@@ -1,0 +1,2 @@
+module EtsDashboardHelper
+end

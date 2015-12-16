@@ -1,0 +1,13 @@
+<div id='jstree'></div>
+
+<script>
+  $(document).ready(function () {
+    var restpaths = {};
+    restpaths.taxonomy_data_path = '<%=taxonomy_load_data_path%>';
+
+    //set ui to hour glass
+    Common.cursor_wait();
+    Taxonomy.onReady("#jstree", restpaths);
+    Common.cursor_auto();
+  });
+</script>

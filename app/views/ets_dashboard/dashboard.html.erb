@@ -1,0 +1,54 @@
+<!--example for changing page title based on current view-->
+<% content_for :title do %>
+    ETS Tooling Dashboard
+<% end %>
+<% content_for :description do %>
+    Dashboard Description
+<% end %>
+
+<style type="text/css" media="all">
+  #dashboard-splitter {
+    height: 91%;
+    width: 100%;
+    position: absolute;
+  }
+
+  #west-pane {
+    /*background-color: red;*/
+  }
+
+  #east-pane {
+    /*background-color: yellow;*/
+  }
+</style>
+
+<div id="dashboard-splitter" class="row">
+  <div id="west-pane">
+    <div id="tabs">
+      <ul>
+        <li><a href='#tp-taxonomy'>Taxonomy</a></li>
+        <li><a href='#tp-search'>Search</a></li>
+        <li><a href='#tp-favorites'>Favorites</a></li>
+        <li><a href='#tp-refsets'>Refsets</a></li>
+      </ul>
+      <div id="tp-taxonomy"></div>
+      <div id="tp-search"></div>
+      <div id="tp-favorites"></div>
+      <div id="tp-refsets"></div>
+    </div>
+  </div>
+  <div id="east-pane">
+    details for selected taxononmy
+  </div>
+</div>
+
+<script>
+  $(document).ready(function () {
+    $("#tp-taxonomy").html('<%= escape_javascript render :partial => 'ets_dashboard/taxonomy/taxonomy'%>');
+    $("#tp-search").html('<%= escape_javascript render :partial => 'ets_dashboard/search/search'%>');
+    $("#tp-favorites").html('<%= escape_javascript render :partial => 'ets_dashboard/favorites/favorites'%>');
+    $("#tabs").tabs();
+    $('#dashboard-splitter').split({orientation: 'vertical', limit: 250});
+  });
+</script>
+

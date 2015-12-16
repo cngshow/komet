@@ -1,0 +1,29 @@
+var Common = new function () {
+  //public functions
+  this.cursor_wait = function () {
+    $('body').css('cursor', 'wait');
+  };
+
+  this.cursor_auto = function () {
+    $('body').css('cursor', 'auto');
+  };
+
+  this.get_common_data = function () {
+    var o = new Object();
+    o.team = 'the team <%= CommonData.get_property(:team)%>!';
+    o.team_email = '<%= CommonData.get_property(:email)%>';
+    o.server_time = new Date(<%= Time.now.to_i * 1000%>);
+    o.foo = "hello";
+    return o;
+  };
+
+  this.sleep = function(milliseconds) {
+    var start = new Date().getTime();
+    for (var i = 0; i < 1e7; i++) {
+      if ((new Date().getTime() - start) > milliseconds) {
+        break;
+      }
+    }
+  }
+};
+
