@@ -1,5 +1,6 @@
-var Taxonomy = {
-    onReady: function(jstree_id, rest_paths) {
+var TaxonomyModule = (function () {
+
+    function buildTaxonomyTree(jstree_id, rest_paths) {
         var settings = {
             "core": {
                 "animation": 0,
@@ -13,16 +14,32 @@ var Taxonomy = {
                 }
             }
         };
-
         $(jstree_id).jstree(settings);
-        $(jstree_id).on('after_open.jstree', Taxonomy.onAfterOpen);
-
-        Taxonomy.tree = $(jstree_id).jstree();
-    },
-    onAfterOpen: function(node) {
-        console.log("******** after open on " + node);
+        $(jstree_id).on('after_open.jstree', onAfterOpen);
+        $(jstree_id).on('after_close.jstree', onAfterClose);
+        TaxonomyModule.tree = $(jstree_id).jstree();
     }
-};
+
+     function onAfterOpen(node, selected) {
+        //publish what we expect our observers to need in a way that allows them not to understand
+        //our tree and our tree's dom.
+        $.publish(EtsChannels.Taxonomy.taxonomyTreeNodeOpenedChannel,selected.node.id);
+
+    }
+
+     function onAfterClose(node, selected) {
+        $.publish(EtsChannels.Taxonomy.taxonomyTreeNodeClosedChannel,selected.node.id);
+    }
+
+    function init(jstree_id, rest_paths) {
+        buildTaxonomyTree(jstree_id, rest_paths);
+    }
+
+    return {
+        initialize : init
+    };
+
+})();
 
 
 
