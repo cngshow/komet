@@ -1,0 +1,19 @@
+########################################################################################################################
+# environment specific setup (development, test, or production)
+########################################################################################################################
+<%
+   env_hash = {}
+   environment = Rails.env.to_sym
+   case environment
+     when :development
+       #log levels are DEBUG,INFO, WARN, ERROR, FATAL
+       env_hash[:level] = 'DEBUG'
+     when :test
+       env_hash[:level] = 'DEBUG'
+     else #production
+       env_hash[:level] = 'ERROR'
+   end
+%>
+<% env_hash.each_pair do |k,v| %>
+    <%= "#{k.to_s}=#{v.to_s}" %>
+<%end%>
