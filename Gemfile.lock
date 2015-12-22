@@ -74,6 +74,10 @@ GEM
       railties (>= 3.2.16)
     jruby-rack (1.1.19)
     json (1.8.3-java)
+    little-plugger (1.1.4)
+    logging (2.0.0)
+      little-plugger (~> 1.1)
+      multi_json (~> 1.10)
     loofah (2.0.3)
       nokogiri (>= 1.5.9)
     mail (2.6.3)
@@ -161,6 +165,7 @@ DEPENDENCIES
   jbuilder (~> 2.0)
   jquery-rails
   jquery-ui-rails
+  logging
   rails (= 4.2.5)
   random-word
   sass-rails (~> 5.0)
@@ -173,4 +178,4 @@ DEPENDENCIES
   yard
 
 BUNDLED WITH
-   1.10.6
+   1.11.2

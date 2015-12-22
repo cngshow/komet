@@ -41,3 +41,4 @@ gem 'trinidad', require: nil
 gem 'yard'
 gem 'random-word'
 gem 'jquery-ui-rails'
+gem 'logging', '~> 2.0'

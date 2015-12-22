@@ -51,15 +51,21 @@ module PropLoader
   end
 
   def self.read_prop_line(line, key_prefix)
-    ret = {}
+    properties = {}
     line.strip!
-    if line =~ /^[a-z].*=.*$/
-      kv = line.split('=')
-      ret["#{key_prefix}.#{kv[0]}"] = kv[1]
+    return properties if line.eql?("")
+    if (line[0] != ?# and line[0] != ?=)
+      i = line.index('=')
+      if (i)
+        properties["#{key_prefix}." + line[0..i - 1].strip] = line[i + 1..-1].strip
+      else
+        properties["#{key_prefix}."+line] = ''
+      end
     end
-    ret
+    properties
   end
 end
 
 PropLoader.load_prop_files('./config/props')
 $PROPS = PropLoader.props.freeze
+#p $PROPS
