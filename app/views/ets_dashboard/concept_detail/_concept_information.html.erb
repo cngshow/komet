@@ -1,0 +1,46 @@
+<style>
+  .taxonomy-content-tabs{
+    font-size: smaller;
+  }
+</style>
+
+<div class="panel panel-default ets-no-margins">
+  <div class="panel-heading">
+    <span class="panel-title ets-section-title">Concept Details</span>
+    <div class="ets-section-icons">
+      <div class="glyphicon glyphicon-time"></div>
+      <div class="glyphicon glyphicon-cog"></div>
+    </div>
+  </div>
+</div>
+
+<div id="taxonomy_content_tabs" class="taxonomy-content-tabs">
+  <ul>
+    <li><a href='#taxonomy_content_summary'>Summary</a></li>
+    <li><a href='#taxonomy_content_details'>Details</a></li>
+    <li><a href='#taxonomy_content_diagram'>Diagram</a></li>
+    <li><a href='#taxonomy_content_expression'>Expression</a></li>
+    <li><a href='#taxonomy_content_refsets'>Refsets</a></li>
+    <li><a href='#taxonomy_content_members'>Members</a></li>
+    <li><a href='#taxonomy_content_references'>References</a></li>
+  </ul>
+  <div id="taxonomy_content_summary"></div>
+  <div id="taxonomy_content_details"></div>
+  <div id="taxonomy_content_diagram"></div>
+  <div id="taxonomy_content_expression"></div>
+  <div id="taxonomy_content_refsets"></div>
+  <div id="taxonomy_content_members"></div>
+  <div id="taxonomy_content_references"></div>
+</div>
+
+
+<script>
+  $(document).ready(function () {
+    $("#taxonomy_content_diagram").html('<%= escape_javascript render :partial => 'ets_dashboard/concept_detail/concept_diagram'%>');
+    $("#taxonomy_content_tabs").tabs({
+      active: 0
+    });
+
+    ConceptsModule.initialize();
+  });
+</script>

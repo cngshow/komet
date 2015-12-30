@@ -2,7 +2,14 @@ Rails.application.routes.draw do
 
   get 'ets_dashboard/metadata'
 
-  get 'taxonomy/load_data'
+  get 'taxonomy/load_tree_data'
+  get 'taxonomy/get_concept_information'
+  get 'taxonomy/get_concept_summary'
+  get 'taxonomy/get_concept_details'
+  get 'taxonomy/get_concept_expression'
+  get 'taxonomy/get_concept_refsets'
+  get 'taxonomy/get_concept_references'
+  get 'taxonomy/get_concept_members'
   get 'ets_dashboard/dashboard2'
 
   # You can have the root of your site routed with "root"

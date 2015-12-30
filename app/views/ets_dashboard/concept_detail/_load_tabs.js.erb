@@ -1,0 +1,9 @@
+console.log("^^^^^^^^^ Load Tabs ^^^^^^^^^^^^");
+$('#taxonomy_content_details').html("<%= j(render(:partial => 'ets_dashboard/concept_detail/concept_details')) %>");
+$('#taxonomy_content_expression').html("<%= j(render(:partial => 'ets_dashboard/concept_detail/concept_expression')) %>");
+$('#taxonomy_content_refsets').html("<%= j(render(:partial => 'ets_dashboard/concept_detail/concept_refsets')) %>");
+$('#taxonomy_content_members').html("<%= j(render(:partial => 'ets_dashboard/concept_detail/concept_members')) %>");
+$('#taxonomy_content_references').html("<%= j(render(:partial => 'ets_dashboard/concept_detail/concept_references')) %>");
+$('#taxonomy_content_summary').html("<%= j(render(:partial => 'ets_dashboard/concept_detail/concept_summary')) %>");
+
+

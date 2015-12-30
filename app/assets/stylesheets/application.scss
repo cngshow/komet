@@ -17,6 +17,31 @@
 @import "bootstrap-sprockets";
 @import "bootstrap";
 
+.ets-no-margins{
+  margin: 0px;
+}
+.ets-section-title{
+  display: inline-block;
+  font-size: larger;
+}
+.ets-section-icons{
+  float: right;
+  display: inline-block;
+}
+
+// Taxonomy Common Styles
+.concept_detail_table{
+  width: 100%;
+}
+.concept_detail_table td{
+  border-top: 1px black solid;
+  border-right: 1px black solid;
+  padding-left: 2px;
+}
+.concept_detail_info_button{
+  display: block;
+}
+
 // Taxonomy Tree Styles
 .ets-reverse-tree{
   transform: scaleX(-1);
@@ -24,4 +49,86 @@
 }
 .ets-reverse-tree-node{
   transform: scaleY(-1);
+}
+.ets-node-image-red:after{
+  margin-left: 2px;
+  content: "i";
+  height: 100%;
+  background-color: red;
+  color: red;
+}
+.ets-node-image-yellow{
+  background-color: yellow !important;
+  width:10px !important;
+  right: 4px;
+}
+.concept-summary-tree-container{
+  margin-left: 0%;
+  margin-bottom: 10px;
+  width: 100%;
+  border: 2px solid #357ebd;
+  border-radius: 4px;
+  padding: 5px;
+}
+.concept-summary-buttons{
+  font-size: smaller;
+  vertical-align: top;
+}
+#concept_summary_details{
+  border: 2px solid #357ebd;
+  border-radius: 4px;
+  background-color: #357ebd;
+  color: white;
+  width: 45%;
+  display: inline-block;
+}
+#concept_summary_attributes{
+  border: 2px solid #357ebd;
+  border-radius: 4px;
+  background-color: rgba(30, 144, 255, 0.17);
+  color: black;
+  width: 45%;
+  display: inline-block;
+  vertical-align: top;
+}
+#concept_summary_details_container{
+  width: 100%;
+  padding-left: 7%;
+  padding-right: 7%;
+  margin-bottom: 10px;
+}
+#concept_summary_left_pane{
+  width: 85%;
+  display: inline-block;
+}
+
+// Concept Details Styles
+#concept_details_concept_text{
+  font-size: larger;
+  font-weight: bold;
+}
+#concept_details_refset_title{
+  text-align: center;
+  width: 100%;
+}
+
+// Concept Expression Styles
+.concept-expression{
+  padding-top: 10px;
+}
+.concept-expression-symbol{
+  color: darkred;
+}
+.concept-expression-description{
+  color: darkgreen;
+}
+.concept-expression-level-2{
+  padding-left: 20px;
+}
+.concept-expression-level-3{
+  padding-left: 40px;
+}
+.concept-expression-footnote{
+  font-size: xx-small;
+  background-color: rgb(245, 245, 245);
 }

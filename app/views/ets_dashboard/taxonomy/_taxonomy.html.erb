@@ -1,10 +1,39 @@
-<div id='jstree'></div>
+<div class="panel panel-default ets-no-margins">
+  <div class="panel-heading">
+    <span class="panel-title ets-section-title">Taxonomy</span>
+    <div class="ets-section-icons">
+      <div class="btn-group btn-group-xs concept-summary-buttons" role="group" aria-label="...">
+        <button type="button" class="btn btn-default" id="taxonomy_tree_button_stated">Stated</button>
+        <button type="button" class="btn btn-primary" id="taxonomy_tree_button_inferred">Inferred</button>
+      </div>
+      <div class="glyphicon glyphicon-time"></div>
+      <div class="glyphicon glyphicon-refresh"></div>
+    </div>
+  </div>
+</div>
+
+<div id='taxonomy_tree'></div>
 
 <script>
   $(document).ready(function () {
+    var restpaths = {};
+    restpaths.taxonomy_load_tree_data_path = '<%=taxonomy_load_tree_data_path%>';
+    restpaths.taxonomy_get_concept_information_path = '<%=taxonomy_get_concept_information_path%>';
+    restpaths.taxonomy_get_concept_summary_path = '<%=taxonomy_get_concept_summary_path%>';
+    restpaths.taxonomy_get_concept_details_path = '<%=taxonomy_get_concept_details_path%>';
+    restpaths.taxonomy_get_concept_expression_path = '<%=taxonomy_get_concept_expression_path%>';
+    restpaths.taxonomy_get_concept_refsets_path = '<%=taxonomy_get_concept_refsets_path%>';
+    restpaths.taxonomy_get_concept_references_path = '<%=taxonomy_get_concept_references_path%>';
+    restpaths.taxonomy_get_concept_members_path = '<%=taxonomy_get_concept_members_path%>';
+
     //set ui to hour glass
     Common.cursor_wait();
-    TaxonomyModule.initialize("#jstree");
-    Common.cursor_auto();
+    TaxonomyModule.initialize("taxonomy_tree", restpaths);
+
+    // set the tree to select the first node when it finishes loading
+    TaxonomyModule.taxonomy_tree.bind('ready.jstree', function(event, data) {
+      data.instance.select_node('ul > li:first')
+      Common.cursor_auto();
+    });
   });
 </script>

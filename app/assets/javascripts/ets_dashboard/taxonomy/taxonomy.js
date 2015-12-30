@@ -1,24 +1,42 @@
 var TaxonomyModule = (function () {
 
-    function buildTaxonomyTree(jstree_id) {
+    function buildTaxonomyTree(tree_id, rest_path, parent_search, starting_id) {
+
+        if (parent_search == undefined || parent_search == null){
+            parent_search = false;
+        }
+
         var settings = {
             "core": {
                 "animation": 0,
                 "check_callback": true,
                 "themes": {"stripes": true},
                 'data': {
-                    'url': gon.routes.taxonomy_load_data_path,
+                    'url': rest_path,
                     'data': function (node) {
-                        return {'id': node.id};
+
+                        var nodeToLoad = node.id;
+
+                        if (starting_id != null && nodeToLoad !== starting_id){
+                            nodeToLoad = starting_id;
+                        }
+
+                        starting_id = null;
+
+                        if (node.id == "#"){
+                            return {'id': nodeToLoad, 'parent_search': parent_search, 'parent_reversed': parent_search};
+                        } else {
+                            return {'id': nodeToLoad, 'parent_search': node.original.parent_search, 'parent_reversed': node.original.parent_reversed};
+                        }
                     }
                 }
             }
         };
-        $(jstree_id).jstree(settings);
-        $(jstree_id).on('after_open.jstree', onAfterOpen);
-        $(jstree_id).on('after_close.jstree', onAfterClose);
-        $(jstree_id).on('changed.jstree', onChanged);
-        TaxonomyModule.tree = $(jstree_id).jstree();
+        var tree = $("#" + tree_id).jstree(settings);
+        tree.on('after_open.jstree', onAfterOpen);
+        tree.on('after_close.jstree', onAfterClose);
+        tree.on('changed.jstree', onChanged);
+        TaxonomyModule[tree_id + ''] = tree;
     }
 
     function onAfterOpen(node, selected) {
@@ -32,62 +50,27 @@ var TaxonomyModule = (function () {
         $.publish(EtsChannels.Taxonomy.taxonomyTreeNodeClosedChannel,selected.node.id);
     }
 
-    function init(jstree_id) {
-        buildTaxonomyTree(jstree_id);
-    }
-
     function onChanged(event, selectedObject) {
 
         var conceptId = selectedObject.node.id;
         var parentConceptId = selectedObject.node.original.parent_id;
-        console.log("Selected id : %s; Parent id: %s", conceptId, parentConceptId);
 
-        var contentPane = $("#east-pane");
-        contentPane.html("Viewing details for concept ID: " + conceptId + "; which has parent concept ID: " + parentConceptId);
+        var conceptText = selectedObject.node.text;
+
+        TaxonomyModule.selectedTreeNode = conceptId;
+
+        $.publish(EtsChannels.Taxonomy.taxonomyTreeNodeSelectedChannel, conceptId, conceptText);
+    }
+
+    function init(tree_id, rest_paths, parent_search, starting_id) {
+
+        TaxonomyModule.restPaths = rest_paths;
+        buildTaxonomyTree(tree_id, TaxonomyModule.restPaths.taxonomy_load_tree_data_path, parent_search, starting_id);
     }
 
     return {
-        initialize : init
+        initialize : init,
+        buildTaxonomyTree: buildTaxonomyTree
     };
 
 })();
-
-
-
-/*
- var taxonomy = new function () {
- //public methods (defined as this. will be exposed in the taxonomy namespace)
- this.init = function (jstree_id, rest_paths) {
- $(jstree_id)
- .on('changed.jstree', function (e, data) {
- console.log("******** on changed of tree " + JSON.stringify(e));
- })
- .on('before_open.jstree', function (node) {
- console.log("******** before open on " + node);
- })
- .on('open_node.jstree', function (node) {
- console.log("******** open_node on" + node);
- })
- .on('after_open.jstree', function (node) {
- console.log("******** after open on " + node);
- })
- // create the instance
- .jstree({
- "core": {
- "animation": 0,
- "check_callback": true,
- "themes": {"stripes": true},
- 'data': {
- 'url': rest_paths.taxonomy_data_path,
- 'data': function (node) {
- return {'id': node.id};
- }
- }
- }
- });
- };
-
- //private methods should be defined as var <function_name> = function(...)
- };
-
- */

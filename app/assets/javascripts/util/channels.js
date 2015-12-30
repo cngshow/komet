@@ -9,7 +9,8 @@ var EtsChannels = {
      Taxonomy : {
         //These strings must be unique across  all channels
         taxonomyTreeNodeOpenedChannel: "Taxonomy/TaxonomyTree/NodeOpened",
-        taxonomyTreeNodeClosedChannel: "Taxonomy/TaxonomyTree/NodeClosed"
+        taxonomyTreeNodeClosedChannel: "Taxonomy/TaxonomyTree/NodeClosed",
+        taxonomyTreeNodeSelectedChannel: "Taxonomy/TaxonomyTree/NodeSelected"
     },
     //whoever adds in another real namespace can whack this silly example
      SomethingElse : {

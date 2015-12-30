@@ -1,0 +1,34 @@
+<% if @concept_references.empty? %>
+    <div class="ets-no-data-message">This concept has no references.</div>
+<% else %>
+
+    <% @concept_references.each do |concept_reference| %>
+
+        <div class="concept-section-title"><%= concept_reference[:title] %></div>
+
+        <table class="concept_detail_table">
+          <thead>
+          <tr>
+            <th>Term</th>
+            <th>Concept ID</th>
+          </tr>
+          </thead>
+          <tbody>
+
+          <% concept_reference[:references].each do |reference| %>
+
+              <tr>
+                <td><%= reference[:term] %></td>
+                <td><%= reference[:concept_id] %></td>
+              </tr>
+
+          <% end %>
+
+          </tbody>
+        </table>
+
+        <br><br>
+
+    <% end %>
+
+<% end %>

@@ -1,0 +1,46 @@
+<% if @concept_refsets == nil %>
+    <div class="ets-no-data-message">No members.</div>
+<% else %>
+
+    <% @concept_refsets.each do |refset| %>
+
+        <div class="concept-section-title"><%= refset[:title]%></div>
+
+      <% if refset[:members].empty? %>
+          <div class="ets-no-data-message">No members.</div>
+      <% else %>
+
+        <table class="concept_detail_table">
+          <thead>
+          <tr>
+            <th>Name</th>
+            <th>Number</th>
+          </tr>
+          </thead>
+          <tbody>
+
+            <% refset[:members].each do |member| %>
+
+              <tr>
+                <td>
+                  <%= member[:name] %>
+                </td>
+                <td>
+                  <%= member[:number] %>
+                  <span class="glyphicon glyphicon-info-sign pull-right"></span>
+                </td>
+              </tr>
+
+            <% end %>
+
+          </tbody>
+        </table>
+
+      <% end %>
+
+      <br><br>
+
+    <% end %>
+
+<% end %>
+

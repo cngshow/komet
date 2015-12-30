@@ -1,0 +1,78 @@
+<span id="concept_summary_left_pane">
+
+  <div class="concept-summary-tree-container">
+    <div class="concept-summary-tree-label">Parents</div>
+    <div id="concept_summary_parents_tree" class="ets-reverse-tree">No Parents</div>
+  </div>
+
+  <div id="concept_summary_details_container">
+    <div id="concept_summary_details">
+
+      <div id="concept_summary_text"><%= @concept_summary[:text] + ' (' + @concept_summary[:qualifier] + ')' %></div>
+      <div id="concept_summary_id"><%= @concept_summary[:id] %></div>
+
+      <div id="concept_summary_text_specific"><%= @concept_summary[:text] %></div>
+      <div id="concept_summary_text_small"><%= @concept_summary[:text] + ' (' + @concept_summary[:qualifier] + ')' %></div>
+    </div>
+
+    <div id="concept_summary_attributes">
+
+      <% if @concept_summary[:attributes] == nil || @concept_summary[:attributes].empty? %>
+
+          No Attributes
+
+      <% else %>
+
+          <% @concept_summary[:attributes].each do |attribute| %>
+
+              <%= attribute[:label] %> -> <%= attribute[:text] %>
+
+          <% end %>
+
+      <% end %>
+
+    </div>
+
+  </div>
+
+  <div class="concept-summary-tree-container">
+    <div class="concept-summary-tree-label">Children</div>
+    <div id="concept_summary_children_tree">No Children</div>
+  </div>
+</span>
+
+<div class="btn-group concept-summary-buttons" role="group" aria-label="...">
+  <button type="button" class="btn btn-default" id="concept_summary_button_stated">Stated</button>
+  <button type="button" class="btn btn-primary" id="concept_summary_button_inferred">Inferred</button>
+</div>
+
+<script>
+  $(document).ready(function () {
+
+    try {
+
+      TaxonomyModule.buildTaxonomyTree("concept_summary_parents_tree", TaxonomyModule.restPaths.taxonomy_load_tree_data_path, true, TaxonomyModule.selectedTreeNode);
+      TaxonomyModule.buildTaxonomyTree("concept_summary_children_tree", TaxonomyModule.restPaths.taxonomy_load_tree_data_path, false, TaxonomyModule.selectedTreeNode);
+
+      TaxonomyModule.concept_summary_parents_tree.bind('ready.jstree', function (event, data) {
+
+        if (data.instance._cnt == 0) {
+          TaxonomyModule.concept_summary_parents_tree.html("<div class='ets-reverse-tree-node'>No Parents</div>");
+        }
+      });
+
+      TaxonomyModule.concept_summary_children_tree.bind('ready.jstree', function (event, data) {
+
+        if (data.instance._cnt == 0) {
+          TaxonomyModule.concept_summary_children_tree.html("No Children");
+        }
+      });
+
+    }
+    catch(err) {
+      console.log("*******  ERROR **********");
+     console.log(err.message);
+    }
+
+  });
+</script>

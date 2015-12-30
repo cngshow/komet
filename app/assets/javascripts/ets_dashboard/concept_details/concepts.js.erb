@@ -1,0 +1,28 @@
+var ConceptsModule = (function () {
+
+  function subscribeToTaxonomyTree() {
+
+    //We received our event.  Due to the fine grained structure of our Observer/Observable paradigm
+    //We need no if/else logic.  If this function receives an event it can just act on it.
+    $.subscribe(EtsChannels.Taxonomy.taxonomyTreeNodeSelectedChannel, function (e, conceptID) {
+
+      ConceptsModule.currentConceptID = conceptID;
+
+      // the path to a javascript partial file the will rerender all the appropriate partials once the ajax call returns
+      var partial = 'ets_dashboard/concept_detail/load_tabs';
+
+      // make an ajax call to get the concept for the current concept and pass it the currently selected concept id and the name of a partial file to render
+      $.get(TaxonomyModule.restPaths.taxonomy_get_concept_information_path, {concept_id: conceptID, partial: partial}, function (data) {
+      });
+    });
+  }
+
+  function init() {
+    subscribeToTaxonomyTree();
+  }
+
+  return {
+    initialize: init
+  };
+
+})();
