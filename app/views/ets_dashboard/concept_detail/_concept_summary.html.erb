@@ -51,8 +51,8 @@
 
     try {
 
-      TaxonomyModule.buildTaxonomyTree("concept_summary_parents_tree", TaxonomyModule.restPaths.taxonomy_load_tree_data_path, true, TaxonomyModule.selectedTreeNode);
-      TaxonomyModule.buildTaxonomyTree("concept_summary_children_tree", TaxonomyModule.restPaths.taxonomy_load_tree_data_path, false, TaxonomyModule.selectedTreeNode);
+      TaxonomyModule.buildTaxonomyTree("concept_summary_parents_tree", true, TaxonomyModule.selectedTreeNode);
+      TaxonomyModule.buildTaxonomyTree("concept_summary_children_tree", false, TaxonomyModule.selectedTreeNode);
 
       TaxonomyModule.concept_summary_parents_tree.bind('ready.jstree', function (event, data) {
 

@@ -16,23 +16,17 @@
 
 <script>
   $(document).ready(function () {
-    var restpaths = {};
-    restpaths.taxonomy_load_tree_data_path = '<%=taxonomy_load_tree_data_path%>';
-    restpaths.taxonomy_get_concept_information_path = '<%=taxonomy_get_concept_information_path%>';
-    restpaths.taxonomy_get_concept_summary_path = '<%=taxonomy_get_concept_summary_path%>';
-    restpaths.taxonomy_get_concept_details_path = '<%=taxonomy_get_concept_details_path%>';
-    restpaths.taxonomy_get_concept_expression_path = '<%=taxonomy_get_concept_expression_path%>';
-    restpaths.taxonomy_get_concept_refsets_path = '<%=taxonomy_get_concept_refsets_path%>';
-    restpaths.taxonomy_get_concept_references_path = '<%=taxonomy_get_concept_references_path%>';
-    restpaths.taxonomy_get_concept_members_path = '<%=taxonomy_get_concept_members_path%>';
 
     //set ui to hour glass
     Common.cursor_wait();
-    TaxonomyModule.initialize("taxonomy_tree", restpaths);
+    TaxonomyModule.initialize("taxonomy_tree");
 
     // set the tree to select the first node when it finishes loading
     TaxonomyModule.taxonomy_tree.bind('ready.jstree', function(event, data) {
+
       data.instance.select_node('ul > li:first')
+
+      // set ui to regular cursor
       Common.cursor_auto();
     });
   });

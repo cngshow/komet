@@ -1,6 +1,6 @@
 var TaxonomyModule = (function () {
 
-    function buildTaxonomyTree(tree_id, rest_path, parent_search, starting_id) {
+    function buildTaxonomyTree(tree_id, parent_search, starting_id) {
 
         if (parent_search == undefined || parent_search == null){
             parent_search = false;
@@ -12,7 +12,7 @@ var TaxonomyModule = (function () {
                 "check_callback": true,
                 "themes": {"stripes": true},
                 'data': {
-                    'url': rest_path,
+                    'url': gon.routes.taxonomy_load_tree_data_path,
                     'data': function (node) {
 
                         var nodeToLoad = node.id;
@@ -62,10 +62,9 @@ var TaxonomyModule = (function () {
         $.publish(EtsChannels.Taxonomy.taxonomyTreeNodeSelectedChannel, conceptId, conceptText);
     }
 
-    function init(tree_id, rest_paths, parent_search, starting_id) {
+    function init(tree_id, parent_search, starting_id) {
 
-        TaxonomyModule.restPaths = rest_paths;
-        buildTaxonomyTree(tree_id, TaxonomyModule.restPaths.taxonomy_load_tree_data_path, parent_search, starting_id);
+        buildTaxonomyTree(tree_id, parent_search, starting_id);
     }
 
     return {

@@ -12,7 +12,7 @@ var ConceptsModule = (function () {
       var partial = 'ets_dashboard/concept_detail/load_tabs';
 
       // make an ajax call to get the concept for the current concept and pass it the currently selected concept id and the name of a partial file to render
-      $.get(TaxonomyModule.restPaths.taxonomy_get_concept_information_path, {concept_id: conceptID, partial: partial}, function (data) {
+      $.get(gon.routes.taxonomy_get_concept_information_path, {concept_id: conceptID, partial: partial}, function (data) {
       });
     });
   }
