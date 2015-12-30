@@ -1,3 +1,10 @@
+pattern = [%l][%d][%F][%L] %m\n
+filename = ./log/ets_web.log
+#valid values for roll_by are 'number' and 'date'
+roll_by = number
+#caller_tracing values are true or false.  If set to true the file and line number data is logged
+caller_tracing = true
+
 ########################################################################################################################
 # environment specific setup (development, test, or production)
 ########################################################################################################################
@@ -8,10 +15,20 @@
      when :development
        #log levels are DEBUG,INFO, WARN, ERROR, FATAL
        env_hash[:level] = 'DEBUG'
+       #valid values for age are daily and weekly. This determines how often we roll our log.
+       env_hash[:age] = 'daily'
+       #how many rolled log files we keep
+       env_hash[:keep] = 3
+       #the presence of this will cause stdout logging to occur.
+       env_hash[:append_stdout] = 'yes'
      when :test
-       env_hash[:level] = 'DEBUG'
+       env_hash[:level] = 'INFO'
+       env_hash[:age] = 'daily'
+       env_hash[:keep] = 7
      else #production
-       env_hash[:level] = 'ERROR'
+       env_hash[:level] = 'WARN'
+       env_hash[:age] = 'weekly'
+       env_hash[:keep] = 12
    end
 %>
 <% env_hash.each_pair do |k,v| %>
