@@ -17,13 +17,13 @@ class TaxonomyController < ApplicationController
 
       main_concepts.each do |concept|
         # the children : true is KEY here. This allows for the AJAX call to be done when the user clicks the down arrow to load the children
-        ret << {:id => concept, :text => concept, children: true}
+        ret << {:id => concept, :text => concept, children: true, parent_id: parent_concept_id}
       end
     else
       nodes = rand(5) + 1
       nodes.times do |i|
         child_label = "#{RandomWord.adjs.next}-#{RandomWord.nouns.next}"
-        ret << {id: "#{parent_concept_id}-#{child_label}", text: child_label, children: true, other_data: {drug: false, clinical_name: 'sizzling bacon'}}
+        ret << {id: child_label, text: child_label, children: true, parent_id: parent_concept_id}
       end
     end
     render json: ret

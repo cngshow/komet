@@ -16,3 +16,12 @@
  */
 @import "bootstrap-sprockets";
 @import "bootstrap";
+
+// Taxonomy Tree Styles
+.ets-reverse-tree{
+  transform: scaleX(-1);
+  transform: scaleY(-1);
+}
+.ets-reverse-tree-node{
+  transform: scaleY(-1);
+}
