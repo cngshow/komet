@@ -1,13 +1,13 @@
 var TaxonomyModule = (function () {
 
-    function buildTaxonomyTree(jstree_id, rest_paths) {
+    function buildTaxonomyTree(jstree_id) {
         var settings = {
             "core": {
                 "animation": 0,
                 "check_callback": true,
                 "themes": {"stripes": true},
                 'data': {
-                    'url': rest_paths.taxonomy_data_path,
+                    'url': gon.routes.taxonomy_load_data_path,
                     'data': function (node) {
                         return {'id': node.id};
                     }
@@ -31,8 +31,8 @@ var TaxonomyModule = (function () {
         $.publish(EtsChannels.Taxonomy.taxonomyTreeNodeClosedChannel,selected.node.id);
     }
 
-    function init(jstree_id, rest_paths) {
-        buildTaxonomyTree(jstree_id, rest_paths);
+    function init(jstree_id) {
+        buildTaxonomyTree(jstree_id);
     }
 
     return {

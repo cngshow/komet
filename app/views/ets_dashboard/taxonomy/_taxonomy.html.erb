@@ -2,12 +2,9 @@
 
 <script>
   $(document).ready(function () {
-    var restpaths = {};
-    restpaths.taxonomy_data_path = '<%=taxonomy_load_data_path%>';
-
     //set ui to hour glass
     Common.cursor_wait();
-    TaxonomyModule.initialize("#jstree", restpaths);
+    TaxonomyModule.initialize("#jstree");
     Common.cursor_auto();
   });
 </script>
