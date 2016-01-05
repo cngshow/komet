@@ -9,7 +9,8 @@ I put it in the directory where JRuby is installed.
 
 https://s3.amazonaws.com/jruby.org/downloads/9.0.4.0/jruby-complete-9.0.4.0.jar
 
-In rails root you will find a file called setup.bat.  You will need to modify the following environment variables:
+In rails root you will find a file called setup.bat.template.
+Move this file to setup.bat, then you will need to modify the following environment variables:
 
 GEM_HOME : (this is in line 2, make sure you create the directory you reference)<br>
 JAVA_HOME : (Line 4)<br>
