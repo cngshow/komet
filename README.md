@@ -43,14 +43,59 @@ http://localhost:3000
 
 notes for deployment to production:
 
-...
+```
 set RAILS_ENV=production
-...
+```
 
-...
+```
 set RAILS_SERVE_STATIC_FILES=true (if and only if you do not have apache or nginx serving static files)
-...
+```
 
-...
+```
 rake assets:precompile
-...
+```
+
+
+How do you run this in a J2EE server like GlassFish?  Here are some GlassFish instructions!  These instructions have been tested on GlassFish version 4.1.1.  You can obtain it here:
+
+https://glassfish.java.net/download.html
+
+Follow the install instructions on the site (you pretty much unzip it).
+
+Before bringing up GlassFish, ensure that <b>jruby-complete-9.0.4.0.jar</b> is placed into the domain you intend to deploy your application.  In my case, on my box, in the directory:
+```
+C:\work\ETS\glassfish\glassfish4\glassfish\domains\domain1\lib\ext
+```
+
+You will want to bring GlassFish up via:
+```
+glassfish4/bin/asadmin start-domain
+```
+
+GlassFish deploys war files, so we will end up converting our rails app into a war file using the warbler gem.  Before running warbler though you need to run the asset pipeline to properly set up the application's javascript, css, and images for the war file.  In addition to that, if you intend to have a context root other than '/' you need to tell the asset pipeline!  By default the  the context root will be 'ets_tooling', so you should do this (from rails root):
+
+```
+set RAILS_RELATIVE_URL_ROOT=/ets_tooling
+```
+
+Then run the asset pipeline:
+```
+rake assets:precompile
+```
+
+Note:  Warbler uses 'production' as the default rails environment if you haven't set the appropriate environment variable.  Thus, if you wish to build a war file that defaults to test or development before running warble do this:
+```
+set RAILS_ENV=test
+```
+
+
+Now you can run warbler to generate your war:
+
+```
+warble
+```
+
+
+You will have a war file named ets_tooling.war.  Deploy it to GlassFish!!
+
+http://localhost:4848/common/index.jsf

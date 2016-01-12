@@ -14,4 +14,8 @@ class EtsDashboardController < ApplicationController
 
   def dashboard
   end
+
+  def metadata
+  end
+
 end

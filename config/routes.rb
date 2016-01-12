@@ -1,5 +1,7 @@
 Rails.application.routes.draw do
 
+  get 'ets_dashboard/metadata'
+
   get 'taxonomy/load_data'
   get 'ets_dashboard/dashboard2'
 
