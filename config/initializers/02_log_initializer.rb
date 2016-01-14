@@ -37,8 +37,9 @@ module Logging
         match = CALLER_RGXP.match(stack)
         f = match[1]
         separator = java.io.File.separator
-        last = Rails.root.to_s.split(separator).last
-        f = f.split(last).last
+        rr = Rails.root.to_s.split(separator)
+        rr.shift if separator.eql?("\\")#windows get rid of drive letter
+        f.gsub!('/' + rr.join('/'),'')
         l = Integer(match[2])
         m = match[3] unless match[3].nil?
       end
