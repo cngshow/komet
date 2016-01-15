@@ -43,6 +43,5 @@ gem 'random-word'
 gem 'jquery-ui-rails'
 gem 'logging', '~> 2.0'
 gem 'gon'
-
-
 gem 'warbler'
+gem 'activeresource'
