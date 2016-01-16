@@ -1,4 +1,5 @@
 require 'active_resource'
+ActiveResource::Base.logger = $log
 class SnomedConcept < ActiveResource::Base
   self.site = $PROPS['ENDPOINT.snomed_concepts']
 
