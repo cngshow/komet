@@ -29,7 +29,10 @@ gem 'sdoc', '~> 0.4.0', group: :doc
 # gem 'unicorn'
 
 # Use Capistrano for deployment
-# gem 'capistrano-rails', group: :development
+# group :development do
+#    gem 'jruby-pageant'
+#    gem 'capistrano-rails'
+# end
 
 
 # Windows does not include zoneinfo files, so bundle the tzinfo-data gem
