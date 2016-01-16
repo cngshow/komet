@@ -1,3 +1,4 @@
+require 'active_resource'
 class SnomedConcept < ActiveResource::Base
   self.site = $PROPS['ENDPOINT.snomed_concepts']
 
