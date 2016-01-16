@@ -13,9 +13,9 @@ namespace :devops do
   end
 
   default_war = "ets_tooling.war"
-  default_undeploy = default_war.split('.')[0]
+  default_name = default_war.split('.')[0]
   context = env('RAILS_RELATIVE_URL_ROOT','/ets_tooling')
-  ENV['RAILS_RELATIVE_URL_ROOT'] = env('RAILS_RELATIVE_URL_ROOT','/ets_tooling')
+  ENV['RAILS_RELATIVE_URL_ROOT'] = env('RAILS_RELATIVE_URL_ROOT',"/#{default_name}")
   ENV['RAILS_ENV'] = env('RAILS_ENV','test')
   domain = env('GLASSFISH_DOMAIN', 'domain1')
 
@@ -66,7 +66,7 @@ namespace :devops do
   desc "Undeploy ets tooling rails from glassfish"
   task :undeploy do |task|
     puts task.comment
-    sh "#{ENV['GLASSFISH_ROOT']}/glassfish4/bin/asadmin undeploy #{default_undeploy}"
+    sh "#{ENV['GLASSFISH_ROOT']}/glassfish4/bin/asadmin undeploy #{default_name}"
   end
 
 end
