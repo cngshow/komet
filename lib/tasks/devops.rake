@@ -27,7 +27,6 @@ namespace :devops do
       #until I learn more we will not give glass fish any access to our environment
       sh "#{ENV['GLASSFISH_ROOT']}/glassfish4/bin/asadmin start-domain #{domain}"
     end
-
   end
 
   desc "Stop glassfish"
@@ -47,6 +46,7 @@ namespace :devops do
   desc "Compile assets"
   task :compile_assets do |task|
     p task.comment
+    Rake::Task['assets:clobber'].invoke
     Rake::Task['assets:precompile'].invoke
   end
 
@@ -56,14 +56,20 @@ namespace :devops do
     sh "bundle install"
   end
 
-  desc "Deploy ets tooling rails to glassfish"
+  desc "Deploy ets_tooling rails to glassfish"
   task :deploy do |task|
     p task.comment
     Rake::Task['devops:build_war'].invoke
-    sh "#{ENV['GLASSFISH_ROOT']}/glassfish4/bin/asadmin deploy --contextroot #{context} #{default_war}"
+    sh "#{ENV['GLASSFISH_ROOT']}/glassfish4/bin/asadmin deploy --force true --contextroot #{context} #{default_war}"
   end
 
-  desc "Undeploy ets tooling rails from glassfish"
+  desc "List glassfish applications"
+  task :list_web_apps do |task|
+    p task.comment
+    sh "#{ENV['GLASSFISH_ROOT']}/glassfish4/bin/asadmin list-applications --type web"
+  end
+
+  desc "Undeploy ets_tooling rails from glassfish"
   task :undeploy do |task|
     puts task.comment
     sh "#{ENV['GLASSFISH_ROOT']}/glassfish4/bin/asadmin undeploy #{default_name}"
