@@ -1,0 +1,3 @@
+[submodule "lib/ets_common"]
+	path = lib/ets_common
+	url = https://github.com/VA-CTT/ets_common
