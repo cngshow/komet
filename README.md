@@ -33,8 +33,7 @@ bundle install
 
 <hr>
 <h1>ETS_COMMON - git submodule</h1>
-We have moved the prop loader and logging code into a git repository at https://github.com/VA-CTT/ets_common.git so that the code can
-be shared with ets_tooling and the PRISME project
+We have moved the prop loader and logging code into a git repository at https://github.com/VA-CTT/ets_common.git so that the code can be shared with ets_tooling and the PRISME project
 
 To pull the latest code do the following:
 1) VCS -> Update Project - from within RubyMine
@@ -42,6 +41,9 @@ To pull the latest code do the following:
 3) git submodule add https://github.com/VA-CTT/ets_common
 
 You should now see an ets_common directory under the lib directory.
+
+In RubyMine you may see a message concerning ets_common being under source control. If/when you do, click the add root button. This will allow you to make changes within the ets_tooling project to the code in ets_common and commit those changes as well.
+
 
 
 <br>
