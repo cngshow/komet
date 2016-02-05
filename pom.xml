@@ -1,0 +1,100 @@
+<?xml version="1.0"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0                       http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <!-- mvn deploy -DaltDeploymentRepository=vadev::default::http://vadev.mantech.com:8081/nexus/content/repositories/ets_tooling2/ -->
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>gov.vha.rails.ets_tooling</groupId>
+  <artifactId>ets_tooling</artifactId>
+  <version>1.2</version>
+  <packaging>pom</packaging>
+
+  <scm>
+    <url>https://github.com/VA-CTT/ets_tooling.git</url>
+  </scm>
+
+  <licenses>
+    <license>
+      <name>The Apache Software License, Version 2.0</name>
+      <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+      <distribution>repo</distribution>
+      <comments>Copyright Notice
+        This is a work of the U.S. Government and is not subject to copyright
+        protection in the United States. Foreign copyrights may apply.
+      </comments>
+    </license>
+  </licenses>
+  <organization>
+    <name>U.S. Department of Veterans Affairs</name>
+    <url>www.va.gov</url>
+  </organization>
+
+  <dependencies>
+    <dependency>
+      <groupId>org.jruby</groupId>
+      <artifactId>jruby-complete</artifactId>
+      <version>9.0.4.0</version>
+    </dependency>
+  </dependencies>
+  <properties>
+    <j.version>9.0.4.0</j.version>
+    <!--This is how I could create a ${j.version}-->
+  </properties>
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>exec-maven-plugin</artifactId>
+        <version>1.2</version>
+        <configuration>
+          <executable>java</executable>
+          <workingDirectory>${project.build.directory}</workingDirectory>
+          <environmentVariables>
+            <GEM_HOME>${env.GEM_HOME}</GEM_HOME>
+          </environmentVariables>
+        </configuration>
+        <executions>
+          <execution>
+            <id>ets_tooling_build_war</id>
+            <phase>compile</phase>
+            <goals><goal>exec</goal></goals>
+            <configuration>
+              <arguments>
+                <argument>-jar</argument>
+                <argument>${env.JRUBY_JAR}</argument>
+                <argument>-S</argument>
+                <argument>bundle</argument>
+                <argument>exec</argument>
+                <argument>rake</argument>
+                <argument>devops:build_war</argument>
+              </arguments>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>build-helper-maven-plugin</artifactId>
+        <version>1.10</version>
+        <executions>
+          <execution>
+            <id>attach-artifacts</id>
+            <phase>package</phase>
+            <goals>
+              <goal>attach-artifact</goal>
+            </goals>
+            <configuration>
+              <artifacts>
+                <artifact>
+                  <file>ets_tooling.war</file>
+                  <type>war</type>
+                  <!--<classifier>optional</classifier>-->
+                </artifact>
+              </artifacts>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+
+    </plugins>
+  </build>
+</project>

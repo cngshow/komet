@@ -3,6 +3,7 @@
 
 # Warbler web application assembly configuration file
 Warbler::Config.new do |config|
+
   # Features: additional options controlling how the jar is built.
   # Currently the following features are supported:
   # - gemjar: package the gem repository in a jar file in WEB-INF/lib
@@ -77,10 +78,10 @@ Warbler::Config.new do |config|
   # config.pathmaps.application = ["WEB-INF/%p"]
 
   # Name of the archive (without the extension). Defaults to the basename
-  # of the project directory.
-  # config.jar_name = "mywar"
+  # of the project directory
+  config.jar_name = "ets_tooling"#.#{ETS_VERSION.first}.#{ETS_VERSION[1]}.#{ETS_VERSION.last}"
 
-  # File extension for the archive. Defaults to either 'jar' or 'war'.
+  # File extension for the archive. Defaults to either 'rm etjar' or 'war'.
   # config.jar_extension = "jar"
 
   # Destionation for the created archive. Defaults to project's root directory.
