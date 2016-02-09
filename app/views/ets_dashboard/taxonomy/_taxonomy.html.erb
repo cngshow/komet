@@ -13,8 +13,26 @@
 </div>
 
 <div id='taxonomy_tree'></div>
-
+<!--
+<div id='jstree'></div>
+<br><br>
+<div id='ets_tree'>
+  this is where the new tree should show up
+</div>
+-->
 <script>
+  /*
+  function callAjax() {
+    $.get(gon.routes.taxonomy_test_ajax_js_path, null, function (data) {
+      $.get(gon.routes.taxonomy_test_render_partial_path, null, function (data2) {
+        $('#kma').html(data2);
+      });
+//      $('#kma').replaceWith("<%#= escape_javascript(render(:partial => '/ets_dashboard/concept_detail/kma', :locals => {:current => @current})) %>");
+      //bob('calling bob');
+    }, "script");
+
+  }
+  */
   $(document).ready(function () {
 
     //set ui to hour glass
@@ -22,12 +40,15 @@
     TaxonomyModule.initialize("taxonomy_tree");
 
     // set the tree to select the first node when it finishes loading
-    TaxonomyModule.taxonomy_tree.bind('ready.jstree', function(event, data) {
+    TaxonomyModule.taxonomy_tree.bind('ready.jstree', function (event, data) {
 
-      data.instance.select_node('ul > li:first')
+      data.instance.select_node('ul > li:first');
 
       // set ui to regular cursor
       Common.cursor_auto();
     });
   });
+
+//  TaxonomyModule2.initialize('#ets_tree', TaxonomyModule2.TreeDirection.UP);
+
 </script>

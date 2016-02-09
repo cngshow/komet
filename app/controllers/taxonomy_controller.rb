@@ -2,7 +2,6 @@
 # TaxonomyController -
 # handles the loading of the taxonomy tree
 class TaxonomyController < ApplicationController
-
   ##
   # load_tree_data - RESTful route for populating the taxonomy tree using an http :GET
   # The current tree node is identified in the request params with the key :id
@@ -16,8 +15,8 @@ class TaxonomyController < ApplicationController
     ret = []
 
     if current_id.eql?('#')
-      current_id = 0;
-      ret << {id: 0, text: 'SNOMED CT Concept', parent: '#', parent_id: '#', parent_reversed: false, parent_search: parent_search, icon: 'glyphicon glyphicon-book ets-node-image-red', a_attr: { class: ''}, state: {opened: 'true'}}
+      current_id = 0
+      ret << {id: 0, text: 'SNOMED CT Concept', parent: '#', parent_id: '#', parent_reversed: false, parent_search: parent_search, icon: 'glyphicon glyphicon-book ets-node-image-red', a_attr: {class: ''}, state: {opened: 'true'}}
     end
 
     if parent_search.eql?('false')
@@ -58,7 +57,7 @@ class TaxonomyController < ApplicationController
         has_children = false
       end
 
-      node = {id: raw_node[:id], text: raw_node[:text] + ' (' + raw_node[:qualifier] + ')', children: has_children, parent_id: current_id, parent_reversed: parent_reversed, parent_search: parent_search, icon: icon_class, a_attr: { class: anchor_classes}}
+      node = {id: raw_node[:id], text: raw_node[:text] + ' (' + raw_node[:qualifier] + ')', children: has_children, parent_id: current_id, parent_reversed: parent_reversed, parent_search: parent_search, icon: icon_class, a_attr: {class: anchor_classes}}
 
       if current_id == 0
         node[:parent] = '0'
@@ -74,7 +73,7 @@ class TaxonomyController < ApplicationController
   # get_concept_information - RESTful route for populating concept details pane using an http :GET
   # The current tree node representing the concept is identified in the request params with the key :concept_id
   # The javascript partial to render is identified in the request params with the key :partial
-  #@return [javascript] render a javascript partial that rerenders all needed partials
+  #@return [javascript] render a javascript partial that re-renders all needed partials
   def get_concept_information
 
     concept_id = params[:concept_id].to_i
@@ -82,12 +81,29 @@ class TaxonomyController < ApplicationController
 
     get_concept_summary(concept_id)
     get_concept_details(concept_id)
+    get_concept_diagram(concept_id)
     get_concept_expression(concept_id)
     get_concept_refsets(concept_id)
     get_concept_members(concept_id)
     get_concept_references(concept_id)
 
     render partial: partial
+
+  end
+
+  ##
+  # get_concept_diagram - RESTful route for populating concept diagram tab using an http :GET
+  # The current tree node representing the concept is identified in the request params with the key :concept_id
+  # @return none - setting the @concept_diagram variable
+  def get_concept_diagram(concept_id = nil)
+
+    # if concept_id == nil && params[:concept_id]
+      concept_id = params[:concept_id].to_i
+    # end
+
+    @concept_diagram = {
+        fsn: @raw_tree_data[concept_id].fetch(:text),
+    }
 
   end
 
@@ -123,8 +139,8 @@ class TaxonomyController < ApplicationController
     refsets = []
 
     members = []
-    members << {type: 'F', type_tooltip: 'FSN', icon: 'preferred_full', acceptability: 'Preferred', term: Time.now.to_s, concept_id: '111111' }
-    members << {type: 'F', type_tooltip: 'FSN', icon: 'preferred_empty', acceptability: 'Preferred', term: 'Term 2', concept_id: '222222' }
+    members << {type: 'F', type_tooltip: 'FSN', icon: 'preferred_full', acceptability: 'Preferred', term: Time.now.to_s, concept_id: '111111'}
+    members << {type: 'F', type_tooltip: 'FSN', icon: 'preferred_empty', acceptability: 'Preferred', term: 'Term 2', concept_id: '222222'}
 
     refsets << {title: 'United States of America English language', members: members}
 
@@ -132,8 +148,8 @@ class TaxonomyController < ApplicationController
 
     types = []
 
-    types << {type: 'Is a (attribute)', destination: 'Death (event)', group: '0', char_type: 'Inferred' }
-    types << {type: 'Associated with (attribute)', destination: 'Overwork (finding)', group: '0', char_type: 'Inferred' }
+    types << {type: 'Is a (attribute)', destination: 'Death (event)', group: '0', char_type: 'Inferred'}
+    types << {type: 'Associated with (attribute)', destination: 'Overwork (finding)', group: '0', char_type: 'Inferred'}
 
     @concept_details[:types] = types
 
@@ -219,8 +235,8 @@ class TaxonomyController < ApplicationController
 
     @concept_refsets = []
 
-    @concept_refsets << {title: 'Simple Refsets Memberships', members: [{name: 'Term 1', number: Time.now.to_s},{name: 'Term 2', number: concept_id},{name: 'Term 3', number: '333333'}]}
-    @concept_refsets << {title: 'Simple Map Refset', members: [{name: 'Term 4', number: '444444'},{name: 'Term 5', number: '555555'}]}
+    @concept_refsets << {title: 'Simple Refsets Memberships', members: [{name: 'Term 1', number: Time.now.to_s}, {name: 'Term 2', number: concept_id}, {name: 'Term 3', number: '333333'}]}
+    @concept_refsets << {title: 'Simple Map Refset', members: [{name: 'Term 4', number: '444444'}, {name: 'Term 5', number: '555555'}]}
     @concept_refsets << {title: 'Attribute Value Refset', members: [{name: 'Term 6', number: '666666'}]}
     @concept_refsets << {title: 'Association Refset', members: []}
 
@@ -238,8 +254,8 @@ class TaxonomyController < ApplicationController
 
     @concept_references = []
 
-    @concept_references << {title: 'Is a (attribute)', references: [{term: 'Term 1', concept_id: Time.now.to_s},{term: 'Term 2', concept_id: concept_id},{term: 'Term 3', concept_id: '333333'}]}
-    @concept_references << {title: 'Route of administration (attribute)', references: [{term: 'Term 4', concept_id: '444444'},{term: 'Term 5', concept_id: '555555'}]}
+    @concept_references << {title: 'Is a (attribute)', references: [{term: 'Term 1', concept_id: Time.now.to_s}, {term: 'Term 2', concept_id: concept_id}, {term: 'Term 3', concept_id: '333333'}]}
+    @concept_references << {title: 'Route of administration (attribute)', references: [{term: 'Term 4', concept_id: '444444'}, {term: 'Term 5', concept_id: '555555'}]}
 
   end
 
@@ -289,23 +305,70 @@ class TaxonomyController < ApplicationController
 
     @raw_tree_data = []
 
-    @raw_tree_data << {id: 0, text: 'SNOMED CT Concept', qualifier: 'SNOMED RT+CTV3', children: [1,2,3,4,5], parents: []}
+    @raw_tree_data << {id: 0, text: 'SNOMED CT Concept', qualifier: 'SNOMED RT+CTV3', children: [1, 2, 3, 4, 5], parents: []}
 
-    @raw_tree_data << {id: 1, text: 'Body Structure', qualifier: 'body structure', children: [6,9], parents: [0]}
+    @raw_tree_data << {id: 1, text: 'Body Structure', qualifier: 'body structure', children: [6, 9], parents: [0]}
     @raw_tree_data << {id: 2, text: 'Clinical Finding', qualifier: 'clinical finding', children: [], parents: [0]}
     @raw_tree_data << {id: 3, text: 'Event', qualifier: 'event', children: [], parents: [0]}
     @raw_tree_data << {id: 4, text: 'Observable', qualifier: 'observable', children: [], parents: [0]}
     @raw_tree_data << {id: 5, text: 'Organism', qualifier: 'organism', children: [], parents: [0]}
 
-    @raw_tree_data << {id: 6, text: 'Anatomical or acquired body structure', qualifier: 'body structure', children: [7,8], parents: [1]}
+    @raw_tree_data << {id: 6, text: 'Anatomical or acquired body structure', qualifier: 'body structure', children: [7, 8], parents: [1]}
     @raw_tree_data << {id: 7, text: 'Acquired body structure', qualifier: 'body structure', children: [], parents: [6]}
     @raw_tree_data << {id: 8, text: 'Anatomical structure ', qualifier: 'body structure', children: [], parents: [6], attributes: [{label: 'Finding site', text: 'Internal body'}, {label: 'Method', text: 'Microscope'}]}
 
-    @raw_tree_data << {id: 9, text: 'Anatomical organizational pattern', qualifier: 'body structure', children: [10,11,12], parents: [1]}
+    @raw_tree_data << {id: 9, text: 'Anatomical organizational pattern', qualifier: 'body structure', children: [10, 11, 12], parents: [1]}
     @raw_tree_data << {id: 10, text: 'Cell to cell relationship, distinctive', qualifier: 'body structure', children: [], parents: [9], attributes: [{label: 'Finding site', text: 'Internal body'}, {label: 'Method', text: 'Microscope'}]}
     @raw_tree_data << {id: 11, text: 'Distinctive arrangement of cytoplasmic filaments', qualifier: 'cell structure', children: [], parents: [9]}
     @raw_tree_data << {id: 12, text: 'Mitochondrial aggregation within cytoplasm', qualifier: 'cell structure', children: [], parents: [9]}
 
   end
 
+=begin
+  def test_ajax_js
+    @current = Time.now.to_s
+    @kma = rand(10)
+    # render_to_string(:action => "users/profile", :layout => false)
+    # @p = render_to_string partial: 'ets_dashboard/concept_detail/kma', locals: {local_kma: @current, local_random: @kma}
+    @local_kma3 = 'oh yea!'
+    @test = view_context.render 'ets_dashboard/concept_detail/kma3' #, locals: {local_kma3: 'another one'}
+    puts @test
+    # render :json => {time: @current, kma: @kma}
+  end
+
+  def test_render_partial
+    sleep(2)
+    @kma2 = Time.now.to_s
+    @greg = get_a_number
+    # stored_content
+    render partial: 'ets_dashboard/concept_detail/kma2', locals: {local_kma: @kma2, local_random: @greg, bacon: 'awesome!'}
+  end
+
+  def get_a_number
+    rand(20)
+  end
+
+  def stored_content
+    content_for(:storage, render(partial: 'ets_dashboard/concept_detail/kma2', locals: {local_random: get_a_number}))
+  end
+=end
+
+  ##
+  # This method gets called when the diagram tab is selected. It simply pulls the concept data and renders the concept diagram html page.
+  # The concept_diagram partial makes an Ajax call (svg_diagram) to render the JavaScript for the generated SVG
+  def render_concept_diagram
+    get_concept_diagram(params[:concept_id])
+    respond_to do |format|
+      format.html { render partial: 'ets_dashboard/concept_detail/concept_diagram' }
+    end
+  end
+
+  ##
+  # This method is called to render the JavaScript partial which renders the SVG image. This method is called via AJAX from the concept_diagram.html.erb file
+  def svg_diagram
+    get_concept_diagram(params[:concept_id])
+    respond_to do |format|
+      format.js { render partial: 'ets_dashboard/concept_detail/svg_diagram' }
+    end
+  end
 end

@@ -10,7 +10,11 @@ Rails.application.routes.draw do
   get 'taxonomy/get_concept_refsets'
   get 'taxonomy/get_concept_references'
   get 'taxonomy/get_concept_members'
-  get 'ets_dashboard/dashboard2'
+
+  #get 'taxonomy/test_ajax_js'
+  #get 'taxonomy/test_render_partial'
+  get 'taxonomy/render_concept_diagram'
+  get 'taxonomy/svg_diagram'
 
   # You can have the root of your site routed with "root"
   root 'ets_dashboard#dashboard'

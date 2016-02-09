@@ -1,4 +1,5 @@
 var ConceptsModule = (function () {
+  var currentConceptID;
 
   function subscribeToTaxonomyTree() {
 
@@ -6,9 +7,9 @@ var ConceptsModule = (function () {
     //We need no if/else logic.  If this function receives an event it can just act on it.
     $.subscribe(EtsChannels.Taxonomy.taxonomyTreeNodeSelectedChannel, function (e, conceptID) {
 
-      ConceptsModule.currentConceptID = conceptID;
+      currentConceptID = conceptID;
 
-      // the path to a javascript partial file the will rerender all the appropriate partials once the ajax call returns
+      // the path to a javascript partial file that will re-render all the appropriate partials once the ajax call returns
       var partial = 'ets_dashboard/concept_detail/load_tabs';
 
       // make an ajax call to get the concept for the current concept and pass it the currently selected concept id and the name of a partial file to render
@@ -17,12 +18,17 @@ var ConceptsModule = (function () {
     });
   }
 
+  function getCurrentConceptId() {
+    return currentConceptID;
+  }
+
   function init() {
     subscribeToTaxonomyTree();
   }
 
   return {
-    initialize: init
+    initialize: init,
+    getCurrentConceptId: getCurrentConceptId
   };
 
 })();

@@ -17,6 +17,10 @@ var Common = new function () {
     return o;
   };
 
+  this.alerty = function(value) {
+    alert("alerty says " + value);
+  };
+
   this.sleep = function(milliseconds) {
     var start = new Date().getTime();
     for (var i = 0; i < 1e7; i++) {
