@@ -1,4 +1,9 @@
 Rails.application.configure do
+
+  #config.action_controller.relative_url_root = to_snake_case(Rails.application.class.parent)
+  #Someone on the rails team should be beaten for this.
+  config.relative_url_root = ENV['RAILS_RELATIVE_URL_ROOT'] #'/' + to_snake_case(Rails.application.class.parent)
+  #config.assets.prefix = "assets"
   # Settings specified here will take precedence over those in config/application.rb.
 
   # Code is not reloaded between requests.
