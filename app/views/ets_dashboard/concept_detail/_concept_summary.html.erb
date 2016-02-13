@@ -68,6 +68,17 @@
         }
       });
 
+      // publish an event that passes the id of the concept selected to listeners
+      function onChanged(event, selectedObject) {
+
+
+        var conceptId = selectedObject.node.id;
+        $.publish(EtsChannels.Taxonomy.taxonomyTreeNodeSelectedChannel, conceptId);
+      }
+
+      TaxonomyModule.concept_summary_parents_tree.on('changed.jstree', onChanged);
+      TaxonomyModule.concept_summary_children_tree.on('changed.jstree', onChanged);
+
     }
     catch(err) {
       console.log("*******  ERROR **********");

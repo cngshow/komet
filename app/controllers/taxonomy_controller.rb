@@ -4,19 +4,20 @@
 class TaxonomyController < ApplicationController
   ##
   # load_tree_data - RESTful route for populating the taxonomy tree using an http :GET
-  # The current tree node is identified in the request params with the key :id
+  # The current tree node is identified in the request params with the key :concept_id
   # If the tree is reversed so we are searching for parents of this node is identified in the request params with the key :parent_search (true/false)
   # If the parent of this node was already doing a reverse search is identified in the request params with the key :parent_reversed (true/false)
   #@return [json] the tree nodes to insert into the tree at the parent node passed in the request
   def load_tree_data
 
-    current_id = params[:id]
+    current_id = params[:concept_id]
     parent_search = params[:parent_search]
-    ret = []
+    tree_nodes = []
 
     if current_id.eql?('#')
-      current_id = 0
-      ret << {id: 0, text: 'SNOMED CT Concept', parent: '#', parent_id: '#', parent_reversed: false, parent_search: parent_search, icon: 'glyphicon glyphicon-book ets-node-image-red', a_attr: {class: ''}, state: {opened: 'true'}}
+
+      current_id = 0;
+      tree_nodes << {id: 0, concept_id: 0, text: 'SNOMED CT Concept', parent: '#', parent_id: '#', parent_reversed: false, parent_search: parent_search, icon: 'glyphicon glyphicon-book ets-node-image-red', a_attr: { class: ''}, state: {opened: 'true'}}
     end
 
     if parent_search.eql?('false')
@@ -27,21 +28,34 @@ class TaxonomyController < ApplicationController
 
     raw_nodes.each do |raw_node|
 
-      li_classes = ''
       anchor_classes = ''
       parent_search = params[:parent_search]
       parent_reversed = params[:parent_reversed]
       has_children = true
 
       # should this child node be reversed and is it the first node to be reversed - comes from node data
-      if parent_reversed.eql?('false') && raw_node.length > 200
+      if parent_reversed.eql?('false') && raw_node[:parents].length > 1
 
-        li_classes = 'ets-reverse-tree'
-        anchor_classes = 'ets-reverse-tree-node'
-        parent_search = 'true'
-        parent_reversed = 'true'
+        # loop though all parents besides the first one (the already open path)
+        raw_node[:parents].drop(1).each do |parent_id|
 
-        # li_attr: {class: li_classes}
+          parent = get_tree_node(parent_id)
+
+          # if the node has no parents identify it as a leaf, otherwise it is a branch
+          if parent[:parents].length > 0
+
+            parent_icon_class = 'glyphicon glyphicon-book ets-node-image-red'
+            parent_has_parents = true
+          else
+
+            parent_icon_class = 'glyphicon glyphicon-leaf ets-node-image-red'
+            parent_has_parents = false
+          end
+
+          # add the parent node above its child, making sure that it identified as a reverse search node
+          tree_nodes << {id: get_next_tree_id, concept_id: parent[:concept_id], text: parent[:text] + ' (' + parent[:qualifier] + ')', children: parent_has_parents, parent_id: current_id, parent_reversed: true, parent_search: true, icon: parent_icon_class, a_attr: { class: 'ets-reverse-tree-node'}, li_attr: {class: 'ets-reverse-tree'}}
+
+        end
 
       elsif parent_search.eql?('true')
         anchor_classes = 'ets-reverse-tree-node'
@@ -57,16 +71,16 @@ class TaxonomyController < ApplicationController
         has_children = false
       end
 
-      node = {id: raw_node[:id], text: raw_node[:text] + ' (' + raw_node[:qualifier] + ')', children: has_children, parent_id: current_id, parent_reversed: parent_reversed, parent_search: parent_search, icon: icon_class, a_attr: {class: anchor_classes}}
+      node = {id: get_next_tree_id, concept_id: raw_node[:concept_id], text: raw_node[:text] + ' (' + raw_node[:qualifier] + ')', children: has_children, parent_id: current_id, parent_reversed: parent_reversed, parent_search: parent_search, icon: icon_class, a_attr: { class: anchor_classes}}
 
       if current_id == 0
         node[:parent] = '0'
       end
 
-      ret << node
+      tree_nodes << node
     end
 
-    render json: ret
+    render json: tree_nodes
   end
 
   ##
@@ -277,6 +291,10 @@ class TaxonomyController < ApplicationController
 
   end
 
+  def get_tree_node (id)
+    return @raw_tree_data[id]
+  end
+
   def get_tree_node_children (parent_id)
 
     children = []
@@ -301,26 +319,30 @@ class TaxonomyController < ApplicationController
     return parents
   end
 
+  def get_next_tree_id
+    return java.lang.System.nanoTime
+  end
+
   def initialize
 
     @raw_tree_data = []
 
-    @raw_tree_data << {id: 0, text: 'SNOMED CT Concept', qualifier: 'SNOMED RT+CTV3', children: [1, 2, 3, 4, 5], parents: []}
+    @raw_tree_data << {concept_id: 0, text: 'SNOMED CT Concept', qualifier: 'SNOMED RT+CTV3', children: [1,2,3,4,5], parents: []}
 
-    @raw_tree_data << {id: 1, text: 'Body Structure', qualifier: 'body structure', children: [6, 9], parents: [0]}
-    @raw_tree_data << {id: 2, text: 'Clinical Finding', qualifier: 'clinical finding', children: [], parents: [0]}
-    @raw_tree_data << {id: 3, text: 'Event', qualifier: 'event', children: [], parents: [0]}
-    @raw_tree_data << {id: 4, text: 'Observable', qualifier: 'observable', children: [], parents: [0]}
-    @raw_tree_data << {id: 5, text: 'Organism', qualifier: 'organism', children: [], parents: [0]}
+    @raw_tree_data << {concept_id: 1, text: 'Body Structure', qualifier: 'body structure', children: [6,9], parents: [0]}
+    @raw_tree_data << {concept_id: 2, text: 'Clinical Finding', qualifier: 'clinical finding', children: [], parents: [0]}
+    @raw_tree_data << {concept_id: 3, text: 'Event', qualifier: 'event', children: [], parents: [0]}
+    @raw_tree_data << {concept_id: 4, text: 'Observable', qualifier: 'observable', children: [], parents: [0]}
+    @raw_tree_data << {concept_id: 5, text: 'Organism', qualifier: 'organism', children: [], parents: [0]}
 
-    @raw_tree_data << {id: 6, text: 'Anatomical or acquired body structure', qualifier: 'body structure', children: [7, 8], parents: [1]}
-    @raw_tree_data << {id: 7, text: 'Acquired body structure', qualifier: 'body structure', children: [], parents: [6]}
-    @raw_tree_data << {id: 8, text: 'Anatomical structure ', qualifier: 'body structure', children: [], parents: [6], attributes: [{label: 'Finding site', text: 'Internal body'}, {label: 'Method', text: 'Microscope'}]}
+    @raw_tree_data << {concept_id: 6, text: 'Anatomical or acquired body structure', qualifier: 'body structure', children: [7,8], parents: [1]}
+    @raw_tree_data << {concept_id: 7, text: 'Anatomical idea', qualifier: 'body structure', children: [], parents: [6,9]}
+    @raw_tree_data << {concept_id: 8, text: 'Anatomical structure ', qualifier: 'body structure', children: [], parents: [6], attributes: [{label: 'Finding site', text: 'Internal body'}, {label: 'Method', text: 'Microscope'}]}
 
-    @raw_tree_data << {id: 9, text: 'Anatomical organizational pattern', qualifier: 'body structure', children: [10, 11, 12], parents: [1]}
-    @raw_tree_data << {id: 10, text: 'Cell to cell relationship, distinctive', qualifier: 'body structure', children: [], parents: [9], attributes: [{label: 'Finding site', text: 'Internal body'}, {label: 'Method', text: 'Microscope'}]}
-    @raw_tree_data << {id: 11, text: 'Distinctive arrangement of cytoplasmic filaments', qualifier: 'cell structure', children: [], parents: [9]}
-    @raw_tree_data << {id: 12, text: 'Mitochondrial aggregation within cytoplasm', qualifier: 'cell structure', children: [], parents: [9]}
+    @raw_tree_data << {concept_id: 9, text: 'Anatomical organizational pattern', qualifier: 'body structure', children: [10,11,12], parents: [1]}
+    @raw_tree_data << {concept_id: 10, text: 'Cell to cell relationship, distinctive', qualifier: 'body structure', children: [], parents: [9], attributes: [{label: 'Finding site', text: 'Internal body'}, {label: 'Method', text: 'Microscope'}]}
+    @raw_tree_data << {concept_id: 11, text: 'Distinctive arrangement of cytoplasmic filaments', qualifier: 'cell structure', children: [], parents: [9]}
+    @raw_tree_data << {concept_id: 12, text: 'Anatomical idea', qualifier: 'cell structure', children: [], parents: [9,6]}
 
   end
 
