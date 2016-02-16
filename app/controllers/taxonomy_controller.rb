@@ -1,7 +1,68 @@
+=begin
+Copyright Notice
+
+ This is a work of the U.S. Government and is not subject to copyright
+ protection in the United States. Foreign copyrights may apply.
+
+ Licensed under the Apache License, Version 2.0 (the "License");
+ you may not use this file except in compliance with the License.
+ You may obtain a copy of the License at
+
+ http://www.apache.org/licenses/LICENSE-2.0
+
+ Unless required by applicable law or agreed to in writing, software
+ distributed under the License is distributed on an "AS IS" BASIS,
+ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ See the License for the specific language governing permissions and
+ limitations under the License.
+=end
+require './lib/isaac_rest/taxonomy_rest'
 ##
 # TaxonomyController -
 # handles the loading of the taxonomy tree
 class TaxonomyController < ApplicationController
+  def rest_concept_version_to_json_tree(rest_concept_version, root = false)
+    ret = []
+    if root
+      root = {}
+      root[:id] = rest_concept_version.conChronology.identifiers.uuids.first
+      root[:text] = rest_concept_version.conChronology.description
+      root[:parent] = '#'
+      root[:parent_id] = '#'
+      root[:parent_reversed] = false
+      # tree_data[:parent_search] = parent_search
+      root[:icon] = 'glyphicon glyphicon-book ets-node-image-red'
+      root[:a_attr] = {class: ''}
+      root[:state] = {opened: 'true'}
+      ret << root
+    end
+
+    children = rest_concept_version.children
+
+    children.each do |child|
+      if child.conChronology
+        uuid = child.conChronology.identifiers.uuids.first
+        desc = child.conChronology.description
+        has_children = !child.children.nil?
+        child_count = (has_children ? child.children.length : 0)
+        badge = has_children ? "&nbsp;&nbsp;<span class=\"badge badge-success\" title=\"kma\">#{child_count}</span>" : ''
+        badge += has_children ? "&nbsp;&nbsp;<sup>#{child_count}</sup>" : ''
+        desc << badge
+        # @raw_tree_data << {id: 1, text: 'Body Structure', qualifier: 'body structure', children: [6, 9], parents: [0]}
+        child_node = {}
+        child_node[:id] = uuid
+        child_node[:text] = desc
+        child_node[:qualifier] = desc
+        child_node[:parent] = root[:id] if root # todo we need to know parents
+        child_node[:parent_id] = root[:id] if root # todo we need to know parents
+        child_node[:children] = has_children
+        child_node[:child_count] = child_count
+        ret << child_node
+      end
+    end
+    ret
+  end
+
   ##
   # load_tree_data - RESTful route for populating the taxonomy tree using an http :GET
   # The current tree node is identified in the request params with the key :id
@@ -9,29 +70,36 @@ class TaxonomyController < ApplicationController
   # If the parent of this node was already doing a reverse search is identified in the request params with the key :parent_reversed (true/false)
   #@return [json] the tree nodes to insert into the tree at the parent node passed in the request
   def load_tree_data
-
     current_id = params[:id]
     parent_search = params[:parent_search]
     ret = []
+    root = current_id.eql?('#')
 
-    if current_id.eql?('#')
-      current_id = 0
-      ret << {id: 0, text: 'SNOMED CT Concept', parent: '#', parent_id: '#', parent_reversed: false, parent_search: parent_search, icon: 'glyphicon glyphicon-book ets-node-image-red', a_attr: {class: ''}, state: {opened: 'true'}}
+    if root
+      # load the ISAAC root node and children
+      isaac_root = TaxonomyRest.get_isaac_root
+      ret = rest_concept_version_to_json_tree(isaac_root, true)
+      # current_id = 0
+      # ret << {id: 0, text: 'SNOMED CT Concept', parent: '#', parent_id: '#', parent_reversed: false, parent_search: parent_search, icon: 'glyphicon glyphicon-book ets-node-image-red', a_attr: {class: ''}, state: {opened: 'true'}}
+    else
+      isaac_concept = TaxonomyRest.get_isaac_concept(current_id)
+      ret = rest_concept_version_to_json_tree(isaac_concept)
     end
 
+=begin
     if parent_search.eql?('false')
       raw_nodes = get_tree_node_children(current_id)
     else
       raw_nodes = get_tree_node_parents(current_id)
     end
+=end
 
-    raw_nodes.each do |raw_node|
+    ret.each do |raw_node|
 
       li_classes = ''
       anchor_classes = ''
       parent_search = params[:parent_search]
       parent_reversed = params[:parent_reversed]
-      has_children = true
 
       # should this child node be reversed and is it the first node to be reversed - comes from node data
       if parent_reversed.eql?('false') && raw_node.length > 200
@@ -46,6 +114,7 @@ class TaxonomyController < ApplicationController
       elsif parent_search.eql?('true')
         anchor_classes = 'ets-reverse-tree-node'
       end
+=begin
 
       # if the node has no children (or no parents if doing a parent search) identify it as a leaf, otherwise it is a branch
       if (!parent_search.eql?('true') && raw_node[:children].length > 0) || (parent_search.eql?('true') && raw_node[:parents].length > 0)
@@ -57,13 +126,22 @@ class TaxonomyController < ApplicationController
         has_children = false
       end
 
-      node = {id: raw_node[:id], text: raw_node[:text] + ' (' + raw_node[:qualifier] + ')', children: has_children, parent_id: current_id, parent_reversed: parent_reversed, parent_search: parent_search, icon: icon_class, a_attr: {class: anchor_classes}}
+      # node = {id: raw_node[:id], text: raw_node[:text] + ' (' + raw_node[:qualifier] + ')', children: has_children, parent_id: current_id, parent_reversed: parent_reversed, parent_search: parent_search, icon: icon_class, a_attr: {class: anchor_classes}}
+=end
+      icon_class =
+          case raw_node[:child_count]
+            when NIL then
+              'glyphicon glyphicon-fire ets-node-image-red'
+            when 0 then
+              'glyphicon glyphicon-leaf ets-node-image-red'
+            else
+              'glyphicon glyphicon-book ets-node-image-red'
+          end
 
-      if current_id == 0
-        node[:parent] = '0'
-      end
-
-      ret << node
+      raw_node[:icon] = icon_class
+      raw_node[:a_attr] = {class: anchor_classes}
+      raw_node[:parent_reversed] = parent_reversed
+      raw_node[:parent_search] = parent_search
     end
 
     render json: ret
@@ -98,7 +176,7 @@ class TaxonomyController < ApplicationController
   def get_concept_diagram(concept_id = nil)
 
     # if concept_id == nil && params[:concept_id]
-      concept_id = params[:concept_id].to_i
+    concept_id = params[:concept_id].to_i
     # end
 
     @concept_diagram = {
@@ -371,4 +449,5 @@ class TaxonomyController < ApplicationController
       format.js { render partial: 'ets_dashboard/concept_detail/svg_diagram' }
     end
   end
+
 end
