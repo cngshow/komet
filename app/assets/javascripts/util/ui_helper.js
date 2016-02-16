@@ -28,7 +28,7 @@ var UIHelper = (function () {
 
         if (idx >= 0 && idx <= tabpages.length - 1) {
             //add one to the index because the first child is the UL element for the tab labels. The remaining children are the tabpage divs
-            return activeTabId = tabpages[parseInt(idx) + 1].id;
+            return tabpages[parseInt(idx) + 1].id;
         }
         return undefined;
     }
