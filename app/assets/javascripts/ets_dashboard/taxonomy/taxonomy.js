@@ -5,11 +5,11 @@ var TaxonomyModule = (function () {
         //set ui to hour glass
         Common.cursor_wait();
 
-        if (parent_search == undefined || parent_search == null){
+        if (parent_search === undefined || parent_search === null){
             parent_search = false;
         }
 
-        if (select_item == undefined || select_item == null){
+        if (select_item === undefined || select_item === null){
             select_item = false;
         }
 
@@ -24,22 +24,23 @@ var TaxonomyModule = (function () {
 
                         var nodeToLoad;
 
-                        if (node.id != "#"){
-                            nodeToLoad = node.original.concept_id;
+                        if (node.id !== "#"){
+                            //todo Tim used to be node.original.concept_id, but this is nil.
+                            nodeToLoad = node.original.id;
                         } else {
                             nodeToLoad = node.id;
                         }
 
-                        if (starting_concept_id != null && nodeToLoad !== starting_concept_id){
+                        if (!(((starting_concept_id === undefined) || (starting_concept_id === null)))){
                             nodeToLoad = starting_concept_id;
                         }
 
                         starting_concept_id = null;
 
-                        if (node.id == "#"){
+                        if (node.id === "#"){
                             return {'concept_id': nodeToLoad, 'parent_search': parent_search, 'parent_reversed': parent_search};
                         } else {
-                            return {'concept_id': nodeToLoad, 'parent_search': node.original.parent_search, 'parent_reversed': node.original.parent_reversed};
+                            return  {'concept_id': nodeToLoad, 'parent_search': node.original.parent_search, 'parent_reversed': node.original.parent_reversed};
                         }
                     }
                 }

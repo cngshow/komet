@@ -102,80 +102,81 @@ class TaxonomyController < ApplicationController
       parent_reversed = params[:parent_reversed]
 
       # should this child node be reversed and is it the first node to be reversed - comes from node data
-      if parent_reversed.eql?('false') && raw_node[:parents].length > 1
-#todo Tim we commented raw nodes out.   Need help here.
-        li_classes = 'ets-reverse-tree'
-        anchor_classes = 'ets-reverse-tree-node'
-        parent_search = 'true'
-        parent_reversed = 'true'
-        # loop though all parents besides the first one (the already open path)
-        raw_node[:parents].drop(1).each do |parent_id|
-
-          parent = get_tree_node(parent_id)
-
-          # if the node has no parents identify it as a leaf, otherwise it is a branch
-          if parent[:parents].length > 0
-
-            parent_icon_class = 'glyphicon glyphicon-book ets-node-image-red'
-            parent_has_parents = true
-          else
-
-            parent_icon_class = 'glyphicon glyphicon-leaf ets-node-image-red'
-            parent_has_parents = false
-          end
-
-          # add the parent node above its child, making sure that it identified as a reverse search node
-          tree_nodes << {id: get_next_tree_id, concept_id: parent[:concept_id], text: parent[:text] + ' (' + parent[:qualifier] + ')', children: parent_has_parents, parent_id: current_id, parent_reversed: true, parent_search: true, icon: parent_icon_class, a_attr: { class: 'ets-reverse-tree-node'}, li_attr: {class: 'ets-reverse-tree'}}
-
-        end
-
-        # loop though all parents besides the first one (the already open path)
-        raw_node[:parents].drop(1).each do |parent_id|
-
-          parent = get_tree_node(parent_id)
-
-          # if the node has no parents identify it as a leaf, otherwise it is a branch
-          if parent[:parents].length > 0
-
-            parent_icon_class = 'glyphicon glyphicon-book ets-node-image-red'
-            parent_has_parents = true
-          else
-
-            parent_icon_class = 'glyphicon glyphicon-leaf ets-node-image-red'
-            parent_has_parents = false
-          end
-
-          # add the parent node above its child, making sure that it identified as a reverse search node
-          tree_nodes << {id: get_next_tree_id, concept_id: parent[:concept_id], text: parent[:text] + ' (' + parent[:qualifier] + ')', children: parent_has_parents, parent_id: current_id, parent_reversed: true, parent_search: true, icon: parent_icon_class, a_attr: { class: 'ets-reverse-tree-node'}, li_attr: {class: 'ets-reverse-tree'}}
-
-        end
-
-        # li_attr: {class: li_classes}
-#todo TIM?
-        # # loop though all parents besides the first one (the already open path)
-        # raw_node[:parents].drop(1).each do |parent_id|
-        #
-        #   parent = get_tree_node(parent_id)
-        #
-        #   # if the node has no parents identify it as a leaf, otherwise it is a branch
-        #   if parent[:parents].length > 0
-        #
-        #     parent_icon_class = 'glyphicon glyphicon-book ets-node-image-red'
-        #     parent_has_parents = true
-        #   else
-        #
-        #     parent_icon_class = 'glyphicon glyphicon-leaf ets-node-image-red'
-        #     parent_has_parents = false
-        #   end
-        #
-        #   # add the parent node above its child, making sure that it identified as a reverse search node
-        #   tree_nodes << {id: get_next_tree_id, concept_id: parent[:concept_id], text: parent[:text] + ' (' + parent[:qualifier] + ')', children: parent_has_parents, parent_id: current_id, parent_reversed: true, parent_search: true, icon: parent_icon_class, a_attr: { class: 'ets-reverse-tree-node'}, li_attr: {class: 'ets-reverse-tree'}}
-        #
-        # end
-
-      elsif parent_search.eql?('true')
-        anchor_classes = 'ets-reverse-tree-node'
-      end
+#      todo Tim commenting out
+#       if parent_reversed.eql?('false') && raw_node[:parents].length > 1
+# #todo Tim we commented raw nodes out.   Need help here.
+#         li_classes = 'ets-reverse-tree'
+#         anchor_classes = 'ets-reverse-tree-node'
+#         parent_search = 'true'
+#         parent_reversed = 'true'
+#         # loop though all parents besides the first one (the already open path)
+#         raw_node[:parents].drop(1).each do |parent_id|
+#
+#           parent = get_tree_node(parent_id)
+#
+#           # if the node has no parents identify it as a leaf, otherwise it is a branch
+#           if parent[:parents].length > 0
+#
+#             parent_icon_class = 'glyphicon glyphicon-book ets-node-image-red'
+#             parent_has_parents = true
+#           else
+#
+#             parent_icon_class = 'glyphicon glyphicon-leaf ets-node-image-red'
+#             parent_has_parents = false
+#           end
+#
+#           # add the parent node above its child, making sure that it identified as a reverse search node
+#           tree_nodes << {id: get_next_tree_id, concept_id: parent[:concept_id], text: parent[:text] + ' (' + parent[:qualifier] + ')', children: parent_has_parents, parent_id: current_id, parent_reversed: true, parent_search: true, icon: parent_icon_class, a_attr: { class: 'ets-reverse-tree-node'}, li_attr: {class: 'ets-reverse-tree'}}
+#
+#         end
+#
+#         # loop though all parents besides the first one (the already open path)
+#         raw_node[:parents].drop(1).each do |parent_id|
+#
+#           parent = get_tree_node(parent_id)
+#
+#           # if the node has no parents identify it as a leaf, otherwise it is a branch
+#           if parent[:parents].length > 0
+#
+#             parent_icon_class = 'glyphicon glyphicon-book ets-node-image-red'
+#             parent_has_parents = true
+#           else
+#
+#             parent_icon_class = 'glyphicon glyphicon-leaf ets-node-image-red'
+#             parent_has_parents = false
+#           end
+#
+#           # add the parent node above its child, making sure that it identified as a reverse search node
+#           tree_nodes << {id: get_next_tree_id, concept_id: parent[:concept_id], text: parent[:text] + ' (' + parent[:qualifier] + ')', children: parent_has_parents, parent_id: current_id, parent_reversed: true, parent_search: true, icon: parent_icon_class, a_attr: { class: 'ets-reverse-tree-node'}, li_attr: {class: 'ets-reverse-tree'}}
+#
+#         end
+#
+#         # li_attr: {class: li_classes}
+# #todo TIM?
+#         # # loop though all parents besides the first one (the already open path)
+#         # raw_node[:parents].drop(1).each do |parent_id|
+#         #
+#         #   parent = get_tree_node(parent_id)
+#         #
+#         #   # if the node has no parents identify it as a leaf, otherwise it is a branch
+#         #   if parent[:parents].length > 0
+#         #
+#         #     parent_icon_class = 'glyphicon glyphicon-book ets-node-image-red'
+#         #     parent_has_parents = true
+#         #   else
+#         #
+#         #     parent_icon_class = 'glyphicon glyphicon-leaf ets-node-image-red'
+#         #     parent_has_parents = false
+#         #   end
+#         #
+#         #   # add the parent node above its child, making sure that it identified as a reverse search node
+#         #   tree_nodes << {id: get_next_tree_id, concept_id: parent[:concept_id], text: parent[:text] + ' (' + parent[:qualifier] + ')', children: parent_has_parents, parent_id: current_id, parent_reversed: true, parent_search: true, icon: parent_icon_class, a_attr: { class: 'ets-reverse-tree-node'}, li_attr: {class: 'ets-reverse-tree'}}
+#         #
+#         # end
+#
+#       elsif parent_search.eql?('true')
+#         anchor_classes = 'ets-reverse-tree-node'
+#       end
 =begin
 
       # if the node has no children (or no parents if doing a parent search) identify it as a leaf, otherwise it is a branch

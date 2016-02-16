@@ -49,7 +49,10 @@ module TaxonomyRest
   end
 
   def get_isaac_concept(uuid, additional_req_params = nil)
-
+    if (uuid.nil?)
+      $log.error("The UUID cannot be nil!  Please esure the caller provides a UUID.")
+      raise ArgumentError.new("The UUID cannot be nil!!")
+    end
     params = TAXONOMY_CHILD_PARAMS_BASE.clone.merge!({ISAAC_UUID_PARAM => uuid})
     params.merge!(additional_req_params) if additional_req_params
     response = @conn.get do |req|
