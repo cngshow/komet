@@ -21,46 +21,63 @@ require './lib/isaac_rest/taxonomy_rest'
 # TaxonomyController -
 # handles the loading of the taxonomy tree
 class TaxonomyController < ApplicationController
-  def rest_concept_version_to_json_tree(rest_concept_version, root = false)
-    ret = []
+
+  def rest_concept_version_to_json_tree(rest_concept_version, root: false, parent_search: false, multi_path: true)
+
+    concept_nodes = []
+
     if root
+
       root = {}
       root[:id] = rest_concept_version.conChronology.identifiers.uuids.first
       root[:text] = rest_concept_version.conChronology.description
-      root[:parent] = '#'
-      root[:parent_id] = '#'
-      root[:parent_reversed] = false
-      # tree_data[:parent_search] = parent_search
-      root[:icon] = 'glyphicon glyphicon-book ets-node-image-red'
-      root[:a_attr] = {class: ''}
-      root[:state] = {opened: 'true'}
-      ret << root
+      concept_nodes << root
     end
 
-    children = rest_concept_version.children
+    # if we are walking up the tree toward the root node get the parents of the current node, otherwise get the children
+    if boolean(parent_search)
+      concepts = !rest_concept_version.parents.nil? ? rest_concept_version.parents : []
+    else
+      concepts = !rest_concept_version.children.nil? ? rest_concept_version.children : []
+    end
 
-    children.each do |child|
-      if child.conChronology
-        uuid = child.conChronology.identifiers.uuids.first
-        desc = child.conChronology.description
-        has_children = !child.children.nil?
-        child_count = (has_children ? child.children.length : 0)
+    concepts.each do |concept|
+
+      if concept.conChronology
+
+        uuid = concept.conChronology.identifiers.uuids.first
+        desc = concept.conChronology.description
+        has_children = !concept.children.nil?
+        child_count = (has_children ? concept.children.length : 0)
         badge = has_children ? "&nbsp;&nbsp;<span class=\"badge badge-success\" title=\"kma\">#{child_count}</span>" : ''
         badge += has_children ? "&nbsp;&nbsp;<sup>#{child_count}</sup>" : ''
         desc << badge
-        # @raw_tree_data << {id: 1, text: 'Body Structure', qualifier: 'body structure', children: [6, 9], parents: [0]}
-        child_node = {}
-        child_node[:id] = uuid
-        child_node[:text] = desc
-        child_node[:qualifier] = desc
-        child_node[:parent] = root[:id] if root # todo we need to know parents
-        child_node[:parent_id] = root[:id] if root # todo we need to know parents
-        child_node[:children] = has_children
-        child_node[:child_count] = child_count
-        ret << child_node
+
+        node = {}
+        node[:id] = uuid
+        node[:text] = desc
+        node[:children] = has_children
+        node[:child_count] = child_count
+        has_parents = !concept.parents.nil?
+        parent_count = has_parents ? concept.parents.length : 0
+        node[:parent_count] = parent_count
+        parents = []
+
+        # if this node has parents and we want to see all parent paths then get the IDs of each parent
+        if has_parents && multi_path
+
+          concept.parents.each do |parent|
+            parents << parent.conChronology.identifiers.uuids.first
+          end
+        end
+
+        node[:parents] = parents
+
+        concept_nodes << node
       end
     end
-    ret
+
+    concept_nodes
   end
 
   ##
@@ -79,132 +96,75 @@ class TaxonomyController < ApplicationController
     if root
       # load the ISAAC root node and children
       isaac_root = TaxonomyRest.get_isaac_root
-      tree_nodes = rest_concept_version_to_json_tree(isaac_root, true)
-      # current_id = 0
-      # ret << {id: 0, text: 'SNOMED CT Concept', parent: '#', parent_id: '#', parent_reversed: false, parent_search: parent_search, icon: 'glyphicon glyphicon-book ets-node-image-red', a_attr: {class: ''}, state: {opened: 'true'}}
+      raw_nodes = rest_concept_version_to_json_tree(isaac_root, root: true, parent_search: parent_search)
+      current_id = 0
+
+      # load the root node into our return variable and then remove it from the raw nodes
+      tree_nodes << {id: 0, concept_id: raw_nodes[0][:id], text: raw_nodes[0][:text], parent: '#', parent_reversed: false, parent_search: parent_search, icon: 'glyphicon glyphicon-fire ets-node-image-red', a_attr: {class: ''}, state: {opened: 'true'}}
+      raw_nodes = raw_nodes.drop(1)
     else
       isaac_concept = TaxonomyRest.get_isaac_concept(current_id)
-      tree_nodes = rest_concept_version_to_json_tree(isaac_concept)
+      raw_nodes = rest_concept_version_to_json_tree(isaac_concept, parent_search: parent_search)
     end
 
-=begin
-    if parent_search.eql?('false')
-      raw_nodes = get_tree_node_children(current_id)
-    else
-      raw_nodes = get_tree_node_parents(current_id)
-    end
-=end
-
-    tree_nodes.each do |raw_node|
+    raw_nodes.each do |raw_node|
 
       anchor_classes = ''
       parent_search = params[:parent_search]
       parent_reversed = params[:parent_reversed]
+      has_children = true
 
       # should this child node be reversed and is it the first node to be reversed - comes from node data
-#      todo Tim commenting out
-#       if parent_reversed.eql?('false') && raw_node[:parents].length > 1
-# #todo Tim we commented raw nodes out.   Need help here.
-#         li_classes = 'ets-reverse-tree'
-#         anchor_classes = 'ets-reverse-tree-node'
-#         parent_search = 'true'
-#         parent_reversed = 'true'
-#         # loop though all parents besides the first one (the already open path)
-#         raw_node[:parents].drop(1).each do |parent_id|
-#
-#           parent = get_tree_node(parent_id)
-#
-#           # if the node has no parents identify it as a leaf, otherwise it is a branch
-#           if parent[:parents].length > 0
-#
-#             parent_icon_class = 'glyphicon glyphicon-book ets-node-image-red'
-#             parent_has_parents = true
-#           else
-#
-#             parent_icon_class = 'glyphicon glyphicon-leaf ets-node-image-red'
-#             parent_has_parents = false
-#           end
-#
-#           # add the parent node above its child, making sure that it identified as a reverse search node
-#           tree_nodes << {id: get_next_tree_id, concept_id: parent[:concept_id], text: parent[:text] + ' (' + parent[:qualifier] + ')', children: parent_has_parents, parent_id: current_id, parent_reversed: true, parent_search: true, icon: parent_icon_class, a_attr: { class: 'ets-reverse-tree-node'}, li_attr: {class: 'ets-reverse-tree'}}
-#
-#         end
-#
-#         # loop though all parents besides the first one (the already open path)
-#         raw_node[:parents].drop(1).each do |parent_id|
-#
-#           parent = get_tree_node(parent_id)
-#
-#           # if the node has no parents identify it as a leaf, otherwise it is a branch
-#           if parent[:parents].length > 0
-#
-#             parent_icon_class = 'glyphicon glyphicon-book ets-node-image-red'
-#             parent_has_parents = true
-#           else
-#
-#             parent_icon_class = 'glyphicon glyphicon-leaf ets-node-image-red'
-#             parent_has_parents = false
-#           end
-#
-#           # add the parent node above its child, making sure that it identified as a reverse search node
-#           tree_nodes << {id: get_next_tree_id, concept_id: parent[:concept_id], text: parent[:text] + ' (' + parent[:qualifier] + ')', children: parent_has_parents, parent_id: current_id, parent_reversed: true, parent_search: true, icon: parent_icon_class, a_attr: { class: 'ets-reverse-tree-node'}, li_attr: {class: 'ets-reverse-tree'}}
-#
-#         end
-#
-#         # li_attr: {class: li_classes}
-# #todo TIM?
-#         # # loop though all parents besides the first one (the already open path)
-#         # raw_node[:parents].drop(1).each do |parent_id|
-#         #
-#         #   parent = get_tree_node(parent_id)
-#         #
-#         #   # if the node has no parents identify it as a leaf, otherwise it is a branch
-#         #   if parent[:parents].length > 0
-#         #
-#         #     parent_icon_class = 'glyphicon glyphicon-book ets-node-image-red'
-#         #     parent_has_parents = true
-#         #   else
-#         #
-#         #     parent_icon_class = 'glyphicon glyphicon-leaf ets-node-image-red'
-#         #     parent_has_parents = false
-#         #   end
-#         #
-#         #   # add the parent node above its child, making sure that it identified as a reverse search node
-#         #   tree_nodes << {id: get_next_tree_id, concept_id: parent[:concept_id], text: parent[:text] + ' (' + parent[:qualifier] + ')', children: parent_has_parents, parent_id: current_id, parent_reversed: true, parent_search: true, icon: parent_icon_class, a_attr: { class: 'ets-reverse-tree-node'}, li_attr: {class: 'ets-reverse-tree'}}
-#         #
-#         # end
-#
-#       elsif parent_search.eql?('true')
-#         anchor_classes = 'ets-reverse-tree-node'
-#       end
-=begin
+      if parent_reversed.eql?('false') && raw_node[:parent_count] > 1
+
+        anchor_classes = 'ets-reverse-tree-node'
+        parent_search = 'true'
+        parent_reversed = 'true'
+
+        # loop though all parents besides the first one (the already open path)
+        raw_node[:parents].drop(1).each do |parent_id|
+
+          parent = get_tree_node(parent_id)
+
+          # if the node has no parents identify it as a leaf, otherwise it is a branch
+          if parent[:parents].length > 0
+
+            parent_icon_class = 'glyphicon glyphicon-book ets-node-image-red'
+            parent_has_parents = true
+          else
+
+            parent_icon_class = 'glyphicon glyphicon-leaf ets-node-image-red'
+            parent_has_parents = false
+          end
+
+          # add the parent node above its child, making sure that it identified as a reverse search node
+          tree_nodes << {id: get_next_tree_id, concept_id: parent[:concept_id], text: parent[:text], children: parent_has_parents, parent_id: current_id, parent_reversed: true, parent_search: true, icon: parent_icon_class, a_attr: { class: 'ets-reverse-tree-node'}, li_attr: {class: 'ets-reverse-tree'}}
+
+        end
+
+      elsif parent_search.eql?('true')
+        anchor_classes = 'ets-reverse-tree-node'
+      end
+
 
       # if the node has no children (or no parents if doing a parent search) identify it as a leaf, otherwise it is a branch
-      if (!parent_search.eql?('true') && raw_node[:children].length > 0) || (parent_search.eql?('true') && raw_node[:parents].length > 0)
+      if (!parent_search.eql?('true') && raw_node[:child_count] > 0) || (parent_search.eql?('true') && raw_node[:parent_count] > 0)
         icon_class = 'glyphicon glyphicon-book ets-node-image-red'
 
-      elsif (!parent_search.eql?('true') && raw_node[:children].length == 0) || (parent_search.eql?('true') && raw_node[:parents].length == 0)
+      elsif (!parent_search.eql?('true') && raw_node[:child_count] == 0) || (parent_search.eql?('true') && raw_node[:parent_count] == 0)
 
         icon_class = 'glyphicon glyphicon-leaf ets-node-image-red'
         has_children = false
       end
 
-      # node = {id: raw_node[:id], text: raw_node[:text] + ' (' + raw_node[:qualifier] + ')', children: has_children, parent_id: current_id, parent_reversed: parent_reversed, parent_search: parent_search, icon: icon_class, a_attr: {class: anchor_classes}}
-=end
-      icon_class =
-          case raw_node[:child_count]
-            when NIL then
-              'glyphicon glyphicon-fire ets-node-image-red'
-            when 0 then
-              'glyphicon glyphicon-leaf ets-node-image-red'
-            else
-              'glyphicon glyphicon-book ets-node-image-red'
-          end
+      node = {id: get_next_tree_id, concept_id: raw_node[:id], text: raw_node[:text], children: has_children, parent_reversed: parent_reversed, parent_search: parent_search, icon: icon_class, a_attr: { class: anchor_classes}}
 
-      raw_node[:icon] = icon_class
-      raw_node[:a_attr] = {class: anchor_classes}
-      raw_node[:parent_reversed] = parent_reversed
-      raw_node[:parent_search] = parent_search
+      # if the current ID is root, then add a 'parent' field to the node to satisfy the alternate JSON format of JSTree for this level of the tree
+      if current_id == 0
+        node[:parent] = '0'
+      end
+
+      tree_nodes << node
     end
 
     render json: tree_nodes
@@ -242,8 +202,9 @@ class TaxonomyController < ApplicationController
     concept_id = params[:concept_id].to_i
     # end
 
+    # todo Reema - need to hook this up to get data from web services, as the tree data will not match the static IDs anymore
     @concept_diagram = {
-        fsn: @raw_tree_data[concept_id].fetch(:text),
+        fsn: @raw_tree_data[1].fetch(:text),
     }
 
   end
@@ -258,7 +219,7 @@ class TaxonomyController < ApplicationController
       concept_id = params[:concept_id].to_i
     end
 
-    @concept_summary = @raw_tree_data[concept_id]
+    @concept_summary = @raw_tree_data[1]
 
   end
 

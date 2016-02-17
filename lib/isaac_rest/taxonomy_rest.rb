@@ -27,8 +27,7 @@ module TaxonomyRest
   TAXONOMY_PATH = $PROPS['ENDPOINT.isaac_root'] + "rest/1/taxonomy/version"
   ISAAC_UUID_PARAM = :id
   ISAAC_ROOT_ID = "cc0b2455-f546-48fa-90e8-e214cc8478d6"
-  TAXONOMY_PARAMS_ROOT = {expand: :chronology}
-  TAXONOMY_CHILD_PARAMS_BASE = {childDepth: 2}
+  TAXONOMY_STARTING_PARAMS = {expand: 'chronology,parents', childDepth: 2, parentHeight: 2}
   @params = {}
 
   @conn = Faraday.new(:url => @params[:site]) do |faraday|
@@ -45,7 +44,7 @@ module TaxonomyRest
   end
 
   def get_isaac_root
-    get_isaac_concept(ISAAC_ROOT_ID, TAXONOMY_PARAMS_ROOT)
+    get_isaac_concept(ISAAC_ROOT_ID)
   end
 
   def get_isaac_concept(uuid, additional_req_params = nil)
@@ -53,7 +52,7 @@ module TaxonomyRest
       $log.error("The UUID cannot be nil!  Please esure the caller provides a UUID.")
       raise ArgumentError.new("The UUID cannot be nil!!")
     end
-    params = TAXONOMY_CHILD_PARAMS_BASE.clone.merge!({ISAAC_UUID_PARAM => uuid})
+    params = TAXONOMY_STARTING_PARAMS.clone.merge!({ISAAC_UUID_PARAM => uuid})
     params.merge!(additional_req_params) if additional_req_params
     response = @conn.get do |req|
       req.url TAXONOMY_PATH

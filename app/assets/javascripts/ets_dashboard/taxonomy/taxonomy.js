@@ -25,8 +25,7 @@ var TaxonomyModule = (function () {
                         var nodeToLoad;
 
                         if (node.id !== "#"){
-                            //todo Tim used to be node.original.concept_id, but this is nil.
-                            nodeToLoad = node.original.id;
+                            nodeToLoad = node.original.concept_id;
                         } else {
                             nodeToLoad = node.id;
                         }
