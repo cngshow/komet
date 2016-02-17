@@ -1,0 +1,10 @@
+----------------------------------------------------------------------------------------------------------------------------------------
+http://localhost:8180/rest/1/concept/descriptions/de40a9d3-99b4-54f2-8e5c-6aa9ca891f8b?includeDialects=true
+
+errors with:
+2016-02-17 11:35:27,617 ERROR [grizzly-http-server-14] jerseyConfig.MyExceptionMapper (MyExceptionMapper.java:39) - oops
+java.lang.ClassCastException: gov.vha.isaac.rest.api1.data.sememe.RestDynamicSememeVersion cannot be cast to gov.vha.isaac.rest.api1.data.sememe.RestSememeDescriptionVersion
+	at gov.vha.isaac.rest.api1.concept.ConceptAPIs.getDescriptions(ConceptAPIs.java:174) ~[classes/:?]
+
+----------------------------------------------------------------------------------------------------------------------------------------
+
