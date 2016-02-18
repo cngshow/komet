@@ -18,6 +18,7 @@ Copyright Notice
 =end
 require './lib/isaac_rest/isaac-rest.rb'
 require './lib/ets_common/util/helpers'
+require './lib/utilities/cached_hash'
 
 #include ETSUtilities
 
@@ -54,14 +55,25 @@ module TaxonomyRest
     end
     params = TAXONOMY_STARTING_PARAMS.clone.merge!({ISAAC_UUID_PARAM => uuid})
     params.merge!(additional_req_params) if additional_req_params
+    url_str = TAXONOMY_PATH
+    cache_lookup = {url_str => params}
+    unless $rest_cache[cache_lookup].nil?
+      $log.info("Using a cached result!  No rest fetch will occur!")
+      json = $rest_cache[cache_lookup]
+      json_to_yaml_file(json, url_to_path_string(TAXONOMY_PATH))
+      return Gov::Vha::Isaac::Rest::Api1::Data::Concept::RestConceptVersion.from_json(json.deep_dup)
+    end
+
     response = @conn.get do |req|
       req.url TAXONOMY_PATH
       req.params = params
     end
     json = JSON.parse response.body
+    json.freeze
     json_to_yaml_file(json, url_to_path_string(TAXONOMY_PATH))
-    Gov::Vha::Isaac::Rest::Api1::Data::Concept::RestConceptVersion.from_json(json)
-    #puts "-----> " + a["data"]["appName"]
+    r_val = Gov::Vha::Isaac::Rest::Api1::Data::Concept::RestConceptVersion.from_json(json.deep_dup)
+    $rest_cache[cache_lookup] = json
+    r_val
   end
 
 
