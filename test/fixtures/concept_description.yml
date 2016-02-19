@@ -1,0 +1,116 @@
+#Fixture created on 2016-02-19 12:36:18
+---
+- "@c": ".RestSememeDescriptionVersion"
+  expandables:
+  sememeChronology:
+    expandables:
+      items:
+      - name: versionsAll
+        url: rest/1/sememe/versions/1349/
+      - name: versionsLatestOnly
+        url: rest/1/sememe/version/1349/
+    sememeSequence: 1349
+    assemblageSequence: 65
+    referencedComponentNid: -2147483635
+    identifiers:
+      uuids:
+      - 91701359-a237-4a8d-82c8-9a7548e0621a
+    versions:
+  sememeVersion:
+    stampSequence: 1
+    state: ACTIVE
+    time: 1454625196096
+    authorSequence: 5
+    moduleSequence: 0
+    pathSequence: 7
+  nestedSememes:
+  - "@c": ".RestDynamicSememeVersion"
+    expandables:
+    sememeChronology:
+      expandables:
+        items:
+        - name: versionsAll
+          url: rest/1/sememe/versions/1348/
+        - name: versionsLatestOnly
+          url: rest/1/sememe/version/1348/
+      sememeSequence: 1348
+      assemblageSequence: 9
+      referencedComponentNid: -2147482064
+      identifiers:
+        uuids:
+        - 739ddb70-5c89-4fcb-9c2d-b5713a659671
+      versions:
+    sememeVersion:
+      stampSequence: 1
+      state: ACTIVE
+      time: 1454625196096
+      authorSequence: 5
+      moduleSequence: 0
+      pathSequence: 7
+    nestedSememes: []
+    dataColumns:
+    - "@c": ".dataTypes.RestDynamicSememeNid"
+      columnNumber: 0
+      data: -2147483582
+  caseSignificanceConceptSequence: 64
+  languageConceptSequence: 8
+  text: ISAAC root
+  descriptionTypeConceptSequence: 66
+  dialects: []
+- "@c": ".RestSememeDescriptionVersion"
+  expandables:
+  sememeChronology:
+    expandables:
+      items:
+      - name: versionsAll
+        url: rest/1/sememe/versions/1351/
+      - name: versionsLatestOnly
+        url: rest/1/sememe/version/1351/
+    sememeSequence: 1351
+    assemblageSequence: 65
+    referencedComponentNid: -2147483635
+    identifiers:
+      uuids:
+      - b3232b9f-9ce8-4365-96ea-c7b0c59de826
+    versions:
+  sememeVersion:
+    stampSequence: 1
+    state: ACTIVE
+    time: 1454625196096
+    authorSequence: 5
+    moduleSequence: 0
+    pathSequence: 7
+  nestedSememes:
+  - "@c": ".RestDynamicSememeVersion"
+    expandables:
+    sememeChronology:
+      expandables:
+        items:
+        - name: versionsAll
+          url: rest/1/sememe/versions/1350/
+        - name: versionsLatestOnly
+          url: rest/1/sememe/version/1350/
+      sememeSequence: 1350
+      assemblageSequence: 9
+      referencedComponentNid: -2147482062
+      identifiers:
+        uuids:
+        - 1f323333-a332-4ebb-9ea5-367382d1fc79
+      versions:
+    sememeVersion:
+      stampSequence: 1
+      state: ACTIVE
+      time: 1454625196096
+      authorSequence: 5
+      moduleSequence: 0
+      pathSequence: 7
+    nestedSememes: []
+    dataColumns:
+    - "@c": ".dataTypes.RestDynamicSememeNid"
+      columnNumber: 0
+      data: -2147483582
+  caseSignificanceConceptSequence: 64
+  languageConceptSequence: 8
+  text: ISAAC root (ISAAC)
+  descriptionTypeConceptSequence: 11
+  dialects: []

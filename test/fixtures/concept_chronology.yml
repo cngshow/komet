@@ -1,0 +1,13 @@
+#Fixture created on 2016-02-19 12:36:19
+---
+description: ISAAC root (ISAAC)
+expandables:
+  items:
+  - name: versionsAll
+    url: rest/1/concept/versions/13/
+  - name: versionsLatestOnly
+    url: rest/1/concept/version/13/
+identifiers:
+  uuids:
+  - cc0b2455-f546-48fa-90e8-e214cc8478d6
+versions:

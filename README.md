@@ -121,3 +121,11 @@ warble
 You will have a war file named ets_tooling.war.  Deploy it to GlassFish!!
 
 http://localhost:4848/common/index.jsf
+
+
+Developer addded config variables:
+
+1: REST_CACHE_SIZE determines the maximum number of key,value pairs (Integer required  > 0) of ISAAC data this application will cache.
+```
+set REST_CACHE_SIZE = 1000
+```

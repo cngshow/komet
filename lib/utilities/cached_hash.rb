@@ -7,26 +7,17 @@ class CachedHash
     self.max_size = max_size
     @lease = {}
     @backing_hash = {}
-    @mutex = Mutex.new
+    @mutex = Mutex.new #Not re-entrant, but lock acquires in 1/2 the time (After JVM is warm and toasty).
+    #@mutex = Monitor.new #re-entrant
   end
 
   def []=(key, value)
-    @mutex.synchronize do
-      clean
-      @lease[key] = Time.now
-      @backing_hash[key] = value
-    end
-
+    save(key, value)
   end
 
   def store(key, value)
-    @mutex.synchronize do
-      clean
-      @lease[key] = Time.now
-      @backing_hash[key] = value
-    end
+    save(key, value)
   end
-
 
   def [] key
     @mutex.synchronize do
@@ -49,6 +40,15 @@ class CachedHash
 
 
   private
+
+  def save(key, value)
+    @mutex.synchronize do
+      clean
+      @lease[key] = Time.now
+      @backing_hash[key] = value
+    end
+  end
+
   def clean
     while (@backing_hash.size >= self.max_size)
       oldest = get_oldest
@@ -59,7 +59,6 @@ class CachedHash
 
   def get_oldest
     oldest = [@lease.keys.first, @lease.values.first]
-    p @lease
     @lease.each_pair do |k, v|
       puts "key #{k}, value #{v}:"
       oldest = [k, v] if v <= oldest.last

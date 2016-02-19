@@ -1,0 +1,20 @@
+#Fixture created on 2016-02-19 12:36:19
+---
+expandables:
+  items:
+  - name: chronology
+    url: rest/1/concept/chronology/13
+  - name: parents
+    url: rest/1/concept/version/13?expand=parents&stated=true
+  - name: children
+    url: rest/1/concept/version/13?expand=children&stated=true
+conChronology:
+conVersion:
+  stampSequence: 1
+  state: ACTIVE
+  time: 1454625196096
+  authorSequence: 5
+  moduleSequence: 0
+  pathSequence: 7
+parents:
+children:

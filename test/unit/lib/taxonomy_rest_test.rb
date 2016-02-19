@@ -1,9 +1,13 @@
 require 'test/unit'
-require './lib/isaac_rest/isaac-rest.rb'
+require './config/initializers/01_ets_init'
+require './lib/isaac_rest/taxonomy_rest'
+#require './lib/tasks/rest_fixtures.rake'
 
 class TaxonomyRestTests < Test::Unit::TestCase
 
   include ETSUtilities
+  include Fixtures
+  include TaxonomyRest
   self.test_order = :defined #run tests in order they appear in this file
   #~ self.test_order = :random
   #~ self.test_order = :alphabetic #default
@@ -12,8 +16,8 @@ class TaxonomyRestTests < Test::Unit::TestCase
   # to set up fixture information.
   def setup
     #build our isaac_root object from our yaml fixture
-    @isaac_root = YAML.load_file('./test/fixtures/isaac_root.yml')
-    @rest_concept_version = Gov::Vha::Isaac::Rest::Api1::Data::Concept::RestConceptVersion.from_json(@isaac_root)
+    json = YAML.load_file(FILES[Fixtures::TAXONOMY_ROOT])
+    @rest_concept_version = Taxonomy.new(uuid: ISAAC_ROOT_ID, params: nil, action: ACTION_VERSION, action_constants: ACTION_CONSTANTS).get_rest_class.send(:from_json, json)
   end
 
   def test_build_rest_concept_version
