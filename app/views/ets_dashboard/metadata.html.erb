@@ -4,6 +4,7 @@
 <p>Environment variable RAILS_SERVE_STATIC_FILES=<%=ENV['RAILS_SERVE_STATIC_FILES']%></p>
 <p>Environment variable RAILS_RELATIVE_URL_ROOT=<%=ENV['RAILS_RELATIVE_URL_ROOT']%></p>
 <p>Rails root_path is? <%=root_path%></p>
+<p>Rails pid is? <%=$$.to_s%></p>
 <%unless Rails.env.production?%>
     <%= raw "<p>Rest cache has a size of #{$rest_cache.to_a.length}<br>"%>
     <%= raw rest_cache_to_str%>

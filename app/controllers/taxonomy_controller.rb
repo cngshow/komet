@@ -103,7 +103,7 @@ class TaxonomyController < ApplicationController
       tree_nodes << {id: 0, concept_id: raw_nodes[0][:id], text: raw_nodes[0][:text], parent: '#', parent_reversed: false, parent_search: parent_search, icon: 'glyphicon glyphicon-fire ets-node-image-red', a_attr: {class: ''}, state: {opened: 'true'}}
       raw_nodes = raw_nodes.drop(1)
     else
-      isaac_concept = TaxonomyRest.get_isaac_concept(current_id)
+      isaac_concept = TaxonomyRest.get_isaac_concept(uuid: current_id)
       raw_nodes = rest_concept_version_to_json_tree(isaac_concept, parent_search: parent_search)
     end
 

@@ -16,68 +16,59 @@ Copyright Notice
  See the License for the specific language governing permissions and
  limitations under the License.
 =end
-require './lib/isaac_rest/isaac-rest.rb'
-require './lib/ets_common/util/helpers'
-require './lib/utilities/cached_hash'
+require './lib/isaac_rest/common_rest'
 
-#include ETSUtilities
+module TaxonomyRestActions
+  ACTION_VERSION = :version
+end
 
 module TaxonomyRest
-  include ETSUtilities
+  include TaxonomyRestActions
+  include CommonActionSyms
   extend self
-  TAXONOMY_PATH = $PROPS['ENDPOINT.isaac_root'] + "rest/1/taxonomy/version"
+  TAXONOMY_PATH = $PROPS['ENDPOINT.isaac_root'] + "rest/1/taxonomy/"
+  VERSION_TAXONOMY_PATH = TAXONOMY_PATH + "version"
   ISAAC_UUID_PARAM = :id
   ISAAC_ROOT_ID = "cc0b2455-f546-48fa-90e8-e214cc8478d6"
-  TAXONOMY_STARTING_PARAMS = {expand: 'chronology,parents', childDepth: 2, parentHeight: 2}
-  @params = {}
+  VERSION_TAXONOMY_STARTING_PARAMS = {expand: 'chronology,parents', childDepth: 2, parentHeight: 2}
 
-  @conn = Faraday.new(:url => @params[:site]) do |faraday|
-    faraday.request :url_encoded # form-encode POST params
-    faraday.use Faraday::Response::Logger, $log
-    faraday.headers['Accept'] = 'application/json'
-    #faraday.use Faraday::Middleware::ParseJson
-    faraday.adapter :net_http # make requests with Net::HTTP
-    #faraday.request  :basic_auth, @urls[:user], @urls[:password]
-  end
+  ACTION_CONSTANTS = {
+      ACTION_VERSION => {PATH_SYM => VERSION_TAXONOMY_PATH, STARTING_PARAMS_SYM => VERSION_TAXONOMY_STARTING_PARAMS, CLAZZ_SYM => Gov::Vha::Isaac::Rest::Api1::Data::Concept::RestConceptVersion},
+  }
 
   class << self
     #attr_accessor :instance_data
   end
 
+  class Taxonomy < CommonRestBase::RestBase
+    include CommonRest
+
+    attr_accessor :uuid
+
+    def initialize(uuid:, params:, action:, action_constants:)
+      @uuid = uuid
+      uuid_check uuid: uuid
+      super(params: params, action: action, action_constants: action_constants)
+    end
+
+    def rest_call
+      p = get_params
+      p = {ISAAC_UUID_PARAM => uuid}.merge(p)#p should never be nil it should at least be {}... VERSION_TAXONOMY_STARTING_PARAMS
+      json = rest_fetch(url_string: url, params: p, raw_url: url)
+      enunciate_json(json)
+    end
+  end
+
+#only one action
   def get_isaac_root
-    get_isaac_concept(ISAAC_ROOT_ID)
+    Taxonomy.new(uuid: ISAAC_ROOT_ID, params: nil, action: ACTION_VERSION, action_constants: ACTION_CONSTANTS).rest_call
   end
 
-  def get_isaac_concept(uuid, additional_req_params = nil)
-    if (uuid.nil?)
-      $log.error("The UUID cannot be nil!  Please esure the caller provides a UUID.")
-      raise ArgumentError.new("The UUID cannot be nil!!")
-    end
-    params = TAXONOMY_STARTING_PARAMS.clone.merge!({ISAAC_UUID_PARAM => uuid})
-    params.merge!(additional_req_params) if additional_req_params
-    url_str = TAXONOMY_PATH
-    cache_lookup = {url_str => params}
-    unless $rest_cache[cache_lookup].nil?
-      $log.info("Using a cached result!  No rest fetch will occur!")
-      json = $rest_cache[cache_lookup]
-      json_to_yaml_file(json, url_to_path_string(TAXONOMY_PATH))
-      return Gov::Vha::Isaac::Rest::Api1::Data::Concept::RestConceptVersion.from_json(json.deep_dup)
-    end
-
-    response = @conn.get do |req|
-      req.url TAXONOMY_PATH
-      req.params = params
-    end
-    json = JSON.parse response.body
-    json.freeze
-    json_to_yaml_file(json, url_to_path_string(TAXONOMY_PATH))
-    r_val = Gov::Vha::Isaac::Rest::Api1::Data::Concept::RestConceptVersion.from_json(json.deep_dup)
-    $rest_cache[cache_lookup] = json
-    r_val
+  def get_isaac_concept(uuid:, additional_req_params:  nil)
+    Taxonomy.new(uuid: uuid, params: additional_req_params, action: ACTION_VERSION, action_constants: ACTION_CONSTANTS).rest_call
   end
-
 
 end
 # load('./lib/isaac_rest/taxonomy_rest.rb')
-# a = TaxonomyRest.get_isaac_concept
-# b = TaxonomyRest.get_isaac_concept({id: 'f7495b58-6630-3499-a44e-2052b5fcf06c'})
+# a = TaxonomyRest.get_isaac_root
+# b = TaxonomyRest.get_isaac_concept(uuid: 'f7495b58-6630-3499-a44e-2052b5fcf06c')
