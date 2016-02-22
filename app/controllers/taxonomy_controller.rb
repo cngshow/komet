@@ -22,7 +22,9 @@ require './lib/isaac_rest/taxonomy_rest'
 # TaxonomyController -
 # handles the loading of the taxonomy tree
 class TaxonomyController < ApplicationController
-  include ConceptConcern
+  include ConceptConcern, InstrumentationConcern
+
+  after_filter :byte_size unless Rails.env.production?
 
   def rest_concept_version_to_json_tree(rest_concept_version, root: false, parent_search: false, multi_path: true)
 
