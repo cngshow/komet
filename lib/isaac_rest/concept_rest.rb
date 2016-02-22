@@ -21,7 +21,7 @@ require './lib/isaac_rest/common_rest'
 module ConceptRestActions
   ACTION_VERSION = :version
   ACTION_DESCRIPTIONS = :descriptions
-  ACTION_CHRONOLOGY = :cronology
+  ACTION_CHRONOLOGY = :chronology
 end
 
 module ConceptRest
@@ -40,9 +40,15 @@ module ConceptRest
   DESCRIPTIONS_CONCEPT_STARTING_PARAMS = {}
 
   ACTION_CONSTANTS = {
-      ACTION_VERSION => {PATH_SYM => VERSION_CONCEPT_PATH, STARTING_PARAMS_SYM => VERSION_CONCEPT_STARTING_PARAMS, CLAZZ_SYM => Gov::Vha::Isaac::Rest::Api1::Data::Concept::RestConceptVersion},
-      ACTION_DESCRIPTIONS => {PATH_SYM => DESCRIPTIONS_CONCEPT_PATH, STARTING_PARAMS_SYM => DESCRIPTIONS_CONCEPT_STARTING_PARAMS, CLAZZ_SYM => Gov::Vha::Isaac::Rest::Api1::Data::Sememe::RestSememeDescriptionVersion},
-      ACTION_CHRONOLOGY => {PATH_SYM => CHRONOLOGY_CONCEPT_PATH, STARTING_PARAMS_SYM => CHRONOLOGY_CONCEPT_STARTING_PARAMS, CLAZZ_SYM => Gov::Vha::Isaac::Rest::Api1::Data::Concept::RestConceptChronology}
+      ACTION_VERSION => {PATH_SYM => VERSION_CONCEPT_PATH,
+                         STARTING_PARAMS_SYM => VERSION_CONCEPT_STARTING_PARAMS,
+                         CLAZZ_SYM => Gov::Vha::Isaac::Rest::Api1::Data::Concept::RestConceptVersion},
+      ACTION_DESCRIPTIONS => {PATH_SYM => DESCRIPTIONS_CONCEPT_PATH,
+                              STARTING_PARAMS_SYM => DESCRIPTIONS_CONCEPT_STARTING_PARAMS,
+                              CLAZZ_SYM => Gov::Vha::Isaac::Rest::Api1::Data::Sememe::RestSememeDescriptionVersion},
+      ACTION_CHRONOLOGY => {PATH_SYM => CHRONOLOGY_CONCEPT_PATH,
+                            STARTING_PARAMS_SYM => CHRONOLOGY_CONCEPT_STARTING_PARAMS,
+                            CLAZZ_SYM => Gov::Vha::Isaac::Rest::Api1::Data::Concept::RestConceptChronology}
   }
 
   class << self
@@ -61,15 +67,13 @@ module ConceptRest
     end
 
     def rest_call
-      r_val = nil
-      p = get_params
       url_string = url.gsub('{id}', uuid)
-      json = rest_fetch(url_string: url_string, params: p, raw_url: url)
+      json = rest_fetch(url_string: url_string, params: get_params, raw_url: url)
       enunciate_json(json)
     end
   end
 
-  def get_concept(action:,uuid:,additional_req_params: nil)
+  def get_concept(action:, uuid:, additional_req_params: nil)
     Concept.new(uuid: uuid, params: additional_req_params, action:  action, action_constants: ACTION_CONSTANTS).rest_call
   end
 end

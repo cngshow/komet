@@ -17,10 +17,12 @@ Copyright Notice
  limitations under the License.
 =end
 require './lib/isaac_rest/taxonomy_rest'
+
 ##
 # TaxonomyController -
 # handles the loading of the taxonomy tree
 class TaxonomyController < ApplicationController
+  include ConceptConcern
 
   def rest_concept_version_to_json_tree(rest_concept_version, root: false, parent_search: false, multi_path: true)
 
@@ -177,7 +179,7 @@ class TaxonomyController < ApplicationController
   #@return [javascript] render a javascript partial that re-renders all needed partials
   def get_concept_information
 
-    concept_id = params[:concept_id].to_i
+    concept_id = params[:concept_id]
     partial = params[:partial]
 
     get_concept_summary(concept_id)
@@ -218,6 +220,8 @@ class TaxonomyController < ApplicationController
     if concept_id == nil && params[:concept_id]
       concept_id = params[:concept_id].to_i
     end
+
+    @greg =  descriptions(concept_id) #ConceptRest::get_concept(action: ConceptRestActions::ACTION_DESCRIPTIONS, uuid: concept_id)
 
     @concept_summary = @raw_tree_data[1]
 

@@ -42,8 +42,6 @@ module CommonRest
     $rest_cache[cache_lookup] = json
     json.deep_dup
   end
-
-
 end
 
 module CommonActionSyms
@@ -81,7 +79,6 @@ module CommonRestBase
       raise NotImplementedError.new("You need to implement me in your base class!")
     end
 
-
     #see https://github.com/stoicflame/enunciate/
     def enunciate_json(json)
       clazz = get_rest_class
@@ -96,9 +93,7 @@ module CommonRestBase
       end
       r_val
     end
-
   end
-
 end
 
 #load './lib/isaac_rest/common_rest.rb'

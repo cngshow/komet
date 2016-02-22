@@ -13,6 +13,14 @@
 
       <div id="concept_summary_text_specific"><%= @concept_summary[:text] %></div>
       <div id="concept_summary_text_small"><%= @concept_summary[:text] %></div>
+
+      <hr>
+      <% @greg[:descriptions].each do |desc_hash| %>
+          <%= desc_hash.each_pair do |k,v| %>
+              <%= "#{k.to_s}: #{v.to_s}" %><br>
+          <% end %>
+          <hr>
+      <% end %>
     </div>
 
     <div id="concept_summary_attributes">
@@ -80,9 +88,9 @@
       TaxonomyModule.concept_summary_children_tree.on('changed.jstree', onChanged);
 
     }
-    catch(err) {
+    catch (err) {
       console.log("*******  ERROR **********");
-     console.log(err.message);
+      console.log(err.message);
     }
 
   });
