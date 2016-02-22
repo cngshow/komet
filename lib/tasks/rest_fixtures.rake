@@ -5,11 +5,19 @@ module Fixtures
   CONCEPT_VERSIONS = :concept_versions
   CONCEPT_CHRONOLOGY = :concept_chronology
   TAXONOMY_ROOT = :taxonomy_root
+  SEMEME_BY_ASSEMBLAGE = :sememe_assemblage
+  SEMEME_VERSIONS = :sememe_versions
+  SEMEME_CHRONOLOGY = :sememe_chronolgy
+  SEMEME_BY_REFERENCED_COMPONENT = :sememe_ref_comp
   FILES = {
       CONCEPT_DESCRIPTIONS => "./test/fixtures/concept_description.yml",
       CONCEPT_VERSIONS => "./test/fixtures/concept_version.yml",
-      CONCEPT_CHRONOLOGY =>  "./test/fixtures/concept_chronology.yml",
+      CONCEPT_CHRONOLOGY => "./test/fixtures/concept_chronology.yml",
       TAXONOMY_ROOT => "./test/fixtures/isaac_root.yml",
+      SEMEME_BY_ASSEMBLAGE => "./test/fixtures/sememe_by_assemblage.yml",
+      SEMEME_VERSIONS => "./test/fixtures/sememe_version.yml",
+      SEMEME_CHRONOLOGY => "./test/fixtures/sememe_chronology.yml",
+      SEMEME_BY_REFERENCED_COMPONENT => "./test/fixtures/sememe_by_referenced_component.yml",
   }
 end
 
@@ -44,9 +52,33 @@ namespace :rest_fixtures do
     FileUtils.cp(file_loc, FILES[CONCEPT_CHRONOLOGY])
   end
 
+  SEMEME_LAMBDA = -> do
+    include Fixtures
+    require './lib/isaac_rest/sememe_rest.rb'
+    SEMEME_UUID = SememeRest::TEST_UUID
+    SEMEME_ID = SememeRest::TEST_ID
+
+    SememeRest::get_sememe(action: SememeRestActions::ACTION_BY_REFERENCED_COMPONENT, uuid_or_id: SEMEME_UUID) #the simple fact that we fetch the rest data motivates a yaml file's generation in temp.
+    file_loc = ETSUtilities::TMP_FILE_PREFIX + url_to_path_string(SememeRest::BY_REFERENCED_COMPONENT_SEMEME_PATH) + ETSUtilities::YML_EXT
+    FileUtils.cp(file_loc, FILES[SEMEME_BY_REFERENCED_COMPONENT])
+
+    SememeRest::get_sememe(action: SememeRestActions::ACTION_CHRONOLOGY, uuid_or_id: SEMEME_ID) #the simple fact that we fetch the rest data motivates a yaml file's generation in temp.
+    file_loc = ETSUtilities::TMP_FILE_PREFIX + url_to_path_string(SememeRest::CHRONOLOGY_SEMEME_PATH) + ETSUtilities::YML_EXT
+    FileUtils.cp(file_loc, FILES[SEMEME_CHRONOLOGY])
+
+    SememeRest::get_sememe(action: SememeRestActions::ACTION_VERSION, uuid_or_id: SEMEME_ID) #the simple fact that we fetch the rest data motivates a yaml file's generation in temp.
+    file_loc = ETSUtilities::TMP_FILE_PREFIX + url_to_path_string(SememeRest::VERSION_SEMEME_PATH) + ETSUtilities::YML_EXT
+    FileUtils.cp(file_loc, FILES[SEMEME_VERSIONS])
+
+    SememeRest::get_sememe(action: SememeRestActions::ACTION_BY_ASSEMBLAGE, uuid_or_id: SEMEME_ID) #the simple fact that we fetch the rest data motivates a yaml file's generation in temp.
+    file_loc = ETSUtilities::TMP_FILE_PREFIX + url_to_path_string(SememeRest::BY_ASSEMBLAGE_SEMEME_PATH) + ETSUtilities::YML_EXT
+    FileUtils.cp(file_loc, FILES[SEMEME_BY_ASSEMBLAGE])
+  end
+
+
   desc "This task hits the isaac rest server. Builds all fixtures."
   task :build => :environment do
-    [TAXONOMY_LAMBDA, CONCEPT_LAMBDA ].each(&:call)
+    [TAXONOMY_LAMBDA, CONCEPT_LAMBDA, SEMEME_LAMBDA].each(&:call)
   end
 
 end
