@@ -5,6 +5,8 @@ require './lib/ets_common/util/helpers'
 module CommonRest
   include ETSUtilities
 
+  UnexpectedResponse = Struct.new(:body, :status) do end
+
   CONNECTION = Faraday.new() do |faraday|
     faraday.request :url_encoded # form-encode POST params
     faraday.use Faraday::Response::Logger, $log
@@ -35,8 +37,19 @@ module CommonRest
       req.url url_string
       req.params = params
     end
-
-    json = JSON.parse response.body
+    json = nil
+    begin
+      json = JSON.parse response.body
+    rescue JSON::ParserError => ex
+      if(response.status.eql?(200))
+        $rest_cache[cache_lookup] = response.body
+            return response.body
+      end
+      $log.warn("Invalid JSON returned from ISAAC rest. URL is #{url_string}")
+      $log.warn("Result is " + response.body)
+      $log.warn("Status is " + response.status.to_s)
+      return UnexpectedResponse.new(response.body, response.status)
+    end
     json.freeze
     json_to_yaml_file(json, url_to_path_string(raw_url))
     $rest_cache[cache_lookup] = json
@@ -82,6 +95,9 @@ module CommonRestBase
     #see https://github.com/stoicflame/enunciate/
     def enunciate_json(json)
       clazz = get_rest_class
+      if clazz.eql?(JSON)
+        return json
+      end
       r_val = nil
       if json.is_a? Array
         r_val = []
