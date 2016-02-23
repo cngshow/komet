@@ -23,6 +23,7 @@ module SememeRestActions
   ACTION_CHRONOLOGY = :cronology
   ACTION_BY_REFERENCED_COMPONENT = :referenced_component
   ACTION_BY_ASSEMBLAGE = :by_assemblage
+  ACTION_SEMEME_DEFINITION = :sememe_definition
 end
 
 module SememeRest
@@ -35,19 +36,23 @@ module SememeRest
   VERSION_SEMEME_PATH = SEMEME_PATH + "version/{id}"
   BY_REFERENCED_COMPONENT_SEMEME_PATH = SEMEME_PATH + "byReferencedComponent/{id}"
   BY_ASSEMBLAGE_SEMEME_PATH = SEMEME_PATH + "byAssemblage/{id}"
-  TEST_UUID = "cc0b2455-f546-48fa-90e8-e214cc8478d6" #useful for testing all actions except those below
+  DEFINITION_SEMEME_PATH = SEMEME_PATH + "sememeDefinition/{id}"
   TEST_ID = "1349" #useful for testing the actions VERSION, CHRONOLOGY, BY_ASSEMBLAGE
+  TEST_UUID_REF_COMP = "cc0b2455-f546-48fa-90e8-e214cc8478d6"
+  TEST_UUID_SEMEME_DEF = "406e872b-2e19-5f5e-a71d-e4e4b2c68fe5"
 
   CHRONOLOGY_SEMEME_STARTING_PARAMS = {}
   VERSION_SEMEME_STARTING_PARAMS = {}
   BY_REFERENCED_COMPONENT_SEMEME_STARTING_PARAMS = {}
   BY_ASSEMBLAGE_SEMEME_STARTING_PARAMS = {}
+  DEFINITION_SEMEME_STARTING_PARAMS = {}
 
   ACTION_CONSTANTS = {
       ACTION_VERSION => {PATH_SYM => VERSION_SEMEME_PATH, STARTING_PARAMS_SYM => VERSION_SEMEME_STARTING_PARAMS, CLAZZ_SYM => Gov::Vha::Isaac::Rest::Api1::Data::Sememe::RestSememeDescriptionVersion},
       ACTION_BY_REFERENCED_COMPONENT => {PATH_SYM => BY_REFERENCED_COMPONENT_SEMEME_PATH, STARTING_PARAMS_SYM => BY_REFERENCED_COMPONENT_SEMEME_STARTING_PARAMS, CLAZZ_SYM => Gov::Vha::Isaac::Rest::Api1::Data::Sememe::RestSememeDescriptionVersion},
       ACTION_CHRONOLOGY => {PATH_SYM => CHRONOLOGY_SEMEME_PATH, STARTING_PARAMS_SYM => CHRONOLOGY_SEMEME_STARTING_PARAMS, CLAZZ_SYM => Gov::Vha::Isaac::Rest::Api1::Data::Sememe::RestSememeChronology},
       ACTION_BY_ASSEMBLAGE => {PATH_SYM => BY_ASSEMBLAGE_SEMEME_PATH, STARTING_PARAMS_SYM => BY_ASSEMBLAGE_SEMEME_STARTING_PARAMS, CLAZZ_SYM => Gov::Vha::Isaac::Rest::Api1::Data::Sememe::RestSememeVersion},
+      ACTION_SEMEME_DEFINITION => {PATH_SYM => DEFINITION_SEMEME_PATH, STARTING_PARAMS_SYM => DEFINITION_SEMEME_STARTING_PARAMS, CLAZZ_SYM => Gov::Vha::Isaac::Rest::Api1::Data::Sememe::RestDynamicSememeDefinition}
   }
 
   class << self
@@ -81,9 +86,10 @@ end
 
 =begin
 load('./lib/isaac_rest/sememe_rest.rb')
-a = SememeRest::get_sememe(action: SememeRestActions::ACTION_BY_REFERENCED_COMPONENT,uuid_or_id: SememeRest::TEST_UUID)
+a = SememeRest::get_sememe(action: SememeRestActions::ACTION_BY_REFERENCED_COMPONENT,uuid_or_id: SememeRest::TEST_UUID_REF_COMP)
 b = SememeRest::get_sememe(action: SememeRestActions::ACTION_CHRONOLOGY,uuid_or_id: SememeRest::TEST_ID)
 c = SememeRest::get_sememe(action: SememeRestActions::ACTION_VERSION,uuid_or_id: SememeRest::TEST_ID)
 d = SememeRest::get_sememe(action: SememeRestActions::ACTION_BY_ASSEMBLAGE,uuid_or_id: SememeRest::TEST_ID)
+e = SememeRest::get_sememe(action: SememeRestActions::ACTION_SEMEME_DEFINITION,uuid_or_id: SememeRest::TEST_UUID_SEMEME_DEF)
 =end
 
