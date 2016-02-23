@@ -1,0 +1,35 @@
+#Fixture created on 2016-02-23 13:34:16
+---
+- "@c": ".RestDynamicSememeValidatorType"
+  name: "<"
+  enumId: 0
+- "@c": ".RestDynamicSememeValidatorType"
+  name: ">"
+  enumId: 1
+- "@c": ".RestDynamicSememeValidatorType"
+  name: "<="
+  enumId: 2
+- "@c": ".RestDynamicSememeValidatorType"
+  name: ">="
+  enumId: 3
+- "@c": ".RestDynamicSememeValidatorType"
+  name: Interval
+  enumId: 4
+- "@c": ".RestDynamicSememeValidatorType"
+  name: Regular Expression
+  enumId: 5
+- "@c": ".RestDynamicSememeValidatorType"
+  name: External
+  enumId: 6
+- "@c": ".RestDynamicSememeValidatorType"
+  name: Is Child Of
+  enumId: 7
+- "@c": ".RestDynamicSememeValidatorType"
+  name: Is Kind Of
+  enumId: 8
+- "@c": ".RestDynamicSememeValidatorType"
+  name: Component Type Restriction
+  enumId: 9
+- "@c": ".RestDynamicSememeValidatorType"
+  name: Unknown
+  enumId: 10

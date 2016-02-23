@@ -20,7 +20,7 @@ require './lib/isaac_rest/common_rest'
 
 module SememeRestActions
   ACTION_VERSION = :version
-  ACTION_CHRONOLOGY = :cronology
+  ACTION_CHRONOLOGY = :chronology
   ACTION_BY_REFERENCED_COMPONENT = :referenced_component
   ACTION_BY_ASSEMBLAGE = :by_assemblage
   ACTION_SEMEME_DEFINITION = :sememe_definition

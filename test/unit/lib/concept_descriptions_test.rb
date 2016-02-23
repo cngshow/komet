@@ -30,8 +30,6 @@ class ConceptDescriptionsTest < Test::Unit::TestCase
 
   def test_concern_descriptions
     desc_hash = descriptions(TEST_UUID)
-    p desc_hash
-
     assert(!desc_hash.nil? , 'The concept was not properly converted from json to a RestSememeDescriptionVersion!')
 
     if desc_hash.has_key?(:descriptions)

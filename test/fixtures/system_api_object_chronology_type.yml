@@ -1,0 +1,11 @@
+#Fixture created on 2016-02-23 13:34:16
+---
+- "@c": ".RestObjectChronologyType"
+  name: Concept
+  enumId: 0
+- "@c": ".RestObjectChronologyType"
+  name: Sememe
+  enumId: 1
+- "@c": ".RestObjectChronologyType"
+  name: Unknown
+  enumId: 2

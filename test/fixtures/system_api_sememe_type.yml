@@ -1,0 +1,29 @@
+#Fixture created on 2016-02-23 13:34:17
+---
+- "@c": ".RestSememeType"
+  name: Member
+  enumId: 0
+- "@c": ".RestSememeType"
+  name: Component Nid
+  enumId: 1
+- "@c": ".RestSememeType"
+  name: Long
+  enumId: 2
+- "@c": ".RestSememeType"
+  name: Logic Graph
+  enumId: 3
+- "@c": ".RestSememeType"
+  name: String
+  enumId: 4
+- "@c": ".RestSememeType"
+  name: Dynamic Sememe
+  enumId: 5
+- "@c": ".RestSememeType"
+  name: Description
+  enumId: 6
+- "@c": ".RestSememeType"
+  name: Relationship Adapter
+  enumId: 7
+- "@c": ".RestSememeType"
+  name: Unknown
+  enumId: 8

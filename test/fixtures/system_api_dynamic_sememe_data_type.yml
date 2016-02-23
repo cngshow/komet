@@ -1,0 +1,41 @@
+#Fixture created on 2016-02-23 13:34:16
+---
+- "@c": ".RestDynamicSememeDataType"
+  name: Component Nid
+  enumId: 0
+- "@c": ".RestDynamicSememeDataType"
+  name: String
+  enumId: 1
+- "@c": ".RestDynamicSememeDataType"
+  name: Integer
+  enumId: 2
+- "@c": ".RestDynamicSememeDataType"
+  name: Boolean
+  enumId: 3
+- "@c": ".RestDynamicSememeDataType"
+  name: Long
+  enumId: 4
+- "@c": ".RestDynamicSememeDataType"
+  name: Arbitrary Data
+  enumId: 5
+- "@c": ".RestDynamicSememeDataType"
+  name: Float
+  enumId: 6
+- "@c": ".RestDynamicSememeDataType"
+  name: Double
+  enumId: 7
+- "@c": ".RestDynamicSememeDataType"
+  name: UUID
+  enumId: 8
+- "@c": ".RestDynamicSememeDataType"
+  name: Unspecified
+  enumId: 9
+- "@c": ".RestDynamicSememeDataType"
+  name: Array
+  enumId: 10
+- "@c": ".RestDynamicSememeDataType"
+  name: Component Sequence
+  enumId: 11
+- "@c": ".RestDynamicSememeDataType"
+  name: Unknown
+  enumId: 12

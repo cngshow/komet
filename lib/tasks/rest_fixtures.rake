@@ -10,16 +10,25 @@ module Fixtures
   SEMEME_CHRONOLOGY = :sememe_chronolgy
   SEMEME_BY_REFERENCED_COMPONENT = :sememe_ref_comp
   SEMEME_DEFINITION = :sememe_def
+  SYSTEM_API_DYNAMIC_SEMEME_VALIDATOR_TYPE = :system_api_dynamic_sememe_validator_type
+  SYSTEM_API_OBJECT_CHRONOLOGY_TYPE = :system_api_object_chronology_type
+  SYSTEM_API_SEMEME_TYPE = :system_api_sememe_type
+  SYSTEM_API_DYNAMIC_SEMEME_DATA_TYPE = :system_api_dynamic_sememe_data_type
+
   FILES = {
-      CONCEPT_DESCRIPTIONS => "./test/fixtures/concept_description.yml",
-      CONCEPT_VERSIONS => "./test/fixtures/concept_version.yml",
-      CONCEPT_CHRONOLOGY => "./test/fixtures/concept_chronology.yml",
-      TAXONOMY_ROOT => "./test/fixtures/isaac_root.yml",
-      SEMEME_BY_ASSEMBLAGE => "./test/fixtures/sememe_by_assemblage.yml",
-      SEMEME_VERSIONS => "./test/fixtures/sememe_version.yml",
-      SEMEME_CHRONOLOGY => "./test/fixtures/sememe_chronology.yml",
-      SEMEME_BY_REFERENCED_COMPONENT => "./test/fixtures/sememe_by_referenced_component.yml",
-      SEMEME_DEFINITION => "./test/fixtures/sememe_dynamic_definition.yml",
+      CONCEPT_DESCRIPTIONS => './test/fixtures/concept_description.yml',
+      CONCEPT_VERSIONS => './test/fixtures/concept_version.yml',
+      CONCEPT_CHRONOLOGY => './test/fixtures/concept_chronology.yml',
+      TAXONOMY_ROOT => './test/fixtures/isaac_root.yml',
+      SEMEME_BY_ASSEMBLAGE => './test/fixtures/sememe_by_assemblage.yml',
+      SEMEME_VERSIONS => './test/fixtures/sememe_version.yml',
+      SEMEME_CHRONOLOGY => './test/fixtures/sememe_chronology.yml',
+      SEMEME_BY_REFERENCED_COMPONENT => './test/fixtures/sememe_by_referenced_component.yml',
+      SEMEME_DEFINITION => './test/fixtures/sememe_dynamic_definition.yml',
+      SYSTEM_API_DYNAMIC_SEMEME_VALIDATOR_TYPE => './test/fixtures/system_api_dynamic_sememe_validator_type.yml',
+      SYSTEM_API_OBJECT_CHRONOLOGY_TYPE => './test/fixtures/system_api_object_chronology_type.yml',
+      SYSTEM_API_SEMEME_TYPE => './test/fixtures/system_api_sememe_type.yml',
+      SYSTEM_API_DYNAMIC_SEMEME_DATA_TYPE => './test/fixtures/system_api_dynamic_sememe_data_type.yml'
   }
 end
 
@@ -27,7 +36,7 @@ namespace :rest_fixtures do
 
   TAXONOMY_LAMBDA = -> do
     include Fixtures
-    raise ScriptError.new("This task is only supported in development mode.") unless Rails.env.development?
+    raise ScriptError.new('This task is only supported in development mode.') unless Rails.env.development?
     include ETSUtilities
     require './lib/isaac_rest/taxonomy_rest'
     #taxonomy set -----
@@ -79,10 +88,30 @@ namespace :rest_fixtures do
     FileUtils.cp(file_loc, FILES[SEMEME_DEFINITION])
   end
 
+  SYSTEM_API_LAMBDA = -> do
+    include Fixtures
+    require './lib/isaac_rest/system_apis_rest.rb'
 
-  desc "This task hits the isaac rest server. Builds all fixtures."
+    SystemApis::get_system_api(action: SystemApiActions::ACTION_DYNAMIC_SEMEME_DATA_TYPE) #the simple fact that we fetch the rest data motivates a yaml file's generation in temp.
+    file_loc = ETSUtilities::TMP_FILE_PREFIX + url_to_path_string(SystemApis::PATH_DYNAMIC_SEMEME_DATA_TYPE) + ETSUtilities::YML_EXT
+    FileUtils.cp(file_loc, FILES[SYSTEM_API_DYNAMIC_SEMEME_DATA_TYPE])
+
+    SystemApis::get_system_api(action: SystemApiActions::ACTION_OBJECT_CHRONOLOGY_TYPE)
+    file_loc = ETSUtilities::TMP_FILE_PREFIX + url_to_path_string(SystemApis::PATH_OBJECT_CHRONOLOGY_TYPE) + ETSUtilities::YML_EXT
+    FileUtils.cp(file_loc, FILES[SYSTEM_API_OBJECT_CHRONOLOGY_TYPE])
+
+    SystemApis::get_system_api(action: SystemApiActions::ACTION_DYNAMIC_SEMEME_VALIDATOR_TYPE)
+    file_loc = ETSUtilities::TMP_FILE_PREFIX + url_to_path_string(SystemApis::PATH_DYNAMIC_SEMEME_VALIDATOR_TYPE) + ETSUtilities::YML_EXT
+    FileUtils.cp(file_loc, FILES[SYSTEM_API_DYNAMIC_SEMEME_VALIDATOR_TYPE])
+
+    SystemApis::get_system_api(action: SystemApiActions::ACTION_SEMEME_TYPE)
+    file_loc = ETSUtilities::TMP_FILE_PREFIX + url_to_path_string(SystemApis::PATH_SEMEME_TYPE) + ETSUtilities::YML_EXT
+    FileUtils.cp(file_loc, FILES[SYSTEM_API_SEMEME_TYPE])
+  end
+
+  desc 'This task hits the isaac rest server. Builds all fixtures.'
   task :build => :environment do
-    [TAXONOMY_LAMBDA, CONCEPT_LAMBDA, SEMEME_LAMBDA].each(&:call)
+    [TAXONOMY_LAMBDA, CONCEPT_LAMBDA, SEMEME_LAMBDA, SYSTEM_API_LAMBDA].each(&:call)
   end
 
 end
