@@ -6,7 +6,6 @@ module ConceptConcern
                    case_significance: 'caseSignificanceConceptSequence'}
 
   def descriptions(uuid)
-    # uuid = params[:uuid]
     ret = {uuid: uuid}
     descriptions = ConceptRest.get_concept(action: ConceptRestActions::ACTION_DESCRIPTIONS, uuid: uuid)
     ret[:descriptions] = []
@@ -17,12 +16,8 @@ module ConceptConcern
       METADATA_HASH.each_pair do |k,v|
         desc[k] = description_metadata(d, v)
       end
-      # desc[:description_type] = metadata(d, 'descriptionTypeConceptSequence')
-      # desc[:language] = metadata(d, 'languageConceptSequence')
-      # desc[:case_significance] = metadata(d, 'caseSignificanceConceptSequence')
       ret[:descriptions] << desc
     end
-    # ret.to_json
     ret
   end
 
