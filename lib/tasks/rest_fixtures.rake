@@ -9,6 +9,7 @@ module Fixtures
   SEMEME_VERSIONS = :sememe_versions
   SEMEME_CHRONOLOGY = :sememe_chronolgy
   SEMEME_BY_REFERENCED_COMPONENT = :sememe_ref_comp
+  SEMEME_DEFINITION = :sememe_def
   FILES = {
       CONCEPT_DESCRIPTIONS => "./test/fixtures/concept_description.yml",
       CONCEPT_VERSIONS => "./test/fixtures/concept_version.yml",
@@ -18,6 +19,7 @@ module Fixtures
       SEMEME_VERSIONS => "./test/fixtures/sememe_version.yml",
       SEMEME_CHRONOLOGY => "./test/fixtures/sememe_chronology.yml",
       SEMEME_BY_REFERENCED_COMPONENT => "./test/fixtures/sememe_by_referenced_component.yml",
+      SEMEME_DEFINITION => "./test/fixtures/sememe_dynamic_definition.yml",
   }
 end
 
@@ -55,24 +57,26 @@ namespace :rest_fixtures do
   SEMEME_LAMBDA = -> do
     include Fixtures
     require './lib/isaac_rest/sememe_rest.rb'
-    SEMEME_UUID = SememeRest::TEST_UUID
-    SEMEME_ID = SememeRest::TEST_ID
 
-    SememeRest::get_sememe(action: SememeRestActions::ACTION_BY_REFERENCED_COMPONENT, uuid_or_id: SEMEME_UUID) #the simple fact that we fetch the rest data motivates a yaml file's generation in temp.
+    SememeRest::get_sememe(action: SememeRestActions::ACTION_BY_REFERENCED_COMPONENT, uuid_or_id: SememeRest::TEST_UUID_REF_COMP) #the simple fact that we fetch the rest data motivates a yaml file's generation in temp.
     file_loc = ETSUtilities::TMP_FILE_PREFIX + url_to_path_string(SememeRest::BY_REFERENCED_COMPONENT_SEMEME_PATH) + ETSUtilities::YML_EXT
     FileUtils.cp(file_loc, FILES[SEMEME_BY_REFERENCED_COMPONENT])
 
-    SememeRest::get_sememe(action: SememeRestActions::ACTION_CHRONOLOGY, uuid_or_id: SEMEME_ID) #the simple fact that we fetch the rest data motivates a yaml file's generation in temp.
+    SememeRest::get_sememe(action: SememeRestActions::ACTION_CHRONOLOGY, uuid_or_id: SememeRest::TEST_ID) #the simple fact that we fetch the rest data motivates a yaml file's generation in temp.
     file_loc = ETSUtilities::TMP_FILE_PREFIX + url_to_path_string(SememeRest::CHRONOLOGY_SEMEME_PATH) + ETSUtilities::YML_EXT
     FileUtils.cp(file_loc, FILES[SEMEME_CHRONOLOGY])
 
-    SememeRest::get_sememe(action: SememeRestActions::ACTION_VERSION, uuid_or_id: SEMEME_ID) #the simple fact that we fetch the rest data motivates a yaml file's generation in temp.
+    SememeRest::get_sememe(action: SememeRestActions::ACTION_VERSION, uuid_or_id: SememeRest::TEST_ID) #the simple fact that we fetch the rest data motivates a yaml file's generation in temp.
     file_loc = ETSUtilities::TMP_FILE_PREFIX + url_to_path_string(SememeRest::VERSION_SEMEME_PATH) + ETSUtilities::YML_EXT
     FileUtils.cp(file_loc, FILES[SEMEME_VERSIONS])
 
-    SememeRest::get_sememe(action: SememeRestActions::ACTION_BY_ASSEMBLAGE, uuid_or_id: SEMEME_ID) #the simple fact that we fetch the rest data motivates a yaml file's generation in temp.
+    SememeRest::get_sememe(action: SememeRestActions::ACTION_BY_ASSEMBLAGE, uuid_or_id: SememeRest::TEST_ID) #the simple fact that we fetch the rest data motivates a yaml file's generation in temp.
     file_loc = ETSUtilities::TMP_FILE_PREFIX + url_to_path_string(SememeRest::BY_ASSEMBLAGE_SEMEME_PATH) + ETSUtilities::YML_EXT
     FileUtils.cp(file_loc, FILES[SEMEME_BY_ASSEMBLAGE])
+
+    SememeRest::get_sememe(action: SememeRestActions::ACTION_SEMEME_DEFINITION, uuid_or_id: SememeRest::TEST_UUID_SEMEME_DEF) #the simple fact that we fetch the rest data motivates a yaml file's generation in temp.
+    file_loc = ETSUtilities::TMP_FILE_PREFIX + url_to_path_string(SememeRest::DEFINITION_SEMEME_PATH) + ETSUtilities::YML_EXT
+    FileUtils.cp(file_loc, FILES[SEMEME_DEFINITION])
   end
 
 

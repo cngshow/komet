@@ -5,7 +5,7 @@ require 'test/unit'
 require './config/initializers/01_ets_init'
 require './lib/isaac_rest/sememe_rest'
 #require './lib/tasks/rest_fixtures.rake'
-class SememeReferencedComponentTest < Test::Unit::TestCase
+class SememeDynamicDefinitionTest < Test::Unit::TestCase
   include ETSUtilities
   include SememeRest
   include Fixtures
@@ -14,14 +14,14 @@ class SememeReferencedComponentTest < Test::Unit::TestCase
   # Called before every test method runs. Can be used
   # to set up fixture information.
   def setup
-    json = YAML.load_file(FILES[Fixtures::SEMEME_BY_REFERENCED_COMPONENT])
-    @rest_sememe_comp = Sememe.new(uuid: TEST_UUID_SEMEME_DEF, params: nil, action: ACTION_BY_REFERENCED_COMPONENT, action_constants: ACTION_CONSTANTS).get_rest_class.send(:from_json, json.first)
+    json = YAML.load_file(FILES[Fixtures::SEMEME_DEFINITION])
+    @rest_sememe_comp = Sememe.new(uuid: TEST_UUID_SEMEME_DEF, params: nil, action: ACTION_SEMEME_DEFINITION, action_constants: ACTION_CONSTANTS).get_rest_class.send(:from_json, json)
   end
 
-  def test_build_rest_sememe_by_referenced_component
+  def test_build_rest_sememe_dynamic_definition
     begin
-        assert(!@rest_sememe_comp.nil? , "The sememe was not properly converted from json to a RestSememeVersion!")
-        assert(@rest_sememe_comp.class.eql?(Gov::Vha::Isaac::Rest::Api1::Data::Sememe::RestSememeDescriptionVersion) , "The sememe was not properly converted to a RestSememeVersion!")
+      assert(!@rest_sememe_comp.nil? , "The sememe was not properly converted from json to a RestDynamicSememeDefinition!")
+      assert(@rest_sememe_comp.class.eql?(Gov::Vha::Isaac::Rest::Api1::Data::Sememe::RestDynamicSememeDefinition) , "The sememe was not properly converted to a RestDynamicSememeDefinition!")
     rescue => ex
       fail(FAIL_MESSAGE + ex.to_s)
     end
