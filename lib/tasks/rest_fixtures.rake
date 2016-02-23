@@ -10,6 +10,8 @@ module Fixtures
   SEMEME_CHRONOLOGY = :sememe_chronolgy
   SEMEME_BY_REFERENCED_COMPONENT = :sememe_ref_comp
   SEMEME_DEFINITION = :sememe_def
+  ID_API_TYPES = :id_api_types
+  ID_API_TRANSLATE = :id_translate_types
   SYSTEM_API_DYNAMIC_SEMEME_VALIDATOR_TYPE = :system_api_dynamic_sememe_validator_type
   SYSTEM_API_OBJECT_CHRONOLOGY_TYPE = :system_api_object_chronology_type
   SYSTEM_API_SEMEME_TYPE = :system_api_sememe_type
@@ -29,6 +31,8 @@ module Fixtures
       SYSTEM_API_OBJECT_CHRONOLOGY_TYPE => './test/fixtures/system_api_object_chronology_type.yml',
       SYSTEM_API_SEMEME_TYPE => './test/fixtures/system_api_sememe_type.yml',
       SYSTEM_API_DYNAMIC_SEMEME_DATA_TYPE => './test/fixtures/system_api_dynamic_sememe_data_type.yml'
+      ID_API_TYPES => "./test/fixtures/id_api_types.yml",
+      ID_API_TRANSLATE => "./test/fixtures/id_api_translate.yml",
   }
 end
 
@@ -88,6 +92,19 @@ namespace :rest_fixtures do
     FileUtils.cp(file_loc, FILES[SEMEME_DEFINITION])
   end
 
+  ID_APIS_LAMBDA = -> do
+    include Fixtures
+    require './lib/isaac_rest/id_apis_rest.rb'
+
+    IdAPIsRest::get_id(action: IdAPIsRestActions::ACTION_TYPES) #the simple fact that we fetch the rest data motivates a yaml file's generation in temp.
+    file_loc = ETSUtilities::TMP_FILE_PREFIX + url_to_path_string(IdAPIsRest::TYPES_PATH) + ETSUtilities::YML_EXT
+    FileUtils.cp(file_loc, FILES[ID_API_TYPES])
+
+    IdAPIsRest::get_id(action: IdAPIsRestActions::ACTION_TRANSLATE, uuid_or_id: IdAPIsRest::TEST_UUID) #the simple fact that we fetch the rest data motivates a yaml file's generation in temp.
+    file_loc = ETSUtilities::TMP_FILE_PREFIX + url_to_path_string(IdAPIsRest::TYPES_TRANSLATE_PATH) + ETSUtilities::YML_EXT
+    FileUtils.cp(file_loc, FILES[ID_API_TRANSLATE])
+  end
+
   SYSTEM_API_LAMBDA = -> do
     include Fixtures
     require './lib/isaac_rest/system_apis_rest.rb'
@@ -109,9 +126,9 @@ namespace :rest_fixtures do
     FileUtils.cp(file_loc, FILES[SYSTEM_API_SEMEME_TYPE])
   end
 
-  desc 'This task hits the isaac rest server. Builds all fixtures.'
+  desc "This task hits the isaac rest server. Builds all fixtures."
   task :build => :environment do
-    [TAXONOMY_LAMBDA, CONCEPT_LAMBDA, SEMEME_LAMBDA, SYSTEM_API_LAMBDA].each(&:call)
+    [TAXONOMY_LAMBDA, CONCEPT_LAMBDA, SEMEME_LAMBDA, ID_APIS_LAMBDA, SYSTEM_API_LAMBDA].each(&:call)
   end
 
 end
