@@ -30,7 +30,7 @@ module Fixtures
       SYSTEM_API_DYNAMIC_SEMEME_VALIDATOR_TYPE => './test/fixtures/system_api_dynamic_sememe_validator_type.yml',
       SYSTEM_API_OBJECT_CHRONOLOGY_TYPE => './test/fixtures/system_api_object_chronology_type.yml',
       SYSTEM_API_SEMEME_TYPE => './test/fixtures/system_api_sememe_type.yml',
-      SYSTEM_API_DYNAMIC_SEMEME_DATA_TYPE => './test/fixtures/system_api_dynamic_sememe_data_type.yml'
+      SYSTEM_API_DYNAMIC_SEMEME_DATA_TYPE => './test/fixtures/system_api_dynamic_sememe_data_type.yml',
       ID_API_TYPES => "./test/fixtures/id_api_types.yml",
       ID_API_TRANSLATE => "./test/fixtures/id_api_translate.yml",
   }

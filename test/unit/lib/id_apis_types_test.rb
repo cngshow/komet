@@ -7,7 +7,7 @@ class IdApisTypes < Test::Unit::TestCase
   include IdAPIsRest
   include Fixtures
 
-  FAIL_MESSAGE = "There may be a mismatch betweeen the generated isaac-rest.rb file and ets_tooling!: "
+  FAIL_MESSAGE = "There may be a mismatch between the generated isaac-rest.rb file and ets_tooling!: "
   # Called before every test method runs. Can be used
   # to set up fixture information.
   def setup
@@ -17,7 +17,8 @@ class IdApisTypes < Test::Unit::TestCase
 
   def test_build_rest_id_types
     begin
-      assert(true) #no point in this until the update.  We have no types so no dependence on enunciate.
+      expected = ["uuid","nid","conceptSequence","sememeSequence","sctid","vuid"]
+      assert((expected - @rest_id_types).length == 0,"Rest ID type mismatch!") #no point in this until the update.  We have no types so no dependence on enunciate.
       # assert(!@rest_id_types.nil? , "The id was not properly converted from json to JSON!")
       # assert(@rest_id_types.class.eql?(Array) , "The id was not properly converted to a JSON object!")
     rescue => ex
