@@ -18,16 +18,16 @@ module CommonRest
 
   def uuid_check(uuid:)
     if uuid.nil?
-      $log.error("The UUID cannot be nil!  Please esure the caller provides a UUID.")
-      raise ArgumentError.new("The UUID cannot be nil!!")
+      $log.error('The UUID cannot be nil!  Please esure the caller provides a UUID.')
+      raise ArgumentError.new('The UUID cannot be nil!!')
     end
   end
 
   def rest_fetch(url_string:, params:, raw_url:)
     cache_lookup = {url_string => params}
     unless $rest_cache[cache_lookup].nil?
-      $log.info("Using a cached result!  No rest fetch will occur!")
-      $log.info("Cache key: " + cache_lookup.to_s)
+      $log.info('Using a cached result!  No rest fetch will occur!')
+      $log.info("Cache key: #{cache_lookup}")
       json = $rest_cache[cache_lookup]
       json_to_yaml_file(json, url_to_path_string(raw_url))
       return json.deep_dup
@@ -46,8 +46,8 @@ module CommonRest
         return response.body
       end
       $log.warn("Invalid JSON returned from ISAAC rest. URL is #{url_string}")
-      $log.warn("Result is " + response.body)
-      $log.warn("Status is " + response.status.to_s)
+      $log.warn('Result is ' + response.body)
+      $log.warn('Status is ' + response.status.to_s)
       return UnexpectedResponse.new(response.body, response.status)
     end
     json.freeze
@@ -89,7 +89,7 @@ module CommonRestBase
     end
 
     def rest_call
-      raise NotImplementedError.new("You need to implement me in your base class!")
+      raise NotImplementedError.new('You need to implement me in your base class!')
     end
 
     #see https://github.com/stoicflame/enunciate/
@@ -123,13 +123,13 @@ module CommonRestBase
         end
         @@rest_modules[rest_module] = paths
       end
-      $log.debug("Registered modules:")
+      $log.debug('Registered modules:')
       $log.debug(@@rest_modules.to_s)
     end
     #{ConceptRest=>{:chronology=>"http://localhost:8180/rest/1/concept/chronology/{id}", :descriptions=>"http://localhost:8180/rest/1/concept/descriptions/{id}", :version=>"http://localhost:8180/rest/1/concept/version/{id}"}}
 
     def self.invoke(url:)
-      $log.debug("invoke")
+      $log.debug('invoke')
       isaac_root_url = $PROPS['ENDPOINT.isaac_root']
       uri = nil
       action = nil
@@ -141,7 +141,9 @@ module CommonRestBase
         uri = URI(url)
         params = Hash[URI.decode_www_form(uri.query)] unless uri.query.nil?
         #issac_root is supposed to always end in a slash! So...
-        url = isaac_root_url + ((uri.path.start_with? '/') ? uri.path.reverse.chop.reverse : uri.path)
+        url = isaac_root_url + uri.path
+        # strip out any double slashes except the http(s)://
+        url.gsub!('//', '^').gsub!(/:\^/,'://').gsub!('^','/')
         $log.debug("Url is #{url}")
       rescue URI::InvalidURIError => ex
         $log.error("An invalid URL was given!  No further attempt to obtain data will be made! URL = #{url}")
@@ -157,24 +159,24 @@ module CommonRestBase
             $log.debug("2: #{act_sym} => #{act_path}")
             if (act_path.eql? url)
               invocation_found = true
-              $log.debug("inv found 1")
-            elsif (act_path.include? "{id}")
+              $log.debug('inv found 1')
+            elsif (act_path.include? '{id}')
               id = parse_id(act_path, url)
               if (id)
                 invocation_found = true
-                $log.debug("inv found 2 (id)")
+                $log.debug('inv found 2 (id)')
               end
             end
             if invocation_found
               action = act_sym
               module_ = mod
-              $log.debug("throw happening")
+              $log.debug('throw happening')
               throw :invocation_found
             end
           end
         end
         if(invocation_found)
-          $log.debug("Invocation found!!")
+          $log.debug('Invocation found!!')
           args_hash = {action: action, id: id, params: params}
           return module_.send(:main_fetch, args_hash )
         end
@@ -188,32 +190,36 @@ module CommonRestBase
     def self.parse_id(url_id_template, url_with_id)
       id = nil
       if (url_id_template =~ /\{id\}/)
-        a = url_id_template.split("{id}")
+        a = url_id_template.split('{id}')
         first = a[0]
         second = a[1].to_s #nil goes to ""
         if ((url_with_id.start_with? first) && (url_with_id.end_with? second))
-          id = url_with_id.sub(first, "").sub(second, "")
+          id = url_with_id.sub(first, '').sub(second, '')
         end
       end
       id
     end
   end
 end
-#load './lib/isaac_rest/common_rest.rb'
-# CommonRestBase::RestBase.invoke(url: "http://localhost:8180/rest/1/concept/chronology/cc0b2455-f546-48fa-90e8-e214cc8478d6")
-# CommonRestBase::RestBase.invoke(url: "rest/1/concept/chronology/cc0b2455-f546-48fa-90e8-e214cc8478d6")
-# CommonRestBase::RestBase.invoke(url: "http://localhost:8180/rest/1/id/types")
-# CommonRestBase::RestBase.invoke(url: "rest/1/id/types")
-# CommonRestBase::RestBase.invoke(url: "http://localhost:8180/rest/1/system/enumeration/restDynamicSememeDataType")
-# CommonRestBase::RestBase.invoke(url: "rest/1/system/enumeration/restDynamicSememeDataType")
-# CommonRestBase::RestBase.invoke(url: "rest/1/system/enumeration/restDynamicSememeDataType?expand=children&stated=true")
+=begin
+load './lib/isaac_rest/common_rest.rb'
+CommonRestBase::RestBase.invoke(url: "http://localhost:8180/rest/1/concept/chronology/cc0b2455-f546-48fa-90e8-e214cc8478d6")
+CommonRestBase::RestBase.invoke(url: "http://localhost:8180/rest/1/concept//chronology//cc0b2455-f546-48fa-90e8-e214cc8478d6")
+CommonRestBase::RestBase.invoke(url: "rest/1/concept/chronology/cc0b2455-f546-48fa-90e8-e214cc8478d6")
+CommonRestBase::RestBase.invoke(url: "http://localhost:8180/rest/1/id/types")
+CommonRestBase::RestBase.invoke(url: "rest/1/id/types")
+CommonRestBase::RestBase.invoke(url: "http://localhost:8180/rest/1/system/enumeration/restDynamicSememeDataType")
+CommonRestBase::RestBase.invoke(url: "rest/1/system/enumeration/restDynamicSememeDataType")
+CommonRestBase::RestBase.invoke(url: "rest/1/system/enumeration/restDynamicSememeDataType?expand=children&stated=true")
 #above doesn't take parameters but it should still invoke
-# CommonRestBase::RestBase.invoke(url: "http://localhost:8180/rest/1/id/translate/406e872b-2e19-5f5e-a71d-e4e4b2c68fe5?outputType=nid")
-# CommonRestBase::RestBase.invoke(url: "rest/1/id/translate/406e872b-2e19-5f5e-a71d-e4e4b2c68fe5?outputType=nid")
-# CommonRestBase::RestBase.invoke(url: "http://localhost:8180/rest/1/id/translate/406e872b-2e19-5f5e-a71d-e4e4b2c68fe5?outputType=sctid")
-# CommonRestBase::RestBase.invoke(url: "rest/1/id/translate/406e872b-2e19-5f5e-a71d-e4e4b2c68fe5?outputType=sctid")
-# CommonRestBase::RestBase.invoke(url: "rest/1/concept/version/5/")
-# CommonRestBase::RestBase.invoke(url: "rest/1/concept/version/5")
-# CommonRestBase::RestBase.invoke(url: "rest/1/concept/version/67?expand=children&stated=true")
-# CommonRestBase::RestBase.invoke(url: "rest/1/not/freacking/there")
-# CommonRestBase::RestBase.invoke(url: "rest/1/taxonomy/version?id=cc0b2455-f546-48fa-90e8-e214cc8478d6&expand=chronology")
+CommonRestBase::RestBase.invoke(url: "http://localhost:8180/rest/1/id/translate/406e872b-2e19-5f5e-a71d-e4e4b2c68fe5?outputType=nid")
+CommonRestBase::RestBase.invoke(url: "rest/1/id/translate/406e872b-2e19-5f5e-a71d-e4e4b2c68fe5?outputType=nid")
+CommonRestBase::RestBase.invoke(url: "http://localhost:8180/rest/1/id/translate/406e872b-2e19-5f5e-a71d-e4e4b2c68fe5?outputType=sctid") #this will fail
+CommonRestBase::RestBase.invoke(url: "rest/1/id/translate/406e872b-2e19-5f5e-a71d-e4e4b2c68fe5?outputType=sctid") #this will fail
+CommonRestBase::RestBase.invoke(url: "rest/1/concept/version/5/")
+CommonRestBase::RestBase.invoke(url: "/rest/1/concept/version/5/")
+CommonRestBase::RestBase.invoke(url: "rest/1/concept/version/5")
+CommonRestBase::RestBase.invoke(url: "rest/1/concept/version/67?expand=children&stated=true")
+CommonRestBase::RestBase.invoke(url: "rest/1/not/freacking/there") #this obviously fails
+CommonRestBase::RestBase.invoke(url: "rest/1/taxonomy/version?id=cc0b2455-f546-48fa-90e8-e214cc8478d6&expand=chronology")
+=end
