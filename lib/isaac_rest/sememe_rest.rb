@@ -61,6 +61,7 @@ module SememeRest
 
   class Sememe < CommonRestBase::RestBase
     include CommonRest
+    register_rest(rest_module: SememeRest, rest_actions: SememeRestActions)
 
     attr_accessor :uuid
 
@@ -77,6 +78,10 @@ module SememeRest
       json = rest_fetch(url_string: url_string, params: p, raw_url: url)
       enunciate_json(json)
     end
+  end
+
+  def main_fetch(**hash)
+    get_sememe(action: hash[:action], uuid_or_id: hash[:id], additional_req_params: hash[:params])
   end
 
   def get_sememe(action:, uuid_or_id:, additional_req_params: nil)

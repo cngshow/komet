@@ -29,7 +29,7 @@ module IdAPIsRest
   extend self
 
   ID_APIS_PATH = $PROPS['ENDPOINT.isaac_root'] + "rest/1/id/"
-  TYPES_PATH = ID_APIS_PATH + "types/"
+  TYPES_PATH = ID_APIS_PATH + "types"
   TYPES_TRANSLATE_PATH = ID_APIS_PATH + "translate/{id}"
 
   TEST_UUID = "406e872b-2e19-5f5e-a71d-e4e4b2c68fe5"
@@ -50,6 +50,7 @@ module IdAPIsRest
 
   class IdAPIs < CommonRestBase::RestBase
     include CommonRest
+    register_rest(rest_module: IdAPIsRest, rest_actions: IdAPIsRestActions)
 
     attr_accessor :uuid
 
@@ -60,13 +61,15 @@ module IdAPIsRest
     end
 
     def rest_call
-      r_val = nil
       p = get_params
-      puts "params are " + p.to_s
       url_string = uuid.nil? ? url : url.gsub('{id}', uuid) #types action doesn't need a uuid
       json = rest_fetch(url_string: url_string, params: p, raw_url: url)
       enunciate_json(json)
     end
+  end
+
+  def main_fetch(**hash)
+    get_id(action: hash[:action], uuid_or_id: hash[:id], additional_req_params: hash[:params])
   end
 
   def get_id(action:, uuid_or_id: nil, additional_req_params: nil)

@@ -67,6 +67,7 @@ module SystemApis
 
   class SystemApi < CommonRestBase::RestBase
     include CommonRest
+    register_rest(rest_module: SystemApis, rest_actions: SystemApiActions)
 
     def initialize(action:, action_constants:)
       super(params: {}, action: action, action_constants: action_constants)
@@ -77,6 +78,11 @@ module SystemApis
       enunciate_json(json)
     end
   end
+
+  def main_fetch(**hash)
+    get_system_api(action: hash[:action])
+  end
+
 
   def get_system_api(action:)
     SystemApi.new(action: action, action_constants: ACTION_CONSTANTS).rest_call

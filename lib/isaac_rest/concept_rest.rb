@@ -57,7 +57,7 @@ module ConceptRest
 
   class Concept < CommonRestBase::RestBase
     include CommonRest
-
+    register_rest(rest_module: ConceptRest, rest_actions: ConceptRestActions)
     attr_accessor :uuid
 
     def initialize(uuid:, params:, action:, action_constants:)
@@ -73,6 +73,10 @@ module ConceptRest
     end
   end
 
+  def main_fetch(**hash)
+    get_concept(action: hash[:action], uuid: hash[:id], additional_req_params: hash[:params])
+  end
+
   def get_concept(action:, uuid:, additional_req_params: nil)
     Concept.new(uuid: uuid, params: additional_req_params, action:  action, action_constants: ACTION_CONSTANTS).rest_call
   end
@@ -86,3 +90,4 @@ c = ConceptRest::get_concept(action: ConceptRestActions::ACTION_VERSION,uuid: 'c
 =end
 #note this will fail!  Use the module ConceptRestActions!!
 # c = ConceptRest::get_concept(action: "version",uuid: 'cc0b2455-f546-48fa-90e8-e214cc8478d6')
+#  a = Concept.new(uuid: "ddd", params: nil, action: :version, action_constants: ACTION_CONSTANTS)

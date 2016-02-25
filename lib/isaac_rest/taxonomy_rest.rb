@@ -42,6 +42,7 @@ module TaxonomyRest
 
   class Taxonomy < CommonRestBase::RestBase
     include CommonRest
+    register_rest(rest_module: TaxonomyRest, rest_actions: TaxonomyRestActions)
 
     attr_accessor :uuid
 
@@ -66,6 +67,10 @@ module TaxonomyRest
 
   def get_isaac_concept(uuid:, additional_req_params:  nil)
     Taxonomy.new(uuid: uuid, params: additional_req_params, action: ACTION_VERSION, action_constants: ACTION_CONSTANTS).rest_call
+  end
+
+  def main_fetch(**hash)
+    get_isaac_concept(uuid: hash[:params]["id"], additional_req_params: hash[:params])
   end
 
 end
