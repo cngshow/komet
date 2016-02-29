@@ -7,7 +7,7 @@ class SememeChronologyTest < Test::Unit::TestCase
   include SememeRest
   include Fixtures
 
-  FAIL_MESSAGE = "There may be a mismatch betweeen the generated isaac-rest.rb file and ets_tooling!: "
+  FAIL_MESSAGE = 'There may be a mismatch between the generated isaac-rest.rb file and ets_tooling!: '
   # Called before every test method runs. Can be used
   # to set up fixture information.
   def setup
@@ -18,8 +18,8 @@ class SememeChronologyTest < Test::Unit::TestCase
 
   def test_build_sememe_concept_chronology
     begin
-      assert(!@rest_sememe_chron.nil? , "The sememe was not properly converted from json to a RestSememeChronology!")
-      assert(@rest_sememe_chron.class.eql?(Gov::Vha::Isaac::Rest::Api1::Data::Sememe::RestSememeChronology) , "The sememe was not properly converted to a RestSememeChronology!")
+      assert(!@rest_sememe_chron.nil? , 'The sememe was not properly converted from json to a RestSememeChronology!')
+      assert(@rest_sememe_chron.class.eql?(Gov::Vha::Isaac::Rest::Api1::Data::Sememe::RestSememeChronology) , 'The sememe was not properly converted to a RestSememeChronology!')
     rescue => ex
       fail(FAIL_MESSAGE + ex.to_s)
     end

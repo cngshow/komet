@@ -7,7 +7,7 @@ class SememeAssemblageTest < Test::Unit::TestCase
   include SememeRest
   include Fixtures
 
-  FAIL_MESSAGE = "There may be a mismatch betweeen the generated isaac-rest.rb file and ets_tooling!: "
+  FAIL_MESSAGE = 'There may be a mismatch between the generated isaac-rest.rb file and ets_tooling!: '
   # Called before every test method runs. Can be used
   # to set up fixture information.
   def setup

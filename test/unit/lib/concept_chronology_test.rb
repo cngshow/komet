@@ -7,7 +7,7 @@ class ConceptChronologyTest < Test::Unit::TestCase
   include ConceptRest
   include Fixtures
 
-  FAIL_MESSAGE = "There may be a mismatch betweeen the generated isaac-rest.rb file and ets_tooling!: "
+  FAIL_MESSAGE = 'There may be a mismatch between the generated isaac-rest.rb file and ets_tooling!: '
   # Called before every test method runs. Can be used
   # to set up fixture information.
   def setup
@@ -18,8 +18,8 @@ class ConceptChronologyTest < Test::Unit::TestCase
 
   def test_build_rest_concept_chronology
     begin
-      assert(!@rest_concept_chronology.nil? , "The concept was not properly converted from json to a RestConceptChronology!")
-      assert(@rest_concept_chronology.class.eql?(Gov::Vha::Isaac::Rest::Api1::Data::Concept::RestConceptChronology) , "The concept was not properly converted to a RestConceptChronology!")
+      assert(!@rest_concept_chronology.nil? , 'The concept was not properly converted from json to a RestConceptChronology!')
+      assert(@rest_concept_chronology.class.eql?(Gov::Vha::Isaac::Rest::Api1::Data::Concept::RestConceptChronology) , 'The concept was not properly converted to a RestConceptChronology!')
     rescue => ex
       fail(FAIL_MESSAGE + ex.to_s)
     end

@@ -16,6 +16,8 @@ module Fixtures
   SYSTEM_API_OBJECT_CHRONOLOGY_TYPE = :system_api_object_chronology_type
   SYSTEM_API_SEMEME_TYPE = :system_api_sememe_type
   SYSTEM_API_DYNAMIC_SEMEME_DATA_TYPE = :system_api_dynamic_sememe_data_type
+  # search descriptions and prefix fixtures
+  SEARCH_DESCRIPTIONS = :search_descriptions
 
   FILES = {
       CONCEPT_DESCRIPTIONS => './test/fixtures/concept_description.yml',
@@ -31,8 +33,9 @@ module Fixtures
       SYSTEM_API_OBJECT_CHRONOLOGY_TYPE => './test/fixtures/system_api_object_chronology_type.yml',
       SYSTEM_API_SEMEME_TYPE => './test/fixtures/system_api_sememe_type.yml',
       SYSTEM_API_DYNAMIC_SEMEME_DATA_TYPE => './test/fixtures/system_api_dynamic_sememe_data_type.yml',
-      ID_API_TYPES => "./test/fixtures/id_api_types.yml",
-      ID_API_TRANSLATE => "./test/fixtures/id_api_translate.yml",
+      ID_API_TYPES => './test/fixtures/id_api_types.yml',
+      ID_API_TRANSLATE => './test/fixtures/id_api_translate.yml',
+      SEARCH_DESCRIPTIONS => './test/fixtures/search_descriptions.yml'
   }
 end
 
@@ -126,9 +129,19 @@ namespace :rest_fixtures do
     FileUtils.cp(file_loc, FILES[SYSTEM_API_SEMEME_TYPE])
   end
 
-  desc "This task hits the isaac rest server. Builds all fixtures."
+  SEARCH_API_LAMBDA = -> do
+    include Fixtures
+    require './lib/isaac_rest/search_apis_rest.rb'
+
+    params = {descriptionType: 'fsn', query: 'heart'}
+    SearchApis::get_search_api(action: SearchApiActions::ACTION_DESCRIPTIONS, additional_req_params: params)
+    file_loc = ETSUtilities::TMP_FILE_PREFIX + url_to_path_string(SearchApis::PATH_DESCRIPTIONS) + ETSUtilities::YML_EXT
+    FileUtils.cp(file_loc, FILES[SEARCH_DESCRIPTIONS])
+  end
+
+  desc 'This task hits the isaac rest server. Builds all fixtures.'
   task :build => :environment do
-    [TAXONOMY_LAMBDA, CONCEPT_LAMBDA, SEMEME_LAMBDA, ID_APIS_LAMBDA, SYSTEM_API_LAMBDA].each(&:call)
+    [TAXONOMY_LAMBDA, CONCEPT_LAMBDA, ID_APIS_LAMBDA, SEMEME_LAMBDA, SEARCH_API_LAMBDA, SYSTEM_API_LAMBDA].each(&:call)
   end
 
 end

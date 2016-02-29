@@ -1,0 +1,29 @@
+#Fixture created on 2016-02-29 10:01:24
+---
+- matchNid: -2147400193
+  matchText: HEART BLOCK
+  score: 8.366157
+- matchNid: -2147325162
+  matchText: C&P HEART
+  score: 7.529541
+- matchNid: -2147400414
+  matchText: IRREGULAR HEART RATE
+  score: 6.6929255
+- matchNid: -2147400233
+  matchText: CONGESTIVE HEART FAILURE
+  score: 6.6929255
+- matchNid: -2147400462
+  matchText: CONDUCTION DISORDER OF HEART
+  score: 6.6929255
+- matchNid: -2147376854
+  matchText: HEART RATE PER MONITOR
+  score: 6.6929255
+- matchNid: -2147391828
+  matchText: FETAL HEART TONES
+  score: 6.6929255
+- matchNid: -2147431815
+  matchText: BRACELET,MEDICAL ALERT HEART DISEASE
+  score: 6.2746177
+- matchNid: -2147315798
+  matchText: IN640 INVESTIGATIONAL CONGESTIVE HEART FAILURE
+  score: 5.85631

@@ -26,10 +26,10 @@ module TaxonomyRest
   include TaxonomyRestActions
   include CommonActionSyms
   extend self
-  TAXONOMY_PATH = $PROPS['ENDPOINT.isaac_root'] + "rest/1/taxonomy/"
-  VERSION_TAXONOMY_PATH = TAXONOMY_PATH + "version"
+  TAXONOMY_PATH = $PROPS['ENDPOINT.isaac_root'] + 'rest/1/taxonomy/'
+  VERSION_TAXONOMY_PATH = TAXONOMY_PATH + 'version'
   ISAAC_UUID_PARAM = :id
-  ISAAC_ROOT_ID = "cc0b2455-f546-48fa-90e8-e214cc8478d6"
+  ISAAC_ROOT_ID = 'cc0b2455-f546-48fa-90e8-e214cc8478d6'
   VERSION_TAXONOMY_STARTING_PARAMS = {expand: 'chronology,parents', childDepth: 2, parentHeight: 2}
 
   ACTION_CONSTANTS = {
@@ -70,7 +70,7 @@ module TaxonomyRest
   end
 
   def main_fetch(**hash)
-    get_isaac_concept(uuid: hash[:params]["id"], additional_req_params: hash[:params])
+    get_isaac_concept(uuid: hash[:params]['id'], additional_req_params: hash[:params])
   end
 
 end

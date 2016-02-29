@@ -25,7 +25,7 @@ class TaxonomyRestTests < Test::Unit::TestCase
       assert(!@rest_concept_version.nil? , "isaac_root.yml is not properly converted from json to a RestConceptVersion!")
       assert(@rest_concept_version.class.eql?(Gov::Vha::Isaac::Rest::Api1::Data::Concept::RestConceptVersion) , "isaac_root.yml is not properly converted to a RestConceptVersion!")
     rescue => ex
-      fail("There may be a mismatch betweeen the generated isaac-rest.rb file and isaac_root.yml: " + ex.to_s)
+      fail("There may be a mismatch between the generated isaac-rest.rb file and isaac_root.yml: #{ex.to_s}")
     end
   end
 

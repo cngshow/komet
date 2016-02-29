@@ -95,7 +95,8 @@ module CommonRestBase
     #see https://github.com/stoicflame/enunciate/
     def enunciate_json(json)
       clazz = get_rest_class
-      if clazz.eql?(JSON)
+
+      if (clazz.eql?(JSON) || json.class.eql?(CommonRest::UnexpectedResponse))
         return json
       end
       r_val = nil
