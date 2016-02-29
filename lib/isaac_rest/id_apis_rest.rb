@@ -40,8 +40,8 @@ module IdAPIsRest
   #NOTE!!  The use of JSON as a class is a marker only.  It means, just return the straight JSON.  The JSON will be parsed
   # so expect an Array, a Hash, a String, or a FixNum!!!
   ACTION_CONSTANTS = {
-      ACTION_TYPES => {PATH_SYM => TYPES_PATH, STARTING_PARAMS_SYM => TYPES_STARTING_PARAMS, CLAZZ_SYM => JSON},
-      ACTION_TRANSLATE => {PATH_SYM => TYPES_TRANSLATE_PATH, STARTING_PARAMS_SYM => TYPES_TRANSLATE_STARTING_PARAMS, CLAZZ_SYM => JSON},
+      ACTION_TYPES => {PATH_SYM => TYPES_PATH, STARTING_PARAMS_SYM => TYPES_STARTING_PARAMS, CLAZZ_SYM => Gov::Vha::Isaac::Rest::Api1::Data::Enumerations::RestSupportedIdType},
+      ACTION_TRANSLATE => {PATH_SYM => TYPES_TRANSLATE_PATH, STARTING_PARAMS_SYM => TYPES_TRANSLATE_STARTING_PARAMS, CLAZZ_SYM => Gov::Vha::Isaac::Rest::Api1::Data::RestId},
  }
 
   class << self

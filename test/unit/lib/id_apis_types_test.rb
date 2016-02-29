@@ -1,7 +1,7 @@
 require 'test/unit'
 require './config/initializers/01_ets_init'
 require './lib/isaac_rest/id_apis_rest'
-#require './lib/tasks/rest_fixtures.rake'
+#load './lib/tasks/rest_fixtures.rake'
 class IdApisTypes < Test::Unit::TestCase
   include ETSUtilities
   include IdAPIsRest
@@ -12,15 +12,14 @@ class IdApisTypes < Test::Unit::TestCase
   # to set up fixture information.
   def setup
     #build our object from our yaml fixture
-    @rest_id_types = YAML.load_file(FILES[Fixtures::ID_API_TYPES])
+    json = YAML.load_file(FILES[Fixtures::ID_API_TYPES])
+    @rest_id_types = IdAPIs.new(uuid: TEST_UUID, params: nil, action: ACTION_TYPES, action_constants: ACTION_CONSTANTS).get_rest_class.send(:from_json, json.first)
+
   end
 
   def test_build_rest_id_types
     begin
-      expected = ["uuid","nid","conceptSequence","sememeSequence","sctid","vuid"]
-      assert((expected - @rest_id_types).length == 0,"Rest ID type mismatch!") #no point in this until the update.  We have no types so no dependence on enunciate.
-      # assert(!@rest_id_types.nil? , "The id was not properly converted from json to JSON!")
-      # assert(@rest_id_types.class.eql?(Array) , "The id was not properly converted to a JSON object!")
+      assert(@rest_id_types.class.eql? Gov::Vha::Isaac::Rest::Api1::Data::Enumerations::RestSupportedIdType)
     rescue => ex
       fail(FAIL_MESSAGE + ex.to_s)
     end

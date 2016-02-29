@@ -12,14 +12,13 @@ class IdApisTranslate < Test::Unit::TestCase
   # to set up fixture information.
   def setup
     #build our object from our yaml fixture
-    @rest_id_translate = YAML.load_file(FILES[Fixtures::ID_API_TRANSLATE])
+    json = YAML.load_file(FILES[Fixtures::ID_API_TRANSLATE])
+    @rest_id_translate = IdAPIs.new(uuid: TEST_UUID, params: nil, action: ACTION_TRANSLATE, action_constants: ACTION_CONSTANTS).get_rest_class.send(:from_json, json)
   end
 
   def test_build_rest_id_translate
     begin
-      assert(true) #no point in this until the update.  We have no types so no dependence on enunciate.
-        # assert(!@rest_id_types.nil? , "The id was not properly converted from json to JSON!")
-        # assert(@rest_id_types.class.eql?(Array) , "The id was not properly converted to a JSON object!")
+      assert(@rest_id_translate.class.eql? Gov::Vha::Isaac::Rest::Api1::Data::RestId )
     rescue => ex
       fail(FAIL_MESSAGE + ex.to_s)
     end

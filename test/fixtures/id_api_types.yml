@@ -1,8 +1,20 @@
-#Fixture created on 2016-02-26 14:17:42
+#Fixture created on 2016-02-29 13:34:16
 ---
-- uuid
-- nid
-- conceptSequence
-- sememeSequence
-- sctid
-- vuid
+- "@c": ".RestSupportedIdType"
+  name: uuid
+  enumId: 0
+- "@c": ".RestSupportedIdType"
+  name: nid
+  enumId: 1
+- "@c": ".RestSupportedIdType"
+  name: conceptSequence
+  enumId: 2
+- "@c": ".RestSupportedIdType"
+  name: sememeSequence
+  enumId: 3
+- "@c": ".RestSupportedIdType"
+  name: sctid
+  enumId: 4
+- "@c": ".RestSupportedIdType"
+  name: vuid
+  enumId: 5
