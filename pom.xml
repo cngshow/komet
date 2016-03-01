@@ -1,100 +1,197 @@
 <?xml version="1.0"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0                       http://maven.apache.org/xsd/maven-4.0.0.xsd">
-  <!-- mvn deploy -DaltDeploymentRepository=vadev::default::http://vadev.mantech.com:8081/nexus/content/repositories/ets_tooling2/ -->
-  <modelVersion>4.0.0</modelVersion>
-  <groupId>gov.vha.rails.ets_tooling</groupId>
-  <artifactId>ets_tooling</artifactId>
-  <version>1.2</version>
-  <packaging>pom</packaging>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<groupId>gov.vha.isaac.ochre</groupId>
+		<artifactId>isaac-parent</artifactId>
+		<version>3.01-SNAPSHOT</version>
+	</parent>
 
-  <scm>
-    <url>https://github.com/VA-CTT/ets_tooling.git</url>
-  </scm>
+	<groupId>gov.vha.isaac.gui.rails</groupId>
+	<artifactId>ets_tooling</artifactId>
+	<version>1.3-SNAPSHOT</version>
+	<packaging>pom</packaging>
 
-  <licenses>
-    <license>
-      <name>The Apache Software License, Version 2.0</name>
-      <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
-      <distribution>repo</distribution>
-      <comments>Copyright Notice
-        This is a work of the U.S. Government and is not subject to copyright
-        protection in the United States. Foreign copyrights may apply.
-      </comments>
-    </license>
-  </licenses>
-  <organization>
-    <name>U.S. Department of Veterans Affairs</name>
-    <url>www.va.gov</url>
-  </organization>
+	<name>ISAAC Rails ETS Tooling</name>
 
-  <dependencies>
-    <dependency>
-      <groupId>org.jruby</groupId>
-      <artifactId>jruby-complete</artifactId>
-      <version>9.0.4.0</version>
-    </dependency>
-  </dependencies>
-  <properties>
-    <j.version>9.0.4.0</j.version>
-    <!--This is how I could create a ${j.version}-->
-  </properties>
-  <build>
-    <plugins>
-      <plugin>
-        <groupId>org.codehaus.mojo</groupId>
-        <artifactId>exec-maven-plugin</artifactId>
-        <version>1.2</version>
-        <configuration>
-          <executable>java</executable>
-          <workingDirectory>${project.build.directory}</workingDirectory>
-          <environmentVariables>
-            <GEM_HOME>${env.GEM_HOME}</GEM_HOME>
-          </environmentVariables>
-        </configuration>
-        <executions>
-          <execution>
-            <id>ets_tooling_build_war</id>
-            <phase>compile</phase>
-            <goals><goal>exec</goal></goals>
-            <configuration>
-              <arguments>
-                <argument>-jar</argument>
-                <argument>${env.JRUBY_JAR}</argument>
-                <argument>-S</argument>
-                <argument>bundle</argument>
-                <argument>exec</argument>
-                <argument>rake</argument>
-                <argument>devops:build_war</argument>
-              </arguments>
-            </configuration>
-          </execution>
-        </executions>
-      </plugin>
+	<description>
+		This project is the Ruby on Rails web GUI for ISAAC 
+	</description>
 
-      <plugin>
-        <groupId>org.codehaus.mojo</groupId>
-        <artifactId>build-helper-maven-plugin</artifactId>
-        <version>1.10</version>
-        <executions>
-          <execution>
-            <id>attach-artifacts</id>
-            <phase>package</phase>
-            <goals>
-              <goal>attach-artifact</goal>
-            </goals>
-            <configuration>
-              <artifacts>
-                <artifact>
-                  <file>ets_tooling.war</file>
-                  <type>war</type>
-                  <!--<classifier>optional</classifier>-->
-                </artifact>
-              </artifacts>
-            </configuration>
-          </execution>
-        </executions>
-      </plugin>
+	<properties>
+		<ets_common.version>1.0-SNAPSHOT</ets_common.version>
+		<!-- railsMode is automatically set to 'test' or 'production' - 'test' if the version number ends with '-SNAPSHOT'
+		or 'production' otherwise.  See regexp below-->
+	</properties>
 
-    </plugins>
-  </build>
+	<scm>
+		<url>https://github.com/VA-CTT/ets_tooling.git</url>
+	</scm>
+
+	<dependencies>
+		<dependency>
+			<groupId>org.jruby</groupId>
+			<artifactId>jruby-complete</artifactId>
+			<version>9.0.4.0</version>
+		</dependency>
+		<dependency>
+			<groupId>rubygems</groupId>
+			<artifactId>rake</artifactId>
+			<version>10.4.2</version>
+			<type>gem</type>
+		</dependency>
+		<dependency>
+			<groupId>rubygems</groupId>
+			<artifactId>bundler</artifactId>
+			<version>1.11.2</version>
+			<type>gem</type>
+		</dependency>
+		<dependency>
+			<groupId>gov.vha.isaac.gui.rails</groupId>
+			<artifactId>ets_common</artifactId>
+			<version>${ets_common.version}</version>
+			<type>zip</type>
+			<optional>true</optional> <!-- Not needed at runtime / transitively -->
+		</dependency>
+	</dependencies>
+
+	<build>
+		<plugins>
+
+			<!-- Extract the ets_common code into the correct place here, overwriting any existing version -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-dependency-plugin</artifactId>
+				<executions>
+					<execution>
+						<id>extract-ets_common</id>
+						<phase>initialize</phase>
+						<goals>
+							<goal>unpack-dependencies</goal>
+						</goals>
+						<configuration>
+							<includeArtifactIds>ets_common</includeArtifactIds>
+							<outputDirectory>${basedir}/lib/</outputDirectory>
+							<overWriteReleases>true</overWriteReleases>
+							<overWriteSnapshots>true</overWriteSnapshots>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+
+			<plugin>
+				<groupId>de.saumya.mojo</groupId>
+				<artifactId>jruby9-exec-maven-plugin</artifactId>
+				<version>0.2.2</version>
+				<executions>
+					<!--execution>
+						<id>list gems</id>
+						<phase>compile</phase>
+						<goals>
+							<goal>exec</goal>
+						</goals>
+						<configuration>
+							<jrubyVerbose>true</jrubyVerbose>
+							<command>gem</command>
+							<args>list</args>
+						</configuration>
+					</execution-->
+					<execution>
+						<id>bundle install</id>
+						<phase>compile</phase>
+						<goals>
+							<goal>exec</goal>
+						</goals>
+						<configuration>
+							<jrubyVerbose>true</jrubyVerbose>
+							<command>bundle</command>
+							<args>install</args>
+						</configuration>
+					</execution>
+					<execution>
+						<id>run tests</id>
+						<phase>compile</phase>
+						<goals>
+							<goal>exec</goal>
+						</goals>
+						<configuration>
+							<jrubyVerbose>true</jrubyVerbose>
+							<command>rake</command>
+							<args>test</args>
+						</configuration>
+					</execution>
+					<!-- Build two instances of the war for now - one with a relative path of _a, one with _b, so we can deploy 
+					twice on the same server -->
+					<execution>
+						<id>build war a</id>
+						<phase>compile</phase>
+						<goals>
+							<goal>exec</goal>
+						</goals>
+						<configuration>
+							<jrubyVerbose>true</jrubyVerbose>
+							<execArgs>RAILS_ENV=${railsMode} RAILS_RELATIVE_URL_ROOT=ets_tooling_a</execArgs>
+							<command>rake</command>
+							<args>devops:build_war</args>
+						</configuration>
+					</execution>
+					<execution>
+						<id>build war b</id>
+						<phase>compile</phase>
+						<goals>
+							<goal>exec</goal>
+						</goals>
+						<configuration>
+							<jrubyVerbose>true</jrubyVerbose>
+							<execArgs>RAILS_ENV=${railsMode} RAILS_RELATIVE_URL_ROOT=ets_tooling_b</execArgs>
+							<command>rake</command>
+							<args>devops:build_war</args>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>build-helper-maven-plugin</artifactId>
+				<executions>
+					<execution>
+						<id>regex-property</id>
+						<phase>initialize</phase>
+						<goals>
+							<goal>regex-property</goal>
+						</goals>
+						<configuration>
+							<name>railsMode</name>
+							<value>test</value>
+							<regex>.*-SNAPSHOT</regex>
+							<replacement>production</replacement>
+							<failIfNoMatch>false</failIfNoMatch>
+						</configuration>
+					</execution>
+					<execution>
+						<id>attach-artifacts</id>
+						<phase>package</phase>
+						<goals>
+							<goal>attach-artifact</goal>
+						</goals>
+						<configuration>
+							<artifacts>
+								<artifact>
+									<file>${project.build.directory}/ets_tooling_a.war</file>
+									<classifier>a</classifier>
+									<type>war</type>
+								</artifact>
+								<artifact>
+									<file>${project.build.directory}/ets_tooling_b.war</file>
+									<classifier>b</classifier>
+									<type>war</type>
+								</artifact>
+							</artifacts>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+		</plugins>
+	</build>
 </project>

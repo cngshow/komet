@@ -1,5 +1,6 @@
 # Disable Rake-environment-task framework detection by uncommenting/setting to false
 # Warbler.framework_detection = false
+require './lib/ets_common/util/helpers'
 
 # Warbler web application assembly configuration file
 Warbler::Config.new do |config|
@@ -79,7 +80,7 @@ Warbler::Config.new do |config|
 
   # Name of the archive (without the extension). Defaults to the basename
   # of the project directory
-  config.jar_name = "ets_tooling"#.#{ETS_VERSION.first}.#{ETS_VERSION[1]}.#{ETS_VERSION.last}"
+  config.jar_name = "#{ETSUtilities::MAVEN_TARGET_DIRECTORY}/#{ENV['RAILS_RELATIVE_URL_ROOT']}"#.#{ETS_VERSION.first}.#{ETS_VERSION[1]}.#{ETS_VERSION.last}"
 
   # File extension for the archive. Defaults to either 'rm etjar' or 'war'.
   # config.jar_extension = "jar"

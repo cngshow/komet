@@ -78,6 +78,7 @@ end
 load('./lib/isaac_rest/search_apis_rest.rb')
 
 heart = SearchApis::get_search_api(action: SearchApiActions::ACTION_DESCRIPTIONS,  additional_req_params: {descriptionType: 'fsn', query: 'heart'} )
+snomed = SearchApis::get_search_api(action: SearchApiActions::ACTION_DESCRIPTIONS,  additional_req_params: {descriptionType: 'fsn', query: 'snomed'} )
 failure = SearchApis::get_search_api(action: SearchApiActions::ACTION_DESCRIPTIONS,  additional_req_params: {descriptionType: 'fsn', query: 'failure', limit: 20} )
 prefix = SearchApis::get_search_api(action: SearchApiActions::ACTION_PREFIX,  additional_req_params: {query: 'failure', limit: 20} )
 
