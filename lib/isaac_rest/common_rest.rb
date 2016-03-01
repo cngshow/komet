@@ -223,4 +223,9 @@ CommonRestBase::RestBase.invoke(url: "rest/1/concept/version/5")
 CommonRestBase::RestBase.invoke(url: "rest/1/concept/version/67?expand=children&stated=true")
 CommonRestBase::RestBase.invoke(url: "rest/1/not/freacking/there") #this obviously fails
 CommonRestBase::RestBase.invoke(url: "rest/1/taxonomy/version?id=cc0b2455-f546-48fa-90e8-e214cc8478d6&expand=chronology")
+
+CommonRestBase::RestBase.invoke(url: "rest/1/search/descriptions?descriptionType=fsn&query=heart")
+CommonRestBase::RestBase.invoke(url: "rest/1/search/descriptions?descriptionType=fsn&query=failure&limit=20")
+CommonRestBase::RestBase.invoke(url: "rest/1/search/prefix?query=failure&limit=20")
+
 =end
