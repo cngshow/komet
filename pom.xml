@@ -109,6 +109,18 @@
 							<args>install</args>
 						</configuration>
 					</execution>
+					<execution>
+						<id>run tests</id>
+						<phase>compile</phase>
+						<goals>
+							<goal>exec</goal>
+						</goals>
+						<configuration>
+							<jrubyVerbose>true</jrubyVerbose>
+							<command>rake</command>
+							<args>test</args>
+						</configuration>
+					</execution>
 					<!-- Build two instances of the war for now - one with a relative path of _a, one with _b, so we can deploy 
 					twice on the same server -->
 					<execution>
