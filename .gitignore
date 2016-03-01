@@ -14,3 +14,7 @@
 /public/assets/*
 setup.bat
 ets_tooling.war
+/target/
+/.settings/
+/lib/ets_common/
+/.project
