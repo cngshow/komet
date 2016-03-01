@@ -41,6 +41,7 @@ Copyright Notice
 //= require util/common
 //= require util/channels
 //= require util/svg_helper.js
+// require util/ajax_cache.js
 // Can also do this as long as we have no load order dependencies in the util directory (Currently we do not)
 // require_tree ./util
 //= require_tree .

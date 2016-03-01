@@ -1,46 +1,65 @@
 var TaxonomyModule = (function () {
 
     function buildTaxonomyTree(tree_id, parent_search, starting_concept_id, select_item) {
+        var getParameters =  function (node) {
+            var nodeToLoad;
+            var params = null;
 
+            if (node.id !== "#") {
+                nodeToLoad = node.original.concept_id;
+            } else {
+                nodeToLoad = node.id;
+            }
+
+            if (!(((starting_concept_id === undefined) || (starting_concept_id === null)))) {
+                nodeToLoad = starting_concept_id;
+            }
+
+            starting_concept_id = null;
+
+            if (node.id === "#") {
+                params =  {
+                    'concept_id': nodeToLoad,
+                    'parent_search': parent_search,
+                    'parent_reversed': parent_search
+                };
+            } else {
+                params = {
+                    'concept_id': nodeToLoad,
+                    'parent_search': node.original.parent_search,
+                    'parent_reversed': node.original.parent_reversed
+                };
+            }
+
+            return params;
+        };
         //set ui to hour glass
         Common.cursor_wait();
 
-        if (parent_search === undefined || parent_search === null){
+        if (parent_search === undefined || parent_search === null) {
             parent_search = false;
         }
 
-        if (select_item === undefined || select_item === null){
+        if (select_item === undefined || select_item === null) {
             select_item = false;
         }
+
 
         var settings = {
             "core": {
                 "animation": 0,
                 "check_callback": true,
                 "themes": {"stripes": true},
+                //'data': function(node,callback) {
+                //    p = getParameters(node);
+                //    AjaxCache.fetch(gon.routes.taxonomy_load_tree_data_path, p, function(data){
+                //                     callback.call(this, data);
+                //                });
+                //}
                 'data': {
                     'url': gon.routes.taxonomy_load_tree_data_path,
                     'data': function (node) {
-
-                        var nodeToLoad;
-
-                        if (node.id !== "#"){
-                            nodeToLoad = node.original.concept_id;
-                        } else {
-                            nodeToLoad = node.id;
-                        }
-
-                        if (!(((starting_concept_id === undefined) || (starting_concept_id === null)))){
-                            nodeToLoad = starting_concept_id;
-                        }
-
-                        starting_concept_id = null;
-
-                        if (node.id === "#"){
-                            return {'concept_id': nodeToLoad, 'parent_search': parent_search, 'parent_reversed': parent_search};
-                        } else {
-                            return  {'concept_id': nodeToLoad, 'parent_search': node.original.parent_search, 'parent_reversed': node.original.parent_reversed};
-                        }
+                        return getParameters(node);
                     }
                 }
             }
@@ -53,7 +72,7 @@ var TaxonomyModule = (function () {
         TaxonomyModule[tree_id + ''] = tree;
 
         // set the tree to select the first node when it finishes loading
-        TaxonomyModule[tree_id + ''].bind('ready.jstree', function(event, data) {
+        TaxonomyModule[tree_id + ''].bind('ready.jstree', function (event, data) {
 
             if (select_item) {
                 data.instance.select_node('ul > li:first');
@@ -67,12 +86,12 @@ var TaxonomyModule = (function () {
     function onAfterOpen(node, selected) {
         //publish what we expect our observers to need in a way that allows them not to understand
         //our tree and our tree's dom.
-        $.publish(EtsChannels.Taxonomy.taxonomyTreeNodeOpenedChannel,selected.node.original.concept_id);
+        $.publish(EtsChannels.Taxonomy.taxonomyTreeNodeOpenedChannel, selected.node.original.concept_id);
 
     }
 
     function onAfterClose(node, selected) {
-        $.publish(EtsChannels.Taxonomy.taxonomyTreeNodeClosedChannel,selected.node.original.concept_id);
+        $.publish(EtsChannels.Taxonomy.taxonomyTreeNodeClosedChannel, selected.node.original.concept_id);
     }
 
     function onChanged(event, selectedObject) {
@@ -110,7 +129,7 @@ var TaxonomyModule = (function () {
     }
 
     return {
-        initialize : init,
+        initialize: init,
         buildTaxonomyTree: buildTaxonomyTree
     };
 

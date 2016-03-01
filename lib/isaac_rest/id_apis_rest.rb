@@ -82,6 +82,7 @@ load('./lib/isaac_rest/id_apis_rest.rb')
 a = IdAPIsRest::get_id(action: IdAPIsRestActions::ACTION_TYPES)
 b = IdAPIsRest::get_id(action: IdAPIsRestActions::ACTION_TRANSLATE,uuid_or_id: IdAPIsRest::TEST_UUID)
 c = IdAPIsRest::get_id(action: IdAPIsRestActions::ACTION_TRANSLATE,uuid_or_id: IdAPIsRest::TEST_UUID,additional_req_params: {"outputType" => "nid"})
-d = IdAPIsRest::get_id(action: IdAPIsRestActions::ACTION_TRANSLATE,uuid_or_id: "bad_uuid",additional_req_params: {"outputType" => "nid"})#test type
+d = IdAPIsRest::get_id(action: IdAPIsRestActions::ACTION_TRANSLATE,uuid_or_id: "-2146638749",additional_req_params: {"outputType" => "uuid", "inputType" => "nid"})
+e = IdAPIsRest::get_id(action: IdAPIsRestActions::ACTION_TRANSLATE,uuid_or_id: "bad_uuid",additional_req_params: {"outputType" => "nid"})#test type
 =end
 
