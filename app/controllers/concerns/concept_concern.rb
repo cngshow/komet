@@ -8,6 +8,10 @@ module ConceptConcern
   def descriptions(uuid)
     ret = {uuid: uuid}
     descriptions = ConceptRest.get_concept(action: ConceptRestActions::ACTION_DESCRIPTIONS, uuid: uuid)
+    if descriptions.is_a? CommonRest::UnexpectedResponse
+      return [descriptions.body]
+    end
+
     ret[:descriptions] = []
 
     # iterate over the array of Gov::Vha::Isaac::Rest::Api1::Data::Sememe::RestSememeDescriptionVersion returned

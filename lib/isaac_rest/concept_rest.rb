@@ -67,6 +67,7 @@ module ConceptRest
     end
 
     def rest_call
+      url = get_url
       url_string = url.gsub('{id}', uuid)
       json = rest_fetch(url_string: url_string, params: get_params, raw_url: url)
       enunciate_json(json)

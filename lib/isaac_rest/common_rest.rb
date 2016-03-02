@@ -74,7 +74,7 @@ module CommonRestBase
       @action_constants = action_constants
     end
 
-    def url
+    def get_url
       action_constants.fetch(action).fetch(PATH_SYM)
     end
 

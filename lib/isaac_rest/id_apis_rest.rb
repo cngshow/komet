@@ -28,11 +28,11 @@ module IdAPIsRest
   include CommonActionSyms
   extend self
 
-  ID_APIS_PATH = $PROPS['ENDPOINT.isaac_root'] + "rest/1/id/"
-  TYPES_PATH = ID_APIS_PATH + "types"
-  TYPES_TRANSLATE_PATH = ID_APIS_PATH + "translate/{id}"
+  ID_APIS_PATH = $PROPS['ENDPOINT.isaac_root'] + 'rest/1/id/'
+  TYPES_PATH = ID_APIS_PATH + 'types'
+  TYPES_TRANSLATE_PATH = ID_APIS_PATH + 'translate/{id}'
 
-  TEST_UUID = "406e872b-2e19-5f5e-a71d-e4e4b2c68fe5"
+  TEST_UUID = '406e872b-2e19-5f5e-a71d-e4e4b2c68fe5'
 
   TYPES_STARTING_PARAMS = {}
   TYPES_TRANSLATE_STARTING_PARAMS = {}
@@ -55,13 +55,14 @@ module IdAPIsRest
     attr_accessor :uuid
 
     def initialize(uuid:, params:, action:, action_constants:)
-      @uuid = uuid
+      @uuid = uuid.to_s unless uuid.nil?
       uuid_check uuid: uuid unless action.eql?(IdAPIsRestActions::ACTION_TYPES)
       super(params: params, action: action, action_constants: action_constants)
     end
 
     def rest_call
       p = get_params
+      url = get_url
       url_string = uuid.nil? ? url : url.gsub('{id}', uuid) #types action doesn't need a uuid
       json = rest_fetch(url_string: url_string, params: p, raw_url: url)
       enunciate_json(json)

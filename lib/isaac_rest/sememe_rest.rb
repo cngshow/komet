@@ -74,6 +74,7 @@ module SememeRest
     def rest_call
       r_val = nil
       p = get_params
+      url = get_url
       url_string = url.gsub('{id}', uuid)
       json = rest_fetch(url_string: url_string, params: p, raw_url: url)
       enunciate_json(json)

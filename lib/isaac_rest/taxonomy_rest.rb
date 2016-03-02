@@ -56,6 +56,7 @@ module TaxonomyRest
     def rest_call
       p = get_params
       p = {ISAAC_UUID_PARAM => uuid}.merge(p)#p should never be nil it should at least be {}... VERSION_TAXONOMY_STARTING_PARAMS
+      url = get_url
       json = rest_fetch(url_string: url, params: p, raw_url: url)
       enunciate_json(json)
     end

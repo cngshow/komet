@@ -17,12 +17,13 @@ Copyright Notice
  limitations under the License.
 =end
 require './lib/isaac_rest/search_apis_rest'
+require './lib/isaac_rest/id_apis_rest'
 
 ##
 # SearchController -
 # handles the taxonomy search functionality
 class SearchController < ApplicationController
-  include SearchApis
+  include SearchApis, IdAPIsRest, ConceptConcern
 
   ##
   # get_assemblage_suggestions - RESTful route for populating the taxonomy tree using an http :GET
@@ -34,7 +35,7 @@ class SearchController < ApplicationController
 
     search_term = params[:term]
 
-    $log.debug(search_term);
+    $log.debug(search_term)
 
     render json: @assemblage_suggestions_data
   end
@@ -69,12 +70,21 @@ class SearchController < ApplicationController
       additional_params[:descriptionType] =  description_type
     end
 
-    res = SearchApis.get_search_api(action: ACTION_DESCRIPTIONS, additional_req_params: additional_params)
+    results = SearchApis.get_search_api(action: ACTION_DESCRIPTIONS, additional_req_params: additional_params)
+    search_data = []
 
+    results.each do |r|
+      match_nid = r.matchNid
+      uuid = IdAPIsRest::get_id(action: IdAPIsRestActions::ACTION_TRANSLATE, uuid_or_id: match_nid, additional_req_params: {'outputType' => 'uuid', 'inputType' => 'nid'}).value
 
-    search_results[:total_rows] = @search_data.length.to_s
-    search_results[:page_data] = @search_data
+      # get the concept descriptions based on the translated uuid
+      # descs = descriptions(uuid)
 
+      search_data << {id: uuid, concept_description: r.matchText, matching_terms: [r.score.to_s]}
+    end
+
+    search_results[:total_rows] = results.length.to_s
+    search_results[:page_data] = search_data
     render json: search_results
   end
 

@@ -74,7 +74,7 @@ module SystemApis
     end
 
     def rest_call
-      json = rest_fetch(url_string: url, params: get_params, raw_url: url)
+      json = rest_fetch(url_string: get_url, params: get_params, raw_url: get_url)
       enunciate_json(json)
     end
   end
