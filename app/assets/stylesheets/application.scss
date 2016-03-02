@@ -46,6 +46,10 @@ Copyright Notice
   float: right;
   display: inline-block;
 }
+.ets-accordion-panel {
+  overflow: visible !important;
+}
+
 
 // Taxonomy Common Styles
 .concept_detail_table{
@@ -149,4 +153,13 @@ Copyright Notice
 .concept-expression-footnote{
   font-size: xx-small;
   background-color: rgb(245, 245, 245);
+}
+
+// Search Styles
+.ets-search-combo-field{
+  font-size:100%;
+}
+.ets-search-selected-result{
+  background-color: green;
+  border: solid green 1px;
 }

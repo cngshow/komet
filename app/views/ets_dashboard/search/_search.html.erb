@@ -1,54 +1,121 @@
-<ul id = "myTab" class = "nav nav-tabs">
-  <li class = "active">
-    <a href = "#home" data-toggle = "tab">
-      Tutorial Point Home - Bootstrap Tabs!
-    </a>
-  </li>
+<%= form_tag('/search', method: 'get') do %>
 
-  <li><a href = "#ios" data-toggle = "tab">iOS</a></li>
+    <div>
+      <%= label_tag :search_text, 'Search Text:' %>
+      <%= text_field_tag (:taxonomy_search_text) %><br />
+    </div>
 
-  <li class = "dropdown">
-    <a href = "#" id = "myTabDrop1" class = "dropdown-toggle" data-toggle = "dropdown">
-      Java
-      <b class = "caret"></b>
-    </a>
+    <div id="search_options_pane">
 
-    <ul class = "dropdown-menu" role = "menu" aria-labelledby = "myTabDrop1">
-      <li><a href = "#jmeter" tabindex = "-1" data-toggle = "tab">jmeter</a></li>
-      <li><a href = "#ejb" tabindex = "-1" data-toggle = "tab">ejb</a></li>
-    </ul>
+      <h3>Advanced Options</h3>
 
-  </li>
+      <div class="ets-accordion-panel">
 
-</ul>
+        <div>
+          <%= label_tag :taxonomy_search_type, 'Search In:' %>
+          <%= select_tag :taxonomy_search_type, options_for_select([['Descriptions', 1], ['Sememes', 2]], 1) %><br />
+        </div>
 
-<div id = "myTabContent" class = "tab-content">
+        <div id="taxonomy_search_option_description_type_fields">
+          <%= label_tag :taxonomy_search_description_type, 'Description Type:' %>
+          <%= select_tag :taxonomy_search_description_type, options_for_select([['Fully Specified Name', 'fsn'], ['Synonym', 'synonym'], ['Definition', 'definition']], 'fsn') %><br />
+        </div>
 
-  <div class = "tab-pane fade in active" id = "home">
-    <p>Tutorials Point is a place for beginners in all technical areas.
-      This website covers most of the latest technologies and explains each of
-      the technology with simple examples. You also have a
-      <b>tryit</b> editor, wherein you can edit your code and
-      try out different possibilities of the examples.</p>
-  </div>
+        <%= label_tag :taxonomy_search_assemblage, 'Search Assemblage:' %>
+        <div id="taxonomy_search_assemblage_fields" class="input-group" style="">
 
-  <div class = "tab-pane fade" id = "ios">
-    <p>iOS is a mobile operating system developed and distributed
-      by Apple Inc. Originally released in 2007 for the iPhone, iPod Touch,
-      and Apple TV. iOS is derived from OS X, with which it shares the
-      Darwin foundation. iOS is Apple's mobile version of the OS X
-      operating system used on Apple computers.</p>
-  </div>
+          <input id="taxonomy_search_assemblage" class="form-control" />
 
-  <div class = "tab-pane fade" id = "jmeter">
-    <p>jMeter is an Open Source testing software. It is 100% pure Java
-      application for load and performance testing.</p>
-  </div>
+          <div class="input-group-btn ets-search-combo-field">
 
-  <div class = "tab-pane fade" id = "ejb">
-    <p>Enterprise Java Beans (EJB) is a development architecture for
-      building highly scalable and robust enterprise level applications to be
-      deployed on J2EE compliant Application Server such as JBOSS, Web Logic etc.</p>
-  </div>
+            <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+              <span class="caret"></span>
+            </button>
 
-</div>
+            <ul id="taxonomy_search_assemblage_recents" class="dropdown-menu dropdown-menu-right">
+            </ul>
+
+          </div><!-- /btn-group -->
+
+        </div><!-- /input-group -->
+
+      </div>
+
+    </div>
+
+    <button type="button" class="btn btn-primary" onclick="getSearchResults()">Search</button>
+<% end %>
+
+<div id="taxonomy_search_results"></div>
+
+<script>
+  $(document).ready(function () {
+
+    $("#search_options_pane").accordion({
+      collapsible: true,
+      active: true,
+      heightStyle: "content",
+      animate: false
+    });
+
+    $("#taxonomy_search_assemblage").autocomplete({
+      source: gon.routes.search_get_assemblage_suggestions_path,
+      minLength: 3
+    });
+
+    loadAssemblageRecents();
+
+  });
+
+  function getSearchResults() {
+
+    var searchParams = "?taxonomy_search_text=" + $("#taxonomy_search_text").val() + "&taxonomy_search_description_type=" + $("#taxonomy_search_description_type").val();
+
+    $("#taxonomy_search_results").bs_grid({
+      ajaxFetchDataURL: gon.routes.search_get_search_results_path + searchParams,
+      rowSelectionMode: "single",
+      row_primary_key: "id",
+      //rowsPerPage: 25,
+      //maxRowsPerPage: 100,
+      columns: [
+        {field: "id", visible: "yes", header: 'UUID'},
+        {field: "concept_description", visible: "yes", header: "Concept Description"},
+        {field: "matching_terms", visible: "yes", header: "Matching Terms", sortable: "no"}
+      ],
+      sorting: [
+        {sortingName: "UUID", field: "UUID", order: "none"},
+        {sortingName: "Concept Description", field: "concept_description", order: "ascending"}
+      ],
+      // selectedTrClass: "ets-search-selected-result",
+      // selectedRowsClass: "ets-search-selected-result",
+      useFilters: false,
+      onRowClick: function(event, data) {
+        // your code here e.g.
+        console.log('Row with ID ' + data.row_id + ' ' + data.row_status + '.');
+      }
+    });
+  }
+
+  function loadAssemblageRecents() {
+
+    $.get(gon.routes.search_get_assemblage_recents_path, function (data) {
+
+      var options = "";
+
+      $.each(data, function (index, value) {
+
+        var valueText = $("<li>").text(value).html();
+        options += "<li><a href=\"#\" onclick=\"useAssemblageRecent('" + valueText + "')\">" + valueText + "</a></li>";
+      });
+
+      $("#taxonomy_search_assemblage_recents").html(options);
+
+    });
+  }
+
+  function useAssemblageRecent(value){
+    $("#taxonomy_search_assemblage").val(value);
+
+  }
+</script>
+
