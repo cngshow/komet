@@ -19,7 +19,7 @@
 		This project is the Ruby on Rails web GUI for ISAAC 
 	</description>
 
-	<testbrokenbuild properties>
+	<properties>
 		<ets_common.version>1.0-SNAPSHOT</ets_common.version>
 		<!-- railsMode is automatically set to 'test' or 'production' - 'test' if the version number ends with '-SNAPSHOT'
 		or 'production' otherwise.  See ant execution below-->
