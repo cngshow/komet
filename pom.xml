@@ -22,7 +22,7 @@
 	<properties>
 		<ets_common.version>1.0-SNAPSHOT</ets_common.version>
 		<!-- railsMode is automatically set to 'test' or 'production' - 'test' if the version number ends with '-SNAPSHOT'
-		or 'production' otherwise.  See regexp below-->
+		or 'production' otherwise.  See ant execution below-->
 	</properties>
 
 	<scm>
@@ -85,18 +85,6 @@
 				<artifactId>jruby9-exec-maven-plugin</artifactId>
 				<version>0.2.2</version>
 				<executions>
-					<!--execution>
-						<id>list gems</id>
-						<phase>compile</phase>
-						<goals>
-							<goal>exec</goal>
-						</goals>
-						<configuration>
-							<jrubyVerbose>true</jrubyVerbose>
-							<command>gem</command>
-							<args>list</args>
-						</configuration>
-					</execution-->
 					<execution>
 						<id>bundle install</id>
 						<phase>compile</phase>
@@ -109,6 +97,7 @@
 							<args>install</args>
 						</configuration>
 					</execution>
+					
 					<execution>
 						<id>run tests</id>
 						<phase>compile</phase>
@@ -121,8 +110,8 @@
 							<args>test</args>
 						</configuration>
 					</execution>
-					<!-- Build two instances of the war for now - one with a relative path of _a, one with _b, so we can deploy 
-					twice on the same server -->
+					
+					<!-- Build two instances of the war for now - one with a relative path of _a, one with _b, so we can deploy twice on the same server -->
 					<execution>
 						<id>build war a</id>
 						<phase>compile</phase>
@@ -151,24 +140,35 @@
 					</execution>
 				</executions>
 			</plugin>
+
+			<!-- Set a variable for the rails runtime mode based on whether we are building SNAPSHOT or not -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-antrun-plugin</artifactId>
+				<executions>
+					<execution>
+						<id>config</id>
+						<phase>initialize</phase>
+						<goals>
+							<goal>run</goal>
+						</goals>
+						<configuration>
+							<exportAntProperties>true</exportAntProperties>
+							<target name="set-build-type">
+								<condition property="railsMode" value="test" else="production">
+									<matches string="${project.version}" pattern=".*-SNAPSHOT"></matches>
+								</condition>
+							</target>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+			
+			<!-- Attach both wars -->
 			<plugin>
 				<groupId>org.codehaus.mojo</groupId>
 				<artifactId>build-helper-maven-plugin</artifactId>
 				<executions>
-					<execution>
-						<id>regex-property</id>
-						<phase>initialize</phase>
-						<goals>
-							<goal>regex-property</goal>
-						</goals>
-						<configuration>
-							<name>railsMode</name>
-							<value>test</value>
-							<regex>.*-SNAPSHOT</regex>
-							<replacement>production</replacement>
-							<failIfNoMatch>false</failIfNoMatch>
-						</configuration>
-					</execution>
 					<execution>
 						<id>attach-artifacts</id>
 						<phase>package</phase>
