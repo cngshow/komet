@@ -49,6 +49,11 @@ GEM
       autoprefixer-rails (>= 5.2.1)
       sass (>= 3.3.4)
     builder (3.2.2)
+    ci_reporter (2.0.0)
+      builder (>= 2.1.2)
+    ci_reporter_test_unit (1.0.0)
+      ci_reporter (~> 2.0)
+      test-unit (~> 2.5.5)
     coffee-rails (4.1.0)
       coffee-script (>= 2.2.0)
       railties (>= 4.0.0, < 5.0)
@@ -145,6 +150,7 @@ GEM
       actionpack (>= 3.0)
       activesupport (>= 3.0)
       sprockets (>= 2.8, < 4.0)
+    test-unit (2.5.5)
     therubyrhino (2.0.4)
       therubyrhino_jar (>= 1.7.3)
     therubyrhino_jar (1.7.6)
@@ -177,6 +183,7 @@ PLATFORMS
 DEPENDENCIES
   activerecord-jdbcsqlite3-adapter
   bootstrap-sass (~> 3.3.6)
+  ci_reporter_test_unit
   faraday (~> 0.9.2)
   gon
   jbuilder (~> 2.0)

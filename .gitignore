@@ -18,3 +18,4 @@ ets_tooling.war
 /.settings/
 /lib/ets_common/
 /.project
+/.idea

@@ -107,7 +107,7 @@
 						<configuration>
 							<jrubyVerbose>true</jrubyVerbose>
 							<command>rake</command>
-							<args>test</args>
+							<args>devops:isaac_rest_test</args>
 						</configuration>
 					</execution>
 					
