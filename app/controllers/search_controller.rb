@@ -17,13 +17,13 @@ Copyright Notice
  limitations under the License.
 =end
 require './lib/isaac_rest/search_apis_rest'
-require './lib/isaac_rest/id_apis_rest'
+require './lib/isaac_rest/sememe_rest'
 
 ##
 # SearchController -
 # handles the taxonomy search functionality
 class SearchController < ApplicationController
-  include SearchApis, IdAPIsRest, ConceptConcern
+  include SearchApis, SememeRest, ConceptConcern
 
   ##
   # get_assemblage_suggestions - RESTful route for populating the taxonomy tree using an http :GET
@@ -75,12 +75,8 @@ class SearchController < ApplicationController
 
     results.each do |r|
       match_nid = r.matchNid
-      uuid = IdAPIsRest::get_id(action: IdAPIsRestActions::ACTION_TRANSLATE, uuid_or_id: match_nid, additional_req_params: {'outputType' => 'uuid', 'inputType' => 'nid'}).value
-
-      # get the concept descriptions based on the translated uuid
-      # descs = descriptions(uuid)
-
-      search_data << {id: uuid, concept_description: r.matchText, matching_terms: [r.score.to_s]}
+      sememe_version = SememeRest::get_sememe(action: SememeRestActions::ACTION_VERSION, uuid_or_id: match_nid)
+      search_data << {id: match_nid, concept_description: r.matchText, matching_terms: [sememe_version.sememeVersion.state.to_s, r.score.to_s]}
     end
 
     search_results[:total_rows] = results.length.to_s

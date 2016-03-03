@@ -66,13 +66,12 @@ module SememeRest
     attr_accessor :uuid
 
     def initialize(uuid:, params:, action:, action_constants:)
-      @uuid = uuid
+      @uuid = uuid.to_s unless uuid.nil?
       uuid_check uuid: uuid
       super(params: params, action: action, action_constants: action_constants)
     end
 
     def rest_call
-      r_val = nil
       p = get_params
       url = get_url
       url_string = url.gsub('{id}', uuid)
