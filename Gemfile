@@ -42,7 +42,6 @@ gem 'tzinfo-data', platforms: [:mingw, :mswin, :x64_mingw, :jruby]
 gem 'bootstrap-sass', '~> 3.3.6'
 gem 'trinidad', require: nil
 gem 'yard'
-gem 'random-word'
 gem 'jquery-ui-rails'
 gem 'logging', '~> 2.0'
 gem 'gon'
