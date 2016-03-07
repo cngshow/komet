@@ -937,7 +937,14 @@ module Gov
                   if !_o['versions'].nil?
                     @versions = Array.new
                     _oa = _o['versions']
-                    _oa.each { |_item| @versions.push Gov::Vha::Isaac::Rest::Api1::Data::Sememe::RestSememeVersion.from_json(_item) }
+                    _oa.each { |_item|
+                      clazz_root = _item['@c'].reverse!.chop!.reverse! #remove beginning '.'
+                      clazz_package = "Gov::Vha::Isaac::Rest::Api1::Data::Sememe::"
+                      clazz = clazz_package + clazz_root
+                      clazz = clazz_package + clazz_root
+                      @versions.push Object.const_get(clazz).send(:from_json, _item)
+                      #@versions.push Gov::Vha::Isaac::Rest::Api1::Data::Sememe::RestSememeVersion.from_json(_item)
+                    }
                   end
                 end
 
