@@ -1,4 +1,4 @@
-#Fixture created on 2016-02-26 14:56:59
+#Fixture created on 2016-03-07 09:49:37
 ---
 - "@c": ".RestSememeDescriptionVersion"
   expandables:
@@ -6,20 +6,20 @@
     expandables:
       items:
       - name: versionsAll
-        url: rest/1/sememe/versions/1349/
+        url: rest/1/sememe/versions/2941235/
       - name: versionsLatestOnly
-        url: rest/1/sememe/version/1349/
-    sememeSequence: 1349
-    assemblageSequence: 65
-    referencedComponentNid: -2147483635
+        url: rest/1/sememe/version/2941235/
+    sememeSequence: 2941235
+    assemblageSequence: 63
+    referencedComponentNid: -2146638992
     identifiers:
       uuids:
-      - 91701359-a237-4a8d-82c8-9a7548e0621a
+      - 8cf0aaeb-518e-3ee2-8082-cde525305d11
     versions:
   sememeVersion:
-    stampSequence: 1
+    stampSequence: 60
     state: ACTIVE
-    time: 1454625196096
+    time: 1012453200000
     authorSequence: 5
     moduleSequence: 0
     pathSequence: 7
@@ -30,32 +30,32 @@
       expandables:
         items:
         - name: versionsAll
-          url: rest/1/sememe/versions/1348/
+          url: rest/1/sememe/versions/2941236/
         - name: versionsLatestOnly
-          url: rest/1/sememe/version/1348/
-      sememeSequence: 1348
-      assemblageSequence: 9
-      referencedComponentNid: -2147482064
+          url: rest/1/sememe/version/2941236/
+      sememeSequence: 2941236
+      assemblageSequence: 77
+      referencedComponentNid: -2144120539
       identifiers:
         uuids:
-        - 739ddb70-5c89-4fcb-9c2d-b5713a659671
+        - 03412d8e-de9e-5c35-b033-e15ec0e43d93
       versions:
     sememeVersion:
-      stampSequence: 1
+      stampSequence: 5
       state: ACTIVE
-      time: 1454625196096
+      time: 1012453200000
       authorSequence: 5
       moduleSequence: 0
       pathSequence: 7
     nestedSememes: []
     dataColumns:
-    - "@c": ".dataTypes.RestDynamicSememeNid"
+    - "@c": ".dataTypes.RestDynamicSememeString"
       columnNumber: 0
-      data: -2147483582
-  caseSignificanceConceptSequence: 64
+      data: '900000000000951010'
+  caseSignificanceConceptSequence: 111
   languageConceptSequence: 8
-  text: ISAAC root
-  descriptionTypeConceptSequence: 66
+  text: SNOMED CT Model Component
+  descriptionTypeConceptSequence: 12
   dialects: []
 - "@c": ".RestSememeDescriptionVersion"
   expandables:
@@ -63,20 +63,20 @@
     expandables:
       items:
       - name: versionsAll
-        url: rest/1/sememe/versions/1351/
+        url: rest/1/sememe/versions/2941237/
       - name: versionsLatestOnly
-        url: rest/1/sememe/version/1351/
-    sememeSequence: 1351
-    assemblageSequence: 65
-    referencedComponentNid: -2147483635
+        url: rest/1/sememe/version/2941237/
+    sememeSequence: 2941237
+    assemblageSequence: 63
+    referencedComponentNid: -2146638992
     identifiers:
       uuids:
-      - b3232b9f-9ce8-4365-96ea-c7b0c59de826
+      - 897ad324-0232-3735-b71f-de19434d9d32
     versions:
   sememeVersion:
-    stampSequence: 1
+    stampSequence: 60
     state: ACTIVE
-    time: 1454625196096
+    time: 1012453200000
     authorSequence: 5
     moduleSequence: 0
     pathSequence: 7
@@ -87,30 +87,30 @@
       expandables:
         items:
         - name: versionsAll
-          url: rest/1/sememe/versions/1350/
+          url: rest/1/sememe/versions/2941238/
         - name: versionsLatestOnly
-          url: rest/1/sememe/version/1350/
-      sememeSequence: 1350
-      assemblageSequence: 9
-      referencedComponentNid: -2147482062
+          url: rest/1/sememe/version/2941238/
+      sememeSequence: 2941238
+      assemblageSequence: 77
+      referencedComponentNid: -2144120537
       identifiers:
         uuids:
-        - 1f323333-a332-4ebb-9ea5-367382d1fc79
+        - 1237c987-2047-5524-b489-deb8794e5d96
       versions:
     sememeVersion:
-      stampSequence: 1
+      stampSequence: 5
       state: ACTIVE
-      time: 1454625196096
+      time: 1012453200000
       authorSequence: 5
       moduleSequence: 0
       pathSequence: 7
     nestedSememes: []
     dataColumns:
-    - "@c": ".dataTypes.RestDynamicSememeNid"
+    - "@c": ".dataTypes.RestDynamicSememeString"
       columnNumber: 0
-      data: -2147483582
-  caseSignificanceConceptSequence: 64
+      data: '900000000000952015'
+  caseSignificanceConceptSequence: 111
   languageConceptSequence: 8
-  text: ISAAC root (ISAAC)
+  text: SNOMED CT Model Component (metadata)
   descriptionTypeConceptSequence: 11
   dialects: []

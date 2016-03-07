@@ -1,6 +1,6 @@
-#Fixture created on 2016-02-26 14:56:59
+#Fixture created on 2016-03-07 09:49:37
 ---
-assemblageConceptId: 60
+assemblageConceptId: 58
 sememeUsageDescription: This concept is used as an assemblage for defining new Sememe extensions.  The attached data columns describe what columns are required to define a new Sememe.
 columnInfo:
 - columnConceptSequence: 210

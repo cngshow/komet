@@ -1,4 +1,4 @@
-#Fixture created on 2016-02-26 14:56:58
+#Fixture created on 2016-03-07 09:49:36
 ---
 expandables:
   items:
@@ -14,12 +14,12 @@ conChronology:
       url: rest/1/concept/version/13/
   identifiers:
     uuids:
-    - cc0b2455-f546-48fa-90e8-e214cc8478d6
+    - 7c21b6c5-cf11-5af9-893b-743f004c97f5
   versions:
 conVersion:
   stampSequence: 1
   state: ACTIVE
-  time: 1454625196096
+  time: 1456685492337
   authorSequence: 5
   moduleSequence: 0
   pathSequence: 7
@@ -28,115 +28,7 @@ children:
 - expandables:
     items:
     - name: parents
-      url: rest/1/concept/version/1113?expand=parents&stated=true
-  conChronology:
-    description: VHAT
-    expandables:
-      items:
-      - name: versionsAll
-        url: rest/1/concept/versions/1113/
-      - name: versionsLatestOnly
-        url: rest/1/concept/version/1113/
-    identifiers:
-      uuids:
-      - de40a9d3-99b4-54f2-8e5c-6aa9ca891f8b
-    versions:
-  conVersion:
-    stampSequence: 3
-    state: ACTIVE
-    time: 1452142800000
-    authorSequence: 5
-    moduleSequence: 0
-    pathSequence: 7
-  parents:
-  children:
-  - expandables:
-      items:
-      - name: parents
-        url: rest/1/concept/version/1115?expand=parents&stated=true
-      - name: children
-        url: rest/1/concept/version/1115?expand=children&stated=true
-    conChronology:
-      description: VistA
-      expandables:
-        items:
-        - name: versionsAll
-          url: rest/1/concept/versions/1115/
-        - name: versionsLatestOnly
-          url: rest/1/concept/version/1115/
-      identifiers:
-        uuids:
-        - 1289aa3f-e90f-5ab2-99f5-08b3da3dc5be
-      versions:
-    conVersion:
-      stampSequence: 3
-      state: ACTIVE
-      time: 1452142800000
-      authorSequence: 5
-      moduleSequence: 0
-      pathSequence: 7
-    parents:
-    children:
-  - expandables:
-      items:
-      - name: parents
-        url: rest/1/concept/version/1114?expand=parents&stated=true
-      - name: children
-        url: rest/1/concept/version/1114?expand=children&stated=true
-    conChronology:
-      description: HealtheVet
-      expandables:
-        items:
-        - name: versionsAll
-          url: rest/1/concept/versions/1114/
-        - name: versionsLatestOnly
-          url: rest/1/concept/version/1114/
-      identifiers:
-        uuids:
-        - d4de54ec-9d47-515d-919c-9dc7787f2d72
-      versions:
-    conVersion:
-      stampSequence: 3
-      state: ACTIVE
-      time: 1452142800000
-      authorSequence: 5
-      moduleSequence: 0
-      pathSequence: 7
-    parents:
-    children:
-  - expandables:
-      items:
-      - name: parents
-        url: rest/1/concept/version/361?expand=parents&stated=true
-      - name: children
-        url: rest/1/concept/version/361?expand=children&stated=true
-    conChronology:
-      description: Standard Code Systems
-      expandables:
-        items:
-        - name: versionsAll
-          url: rest/1/concept/versions/361/
-        - name: versionsLatestOnly
-          url: rest/1/concept/version/361/
-      identifiers:
-        uuids:
-        - 67bb89b2-13c7-52c2-96d3-dee912446bd6
-      versions:
-    conVersion:
-      stampSequence: 3
-      state: ACTIVE
-      time: 1452142800000
-      authorSequence: 5
-      moduleSequence: 0
-      pathSequence: 7
-    parents:
-    children:
-- expandables:
-    items:
-    - name: parents
       url: rest/1/concept/version/149?expand=parents&stated=true
-    - name: children
-      url: rest/1/concept/version/149?expand=children&stated=true
   conChronology:
     description: health concept (ISAAC)
     expandables:
@@ -152,12 +44,525 @@ children:
   conVersion:
     stampSequence: 1
     state: ACTIVE
-    time: 1454625196096
+    time: 1456685492337
     authorSequence: 5
     moduleSequence: 0
     pathSequence: 7
   parents:
   children:
+  - expandables:
+      items:
+      - name: parents
+        url: rest/1/concept/version/421761?expand=parents&stated=true
+      - name: children
+        url: rest/1/concept/version/421761?expand=children&stated=true
+    conChronology:
+      description: SNOMED CT Model Component (metadata)
+      expandables:
+        items:
+        - name: versionsAll
+          url: rest/1/concept/versions/421761/
+        - name: versionsLatestOnly
+          url: rest/1/concept/version/421761/
+      identifiers:
+        uuids:
+        - a60bd881-9010-3260-9653-0c85716b4391
+      versions:
+    conVersion:
+      stampSequence: 60
+      state: ACTIVE
+      time: 1012453200000
+      authorSequence: 5
+      moduleSequence: 0
+      pathSequence: 7
+    parents:
+    children:
+  - expandables:
+      items:
+      - name: parents
+        url: rest/1/concept/version/368473?expand=parents&stated=true
+      - name: children
+        url: rest/1/concept/version/368473?expand=children&stated=true
+    conChronology:
+      description: Record artifact (record artifact)
+      expandables:
+        items:
+        - name: versionsAll
+          url: rest/1/concept/versions/368473/
+        - name: versionsLatestOnly
+          url: rest/1/concept/version/368473/
+      identifiers:
+        uuids:
+        - 2724663a-65a5-381f-ba31-6c8b576b8948
+      versions:
+    conVersion:
+      stampSequence: 20
+      state: ACTIVE
+      time: 1138683600000
+      authorSequence: 5
+      moduleSequence: 0
+      pathSequence: 7
+    parents:
+    children:
+  - expandables:
+      items:
+      - name: parents
+        url: rest/1/concept/version/359323?expand=parents&stated=true
+      - name: children
+        url: rest/1/concept/version/359323?expand=children&stated=true
+    conChronology:
+      description: Organism (organism)
+      expandables:
+        items:
+        - name: versionsAll
+          url: rest/1/concept/versions/359323/
+        - name: versionsLatestOnly
+          url: rest/1/concept/version/359323/
+      identifiers:
+        uuids:
+        - 0bab48ac-3030-3568-93d8-aee0f63bf072
+      versions:
+    conVersion:
+      stampSequence: 29
+      state: ACTIVE
+      time: 1091246400000
+      authorSequence: 5
+      moduleSequence: 0
+      pathSequence: 7
+    parents:
+    children:
+  - expandables:
+      items:
+      - name: parents
+        url: rest/1/concept/version/353401?expand=parents&stated=true
+      - name: children
+        url: rest/1/concept/version/353401?expand=children&stated=true
+    conChronology:
+      description: Clinical finding (finding)
+      expandables:
+        items:
+        - name: versionsAll
+          url: rest/1/concept/versions/353401/
+        - name: versionsLatestOnly
+          url: rest/1/concept/version/353401/
+      identifiers:
+        uuids:
+        - bd83b1dd-5a82-34fa-bb52-06f666420a1c
+      versions:
+    conVersion:
+      stampSequence: 49
+      state: ACTIVE
+      time: 1075525200000
+      authorSequence: 5
+      moduleSequence: 0
+      pathSequence: 7
+    parents:
+    children:
+  - expandables:
+      items:
+      - name: parents
+        url: rest/1/concept/version/329834?expand=parents&stated=true
+      - name: children
+        url: rest/1/concept/version/329834?expand=children&stated=true
+    conChronology:
+      description: Pharmaceutical / biologic product (product)
+      expandables:
+        items:
+        - name: versionsAll
+          url: rest/1/concept/versions/329834/
+        - name: versionsLatestOnly
+          url: rest/1/concept/version/329834/
+      identifiers:
+        uuids:
+        - 5032532f-6b58-31f9-84c1-4a365dde4449
+      versions:
+    conVersion:
+      stampSequence: 7
+      state: ACTIVE
+      time: 1028088000000
+      authorSequence: 5
+      moduleSequence: 0
+      pathSequence: 7
+    parents:
+    children:
+  - expandables:
+      items:
+      - name: parents
+        url: rest/1/concept/version/326083?expand=parents&stated=true
+      - name: children
+        url: rest/1/concept/version/326083?expand=children&stated=true
+    conChronology:
+      description: Special concept
+      expandables:
+        items:
+        - name: versionsAll
+          url: rest/1/concept/versions/326083/
+        - name: versionsLatestOnly
+          url: rest/1/concept/version/326083/
+      identifiers:
+        uuids:
+        - 65cc653d-94b0-32f1-b2bf-4166d980e7cc
+      versions:
+    conVersion:
+      stampSequence: 5
+      state: ACTIVE
+      time: 1012453200000
+      authorSequence: 5
+      moduleSequence: 0
+      pathSequence: 7
+    parents:
+    children:
+  - expandables:
+      items:
+      - name: parents
+        url: rest/1/concept/version/319756?expand=parents&stated=true
+      - name: children
+        url: rest/1/concept/version/319756?expand=children&stated=true
+    conChronology:
+      description: Observable entity (observable entity)
+      expandables:
+        items:
+        - name: versionsAll
+          url: rest/1/concept/versions/319756/
+        - name: versionsLatestOnly
+          url: rest/1/concept/version/319756/
+      identifiers:
+        uuids:
+        - d678e7a6-5562-3ff1-800e-ab070e329824
+      versions:
+    conVersion:
+      stampSequence: 5
+      state: ACTIVE
+      time: 1012453200000
+      authorSequence: 5
+      moduleSequence: 0
+      pathSequence: 7
+    parents:
+    children:
+  - expandables:
+      items:
+      - name: parents
+        url: rest/1/concept/version/318950?expand=parents&stated=true
+      - name: children
+        url: rest/1/concept/version/318950?expand=children&stated=true
+    conChronology:
+      description: Qualifier value (qualifier value)
+      expandables:
+        items:
+        - name: versionsAll
+          url: rest/1/concept/versions/318950/
+        - name: versionsLatestOnly
+          url: rest/1/concept/version/318950/
+      identifiers:
+        uuids:
+        - ed6a9820-ba24-3917-b1b2-151e9c5a7a8d
+      versions:
+    conVersion:
+      stampSequence: 5
+      state: ACTIVE
+      time: 1012453200000
+      authorSequence: 5
+      moduleSequence: 0
+      pathSequence: 7
+    parents:
+    children:
+  - expandables:
+      items:
+      - name: parents
+        url: rest/1/concept/version/262815?expand=parents&stated=true
+      - name: children
+        url: rest/1/concept/version/262815?expand=children&stated=true
+    conChronology:
+      description: Events (event)
+      expandables:
+        items:
+        - name: versionsAll
+          url: rest/1/concept/versions/262815/
+        - name: versionsLatestOnly
+          url: rest/1/concept/version/262815/
+      identifiers:
+        uuids:
+        - c7243365-510d-3e5f-82b3-7286b27d7698
+      versions:
+    conVersion:
+      stampSequence: 5
+      state: ACTIVE
+      time: 1012453200000
+      authorSequence: 5
+      moduleSequence: 0
+      pathSequence: 7
+    parents:
+    children:
+  - expandables:
+      items:
+      - name: parents
+        url: rest/1/concept/version/245437?expand=parents&stated=true
+      - name: children
+        url: rest/1/concept/version/245437?expand=children&stated=true
+    conChronology:
+      description: Staging and scales (staging scale)
+      expandables:
+        items:
+        - name: versionsAll
+          url: rest/1/concept/versions/245437/
+        - name: versionsLatestOnly
+          url: rest/1/concept/version/245437/
+      identifiers:
+        uuids:
+        - 1ec915b4-8d80-3125-a711-c61e9cf7eb53
+      versions:
+    conVersion:
+      stampSequence: 5
+      state: ACTIVE
+      time: 1012453200000
+      authorSequence: 5
+      moduleSequence: 0
+      pathSequence: 7
+    parents:
+    children:
+  - expandables:
+      items:
+      - name: parents
+        url: rest/1/concept/version/237489?expand=parents&stated=true
+      - name: children
+        url: rest/1/concept/version/237489?expand=children&stated=true
+    conChronology:
+      description: Finding (finding)
+      expandables:
+        items:
+        - name: versionsAll
+          url: rest/1/concept/versions/237489/
+        - name: versionsLatestOnly
+          url: rest/1/concept/version/237489/
+      identifiers:
+        uuids:
+        - f8a0e942-410d-3739-90d3-b7ba303c796c
+      versions:
+    conVersion:
+      stampSequence: 25
+      state: INACTIVE
+      time: 1075525200000
+      authorSequence: 5
+      moduleSequence: 0
+      pathSequence: 7
+    parents:
+    children:
+  - expandables:
+      items:
+      - name: parents
+        url: rest/1/concept/version/235108?expand=parents&stated=true
+      - name: children
+        url: rest/1/concept/version/235108?expand=children&stated=true
+    conChronology:
+      description: Context-dependent categories (context-dependent category)
+      expandables:
+        items:
+        - name: versionsAll
+          url: rest/1/concept/versions/235108/
+        - name: versionsLatestOnly
+          url: rest/1/concept/version/235108/
+      identifiers:
+        uuids:
+        - 27d03723-07c3-3de9-828b-76aa05a23438
+      versions:
+    conVersion:
+      stampSequence: 5
+      state: ACTIVE
+      time: 1012453200000
+      authorSequence: 5
+      moduleSequence: 0
+      pathSequence: 7
+    parents:
+    children:
+  - expandables:
+      items:
+      - name: parents
+        url: rest/1/concept/version/117813?expand=parents&stated=true
+      - name: children
+        url: rest/1/concept/version/117813?expand=children&stated=true
+    conChronology:
+      description: Specimen (specimen)
+      expandables:
+        items:
+        - name: versionsAll
+          url: rest/1/concept/versions/117813/
+        - name: versionsLatestOnly
+          url: rest/1/concept/version/117813/
+      identifiers:
+        uuids:
+        - 3680e12d-c14c-39cb-ac89-2ae1fa125d41
+      versions:
+    conVersion:
+      stampSequence: 5
+      state: ACTIVE
+      time: 1012453200000
+      authorSequence: 5
+      moduleSequence: 0
+      pathSequence: 7
+    parents:
+    children:
+  - expandables:
+      items:
+      - name: parents
+        url: rest/1/concept/version/117812?expand=parents&stated=true
+      - name: children
+        url: rest/1/concept/version/117812?expand=children&stated=true
+    conChronology:
+      description: Body structure (body structure)
+      expandables:
+        items:
+        - name: versionsAll
+          url: rest/1/concept/versions/117812/
+        - name: versionsLatestOnly
+          url: rest/1/concept/version/117812/
+      identifiers:
+        uuids:
+        - 4be3f62e-28d5-3bb4-a424-9aa7856a1790
+      versions:
+    conVersion:
+      stampSequence: 5
+      state: ACTIVE
+      time: 1012453200000
+      authorSequence: 5
+      moduleSequence: 0
+      pathSequence: 7
+    parents:
+    children:
+  - expandables:
+      items:
+      - name: parents
+        url: rest/1/concept/version/102901?expand=parents&stated=true
+      - name: children
+        url: rest/1/concept/version/102901?expand=children&stated=true
+    conChronology:
+      description: Linkage concept (attribute)
+      expandables:
+        items:
+        - name: versionsAll
+          url: rest/1/concept/versions/102901/
+        - name: versionsLatestOnly
+          url: rest/1/concept/version/102901/
+      identifiers:
+        uuids:
+        - 1a3399bc-e6b5-3dea-8058-4e08012ff00f
+      versions:
+    conVersion:
+      stampSequence: 47
+      state: ACTIVE
+      time: 1296450000000
+      authorSequence: 5
+      moduleSequence: 0
+      pathSequence: 7
+    parents:
+    children:
+  - expandables:
+      items:
+      - name: parents
+        url: rest/1/concept/version/102405?expand=parents&stated=true
+      - name: children
+        url: rest/1/concept/version/102405?expand=children&stated=true
+    conChronology:
+      description: Substance (substance)
+      expandables:
+        items:
+        - name: versionsAll
+          url: rest/1/concept/versions/102405/
+        - name: versionsLatestOnly
+          url: rest/1/concept/version/102405/
+      identifiers:
+        uuids:
+        - 95f41098-8391-3f5e-9d61-4b019f1de99d
+      versions:
+    conVersion:
+      stampSequence: 5
+      state: ACTIVE
+      time: 1012453200000
+      authorSequence: 5
+      moduleSequence: 0
+      pathSequence: 7
+    parents:
+    children:
+  - expandables:
+      items:
+      - name: parents
+        url: rest/1/concept/version/78757?expand=parents&stated=true
+      - name: children
+        url: rest/1/concept/version/78757?expand=children&stated=true
+    conChronology:
+      description: Physical force (physical force)
+      expandables:
+        items:
+        - name: versionsAll
+          url: rest/1/concept/versions/78757/
+        - name: versionsLatestOnly
+          url: rest/1/concept/version/78757/
+      identifiers:
+        uuids:
+        - 32213bf6-c073-3ce1-b0c7-9463e43af2f1
+      versions:
+    conVersion:
+      stampSequence: 5
+      state: ACTIVE
+      time: 1012453200000
+      authorSequence: 5
+      moduleSequence: 0
+      pathSequence: 7
+    parents:
+    children:
+  - expandables:
+      items:
+      - name: parents
+        url: rest/1/concept/version/71524?expand=parents&stated=true
+      - name: children
+        url: rest/1/concept/version/71524?expand=children&stated=true
+    conChronology:
+      description: Procedure (procedure)
+      expandables:
+        items:
+        - name: versionsAll
+          url: rest/1/concept/versions/71524/
+        - name: versionsLatestOnly
+          url: rest/1/concept/version/71524/
+      identifiers:
+        uuids:
+        - bfbced4b-ad7d-30aa-ae5c-f848ccebd45b
+      versions:
+    conVersion:
+      stampSequence: 5
+      state: ACTIVE
+      time: 1012453200000
+      authorSequence: 5
+      moduleSequence: 0
+      pathSequence: 7
+    parents:
+    children:
+  - expandables:
+      items:
+      - name: parents
+        url: rest/1/concept/version/48312?expand=parents&stated=true
+      - name: children
+        url: rest/1/concept/version/48312?expand=children&stated=true
+    conChronology:
+      description: Social context (social concept)
+      expandables:
+        items:
+        - name: versionsAll
+          url: rest/1/concept/versions/48312/
+        - name: versionsLatestOnly
+          url: rest/1/concept/version/48312/
+      identifiers:
+        uuids:
+        - b89db478-21d5-3e51-972d-6c900f0ec436
+      versions:
+    conVersion:
+      stampSequence: 5
+      state: ACTIVE
+      time: 1012453200000
+      authorSequence: 5
+      moduleSequence: 0
+      pathSequence: 7
+    parents:
+    children:
 - expandables:
     items:
     - name: parents
@@ -179,7 +584,7 @@ children:
   conVersion:
     stampSequence: 1
     state: ACTIVE
-    time: 1454625196096
+    time: 1456685492337
     authorSequence: 5
     moduleSequence: 0
     pathSequence: 7
@@ -188,15 +593,69 @@ children:
 - expandables:
     items:
     - name: parents
-      url: rest/1/concept/version/54?expand=parents&stated=true
+      url: rest/1/concept/version/110?expand=parents&stated=true
+    - name: children
+      url: rest/1/concept/version/110?expand=children&stated=true
+  conChronology:
+    description: relationship type in source terminology (ISAAC)
+    expandables:
+      items:
+      - name: versionsAll
+        url: rest/1/concept/versions/110/
+      - name: versionsLatestOnly
+        url: rest/1/concept/version/110/
+    identifiers:
+      uuids:
+      - 46bc0e6b-0e64-5aa6-af27-a823e9156dfc
+    versions:
+  conVersion:
+    stampSequence: 1
+    state: ACTIVE
+    time: 1456685492337
+    authorSequence: 5
+    moduleSequence: 0
+    pathSequence: 7
+  parents:
+  children:
+- expandables:
+    items:
+    - name: parents
+      url: rest/1/concept/version/109?expand=parents&stated=true
+    - name: children
+      url: rest/1/concept/version/109?expand=children&stated=true
+  conChronology:
+    description: description type in source terminology (ISAAC)
+    expandables:
+      items:
+      - name: versionsAll
+        url: rest/1/concept/versions/109/
+      - name: versionsLatestOnly
+        url: rest/1/concept/version/109/
+    identifiers:
+      uuids:
+      - ef7d9808-a839-5119-a604-b777268eb719
+    versions:
+  conVersion:
+    stampSequence: 1
+    state: ACTIVE
+    time: 1456685492337
+    authorSequence: 5
+    moduleSequence: 0
+    pathSequence: 7
+  parents:
+  children:
+- expandables:
+    items:
+    - name: parents
+      url: rest/1/concept/version/52?expand=parents&stated=true
   conChronology:
     description: dynamic sememe metadata (ISAAC)
     expandables:
       items:
       - name: versionsAll
-        url: rest/1/concept/versions/54/
+        url: rest/1/concept/versions/52/
       - name: versionsLatestOnly
-        url: rest/1/concept/version/54/
+        url: rest/1/concept/version/52/
     identifiers:
       uuids:
       - 9769773c-7b70-523d-8fc5-b16621ffa57c
@@ -204,7 +663,7 @@ children:
   conVersion:
     stampSequence: 1
     state: ACTIVE
-    time: 1454625196096
+    time: 1456685492337
     authorSequence: 5
     moduleSequence: 0
     pathSequence: 7
@@ -231,34 +690,7 @@ children:
     conVersion:
       stampSequence: 1
       state: ACTIVE
-      time: 1454625196096
-      authorSequence: 5
-      moduleSequence: 0
-      pathSequence: 7
-    parents:
-    children:
-  - expandables:
-      items:
-      - name: parents
-        url: rest/1/concept/version/63?expand=parents&stated=true
-      - name: children
-        url: rest/1/concept/version/63?expand=children&stated=true
-    conChronology:
-      description: dynamic sememe column data types (ISAAC)
-      expandables:
-        items:
-        - name: versionsAll
-          url: rest/1/concept/versions/63/
-        - name: versionsLatestOnly
-          url: rest/1/concept/version/63/
-      identifiers:
-        uuids:
-        - 61da7e50-f606-5ba0-a0df-83fd524951e7
-      versions:
-    conVersion:
-      stampSequence: 1
-      state: ACTIVE
-      time: 1454625196096
+      time: 1456685492337
       authorSequence: 5
       moduleSequence: 0
       pathSequence: 7
@@ -271,7 +703,7 @@ children:
       - name: children
         url: rest/1/concept/version/61?expand=children&stated=true
     conChronology:
-      description: dynamic sememe referenced component restriction (ISAAC)
+      description: dynamic sememe column data types (ISAAC)
       expandables:
         items:
         - name: versionsAll
@@ -280,12 +712,12 @@ children:
           url: rest/1/concept/version/61/
       identifiers:
         uuids:
-        - 0d94ceeb-e24f-5f1a-84b2-1ac35f671db5
+        - 61da7e50-f606-5ba0-a0df-83fd524951e7
       versions:
     conVersion:
       stampSequence: 1
       state: ACTIVE
-      time: 1454625196096
+      time: 1456685492337
       authorSequence: 5
       moduleSequence: 0
       pathSequence: 7
@@ -294,25 +726,25 @@ children:
   - expandables:
       items:
       - name: parents
-        url: rest/1/concept/version/55?expand=parents&stated=true
+        url: rest/1/concept/version/60?expand=parents&stated=true
       - name: children
-        url: rest/1/concept/version/55?expand=children&stated=true
+        url: rest/1/concept/version/60?expand=children&stated=true
     conChronology:
-      description: mapping metadata (ISAAC)
+      description: dynamic sememe referenced component restriction (ISAAC)
       expandables:
         items:
         - name: versionsAll
-          url: rest/1/concept/versions/55/
+          url: rest/1/concept/versions/60/
         - name: versionsLatestOnly
-          url: rest/1/concept/version/55/
+          url: rest/1/concept/version/60/
       identifiers:
         uuids:
-        - 9b5de306-e582-58e3-a23a-0dbf49cbdfe7
+        - 0d94ceeb-e24f-5f1a-84b2-1ac35f671db5
       versions:
     conVersion:
       stampSequence: 1
       state: ACTIVE
-      time: 1454625196096
+      time: 1456685492337
       authorSequence: 5
       moduleSequence: 0
       pathSequence: 7
@@ -325,7 +757,7 @@ children:
       - name: children
         url: rest/1/concept/version/53?expand=children&stated=true
     conChronology:
-      description: dynamic sememe columns (ISAAC)
+      description: mapping metadata (ISAAC)
       expandables:
         items:
         - name: versionsAll
@@ -334,12 +766,39 @@ children:
           url: rest/1/concept/version/53/
       identifiers:
         uuids:
+        - 9b5de306-e582-58e3-a23a-0dbf49cbdfe7
+      versions:
+    conVersion:
+      stampSequence: 1
+      state: ACTIVE
+      time: 1456685492337
+      authorSequence: 5
+      moduleSequence: 0
+      pathSequence: 7
+    parents:
+    children:
+  - expandables:
+      items:
+      - name: parents
+        url: rest/1/concept/version/51?expand=parents&stated=true
+      - name: children
+        url: rest/1/concept/version/51?expand=children&stated=true
+    conChronology:
+      description: dynamic sememe columns (ISAAC)
+      expandables:
+        items:
+        - name: versionsAll
+          url: rest/1/concept/versions/51/
+        - name: versionsLatestOnly
+          url: rest/1/concept/version/51/
+      identifiers:
+        uuids:
         - 46ddb9a2-0e10-586a-8b54-8e66333e9b77
       versions:
     conVersion:
       stampSequence: 1
       state: ACTIVE
-      time: 1454625196096
+      time: 1456685492337
       authorSequence: 5
       moduleSequence: 0
       pathSequence: 7
@@ -348,23 +807,23 @@ children:
 - expandables:
     items:
     - name: parents
-      url: rest/1/concept/version/52?expand=parents&stated=true
+      url: rest/1/concept/version/50?expand=parents&stated=true
   conChronology:
     description: solor metadata (ISAAC)
     expandables:
       items:
       - name: versionsAll
-        url: rest/1/concept/versions/52/
+        url: rest/1/concept/versions/50/
       - name: versionsLatestOnly
-        url: rest/1/concept/version/52/
+        url: rest/1/concept/version/50/
     identifiers:
       uuids:
-      - 152177a7-ed46-4ee1-bf18-52d9f48012cb
+      - 91c69f30-cf99-56d7-8461-8f30ae5dd0c6
     versions:
   conVersion:
     stampSequence: 1
     state: ACTIVE
-    time: 1454625196096
+    time: 1456685492337
     authorSequence: 5
     moduleSequence: 0
     pathSequence: 7
@@ -377,7 +836,7 @@ children:
       - name: children
         url: rest/1/concept/version/236?expand=children&stated=true
     conChronology:
-      description: VHAT Metadata
+      description: RF2 Metadata SnomedCT_RF2Release_INT_20150731
       expandables:
         items:
         - name: versionsAll
@@ -386,12 +845,12 @@ children:
           url: rest/1/concept/version/236/
       identifiers:
         uuids:
-        - 13943296-3503-5ea4-8087-7cc9ba1b644b
+        - d8685179-3e83-5e13-8fbd-c24b6ea1030f
       versions:
     conVersion:
       stampSequence: 3
       state: ACTIVE
-      time: 1452142800000
+      time: 1438315200000
       authorSequence: 5
       moduleSequence: 0
       pathSequence: 7
@@ -413,12 +872,12 @@ children:
           url: rest/1/concept/version/197/
       identifiers:
         uuids:
-        - fb600b64-0ea3-4c5f-8068-8c0a60c22ed5
+        - 42c548ba-495e-5568-be0d-c0a6f0a9ae74
       versions:
     conVersion:
       stampSequence: 1
       state: ACTIVE
-      time: 1454625196096
+      time: 1456685492337
       authorSequence: 5
       moduleSequence: 0
       pathSequence: 7
@@ -440,12 +899,12 @@ children:
           url: rest/1/concept/version/196/
       identifiers:
         uuids:
-        - ee72bd50-285a-49be-a5fe-563b1ec2a089
+        - 186a6049-dd3b-53fb-8ece-68c3d62f5cd7
       versions:
     conVersion:
       stampSequence: 1
       state: ACTIVE
-      time: 1454625196096
+      time: 1456685492337
       authorSequence: 5
       moduleSequence: 0
       pathSequence: 7
@@ -467,12 +926,12 @@ children:
           url: rest/1/concept/version/195/
       identifiers:
         uuids:
-        - 9d4b7d5f-ad85-43eb-bf1d-ed83953835de
+        - 70553f62-0841-5f9f-89ee-3cb22df677cb
       versions:
     conVersion:
       stampSequence: 1
       state: ACTIVE
-      time: 1454625196096
+      time: 1456685492337
       authorSequence: 5
       moduleSequence: 0
       pathSequence: 7
@@ -494,12 +953,12 @@ children:
           url: rest/1/concept/version/194/
       identifiers:
         uuids:
-        - 6559eacf-0645-4457-882f-d62cd56aebd8
+        - 6b224953-8192-5d50-88be-eebb60640c2a
       versions:
     conVersion:
       stampSequence: 1
       state: ACTIVE
-      time: 1454625196096
+      time: 1456685492337
       authorSequence: 5
       moduleSequence: 0
       pathSequence: 7
@@ -508,23 +967,23 @@ children:
 - expandables:
     items:
     - name: parents
-      url: rest/1/concept/version/46?expand=parents&stated=true
+      url: rest/1/concept/version/44?expand=parents&stated=true
   conChronology:
     description: object properties (ISAAC)
     expandables:
       items:
       - name: versionsAll
-        url: rest/1/concept/versions/46/
+        url: rest/1/concept/versions/44/
       - name: versionsLatestOnly
-        url: rest/1/concept/version/46/
+        url: rest/1/concept/version/44/
     identifiers:
       uuids:
-      - b75aa022-b014-4144-a55f-d9579925d87e
+      - f4301f17-fd68-51dc-89f0-2f2bc8bfc446
     versions:
   conVersion:
     stampSequence: 1
     state: ACTIVE
-    time: 1454625196096
+    time: 1456685492337
     authorSequence: 5
     moduleSequence: 0
     pathSequence: 7
@@ -533,52 +992,25 @@ children:
   - expandables:
       items:
       - name: parents
-        url: rest/1/concept/version/51?expand=parents&stated=true
+        url: rest/1/concept/version/49?expand=parents&stated=true
       - name: children
-        url: rest/1/concept/version/51?expand=children&stated=true
+        url: rest/1/concept/version/49?expand=children&stated=true
     conChronology:
       description: concept properties (ISAAC)
       expandables:
         items:
         - name: versionsAll
-          url: rest/1/concept/versions/51/
+          url: rest/1/concept/versions/49/
         - name: versionsLatestOnly
-          url: rest/1/concept/version/51/
+          url: rest/1/concept/version/49/
       identifiers:
         uuids:
-        - b11af6a6-65cb-43a9-9f92-3f48a128e1e7
+        - c9ca5202-b74b-5fdd-a158-f34bf0bde4c3
       versions:
     conVersion:
       stampSequence: 1
       state: ACTIVE
-      time: 1454625196096
-      authorSequence: 5
-      moduleSequence: 0
-      pathSequence: 7
-    parents:
-    children:
-  - expandables:
-      items:
-      - name: parents
-        url: rest/1/concept/version/50?expand=parents&stated=true
-      - name: children
-        url: rest/1/concept/version/50?expand=children&stated=true
-    conChronology:
-      description: chronicle properties (ISAAC)
-      expandables:
-        items:
-        - name: versionsAll
-          url: rest/1/concept/versions/50/
-        - name: versionsLatestOnly
-          url: rest/1/concept/version/50/
-      identifiers:
-        uuids:
-        - e1ea1909-a47f-4dd8-9f72-a2a7306118a9
-      versions:
-    conVersion:
-      stampSequence: 1
-      state: ACTIVE
-      time: 1454625196096
+      time: 1456685492337
       authorSequence: 5
       moduleSequence: 0
       pathSequence: 7
@@ -591,7 +1023,7 @@ children:
       - name: children
         url: rest/1/concept/version/48?expand=children&stated=true
     conChronology:
-      description: version properties (ISAAC)
+      description: chronicle properties (ISAAC)
       expandables:
         items:
         - name: versionsAll
@@ -600,12 +1032,12 @@ children:
           url: rest/1/concept/version/48/
       identifiers:
         uuids:
-        - b93b3b2b-7d06-4420-99b2-f39c8b705732
+        - e3dd5c03-6294-5c32-84ea-31e7985344ca
       versions:
     conVersion:
       stampSequence: 1
       state: ACTIVE
-      time: 1454625196096
+      time: 1456685492337
       authorSequence: 5
       moduleSequence: 0
       pathSequence: 7
@@ -614,25 +1046,52 @@ children:
   - expandables:
       items:
       - name: parents
-        url: rest/1/concept/version/47?expand=parents&stated=true
+        url: rest/1/concept/version/46?expand=parents&stated=true
       - name: children
-        url: rest/1/concept/version/47?expand=children&stated=true
+        url: rest/1/concept/version/46?expand=children&stated=true
+    conChronology:
+      description: version properties (ISAAC)
+      expandables:
+        items:
+        - name: versionsAll
+          url: rest/1/concept/versions/46/
+        - name: versionsLatestOnly
+          url: rest/1/concept/version/46/
+      identifiers:
+        uuids:
+        - a9858bec-2c17-59fd-b7de-9717674fb481
+      versions:
+    conVersion:
+      stampSequence: 1
+      state: ACTIVE
+      time: 1456685492337
+      authorSequence: 5
+      moduleSequence: 0
+      pathSequence: 7
+    parents:
+    children:
+  - expandables:
+      items:
+      - name: parents
+        url: rest/1/concept/version/45?expand=parents&stated=true
+      - name: children
+        url: rest/1/concept/version/45?expand=children&stated=true
     conChronology:
       description: coordinate properties (ISAAC)
       expandables:
         items:
         - name: versionsAll
-          url: rest/1/concept/versions/47/
+          url: rest/1/concept/versions/45/
         - name: versionsLatestOnly
-          url: rest/1/concept/version/47/
+          url: rest/1/concept/version/45/
       identifiers:
         uuids:
-        - db35ab03-7be1-40f4-b2cc-66a7b4f23d55
+        - ad073639-7647-53f4-9823-b4e709d0599d
       versions:
     conVersion:
       stampSequence: 1
       state: ACTIVE
-      time: 1454625196096
+      time: 1456685492337
       authorSequence: 5
       moduleSequence: 0
       pathSequence: 7
@@ -641,23 +1100,23 @@ children:
 - expandables:
     items:
     - name: parents
-      url: rest/1/concept/version/45?expand=parents&stated=true
+      url: rest/1/concept/version/43?expand=parents&stated=true
   conChronology:
     description: unmodeled concept (ISAAC)
     expandables:
       items:
       - name: versionsAll
-        url: rest/1/concept/versions/45/
+        url: rest/1/concept/versions/43/
       - name: versionsLatestOnly
-        url: rest/1/concept/version/45/
+        url: rest/1/concept/version/43/
     identifiers:
       uuids:
-      - 6e5beee0-536a-468a-94cc-b91f9a1a1bb0
+      - fb65d3c3-19a9-5a91-b520-e89ac07154ef
     versions:
   conVersion:
     stampSequence: 1
     state: ACTIVE
-    time: 1454625196096
+    time: 1456685492337
     authorSequence: 5
     moduleSequence: 0
     pathSequence: 7
@@ -679,12 +1138,12 @@ children:
           url: rest/1/concept/version/148/
       identifiers:
         uuids:
-        - d107c4e0-a18b-432b-ad96-60f3267498f6
+        - 8f661314-2a59-5176-9116-727d74f42437
       versions:
     conVersion:
       stampSequence: 1
       state: ACTIVE
-      time: 1454625196096
+      time: 1456685492337
       authorSequence: 5
       moduleSequence: 0
       pathSequence: 7
@@ -706,12 +1165,12 @@ children:
           url: rest/1/concept/version/147/
       identifiers:
         uuids:
-        - 20617fa3-cf63-49d9-8418-ac8727b37ea9
+        - 974efbaf-f9d8-5bfa-8ce9-7763a34a28ad
       versions:
     conVersion:
       stampSequence: 1
       state: ACTIVE
-      time: 1454625196096
+      time: 1456685492337
       authorSequence: 5
       moduleSequence: 0
       pathSequence: 7
@@ -733,12 +1192,12 @@ children:
           url: rest/1/concept/version/146/
       identifiers:
         uuids:
-        - 8cb56d50-cc6d-4194-bd96-72ce4dca4cb0
+        - 17adf31b-d0d7-56df-90a1-bdc046a60f17
       versions:
     conVersion:
       stampSequence: 1
       state: ACTIVE
-      time: 1454625196096
+      time: 1456685492337
       authorSequence: 5
       moduleSequence: 0
       pathSequence: 7
@@ -760,12 +1219,12 @@ children:
           url: rest/1/concept/version/145/
       identifiers:
         uuids:
-        - 2d573878-b210-4e98-a5d3-4ffa39e45676
+        - d90ec574-58e1-5af0-ac12-29b96e43b859
       versions:
     conVersion:
       stampSequence: 1
       state: ACTIVE
-      time: 1454625196096
+      time: 1456685492337
       authorSequence: 5
       moduleSequence: 0
       pathSequence: 7
@@ -774,15 +1233,15 @@ children:
 - expandables:
     items:
     - name: parents
-      url: rest/1/concept/version/42?expand=parents&stated=true
+      url: rest/1/concept/version/40?expand=parents&stated=true
   conChronology:
     description: role (ISAAC)
     expandables:
       items:
       - name: versionsAll
-        url: rest/1/concept/versions/42/
+        url: rest/1/concept/versions/40/
       - name: versionsLatestOnly
-        url: rest/1/concept/version/42/
+        url: rest/1/concept/version/40/
     identifiers:
       uuids:
       - 6155818b-09ed-388e-82ce-caa143423e99
@@ -790,7 +1249,7 @@ children:
   conVersion:
     stampSequence: 1
     state: ACTIVE
-    time: 1454625196096
+    time: 1456685492337
     authorSequence: 5
     moduleSequence: 0
     pathSequence: 7
@@ -799,25 +1258,1834 @@ children:
   - expandables:
       items:
       - name: parents
-        url: rest/1/concept/version/43?expand=parents&stated=true
+        url: rest/1/concept/version/412147?expand=parents&stated=true
       - name: children
-        url: rest/1/concept/version/43?expand=children&stated=true
+        url: rest/1/concept/version/412147?expand=children&stated=true
+    conChronology:
+      description: Is about (attribute)
+      expandables:
+        items:
+        - name: versionsAll
+          url: rest/1/concept/versions/412147/
+        - name: versionsLatestOnly
+          url: rest/1/concept/version/412147/
+      identifiers:
+        uuids:
+        - f74cf386-8d8b-3f50-87a3-3978d7809020
+      versions:
+    conVersion:
+      stampSequence: 63
+      state: ACTIVE
+      time: 1422680400000
+      authorSequence: 5
+      moduleSequence: 0
+      pathSequence: 7
+    parents:
+    children:
+  - expandables:
+      items:
+      - name: parents
+        url: rest/1/concept/version/411851?expand=parents&stated=true
+      - name: children
+        url: rest/1/concept/version/411851?expand=children&stated=true
+    conChronology:
+      description: Observes (attribute)
+      expandables:
+        items:
+        - name: versionsAll
+          url: rest/1/concept/versions/411851/
+        - name: versionsLatestOnly
+          url: rest/1/concept/version/411851/
+      identifiers:
+        uuids:
+        - 042bf19b-989d-3193-87de-d0d0cd8de180
+      versions:
+    conVersion:
+      stampSequence: 63
+      state: ACTIVE
+      time: 1422680400000
+      authorSequence: 5
+      moduleSequence: 0
+      pathSequence: 7
+    parents:
+    children:
+  - expandables:
+      items:
+      - name: parents
+        url: rest/1/concept/version/411850?expand=parents&stated=true
+      - name: children
+        url: rest/1/concept/version/411850?expand=children&stated=true
+    conChronology:
+      description: Specified by (attribute)
+      expandables:
+        items:
+        - name: versionsAll
+          url: rest/1/concept/versions/411850/
+        - name: versionsLatestOnly
+          url: rest/1/concept/version/411850/
+      identifiers:
+        uuids:
+        - 25327a0c-8176-3d87-a030-a0a92fa9d4ff
+      versions:
+    conVersion:
+      stampSequence: 63
+      state: ACTIVE
+      time: 1422680400000
+      authorSequence: 5
+      moduleSequence: 0
+      pathSequence: 7
+    parents:
+    children:
+  - expandables:
+      items:
+      - name: parents
+        url: rest/1/concept/version/411831?expand=parents&stated=true
+      - name: children
+        url: rest/1/concept/version/411831?expand=children&stated=true
+    conChronology:
+      description: Direct site (attribute)
+      expandables:
+        items:
+        - name: versionsAll
+          url: rest/1/concept/versions/411831/
+        - name: versionsLatestOnly
+          url: rest/1/concept/version/411831/
+      identifiers:
+        uuids:
+        - a6eebe78-7ca6-309e-94d6-cf797a786cd9
+      versions:
+    conVersion:
+      stampSequence: 63
+      state: ACTIVE
+      time: 1422680400000
+      authorSequence: 5
+      moduleSequence: 0
+      pathSequence: 7
+    parents:
+    children:
+  - expandables:
+      items:
+      - name: parents
+        url: rest/1/concept/version/411830?expand=parents&stated=true
+      - name: children
+        url: rest/1/concept/version/411830?expand=children&stated=true
+    conChronology:
+      description: Precondition (attribute)
+      expandables:
+        items:
+        - name: versionsAll
+          url: rest/1/concept/versions/411830/
+        - name: versionsLatestOnly
+          url: rest/1/concept/version/411830/
+      identifiers:
+        uuids:
+        - 20f38559-0206-36b7-bb82-c201670ef040
+      versions:
+    conVersion:
+      stampSequence: 63
+      state: ACTIVE
+      time: 1422680400000
+      authorSequence: 5
+      moduleSequence: 0
+      pathSequence: 7
+    parents:
+    children:
+  - expandables:
+      items:
+      - name: parents
+        url: rest/1/concept/version/411829?expand=parents&stated=true
+      - name: children
+        url: rest/1/concept/version/411829?expand=children&stated=true
+    conChronology:
+      description: Relative to (attribute)
+      expandables:
+        items:
+        - name: versionsAll
+          url: rest/1/concept/versions/411829/
+        - name: versionsLatestOnly
+          url: rest/1/concept/version/411829/
+      identifiers:
+        uuids:
+        - f8d96e43-c682-3a7b-8661-0e779d7ce93c
+      versions:
+    conVersion:
+      stampSequence: 63
+      state: ACTIVE
+      time: 1422680400000
+      authorSequence: 5
+      moduleSequence: 0
+      pathSequence: 7
+    parents:
+    children:
+  - expandables:
+      items:
+      - name: parents
+        url: rest/1/concept/version/411828?expand=parents&stated=true
+      - name: children
+        url: rest/1/concept/version/411828?expand=children&stated=true
+    conChronology:
+      description: Process output (attribute)
+      expandables:
+        items:
+        - name: versionsAll
+          url: rest/1/concept/versions/411828/
+        - name: versionsLatestOnly
+          url: rest/1/concept/version/411828/
+      identifiers:
+        uuids:
+        - ef18b2b0-dc77-3ed9-a80f-0386da11c8e5
+      versions:
+    conVersion:
+      stampSequence: 63
+      state: ACTIVE
+      time: 1422680400000
+      authorSequence: 5
+      moduleSequence: 0
+      pathSequence: 7
+    parents:
+    children:
+  - expandables:
+      items:
+      - name: parents
+        url: rest/1/concept/version/411827?expand=parents&stated=true
+      - name: children
+        url: rest/1/concept/version/411827?expand=children&stated=true
+    conChronology:
+      description: Process duration (attribute)
+      expandables:
+        items:
+        - name: versionsAll
+          url: rest/1/concept/versions/411827/
+        - name: versionsLatestOnly
+          url: rest/1/concept/version/411827/
+      identifiers:
+        uuids:
+        - a6e02ed0-bdbe-30c4-81ac-1c1160621cf3
+      versions:
+    conVersion:
+      stampSequence: 63
+      state: ACTIVE
+      time: 1422680400000
+      authorSequence: 5
+      moduleSequence: 0
+      pathSequence: 7
+    parents:
+    children:
+  - expandables:
+      items:
+      - name: parents
+        url: rest/1/concept/version/411826?expand=parents&stated=true
+      - name: children
+        url: rest/1/concept/version/411826?expand=children&stated=true
+    conChronology:
+      description: Process agent (attribute)
+      expandables:
+        items:
+        - name: versionsAll
+          url: rest/1/concept/versions/411826/
+        - name: versionsLatestOnly
+          url: rest/1/concept/version/411826/
+      identifiers:
+        uuids:
+        - 5ce09338-ebe2-349f-bf13-72673d72012b
+      versions:
+    conVersion:
+      stampSequence: 63
+      state: ACTIVE
+      time: 1422680400000
+      authorSequence: 5
+      moduleSequence: 0
+      pathSequence: 7
+    parents:
+    children:
+  - expandables:
+      items:
+      - name: parents
+        url: rest/1/concept/version/411825?expand=parents&stated=true
+      - name: children
+        url: rest/1/concept/version/411825?expand=children&stated=true
+    conChronology:
+      description: Characterizes (attribute)
+      expandables:
+        items:
+        - name: versionsAll
+          url: rest/1/concept/versions/411825/
+        - name: versionsLatestOnly
+          url: rest/1/concept/version/411825/
+      identifiers:
+        uuids:
+        - 4eaec380-7dd4-3c98-896d-f0049cd3fd1c
+      versions:
+    conVersion:
+      stampSequence: 63
+      state: ACTIVE
+      time: 1422680400000
+      authorSequence: 5
+      moduleSequence: 0
+      pathSequence: 7
+    parents:
+    children:
+  - expandables:
+      items:
+      - name: parents
+        url: rest/1/concept/version/411824?expand=parents&stated=true
+      - name: children
+        url: rest/1/concept/version/411824?expand=children&stated=true
+    conChronology:
+      description: Towards (attribute)
+      expandables:
+        items:
+        - name: versionsAll
+          url: rest/1/concept/versions/411824/
+        - name: versionsLatestOnly
+          url: rest/1/concept/version/411824/
+      identifiers:
+        uuids:
+        - 479d0f36-9a34-3909-a150-ea653d2d0082
+      versions:
+    conVersion:
+      stampSequence: 63
+      state: ACTIVE
+      time: 1422680400000
+      authorSequence: 5
+      moduleSequence: 0
+      pathSequence: 7
+    parents:
+    children:
+  - expandables:
+      items:
+      - name: parents
+        url: rest/1/concept/version/411823?expand=parents&stated=true
+      - name: children
+        url: rest/1/concept/version/411823?expand=children&stated=true
+    conChronology:
+      description: Inheres in (attribute)
+      expandables:
+        items:
+        - name: versionsAll
+          url: rest/1/concept/versions/411823/
+        - name: versionsLatestOnly
+          url: rest/1/concept/version/411823/
+      identifiers:
+        uuids:
+        - c0403a4d-aa15-35ef-ba57-1c244ea7bda0
+      versions:
+    conVersion:
+      stampSequence: 63
+      state: ACTIVE
+      time: 1422680400000
+      authorSequence: 5
+      moduleSequence: 0
+      pathSequence: 7
+    parents:
+    children:
+  - expandables:
+      items:
+      - name: parents
+        url: rest/1/concept/version/411822?expand=parents&stated=true
+      - name: children
+        url: rest/1/concept/version/411822?expand=children&stated=true
+    conChronology:
+      description: Property type (attribute)
+      expandables:
+        items:
+        - name: versionsAll
+          url: rest/1/concept/versions/411822/
+        - name: versionsLatestOnly
+          url: rest/1/concept/version/411822/
+      identifiers:
+        uuids:
+        - 3f9524f4-86ea-32ac-8669-df528dc62c31
+      versions:
+    conVersion:
+      stampSequence: 63
+      state: ACTIVE
+      time: 1422680400000
+      authorSequence: 5
+      moduleSequence: 0
+      pathSequence: 7
+    parents:
+    children:
+  - expandables:
+      items:
+      - name: parents
+        url: rest/1/concept/version/405133?expand=parents&stated=true
+      - name: children
+        url: rest/1/concept/version/405133?expand=children&stated=true
+    conChronology:
+      description: Role group (attribute)
+      expandables:
+        items:
+        - name: versionsAll
+          url: rest/1/concept/versions/405133/
+        - name: versionsLatestOnly
+          url: rest/1/concept/version/405133/
+      identifiers:
+        uuids:
+        - 051fbfed-3c40-3130-8c09-889cb7b7b5b6
+      versions:
+    conVersion:
+      stampSequence: 64
+      state: ACTIVE
+      time: 1375243200000
+      authorSequence: 5
+      moduleSequence: 0
+      pathSequence: 7
+    parents:
+    children:
+  - expandables:
+      items:
+      - name: parents
+        url: rest/1/concept/version/373450?expand=parents&stated=true
+      - name: children
+        url: rest/1/concept/version/373450?expand=children&stated=true
+    conChronology:
+      description: Surgical approach (attribute)
+      expandables:
+        items:
+        - name: versionsAll
+          url: rest/1/concept/versions/373450/
+        - name: versionsLatestOnly
+          url: rest/1/concept/version/373450/
+      identifiers:
+        uuids:
+        - 6e791030-235d-3533-b72c-149fc4adac5c
+      versions:
+    conVersion:
+      stampSequence: 47
+      state: ACTIVE
+      time: 1296450000000
+      authorSequence: 5
+      moduleSequence: 0
+      pathSequence: 7
+    parents:
+    children:
+  - expandables:
+      items:
+      - name: parents
+        url: rest/1/concept/version/372935?expand=parents&stated=true
+      - name: children
+        url: rest/1/concept/version/372935?expand=children&stated=true
+    conChronology:
+      description: Using substance (attribute)
+      expandables:
+        items:
+        - name: versionsAll
+          url: rest/1/concept/versions/372935/
+        - name: versionsLatestOnly
+          url: rest/1/concept/version/372935/
+      identifiers:
+        uuids:
+        - 996261c3-3c12-3f09-8f14-e30e85e9e70d
+      versions:
+    conVersion:
+      stampSequence: 47
+      state: ACTIVE
+      time: 1296450000000
+      authorSequence: 5
+      moduleSequence: 0
+      pathSequence: 7
+    parents:
+    children:
+  - expandables:
+      items:
+      - name: parents
+        url: rest/1/concept/version/372818?expand=parents&stated=true
+      - name: children
+        url: rest/1/concept/version/372818?expand=children&stated=true
+    conChronology:
+      description: Using energy (attribute)
+      expandables:
+        items:
+        - name: versionsAll
+          url: rest/1/concept/versions/372818/
+        - name: versionsLatestOnly
+          url: rest/1/concept/version/372818/
+      identifiers:
+        uuids:
+        - 3050f9ea-e811-37f2-b132-ffa06afcfbbe
+      versions:
+    conVersion:
+      stampSequence: 47
+      state: ACTIVE
+      time: 1296450000000
+      authorSequence: 5
+      moduleSequence: 0
+      pathSequence: 7
+    parents:
+    children:
+  - expandables:
+      items:
+      - name: parents
+        url: rest/1/concept/version/367648?expand=parents&stated=true
+      - name: children
+        url: rest/1/concept/version/367648?expand=children&stated=true
+    conChronology:
+      description: Finding informer (attribute)
+      expandables:
+        items:
+        - name: versionsAll
+          url: rest/1/concept/versions/367648/
+        - name: versionsLatestOnly
+          url: rest/1/concept/version/367648/
+      identifiers:
+        uuids:
+        - 4990c973-2c08-3972-93ed-3ce9cd4e1776
+      versions:
+    conVersion:
+      stampSequence: 47
+      state: ACTIVE
+      time: 1296450000000
+      authorSequence: 5
+      moduleSequence: 0
+      pathSequence: 7
+    parents:
+    children:
+  - expandables:
+      items:
+      - name: parents
+        url: rest/1/concept/version/367357?expand=parents&stated=true
+      - name: children
+        url: rest/1/concept/version/367357?expand=children&stated=true
+    conChronology:
+      description: Finding method (attribute)
+      expandables:
+        items:
+        - name: versionsAll
+          url: rest/1/concept/versions/367357/
+        - name: versionsLatestOnly
+          url: rest/1/concept/version/367357/
+      identifiers:
+        uuids:
+        - ee283805-ec23-3e22-8bd0-c739f8cbdd7d
+      versions:
+    conVersion:
+      stampSequence: 47
+      state: ACTIVE
+      time: 1296450000000
+      authorSequence: 5
+      moduleSequence: 0
+      pathSequence: 7
+    parents:
+    children:
+  - expandables:
+      items:
+      - name: parents
+        url: rest/1/concept/version/359830?expand=parents&stated=true
+      - name: children
+        url: rest/1/concept/version/359830?expand=children&stated=true
+    conChronology:
+      description: Has dose form (attribute)
+      expandables:
+        items:
+        - name: versionsAll
+          url: rest/1/concept/versions/359830/
+        - name: versionsLatestOnly
+          url: rest/1/concept/version/359830/
+      identifiers:
+        uuids:
+        - 072e7737-e22e-36b5-89d2-4815f0529c63
+      versions:
+    conVersion:
+      stampSequence: 47
+      state: ACTIVE
+      time: 1296450000000
+      authorSequence: 5
+      moduleSequence: 0
+      pathSequence: 7
+    parents:
+    children:
+  - expandables:
+      items:
+      - name: parents
+        url: rest/1/concept/version/359390?expand=parents&stated=true
+      - name: children
+        url: rest/1/concept/version/359390?expand=children&stated=true
+    conChronology:
+      description: Route of administration (attribute)
+      expandables:
+        items:
+        - name: versionsAll
+          url: rest/1/concept/versions/359390/
+        - name: versionsLatestOnly
+          url: rest/1/concept/version/359390/
+      identifiers:
+        uuids:
+        - ddbb95e5-aaf6-38f3-b400-dcfb1f85be91
+      versions:
+    conVersion:
+      stampSequence: 47
+      state: ACTIVE
+      time: 1296450000000
+      authorSequence: 5
+      moduleSequence: 0
+      pathSequence: 7
+    parents:
+    children:
+  - expandables:
+      items:
+      - name: parents
+        url: rest/1/concept/version/357448?expand=parents&stated=true
+      - name: children
+        url: rest/1/concept/version/357448?expand=children&stated=true
+    conChronology:
+      description: Subject relationship context (attribute)
+      expandables:
+        items:
+        - name: versionsAll
+          url: rest/1/concept/versions/357448/
+        - name: versionsLatestOnly
+          url: rest/1/concept/version/357448/
+      identifiers:
+        uuids:
+        - cbd2a57c-a28d-3494-9193-2189f2b618a2
+      versions:
+    conVersion:
+      stampSequence: 47
+      state: ACTIVE
+      time: 1296450000000
+      authorSequence: 5
+      moduleSequence: 0
+      pathSequence: 7
+    parents:
+    children:
+  - expandables:
+      items:
+      - name: parents
+        url: rest/1/concept/version/357447?expand=parents&stated=true
+      - name: children
+        url: rest/1/concept/version/357447?expand=children&stated=true
+    conChronology:
+      description: Temporal context (attribute)
+      expandables:
+        items:
+        - name: versionsAll
+          url: rest/1/concept/versions/357447/
+        - name: versionsLatestOnly
+          url: rest/1/concept/version/357447/
+      identifiers:
+        uuids:
+        - 2c6acb71-a375-30b4-952d-63916ed74084
+      versions:
+    conVersion:
+      stampSequence: 47
+      state: ACTIVE
+      time: 1296450000000
+      authorSequence: 5
+      moduleSequence: 0
+      pathSequence: 7
+    parents:
+    children:
+  - expandables:
+      items:
+      - name: parents
+        url: rest/1/concept/version/357446?expand=parents&stated=true
+      - name: children
+        url: rest/1/concept/version/357446?expand=children&stated=true
+    conChronology:
+      description: Procedure context (attribute)
+      expandables:
+        items:
+        - name: versionsAll
+          url: rest/1/concept/versions/357446/
+        - name: versionsLatestOnly
+          url: rest/1/concept/version/357446/
+      identifiers:
+        uuids:
+        - 6d2e9614-a93f-3835-b278-01650b17743a
+      versions:
+    conVersion:
+      stampSequence: 47
+      state: ACTIVE
+      time: 1296450000000
+      authorSequence: 5
+      moduleSequence: 0
+      pathSequence: 7
+    parents:
+    children:
+  - expandables:
+      items:
+      - name: parents
+        url: rest/1/concept/version/357445?expand=parents&stated=true
+      - name: children
+        url: rest/1/concept/version/357445?expand=children&stated=true
+    conChronology:
+      description: Finding context (attribute)
+      expandables:
+        items:
+        - name: versionsAll
+          url: rest/1/concept/versions/357445/
+        - name: versionsLatestOnly
+          url: rest/1/concept/version/357445/
+      identifiers:
+        uuids:
+        - 2dbbf50e-9e14-382d-80be-ec7a020cb436
+      versions:
+    conVersion:
+      stampSequence: 47
+      state: ACTIVE
+      time: 1296450000000
+      authorSequence: 5
+      moduleSequence: 0
+      pathSequence: 7
+    parents:
+    children:
+  - expandables:
+      items:
+      - name: parents
+        url: rest/1/concept/version/354533?expand=parents&stated=true
+      - name: children
+        url: rest/1/concept/version/354533?expand=children&stated=true
+    conChronology:
+      description: Procedure morphology (attribute)
+      expandables:
+        items:
+        - name: versionsAll
+          url: rest/1/concept/versions/354533/
+        - name: versionsLatestOnly
+          url: rest/1/concept/version/354533/
+      identifiers:
+        uuids:
+        - c6456f56-c088-34f5-a85d-39a5fcf62411
+      versions:
+    conVersion:
+      stampSequence: 47
+      state: ACTIVE
+      time: 1296450000000
+      authorSequence: 5
+      moduleSequence: 0
+      pathSequence: 7
+    parents:
+    children:
+  - expandables:
+      items:
+      - name: parents
+        url: rest/1/concept/version/354532?expand=parents&stated=true
+      - name: children
+        url: rest/1/concept/version/354532?expand=children&stated=true
+    conChronology:
+      description: Procedure device (attribute)
+      expandables:
+        items:
+        - name: versionsAll
+          url: rest/1/concept/versions/354532/
+        - name: versionsLatestOnly
+          url: rest/1/concept/version/354532/
+      identifiers:
+        uuids:
+        - 820447dc-ff12-3902-b752-6e5397d297ef
+      versions:
+    conVersion:
+      stampSequence: 47
+      state: ACTIVE
+      time: 1296450000000
+      authorSequence: 5
+      moduleSequence: 0
+      pathSequence: 7
+    parents:
+    children:
+  - expandables:
+      items:
+      - name: parents
+        url: rest/1/concept/version/326103?expand=parents&stated=true
+      - name: children
+        url: rest/1/concept/version/326103?expand=children&stated=true
+    conChronology:
+      description: Pathological process (attribute)
+      expandables:
+        items:
+        - name: versionsAll
+          url: rest/1/concept/versions/326103/
+        - name: versionsLatestOnly
+          url: rest/1/concept/version/326103/
+      identifiers:
+        uuids:
+        - 52542cae-017c-3fc4-bff0-97b7f620db28
+      versions:
+    conVersion:
+      stampSequence: 47
+      state: ACTIVE
+      time: 1296450000000
+      authorSequence: 5
+      moduleSequence: 0
+      pathSequence: 7
+    parents:
+    children:
+  - expandables:
+      items:
+      - name: parents
+        url: rest/1/concept/version/326102?expand=parents&stated=true
+      - name: children
+        url: rest/1/concept/version/326102?expand=children&stated=true
+    conChronology:
+      description: Time aspect (attribute)
+      expandables:
+        items:
+        - name: versionsAll
+          url: rest/1/concept/versions/326102/
+        - name: versionsLatestOnly
+          url: rest/1/concept/version/326102/
+      identifiers:
+        uuids:
+        - 350adfa7-8fd5-3b95-91f2-8119b500a464
+      versions:
+    conVersion:
+      stampSequence: 47
+      state: ACTIVE
+      time: 1296450000000
+      authorSequence: 5
+      moduleSequence: 0
+      pathSequence: 7
+    parents:
+    children:
+  - expandables:
+      items:
+      - name: parents
+        url: rest/1/concept/version/326101?expand=parents&stated=true
+      - name: children
+        url: rest/1/concept/version/326101?expand=children&stated=true
+    conChronology:
+      description: Specimen substance (attribute)
+      expandables:
+        items:
+        - name: versionsAll
+          url: rest/1/concept/versions/326101/
+        - name: versionsLatestOnly
+          url: rest/1/concept/version/326101/
+      identifiers:
+        uuids:
+        - 500b618d-2896-36ff-a020-c3c988f816f1
+      versions:
+    conVersion:
+      stampSequence: 47
+      state: ACTIVE
+      time: 1296450000000
+      authorSequence: 5
+      moduleSequence: 0
+      pathSequence: 7
+    parents:
+    children:
+  - expandables:
+      items:
+      - name: parents
+        url: rest/1/concept/version/326100?expand=parents&stated=true
+      - name: children
+        url: rest/1/concept/version/326100?expand=children&stated=true
+    conChronology:
+      description: Scale type (attribute)
+      expandables:
+        items:
+        - name: versionsAll
+          url: rest/1/concept/versions/326100/
+        - name: versionsLatestOnly
+          url: rest/1/concept/version/326100/
+      identifiers:
+        uuids:
+        - 087afdd2-23cd-34c3-93a4-09088dfd480c
+      versions:
+    conVersion:
+      stampSequence: 47
+      state: ACTIVE
+      time: 1296450000000
+      authorSequence: 5
+      moduleSequence: 0
+      pathSequence: 7
+    parents:
+    children:
+  - expandables:
+      items:
+      - name: parents
+        url: rest/1/concept/version/326099?expand=parents&stated=true
+      - name: children
+        url: rest/1/concept/version/326099?expand=children&stated=true
+    conChronology:
+      description: Recipient category (attribute)
+      expandables:
+        items:
+        - name: versionsAll
+          url: rest/1/concept/versions/326099/
+        - name: versionsLatestOnly
+          url: rest/1/concept/version/326099/
+      identifiers:
+        uuids:
+        - e4233cb6-6b8f-3ae5-85e5-dab691a81ecd
+      versions:
+    conVersion:
+      stampSequence: 47
+      state: ACTIVE
+      time: 1296450000000
+      authorSequence: 5
+      moduleSequence: 0
+      pathSequence: 7
+    parents:
+    children:
+  - expandables:
+      items:
+      - name: parents
+        url: rest/1/concept/version/326098?expand=parents&stated=true
+      - name: children
+        url: rest/1/concept/version/326098?expand=children&stated=true
+    conChronology:
+      description: Property (attribute)
+      expandables:
+        items:
+        - name: versionsAll
+          url: rest/1/concept/versions/326098/
+        - name: versionsLatestOnly
+          url: rest/1/concept/version/326098/
+      identifiers:
+        uuids:
+        - 066462e2-f926-35d5-884a-4e276dad4c2c
+      versions:
+    conVersion:
+      stampSequence: 47
+      state: ACTIVE
+      time: 1296450000000
+      authorSequence: 5
+      moduleSequence: 0
+      pathSequence: 7
+    parents:
+    children:
+  - expandables:
+      items:
+      - name: parents
+        url: rest/1/concept/version/326097?expand=parents&stated=true
+      - name: children
+        url: rest/1/concept/version/326097?expand=children&stated=true
+    conChronology:
+      description: Measurement Method (attribute)
+      expandables:
+        items:
+        - name: versionsAll
+          url: rest/1/concept/versions/326097/
+        - name: versionsLatestOnly
+          url: rest/1/concept/version/326097/
+      identifiers:
+        uuids:
+        - a6e4f659-a4b4-33b7-a75d-4a810167b32a
+      versions:
+    conVersion:
+      stampSequence: 47
+      state: ACTIVE
+      time: 1296450000000
+      authorSequence: 5
+      moduleSequence: 0
+      pathSequence: 7
+    parents:
+    children:
+  - expandables:
+      items:
+      - name: parents
+        url: rest/1/concept/version/319683?expand=parents&stated=true
+      - name: children
+        url: rest/1/concept/version/319683?expand=children&stated=true
+    conChronology:
+      description: Interprets (attribute)
+      expandables:
+        items:
+        - name: versionsAll
+          url: rest/1/concept/versions/319683/
+        - name: versionsLatestOnly
+          url: rest/1/concept/version/319683/
+      identifiers:
+        uuids:
+        - 75e0da0c-21ea-301f-a176-bf056788afe5
+      versions:
+    conVersion:
+      stampSequence: 47
+      state: ACTIVE
+      time: 1296450000000
+      authorSequence: 5
+      moduleSequence: 0
+      pathSequence: 7
+    parents:
+    children:
+  - expandables:
+      items:
+      - name: parents
+        url: rest/1/concept/version/319682?expand=parents&stated=true
+      - name: children
+        url: rest/1/concept/version/319682?expand=children&stated=true
+    conChronology:
+      description: Has interpretation (attribute)
+      expandables:
+        items:
+        - name: versionsAll
+          url: rest/1/concept/versions/319682/
+        - name: versionsLatestOnly
+          url: rest/1/concept/version/319682/
+      identifiers:
+        uuids:
+        - 993a598d-a95a-3235-813e-59252c975070
+      versions:
+    conVersion:
+      stampSequence: 47
+      state: ACTIVE
+      time: 1296450000000
+      authorSequence: 5
+      moduleSequence: 0
+      pathSequence: 7
+    parents:
+    children:
+  - expandables:
+      items:
+      - name: parents
+        url: rest/1/concept/version/319674?expand=parents&stated=true
+      - name: children
+        url: rest/1/concept/version/319674?expand=children&stated=true
+    conChronology:
+      description: Has definitional manifestation (attribute)
+      expandables:
+        items:
+        - name: versionsAll
+          url: rest/1/concept/versions/319674/
+        - name: versionsLatestOnly
+          url: rest/1/concept/version/319674/
+      identifiers:
+        uuids:
+        - 545df979-75ea-3f82-939a-565d032bcdad
+      versions:
+    conVersion:
+      stampSequence: 47
+      state: ACTIVE
+      time: 1296450000000
+      authorSequence: 5
+      moduleSequence: 0
+      pathSequence: 7
+    parents:
+    children:
+  - expandables:
+      items:
+      - name: parents
+        url: rest/1/concept/version/319673?expand=parents&stated=true
+      - name: children
+        url: rest/1/concept/version/319673?expand=children&stated=true
+    conChronology:
+      description: Procedure site (attribute)
+      expandables:
+        items:
+        - name: versionsAll
+          url: rest/1/concept/versions/319673/
+        - name: versionsLatestOnly
+          url: rest/1/concept/version/319673/
+      identifiers:
+        uuids:
+        - 78dd0334-4b9e-3c26-9266-356f8c5c43ed
+      versions:
+    conVersion:
+      stampSequence: 47
+      state: ACTIVE
+      time: 1296450000000
+      authorSequence: 5
+      moduleSequence: 0
+      pathSequence: 7
+    parents:
+    children:
+  - expandables:
+      items:
+      - name: parents
+        url: rest/1/concept/version/319672?expand=parents&stated=true
+      - name: children
+        url: rest/1/concept/version/319672?expand=children&stated=true
+    conChronology:
+      description: Has intent (attribute)
+      expandables:
+        items:
+        - name: versionsAll
+          url: rest/1/concept/versions/319672/
+        - name: versionsLatestOnly
+          url: rest/1/concept/version/319672/
+      identifiers:
+        uuids:
+        - 4e504dc1-c971-3e20-a4f9-b86d0c0490af
+      versions:
+    conVersion:
+      stampSequence: 47
+      state: ACTIVE
+      time: 1296450000000
+      authorSequence: 5
+      moduleSequence: 0
+      pathSequence: 7
+    parents:
+    children:
+  - expandables:
+      items:
+      - name: parents
+        url: rest/1/concept/version/319671?expand=parents&stated=true
+      - name: children
+        url: rest/1/concept/version/319671?expand=children&stated=true
+    conChronology:
+      description: Has focus (attribute)
+      expandables:
+        items:
+        - name: versionsAll
+          url: rest/1/concept/versions/319671/
+        - name: versionsLatestOnly
+          url: rest/1/concept/version/319671/
+      identifiers:
+        uuids:
+        - b610d820-4486-3b5e-a2c1-9b66bc718c6d
+      versions:
+    conVersion:
+      stampSequence: 47
+      state: ACTIVE
+      time: 1296450000000
+      authorSequence: 5
+      moduleSequence: 0
+      pathSequence: 7
+    parents:
+    children:
+  - expandables:
+      items:
+      - name: parents
+        url: rest/1/concept/version/319670?expand=parents&stated=true
+      - name: children
+        url: rest/1/concept/version/319670?expand=children&stated=true
+    conChronology:
+      description: Direct substance (attribute)
+      expandables:
+        items:
+        - name: versionsAll
+          url: rest/1/concept/versions/319670/
+        - name: versionsLatestOnly
+          url: rest/1/concept/version/319670/
+      identifiers:
+        uuids:
+        - 49ee3912-abb7-325c-88ba-a98824b4c47d
+      versions:
+    conVersion:
+      stampSequence: 47
+      state: ACTIVE
+      time: 1296450000000
+      authorSequence: 5
+      moduleSequence: 0
+      pathSequence: 7
+    parents:
+    children:
+  - expandables:
+      items:
+      - name: parents
+        url: rest/1/concept/version/319667?expand=parents&stated=true
+      - name: children
+        url: rest/1/concept/version/319667?expand=children&stated=true
+    conChronology:
+      description: Finding site (attribute)
+      expandables:
+        items:
+        - name: versionsAll
+          url: rest/1/concept/versions/319667/
+        - name: versionsLatestOnly
+          url: rest/1/concept/version/319667/
+      identifiers:
+        uuids:
+        - 3a6d919d-6c25-3aae-9bc3-983ead83a928
+      versions:
+    conVersion:
+      stampSequence: 47
+      state: ACTIVE
+      time: 1296450000000
+      authorSequence: 5
+      moduleSequence: 0
+      pathSequence: 7
+    parents:
+    children:
+  - expandables:
+      items:
+      - name: parents
+        url: rest/1/concept/version/319558?expand=parents&stated=true
+      - name: children
+        url: rest/1/concept/version/319558?expand=children&stated=true
+    conChronology:
+      description: Associated procedure (attribute)
+      expandables:
+        items:
+        - name: versionsAll
+          url: rest/1/concept/versions/319558/
+        - name: versionsLatestOnly
+          url: rest/1/concept/version/319558/
+      identifiers:
+        uuids:
+        - c2a8166f-0860-3e8c-a058-e97a422670d8
+      versions:
+    conVersion:
+      stampSequence: 47
+      state: ACTIVE
+      time: 1296450000000
+      authorSequence: 5
+      moduleSequence: 0
+      pathSequence: 7
+    parents:
+    children:
+  - expandables:
+      items:
+      - name: parents
+        url: rest/1/concept/version/263177?expand=parents&stated=true
+      - name: children
+        url: rest/1/concept/version/263177?expand=children&stated=true
+    conChronology:
+      description: Laterality (attribute)
+      expandables:
+        items:
+        - name: versionsAll
+          url: rest/1/concept/versions/263177/
+        - name: versionsLatestOnly
+          url: rest/1/concept/version/263177/
+      identifiers:
+        uuids:
+        - 26ca4590-bbe5-327c-a40a-ba56dc86996b
+      versions:
+    conVersion:
+      stampSequence: 47
+      state: ACTIVE
+      time: 1296450000000
+      authorSequence: 5
+      moduleSequence: 0
+      pathSequence: 7
+    parents:
+    children:
+  - expandables:
+      items:
+      - name: parents
+        url: rest/1/concept/version/254646?expand=parents&stated=true
+      - name: children
+        url: rest/1/concept/version/254646?expand=children&stated=true
+    conChronology:
+      description: Clinical course (attribute)
+      expandables:
+        items:
+        - name: versionsAll
+          url: rest/1/concept/versions/254646/
+        - name: versionsLatestOnly
+          url: rest/1/concept/version/254646/
+      identifiers:
+        uuids:
+        - 0d8a9cbb-e21e-3de7-9aad-8223c000849f
+      versions:
+    conVersion:
+      stampSequence: 47
+      state: ACTIVE
+      time: 1296450000000
+      authorSequence: 5
+      moduleSequence: 0
+      pathSequence: 7
+    parents:
+    children:
+  - expandables:
+      items:
+      - name: parents
+        url: rest/1/concept/version/252014?expand=parents&stated=true
+      - name: children
+        url: rest/1/concept/version/252014?expand=children&stated=true
+    conChronology:
+      description: Priority (attribute)
+      expandables:
+        items:
+        - name: versionsAll
+          url: rest/1/concept/versions/252014/
+        - name: versionsLatestOnly
+          url: rest/1/concept/version/252014/
+      identifiers:
+        uuids:
+        - 77d496f0-d56d-3ab1-b3c4-b58969ddd078
+      versions:
+    conVersion:
+      stampSequence: 47
+      state: ACTIVE
+      time: 1296450000000
+      authorSequence: 5
+      moduleSequence: 0
+      pathSequence: 7
+    parents:
+    children:
+  - expandables:
+      items:
+      - name: parents
+        url: rest/1/concept/version/251830?expand=parents&stated=true
+      - name: children
+        url: rest/1/concept/version/251830?expand=children&stated=true
+    conChronology:
+      description: Method (attribute)
+      expandables:
+        items:
+        - name: versionsAll
+          url: rest/1/concept/versions/251830/
+        - name: versionsLatestOnly
+          url: rest/1/concept/version/251830/
+      identifiers:
+        uuids:
+        - d0f9e3b1-29e4-399f-b129-36693ba4acbc
+      versions:
+    conVersion:
+      stampSequence: 47
+      state: ACTIVE
+      time: 1296450000000
+      authorSequence: 5
+      moduleSequence: 0
+      pathSequence: 7
+    parents:
+    children:
+  - expandables:
+      items:
+      - name: parents
+        url: rest/1/concept/version/251651?expand=parents&stated=true
+      - name: children
+        url: rest/1/concept/version/251651?expand=children&stated=true
+    conChronology:
+      description: Access (attribute)
+      expandables:
+        items:
+        - name: versionsAll
+          url: rest/1/concept/versions/251651/
+        - name: versionsLatestOnly
+          url: rest/1/concept/version/251651/
+      identifiers:
+        uuids:
+        - 3f5a4b8c-923b-3df5-9362-67881b729394
+      versions:
+    conVersion:
+      stampSequence: 47
+      state: ACTIVE
+      time: 1296450000000
+      authorSequence: 5
+      moduleSequence: 0
+      pathSequence: 7
+    parents:
+    children:
+  - expandables:
+      items:
+      - name: parents
+        url: rest/1/concept/version/237815?expand=parents&stated=true
+      - name: children
+        url: rest/1/concept/version/237815?expand=children&stated=true
+    conChronology:
+      description: Units (attribute)
+      expandables:
+        items:
+        - name: versionsAll
+          url: rest/1/concept/versions/237815/
+        - name: versionsLatestOnly
+          url: rest/1/concept/version/237815/
+      identifiers:
+        uuids:
+        - 17055d89-84e3-3e12-9fb1-1bc4c75a122d
+      versions:
+    conVersion:
+      stampSequence: 47
+      state: ACTIVE
+      time: 1296450000000
+      authorSequence: 5
+      moduleSequence: 0
+      pathSequence: 7
+    parents:
+    children:
+  - expandables:
+      items:
+      - name: parents
+        url: rest/1/concept/version/237814?expand=parents&stated=true
+      - name: children
+        url: rest/1/concept/version/237814?expand=children&stated=true
+    conChronology:
+      description: Revision status (attribute)
+      expandables:
+        items:
+        - name: versionsAll
+          url: rest/1/concept/versions/237814/
+        - name: versionsLatestOnly
+          url: rest/1/concept/version/237814/
+      identifiers:
+        uuids:
+        - 7b15c5ab-ecf9-3dd4-932c-5e7ce2482ee4
+      versions:
+    conVersion:
+      stampSequence: 47
+      state: ACTIVE
+      time: 1296450000000
+      authorSequence: 5
+      moduleSequence: 0
+      pathSequence: 7
+    parents:
+    children:
+  - expandables:
+      items:
+      - name: parents
+        url: rest/1/concept/version/237802?expand=parents&stated=true
+      - name: children
+        url: rest/1/concept/version/237802?expand=children&stated=true
+    conChronology:
+      description: Technique (attribute)
+      expandables:
+        items:
+        - name: versionsAll
+          url: rest/1/concept/versions/237802/
+        - name: versionsLatestOnly
+          url: rest/1/concept/version/237802/
+      identifiers:
+        uuids:
+        - ad61013f-9d40-3ea5-baf0-7273631efaea
+      versions:
+    conVersion:
+      stampSequence: 47
+      state: ACTIVE
+      time: 1296450000000
+      authorSequence: 5
+      moduleSequence: 0
+      pathSequence: 7
+    parents:
+    children:
+  - expandables:
+      items:
+      - name: parents
+        url: rest/1/concept/version/237757?expand=parents&stated=true
+      - name: children
+        url: rest/1/concept/version/237757?expand=children&stated=true
+    conChronology:
+      description: Episodicity (attribute)
+      expandables:
+        items:
+        - name: versionsAll
+          url: rest/1/concept/versions/237757/
+        - name: versionsLatestOnly
+          url: rest/1/concept/version/237757/
+      identifiers:
+        uuids:
+        - bc3e12ec-0278-3224-bb4d-2d2414830a55
+      versions:
+    conVersion:
+      stampSequence: 47
+      state: ACTIVE
+      time: 1296450000000
+      authorSequence: 5
+      moduleSequence: 0
+      pathSequence: 7
+    parents:
+    children:
+  - expandables:
+      items:
+      - name: parents
+        url: rest/1/concept/version/237755?expand=parents&stated=true
+      - name: children
+        url: rest/1/concept/version/237755?expand=children&stated=true
+    conChronology:
+      description: Occurrence (attribute)
+      expandables:
+        items:
+        - name: versionsAll
+          url: rest/1/concept/versions/237755/
+        - name: versionsLatestOnly
+          url: rest/1/concept/version/237755/
+      identifiers:
+        uuids:
+        - d99e2a70-243d-3bf2-967a-faee3265102b
+      versions:
+    conVersion:
+      stampSequence: 47
+      state: ACTIVE
+      time: 1296450000000
+      authorSequence: 5
+      moduleSequence: 0
+      pathSequence: 7
+    parents:
+    children:
+  - expandables:
+      items:
+      - name: parents
+        url: rest/1/concept/version/237413?expand=parents&stated=true
+      - name: children
+        url: rest/1/concept/version/237413?expand=children&stated=true
+    conChronology:
+      description: Severity (attribute)
+      expandables:
+        items:
+        - name: versionsAll
+          url: rest/1/concept/versions/237413/
+        - name: versionsLatestOnly
+          url: rest/1/concept/version/237413/
+      identifiers:
+        uuids:
+        - fe63c719-4caa-398a-ba22-e47cc1ccc5c1
+      versions:
+    conVersion:
+      stampSequence: 47
+      state: ACTIVE
+      time: 1296450000000
+      authorSequence: 5
+      moduleSequence: 0
+      pathSequence: 7
+    parents:
+    children:
+  - expandables:
+      items:
+      - name: parents
+        url: rest/1/concept/version/237401?expand=parents&stated=true
+      - name: children
+        url: rest/1/concept/version/237401?expand=children&stated=true
+    conChronology:
+      description: Onset (attribute)
+      expandables:
+        items:
+        - name: versionsAll
+          url: rest/1/concept/versions/237401/
+        - name: versionsLatestOnly
+          url: rest/1/concept/version/237401/
+      identifiers:
+        uuids:
+        - 113f7b33-caac-30d2-b827-be4646f0bc58
+      versions:
+    conVersion:
+      stampSequence: 15
+      state: INACTIVE
+      time: 1170219600000
+      authorSequence: 5
+      moduleSequence: 0
+      pathSequence: 7
+    parents:
+    children:
+  - expandables:
+      items:
+      - name: parents
+        url: rest/1/concept/version/237394?expand=parents&stated=true
+      - name: children
+        url: rest/1/concept/version/237394?expand=children&stated=true
+    conChronology:
+      description: Component (attribute)
+      expandables:
+        items:
+        - name: versionsAll
+          url: rest/1/concept/versions/237394/
+        - name: versionsLatestOnly
+          url: rest/1/concept/version/237394/
+      identifiers:
+        uuids:
+        - 8f0696db-210d-37ab-8fe1-d4f949892ac4
+      versions:
+    conVersion:
+      stampSequence: 47
+      state: ACTIVE
+      time: 1296450000000
+      authorSequence: 5
+      moduleSequence: 0
+      pathSequence: 7
+    parents:
+    children:
+  - expandables:
+      items:
+      - name: parents
+        url: rest/1/concept/version/237391?expand=parents&stated=true
+      - name: children
+        url: rest/1/concept/version/237391?expand=children&stated=true
+    conChronology:
+      description: Associated finding (attribute)
+      expandables:
+        items:
+        - name: versionsAll
+          url: rest/1/concept/versions/237391/
+        - name: versionsLatestOnly
+          url: rest/1/concept/version/237391/
+      identifiers:
+        uuids:
+        - b20b664d-2690-3092-a2ef-7f8013b2dad3
+      versions:
+    conVersion:
+      stampSequence: 47
+      state: ACTIVE
+      time: 1296450000000
+      authorSequence: 5
+      moduleSequence: 0
+      pathSequence: 7
+    parents:
+    children:
+  - expandables:
+      items:
+      - name: parents
+        url: rest/1/concept/version/124779?expand=parents&stated=true
+      - name: children
+        url: rest/1/concept/version/124779?expand=children&stated=true
+    conChronology:
+      description: Subject of information (attribute)
+      expandables:
+        items:
+        - name: versionsAll
+          url: rest/1/concept/versions/124779/
+        - name: versionsLatestOnly
+          url: rest/1/concept/version/124779/
+      identifiers:
+        uuids:
+        - 51690fd8-4bf1-359f-9931-05a9c80a04b6
+      versions:
+    conVersion:
+      stampSequence: 47
+      state: ACTIVE
+      time: 1296450000000
+      authorSequence: 5
+      moduleSequence: 0
+      pathSequence: 7
+    parents:
+    children:
+  - expandables:
+      items:
+      - name: parents
+        url: rest/1/concept/version/121439?expand=parents&stated=true
+      - name: children
+        url: rest/1/concept/version/121439?expand=children&stated=true
+    conChronology:
+      description: Has active ingredient (attribute)
+      expandables:
+        items:
+        - name: versionsAll
+          url: rest/1/concept/versions/121439/
+        - name: versionsLatestOnly
+          url: rest/1/concept/version/121439/
+      identifiers:
+        uuids:
+        - 65bf3b7f-c854-36b5-81c3-4915461020a8
+      versions:
+    conVersion:
+      stampSequence: 47
+      state: ACTIVE
+      time: 1296450000000
+      authorSequence: 5
+      moduleSequence: 0
+      pathSequence: 7
+    parents:
+    children:
+  - expandables:
+      items:
+      - name: parents
+        url: rest/1/concept/version/117788?expand=parents&stated=true
+      - name: children
+        url: rest/1/concept/version/117788?expand=children&stated=true
+    conChronology:
+      description: Part of (attribute)
+      expandables:
+        items:
+        - name: versionsAll
+          url: rest/1/concept/versions/117788/
+        - name: versionsLatestOnly
+          url: rest/1/concept/version/117788/
+      identifiers:
+        uuids:
+        - b4c3f6f9-6937-30fd-8412-d0c77f8a7f73
+      versions:
+    conVersion:
+      stampSequence: 47
+      state: ACTIVE
+      time: 1296450000000
+      authorSequence: 5
+      moduleSequence: 0
+      pathSequence: 7
+    parents:
+    children:
+  - expandables:
+      items:
+      - name: parents
+        url: rest/1/concept/version/113968?expand=parents&stated=true
+      - name: children
+        url: rest/1/concept/version/113968?expand=children&stated=true
+    conChronology:
+      description: Specimen procedure (attribute)
+      expandables:
+        items:
+        - name: versionsAll
+          url: rest/1/concept/versions/113968/
+        - name: versionsLatestOnly
+          url: rest/1/concept/version/113968/
+      identifiers:
+        uuids:
+        - e81aa5e5-fcf6-3329-994d-3154576ac90d
+      versions:
+    conVersion:
+      stampSequence: 47
+      state: ACTIVE
+      time: 1296450000000
+      authorSequence: 5
+      moduleSequence: 0
+      pathSequence: 7
+    parents:
+    children:
+  - expandables:
+      items:
+      - name: parents
+        url: rest/1/concept/version/113967?expand=parents&stated=true
+      - name: children
+        url: rest/1/concept/version/113967?expand=children&stated=true
+    conChronology:
+      description: Specimen source identity (attribute)
+      expandables:
+        items:
+        - name: versionsAll
+          url: rest/1/concept/versions/113967/
+        - name: versionsLatestOnly
+          url: rest/1/concept/version/113967/
+      identifiers:
+        uuids:
+        - 4ae2b18c-db93-339c-8a9f-35e027007bf5
+      versions:
+    conVersion:
+      stampSequence: 47
+      state: ACTIVE
+      time: 1296450000000
+      authorSequence: 5
+      moduleSequence: 0
+      pathSequence: 7
+    parents:
+    children:
+  - expandables:
+      items:
+      - name: parents
+        url: rest/1/concept/version/113966?expand=parents&stated=true
+      - name: children
+        url: rest/1/concept/version/113966?expand=children&stated=true
+    conChronology:
+      description: Specimen source topography (attribute)
+      expandables:
+        items:
+        - name: versionsAll
+          url: rest/1/concept/versions/113966/
+        - name: versionsLatestOnly
+          url: rest/1/concept/version/113966/
+      identifiers:
+        uuids:
+        - 4aafafbc-b21f-30a6-b676-0224e6b001ab
+      versions:
+    conVersion:
+      stampSequence: 47
+      state: ACTIVE
+      time: 1296450000000
+      authorSequence: 5
+      moduleSequence: 0
+      pathSequence: 7
+    parents:
+    children:
+  - expandables:
+      items:
+      - name: parents
+        url: rest/1/concept/version/113965?expand=parents&stated=true
+      - name: children
+        url: rest/1/concept/version/113965?expand=children&stated=true
+    conChronology:
+      description: Specimen source morphology (attribute)
+      expandables:
+        items:
+        - name: versionsAll
+          url: rest/1/concept/versions/113965/
+        - name: versionsLatestOnly
+          url: rest/1/concept/version/113965/
+      identifiers:
+        uuids:
+        - 3dd1e927-005e-30ba-b3a4-0a67d538fefe
+      versions:
+    conVersion:
+      stampSequence: 47
+      state: ACTIVE
+      time: 1296450000000
+      authorSequence: 5
+      moduleSequence: 0
+      pathSequence: 7
+    parents:
+    children:
+  - expandables:
+      items:
+      - name: parents
+        url: rest/1/concept/version/112491?expand=parents&stated=true
+      - name: children
+        url: rest/1/concept/version/112491?expand=children&stated=true
+    conChronology:
+      description: Has specimen (attribute)
+      expandables:
+        items:
+        - name: versionsAll
+          url: rest/1/concept/versions/112491/
+        - name: versionsLatestOnly
+          url: rest/1/concept/version/112491/
+      identifiers:
+        uuids:
+        - 5ce3e93b-8594-3d38-b410-b06039e63e3c
+      versions:
+    conVersion:
+      stampSequence: 47
+      state: ACTIVE
+      time: 1296450000000
+      authorSequence: 5
+      moduleSequence: 0
+      pathSequence: 7
+    parents:
+    children:
+  - expandables:
+      items:
+      - name: parents
+        url: rest/1/concept/version/112482?expand=parents&stated=true
+      - name: children
+        url: rest/1/concept/version/112482?expand=children&stated=true
+    conChronology:
+      description: Associated morphology (attribute)
+      expandables:
+        items:
+        - name: versionsAll
+          url: rest/1/concept/versions/112482/
+        - name: versionsLatestOnly
+          url: rest/1/concept/version/112482/
+      identifiers:
+        uuids:
+        - 3161e31b-7d00-33d9-8cbd-9c33dc153aae
+      versions:
+    conVersion:
+      stampSequence: 47
+      state: ACTIVE
+      time: 1296450000000
+      authorSequence: 5
+      moduleSequence: 0
+      pathSequence: 7
+    parents:
+    children:
+  - expandables:
+      items:
+      - name: parents
+        url: rest/1/concept/version/47565?expand=parents&stated=true
+      - name: children
+        url: rest/1/concept/version/47565?expand=children&stated=true
+    conChronology:
+      description: Associated with (attribute)
+      expandables:
+        items:
+        - name: versionsAll
+          url: rest/1/concept/versions/47565/
+        - name: versionsLatestOnly
+          url: rest/1/concept/version/47565/
+      identifiers:
+        uuids:
+        - 79e34041-f87c-3659-b033-41bdd35bd89e
+      versions:
+    conVersion:
+      stampSequence: 47
+      state: ACTIVE
+      time: 1296450000000
+      authorSequence: 5
+      moduleSequence: 0
+      pathSequence: 7
+    parents:
+    children:
+  - expandables:
+      items:
+      - name: parents
+        url: rest/1/concept/version/41?expand=parents&stated=true
+      - name: children
+        url: rest/1/concept/version/41?expand=children&stated=true
     conChronology:
       description: Has strength (ISAAC)
       expandables:
         items:
         - name: versionsAll
-          url: rest/1/concept/versions/43/
+          url: rest/1/concept/versions/41/
         - name: versionsLatestOnly
-          url: rest/1/concept/version/43/
+          url: rest/1/concept/version/41/
       identifiers:
         uuids:
-        - 54309559-604d-4116-abf3-5fbee485dc27
+        - aea60693-6f4c-5bc6-aecc-8051a8f1ef56
       versions:
     conVersion:
       stampSequence: 1
       state: ACTIVE
-      time: 1454625196096
+      time: 1456685492337
       authorSequence: 5
       moduleSequence: 0
       pathSequence: 7
@@ -826,23 +3094,23 @@ children:
 - expandables:
     items:
     - name: parents
-      url: rest/1/concept/version/41?expand=parents&stated=true
+      url: rest/1/concept/version/39?expand=parents&stated=true
   conChronology:
     description: description-logic classifier (ISAAC)
     expandables:
       items:
       - name: versionsAll
-        url: rest/1/concept/versions/41/
+        url: rest/1/concept/versions/39/
       - name: versionsLatestOnly
-        url: rest/1/concept/version/41/
+        url: rest/1/concept/version/39/
     identifiers:
       uuids:
-      - a942c57f-3a88-45ed-b923-287c124bdfff
+      - efb60c53-9bd6-5fd4-a41c-582fd7b8784d
     versions:
   conVersion:
     stampSequence: 1
     state: ACTIVE
-    time: 1454625196096
+    time: 1456685492337
     authorSequence: 5
     moduleSequence: 0
     pathSequence: 7
@@ -864,12 +3132,12 @@ children:
           url: rest/1/concept/version/144/
       identifiers:
         uuids:
-        - cebb350e-9280-4af9-89e4-e6406c984186
+        - 7af994c7-a010-5c5c-9a57-67054986c63e
       versions:
     conVersion:
       stampSequence: 1
       state: ACTIVE
-      time: 1454625196096
+      time: 1456685492337
       authorSequence: 5
       moduleSequence: 0
       pathSequence: 7
@@ -896,7 +3164,7 @@ children:
     conVersion:
       stampSequence: 1
       state: ACTIVE
-      time: 1454625196096
+      time: 1456685492337
       authorSequence: 5
       moduleSequence: 0
       pathSequence: 7
@@ -923,7 +3191,7 @@ children:
     conVersion:
       stampSequence: 1
       state: ACTIVE
-      time: 1454625196096
+      time: 1456685492337
       authorSequence: 5
       moduleSequence: 0
       pathSequence: 7
@@ -932,23 +3200,23 @@ children:
 - expandables:
     items:
     - name: parents
-      url: rest/1/concept/version/40?expand=parents&stated=true
+      url: rest/1/concept/version/38?expand=parents&stated=true
   conChronology:
     description: description-logic profile (ISAAC)
     expandables:
       items:
       - name: versionsAll
-        url: rest/1/concept/versions/40/
+        url: rest/1/concept/versions/38/
       - name: versionsLatestOnly
-        url: rest/1/concept/version/40/
+        url: rest/1/concept/version/38/
     identifiers:
       uuids:
-      - e414fd37-3ff0-4417-852c-4ccb812ab26e
+      - a2befa28-c6d5-5f73-8a49-43639c1e0934
     versions:
   conVersion:
     stampSequence: 1
     state: ACTIVE
-    time: 1454625196096
+    time: 1456685492337
     authorSequence: 5
     moduleSequence: 0
     pathSequence: 7
@@ -970,12 +3238,12 @@ children:
           url: rest/1/concept/version/141/
       identifiers:
         uuids:
-        - 47e6c9d9-4a17-4084-ac19-d2cce5726a4f
+        - 494a3dbd-bd3a-595f-bde1-b2df12e2ba15
       versions:
     conVersion:
       stampSequence: 1
       state: ACTIVE
-      time: 1454625196096
+      time: 1456685492337
       authorSequence: 5
       moduleSequence: 0
       pathSequence: 7
@@ -1002,7 +3270,7 @@ children:
     conVersion:
       stampSequence: 1
       state: ACTIVE
-      time: 1454625196096
+      time: 1456685492337
       authorSequence: 5
       moduleSequence: 0
       pathSequence: 7
@@ -1011,23 +3279,23 @@ children:
 - expandables:
     items:
     - name: parents
-      url: rest/1/concept/version/39?expand=parents&stated=true
+      url: rest/1/concept/version/37?expand=parents&stated=true
   conChronology:
     description: concrete domain operator (ISAAC)
     expandables:
       items:
       - name: versionsAll
-        url: rest/1/concept/versions/39/
+        url: rest/1/concept/versions/37/
       - name: versionsLatestOnly
-        url: rest/1/concept/version/39/
+        url: rest/1/concept/version/37/
     identifiers:
       uuids:
-      - 66ccc5ac-ed2e-4fbd-ae05-85591f659341
+      - 34de51b1-8ae8-5ff9-8248-f5b8ddc844ee
     versions:
   conVersion:
     stampSequence: 1
     state: ACTIVE
-    time: 1454625196096
+    time: 1456685492337
     authorSequence: 5
     moduleSequence: 0
     pathSequence: 7
@@ -1049,12 +3317,12 @@ children:
           url: rest/1/concept/version/139/
       identifiers:
         uuids:
-        - 4380a1f4-a297-4b47-92b4-46cd19ab054f
+        - cc0b91f7-237e-5efb-ac07-6e476a599a8f
       versions:
     conVersion:
       stampSequence: 1
       state: ACTIVE
-      time: 1454625196096
+      time: 1456685492337
       authorSequence: 5
       moduleSequence: 0
       pathSequence: 7
@@ -1076,12 +3344,12 @@ children:
           url: rest/1/concept/version/138/
       identifiers:
         uuids:
-        - 23a0b42b-2ba3-43db-af6b-9ce96fc4d283
+        - 2aa59112-c6fa-56ea-9711-37009f5a08c1
       versions:
     conVersion:
       stampSequence: 1
       state: ACTIVE
-      time: 1454625196096
+      time: 1456685492337
       authorSequence: 5
       moduleSequence: 0
       pathSequence: 7
@@ -1103,12 +3371,12 @@ children:
           url: rest/1/concept/version/137/
       identifiers:
         uuids:
-        - 92fa8f74-a79a-433b-a0bd-4c8bf8dca07c
+        - ac0a9ef4-0380-57ba-b0b4-f9da1d8b8962
       versions:
     conVersion:
       stampSequence: 1
       state: ACTIVE
-      time: 1454625196096
+      time: 1456685492337
       authorSequence: 5
       moduleSequence: 0
       pathSequence: 7
@@ -1130,12 +3398,12 @@ children:
           url: rest/1/concept/version/136/
       identifiers:
         uuids:
-        - 4b127f0b-0158-4133-bd12-f9fcc30b06fd
+        - a0115e1d-f118-5a4e-bfe8-7d97d2b847d9
       versions:
     conVersion:
       stampSequence: 1
       state: ACTIVE
-      time: 1454625196096
+      time: 1456685492337
       authorSequence: 5
       moduleSequence: 0
       pathSequence: 7
@@ -1157,12 +3425,12 @@ children:
           url: rest/1/concept/version/135/
       identifiers:
         uuids:
-        - af598bc5-ef98-4cbc-b530-2f4abb7eec30
+        - 55a5e1df-11c7-5fd2-be63-b9f50ae2a191
       versions:
     conVersion:
       stampSequence: 1
       state: ACTIVE
-      time: 1454625196096
+      time: 1456685492337
       authorSequence: 5
       moduleSequence: 0
       pathSequence: 7
@@ -1171,23 +3439,23 @@ children:
 - expandables:
     items:
     - name: parents
-      url: rest/1/concept/version/38?expand=parents&stated=true
+      url: rest/1/concept/version/36?expand=parents&stated=true
   conChronology:
     description: literal value (ISAAC)
     expandables:
       items:
       - name: versionsAll
-        url: rest/1/concept/versions/38/
+        url: rest/1/concept/versions/36/
       - name: versionsLatestOnly
-        url: rest/1/concept/version/38/
+        url: rest/1/concept/version/36/
     identifiers:
       uuids:
-      - 0eae1054-573d-4470-a397-f5b5178552e6
+      - dbc075d7-c44f-5998-9cb7-279a5b14e08c
     versions:
   conVersion:
     stampSequence: 1
     state: ACTIVE
-    time: 1454625196096
+    time: 1456685492337
     authorSequence: 5
     moduleSequence: 0
     pathSequence: 7
@@ -1214,7 +3482,7 @@ children:
     conVersion:
       stampSequence: 1
       state: ACTIVE
-      time: 1454625196096
+      time: 1456685492337
       authorSequence: 5
       moduleSequence: 0
       pathSequence: 7
@@ -1241,7 +3509,7 @@ children:
     conVersion:
       stampSequence: 1
       state: ACTIVE
-      time: 1454625196096
+      time: 1456685492337
       authorSequence: 5
       moduleSequence: 0
       pathSequence: 7
@@ -1268,7 +3536,7 @@ children:
     conVersion:
       stampSequence: 1
       state: ACTIVE
-      time: 1454625196096
+      time: 1456685492337
       authorSequence: 5
       moduleSequence: 0
       pathSequence: 7
@@ -1295,7 +3563,7 @@ children:
     conVersion:
       stampSequence: 1
       state: ACTIVE
-      time: 1454625196096
+      time: 1456685492337
       authorSequence: 5
       moduleSequence: 0
       pathSequence: 7
@@ -1322,7 +3590,7 @@ children:
     conVersion:
       stampSequence: 1
       state: ACTIVE
-      time: 1454625196096
+      time: 1456685492337
       authorSequence: 5
       moduleSequence: 0
       pathSequence: 7
@@ -1331,23 +3599,23 @@ children:
 - expandables:
     items:
     - name: parents
-      url: rest/1/concept/version/37?expand=parents&stated=true
+      url: rest/1/concept/version/35?expand=parents&stated=true
   conChronology:
     description: role operator (ISAAC)
     expandables:
       items:
       - name: versionsAll
-        url: rest/1/concept/versions/37/
+        url: rest/1/concept/versions/35/
       - name: versionsLatestOnly
-        url: rest/1/concept/version/37/
+        url: rest/1/concept/version/35/
     identifiers:
       uuids:
-      - 7e5453a3-435c-4ad6-95ef-0c501aa3b2bb
+      - 258bf5cd-bf80-5261-bd0c-309eb30e1c85
     versions:
   conVersion:
     stampSequence: 1
     state: ACTIVE
-    time: 1454625196096
+    time: 1456685492337
     authorSequence: 5
     moduleSequence: 0
     pathSequence: 7
@@ -1374,7 +3642,7 @@ children:
     conVersion:
       stampSequence: 1
       state: ACTIVE
-      time: 1454625196096
+      time: 1456685492337
       authorSequence: 5
       moduleSequence: 0
       pathSequence: 7
@@ -1401,7 +3669,7 @@ children:
     conVersion:
       stampSequence: 1
       state: ACTIVE
-      time: 1454625196096
+      time: 1456685492337
       authorSequence: 5
       moduleSequence: 0
       pathSequence: 7
@@ -1410,15 +3678,15 @@ children:
 - expandables:
     items:
     - name: parents
-      url: rest/1/concept/version/36?expand=parents&stated=true
+      url: rest/1/concept/version/34?expand=parents&stated=true
   conChronology:
     description: template concept (ISAAC)
     expandables:
       items:
       - name: versionsAll
-        url: rest/1/concept/versions/36/
+        url: rest/1/concept/versions/34/
       - name: versionsLatestOnly
-        url: rest/1/concept/version/36/
+        url: rest/1/concept/version/34/
     identifiers:
       uuids:
       - 66fba341-dc65-530d-a422-22427e7fc1eb
@@ -1426,7 +3694,7 @@ children:
   conVersion:
     stampSequence: 1
     state: ACTIVE
-    time: 1454625196096
+    time: 1456685492337
     authorSequence: 5
     moduleSequence: 0
     pathSequence: 7
@@ -1448,12 +3716,12 @@ children:
           url: rest/1/concept/version/126/
       identifiers:
         uuids:
-        - 3cb3ed4a-a6e4-4a22-87e8-4c9b769465cc
+        - 5b959672-e0fe-584f-8421-dd9afc5f6a77
       versions:
     conVersion:
       stampSequence: 1
       state: ACTIVE
-      time: 1454625196096
+      time: 1456685492337
       authorSequence: 5
       moduleSequence: 0
       pathSequence: 7
@@ -1462,23 +3730,23 @@ children:
 - expandables:
     items:
     - name: parents
-      url: rest/1/concept/version/34?expand=parents&stated=true
+      url: rest/1/concept/version/32?expand=parents&stated=true
   conChronology:
     description: node operator (ISAAC)
     expandables:
       items:
       - name: versionsAll
-        url: rest/1/concept/versions/34/
+        url: rest/1/concept/versions/32/
       - name: versionsLatestOnly
-        url: rest/1/concept/version/34/
+        url: rest/1/concept/version/32/
     identifiers:
       uuids:
-      - affaad53-4525-43fe-b75f-7ea6e8a1428b
+      - 30b519f6-a072-5120-a337-6c1bff357180
     versions:
   conVersion:
     stampSequence: 1
     state: ACTIVE
-    time: 1454625196096
+    time: 1456685492337
     authorSequence: 5
     moduleSequence: 0
     pathSequence: 7
@@ -1505,7 +3773,7 @@ children:
     conVersion:
       stampSequence: 1
       state: ACTIVE
-      time: 1454625196096
+      time: 1456685492337
       authorSequence: 5
       moduleSequence: 0
       pathSequence: 7
@@ -1527,12 +3795,12 @@ children:
           url: rest/1/concept/version/118/
       identifiers:
         uuids:
-        - 9e8047b6-603e-4fc2-828c-6ca0535f3519
+        - bbae2068-b307-5322-bea0-09d773d0e894
       versions:
     conVersion:
       stampSequence: 1
       state: ACTIVE
-      time: 1454625196096
+      time: 1456685492337
       authorSequence: 5
       moduleSequence: 0
       pathSequence: 7
@@ -1541,25 +3809,25 @@ children:
   - expandables:
       items:
       - name: parents
-        url: rest/1/concept/version/35?expand=parents&stated=true
+        url: rest/1/concept/version/33?expand=parents&stated=true
       - name: children
-        url: rest/1/concept/version/35?expand=children&stated=true
+        url: rest/1/concept/version/33?expand=children&stated=true
     conChronology:
       description: field substitution (ISAAC)
       expandables:
         items:
         - name: versionsAll
-          url: rest/1/concept/versions/35/
+          url: rest/1/concept/versions/33/
         - name: versionsLatestOnly
-          url: rest/1/concept/version/35/
+          url: rest/1/concept/version/33/
       identifiers:
         uuids:
-        - 640f7d41-4077-4fbc-941b-2aa8887354b5
+        - 12480875-4790-53ad-8382-5ad0a35cd698
       versions:
     conVersion:
       stampSequence: 1
       state: ACTIVE
-      time: 1454625196096
+      time: 1456685492337
       authorSequence: 5
       moduleSequence: 0
       pathSequence: 7
@@ -1568,23 +3836,23 @@ children:
 - expandables:
     items:
     - name: parents
-      url: rest/1/concept/version/33?expand=parents&stated=true
+      url: rest/1/concept/version/31?expand=parents&stated=true
   conChronology:
     description: connective operator (ISAAC)
     expandables:
       items:
       - name: versionsAll
-        url: rest/1/concept/versions/33/
+        url: rest/1/concept/versions/31/
       - name: versionsLatestOnly
-        url: rest/1/concept/version/33/
+        url: rest/1/concept/version/31/
     identifiers:
       uuids:
-      - e9b31795-4856-412b-a5e2-95ce93cd6cfd
+      - 525e76a9-7550-5c86-9546-cf7996dc10f5
     versions:
   conVersion:
     stampSequence: 1
     state: ACTIVE
-    time: 1454625196096
+    time: 1456685492337
     authorSequence: 5
     moduleSequence: 0
     pathSequence: 7
@@ -1611,7 +3879,7 @@ children:
     conVersion:
       stampSequence: 1
       state: ACTIVE
-      time: 1454625196096
+      time: 1456685492337
       authorSequence: 5
       moduleSequence: 0
       pathSequence: 7
@@ -1638,7 +3906,7 @@ children:
     conVersion:
       stampSequence: 1
       state: ACTIVE
-      time: 1454625196096
+      time: 1456685492337
       authorSequence: 5
       moduleSequence: 0
       pathSequence: 7
@@ -1665,7 +3933,7 @@ children:
     conVersion:
       stampSequence: 1
       state: ACTIVE
-      time: 1454625196096
+      time: 1456685492337
       authorSequence: 5
       moduleSequence: 0
       pathSequence: 7
@@ -1692,7 +3960,7 @@ children:
     conVersion:
       stampSequence: 1
       state: ACTIVE
-      time: 1454625196096
+      time: 1456685492337
       authorSequence: 5
       moduleSequence: 0
       pathSequence: 7
@@ -1701,55 +3969,28 @@ children:
 - expandables:
     items:
     - name: parents
-      url: rest/1/concept/version/31?expand=parents&stated=true
+      url: rest/1/concept/version/30?expand=parents&stated=true
   conChronology:
     description: taxonomy operator (ISAAC)
     expandables:
       items:
       - name: versionsAll
-        url: rest/1/concept/versions/31/
+        url: rest/1/concept/versions/30/
       - name: versionsLatestOnly
-        url: rest/1/concept/version/31/
+        url: rest/1/concept/version/30/
     identifiers:
       uuids:
-      - e6515916-eedb-4d9b-88a1-1d288ec95e0f
+      - 036560f2-8576-59f4-85ca-1d8e2785ce55
     versions:
   conVersion:
     stampSequence: 1
     state: ACTIVE
-    time: 1454625196096
+    time: 1456685492337
     authorSequence: 5
     moduleSequence: 0
     pathSequence: 7
   parents:
   children:
-  - expandables:
-      items:
-      - name: parents
-        url: rest/1/concept/version/32?expand=parents&stated=true
-      - name: children
-        url: rest/1/concept/version/32?expand=children&stated=true
-    conChronology:
-      description: relationship type in source terminology (ISAAC)
-      expandables:
-        items:
-        - name: versionsAll
-          url: rest/1/concept/versions/32/
-        - name: versionsLatestOnly
-          url: rest/1/concept/version/32/
-      identifiers:
-        uuids:
-        - 658b8229-b68e-4e56-b992-89ea686ad51a
-      versions:
-    conVersion:
-      stampSequence: 1
-      state: ACTIVE
-      time: 1454625196096
-      authorSequence: 5
-      moduleSequence: 0
-      pathSequence: 7
-    parents:
-    children:
   - expandables:
       items:
       - name: parents
@@ -1766,92 +4007,12 @@ children:
           url: rest/1/concept/version/3/
       identifiers:
         uuids:
-        - 46bccdc4-8fb6-11db-b606-0800200c9a66
         - c93a30b9-ba77-3adb-a9b8-4589c9f8fb25
       versions:
     conVersion:
       stampSequence: 1
       state: ACTIVE
-      time: 1454625196096
-      authorSequence: 5
-      moduleSequence: 0
-      pathSequence: 7
-    parents:
-    children:
-- expandables:
-    items:
-    - name: parents
-      url: rest/1/concept/version/30?expand=parents&stated=true
-  conChronology:
-    description: description acceptability (ISAAC)
-    expandables:
-      items:
-      - name: versionsAll
-        url: rest/1/concept/versions/30/
-      - name: versionsLatestOnly
-        url: rest/1/concept/version/30/
-    identifiers:
-      uuids:
-      - 03f1d916-a679-49b3-9c65-20f614654f66
-    versions:
-  conVersion:
-    stampSequence: 1
-    state: ACTIVE
-    time: 1454625196096
-    authorSequence: 5
-    moduleSequence: 0
-    pathSequence: 7
-  parents:
-  children:
-  - expandables:
-      items:
-      - name: parents
-        url: rest/1/concept/version/112?expand=parents&stated=true
-      - name: children
-        url: rest/1/concept/version/112?expand=children&stated=true
-    conChronology:
-      description: acceptable (ISAAC)
-      expandables:
-        items:
-        - name: versionsAll
-          url: rest/1/concept/versions/112/
-        - name: versionsLatestOnly
-          url: rest/1/concept/version/112/
-      identifiers:
-        uuids:
-        - 12b9e103-060e-3256-9982-18c1191af60e
-      versions:
-    conVersion:
-      stampSequence: 1
-      state: ACTIVE
-      time: 1454625196096
-      authorSequence: 5
-      moduleSequence: 0
-      pathSequence: 7
-    parents:
-    children:
-  - expandables:
-      items:
-      - name: parents
-        url: rest/1/concept/version/66?expand=parents&stated=true
-      - name: children
-        url: rest/1/concept/version/66?expand=children&stated=true
-    conChronology:
-      description: preferred (ISAAC)
-      expandables:
-        items:
-        - name: versionsAll
-          url: rest/1/concept/versions/66/
-        - name: versionsLatestOnly
-          url: rest/1/concept/version/66/
-      identifiers:
-        uuids:
-        - 266f1bc3-3361-39f3-bffe-69db9daea56e
-      versions:
-    conVersion:
-      stampSequence: 1
-      state: ACTIVE
-      time: 1454625196096
+      time: 1456685492337
       authorSequence: 5
       moduleSequence: 0
       pathSequence: 7
@@ -1862,7 +4023,7 @@ children:
     - name: parents
       url: rest/1/concept/version/29?expand=parents&stated=true
   conChronology:
-    description: description case significance (ISAAC)
+    description: description acceptability (ISAAC)
     expandables:
       items:
       - name: versionsAll
@@ -1871,12 +4032,12 @@ children:
         url: rest/1/concept/version/29/
     identifiers:
       uuids:
-      - 38880d99-d35d-4132-9575-1eb53de859f3
+      - 04c36a32-5402-5324-bb6f-2d3f38a6e1a0
     versions:
   conVersion:
     stampSequence: 1
     state: ACTIVE
-    time: 1454625196096
+    time: 1456685492337
     authorSequence: 5
     moduleSequence: 0
     pathSequence: 7
@@ -1885,52 +4046,25 @@ children:
   - expandables:
       items:
       - name: parents
-        url: rest/1/concept/version/111?expand=parents&stated=true
+        url: rest/1/concept/version/113?expand=parents&stated=true
       - name: children
-        url: rest/1/concept/version/111?expand=children&stated=true
+        url: rest/1/concept/version/113?expand=children&stated=true
     conChronology:
-      description: description initial character sensitive (ISAAC)
+      description: acceptable (ISAAC)
       expandables:
         items:
         - name: versionsAll
-          url: rest/1/concept/versions/111/
+          url: rest/1/concept/versions/113/
         - name: versionsLatestOnly
-          url: rest/1/concept/version/111/
+          url: rest/1/concept/version/113/
       identifiers:
         uuids:
-        - 17915e0d-ed38-3488-a35c-cda966db306a
+        - 12b9e103-060e-3256-9982-18c1191af60e
       versions:
     conVersion:
       stampSequence: 1
       state: ACTIVE
-      time: 1454625196096
-      authorSequence: 5
-      moduleSequence: 0
-      pathSequence: 7
-    parents:
-    children:
-  - expandables:
-      items:
-      - name: parents
-        url: rest/1/concept/version/110?expand=parents&stated=true
-      - name: children
-        url: rest/1/concept/version/110?expand=children&stated=true
-    conChronology:
-      description: description case sensitive (ISAAC)
-      expandables:
-        items:
-        - name: versionsAll
-          url: rest/1/concept/versions/110/
-        - name: versionsLatestOnly
-          url: rest/1/concept/version/110/
-      identifiers:
-        uuids:
-        - 0def37bc-7e1b-384b-a6a3-3e3ceee9c52e
-      versions:
-    conVersion:
-      stampSequence: 1
-      state: ACTIVE
-      time: 1454625196096
+      time: 1456685492337
       authorSequence: 5
       moduleSequence: 0
       pathSequence: 7
@@ -1943,7 +4077,7 @@ children:
       - name: children
         url: rest/1/concept/version/64?expand=children&stated=true
     conChronology:
-      description: description not case sensitive (ISAAC)
+      description: preferred (ISAAC)
       expandables:
         items:
         - name: versionsAll
@@ -1952,12 +4086,118 @@ children:
           url: rest/1/concept/version/64/
       identifiers:
         uuids:
+        - 266f1bc3-3361-39f3-bffe-69db9daea56e
+      versions:
+    conVersion:
+      stampSequence: 1
+      state: ACTIVE
+      time: 1456685492337
+      authorSequence: 5
+      moduleSequence: 0
+      pathSequence: 7
+    parents:
+    children:
+- expandables:
+    items:
+    - name: parents
+      url: rest/1/concept/version/28?expand=parents&stated=true
+  conChronology:
+    description: description case significance (ISAAC)
+    expandables:
+      items:
+      - name: versionsAll
+        url: rest/1/concept/versions/28/
+      - name: versionsLatestOnly
+        url: rest/1/concept/version/28/
+    identifiers:
+      uuids:
+      - 7d98555f-d730-555d-857b-28814f60fb27
+    versions:
+  conVersion:
+    stampSequence: 1
+    state: ACTIVE
+    time: 1456685492337
+    authorSequence: 5
+    moduleSequence: 0
+    pathSequence: 7
+  parents:
+  children:
+  - expandables:
+      items:
+      - name: parents
+        url: rest/1/concept/version/112?expand=parents&stated=true
+      - name: children
+        url: rest/1/concept/version/112?expand=children&stated=true
+    conChronology:
+      description: description initial character sensitive (ISAAC)
+      expandables:
+        items:
+        - name: versionsAll
+          url: rest/1/concept/versions/112/
+        - name: versionsLatestOnly
+          url: rest/1/concept/version/112/
+      identifiers:
+        uuids:
+        - 17915e0d-ed38-3488-a35c-cda966db306a
+      versions:
+    conVersion:
+      stampSequence: 1
+      state: ACTIVE
+      time: 1456685492337
+      authorSequence: 5
+      moduleSequence: 0
+      pathSequence: 7
+    parents:
+    children:
+  - expandables:
+      items:
+      - name: parents
+        url: rest/1/concept/version/111?expand=parents&stated=true
+      - name: children
+        url: rest/1/concept/version/111?expand=children&stated=true
+    conChronology:
+      description: description case sensitive (ISAAC)
+      expandables:
+        items:
+        - name: versionsAll
+          url: rest/1/concept/versions/111/
+        - name: versionsLatestOnly
+          url: rest/1/concept/version/111/
+      identifiers:
+        uuids:
+        - 0def37bc-7e1b-384b-a6a3-3e3ceee9c52e
+      versions:
+    conVersion:
+      stampSequence: 1
+      state: ACTIVE
+      time: 1456685492337
+      authorSequence: 5
+      moduleSequence: 0
+      pathSequence: 7
+    parents:
+    children:
+  - expandables:
+      items:
+      - name: parents
+        url: rest/1/concept/version/62?expand=parents&stated=true
+      - name: children
+        url: rest/1/concept/version/62?expand=children&stated=true
+    conChronology:
+      description: description not case sensitive (ISAAC)
+      expandables:
+        items:
+        - name: versionsAll
+          url: rest/1/concept/versions/62/
+        - name: versionsLatestOnly
+          url: rest/1/concept/version/62/
+      identifiers:
+        uuids:
         - ecea41a2-f596-3d98-99d1-771b667e55b8
       versions:
     conVersion:
       stampSequence: 1
       state: ACTIVE
-      time: 1454625196096
+      time: 1456685492337
       authorSequence: 5
       moduleSequence: 0
       pathSequence: 7
@@ -1977,12 +4217,12 @@ children:
         url: rest/1/concept/version/27/
     identifiers:
       uuids:
-      - 0c4a7b04-3354-46ae-b9f7-cdb2eca4ecd6
+      - 013c1fc4-4886-5b26-88a8-cda2c9b20d1e
     versions:
   conVersion:
     stampSequence: 1
     state: ACTIVE
-    time: 1454625196096
+    time: 1456685492337
     authorSequence: 5
     moduleSequence: 0
     pathSequence: 7
@@ -2009,34 +4249,7 @@ children:
     conVersion:
       stampSequence: 1
       state: ACTIVE
-      time: 1454625196096
-      authorSequence: 5
-      moduleSequence: 0
-      pathSequence: 7
-    parents:
-    children:
-  - expandables:
-      items:
-      - name: parents
-        url: rest/1/concept/version/28?expand=parents&stated=true
-      - name: children
-        url: rest/1/concept/version/28?expand=children&stated=true
-    conChronology:
-      description: description type in source terminology (ISAAC)
-      expandables:
-        items:
-        - name: versionsAll
-          url: rest/1/concept/versions/28/
-        - name: versionsLatestOnly
-          url: rest/1/concept/version/28/
-      identifiers:
-        uuids:
-        - 7a05be9f-9678-4a16-8c08-37413e5109ac
-      versions:
-    conVersion:
-      stampSequence: 1
-      state: ACTIVE
-      time: 1454625196096
+      time: 1456685492337
       authorSequence: 5
       moduleSequence: 0
       pathSequence: 7
@@ -2059,12 +4272,11 @@ children:
       identifiers:
         uuids:
         - 8bfba944-3965-3946-9bcb-1e80a5da63a2
-        - d6fad981-7df6-3388-94d8-238cc0465a79
       versions:
     conVersion:
       stampSequence: 1
       state: ACTIVE
-      time: 1454625196096
+      time: 1456685492337
       authorSequence: 5
       moduleSequence: 0
       pathSequence: 7
@@ -2087,12 +4299,11 @@ children:
       identifiers:
         uuids:
         - 00791270-77c9-32b6-b34f-d932569bd2bf
-        - 5e1fe940-8faf-11db-b606-0800200c9a66
       versions:
     conVersion:
       stampSequence: 1
       state: ACTIVE
-      time: 1454625196096
+      time: 1456685492337
       authorSequence: 5
       moduleSequence: 0
       pathSequence: 7
@@ -2112,12 +4323,12 @@ children:
         url: rest/1/concept/version/26/
     identifiers:
       uuids:
-      - 8fe1bd9d-31f8-49ae-8848-62b8d09fc86d
+      - c142377c-02bf-5b68-b934-c52b1f780e21
     versions:
   conVersion:
     stampSequence: 1
     state: ACTIVE
-    time: 1454625196096
+    time: 1456685492337
     authorSequence: 5
     moduleSequence: 0
     pathSequence: 7
@@ -2140,12 +4351,11 @@ children:
       identifiers:
         uuids:
         - 1290e6ba-48d0-31d2-8d62-e133373c63f5
-        - a4c6bf72-8fb6-11db-b606-0800200c9a66
       versions:
     conVersion:
       stampSequence: 1
       state: ACTIVE
-      time: 1454625196096
+      time: 1456685492337
       authorSequence: 5
       moduleSequence: 0
       pathSequence: 7
@@ -2168,12 +4378,11 @@ children:
       identifiers:
         uuids:
         - 3b0dbd3b-2e53-3a30-8576-6c7fa7773060
-        - 3fde38f6-e079-3cdc-a819-eda3ec74732d
       versions:
     conVersion:
       stampSequence: 1
       state: ACTIVE
-      time: 1454625196096
+      time: 1456685492337
       authorSequence: 5
       moduleSequence: 0
       pathSequence: 7
@@ -2198,7 +4407,7 @@ children:
   conVersion:
     stampSequence: 1
     state: ACTIVE
-    time: 1454625196096
+    time: 1456685492337
     authorSequence: 5
     moduleSequence: 0
     pathSequence: 7
@@ -2225,7 +4434,7 @@ children:
     conVersion:
       stampSequence: 1
       state: ACTIVE
-      time: 1454625196096
+      time: 1456685492337
       authorSequence: 5
       moduleSequence: 0
       pathSequence: 7
@@ -2234,17 +4443,71 @@ children:
   - expandables:
       items:
       - name: parents
-        url: rest/1/concept/version/58?expand=parents&stated=true
+        url: rest/1/concept/version/103?expand=parents&stated=true
       - name: children
-        url: rest/1/concept/version/58?expand=children&stated=true
+        url: rest/1/concept/version/103?expand=children&stated=true
+    conChronology:
+      description: relationship source type reference sets (ISAAC)
+      expandables:
+        items:
+        - name: versionsAll
+          url: rest/1/concept/versions/103/
+        - name: versionsLatestOnly
+          url: rest/1/concept/version/103/
+      identifiers:
+        uuids:
+        - 5bfcc887-bb6f-54b5-9a8a-46aafe62cf41
+      versions:
+    conVersion:
+      stampSequence: 1
+      state: ACTIVE
+      time: 1456685492337
+      authorSequence: 5
+      moduleSequence: 0
+      pathSequence: 7
+    parents:
+    children:
+  - expandables:
+      items:
+      - name: parents
+        url: rest/1/concept/version/102?expand=parents&stated=true
+      - name: children
+        url: rest/1/concept/version/102?expand=children&stated=true
+    conChronology:
+      description: description source type reference sets (ISAAC)
+      expandables:
+        items:
+        - name: versionsAll
+          url: rest/1/concept/versions/102/
+        - name: versionsLatestOnly
+          url: rest/1/concept/version/102/
+      identifiers:
+        uuids:
+        - 10fd8687-5b0f-59c5-9e5e-3a4b187031dd
+      versions:
+    conVersion:
+      stampSequence: 1
+      state: ACTIVE
+      time: 1456685492337
+      authorSequence: 5
+      moduleSequence: 0
+      pathSequence: 7
+    parents:
+    children:
+  - expandables:
+      items:
+      - name: parents
+        url: rest/1/concept/version/56?expand=parents&stated=true
+      - name: children
+        url: rest/1/concept/version/56?expand=children&stated=true
     conChronology:
       description: dynamic sememe assemblages (ISAAC)
       expandables:
         items:
         - name: versionsAll
-          url: rest/1/concept/versions/58/
+          url: rest/1/concept/versions/56/
         - name: versionsLatestOnly
-          url: rest/1/concept/version/58/
+          url: rest/1/concept/version/56/
       identifiers:
         uuids:
         - e18265b7-5406-52b6-baf0-4cfb867829b4
@@ -2252,7 +4515,7 @@ children:
     conVersion:
       stampSequence: 1
       state: ACTIVE
-      time: 1454625196096
+      time: 1456685492337
       authorSequence: 5
       moduleSequence: 0
       pathSequence: 7
@@ -2274,12 +4537,12 @@ children:
           url: rest/1/concept/version/24/
       identifiers:
         uuids:
-        - b5b6c961-a8e0-4a30-be64-25e6424801b0
+        - 11b5af2e-3012-5b19-85b3-7023f5aaf797
       versions:
     conVersion:
       stampSequence: 1
       state: ACTIVE
-      time: 1454625196096
+      time: 1456685492337
       authorSequence: 5
       moduleSequence: 0
       pathSequence: 7
@@ -2301,12 +4564,12 @@ children:
           url: rest/1/concept/version/23/
       identifiers:
         uuids:
-        - 137f96d7-ef9e-4829-ad28-6d22fdf269b8
+        - 9f191b65-fb28-5c4c-9db1-83229b4cc929
       versions:
     conVersion:
       stampSequence: 1
       state: ACTIVE
-      time: 1454625196096
+      time: 1456685492337
       authorSequence: 5
       moduleSequence: 0
       pathSequence: 7
@@ -2328,12 +4591,12 @@ children:
           url: rest/1/concept/version/22/
       identifiers:
         uuids:
-        - bb9e1a8a-a83d-4074-ad77-6bd5b0b14ab5
+        - e77f888f-1354-53e4-88ad-125cd6d3e3f2
       versions:
     conVersion:
       stampSequence: 1
       state: ACTIVE
-      time: 1454625196096
+      time: 1456685492337
       authorSequence: 5
       moduleSequence: 0
       pathSequence: 7
@@ -2355,12 +4618,12 @@ children:
           url: rest/1/concept/version/21/
       identifiers:
         uuids:
-        - 99391585-c6e2-4765-a01d-c393d020d557
+        - 7395c344-46f7-5625-9337-3536901afc4f
       versions:
     conVersion:
       stampSequence: 1
       state: ACTIVE
-      time: 1454625196096
+      time: 1456685492337
       authorSequence: 5
       moduleSequence: 0
       pathSequence: 7
@@ -2380,12 +4643,12 @@ children:
         url: rest/1/concept/version/19/
     identifiers:
       uuids:
-      - bc18d0b6-1f9f-45b5-99ed-ddf6a34345fe
+      - e80d88e3-4b40-5ddc-aff0-227bbe2f1e36
     versions:
   conVersion:
     stampSequence: 1
     state: ACTIVE
-    time: 1454625196096
+    time: 1456685492337
     authorSequence: 5
     moduleSequence: 0
     pathSequence: 7
@@ -2394,25 +4657,25 @@ children:
   - expandables:
       items:
       - name: parents
-        url: rest/1/concept/version/94?expand=parents&stated=true
+        url: rest/1/concept/version/92?expand=parents&stated=true
       - name: children
-        url: rest/1/concept/version/94?expand=children&stated=true
+        url: rest/1/concept/version/92?expand=children&stated=true
     conChronology:
       description: marked parent (ISAAC)
       expandables:
         items:
         - name: versionsAll
-          url: rest/1/concept/versions/94/
+          url: rest/1/concept/versions/92/
         - name: versionsLatestOnly
-          url: rest/1/concept/version/94/
+          url: rest/1/concept/version/92/
       identifiers:
         uuids:
-        - 125f3d04-de17-490e-afec-1431c2a39e29
+        - affed3b8-ac7f-55a5-bdcb-afe26132df36
       versions:
     conVersion:
       stampSequence: 1
       state: ACTIVE
-      time: 1454625196096
+      time: 1456685492337
       authorSequence: 5
       moduleSequence: 0
       pathSequence: 7
@@ -2421,25 +4684,25 @@ children:
   - expandables:
       items:
       - name: parents
-        url: rest/1/concept/version/93?expand=parents&stated=true
+        url: rest/1/concept/version/91?expand=parents&stated=true
       - name: children
-        url: rest/1/concept/version/93?expand=children&stated=true
+        url: rest/1/concept/version/91?expand=children&stated=true
     conChronology:
       description: normal member (ISAAC)
       expandables:
         items:
         - name: versionsAll
-          url: rest/1/concept/versions/93/
+          url: rest/1/concept/versions/91/
         - name: versionsLatestOnly
-          url: rest/1/concept/version/93/
+          url: rest/1/concept/version/91/
       identifiers:
         uuids:
-        - cc624429-b17d-4ac5-a69e-0b32448aaf3c
+        - 8aa0703b-2f8c-5436-bf6c-b9f1ca6d4884
       versions:
     conVersion:
       stampSequence: 1
       state: ACTIVE
-      time: 1454625196096
+      time: 1456685492337
       authorSequence: 5
       moduleSequence: 0
       pathSequence: 7
@@ -2459,12 +4722,12 @@ children:
         url: rest/1/concept/version/18/
     identifiers:
       uuids:
-      - ee7d66bc-2c34-4bce-9a63-4e435188bb58
+      - c71da370-a8cb-57ce-b2f9-85fed8ea2e79
     versions:
   conVersion:
     stampSequence: 1
     state: ACTIVE
-    time: 1454625196096
+    time: 1456685492337
     authorSequence: 5
     moduleSequence: 0
     pathSequence: 7
@@ -2473,65 +4736,11 @@ children:
   - expandables:
       items:
       - name: parents
-        url: rest/1/concept/version/92?expand=parents&stated=true
-      - name: children
-        url: rest/1/concept/version/92?expand=children&stated=true
-    conChronology:
-      description: Swedish language (ISAAC)
-      expandables:
-        items:
-        - name: versionsAll
-          url: rest/1/concept/versions/92/
-        - name: versionsLatestOnly
-          url: rest/1/concept/version/92/
-      identifiers:
-        uuids:
-        - 9784a791-8fdb-32f7-88da-74ab135fe4e3
-      versions:
-    conVersion:
-      stampSequence: 1
-      state: ACTIVE
-      time: 1454625196096
-      authorSequence: 5
-      moduleSequence: 0
-      pathSequence: 7
-    parents:
-    children:
-  - expandables:
-      items:
-      - name: parents
-        url: rest/1/concept/version/91?expand=parents&stated=true
-      - name: children
-        url: rest/1/concept/version/91?expand=children&stated=true
-    conChronology:
-      description: Japanese language (ISAAC)
-      expandables:
-        items:
-        - name: versionsAll
-          url: rest/1/concept/versions/91/
-        - name: versionsLatestOnly
-          url: rest/1/concept/version/91/
-      identifiers:
-        uuids:
-        - b90a1097-29e3-42bc-8576-8e8eb6715c44
-      versions:
-    conVersion:
-      stampSequence: 1
-      state: ACTIVE
-      time: 1454625196096
-      authorSequence: 5
-      moduleSequence: 0
-      pathSequence: 7
-    parents:
-    children:
-  - expandables:
-      items:
-      - name: parents
         url: rest/1/concept/version/90?expand=parents&stated=true
       - name: children
         url: rest/1/concept/version/90?expand=children&stated=true
     conChronology:
-      description: Chinese language (ISAAC)
+      description: Swedish language (ISAAC)
       expandables:
         items:
         - name: versionsAll
@@ -2540,12 +4749,12 @@ children:
           url: rest/1/concept/version/90/
       identifiers:
         uuids:
-        - ba2efe6b-fe56-3d91-ae0f-3b389628f74c
+        - 9784a791-8fdb-32f7-88da-74ab135fe4e3
       versions:
     conVersion:
       stampSequence: 1
       state: ACTIVE
-      time: 1454625196096
+      time: 1456685492337
       authorSequence: 5
       moduleSequence: 0
       pathSequence: 7
@@ -2558,7 +4767,7 @@ children:
       - name: children
         url: rest/1/concept/version/89?expand=children&stated=true
     conChronology:
-      description: Lithuanian language (ISAAC)
+      description: Japanese language (ISAAC)
       expandables:
         items:
         - name: versionsAll
@@ -2567,12 +4776,12 @@ children:
           url: rest/1/concept/version/89/
       identifiers:
         uuids:
-        - e9645d95-8a1f-3825-8feb-0bc2ee825694
+        - 12fd37c2-e9fe-58ed-992d-5ad13bf4e110
       versions:
     conVersion:
       stampSequence: 1
       state: ACTIVE
-      time: 1454625196096
+      time: 1456685492337
       authorSequence: 5
       moduleSequence: 0
       pathSequence: 7
@@ -2585,7 +4794,7 @@ children:
       - name: children
         url: rest/1/concept/version/88?expand=children&stated=true
     conChronology:
-      description: Dutch language (ISAAC)
+      description: Chinese language (ISAAC)
       expandables:
         items:
         - name: versionsAll
@@ -2594,12 +4803,12 @@ children:
           url: rest/1/concept/version/88/
       identifiers:
         uuids:
-        - 674ad858-0224-3f90-bcf0-bc4cab753d2d
+        - ba2efe6b-fe56-3d91-ae0f-3b389628f74c
       versions:
     conVersion:
       stampSequence: 1
       state: ACTIVE
-      time: 1454625196096
+      time: 1456685492337
       authorSequence: 5
       moduleSequence: 0
       pathSequence: 7
@@ -2612,7 +4821,7 @@ children:
       - name: children
         url: rest/1/concept/version/87?expand=children&stated=true
     conChronology:
-      description: Polish language (ISAAC)
+      description: Lithuanian language (ISAAC)
       expandables:
         items:
         - name: versionsAll
@@ -2621,12 +4830,12 @@ children:
           url: rest/1/concept/version/87/
       identifiers:
         uuids:
-        - c924b887-da88-3a72-b8ea-fa86990467c9
+        - e9645d95-8a1f-3825-8feb-0bc2ee825694
       versions:
     conVersion:
       stampSequence: 1
       state: ACTIVE
-      time: 1454625196096
+      time: 1456685492337
       authorSequence: 5
       moduleSequence: 0
       pathSequence: 7
@@ -2639,7 +4848,7 @@ children:
       - name: children
         url: rest/1/concept/version/86?expand=children&stated=true
     conChronology:
-      description: Danish language (ISAAC)
+      description: Dutch language (ISAAC)
       expandables:
         items:
         - name: versionsAll
@@ -2648,12 +4857,12 @@ children:
           url: rest/1/concept/version/86/
       identifiers:
         uuids:
-        - 7e462e33-6d94-38ae-a044-492a857a6853
+        - 674ad858-0224-3f90-bcf0-bc4cab753d2d
       versions:
     conVersion:
       stampSequence: 1
       state: ACTIVE
-      time: 1454625196096
+      time: 1456685492337
       authorSequence: 5
       moduleSequence: 0
       pathSequence: 7
@@ -2666,7 +4875,7 @@ children:
       - name: children
         url: rest/1/concept/version/85?expand=children&stated=true
     conChronology:
-      description: French language (ISAAC)
+      description: Polish language (ISAAC)
       expandables:
         items:
         - name: versionsAll
@@ -2675,12 +4884,12 @@ children:
           url: rest/1/concept/version/85/
       identifiers:
         uuids:
-        - 8b23e636-a0bd-30fb-b8e2-1f77eaa3a87e
+        - c924b887-da88-3a72-b8ea-fa86990467c9
       versions:
     conVersion:
       stampSequence: 1
       state: ACTIVE
-      time: 1454625196096
+      time: 1456685492337
       authorSequence: 5
       moduleSequence: 0
       pathSequence: 7
@@ -2693,7 +4902,7 @@ children:
       - name: children
         url: rest/1/concept/version/84?expand=children&stated=true
     conChronology:
-      description: Spanish language (ISAAC)
+      description: Danish language (ISAAC)
       expandables:
         items:
         - name: versionsAll
@@ -2702,12 +4911,66 @@ children:
           url: rest/1/concept/version/84/
       identifiers:
         uuids:
+        - 7e462e33-6d94-38ae-a044-492a857a6853
+      versions:
+    conVersion:
+      stampSequence: 1
+      state: ACTIVE
+      time: 1456685492337
+      authorSequence: 5
+      moduleSequence: 0
+      pathSequence: 7
+    parents:
+    children:
+  - expandables:
+      items:
+      - name: parents
+        url: rest/1/concept/version/83?expand=parents&stated=true
+      - name: children
+        url: rest/1/concept/version/83?expand=children&stated=true
+    conChronology:
+      description: French language (ISAAC)
+      expandables:
+        items:
+        - name: versionsAll
+          url: rest/1/concept/versions/83/
+        - name: versionsLatestOnly
+          url: rest/1/concept/version/83/
+      identifiers:
+        uuids:
+        - 8b23e636-a0bd-30fb-b8e2-1f77eaa3a87e
+      versions:
+    conVersion:
+      stampSequence: 1
+      state: ACTIVE
+      time: 1456685492337
+      authorSequence: 5
+      moduleSequence: 0
+      pathSequence: 7
+    parents:
+    children:
+  - expandables:
+      items:
+      - name: parents
+        url: rest/1/concept/version/82?expand=parents&stated=true
+      - name: children
+        url: rest/1/concept/version/82?expand=children&stated=true
+    conChronology:
+      description: Spanish language (ISAAC)
+      expandables:
+        items:
+        - name: versionsAll
+          url: rest/1/concept/versions/82/
+        - name: versionsLatestOnly
+          url: rest/1/concept/version/82/
+      identifiers:
+        uuids:
         - 0fcf44fb-d0a7-3a67-bc9f-eb3065ed3c8e
       versions:
     conVersion:
       stampSequence: 1
       state: ACTIVE
-      time: 1454625196096
+      time: 1456685492337
       authorSequence: 5
       moduleSequence: 0
       pathSequence: 7
@@ -2734,7 +4997,7 @@ children:
     conVersion:
       stampSequence: 1
       state: ACTIVE
-      time: 1454625196096
+      time: 1456685492337
       authorSequence: 5
       moduleSequence: 0
       pathSequence: 7
@@ -2754,12 +5017,12 @@ children:
         url: rest/1/concept/version/17/
     identifiers:
       uuids:
-      - 8f9830a6-e15a-4f16-a5d3-c7f41c2a65d9
+      - 5a87935c-d654-548f-82a2-0c06e3801162
     versions:
   conVersion:
     stampSequence: 1
     state: ACTIVE
-    time: 1454625196096
+    time: 1456685492337
     authorSequence: 5
     moduleSequence: 0
     pathSequence: 7
@@ -2768,65 +5031,11 @@ children:
   - expandables:
       items:
       - name: parents
-        url: rest/1/concept/version/83?expand=parents&stated=true
-      - name: children
-        url: rest/1/concept/version/83?expand=children&stated=true
-    conChronology:
-      description: VUID (ISAAC)
-      expandables:
-        items:
-        - name: versionsAll
-          url: rest/1/concept/versions/83/
-        - name: versionsLatestOnly
-          url: rest/1/concept/version/83/
-      identifiers:
-        uuids:
-        - c9f05630-5ef3-45de-895b-fd03e9d253e4
-      versions:
-    conVersion:
-      stampSequence: 1
-      state: ACTIVE
-      time: 1454625196096
-      authorSequence: 5
-      moduleSequence: 0
-      pathSequence: 7
-    parents:
-    children:
-  - expandables:
-      items:
-      - name: parents
-        url: rest/1/concept/version/82?expand=parents&stated=true
-      - name: children
-        url: rest/1/concept/version/82?expand=children&stated=true
-    conChronology:
-      description: RXCUI (ISAAC)
-      expandables:
-        items:
-        - name: versionsAll
-          url: rest/1/concept/versions/82/
-        - name: versionsLatestOnly
-          url: rest/1/concept/version/82/
-      identifiers:
-        uuids:
-        - 617761d2-80ef-5585-83a0-60851dd44158
-      versions:
-    conVersion:
-      stampSequence: 1
-      state: ACTIVE
-      time: 1454625196096
-      authorSequence: 5
-      moduleSequence: 0
-      pathSequence: 7
-    parents:
-    children:
-  - expandables:
-      items:
-      - name: parents
         url: rest/1/concept/version/81?expand=parents&stated=true
       - name: children
         url: rest/1/concept/version/81?expand=children&stated=true
     conChronology:
-      description: LOINC Num (ISAAC)
+      description: VUID (ISAAC)
       expandables:
         items:
         - name: versionsAll
@@ -2835,12 +5044,12 @@ children:
           url: rest/1/concept/version/81/
       identifiers:
         uuids:
-        - 7eecb16c-f681-4029-8fac-19543add96bf
+        - f31f3d89-5a6f-5e1f-81d3-5b68344d96f9
       versions:
     conVersion:
       stampSequence: 1
       state: ACTIVE
-      time: 1454625196096
+      time: 1456685492337
       authorSequence: 5
       moduleSequence: 0
       pathSequence: 7
@@ -2853,7 +5062,7 @@ children:
       - name: children
         url: rest/1/concept/version/80?expand=children&stated=true
     conChronology:
-      description: generated UUID (ISAAC)
+      description: RXCUI (ISAAC)
       expandables:
         items:
         - name: versionsAll
@@ -2862,12 +5071,12 @@ children:
           url: rest/1/concept/version/80/
       identifiers:
         uuids:
-        - 2faa9262-8fb2-11db-b606-0800200c9a66
+        - 617761d2-80ef-5585-83a0-60851dd44158
       versions:
     conVersion:
       stampSequence: 1
       state: ACTIVE
-      time: 1454625196096
+      time: 1456685492337
       authorSequence: 5
       moduleSequence: 0
       pathSequence: 7
@@ -2880,7 +5089,7 @@ children:
       - name: children
         url: rest/1/concept/version/79?expand=children&stated=true
     conChronology:
-      description: SNOMED integer id (ISAAC)
+      description: LOINC Num (ISAAC)
       expandables:
         items:
         - name: versionsAll
@@ -2889,12 +5098,66 @@ children:
           url: rest/1/concept/version/79/
       identifiers:
         uuids:
+        - 42f83d1e-9f7b-530f-b672-be6bea5257a5
+      versions:
+    conVersion:
+      stampSequence: 1
+      state: ACTIVE
+      time: 1456685492337
+      authorSequence: 5
+      moduleSequence: 0
+      pathSequence: 7
+    parents:
+    children:
+  - expandables:
+      items:
+      - name: parents
+        url: rest/1/concept/version/78?expand=parents&stated=true
+      - name: children
+        url: rest/1/concept/version/78?expand=children&stated=true
+    conChronology:
+      description: generated UUID (ISAAC)
+      expandables:
+        items:
+        - name: versionsAll
+          url: rest/1/concept/versions/78/
+        - name: versionsLatestOnly
+          url: rest/1/concept/version/78/
+      identifiers:
+        uuids:
+        - 2faa9262-8fb2-11db-b606-0800200c9a66
+      versions:
+    conVersion:
+      stampSequence: 1
+      state: ACTIVE
+      time: 1456685492337
+      authorSequence: 5
+      moduleSequence: 0
+      pathSequence: 7
+    parents:
+    children:
+  - expandables:
+      items:
+      - name: parents
+        url: rest/1/concept/version/77?expand=parents&stated=true
+      - name: children
+        url: rest/1/concept/version/77?expand=children&stated=true
+    conChronology:
+      description: SNOMED integer id (ISAAC)
+      expandables:
+        items:
+        - name: versionsAll
+          url: rest/1/concept/versions/77/
+        - name: versionsLatestOnly
+          url: rest/1/concept/version/77/
+      identifiers:
+        uuids:
         - 0418a591-f75b-39ad-be2c-3ab849326da9
       versions:
     conVersion:
       stampSequence: 1
       state: ACTIVE
-      time: 1454625196096
+      time: 1456685492337
       authorSequence: 5
       moduleSequence: 0
       pathSequence: 7
@@ -2914,12 +5177,12 @@ children:
         url: rest/1/concept/version/16/
     identifiers:
       uuids:
-      - 9681a8aa-d8de-496f-8d32-0145d137be8e
+      - e1a7fe31-d90d-5383-b9b7-364e8c02ca06
     versions:
   conVersion:
     stampSequence: 1
     state: ACTIVE
-    time: 1454625196096
+    time: 1456685492337
     authorSequence: 5
     moduleSequence: 0
     pathSequence: 7
@@ -2928,17 +5191,17 @@ children:
   - expandables:
       items:
       - name: parents
-        url: rest/1/concept/version/78?expand=parents&stated=true
+        url: rest/1/concept/version/76?expand=parents&stated=true
       - name: children
-        url: rest/1/concept/version/78?expand=children&stated=true
+        url: rest/1/concept/version/76?expand=children&stated=true
     conChronology:
       description: necessary set (ISAAC)
       expandables:
         items:
         - name: versionsAll
-          url: rest/1/concept/versions/78/
+          url: rest/1/concept/versions/76/
         - name: versionsLatestOnly
-          url: rest/1/concept/version/78/
+          url: rest/1/concept/version/76/
       identifiers:
         uuids:
         - ff433de2-34c7-5da7-90cc-257e6e9abf7c
@@ -2946,7 +5209,7 @@ children:
     conVersion:
       stampSequence: 1
       state: ACTIVE
-      time: 1454625196096
+      time: 1456685492337
       authorSequence: 5
       moduleSequence: 0
       pathSequence: 7
@@ -2955,17 +5218,17 @@ children:
   - expandables:
       items:
       - name: parents
-        url: rest/1/concept/version/77?expand=parents&stated=true
+        url: rest/1/concept/version/75?expand=parents&stated=true
       - name: children
-        url: rest/1/concept/version/77?expand=children&stated=true
+        url: rest/1/concept/version/75?expand=children&stated=true
     conChronology:
       description: sufficient set (ISAAC)
       expandables:
         items:
         - name: versionsAll
-          url: rest/1/concept/versions/77/
+          url: rest/1/concept/versions/75/
         - name: versionsLatestOnly
-          url: rest/1/concept/version/77/
+          url: rest/1/concept/version/75/
       identifiers:
         uuids:
         - f768e900-3972-561a-8ded-5c14928d0589
@@ -2973,7 +5236,7 @@ children:
     conVersion:
       stampSequence: 1
       state: ACTIVE
-      time: 1454625196096
+      time: 1456685492337
       authorSequence: 5
       moduleSequence: 0
       pathSequence: 7
@@ -2998,7 +5261,7 @@ children:
   conVersion:
     stampSequence: 1
     state: ACTIVE
-    time: 1454625196096
+    time: 1456685492337
     authorSequence: 5
     moduleSequence: 0
     pathSequence: 7
@@ -3007,17 +5270,17 @@ children:
   - expandables:
       items:
       - name: parents
-        url: rest/1/concept/version/76?expand=parents&stated=true
+        url: rest/1/concept/version/74?expand=parents&stated=true
       - name: children
-        url: rest/1/concept/version/76?expand=children&stated=true
+        url: rest/1/concept/version/74?expand=children&stated=true
     conChronology:
       description: master path (ISAAC)
       expandables:
         items:
         - name: versionsAll
-          url: rest/1/concept/versions/76/
+          url: rest/1/concept/versions/74/
         - name: versionsLatestOnly
-          url: rest/1/concept/version/76/
+          url: rest/1/concept/version/74/
       identifiers:
         uuids:
         - 1f20134a-960e-11e5-8994-feff819cdc9f
@@ -3026,7 +5289,7 @@ children:
     conVersion:
       stampSequence: 1
       state: ACTIVE
-      time: 1454625196096
+      time: 1456685492337
       authorSequence: 5
       moduleSequence: 0
       pathSequence: 7
@@ -3053,7 +5316,7 @@ children:
     conVersion:
       stampSequence: 1
       state: ACTIVE
-      time: 1454625196096
+      time: 1456685492337
       authorSequence: 5
       moduleSequence: 0
       pathSequence: 7
@@ -3073,12 +5336,12 @@ children:
         url: rest/1/concept/version/14/
     identifiers:
       uuids:
-      - c1789973-8cbf-42c8-a330-0830238b1347
+      - 1b55c4b6-5800-5424-93a2-5805e5b3b022
     versions:
   conVersion:
     stampSequence: 1
     state: ACTIVE
-    time: 1454625196096
+    time: 1456685492337
     authorSequence: 5
     moduleSequence: 0
     pathSequence: 7
@@ -3087,65 +5350,11 @@ children:
   - expandables:
       items:
       - name: parents
-        url: rest/1/concept/version/75?expand=parents&stated=true
-      - name: children
-        url: rest/1/concept/version/75?expand=children&stated=true
-    conChronology:
-      description: SOLOR overlay module (ISAAC)
-      expandables:
-        items:
-        - name: versionsAll
-          url: rest/1/concept/versions/75/
-        - name: versionsLatestOnly
-          url: rest/1/concept/version/75/
-      identifiers:
-        uuids:
-        - 0c5d0740-a808-4fcb-b9bc-d68b305a5e9d
-      versions:
-    conVersion:
-      stampSequence: 1
-      state: ACTIVE
-      time: 1454625196096
-      authorSequence: 5
-      moduleSequence: 0
-      pathSequence: 7
-    parents:
-    children:
-  - expandables:
-      items:
-      - name: parents
-        url: rest/1/concept/version/74?expand=parents&stated=true
-      - name: children
-        url: rest/1/concept/version/74?expand=children&stated=true
-    conChronology:
-      description: IPO module (ISAAC)
-      expandables:
-        items:
-        - name: versionsAll
-          url: rest/1/concept/versions/74/
-        - name: versionsLatestOnly
-          url: rest/1/concept/version/74/
-      identifiers:
-        uuids:
-        - 87eb506a-57a5-4fd7-950c-9193d2d0a920
-      versions:
-    conVersion:
-      stampSequence: 1
-      state: ACTIVE
-      time: 1454625196096
-      authorSequence: 5
-      moduleSequence: 0
-      pathSequence: 7
-    parents:
-    children:
-  - expandables:
-      items:
-      - name: parents
         url: rest/1/concept/version/73?expand=parents&stated=true
       - name: children
         url: rest/1/concept/version/73?expand=children&stated=true
     conChronology:
-      description: DOD module (ISAAC)
+      description: SOLOR overlay module (ISAAC)
       expandables:
         items:
         - name: versionsAll
@@ -3154,12 +5363,12 @@ children:
           url: rest/1/concept/version/73/
       identifiers:
         uuids:
-        - 145a1524-fbd9-46fc-9156-82c806dae3b0
+        - 9ecc154c-e490-5cf8-805d-d2865d62aef3
       versions:
     conVersion:
       stampSequence: 1
       state: ACTIVE
-      time: 1454625196096
+      time: 1456685492337
       authorSequence: 5
       moduleSequence: 0
       pathSequence: 7
@@ -3172,7 +5381,7 @@ children:
       - name: children
         url: rest/1/concept/version/72?expand=children&stated=true
     conChronology:
-      description: VHA module (ISAAC)
+      description: IPO module (ISAAC)
       expandables:
         items:
         - name: versionsAll
@@ -3181,12 +5390,12 @@ children:
           url: rest/1/concept/version/72/
       identifiers:
         uuids:
-        - 0e0c9215-87d1-4de2-afa7-de0ab68b8f1d
+        - edc0d8f4-b11b-5c2c-8638-aa00cc5bbb29
       versions:
     conVersion:
       stampSequence: 1
       state: ACTIVE
-      time: 1454625196096
+      time: 1456685492337
       authorSequence: 5
       moduleSequence: 0
       pathSequence: 7
@@ -3199,7 +5408,7 @@ children:
       - name: children
         url: rest/1/concept/version/71?expand=children&stated=true
     conChronology:
-      description: AMT module (ISAAC)
+      description: DOD module (ISAAC)
       expandables:
         items:
         - name: versionsAll
@@ -3208,12 +5417,12 @@ children:
           url: rest/1/concept/version/71/
       identifiers:
         uuids:
-        - a91f1c52-34fe-4d7f-bda1-0e54fcf51c23
+        - 46389464-f9da-5556-9157-1f210573aaf5
       versions:
     conVersion:
       stampSequence: 1
       state: ACTIVE
-      time: 1454625196096
+      time: 1456685492337
       authorSequence: 5
       moduleSequence: 0
       pathSequence: 7
@@ -3226,7 +5435,7 @@ children:
       - name: children
         url: rest/1/concept/version/70?expand=children&stated=true
     conChronology:
-      description: RxNorm module (ISAAC)
+      description: VHA module (ISAAC)
       expandables:
         items:
         - name: versionsAll
@@ -3235,12 +5444,12 @@ children:
           url: rest/1/concept/version/70/
       identifiers:
         uuids:
-        - 71852ee0-0ca9-4e40-bdcb-8c3e73e41d20
+        - 8aa5fda8-33e9-5eaf-88e8-dd8a024d2489
       versions:
     conVersion:
       stampSequence: 1
       state: ACTIVE
-      time: 1454625196096
+      time: 1456685492337
       authorSequence: 5
       moduleSequence: 0
       pathSequence: 7
@@ -3253,7 +5462,7 @@ children:
       - name: children
         url: rest/1/concept/version/69?expand=children&stated=true
     conChronology:
-      description: LOINC module (ISAAC)
+      description: AMT module (ISAAC)
       expandables:
         items:
         - name: versionsAll
@@ -3262,12 +5471,12 @@ children:
           url: rest/1/concept/version/69/
       identifiers:
         uuids:
-        - 684929fd-f949-4c55-ab4d-b837787a46cf
+        - d2d4eff7-08af-5a57-867c-1d17bc7d7e83
       versions:
     conVersion:
       stampSequence: 1
       state: ACTIVE
-      time: 1454625196096
+      time: 1456685492337
       authorSequence: 5
       moduleSequence: 0
       pathSequence: 7
@@ -3280,7 +5489,7 @@ children:
       - name: children
         url: rest/1/concept/version/68?expand=children&stated=true
     conChronology:
-      description: US Extension module (ISAAC)
+      description: RxNorm module (ISAAC)
       expandables:
         items:
         - name: versionsAll
@@ -3289,12 +5498,12 @@ children:
           url: rest/1/concept/version/68/
       identifiers:
         uuids:
-        - 2d813d7b-cc52-421d-b6ef-9f64cf30f11f
+        - af033b4b-e21a-5ffe-ae35-2b8efcfda91a
       versions:
     conVersion:
       stampSequence: 1
       state: ACTIVE
-      time: 1454625196096
+      time: 1456685492337
       authorSequence: 5
       moduleSequence: 0
       pathSequence: 7
@@ -3307,7 +5516,7 @@ children:
       - name: children
         url: rest/1/concept/version/67?expand=children&stated=true
     conChronology:
-      description: SNOMED CT core module (ISAAC)
+      description: LOINC module (ISAAC)
       expandables:
         items:
         - name: versionsAll
@@ -3316,12 +5525,66 @@ children:
           url: rest/1/concept/version/67/
       identifiers:
         uuids:
+        - 08731eb6-7ba7-5c9b-af5d-cbce3a3745f2
+      versions:
+    conVersion:
+      stampSequence: 1
+      state: ACTIVE
+      time: 1456685492337
+      authorSequence: 5
+      moduleSequence: 0
+      pathSequence: 7
+    parents:
+    children:
+  - expandables:
+      items:
+      - name: parents
+        url: rest/1/concept/version/66?expand=parents&stated=true
+      - name: children
+        url: rest/1/concept/version/66?expand=children&stated=true
+    conChronology:
+      description: US Extension module (ISAAC)
+      expandables:
+        items:
+        - name: versionsAll
+          url: rest/1/concept/versions/66/
+        - name: versionsLatestOnly
+          url: rest/1/concept/version/66/
+      identifiers:
+        uuids:
+        - 4822ec5a-fa64-5e0c-b88b-e81fff954eb9
+      versions:
+    conVersion:
+      stampSequence: 1
+      state: ACTIVE
+      time: 1456685492337
+      authorSequence: 5
+      moduleSequence: 0
+      pathSequence: 7
+    parents:
+    children:
+  - expandables:
+      items:
+      - name: parents
+        url: rest/1/concept/version/65?expand=parents&stated=true
+      - name: children
+        url: rest/1/concept/version/65?expand=children&stated=true
+    conChronology:
+      description: SNOMED CT core module (ISAAC)
+      expandables:
+        items:
+        - name: versionsAll
+          url: rest/1/concept/versions/65/
+        - name: versionsLatestOnly
+          url: rest/1/concept/version/65/
+      identifiers:
+        uuids:
         - 1b4f1ba5-b725-390f-8c3b-33ec7096bdca
       versions:
     conVersion:
       stampSequence: 1
       state: ACTIVE
-      time: 1454625196096
+      time: 1456685492337
       authorSequence: 5
       moduleSequence: 0
       pathSequence: 7
@@ -3348,7 +5611,7 @@ children:
     conVersion:
       stampSequence: 1
       state: ACTIVE
-      time: 1454625196096
+      time: 1456685492337
       authorSequence: 5
       moduleSequence: 0
       pathSequence: 7
@@ -3375,7 +5638,7 @@ children:
   conVersion:
     stampSequence: 1
     state: ACTIVE
-    time: 1454625196096
+    time: 1456685492337
     authorSequence: 5
     moduleSequence: 0
     pathSequence: 7

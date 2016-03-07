@@ -1,6 +1,6 @@
-#Fixture created on 2016-02-26 14:56:59
+#Fixture created on 2016-03-07 09:49:37
 ---
-"@c": ".RestSememeDescriptionVersion"
+"@c": ".RestDynamicSememeVersion"
 expandables:
   items:
   - name: chronology
@@ -11,13 +11,12 @@ sememeChronology:
 sememeVersion:
   stampSequence: 1
   state: ACTIVE
-  time: 1454625196096
+  time: 1456685492337
   authorSequence: 5
   moduleSequence: 0
   pathSequence: 7
 nestedSememes:
-caseSignificanceConceptSequence: 64
-languageConceptSequence: 8
-text: ISAAC root
-descriptionTypeConceptSequence: 66
-dialects:
+dataColumns:
+- "@c": ".dataTypes.RestDynamicSememeNid"
+  columnNumber: 0
+  data: -2147483584

@@ -1,29 +1,32 @@
-#Fixture created on 2016-02-29 10:01:24
+#Fixture created on 2016-03-07 09:49:37
 ---
-- matchNid: -2147400193
-  matchText: HEART BLOCK
-  score: 8.366157
-- matchNid: -2147325162
-  matchText: C&P HEART
-  score: 7.529541
-- matchNid: -2147400414
-  matchText: IRREGULAR HEART RATE
-  score: 6.6929255
-- matchNid: -2147400233
-  matchText: CONGESTIVE HEART FAILURE
-  score: 6.6929255
-- matchNid: -2147400462
-  matchText: CONDUCTION DISORDER OF HEART
-  score: 6.6929255
-- matchNid: -2147376854
-  matchText: HEART RATE PER MONITOR
-  score: 6.6929255
-- matchNid: -2147391828
-  matchText: FETAL HEART TONES
-  score: 6.6929255
-- matchNid: -2147431815
-  matchText: BRACELET,MEDICAL ALERT HEART DISEASE
-  score: 6.2746177
-- matchNid: -2147315798
-  matchText: IN640 INVESTIGATIONAL CONGESTIVE HEART FAILURE
-  score: 5.85631
+- matchNid: -2145698005
+  matchText: Heart transplant
+  score: 6.56234
+- matchNid: -2145698035
+  matchText: Heart repair
+  score: 6.56234
+- matchNid: -2145698029
+  matchText: Heart ligation
+  score: 6.56234
+- matchNid: -2145698023
+  matchText: Heart suturing
+  score: 6.56234
+- matchNid: -2145762643
+  matchText: Fluttering heart
+  score: 6.56234
+- matchNid: -2145762649
+  matchText: Bumping heart
+  score: 6.56234
+- matchNid: -2145656153
+  matchText: Heart failure
+  score: 6.56234
+- matchNid: -2145364025
+  matchText: Abdominal heart
+  score: 6.56234
+- matchNid: -2145171553
+  matchText: Heart procedure
+  score: 6.56234
+- matchNid: -2145716911
+  matchText: Cineradiography - heart
+  score: 5.9001865

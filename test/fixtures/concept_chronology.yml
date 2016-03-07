@@ -1,13 +1,13 @@
-#Fixture created on 2016-02-26 14:56:59
+#Fixture created on 2016-03-07 09:49:37
 ---
-description: ISAAC root (ISAAC)
+description: SNOMED CT Model Component (metadata)
 expandables:
   items:
   - name: versionsAll
-    url: rest/1/concept/versions/13/
+    url: rest/1/concept/versions/421761/
   - name: versionsLatestOnly
-    url: rest/1/concept/version/13/
+    url: rest/1/concept/version/421761/
 identifiers:
   uuids:
-  - cc0b2455-f546-48fa-90e8-e214cc8478d6
+  - a60bd881-9010-3260-9653-0c85716b4391
 versions:

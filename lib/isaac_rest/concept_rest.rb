@@ -33,7 +33,7 @@ module ConceptRest
   CHRONOLOGY_CONCEPT_PATH = CONCEPT_PATH + 'chronology/{id}'
   VERSION_CONCEPT_PATH = CONCEPT_PATH + 'version/{id}'
   DESCRIPTIONS_CONCEPT_PATH = CONCEPT_PATH + 'descriptions/{id}'
-  TEST_UUID = 'cc0b2455-f546-48fa-90e8-e214cc8478d6' #useful for testing
+  TEST_UUID = 'a60bd881-9010-3260-9653-0c85716b4391' #useful for testing
 
   CHRONOLOGY_CONCEPT_STARTING_PARAMS = {}
   VERSION_CONCEPT_STARTING_PARAMS = {}
