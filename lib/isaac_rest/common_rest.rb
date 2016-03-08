@@ -1,5 +1,5 @@
 require './lib/ets_common/util/helpers'
-require './lib/isaac_rest/ennunciate/isaac-rest.rb'
+require './lib/isaac_rest/enunciate/isaac-rest.rb'
 require 'uri'
 
 module CommonRest
