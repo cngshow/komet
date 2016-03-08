@@ -938,10 +938,10 @@ module Gov
                     @versions = Array.new
                     _oa = _o['versions']
                     _oa.each { |_item|
-                      clazz_root = _item['@c'].reverse.chop.reverse #remove beginning '.'
-                      clazz_package = "Gov::Vha::Isaac::Rest::Api1::Data::Sememe::"
-                      clazz = clazz_package + clazz_root
-                      clazz = clazz_package + clazz_root
+                      clazz_array_parts = _item['@class'].split('.')
+                      short_clazz = clazz_array_parts.pop
+                      clazz_package = clazz_array_parts.map(&:capitalize).join("::")
+                      clazz = clazz_package + "::" + short_clazz
                       @versions.push Object.const_get(clazz).send(:from_json, _item)
                       #@versions.push Gov::Vha::Isaac::Rest::Api1::Data::Sememe::RestSememeVersion.from_json(_item)
                     }
