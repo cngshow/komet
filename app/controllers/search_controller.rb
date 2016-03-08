@@ -16,9 +16,6 @@ Copyright Notice
  See the License for the specific language governing permissions and
  limitations under the License.
 =end
-require './lib/isaac_rest/search_apis_rest'
-require './lib/isaac_rest/sememe_rest'
-
 ##
 # SearchController -
 # handles the taxonomy search functionality

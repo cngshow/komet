@@ -1,7 +1,9 @@
 Rails.application.routes.draw do
 
-  get 'ets_dashboard/metadata'
+  match 'logic_graph/chronology/:id' => 'logic_graph#chronology', :as => :logic_graph_chronology, via: [:get]
+  match 'logic_graph/version/:id' => 'logic_graph#version', :as => :logic_graph_version, via: [:get]
 
+  get 'ets_dashboard/metadata'
   get 'taxonomy/load_tree_data'
   get 'taxonomy/get_concept_information'
   get 'taxonomy/get_concept_summary'
