@@ -938,7 +938,7 @@ module Gov
                     @versions = Array.new
                     _oa = _o['versions']
                     _oa.each { |_item|
-                      clazz_root = _item['@c'].reverse!.chop!.reverse! #remove beginning '.'
+                      clazz_root = _item['@c'].reverse.chop.reverse #remove beginning '.'
                       clazz_package = "Gov::Vha::Isaac::Rest::Api1::Data::Sememe::"
                       clazz = clazz_package + clazz_root
                       clazz = clazz_package + clazz_root
