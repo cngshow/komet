@@ -1,0 +1,15 @@
+#Fixture created on 2016-03-08 10:29:39
+---
+expandables:
+  items:
+  - name: versionsAll
+    url: rest/1/sememe/versions/309/
+  - name: versionsLatestOnly
+    url: rest/1/sememe/version/309/
+sememeSequence: 309
+assemblageSequence: 1
+referencedComponentNid: -2147483590
+identifiers:
+  uuids:
+  - 941c28e1-e9d1-4669-97b3-06ed96db269e
+versions:

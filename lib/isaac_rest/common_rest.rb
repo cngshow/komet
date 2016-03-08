@@ -171,7 +171,7 @@ module CommonRestBase
             if invocation_found
               action = act_sym
               module_ = mod
-              $log.debug('throw happening')
+              $log.debug('Invocation found!!')
               throw :invocation_found
             end
           end
@@ -227,5 +227,11 @@ CommonRestBase::RestBase.invoke(url: "rest/1/taxonomy/version?id=cc0b2455-f546-4
 CommonRestBase::RestBase.invoke(url: "rest/1/search/descriptions?descriptionType=fsn&query=heart")
 CommonRestBase::RestBase.invoke(url: "rest/1/search/descriptions?descriptionType=fsn&query=failure&limit=20")
 CommonRestBase::RestBase.invoke(url: "rest/1/search/prefix?query=failure&limit=20")
+
+
+CommonRestBase::RestBase.invoke(url: "rest/1/logicGraph/version/406e872b-2e19-5f5e-a71d-e4e4b2c68fe5")
+CommonRestBase::RestBase.invoke(url: "rest/1/logicGraph/chronology/406e872b-2e19-5f5e-a71d-e4e4b2c68fe5")
+CommonRestBase::RestBase.invoke(url: "rest/1/sememe/version/309/?expand=nestedSememes")
+CommonRestBase::RestBase.invoke(url: "rest/1/sememe/chronology/309")
 
 =end

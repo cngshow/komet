@@ -7,7 +7,7 @@ module Fixtures
   TAXONOMY_ROOT = :taxonomy_root
   SEMEME_BY_ASSEMBLAGE = :sememe_assemblage
   SEMEME_VERSIONS = :sememe_versions
-  SEMEME_CHRONOLOGY = :sememe_chronolgy
+  SEMEME_CHRONOLOGY = :sememe_chronology
   SEMEME_BY_REFERENCED_COMPONENT = :sememe_ref_comp
   SEMEME_DEFINITION = :sememe_def
   ID_API_TYPES = :id_api_types
@@ -18,7 +18,8 @@ module Fixtures
   SYSTEM_API_DYNAMIC_SEMEME_DATA_TYPE = :system_api_dynamic_sememe_data_type
   # search descriptions and prefix fixtures
   SEARCH_DESCRIPTIONS = :search_descriptions
-
+  LOGIC_GRAPH_VERSION = :graph_version
+  LOGIC_GRAPH_CHRONOLOGY = :graph_chronology
   FILES = {
       CONCEPT_DESCRIPTIONS => './test/fixtures/concept_description.yml',
       CONCEPT_VERSIONS => './test/fixtures/concept_version.yml',
@@ -35,7 +36,9 @@ module Fixtures
       SYSTEM_API_DYNAMIC_SEMEME_DATA_TYPE => './test/fixtures/system_api_dynamic_sememe_data_type.yml',
       ID_API_TYPES => './test/fixtures/id_api_types.yml',
       ID_API_TRANSLATE => './test/fixtures/id_api_translate.yml',
-      SEARCH_DESCRIPTIONS => './test/fixtures/search_descriptions.yml'
+      SEARCH_DESCRIPTIONS => './test/fixtures/search_descriptions.yml',
+      LOGIC_GRAPH_VERSION => './test/fixtures/logic_graph_version.yml',
+      LOGIC_GRAPH_CHRONOLOGY => './test/fixtures/logic_graph_chronology.yml',
   }
 end
 
@@ -78,7 +81,7 @@ namespace :rest_fixtures do
     file_loc = ETSUtilities::TMP_FILE_PREFIX + url_to_path_string(SememeRest::BY_REFERENCED_COMPONENT_SEMEME_PATH) + ETSUtilities::YML_EXT
     FileUtils.cp(file_loc, FILES[SEMEME_BY_REFERENCED_COMPONENT])
 
-    SememeRest::get_sememe(action: SememeRestActions::ACTION_CHRONOLOGY, uuid_or_id: SememeRest::TEST_ID) #the simple fact that we fetch the rest data motivates a yaml file's generation in temp.
+    SememeRest::get_sememe(action: SememeRestActions::ACTION_CHRONOLOGY, uuid_or_id: SememeRest::TEST_ID, additional_req_params: {expand: 'versionsAll'} ) #the simple fact that we fetch the rest data motivates a yaml file's generation in temp.
     file_loc = ETSUtilities::TMP_FILE_PREFIX + url_to_path_string(SememeRest::CHRONOLOGY_SEMEME_PATH) + ETSUtilities::YML_EXT
     FileUtils.cp(file_loc, FILES[SEMEME_CHRONOLOGY])
 
@@ -93,6 +96,19 @@ namespace :rest_fixtures do
     SememeRest::get_sememe(action: SememeRestActions::ACTION_SEMEME_DEFINITION, uuid_or_id: SememeRest::TEST_UUID_SEMEME_DEF) #the simple fact that we fetch the rest data motivates a yaml file's generation in temp.
     file_loc = ETSUtilities::TMP_FILE_PREFIX + url_to_path_string(SememeRest::DEFINITION_SEMEME_PATH) + ETSUtilities::YML_EXT
     FileUtils.cp(file_loc, FILES[SEMEME_DEFINITION])
+  end
+
+  LOGIC_GRAPHS_LAMBDA = -> do
+    include Fixtures
+    require './lib/isaac_rest/logic_graph_rest.rb'
+
+    LogicGraphRest::get_graph(action: LogicGraphRestActions::ACTION_CHRONOLOGY,uuid_or_id: LogicGraphRest::TEST_UUID)
+    file_loc = ETSUtilities::TMP_FILE_PREFIX + url_to_path_string(LogicGraphRest::CHRONOLOGY_PATH) + ETSUtilities::YML_EXT
+    FileUtils.cp(file_loc, FILES[LOGIC_GRAPH_CHRONOLOGY])
+
+    LogicGraphRest::get_graph(action: LogicGraphRestActions::ACTION_VERSION,uuid_or_id: LogicGraphRest::TEST_UUID)
+    file_loc = ETSUtilities::TMP_FILE_PREFIX + url_to_path_string(LogicGraphRest::VERSION_PATH) + ETSUtilities::YML_EXT
+    FileUtils.cp(file_loc, FILES[LOGIC_GRAPH_VERSION])
   end
 
   ID_APIS_LAMBDA = -> do
@@ -141,7 +157,7 @@ namespace :rest_fixtures do
 
   desc 'This task hits the isaac rest server. Builds all fixtures.'
   task :build => :environment do
-    [TAXONOMY_LAMBDA, CONCEPT_LAMBDA, ID_APIS_LAMBDA, SEMEME_LAMBDA, SEARCH_API_LAMBDA, SYSTEM_API_LAMBDA].each(&:call)
+    [TAXONOMY_LAMBDA, CONCEPT_LAMBDA, ID_APIS_LAMBDA, SEMEME_LAMBDA, SEARCH_API_LAMBDA, SYSTEM_API_LAMBDA, LOGIC_GRAPHS_LAMBDA].each(&:call)
   end
 
 end

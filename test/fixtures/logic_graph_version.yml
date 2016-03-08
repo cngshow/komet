@@ -1,0 +1,58 @@
+#Fixture created on 2016-03-08 10:29:39
+---
+"@c": ".RestSememeLogicGraphVersion"
+expandables:
+  items:
+  - name: chronology
+    url: rest/1/sememe/chronology/309
+  - name: nestedSememes
+    url: rest/1/sememe/version/309/?expand=nestedSememes
+sememeChronology:
+sememeVersion:
+  stampSequence: 1
+  state: ACTIVE
+  time: 1456685492337
+  authorSequence: 5
+  moduleSequence: 0
+  pathSequence: 7
+nestedSememes:
+referencedConceptDescription: dynamic sememe extension definition (ISAAC)
+rootLogicNode:
+  "@c": ".RestUntypedConnectorNode"
+  expandables:
+    items: []
+  nodeUuid:
+  children:
+  - "@c": ".RestUntypedConnectorNode"
+    expandables:
+      items: []
+    nodeUuid:
+    children:
+    - "@c": ".RestUntypedConnectorNode"
+      expandables:
+        items: []
+      nodeUuid:
+      children:
+      - "@c": ".RestConceptNode"
+        expandables:
+        nodeUuid:
+        children: []
+        nodeSemantic:
+          "@c": ".RestNodeSemantic"
+          name: CONCEPT
+          enumId: 8
+        conceptSequence: 56
+        conceptVersion:
+        conceptDescription: dynamic sememe assemblages (ISAAC)
+      nodeSemantic:
+        "@c": ".RestNodeSemantic"
+        name: AND
+        enumId: 2
+    nodeSemantic:
+      "@c": ".RestNodeSemantic"
+      name: NECESSARY_SET
+      enumId: 0
+  nodeSemantic:
+    "@c": ".RestNodeSemantic"
+    name: DEFINITION_ROOT
+    enumId: 5
