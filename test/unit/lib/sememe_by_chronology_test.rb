@@ -24,6 +24,12 @@ class SememeChronologyTest < Test::Unit::TestCase
       fail(FAIL_MESSAGE + ex.to_s)
     end
   end
+  #concept = SememeRest::get_sememe(action: SememeRestActions::ACTION_CHRONOLOGY, uuid_or_id: '-2145065647', additional_req_params: {expand: 'versionsAll'})
+  def test_concept_versions
+    versions = @rest_sememe_chron.versions #an array of versions
+    assert(versions.first.class.eql? Gov::Vha::Isaac::Rest::Api1::Data::Sememe::RestSememeDescriptionVersion)#Do I get my inherited subtype of RestSememeVersion
+    assert(versions.first.text.class.eql? String)#Do I get my string?
+  end
 
   # Called after every test method runs. Can be used to tear
   # down fixture information.

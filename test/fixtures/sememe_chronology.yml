@@ -1,15 +1,52 @@
-#Fixture created on 2016-03-07 09:49:37
+#Fixture created on 2016-03-08 10:29:38
 ---
 expandables:
-  items:
-  - name: versionsAll
-    url: rest/1/sememe/versions/1349/
-  - name: versionsLatestOnly
-    url: rest/1/sememe/version/1349/
-sememeSequence: 1349
-assemblageSequence: 9
-referencedComponentNid: -2147482063
+sememeSequence: 1996127
+assemblageSequence: 63
+referencedComponentNid: -2146983539
 identifiers:
   uuids:
-  - 6c6084a3-85d7-4913-88e8-c3bd0db8edc5
+  - 55657d7a-1cdd-39ec-bc07-f2f779433783
 versions:
+- "@c": ".RestSememeDescriptionVersion"
+  expandables:
+    items:
+    - name: chronology
+      url: rest/1/sememe/chronology/1996127
+    - name: nestedSememes
+      url: rest/1/sememe/version/1996127/?expand=nestedSememes
+  sememeChronology:
+  sememeVersion:
+    stampSequence: 21
+    state: ACTIVE
+    time: 1059624000000
+    authorSequence: 5
+    moduleSequence: 0
+    pathSequence: 7
+  nestedSememes:
+  caseSignificanceConceptSequence: 111
+  languageConceptSequence: 8
+  text: HEA (body structure)
+  descriptionTypeConceptSequence: 11
+  dialects:
+- "@c": ".RestSememeDescriptionVersion"
+  expandables:
+    items:
+    - name: chronology
+      url: rest/1/sememe/chronology/1996127
+    - name: nestedSememes
+      url: rest/1/sememe/version/1996127/?expand=nestedSememes
+  sememeChronology:
+  sememeVersion:
+    stampSequence: 5
+    state: ACTIVE
+    time: 1012453200000
+    authorSequence: 5
+    moduleSequence: 0
+    pathSequence: 7
+  nestedSememes:
+  caseSignificanceConceptSequence: 112
+  languageConceptSequence: 8
+  text: HEA (body structure)
+  descriptionTypeConceptSequence: 11
+  dialects:

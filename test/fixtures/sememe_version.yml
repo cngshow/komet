@@ -1,22 +1,23 @@
-#Fixture created on 2016-03-07 09:49:37
+#Fixture created on 2016-03-08 10:29:38
 ---
-"@c": ".RestDynamicSememeVersion"
+"@c": ".RestSememeDescriptionVersion"
 expandables:
   items:
   - name: chronology
-    url: rest/1/sememe/chronology/1349
+    url: rest/1/sememe/chronology/1996127
   - name: nestedSememes
-    url: rest/1/sememe/version/1349/?expand=nestedSememes
+    url: rest/1/sememe/version/1996127/?expand=nestedSememes
 sememeChronology:
 sememeVersion:
-  stampSequence: 1
+  stampSequence: 21
   state: ACTIVE
-  time: 1456685492337
+  time: 1059624000000
   authorSequence: 5
   moduleSequence: 0
   pathSequence: 7
 nestedSememes:
-dataColumns:
-- "@c": ".dataTypes.RestDynamicSememeNid"
-  columnNumber: 0
-  data: -2147483584
+caseSignificanceConceptSequence: 111
+languageConceptSequence: 8
+text: HEA (body structure)
+descriptionTypeConceptSequence: 11
+dialects:
