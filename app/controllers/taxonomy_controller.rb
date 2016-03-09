@@ -108,6 +108,11 @@ class TaxonomyController < ApplicationController
       raw_nodes = raw_nodes.drop(1)
     else
       isaac_concept = TaxonomyRest.get_isaac_concept(uuid: current_id)
+
+      if isaac_concept.is_a? CommonRest::UnexpectedResponse
+        render json: [] and return
+      end
+
       raw_nodes = rest_concept_version_to_json_tree(isaac_concept, parent_search: parent_search)
     end
 
@@ -223,9 +228,10 @@ class TaxonomyController < ApplicationController
       concept_id = params[:concept_id].to_i
     end
 
+    @concept_summary = @raw_tree_data[1]
     @greg =  descriptions(concept_id) #ConceptRest::get_concept(action: ConceptRestActions::ACTION_DESCRIPTIONS, uuid: concept_id)
 
-    @concept_summary = @raw_tree_data[1]
+
 
   end
 

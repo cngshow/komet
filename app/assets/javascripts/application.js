@@ -31,6 +31,8 @@ Copyright Notice
 //= require jquery
 //= require jquery_ujs
 //= require jquery-ui
+//= require moment.js
+//= require ag-grid.min.js
 //= require_tree ../../../vendor/assets/javascripts/jquery-svg
 //= require_tree ../../../vendor/assets/javascripts/jsTree
 //= require_tree ../../../vendor/assets/javascripts/jq-ui-plugins

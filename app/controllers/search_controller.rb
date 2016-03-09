@@ -16,87 +16,169 @@ Copyright Notice
  See the License for the specific language governing permissions and
  limitations under the License.
 =end
+require './lib/isaac_rest/search_apis_rest'
+require './lib/isaac_rest/id_apis_rest'
+require './lib/isaac_rest/sememe_rest'
+require './lib/isaac_rest/taxonomy_rest'
+
 ##
 # SearchController -
 # handles the taxonomy search functionality
 class SearchController < ApplicationController
-  include SearchApis, SememeRest, ConceptConcern
+  include SearchApis, IdAPIsRest, SememeRest, ConceptConcern
 
   ##
-  # get_assemblage_suggestions - RESTful route for populating the taxonomy tree using an http :GET
-  # The current tree node is identified in the request params with the key :concept_id
-  # If the tree is reversed so we are searching for parents of this node is identified in the request params with the key :parent_search (true/false)
-  # If the parent of this node was already doing a reverse search is identified in the request params with the key :parent_reversed (true/false)
-  #@return [json] the tree nodes to insert into the tree at the parent node passed in the request
+  # get_assemblage_suggestions - RESTful route for populating a list suggested list of assemblages as a user types into a field via http :GET or :POST
+  # The term entered by the user to search for assemblages with a request param of :term
+  #@return [json] a list of matching assemblage text and ids - array of hashes {label:, value:}
   def get_assemblage_suggestions
 
     search_term = params[:term]
+    assemblage_suggestions_data = []
 
     $log.debug(search_term)
 
-    render json: @assemblage_suggestions_data
+    searchResults = SearchApis.get_search_api(action: ACTION_DESCRIPTIONS, additional_req_params: {query: search_term, descriptionType: 'fsn'})
+
+    searchResults.each do |searchResult|
+
+      match_nid = searchResult.matchNid
+
+      concept = SememeRest::get_sememe(action: SememeRestActions::ACTION_CHRONOLOGY, uuid_or_id: match_nid, additional_req_params: {expand: 'versionsAll'})
+      assemblage_suggestions_data << {label: searchResult.matchText , value: concept.assemblageSequence}
+
+    end
+
+    # use this to look up all dynamic sememe assemblages "406e872b-2e19-5f5e-a71d-e4e4b2c68fe5"
+
+    render json: assemblage_suggestions_data
   end
 
   ##
-  # get_assemblage_recents - RESTful route for populating the taxonomy tree using an http :GET
-  # The current tree node is identified in the request params with the key :concept_id
-  # If the tree is reversed so we are searching for parents of this node is identified in the request params with the key :parent_search (true/false)
-  # If the parent of this node was already doing a reverse search is identified in the request params with the key :parent_reversed (true/false)
-  #@return [json] the tree nodes to insert into the tree at the parent node passed in the request
+  # get_assemblage_recents - RESTful route for populating a list of recent assemblage searches via http :GET
+  #@return [json] an array of hashes {id:, text:}
   def get_assemblage_recents
 
-    render json: @assemblage_recents_data
+    recents_array = []
+
+    if session[:search_assemblage_recents]
+      recents_array = session[:search_assemblage_recents]
+    end
+
+    render json: recents_array
   end
 
   ##
-  # get_search_results - RESTful route for populating the taxonomy tree using an http :GET
-  # The current tree node is identified in the request params with the key :concept_id
-  # If the tree is reversed so we are searching for parents of this node is identified in the request params with the key :parent_search (true/false)
-  # If the parent of this node was already doing a reverse search is identified in the request params with the key :parent_reversed (true/false)
-  #@return [json] the tree nodes to insert into the tree at the parent node passed in the request
+  # get_search_results - RESTful route for populating the search results via http :GET
+  # The query string to search for with a request param of :taxonomy_search_text
+  # The type of search we are doing with a request param of :taxonomy_search_type (descriptions|sememes)
+  # The number of results to fetch with a request param of :taxonomy_search_limit
+  # If doing a description search the type of description to search with a request param of :description_type (fsn|synonym|definition)
+  # If doing a sememe search whether to treat the query string as a string or determine its type programmatically with a request param of :treatAsString (true|false)
+  # If doing a sememe search the id of an assemblage to search within with a request param of :taxonomy_search_assemblage_id
+  # If doing a sememe search the display text of an assemblage to search within with a request param of :taxonomy_search_assemblage_display
+  #@return [json] the search results - an array of hashes {id:, matching_text:, concept_status:, score:}
   def get_search_results
 
-    search_results = {}
+    search_data = []
     search_text = params[:taxonomy_search_text]
-    description_type = params[:taxonomy_search_description_type]
-    assemblage = params[:taxonomy_search_assemblage]
-
+    search_type = params[:taxonomy_search_type]
+    search_limit = params[:taxonomy_search_limit]
+    new_search = params[:new_search]
     additional_params = {query: search_text}
 
-    if description_type != nil
-      additional_params[:descriptionType] =  description_type
+    if search_text == nil || search_text == ''
+      render json: {total_rows: 0, page_data: []} and return
     end
 
-    results = SearchApis.get_search_api(action: ACTION_DESCRIPTIONS, additional_req_params: additional_params)
-    search_data = []
-
-    results.each do |r|
-      match_nid = r.matchNid
-      sememe_version = SememeRest::get_sememe(action: SememeRestActions::ACTION_VERSION, uuid_or_id: match_nid)
-      search_data << {id: match_nid, concept_description: r.matchText, matching_terms: [sememe_version.sememeVersion.state.to_s, r.score.to_s]}
+    if search_limit != nil || search_limit == ''
+      additional_params[:limit] =  search_limit
     end
 
-    search_results[:total_rows] = results.length.to_s
-    search_results[:page_data] = search_data
-    render json: search_results
+    if search_type == 'descriptions'
+
+      description_type = params[:taxonomy_search_description_type]
+
+      if description_type != nil
+        additional_params[:descriptionType] =  description_type
+      end
+
+      # perform a description search with the parameters we set
+      results = SearchApis.get_search_api(action: ACTION_DESCRIPTIONS, additional_req_params: additional_params)
+
+      results.each do |result|
+
+        # get the sememe version using the NID returned by the search, with its chronology expanded.
+        sememe_version = SememeRest::get_sememe(action: SememeRestActions::ACTION_VERSION, uuid_or_id: result.matchNid, additional_req_params: {expand: 'chronology'})
+
+        # translate the NID in the sememe chronology into a UUID
+        uuid = IdAPIsRest.get_id(uuid_or_id: sememe_version.sememeChronology.referencedComponentNid, action: ACTION_TRANSLATE, additional_req_params: {outputType: 'uuid'}).value
+
+        # add the information to the search array to be returned
+        search_data << {id: uuid, matching_terms: result.matchText, concept_status: sememe_version.sememeVersion.state.to_s, match_score: result.score.to_s}
+      end
+
+    elsif search_type == 'sememes'
+
+      additional_params[:treatAsString] = params[:taxonomy_search_treat_as_string]
+      assemblage = params[:taxonomy_search_assemblage_id]
+
+      if assemblage != nil
+
+        additional_params[:sememeAssemblageSequence] =  assemblage
+
+        recents_array = []
+
+        # see if the recents array already exists in the session
+        if session[:search_assemblage_recents]
+          recents_array = session[:search_assemblage_recents]
+        end
+
+        # only proceed if the array does not already contain the id and term that were searched for
+        already_exist = recents_array.find {|recent|
+          (recent['id'] == assemblage && recent['text'] == params[:taxonomy_search_assemblage_display])
+        }
+
+        if already_exist == nil
+
+          # if the recents array has the max of 20 items remove the last item before adding a new one
+          if recents_array.length == 20
+            recents_array.delete_at(19)
+          end
+
+          # put the current items into the beginning of the array
+          recents_array.insert(0, {id: assemblage, text: params[:taxonomy_search_assemblage_display]})
+
+          # put the array into the session
+          session[:search_assemblage_recents] = recents_array
+        end
+
+      end
+
+      # perform a sememe search with the parameters we set
+      results = SearchApis.get_search_api(action: ACTION_SEMEMES, additional_req_params: additional_params)
+
+      results.each do |result|
+
+        # get the sememe version using the NID returned by the search, with its chronology expanded.
+        sememe_version = SememeRest::get_sememe(action: SememeRestActions::ACTION_VERSION, uuid_or_id: result.matchNid, additional_req_params: {expand: 'chronology'})
+
+        # translate the NID in the sememe chronology into a UUID
+        uuid = IdAPIsRest.get_id(uuid_or_id: sememe_version.sememeChronology.referencedComponentNid, action: ACTION_TRANSLATE, additional_req_params: {outputType: 'uuid'}).value
+
+        # add the information to the search array to be returned
+        search_data << {id: uuid, matching_terms: result.matchText, concept_status: sememe_version.sememeVersion.state.to_s, match_score: result.score.to_s} #sememe_version.sememeVersion.state.to_s
+      end
+
+    end
+
+    render json: search_data
   end
 
   def initialize
 
-    @assemblage_suggestions_data = []
-
-    @assemblage_suggestions_data << {label: 'SNOMED CT Concept', value: 'SNOMED RT+CTV3'}
-
-    @assemblage_recents_data = ['SNOMED CT Concept', 'VHAT', 'heart']
-
-    @search_data = []
-    @search_data << { id: '1234', concept_description: 'SNOMED CT Concept', matching_terms: ['SNOMED RT+CTV3', 'SNOMED CT']}
-    @search_data << { id: '5678', concept_description: 'Second Term', matching_terms: ['SNOMED RT+CTV3']}
-    @search_data << { id: '9012', concept_description: 'Third Term', matching_terms: ['Third Term', 'Third (3rd) Term', 'Term the Third']}
-
+    @cached_results = []
 
   end
-
-
 
 end

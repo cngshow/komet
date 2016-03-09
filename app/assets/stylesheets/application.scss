@@ -35,6 +35,15 @@ Copyright Notice
 @import "bootstrap-sprockets";
 @import "bootstrap";
 
+
+// jQuery UI Overrides
+// need to reiterate this style for some reason - gets lost on the search page for advanced options
+.ui-accordion-content{
+  border: solid #aaaaaa 1px;
+}
+
+
+// ETS Common styles
 .ets-no-margins{
   margin: 0px;
 }
@@ -48,6 +57,10 @@ Copyright Notice
 }
 .ets-accordion-panel {
   overflow: visible !important;
+}
+.ets-floated-bar{
+  overflow: hidden;
+  margin: 2px;
 }
 
 
@@ -162,4 +175,7 @@ Copyright Notice
 .ets-search-selected-result{
   background-color: green;
   border: solid green 1px;
+}
+#taxonomy_search_sememe_fields{
+  display: none;
 }

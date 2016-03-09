@@ -6,13 +6,14 @@ module ConceptConcern
                    case_significance: 'caseSignificanceConceptSequence'}
 
   def descriptions(uuid)
-    ret = {uuid: uuid}
-    descriptions = ConceptRest.get_concept(action: ConceptRestActions::ACTION_DESCRIPTIONS, uuid: uuid)
-    if descriptions.is_a? CommonRest::UnexpectedResponse
-      return [descriptions.body]
-    end
 
+    ret = {uuid: uuid}
     ret[:descriptions] = []
+    descriptions = ConceptRest.get_concept(action: ConceptRestActions::ACTION_DESCRIPTIONS, uuid: uuid)
+
+    if descriptions.is_a? CommonRest::UnexpectedResponse
+      return ret
+    end
 
     # iterate over the array of Gov::Vha::Isaac::Rest::Api1::Data::Sememe::RestSememeDescriptionVersion returned
     descriptions.each do |d|

@@ -30,7 +30,8 @@ var EtsChannels = {
         taxonomyTreeNodeOpenedChannel: "Taxonomy/TaxonomyTree/NodeOpened",
         taxonomyTreeNodeClosedChannel: "Taxonomy/TaxonomyTree/NodeClosed",
         taxonomyTreeNodeSelectedChannel: "Taxonomy/TaxonomyTree/NodeSelected",
-        taxonomyDetailsTreeNodeSelectedChannel: "Taxonomy/TaxonomyDetailsTree/NodeSelected"
+        taxonomyDetailsTreeNodeSelectedChannel: "Taxonomy/TaxonomyDetailsTree/NodeSelected",
+        taxonomySearchResultSelectedChannel: "Taxonomy/Search/ResultSelected"
     },
     //whoever adds in another real namespace can whack this silly example
     SomethingElse: {
