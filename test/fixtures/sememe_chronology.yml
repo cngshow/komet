@@ -1,4 +1,4 @@
-#Fixture created on 2016-03-08 10:29:38
+#Fixture created on 2016-03-09 16:43:59
 ---
 expandables:
 sememeSequence: 1996127
@@ -8,7 +8,7 @@ identifiers:
   uuids:
   - 55657d7a-1cdd-39ec-bc07-f2f779433783
 versions:
-- "@c": ".RestSememeDescriptionVersion"
+- "@class": gov.vha.isaac.rest.api1.data.sememe.RestSememeDescriptionVersion
   expandables:
     items:
     - name: chronology
@@ -29,7 +29,7 @@ versions:
   text: HEA (body structure)
   descriptionTypeConceptSequence: 11
   dialects:
-- "@c": ".RestSememeDescriptionVersion"
+- "@class": gov.vha.isaac.rest.api1.data.sememe.RestSememeDescriptionVersion
   expandables:
     items:
     - name: chronology

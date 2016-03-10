@@ -1,11 +1,11 @@
-#Fixture created on 2016-03-08 10:29:39
+#Fixture created on 2016-03-09 16:44:00
 ---
-- "@c": ".RestObjectChronologyType"
+- "@class": gov.vha.isaac.rest.api1.data.enumerations.RestObjectChronologyType
   name: Concept
   enumId: 0
-- "@c": ".RestObjectChronologyType"
+- "@class": gov.vha.isaac.rest.api1.data.enumerations.RestObjectChronologyType
   name: Sememe
   enumId: 1
-- "@c": ".RestObjectChronologyType"
+- "@class": gov.vha.isaac.rest.api1.data.enumerations.RestObjectChronologyType
   name: Unknown
   enumId: 2
