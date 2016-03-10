@@ -1,29 +1,29 @@
-#Fixture created on 2016-03-08 10:29:39
+#Fixture created on 2016-03-09 16:44:00
 ---
-- "@c": ".RestSememeType"
+- "@class": gov.vha.isaac.rest.api1.data.enumerations.RestSememeType
   name: Member
   enumId: 0
-- "@c": ".RestSememeType"
+- "@class": gov.vha.isaac.rest.api1.data.enumerations.RestSememeType
   name: Component Nid
   enumId: 1
-- "@c": ".RestSememeType"
+- "@class": gov.vha.isaac.rest.api1.data.enumerations.RestSememeType
   name: Long
   enumId: 2
-- "@c": ".RestSememeType"
+- "@class": gov.vha.isaac.rest.api1.data.enumerations.RestSememeType
   name: Logic Graph
   enumId: 3
-- "@c": ".RestSememeType"
+- "@class": gov.vha.isaac.rest.api1.data.enumerations.RestSememeType
   name: String
   enumId: 4
-- "@c": ".RestSememeType"
+- "@class": gov.vha.isaac.rest.api1.data.enumerations.RestSememeType
   name: Dynamic Sememe
   enumId: 5
-- "@c": ".RestSememeType"
+- "@class": gov.vha.isaac.rest.api1.data.enumerations.RestSememeType
   name: Description
   enumId: 6
-- "@c": ".RestSememeType"
+- "@class": gov.vha.isaac.rest.api1.data.enumerations.RestSememeType
   name: Relationship Adapter
   enumId: 7
-- "@c": ".RestSememeType"
+- "@class": gov.vha.isaac.rest.api1.data.enumerations.RestSememeType
   name: Unknown
   enumId: 8

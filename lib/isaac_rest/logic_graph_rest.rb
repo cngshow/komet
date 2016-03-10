@@ -59,12 +59,16 @@ module LogicGraphRest
       super(params: params, action: action, action_constants: action_constants)
     end
 
-    def rest_call
+    def rest_call(enunciated = true)
       p = get_params
       url = get_url
       url_string = url.gsub('{id}', uuid)
       json = rest_fetch(url_string: url_string, params: p, raw_url: url)
-      enunciate_json(json)
+      if(enunciated)
+        return  enunciate_json(json)
+      else
+        return json
+      end
     end
   end
 
@@ -72,8 +76,8 @@ module LogicGraphRest
     get_graph(action: hash[:action], uuid_or_id: hash[:id], additional_req_params: hash[:params])
   end
 
-  def get_graph(action:, uuid_or_id:, additional_req_params: nil)
-    LogicGraph.new(uuid: uuid_or_id, params: additional_req_params, action: action, action_constants: ACTION_CONSTANTS).rest_call
+  def get_graph(action:, uuid_or_id:, additional_req_params: nil, raw_json: false)
+    LogicGraph.new(uuid: uuid_or_id, params: additional_req_params, action: action, action_constants: ACTION_CONSTANTS).rest_call(!raw_json)
   end
 end
 
