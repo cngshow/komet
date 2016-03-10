@@ -65,6 +65,23 @@ class Hash
   end
 end
 
+class MonkeyPatch
+  def self.use_json_type_info(enunciate_type, some_array = nil, default_class)
+    r_val = nil
+    if (enunciate_type['@class'].nil?)
+      r_val = default_class.from_json(enunciate_type)
+      some_array.push val unless some_array.nil?
+    else
+      clazz_array_parts = enunciate_type['@class'].split('.')
+      short_clazz = clazz_array_parts.pop
+      clazz_package = clazz_array_parts.map(&:capitalize).join("::")
+      clazz = clazz_package + "::" + short_clazz
+      r_val = Object.const_get(clazz).send(:from_json, enunciate_type)
+      some_array.push r_val unless some_array.nil?
+    end
+    r_val
+  end
+end
 
 module Gov
 
@@ -938,12 +955,8 @@ module Gov
                     @versions = Array.new
                     _oa = _o['versions']
                     _oa.each { |_item|
-                      clazz_array_parts = _item['@class'].split('.')
-                      short_clazz = clazz_array_parts.pop
-                      clazz_package = clazz_array_parts.map(&:capitalize).join("::")
-                      clazz = clazz_package + "::" + short_clazz
-                      @versions.push Object.const_get(clazz).send(:from_json, _item)
-                      #@versions.push Gov::Vha::Isaac::Rest::Api1::Data::Sememe::RestSememeVersion.from_json(_item)
+                      default_class =  Gov::Vha::Isaac::Rest::Api1::Data::Sememe::RestSememeVersion
+                      MonkeyPatch.use_json_type_info(_item, @versions,default_class)
                     }
                   end
                 end
@@ -1178,8 +1191,14 @@ module Gov
                   @nodeUuid = String.from_json(_o['nodeUuid']) unless _o['nodeUuid'].nil?
                   if !_o['children'].nil?
                     @children = Array.new
+                    #to_do  CRIS fix this
                     _oa = _o['children']
-                    _oa.each { |_item| @children.push Gov::Vha::Isaac::Rest::Api1::Data::Logic::RestLogicNode.from_json(_item) }
+
+                    _oa.each { |_item|
+                      default_class = Gov::Vha::Isaac::Rest::Api1::Data::Logic::RestLogicNode
+                      MonkeyPatch.use_json_type_info(_item, @children,default_class)
+                      #@children.push Gov::Vha::Isaac::Rest::Api1::Data::Logic::RestLogicNode.from_json(_item)
+                    }
                   end
                   @nodeSemantic = Gov::Vha::Isaac::Rest::Api1::Data::Enumerations::RestNodeSemantic.from_json(_o['nodeSemantic']) unless _o['nodeSemantic'].nil?
                 end
