@@ -12,7 +12,9 @@ namespace :isaac do
     end
   end
 
+  desc 'Build local isaac rest project'
   task :build => :build_isaac_rest
+  desc 'Build local isaac rest project'
   task :b => :build_isaac_rest
 
 end
