@@ -1,4 +1,4 @@
-#Fixture created on 2016-03-09 16:44:00
+#Fixture created on 2016-03-11 12:45:00
 ---
 - "@class": gov.vha.isaac.rest.api1.data.enumerations.RestSememeType
   name: Member

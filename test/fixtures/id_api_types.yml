@@ -1,4 +1,4 @@
-#Fixture created on 2016-03-09 16:43:59
+#Fixture created on 2016-03-11 12:45:00
 ---
 - "@class": gov.vha.isaac.rest.api1.data.enumerations.RestSupportedIdType
   name: uuid

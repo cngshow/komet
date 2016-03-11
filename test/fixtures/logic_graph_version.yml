@@ -1,4 +1,4 @@
-#Fixture created on 2016-03-09 16:44:00
+#Fixture created on 2016-03-11 12:45:00
 ---
 "@class": gov.vha.isaac.rest.api1.data.sememe.RestSememeLogicGraphVersion
 expandables:
@@ -19,40 +19,40 @@ nestedSememes:
 referencedConceptDescription: dynamic sememe extension definition (ISAAC)
 rootLogicNode:
   "@class": gov.vha.isaac.rest.api1.data.logic.RestUntypedConnectorNode
+  nodeSemantic:
+    "@class": gov.vha.isaac.rest.api1.data.enumerations.RestNodeSemantic
+    name: DEFINITION_ROOT
+    enumId: 5
   expandables:
     items: []
   nodeUuid:
   children:
   - "@class": gov.vha.isaac.rest.api1.data.logic.RestUntypedConnectorNode
+    nodeSemantic:
+      "@class": gov.vha.isaac.rest.api1.data.enumerations.RestNodeSemantic
+      name: NECESSARY_SET
+      enumId: 0
     expandables:
       items: []
     nodeUuid:
     children:
     - "@class": gov.vha.isaac.rest.api1.data.logic.RestUntypedConnectorNode
+      nodeSemantic:
+        "@class": gov.vha.isaac.rest.api1.data.enumerations.RestNodeSemantic
+        name: AND
+        enumId: 2
       expandables:
         items: []
       nodeUuid:
       children:
       - "@class": gov.vha.isaac.rest.api1.data.logic.RestConceptNode
-        expandables:
-        nodeUuid:
-        children: []
         nodeSemantic:
           "@class": gov.vha.isaac.rest.api1.data.enumerations.RestNodeSemantic
           name: CONCEPT
           enumId: 8
+        expandables:
+        nodeUuid:
+        children: []
         conceptSequence: 56
         conceptVersion:
         conceptDescription: dynamic sememe assemblages (ISAAC)
-      nodeSemantic:
-        "@class": gov.vha.isaac.rest.api1.data.enumerations.RestNodeSemantic
-        name: AND
-        enumId: 2
-    nodeSemantic:
-      "@class": gov.vha.isaac.rest.api1.data.enumerations.RestNodeSemantic
-      name: NECESSARY_SET
-      enumId: 0
-  nodeSemantic:
-    "@class": gov.vha.isaac.rest.api1.data.enumerations.RestNodeSemantic
-    name: DEFINITION_ROOT
-    enumId: 5
