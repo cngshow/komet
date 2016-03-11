@@ -24,6 +24,13 @@ class LogicGraphVersionTest < Test::Unit::TestCase
     end
   end
 
+  def test_get_concept_description
+    begin
+      assert(! @rest_graph_version.rootLogicNode.children.first.children.first.children.first.conceptDescription.nil?, 'The concept description should not be null!')
+      assert(@rest_graph_version.rootLogicNode.children.first.children.first.children.first.class.eql?(Gov::Vha::Isaac::Rest::Api1::Data::Logic::RestConceptNode), 'The class should be a RestConceptNode!')
+    end
+  end
+
   # Called after every test method runs. Can be used to tear
   # down fixture information.
 
