@@ -11,4 +11,8 @@ namespace :isaac do
       puts 'set ISAAC_PATH to your local isaac workspace in this shell before executing the rake task'
     end
   end
+
+  task :build => :build_isaac_rest
+  task :b => :build_isaac_rest
+
 end

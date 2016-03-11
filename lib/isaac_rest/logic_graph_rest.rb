@@ -85,6 +85,8 @@ end
 load('./lib/isaac_rest/logic_graph_rest.rb')
 a = LogicGraphRest::get_graph(action: LogicGraphRestActions::ACTION_CHRONOLOGY,uuid_or_id: LogicGraphRest::TEST_UUID)
 b = LogicGraphRest::get_graph(action: LogicGraphRestActions::ACTION_VERSION,uuid_or_id: LogicGraphRest::TEST_UUID)
+s = LogicGraphRest.get_graph(action: ACTION_VERSION, uuid_or_id: "251be9d9-0193-3c98-9d11-317658983101", additional_req_params: {},raw_json: true)
+
 
 =end
 
