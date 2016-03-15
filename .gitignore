@@ -16,6 +16,6 @@ setup.bat
 rails_komet.war
 /target/
 /.settings/
-/lib/ets_common/
+/lib/rails_common/
 /.project
 /.idea

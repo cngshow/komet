@@ -13,14 +13,14 @@
 	<version>1.3-SNAPSHOT</version>
 	<packaging>pom</packaging>
 
-	<name>ISAAC Rails ETS Tooling</name>
+	<name>ISAAC Rails Komet Tooling</name>
 
 	<description>
 		This project is the Ruby on Rails web GUI for ISAAC 
 	</description>
 
 	<properties>
-		<ets_common.version>1.0-SNAPSHOT</ets_common.version>
+		<rails_common.version>1.0-SNAPSHOT</rails_common.version>
 		<!-- railsMode is automatically set to 'test' or 'production' - 'test' if the version number ends with '-SNAPSHOT'
 		or 'production' otherwise.  See ant execution below-->
 	</properties>
@@ -49,8 +49,8 @@
 		</dependency>
 		<dependency>
 			<groupId>gov.vha.isaac.gui.rails</groupId>
-			<artifactId>ets_common</artifactId>
-			<version>${ets_common.version}</version>
+			<artifactId>rails_common</artifactId>
+			<version>${rails_common.version}</version>
 			<type>zip</type>
 			<optional>true</optional> <!-- Not needed at runtime / transitively -->
 		</dependency>
@@ -59,19 +59,19 @@
 	<build>
 		<plugins>
 
-			<!-- Extract the ets_common code into the correct place here, overwriting any existing version -->
+			<!-- Extract the rails_common code into the correct place here, overwriting any existing version -->
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-dependency-plugin</artifactId>
 				<executions>
 					<execution>
-						<id>extract-ets_common</id>
+						<id>extract-rails_common</id>
 						<phase>initialize</phase>
 						<goals>
 							<goal>unpack-dependencies</goal>
 						</goals>
 						<configuration>
-							<includeArtifactIds>ets_common</includeArtifactIds>
+							<includeArtifactIds>rails_common</includeArtifactIds>
 							<outputDirectory>${basedir}/lib/</outputDirectory>
 							<overWriteReleases>true</overWriteReleases>
 							<overWriteSnapshots>true</overWriteSnapshots>

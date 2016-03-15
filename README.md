@@ -32,22 +32,26 @@ bundle install
 ```
 
 <hr>
-<h1>ETS_COMMON - git submodule</h1>
-We have moved the prop loader and logging code into a git repository at https://github.com/VA-CTT/ets_common.git so that the code can be shared with rails_komet and the PRISME project
+<h1>RAILS_COMMON - git submodule</h1>
+We have moved the prop loader and logging code into a git repository at https://github.com/VA-CTT/rails_common.git so that the code can
+be shared with rails_komet and the PRISME project
 
 To pull the latest code do the following:
-1) VCS -> Update Project - from within RubyMine
-2) open a terminal and navigate to rails_komet/lib
-3) git submodule add https://github.com/VA-CTT/rails_common
-4) run git reset from within the lib/ets_common directory
+<ol>
+<li>VCS -> Update Project - from within RubyMine</li>
+<li>open a terminal and navigate to rails_komet/lib</li>
+<li>git submodule add https://github.com/VA-CTT/rails_common</li>
+<li>run git reset from within the lib/rails_common directory</li>
+<li>run git  rm -f --cached rails_common from within the lib/rails_common directory if the line above fails</li>
+</ol>
 
 ```
 git reset .
 ```
 
-You should now see an ets_common directory under the lib directory.
+You should now see an rails_common directory under the lib directory.
 
-In RubyMine you may see a message concerning ets_common being under source control. If/when you do, click the add root button. This will allow you to make changes within the rails_komet project to the code in ets_common and commit those changes as well.
+In RubyMine you may see a message concerning rails_common being under source control. If/when you do, click the add root button. This will allow you to make changes within the rails_komet project to the code in rails_common and commit those changes as well.
 
 
 
