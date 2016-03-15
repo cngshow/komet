@@ -23,4 +23,3 @@ $rest_cache = CachedHash.new($PROPS.fetch('ETS.rest_cache_max').to_i)
 #   sleep 3
 #   concept = SememeRest::get_sememe(action: SememeRestActions::ACTION_CHRONOLOGY, uuid_or_id: '-2145065647', additional_req_params: {expand: 'versionsAll'})
 # end
-#test check in   sss
