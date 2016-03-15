@@ -9,7 +9,7 @@ class ConceptDescriptionsTest < Test::Unit::TestCase
   include Fixtures
   include ConceptConcern
 
-  FAIL_MESSAGE = 'There may be a mismatch between the generated isaac-rest.rb file and ets_tooling!: '
+  FAIL_MESSAGE = 'There may be a mismatch between the generated isaac-rest.rb file and rails_komet!: '
   # Called before every test method runs. Can be used
   # to set up fixture information.
   def setup
