@@ -1,35 +1,35 @@
-#Fixture created on 2016-03-08 10:29:39
+#Fixture created on 2016-03-11 12:45:00
 ---
-- "@c": ".RestDynamicSememeValidatorType"
+- "@class": gov.vha.isaac.rest.api1.data.enumerations.RestDynamicSememeValidatorType
   name: "<"
   enumId: 0
-- "@c": ".RestDynamicSememeValidatorType"
+- "@class": gov.vha.isaac.rest.api1.data.enumerations.RestDynamicSememeValidatorType
   name: ">"
   enumId: 1
-- "@c": ".RestDynamicSememeValidatorType"
+- "@class": gov.vha.isaac.rest.api1.data.enumerations.RestDynamicSememeValidatorType
   name: "<="
   enumId: 2
-- "@c": ".RestDynamicSememeValidatorType"
+- "@class": gov.vha.isaac.rest.api1.data.enumerations.RestDynamicSememeValidatorType
   name: ">="
   enumId: 3
-- "@c": ".RestDynamicSememeValidatorType"
+- "@class": gov.vha.isaac.rest.api1.data.enumerations.RestDynamicSememeValidatorType
   name: Interval
   enumId: 4
-- "@c": ".RestDynamicSememeValidatorType"
+- "@class": gov.vha.isaac.rest.api1.data.enumerations.RestDynamicSememeValidatorType
   name: Regular Expression
   enumId: 5
-- "@c": ".RestDynamicSememeValidatorType"
+- "@class": gov.vha.isaac.rest.api1.data.enumerations.RestDynamicSememeValidatorType
   name: External
   enumId: 6
-- "@c": ".RestDynamicSememeValidatorType"
+- "@class": gov.vha.isaac.rest.api1.data.enumerations.RestDynamicSememeValidatorType
   name: Is Child Of
   enumId: 7
-- "@c": ".RestDynamicSememeValidatorType"
+- "@class": gov.vha.isaac.rest.api1.data.enumerations.RestDynamicSememeValidatorType
   name: Is Kind Of
   enumId: 8
-- "@c": ".RestDynamicSememeValidatorType"
+- "@class": gov.vha.isaac.rest.api1.data.enumerations.RestDynamicSememeValidatorType
   name: Component Type Restriction
   enumId: 9
-- "@c": ".RestDynamicSememeValidatorType"
+- "@class": gov.vha.isaac.rest.api1.data.enumerations.RestDynamicSememeValidatorType
   name: Unknown
   enumId: 10

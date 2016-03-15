@@ -1,5 +1,5 @@
 require 'test/unit'
-require './config/initializers/01_ets_init'
+require './config/initializers/01_komet_init'
 require './lib/isaac_rest/concept_rest'
 #require './lib/tasks/rest_fixtures.rake'
 class ConceptChronologyTest < Test::Unit::TestCase
@@ -7,7 +7,7 @@ class ConceptChronologyTest < Test::Unit::TestCase
   include ConceptRest
   include Fixtures
 
-  FAIL_MESSAGE = 'There may be a mismatch between the generated isaac-rest.rb file and ets_tooling!: '
+  FAIL_MESSAGE = 'There may be a mismatch between the generated isaac-rest.rb file and rails_komet!: '
   # Called before every test method runs. Can be used
   # to set up fixture information.
   def setup

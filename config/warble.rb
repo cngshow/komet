@@ -1,6 +1,6 @@
 # Disable Rake-environment-task framework detection by uncommenting/setting to false
 # Warbler.framework_detection = false
-require './lib/ets_common/util/helpers'
+require './lib/rails_common/util/helpers'
 
 # Warbler web application assembly configuration file
 Warbler::Config.new do |config|

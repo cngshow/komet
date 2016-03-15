@@ -1,20 +1,20 @@
-#Fixture created on 2016-03-08 10:29:38
+#Fixture created on 2016-03-11 12:45:00
 ---
-- "@c": ".RestSupportedIdType"
+- "@class": gov.vha.isaac.rest.api1.data.enumerations.RestSupportedIdType
   name: uuid
   enumId: 0
-- "@c": ".RestSupportedIdType"
+- "@class": gov.vha.isaac.rest.api1.data.enumerations.RestSupportedIdType
   name: nid
   enumId: 1
-- "@c": ".RestSupportedIdType"
+- "@class": gov.vha.isaac.rest.api1.data.enumerations.RestSupportedIdType
   name: conceptSequence
   enumId: 2
-- "@c": ".RestSupportedIdType"
+- "@class": gov.vha.isaac.rest.api1.data.enumerations.RestSupportedIdType
   name: sememeSequence
   enumId: 3
-- "@c": ".RestSupportedIdType"
+- "@class": gov.vha.isaac.rest.api1.data.enumerations.RestSupportedIdType
   name: sctid
   enumId: 4
-- "@c": ".RestSupportedIdType"
+- "@class": gov.vha.isaac.rest.api1.data.enumerations.RestSupportedIdType
   name: vuid
   enumId: 5

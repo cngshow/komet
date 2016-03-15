@@ -1,41 +1,41 @@
-#Fixture created on 2016-03-08 10:29:39
+#Fixture created on 2016-03-11 12:45:00
 ---
-- "@c": ".RestDynamicSememeDataType"
+- "@class": gov.vha.isaac.rest.api1.data.enumerations.RestDynamicSememeDataType
   name: Component Nid
   enumId: 0
-- "@c": ".RestDynamicSememeDataType"
+- "@class": gov.vha.isaac.rest.api1.data.enumerations.RestDynamicSememeDataType
   name: String
   enumId: 1
-- "@c": ".RestDynamicSememeDataType"
+- "@class": gov.vha.isaac.rest.api1.data.enumerations.RestDynamicSememeDataType
   name: Integer
   enumId: 2
-- "@c": ".RestDynamicSememeDataType"
+- "@class": gov.vha.isaac.rest.api1.data.enumerations.RestDynamicSememeDataType
   name: Boolean
   enumId: 3
-- "@c": ".RestDynamicSememeDataType"
+- "@class": gov.vha.isaac.rest.api1.data.enumerations.RestDynamicSememeDataType
   name: Long
   enumId: 4
-- "@c": ".RestDynamicSememeDataType"
+- "@class": gov.vha.isaac.rest.api1.data.enumerations.RestDynamicSememeDataType
   name: Arbitrary Data
   enumId: 5
-- "@c": ".RestDynamicSememeDataType"
+- "@class": gov.vha.isaac.rest.api1.data.enumerations.RestDynamicSememeDataType
   name: Float
   enumId: 6
-- "@c": ".RestDynamicSememeDataType"
+- "@class": gov.vha.isaac.rest.api1.data.enumerations.RestDynamicSememeDataType
   name: Double
   enumId: 7
-- "@c": ".RestDynamicSememeDataType"
+- "@class": gov.vha.isaac.rest.api1.data.enumerations.RestDynamicSememeDataType
   name: UUID
   enumId: 8
-- "@c": ".RestDynamicSememeDataType"
+- "@class": gov.vha.isaac.rest.api1.data.enumerations.RestDynamicSememeDataType
   name: Unspecified
   enumId: 9
-- "@c": ".RestDynamicSememeDataType"
+- "@class": gov.vha.isaac.rest.api1.data.enumerations.RestDynamicSememeDataType
   name: Array
   enumId: 10
-- "@c": ".RestDynamicSememeDataType"
+- "@class": gov.vha.isaac.rest.api1.data.enumerations.RestDynamicSememeDataType
   name: Component Sequence
   enumId: 11
-- "@c": ".RestDynamicSememeDataType"
+- "@class": gov.vha.isaac.rest.api1.data.enumerations.RestDynamicSememeDataType
   name: Unknown
   enumId: 12

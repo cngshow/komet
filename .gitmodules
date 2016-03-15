@@ -1,3 +1,3 @@
-[submodule "lib/ets_common"]
-	path = lib/ets_common
-	url = https://github.com/VA-CTT/ets_common
+[submodule "lib/rails_common"]
+	path = lib/rails_common
+	url = https://github.com/VA-CTT/rails_common

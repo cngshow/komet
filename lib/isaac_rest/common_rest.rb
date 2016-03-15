@@ -1,4 +1,4 @@
-require './lib/ets_common/util/helpers'
+require './lib/rails_common/util/helpers'
 require './lib/isaac_rest/enunciate/isaac-rest.rb'
 require 'uri'
 
@@ -18,7 +18,7 @@ module CommonRest
 
   def uuid_check(uuid:)
     if uuid.nil?
-      $log.error('The UUID cannot be nil!  Please esure the caller provides a UUID.')
+      $log.error('The UUID cannot be nil!  Please ensure the caller provides a UUID.')
       raise ArgumentError.new('The UUID cannot be nil!!')
     end
   end

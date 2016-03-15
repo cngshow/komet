@@ -13,9 +13,9 @@
 /tmp
 /public/assets/*
 setup.bat
-ets_tooling.war
+rails_komet.war
 /target/
 /.settings/
-/lib/ets_common/
+/lib/rails_common/
 /.project
 /.idea

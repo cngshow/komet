@@ -1,6 +1,6 @@
-#Fixture created on 2016-03-08 10:29:38
+#Fixture created on 2016-03-11 12:44:59
 ---
-- "@c": ".RestSememeDescriptionVersion"
+- "@class": gov.vha.isaac.rest.api1.data.sememe.RestSememeDescriptionVersion
   expandables:
   sememeChronology:
     expandables:
@@ -24,7 +24,7 @@
     moduleSequence: 0
     pathSequence: 7
   nestedSememes:
-  - "@c": ".RestDynamicSememeVersion"
+  - "@class": gov.vha.isaac.rest.api1.data.sememe.RestDynamicSememeVersion
     expandables:
     sememeChronology:
       expandables:
@@ -49,7 +49,7 @@
       pathSequence: 7
     nestedSememes: []
     dataColumns:
-    - "@c": ".dataTypes.RestDynamicSememeString"
+    - "@class": gov.vha.isaac.rest.api1.data.sememe.dataTypes.RestDynamicSememeString
       columnNumber: 0
       data: '900000000000951010'
   caseSignificanceConceptSequence: 111
@@ -57,7 +57,7 @@
   text: SNOMED CT Model Component
   descriptionTypeConceptSequence: 12
   dialects: []
-- "@c": ".RestSememeDescriptionVersion"
+- "@class": gov.vha.isaac.rest.api1.data.sememe.RestSememeDescriptionVersion
   expandables:
   sememeChronology:
     expandables:
@@ -81,7 +81,7 @@
     moduleSequence: 0
     pathSequence: 7
   nestedSememes:
-  - "@c": ".RestDynamicSememeVersion"
+  - "@class": gov.vha.isaac.rest.api1.data.sememe.RestDynamicSememeVersion
     expandables:
     sememeChronology:
       expandables:
@@ -106,7 +106,7 @@
       pathSequence: 7
     nestedSememes: []
     dataColumns:
-    - "@c": ".dataTypes.RestDynamicSememeString"
+    - "@class": gov.vha.isaac.rest.api1.data.sememe.dataTypes.RestDynamicSememeString
       columnNumber: 0
       data: '900000000000952015'
   caseSignificanceConceptSequence: 111

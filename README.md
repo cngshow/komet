@@ -32,22 +32,26 @@ bundle install
 ```
 
 <hr>
-<h1>ETS_COMMON - git submodule</h1>
-We have moved the prop loader and logging code into a git repository at https://github.com/VA-CTT/ets_common.git so that the code can be shared with ets_tooling and the PRISME project
+<h1>RAILS_COMMON - git submodule</h1>
+We have moved the prop loader and logging code into a git repository at https://github.com/VA-CTT/rails_common.git so that the code can
+be shared with rails_komet and the PRISME project
 
 To pull the latest code do the following:
-1) VCS -> Update Project - from within RubyMine
-2) open a terminal and navigate to ets_tooling/lib
-3) git submodule add https://github.com/VA-CTT/ets_common
-4) run git reset from within the lib/ets_common directory
+<ol>
+<li>VCS -> Update Project - from within RubyMine</li>
+<li>open a terminal and navigate to rails_komet/lib</li>
+<li>git submodule add https://github.com/VA-CTT/rails_common</li>
+<li>run git reset from within the lib/rails_common directory</li>
+<li>run git  rm -f --cached rails_common from within the lib/rails_common directory if the line above fails</li>
+</ol>
 
 ```
 git reset .
 ```
 
-You should now see an ets_common directory under the lib directory.
+You should now see an rails_common directory under the lib directory.
 
-In RubyMine you may see a message concerning ets_common being under source control. If/when you do, click the add root button. This will allow you to make changes within the ets_tooling project to the code in ets_common and commit those changes as well.
+In RubyMine you may see a message concerning rails_common being under source control. If/when you do, click the add root button. This will allow you to make changes within the rails_komet project to the code in rails_common and commit those changes as well.
 
 
 
@@ -94,10 +98,10 @@ You will want to bring GlassFish up via:
 glassfish4/bin/asadmin start-domain
 ```
 
-GlassFish deploys war files, so we will end up converting our rails app into a war file using the warbler gem.  Before running warbler though you need to run the asset pipeline to properly set up the application's javascript, css, and images for the war file.  In addition to that, if you intend to have a context root other than '/' you need to tell the asset pipeline!  By default the  the context root will be 'ets_tooling', so you should do this (from rails root):
+GlassFish deploys war files, so we will end up converting our rails app into a war file using the warbler gem.  Before running warbler though you need to run the asset pipeline to properly set up the application's javascript, css, and images for the war file.  In addition to that, if you intend to have a context root other than '/' you need to tell the asset pipeline!  By default the  the context root will be 'rails_komet', so you should do this (from rails root):
 
 ```
-set RAILS_RELATIVE_URL_ROOT=/ets_tooling
+set RAILS_RELATIVE_URL_ROOT=/rails_komet
 ```
 
 Then run the asset pipeline:
@@ -118,7 +122,7 @@ warble
 ```
 
 
-You will have a war file named ets_tooling.war.  Deploy it to GlassFish!!
+You will have a war file named rails_komet.war.  Deploy it to GlassFish!!
 
 http://localhost:4848/common/index.jsf
 
