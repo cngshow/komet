@@ -1,0 +1,59 @@
+<div class="ets-concept-definition-title">Concept</div>
+
+<% @greg[:descriptions].each_with_index do |desc_hash, index| %>
+
+    <% if index > 0 %>
+        <br>
+    <% end %>
+
+    <div id="ets_concept_definition_panel" class="ets-concept-definition-panel">
+
+      <!-- main header block - always visible -->
+      <div class="ets-concept-definition-panel-header">
+
+        <!-- expand/collapse icon - controls details drawer -->
+        <div class="glyphicon glyphicon-plus-sign"></div>
+
+        <!-- description type, refset -->
+        <div class="ets-concept-definition-title-block">
+          <div class="ets-concept-definition-title">
+            <%= desc_hash[:description_type_short] %>
+          </div>
+          <span class="glyphicon glyphicon-text-size"></span>
+          <span><%= desc_hash[:language_short] %></span>
+        </div>
+
+        <!-- description text -->
+        <div class="ets-concept-definition-text">
+          <%= desc_hash[:text] %>
+        </div>
+
+      </div>
+
+      <!-- details drawer - can be collapsed -->
+      <div id="ets_concept_definition_details" class="ets-concept-definition-details">
+
+        <div class="ets-concept-definition-details-row">
+
+          <div class="ets-concept-definition-details-name">
+            Generated UUID:
+          </div>
+
+          <div class="ets-concept-definition-details-value">
+            2S342111FF3274444
+          </div>
+
+          <div class="ets-concept-definition-details-date">
+            08/23/2013
+          </div>
+
+          <div class="ets-concept-definition-details-user">
+            gsmith
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+
+<% end %>

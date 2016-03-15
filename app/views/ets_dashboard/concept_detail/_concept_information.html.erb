@@ -4,15 +4,68 @@
   }
 </style>
 
-<div class="panel panel-default ets-no-margins">
+<div>
+
+
+</div>
+
+<div class="panel panel-default ets-no-margins ets-concept-panel">
   <div class="panel-heading">
-    <span class="panel-title ets-section-title">Concept Details</span>
+    <span class="panel-title ets-section-title">
+      <div class="glyphicon glyphicon-link"></div>
+      Concept Details
+    </span>
     <div class="ets-section-icons">
-      <div class="glyphicon glyphicon-time"></div>
-      <div class="glyphicon glyphicon-cog"></div>
+      <div class="glyphicon glyphicon-new-window"></div>
+      <div class="glyphicon glyphicon-resize-full"></div>
+      <div class="glyphicon glyphicon-remove"></div>
     </div>
   </div>
+
+  <div class="panel-body">
+
+    <div class="ets-concept-body-tools">
+      <div class="glyphicon glyphicon-plus-sign"></div>
+      Expand All
+
+      <div class="ets-concept-body-stated-inferred">
+        <div>
+        <select id="ets_concept_stated_inferred" class="form-control">
+          <option value="stated" selected>Stated View</option>
+          <option value="inferred">Inferred View</option>
+        </select>
+        </div>
+      </div>
+    </div>
+
+    <!-- concept attribute section
+    <div id="ets_concept_attribute_section">
+
+      <div class="ets-concept-attribute-title">Concept</div>
+
+      <div id="ets_concept_attribute_panel" class="ets-concept-attribute-panel">
+
+        <div class="ets-floated-bar">
+
+          <div class="glyphicon glyphicon-plus-sign"></div>
+          <div class="ets-concept-attribute-title">Attribute</div>
+
+          <div class="ets-concept-attribute-primitive">
+            Primitive
+          </div>
+
+        </div>
+
+      </div>
+    </div>
+    -->
+
+    <!-- concept definition section -->
+    <div id="ets_concept_definition_section"></div>
+
+  </div>
 </div>
+
 <div id="taxonomy_content_tabs" class="taxonomy-content-tabs">
   <ul id="tabLabels">
     <li><a href='#taxonomy_content_summary'>Summary</a></li>

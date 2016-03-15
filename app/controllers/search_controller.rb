@@ -38,14 +38,14 @@ class SearchController < ApplicationController
 
     $log.debug(search_term)
 
-    searchResults = SearchApis.get_search_api(action: ACTION_DESCRIPTIONS, additional_req_params: {query: search_term, descriptionType: 'fsn'})
+    searchResults = SearchApis.get_search_api(action: ACTION_PREFIX, additional_req_params: {query: search_term})
 
     searchResults.each do |searchResult|
 
       match_nid = searchResult.matchNid
 
-      concept = SememeRest::get_sememe(action: SememeRestActions::ACTION_CHRONOLOGY, uuid_or_id: match_nid, additional_req_params: {expand: 'versionsAll'})
-      assemblage_suggestions_data << {label: searchResult.matchText , value: concept.assemblageSequence}
+      concept = SememeRest::get_sememe(action: SememeRestActions::ACTION_VERSION, uuid_or_id: match_nid, additional_req_params: {expand: 'chronology'})
+      assemblage_suggestions_data << {label: searchResult.matchText , value: concept.sememeChronology.referencedComponentNid}
 
     end
 
