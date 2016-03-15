@@ -1,5 +1,5 @@
 require 'test/unit'
-require './config/initializers/01_ets_init'
+require './config/initializers/01_komet_init'
 require './lib/isaac_rest/concept_rest'
 require './app/controllers/concerns/concept_concern'
 

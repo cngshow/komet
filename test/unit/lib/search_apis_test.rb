@@ -1,5 +1,5 @@
 require 'test/unit'
-require './config/initializers/01_ets_init'
+require './config/initializers/01_komet_init'
 require './lib/isaac_rest/search_apis_rest'
 
 class SearchTest < Test::Unit::TestCase

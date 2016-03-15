@@ -17,7 +17,7 @@ Copyright Notice
  limitations under the License.
 =end
 require 'test/unit'
-require './config/initializers/01_ets_init'
+require './config/initializers/01_komet_init'
 require './lib/isaac_rest/system_apis_rest'
 
 class SystemApiTests < Test::Unit::TestCase
