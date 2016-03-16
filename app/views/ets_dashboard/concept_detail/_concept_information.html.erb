@@ -9,7 +9,7 @@
 
 </div>
 
-<div class="panel panel-default ets-no-margins ets-concept-panel">
+<div class="panel panel-default ets-no-margins ets-concept-panel" id="ets-concept-panel">
   <div class="panel-heading">
     <span class="panel-title ets-section-title">
       <div class="glyphicon glyphicon-link"></div>
@@ -25,7 +25,7 @@
   <div class="panel-body">
 
     <div class="ets-concept-body-tools">
-      <div class="glyphicon glyphicon-plus-sign"></div>
+      <div class="glyphicon glyphicon-plus-sign" onclick="toggleConceptDetails('ets-concept-panel')"></div>
       Expand All
 
       <div class="ets-concept-body-stated-inferred">
@@ -103,4 +103,23 @@
       });
     });
   });
+
+  function toggleConceptDetails(panel_id){
+
+    // toggle the visibility of the panel's detail drawer
+    $("#" + panel_id + " .ets-concept-panel-details").toggle();
+
+    var expander = $("#" + panel_id + " .glyphicon-plus-sign, #" + panel_id + " .glyphicon-minus-sign");
+
+    if (expander.hasClass("glyphicon-plus-sign")){
+
+      expander.removeClass("glyphicon-plus-sign");
+      expander.addClass("glyphicon-minus-sign");
+    } else {
+
+      expander.removeClass("glyphicon-minus-sign");
+      expander.addClass("glyphicon-plus-sign");
+    }
+
+  }
 </script>

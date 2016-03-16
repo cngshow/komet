@@ -5,49 +5,6 @@
     <div id="concept_summary_parents_tree" class="ets-reverse-tree">No Parents</div>
   </div>
 
-  <div id="concept_summary_details_container">
-    <div id="concept_summary_details">
-
-      <div id="concept_summary_text"><%= @concept_summary[:text] %></div>
-      <div id="concept_summary_id"><%= @concept_summary[:id] %></div>
-
-      <div id="concept_summary_text_specific"><%= @concept_summary[:text] %></div>
-      <div id="concept_summary_text_small"><%= @concept_summary[:text] %></div>
-
-      <hr>
-
-      <% @greg[:descriptions].each do |desc_hash| %>
-
-          <% desc_hash.each_pair do |key, value| %>
-              <%= "#{key}: #{value}" %><br>
-          <% end %>
-
-          <hr>
-
-      <% end %>
-
-    </div>
-
-    <div id="concept_summary_attributes">
-
-      <% if @concept_summary[:attributes] == nil || @concept_summary[:attributes].empty? %>
-
-          No Attributes
-
-      <% else %>
-
-          <% @concept_summary[:attributes].each do |attribute| %>
-
-              <%= attribute[:label] %> -> <%= attribute[:text] %>
-
-          <% end %>
-
-      <% end %>
-
-    </div>
-
-  </div>
-
   <div class="concept-summary-tree-container">
     <div class="concept-summary-tree-label">Children</div>
     <div id="concept_summary_children_tree">No Children</div>

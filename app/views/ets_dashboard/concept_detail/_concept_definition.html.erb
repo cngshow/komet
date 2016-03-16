@@ -1,18 +1,18 @@
 <div class="ets-concept-definition-title">Concept</div>
 
-<% @greg[:descriptions].each_with_index do |desc_hash, index| %>
+<% @descriptions[:descriptions].each_with_index do |desc_hash, concept_index| %>
 
-    <% if index > 0 %>
+    <% if concept_index > 0 %>
         <br>
     <% end %>
 
-    <div id="ets_concept_definition_panel" class="ets-concept-definition-panel">
+    <div id="ets_concept_definition_panel_<%= desc_hash[:uuid] %>" class="ets-concept-definition-panel">
 
       <!-- main header block - always visible -->
       <div class="ets-concept-definition-panel-header">
 
         <!-- expand/collapse icon - controls details drawer -->
-        <div class="glyphicon glyphicon-plus-sign"></div>
+        <div class="glyphicon glyphicon-plus-sign" onclick="toggleConceptDetails('ets_concept_definition_panel_<%= desc_hash[:uuid] %>')"></div>
 
         <!-- description type, refset -->
         <div class="ets-concept-definition-title-block">
@@ -31,26 +31,31 @@
       </div>
 
       <!-- details drawer - can be collapsed -->
-      <div id="ets_concept_definition_details" class="ets-concept-definition-details">
+      <div class="ets-concept-panel-details">
 
-        <div class="ets-concept-definition-details-row">
+        <!-- loop through the description attributes -->
+        <% desc_hash[:attributes].each_with_index do |attribute, attribute_index| %>
 
-          <div class="ets-concept-definition-details-name">
-            Generated UUID:
+            <% if attribute_index > 0 %>
+                <hr class="ets-concept-definition-details-hr" />
+            <% end %>
+
+          <div class="ets-concept-definition-details-row">
+
+            <div class="ets-concept-definition-details-name">
+              <%= attribute[:label] %>: <%= attribute[:text] %>
+            </div>
+
+            <div class="ets-concept-definition-details-date">
+              Date: <%= attribute[:date] %>
+            </div>
+
+            <div class="ets-concept-definition-details-user">
+              Author: <%= attribute[:author] %>
+            </div>
           </div>
 
-          <div class="ets-concept-definition-details-value">
-            2S342111FF3274444
-          </div>
-
-          <div class="ets-concept-definition-details-date">
-            08/23/2013
-          </div>
-
-          <div class="ets-concept-definition-details-user">
-            gsmith
-          </div>
-        </div>
+        <% end %>
 
       </div>
 

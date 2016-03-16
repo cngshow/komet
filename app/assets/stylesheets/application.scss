@@ -176,6 +176,14 @@ Copyright Notice
   font-size: smaller;
   padding: 3px 12px;
 }
+.ets-concept-panel-details{
+  align-self: center;
+  width: 96%;
+  border-top: 1px solid black;
+  padding: 10px;
+  margin-top: 10px;
+  display: none;
+}
 
 // Concept Viewer Definition Styles
 .ets-concept-definition-panel{
@@ -196,6 +204,7 @@ Copyright Notice
 .ets-concept-definition-panel-header .glyphicon-plus-sign, .glyphicon-minus-sign{
   margin-right: 10px;
   margin-top: 2px;
+  cursor: pointer;
 }
 .ets-concept-definition-title-block .glyphicon{
   margin-right: 5px;
@@ -209,13 +218,6 @@ Copyright Notice
 .ets-concept-definition-text{
   flex-grow: 1;
 }
-.ets-concept-definition-details{
-  align-self: center;
-  width: 96%;
-  border-top: 1px solid black;
-  padding: 10px;
-  margin-top: 10px;
-}
 .ets-concept-definition-details-row{
   display: flex;
   flex-wrap: wrap;
@@ -224,10 +226,17 @@ Copyright Notice
 .ets-concept-definition-details-row div{
   margin-right: 10px;
 }
-.ets-concept-definition-details-value{
+.ets-concept-definition-details-name{
   flex: 1 0 100px;
 }
-
+.ets-concept-definition-details-date{
+  margin-right: 20px;
+}
+.ets-concept-definition-details-hr{
+  width: 100%;
+  border: 1px solid #d1d1d1;
+  margin: 10px 0px;
+}
 #concept_details_concept_text{
   font-size: larger;
   font-weight: bold;

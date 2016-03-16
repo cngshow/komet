@@ -228,8 +228,7 @@ class TaxonomyController < ApplicationController
       concept_id = params[:concept_id].to_i
     end
 
-    @concept_summary = @raw_tree_data[1]
-    @greg =  descriptions(concept_id) #ConceptRest::get_concept(action: ConceptRestActions::ACTION_DESCRIPTIONS, uuid: concept_id)
+    @descriptions =  descriptions(concept_id) #ConceptRest::get_concept(action: ConceptRestActions::ACTION_DESCRIPTIONS, uuid: concept_id)
 
 
 
