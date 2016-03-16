@@ -119,7 +119,7 @@
 							<goal>exec</goal>
 						</goals>
 						<configuration>
-							<jrubyJvmArgs>-Xmx4G</jrubyJvmArgs>
+							<jrubyJvmArgs>-Xmx4G</jrubyJvmArgs> 
 							<jrubyVerbose>true</jrubyVerbose>
 							<execArgs>RAILS_ENV=${railsMode} RAILS_RELATIVE_URL_ROOT=rails_komet_a</execArgs>
 							<command>rake</command>
