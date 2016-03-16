@@ -26,7 +26,7 @@
 
     <div class="ets-concept-body-tools">
       <div class="glyphicon glyphicon-plus-sign" onclick="toggleConceptDetails('ets-concept-panel')"></div>
-      Expand All
+      <span>Expand All</span>
 
       <div class="ets-concept-body-stated-inferred">
         <div>
@@ -111,6 +111,7 @@
 
     var expander = $("#" + panel_id + " .glyphicon-plus-sign, #" + panel_id + " .glyphicon-minus-sign");
 
+    // change the displayed expander icon
     if (expander.hasClass("glyphicon-plus-sign")){
 
       expander.removeClass("glyphicon-plus-sign");
@@ -119,6 +120,18 @@
 
       expander.removeClass("glyphicon-minus-sign");
       expander.addClass("glyphicon-plus-sign");
+    }
+
+    // if the user clicked on the top level concept expander, change the associated text label
+    if (expander.parent().hasClass('ets-concept-body-tools')){
+
+      var item_text = expander[0].nextElementSibling;
+
+      if (item_text.innerHTML == "Expand All"){
+        item_text.innerHTML = "Collapse All";
+      } else {
+        item_text.innerHTML = "Expand All";
+      }
     }
 
   }
