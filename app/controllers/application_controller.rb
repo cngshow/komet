@@ -6,6 +6,7 @@ class ApplicationController < ActionController::Base
   rescue_from Exception, :with => :internal_error
 
   def internal_error(e)
+    $log.error(e.message)
     $log.error request.fullpath
     $log.error(e.backtrace.join("\n"))
     raise e
