@@ -97,45 +97,6 @@ Copyright Notice
   width:10px !important;
   right: 4px;
 }
-.concept-summary-tree-container{
-  margin-left: 0%;
-  margin-bottom: 10px;
-  width: 100%;
-  border: 2px solid #357ebd;
-  border-radius: 4px;
-  padding: 5px;
-}
-.concept-summary-buttons{
-  font-size: smaller;
-  vertical-align: top;
-}
-#concept_summary_details{
-  border: 2px solid #357ebd;
-  border-radius: 4px;
-  background-color: #357ebd;
-  color: white;
-  width: 45%;
-  display: inline-block;
-}
-#concept_summary_attributes{
-  border: 2px solid #357ebd;
-  border-radius: 4px;
-  background-color: rgba(30, 144, 255, 0.17);
-  color: black;
-  width: 45%;
-  display: inline-block;
-  vertical-align: top;
-}
-#concept_summary_details_container{
-  width: 100%;
-  padding-left: 7%;
-  padding-right: 7%;
-  margin-bottom: 10px;
-}
-#concept_summary_left_pane{
-  width: 85%;
-  display: inline-block;
-}
 
 // Concept Viewer Styles
 .ets-concept-panel .panel-heading {
@@ -176,7 +137,25 @@ Copyright Notice
   font-size: smaller;
   padding: 3px 12px;
 }
-.ets-concept-panel-details{
+.concept-section{
+  margin-top: 15px;
+}
+.ets-concept-section-panel{
+  display: flex;
+  flex-direction: column;
+  border: 1px solid #d1d1d1;
+  padding: 4px;
+  margin: 2px;
+}
+.ets-concept-section-panel-header{
+  display: flex;
+}
+.ets-concept-section-panel-header .glyphicon-plus-sign, .ets-concept-section-panel-header .glyphicon-minus-sign{
+  margin-right: 10px;
+  margin-top: 2px;
+  cursor: pointer;
+}
+.ets-concept-section-panel-details{
   align-self: center;
   width: 96%;
   border-top: 1px solid black;
@@ -184,27 +163,18 @@ Copyright Notice
   margin-top: 10px;
   display: none;
 }
+.concept-section-panel-spacer{
+  margin: 5px;
+  padding: 0px;
+}
 
 // Concept Viewer Definition Styles
 .ets-concept-definition-panel{
-  display: flex;
-  flex-direction: column;
-  border: 1px solid #d1d1d1;
   border-left: 4px solid #ff9100;
-  padding: 4px;
-  margin: 2px;
 }
 .ets-concept-definition-title{
   color: #ff9100;
   font-weight: bold;
-}
-.ets-concept-definition-panel-header{
-  display: flex;
-}
-.ets-concept-definition-panel-header .glyphicon-plus-sign, .ets-concept-definition-panel-header .glyphicon-minus-sign{
-  margin-right: 10px;
-  margin-top: 2px;
-  cursor: pointer;
 }
 .ets-concept-definition-title-block .glyphicon{
   margin-right: 5px;
@@ -237,6 +207,25 @@ Copyright Notice
   border: 1px solid #d1d1d1;
   margin: 10px 0px;
 }
+
+// Concept Viewer Lineage Styles
+.ets-concept-lineage-panel{
+  border-left: 4px solid #009bff;
+}
+.ets-concept-lineage-title{
+  color: #009bff;
+  font-weight: bold;
+}
+.concept-lineage-tree-container{
+  margin-left: 0%;
+  margin-bottom: 10px;
+  width: 100%;
+  border: 2px solid #009bff;
+  border-radius: 4px;
+  padding: 5px;
+}
+
+// details tab
 #concept_details_concept_text{
   font-size: larger;
   font-weight: bold;

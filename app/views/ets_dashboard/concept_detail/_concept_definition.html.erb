@@ -1,15 +1,15 @@
-<div class="ets-concept-definition-title">Concept</div>
+<div class="ets-concept-definition-title">CONCEPT</div>
 
 <% @descriptions[:descriptions].each_with_index do |desc_hash, concept_index| %>
 
     <% if concept_index > 0 %>
-        <br>
+        <div class="concept-section-panel-spacer"></div>
     <% end %>
 
-    <div id="ets_concept_definition_panel_<%= desc_hash[:uuid] %>" class="ets-concept-definition-panel">
+    <div id="ets_concept_definition_panel_<%= desc_hash[:uuid] %>" class="ets-concept-section-panel ets-concept-definition-panel">
 
       <!-- main header block - always visible -->
-      <div class="ets-concept-definition-panel-header">
+      <div class="ets-concept-section-panel-header">
 
         <!-- expand/collapse icon - controls details drawer -->
         <div class="glyphicon glyphicon-plus-sign" onclick="toggleConceptDetails('ets_concept_definition_panel_<%= desc_hash[:uuid] %>')"></div>
@@ -31,7 +31,7 @@
       </div>
 
       <!-- details drawer - can be collapsed -->
-      <div class="ets-concept-panel-details">
+      <div class="ets-concept-section-panel-details">
 
         <!-- loop through the description attributes -->
         <% desc_hash[:attributes].each_with_index do |attribute, attribute_index| %>

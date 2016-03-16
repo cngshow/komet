@@ -61,14 +61,14 @@
     -->
 
     <!-- concept definition section -->
-    <div id="ets_concept_definition_section"></div>
+    <div id="ets_concept_definition_section" class="concept-section"></div>
+    <div id="ets_concept_lineage_section" class="concept-section"></div>
 
   </div>
 </div>
 
 <div id="taxonomy_content_tabs" class="taxonomy-content-tabs">
   <ul id="tabLabels">
-    <li><a href='#taxonomy_content_summary'>Summary</a></li>
     <li><a href='#taxonomy_content_details'>Details</a></li>
     <li class="svg_diagram"><a href='#taxonomy_content_diagram'>Diagram</a></li>
     <li><a href='#taxonomy_content_expression'>Expression</a></li>
@@ -107,7 +107,7 @@
   function toggleConceptDetails(panel_id){
 
     // toggle the visibility of the panel's detail drawer
-    $("#" + panel_id + " .ets-concept-panel-details").toggle();
+    $("#" + panel_id + " .ets-concept-section-panel-details").toggle();
 
     var expander = $("#" + panel_id + " .glyphicon-plus-sign, #" + panel_id + " .glyphicon-minus-sign");
 
