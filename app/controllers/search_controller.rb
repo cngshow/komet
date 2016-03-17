@@ -120,7 +120,8 @@ class SearchController < ApplicationController
       additional_params[:treatAsString] = params[:taxonomy_search_treat_as_string]
       assemblage = params[:taxonomy_search_assemblage_id]
 
-      if assemblage != nil
+      # if there is an assemblage ID in params add it to the params being passed to the search
+      if assemblage != nil && assemblage != ''
 
         additional_params[:sememeAssemblageId] =  assemblage
 

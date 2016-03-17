@@ -3,7 +3,7 @@ require './lib/isaac_rest/enunciate/isaac-rest.rb'
 require 'uri'
 
 module CommonRest
-  include ETSUtilities
+  include KOMETUtilities
 
   UnexpectedResponse = Struct.new(:body, :status) do end
 

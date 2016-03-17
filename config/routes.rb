@@ -3,7 +3,7 @@ Rails.application.routes.draw do
   match 'logic_graph/chronology/:id' => 'logic_graph#chronology', :as => :logic_graph_chronology, via: [:get]
   match 'logic_graph/version/:id' => 'logic_graph#version', :as => :logic_graph_version, via: [:get]
 
-  get 'ets_dashboard/metadata'
+  get 'komet_dashboard/metadata'
   get 'taxonomy/load_tree_data'
   get 'taxonomy/get_concept_information'
   get 'taxonomy/get_concept_summary'
@@ -23,7 +23,7 @@ Rails.application.routes.draw do
   post 'search/get_search_results'
 
   # You can have the root of your site routed with "root"
-  root 'ets_dashboard#dashboard'
+  root 'komet_dashboard#dashboard'
 
   # The priority is based upon order of creation: first created -> highest priority.
   # See how all your routes lay out with "rake routes".

@@ -3,7 +3,7 @@ require './config/initializers/01_komet_init'
 require './lib/isaac_rest/id_apis_rest'
 #load './lib/tasks/rest_fixtures.rake'
 class IdApisTypes < Test::Unit::TestCase
-  include ETSUtilities
+  include KOMETUtilities
   include IdAPIsRest
   include Fixtures
 

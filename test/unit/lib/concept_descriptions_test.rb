@@ -4,7 +4,7 @@ require './lib/isaac_rest/concept_rest'
 require './app/controllers/concerns/concept_concern'
 
 class ConceptDescriptionsTest < Test::Unit::TestCase
-  include ETSUtilities
+  include KOMETUtilities
   include ConceptRest
   include Fixtures
   include ConceptConcern

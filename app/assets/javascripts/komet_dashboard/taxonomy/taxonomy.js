@@ -86,12 +86,12 @@ var TaxonomyModule = (function () {
     function onAfterOpen(node, selected) {
         //publish what we expect our observers to need in a way that allows them not to understand
         //our tree and our tree's dom.
-        $.publish(EtsChannels.Taxonomy.taxonomyTreeNodeOpenedChannel, selected.node.original.concept_id);
+        $.publish(KometChannels.Taxonomy.taxonomyTreeNodeOpenedChannel, selected.node.original.concept_id);
 
     }
 
     function onAfterClose(node, selected) {
-        $.publish(EtsChannels.Taxonomy.taxonomyTreeNodeClosedChannel, selected.node.original.concept_id);
+        $.publish(KometChannels.Taxonomy.taxonomyTreeNodeClosedChannel, selected.node.original.concept_id);
     }
 
     function onChanged(event, selectedObject) {
@@ -100,7 +100,7 @@ var TaxonomyModule = (function () {
 
         TaxonomyModule.selectedTreeNode = conceptId;
 
-        $.publish(EtsChannels.Taxonomy.taxonomyTreeNodeSelectedChannel, conceptId);
+        $.publish(KometChannels.Taxonomy.taxonomyTreeNodeSelectedChannel, conceptId);
     }
 
     // listen for the onChange event broadcast by the trees on the details panes. If they have items selected then reload this tree
@@ -118,7 +118,7 @@ var TaxonomyModule = (function () {
     // listen for the onChange event broadcast by the trees on the details panes. If they have items selected then reload this tree
     function subscribeToDetailsTaxonomyTrees() {
 
-        $.subscribe(EtsChannels.Taxonomy.taxonomyTreeNodeSelectedChannel, function (e, conceptID) {
+        $.subscribe(KometChannels.Taxonomy.taxonomyTreeNodeSelectedChannel, function (e, conceptID) {
             reloadTree(conceptID);
         });
     }

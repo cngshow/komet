@@ -11,7 +11,7 @@
 <br><br>
 
 <% if @concept_details[:refsets] == nil %>
-    <div class="ets-no-data-message">No Refsets.</div>
+    <div class="komet-no-data-message">No Refsets.</div>
 <% else %>
 
     <% @concept_details[:refsets].each do |refset| %>
@@ -70,7 +70,7 @@
 <% end %>
 
 <% if @concept_details[:types].empty? %>
-    <div class="ets-no-data-message">No relationships.</div>
+    <div class="komet-no-data-message">No relationships.</div>
 <% else %>
 
     <table class="concept_detail_table">

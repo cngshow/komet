@@ -43,22 +43,22 @@ Copyright Notice
 }
 
 
-// ETS Common styles
-.ets-no-margins{
+// KOMET Common styles
+.komet-no-margins{
   margin: 0px;
 }
-.ets-section-title{
+.komet-section-title{
   display: inline-block;
   font-size: larger;
 }
-.ets-section-icons{
+.komet-section-icons{
   float: right;
   display: inline-block;
 }
-.ets-accordion-panel {
+.komet-accordion-panel {
   overflow: visible !important;
 }
-.ets-floated-bar{
+.komet-floated-bar{
   overflow: hidden;
   margin: 2px;
 }
@@ -78,59 +78,60 @@ Copyright Notice
 }
 
 // Taxonomy Tree Styles
-.ets-reverse-tree{
+.komet-reverse-tree{
   transform: scaleX(-1);
   transform: scaleY(-1);
 }
-.ets-reverse-tree-node{
+.komet-reverse-tree-node{
   transform: scaleY(-1);
 }
-.ets-node-image-red:after{
+.komet-node-image-red:after{
   margin-left: 2px;
   content: "i";
   height: 100%;
   background-color: red;
   color: red;
 }
-.ets-node-image-yellow{
+.komet-node-image-yellow{
   background-color: yellow !important;
   width:10px !important;
   right: 4px;
 }
 
 // Concept Viewer Styles
-.ets-concept-panel .panel-heading {
+.komet-concept-panel .panel-heading {
   background-color: #4f80d9;
   display: flex;
 }
-.ets-concept-panel .panel-title{
+.komet-concept-panel .panel-title{
   color: white;
 }
-.ets-concept-panel .ets-section-icons{
+.komet-concept-panel .komet-section-icons{
   color: white;
   flex-grow: 1;
   text-align: end;
 }
-.ets-concept-panel .ets-section-icons .glyphicon{
+.komet-concept-panel .komet-section-icons .glyphicon{
   margin-left: 10px;
 }
-.ets-concept-panel .panel-body {
+.komet-concept-panel .panel-body {
   background-color: #eef1f3;
   display: flex;
   flex-direction: column;
 }
-.ets-concept-body-tools{
+.komet-concept-body-tools{
   display: flex;
   align-items: baseline;
 }
-.ets-concept-body-tools .glyphicon{
+.komet-concept-body-tools .glyphicon{
   width: 20px;
+  cursor: pointer;
 }
-.ets-concept-body-stated-inferred{
+.komet-concept-body-stated-inferred{
   flex-grow: 1;
   text-align: right;
 }
-.ets-concept-body-stated-inferred .form-control{
+.komet-concept-body-stated-inferred .form-control{
   width: 150px;
   height: 25px;
   display: inline-block;
@@ -140,22 +141,22 @@ Copyright Notice
 .concept-section{
   margin-top: 15px;
 }
-.ets-concept-section-panel{
+.komet-concept-section-panel{
   display: flex;
   flex-direction: column;
   border: 1px solid #d1d1d1;
   padding: 4px;
   margin: 2px;
 }
-.ets-concept-section-panel-header{
+.komet-concept-section-panel-header{
   display: flex;
 }
-.ets-concept-section-panel-header .glyphicon-plus-sign, .ets-concept-section-panel-header .glyphicon-minus-sign{
+.komet-concept-section-panel-header .glyphicon-plus-sign, .komet-concept-section-panel-header .glyphicon-minus-sign{
   margin-right: 10px;
   margin-top: 2px;
   cursor: pointer;
 }
-.ets-concept-section-panel-details{
+.komet-concept-section-panel-details{
   align-self: center;
   width: 96%;
   border-top: 1px solid black;
@@ -169,54 +170,54 @@ Copyright Notice
 }
 
 // Concept Viewer Definition Styles
-.ets-concept-definition-panel{
+.komet-concept-definition-panel{
   border-left: 4px solid #ff9100;
 }
-.ets-concept-definition-title{
+.komet-concept-definition-title{
   color: #ff9100;
   font-weight: bold;
 }
-.ets-concept-definition-title-block .glyphicon{
+.komet-concept-definition-title-block .glyphicon{
   margin-right: 5px;
 }
-.ets-concept-definition-title-block{
+.komet-concept-definition-title-block{
   width: 100px;
 }
-.ets-concept-definition-title-block span{
+.komet-concept-definition-title-block span{
   display: inline-block;
 }
-.ets-concept-definition-text{
+.komet-concept-definition-text{
   flex-grow: 1;
 }
-.ets-concept-definition-details-row{
+.komet-concept-definition-details-row{
   display: flex;
   flex-wrap: wrap;
   justify-content: space-between;
 }
-.ets-concept-definition-details-row div{
+.komet-concept-definition-details-row div{
   margin-right: 10px;
 }
-.ets-concept-definition-details-name{
+.komet-concept-definition-details-name{
   flex: 1 0 100px;
 }
-.ets-concept-definition-details-date{
+.komet-concept-definition-details-date{
   margin-right: 20px;
 }
-.ets-concept-definition-details-hr{
+.komet-concept-definition-details-hr{
   width: 100%;
   border: 1px solid #d1d1d1;
   margin: 10px 0px;
 }
 
 // Concept Viewer Lineage Styles
-.ets-concept-lineage-panel{
+.komet-concept-lineage-panel{
   border-left: 4px solid #009bff;
 }
-.ets-concept-lineage-title{
+.komet-concept-lineage-title{
   color: #009bff;
   font-weight: bold;
 }
-.concept-lineage-tree-container{
+.komet-concept-lineage-tree-container{
   margin-left: 0%;
   margin-bottom: 10px;
   width: 100%;
@@ -257,10 +258,10 @@ Copyright Notice
 }
 
 // Search Styles
-.ets-search-combo-field{
+.komet-search-combo-field{
   font-size:100%;
 }
-.ets-search-selected-result{
+.komet-search-selected-result{
   background-color: green;
   border: solid green 1px;
 }

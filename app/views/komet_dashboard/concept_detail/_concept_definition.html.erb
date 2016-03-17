@@ -1,4 +1,4 @@
-<div class="ets-concept-definition-title">CONCEPT</div>
+<div class="komet-concept-definition-title">CONCEPT</div>
 
 <% @descriptions[:descriptions].each_with_index do |desc_hash, concept_index| %>
 
@@ -6,17 +6,17 @@
         <div class="concept-section-panel-spacer"></div>
     <% end %>
 
-    <div id="ets_concept_definition_panel_<%= desc_hash[:uuid] %>" class="ets-concept-section-panel ets-concept-definition-panel">
+    <div id="komet_concept_definition_panel_<%= desc_hash[:uuid] %>" class="komet-concept-section-panel komet-concept-definition-panel">
 
       <!-- main header block - always visible -->
-      <div class="ets-concept-section-panel-header">
+      <div class="komet-concept-section-panel-header">
 
         <!-- expand/collapse icon - controls details drawer -->
-        <div class="glyphicon glyphicon-plus-sign" onclick="toggleConceptDetails('ets_concept_definition_panel_<%= desc_hash[:uuid] %>')"></div>
+        <div class="glyphicon glyphicon-plus-sign" onclick="toggleConceptDetails('komet_concept_definition_panel_<%= desc_hash[:uuid] %>')"></div>
 
         <!-- description type, refset -->
-        <div class="ets-concept-definition-title-block">
-          <div class="ets-concept-definition-title">
+        <div class="komet-concept-definition-title-block">
+          <div class="komet-concept-definition-title">
             <%= desc_hash[:description_type_short] %>
           </div>
           <span class="glyphicon glyphicon-text-size"></span>
@@ -24,33 +24,33 @@
         </div>
 
         <!-- description text -->
-        <div class="ets-concept-definition-text">
+        <div class="komet-concept-definition-text">
           <%= desc_hash[:text] %>
         </div>
 
       </div>
 
       <!-- details drawer - can be collapsed -->
-      <div class="ets-concept-section-panel-details">
+      <div class="komet-concept-section-panel-details">
 
         <!-- loop through the description attributes -->
         <% desc_hash[:attributes].each_with_index do |attribute, attribute_index| %>
 
             <% if attribute_index > 0 %>
-                <hr class="ets-concept-definition-details-hr" />
+                <hr class="komet-concept-definition-details-hr" />
             <% end %>
 
-          <div class="ets-concept-definition-details-row">
+          <div class="komet-concept-definition-details-row">
 
-            <div class="ets-concept-definition-details-name">
+            <div class="komet-concept-definition-details-name">
               <%= attribute[:label] %>: <%= attribute[:text] %>
             </div>
 
-            <div class="ets-concept-definition-details-date">
+            <div class="komet-concept-definition-details-date">
               Date: <%= attribute[:date] %>
             </div>
 
-            <div class="ets-concept-definition-details-user">
+            <div class="komet-concept-definition-details-user">
               Author: <%= attribute[:author] %>
             </div>
           </div>

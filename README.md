@@ -90,7 +90,7 @@ Follow the install instructions on the site (you pretty much unzip it).
 
 Before bringing up GlassFish, ensure that <b>jruby-complete-9.0.4.0.jar</b> is placed into the domain you intend to deploy your application.  In my case, on my box, in the directory:
 ```
-C:\work\ETS\glassfish\glassfish4\glassfish\domains\domain1\lib\ext
+C:\work\KOMET\glassfish\glassfish4\glassfish\domains\domain1\lib\ext
 ```
 
 You will want to bring GlassFish up via:

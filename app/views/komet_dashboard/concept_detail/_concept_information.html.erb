@@ -9,13 +9,13 @@
 
 </div>
 
-<div class="panel panel-default ets-no-margins ets-concept-panel" id="ets-concept-panel">
+<div class="panel panel-default komet-no-margins komet-concept-panel" id="komet-concept-panel">
   <div class="panel-heading">
-    <span class="panel-title ets-section-title">
+    <span class="panel-title komet-section-title">
       <div class="glyphicon glyphicon-link"></div>
       Concept Details
     </span>
-    <div class="ets-section-icons">
+    <div class="komet-section-icons">
       <div class="glyphicon glyphicon-new-window"></div>
       <div class="glyphicon glyphicon-resize-full"></div>
       <div class="glyphicon glyphicon-remove"></div>
@@ -24,13 +24,13 @@
 
   <div class="panel-body">
 
-    <div class="ets-concept-body-tools">
-      <div class="glyphicon glyphicon-plus-sign" onclick="toggleConceptDetails('ets-concept-panel')"></div>
+    <div class="komet-concept-body-tools">
+      <div class="glyphicon glyphicon-plus-sign" onclick="toggleConceptDetails('komet-concept-panel')"></div>
       <span>Expand All</span>
 
-      <div class="ets-concept-body-stated-inferred">
+      <div class="komet-concept-body-stated-inferred">
         <div>
-        <select id="ets_concept_stated_inferred" class="form-control">
+        <select id="komet_concept_stated_inferred" class="form-control">
           <option value="stated" selected>Stated View</option>
           <option value="inferred">Inferred View</option>
         </select>
@@ -39,18 +39,18 @@
     </div>
 
     <!-- concept attribute section
-    <div id="ets_concept_attribute_section">
+    <div id="komet_concept_attribute_section">
 
-      <div class="ets-concept-attribute-title">Concept</div>
+      <div class="komet-concept-attribute-title">Concept</div>
 
-      <div id="ets_concept_attribute_panel" class="ets-concept-attribute-panel">
+      <div id="komet_concept_attribute_panel" class="komet-concept-attribute-panel">
 
-        <div class="ets-floated-bar">
+        <div class="komet-floated-bar">
 
           <div class="glyphicon glyphicon-plus-sign"></div>
-          <div class="ets-concept-attribute-title">Attribute</div>
+          <div class="komet-concept-attribute-title">Attribute</div>
 
-          <div class="ets-concept-attribute-primitive">
+          <div class="komet-concept-attribute-primitive">
             Primitive
           </div>
 
@@ -61,8 +61,8 @@
     -->
 
     <!-- concept definition section -->
-    <div id="ets_concept_definition_section" class="concept-section"></div>
-    <div id="ets_concept_lineage_section" class="concept-section"></div>
+    <div id="komet_concept_definition_section" class="concept-section"></div>
+    <div id="komet_concept_lineage_section" class="concept-section"></div>
 
   </div>
 </div>
@@ -107,7 +107,7 @@
   function toggleConceptDetails(panel_id){
 
     // toggle the visibility of the panel's detail drawer
-    $("#" + panel_id + " .ets-concept-section-panel-details").toggle();
+    $("#" + panel_id + " .komet-concept-section-panel-details").toggle();
 
     var expander = $("#" + panel_id + " .glyphicon-plus-sign, #" + panel_id + " .glyphicon-minus-sign");
 
@@ -123,7 +123,7 @@
     }
 
     // if the user clicked on the top level concept expander, change the associated text label
-    if (expander.parent().hasClass('ets-concept-body-tools')){
+    if (expander.parent().hasClass('komet-concept-body-tools')){
 
       var item_text = expander[0].nextElementSibling;
 

@@ -19,11 +19,11 @@ Copyright Notice
 
 /**
  * All Channel strings must be unique even across namespaces!
- * Thus if EtsChannels.Taxonomy has:
+ * Thus if KometChannels.Taxonomy has:
  * taxonomyTreeNodeOpenedChannel: "Taxonomy/TaxonomyTree/NodeOpened"
  * the value string cannot be used again!!
  */
-var EtsChannels = {
+var KometChannels = {
 
     Taxonomy: {
         //These strings must be unique across  all channels

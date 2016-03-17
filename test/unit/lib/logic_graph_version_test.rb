@@ -3,7 +3,7 @@ require './config/initializers/01_komet_init'
 require './lib/isaac_rest/logic_graph_rest'
 #require './lib/tasks/rest_fixtures.rake'
 class LogicGraphVersionTest < Test::Unit::TestCase
-  include ETSUtilities
+  include KOMETUtilities
   include LogicGraphRest
   include Fixtures
 

@@ -1,6 +1,6 @@
 <!--example for changing page title based on current view-->
 <% content_for :title do %>
-    ETS Dashboard
+    KOMET Dashboard
 <% end %>
 
 <style type="text/css" media="all">
@@ -35,15 +35,15 @@
     </div>
   </div>
   <div id="east-pane">
-    <%= render :partial => 'ets_dashboard/concept_detail/concept_information'%>
+    <%= render :partial => 'komet_dashboard/concept_detail/concept_information'%>
   </div>
 </div>
 
 <script>
   $(document).ready(function () {
-    $("#tp-taxonomy").html('<%= escape_javascript render :partial => 'ets_dashboard/taxonomy/taxonomy'%>');
-    $("#tp-search").html('<%= escape_javascript render :partial => 'ets_dashboard/search/search'%>');
-    $("#tp-favorites").html('<%= escape_javascript render :partial => 'ets_dashboard/favorites/favorites'%>');
+    $("#tp-taxonomy").html('<%= escape_javascript render :partial => 'komet_dashboard/taxonomy/taxonomy'%>');
+    $("#tp-search").html('<%= escape_javascript render :partial => 'komet_dashboard/search/search'%>');
+    $("#tp-favorites").html('<%= escape_javascript render :partial => 'komet_dashboard/favorites/favorites'%>');
     $("#tabs").tabs();
     $('#dashboard-splitter').split({orientation: 'vertical', limit: 250});
   });

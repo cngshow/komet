@@ -104,7 +104,7 @@ class TaxonomyController < ApplicationController
       current_id = 0
 
       # load the root node into our return variable and then remove it from the raw nodes
-      tree_nodes << {id: 0, concept_id: raw_nodes[0][:id], text: raw_nodes[0][:text], parent: '#', parent_reversed: false, parent_search: parent_search, icon: 'glyphicon glyphicon-fire ets-node-image-red', a_attr: {class: ''}, state: {opened: 'true'}}
+      tree_nodes << {id: 0, concept_id: raw_nodes[0][:id], text: raw_nodes[0][:text], parent: '#', parent_reversed: false, parent_search: parent_search, icon: 'glyphicon glyphicon-fire komet-node-image-red', a_attr: {class: ''}, state: {opened: 'true'}}
       raw_nodes = raw_nodes.drop(1)
     else
       isaac_concept = TaxonomyRest.get_isaac_concept(uuid: current_id)
@@ -126,7 +126,7 @@ class TaxonomyController < ApplicationController
       # should this child node be reversed and is it the first node to be reversed - comes from node data
       if parent_reversed.eql?('false') && raw_node[:parent_count] > 1
 
-        anchor_classes = 'ets-reverse-tree-node'
+        anchor_classes = 'komet-reverse-tree-node'
         parent_search = 'true'
         parent_reversed = 'true'
 
@@ -138,31 +138,31 @@ class TaxonomyController < ApplicationController
           # if the node has no parents identify it as a leaf, otherwise it is a branch
           if parent[:parents].length > 0
 
-            parent_icon_class = 'glyphicon glyphicon-book ets-node-image-red'
+            parent_icon_class = 'glyphicon glyphicon-book komet-node-image-red'
             parent_has_parents = true
           else
 
-            parent_icon_class = 'glyphicon glyphicon-leaf ets-node-image-red'
+            parent_icon_class = 'glyphicon glyphicon-leaf komet-node-image-red'
             parent_has_parents = false
           end
 
           # add the parent node above its child, making sure that it identified as a reverse search node
-          tree_nodes << {id: get_next_tree_id, concept_id: parent[:concept_id], text: parent[:text], children: parent_has_parents, parent_id: current_id, parent_reversed: true, parent_search: true, icon: parent_icon_class, a_attr: { class: 'ets-reverse-tree-node'}, li_attr: {class: 'ets-reverse-tree'}}
+          tree_nodes << {id: get_next_tree_id, concept_id: parent[:concept_id], text: parent[:text], children: parent_has_parents, parent_id: current_id, parent_reversed: true, parent_search: true, icon: parent_icon_class, a_attr: { class: 'komet-reverse-tree-node'}, li_attr: {class: 'komet-reverse-tree'}}
 
         end
 
       elsif parent_search.eql?('true')
-        anchor_classes = 'ets-reverse-tree-node'
+        anchor_classes = 'komet-reverse-tree-node'
       end
 
 
       # if the node has no children (or no parents if doing a parent search) identify it as a leaf, otherwise it is a branch
       if (!parent_search.eql?('true') && raw_node[:child_count] > 0) || (parent_search.eql?('true') && raw_node[:parent_count] > 0)
-        icon_class = 'glyphicon glyphicon-book ets-node-image-red'
+        icon_class = 'glyphicon glyphicon-book komet-node-image-red'
 
       elsif (!parent_search.eql?('true') && raw_node[:child_count] == 0) || (parent_search.eql?('true') && raw_node[:parent_count] == 0)
 
-        icon_class = 'glyphicon glyphicon-leaf ets-node-image-red'
+        icon_class = 'glyphicon glyphicon-leaf komet-node-image-red'
         has_children = false
       end
 
@@ -450,9 +450,9 @@ class TaxonomyController < ApplicationController
     @current = Time.now.to_s
     @kma = rand(10)
     # render_to_string(:action => "users/profile", :layout => false)
-    # @p = render_to_string partial: 'ets_dashboard/concept_detail/kma', locals: {local_kma: @current, local_random: @kma}
+    # @p = render_to_string partial: 'komet_dashboard/concept_detail/kma', locals: {local_kma: @current, local_random: @kma}
     @local_kma3 = 'oh yea!'
-    @test = view_context.render 'ets_dashboard/concept_detail/kma3' #, locals: {local_kma3: 'another one'}
+    @test = view_context.render 'komet_dashboard/concept_detail/kma3' #, locals: {local_kma3: 'another one'}
     puts @test
     # render :json => {time: @current, kma: @kma}
   end
@@ -462,7 +462,7 @@ class TaxonomyController < ApplicationController
     @kma2 = Time.now.to_s
     @greg = get_a_number
     # stored_content
-    render partial: 'ets_dashboard/concept_detail/kma2', locals: {local_kma: @kma2, local_random: @greg, bacon: 'awesome!'}
+    render partial: 'komet_dashboard/concept_detail/kma2', locals: {local_kma: @kma2, local_random: @greg, bacon: 'awesome!'}
   end
 
   def get_a_number
@@ -470,7 +470,7 @@ class TaxonomyController < ApplicationController
   end
 
   def stored_content
-    content_for(:storage, render(partial: 'ets_dashboard/concept_detail/kma2', locals: {local_random: get_a_number}))
+    content_for(:storage, render(partial: 'komet_dashboard/concept_detail/kma2', locals: {local_random: get_a_number}))
   end
 =end
 
@@ -480,7 +480,7 @@ class TaxonomyController < ApplicationController
   def render_concept_diagram
     get_concept_diagram(params[:concept_id])
     respond_to do |format|
-      format.html { render partial: 'ets_dashboard/concept_detail/concept_diagram' }
+      format.html { render partial: 'komet_dashboard/concept_detail/concept_diagram' }
     end
   end
 
@@ -489,7 +489,7 @@ class TaxonomyController < ApplicationController
   def svg_diagram
     get_concept_diagram(params[:concept_id])
     respond_to do |format|
-      format.js { render partial: 'ets_dashboard/concept_detail/svg_diagram' }
+      format.js { render partial: 'komet_dashboard/concept_detail/svg_diagram' }
     end
   end
 

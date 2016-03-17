@@ -1,6 +1,6 @@
 <%= form_tag('/search', method: 'get') do %>
 
-    <div class="ets-floated-bar">
+    <div class="komet-floated-bar">
       <%= label_tag :search_text, 'Search Text:' %>
       <%= text_field_tag (:taxonomy_search_text) %>
 
@@ -14,9 +14,9 @@
 
       <h3>Advanced Options</h3>
 
-      <div class="ets-accordion-panel">
+      <div class="komet-accordion-panel">
 
-        <div class="ets-floated-bar">
+        <div class="komet-floated-bar">
           <%= label_tag :taxonomy_search_type, 'Search In:' %>
           <%= select_tag :taxonomy_search_type, options_for_select([['Descriptions', 'descriptions'], ['Sememes', 'sememes']], 'descriptions'), :onchange => 'taxonomyChangeSearchType(this)' %>
 
@@ -45,7 +45,7 @@
 
             <input id="taxonomy_search_assemblage_display" class="form-control" />
 
-            <div class="input-group-btn ets-search-combo-field">
+            <div class="input-group-btn komet-search-combo-field">
 
               <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                 <span class="caret"></span>
@@ -180,7 +180,7 @@
     selectedRows.forEach( function(selectedRow, index) {
 
       console.log('Row with ID ' + selectedRow.id + ' ' + selectedRow.concept_status + '.');
-      $.publish(EtsChannels.Taxonomy.taxonomySearchResultSelectedChannel, selectedRow.id);
+      $.publish(KometChannels.Taxonomy.taxonomySearchResultSelectedChannel, selectedRow.id);
     });
   }
 

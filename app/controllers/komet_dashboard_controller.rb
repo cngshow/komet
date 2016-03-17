@@ -1,4 +1,4 @@
-class EtsDashboardController < ApplicationController
+class KometDashboardController < ApplicationController
 
   before_action :setup_routes, :only => [:dashboard]
 

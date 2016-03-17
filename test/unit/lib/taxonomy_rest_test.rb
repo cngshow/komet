@@ -5,7 +5,7 @@ require './lib/isaac_rest/taxonomy_rest'
 
 class TaxonomyRestTests < Test::Unit::TestCase
 
-  include ETSUtilities
+  include KOMETUtilities
   include Fixtures
   include TaxonomyRest
   self.test_order = :defined #run tests in order they appear in this file

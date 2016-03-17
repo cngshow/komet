@@ -1,12 +1,12 @@
-<div class="ets-concept-lineage-title">LINEAGE</div>
+<div class="komet-concept-lineage-title">LINEAGE</div>
 
-  <div id="ets_concept_lineage_panel_" class="ets-concept-section-panel ets-concept-lineage-panel">
+  <div id="komet_concept_lineage_panel_" class="komet-concept-section-panel komet-concept-lineage-panel">
 
     <!-- main header block - always visible -->
-    <div class="ets-concept-section-panel-header">
+    <div class="komet-concept-section-panel-header">
 
       <!-- expand/collapse icon - controls details drawer -->
-      <div class="glyphicon glyphicon-plus-sign" onclick="toggleConceptDetails('ets_concept_lineage_panel_')"></div>
+      <div class="glyphicon glyphicon-plus-sign" onclick="toggleConceptDetails('komet_concept_lineage_panel_')"></div>
 
       <!-- description type, refset -->
       <div>
@@ -17,14 +17,14 @@
     </div>
 
     <!-- details drawer - can be collapsed -->
-    <div class="ets-concept-section-panel-details">
+    <div class="komet-concept-section-panel-details">
 
-      <div class="concept-lineage-tree-container">
+      <div class="komet-concept-lineage-tree-container">
         <div>Parents</div>
-        <div id="concept_lineage_parents_tree" class="ets-reverse-tree">No Parents</div>
+        <div id="concept_lineage_parents_tree" class="komet-reverse-tree">No Parents</div>
       </div>
 
-      <div class="concept-lineage-tree-container">
+      <div class="komet-concept-lineage-tree-container">
         <div>Children</div>
         <div id="concept_lineage_children_tree">No Children</div>
       </div>
@@ -46,7 +46,7 @@
 
         if (data.instance._cnt == 0) {
 
-          TaxonomyModule.concept_lineage_parents_tree.html("<div class='ets-reverse-tree-node'>No Parents</div>");
+          TaxonomyModule.concept_lineage_parents_tree.html("<div class='komet-reverse-tree-node'>No Parents</div>");
           $("#concept_lineage_header_text").html("No Parent");
         } else{
           $("#concept_lineage_header_text").html(data.instance.get_node('ul > li:first').text);
@@ -64,7 +64,7 @@
       function onChanged(event, selectedObject) {
 
         var conceptId = selectedObject.node.id;
-        $.publish(EtsChannels.Taxonomy.taxonomyTreeNodeSelectedChannel, conceptId);
+        $.publish(KometChannels.Taxonomy.taxonomyTreeNodeSelectedChannel, conceptId);
       }
 
       TaxonomyModule.concept_lineage_parents_tree.on('changed.jstree', onChanged);

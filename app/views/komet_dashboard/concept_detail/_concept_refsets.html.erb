@@ -1,5 +1,5 @@
 <% if @concept_refsets == nil %>
-    <div class="ets-no-data-message">No members.</div>
+    <div class="komet-no-data-message">No members.</div>
 <% else %>
 
     <% @concept_refsets.each do |refset| %>
@@ -7,7 +7,7 @@
         <div class="concept-section-title"><%= refset[:title]%></div>
 
       <% if refset[:members].empty? %>
-          <div class="ets-no-data-message">No members.</div>
+          <div class="komet-no-data-message">No members.</div>
       <% else %>
 
         <table class="concept_detail_table">

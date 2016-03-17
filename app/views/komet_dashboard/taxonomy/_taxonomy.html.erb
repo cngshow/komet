@@ -1,7 +1,7 @@
-<div class="panel panel-default ets-no-margins">
+<div class="panel panel-default komet-no-margins">
   <div class="panel-heading">
-    <span class="panel-title ets-section-title">Taxonomy</span>
-    <div class="ets-section-icons">
+    <span class="panel-title komet-section-title">Taxonomy</span>
+    <div class="komet-section-icons">
       <div class="btn-group btn-group-xs concept-summary-buttons" role="group" aria-label="...">
         <button type="button" class="btn btn-default" id="taxonomy_tree_button_stated">Stated</button>
         <button type="button" class="btn btn-primary" id="taxonomy_tree_button_inferred">Inferred</button>
@@ -16,7 +16,7 @@
 <!--
 <div id='jstree'></div>
 <br><br>
-<div id='ets_tree'>
+<div id='komet_tree'>
   this is where the new tree should show up
 </div>
 -->
@@ -27,7 +27,7 @@
       $.get(gon.routes.taxonomy_test_render_partial_path, null, function (data2) {
         $('#kma').html(data2);
       });
-//      $('#kma').replaceWith("<%#= escape_javascript(render(:partial => '/ets_dashboard/concept_detail/kma', :locals => {:current => @current})) %>");
+//      $('#kma').replaceWith("<%#= escape_javascript(render(:partial => '/komet_dashboard/concept_detail/kma', :locals => {:current => @current})) %>");
       //bob('calling bob');
     }, "script");
 
@@ -49,6 +49,6 @@
     });
   });
 
-//  TaxonomyModule2.initialize('#ets_tree', TaxonomyModule2.TreeDirection.UP);
+//  TaxonomyModule2.initialize('#komet_tree', TaxonomyModule2.TreeDirection.UP);
 
 </script>

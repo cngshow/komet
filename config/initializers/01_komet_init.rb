@@ -1,5 +1,5 @@
 ##
-# Do common initialization tasks in ets tooling
+# Do common initialization tasks in komet tooling
 #
 require './lib/rails_common/props/prop_loader'
 require './lib/rails_common/logging/open_logging'

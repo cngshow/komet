@@ -1,4 +1,4 @@
-module EtsDashboardHelper
+module KometDashboardHelper
 
   def rest_cache_to_str
     r_val = ""

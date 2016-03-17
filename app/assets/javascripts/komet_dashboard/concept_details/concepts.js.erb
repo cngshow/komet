@@ -4,7 +4,7 @@ var ConceptsModule = (function () {
   function subscribeToTaxonomyTree() {
 
     // listen for the onChange event broadcast by any of the taxonomy trees.
-    $.subscribe(EtsChannels.Taxonomy.taxonomyTreeNodeSelectedChannel, function (e, conceptID) {
+    $.subscribe(KometChannels.Taxonomy.taxonomyTreeNodeSelectedChannel, function (e, conceptID) {
 
       currentConceptID = conceptID;
 
@@ -15,7 +15,7 @@ var ConceptsModule = (function () {
   function subscribeToSearch() {
 
     // listen for the onChange event broadcast by selecting a search result.
-    $.subscribe(EtsChannels.Taxonomy.taxonomySearchResultSelectedChannel, function (e, conceptID) {
+    $.subscribe(KometChannels.Taxonomy.taxonomySearchResultSelectedChannel, function (e, conceptID) {
 
       currentConceptID = conceptID;
 
@@ -28,7 +28,7 @@ var ConceptsModule = (function () {
   function loadConceptTabs() {
 
     // the path to a javascript partial file that will re-render all the appropriate partials once the ajax call returns
-    var partial = 'ets_dashboard/concept_detail/load_tabs';
+    var partial = 'komet_dashboard/concept_detail/load_tabs';
 
     // make an ajax call to get the concept for the current concept and pass it the currently selected concept id and the name of a partial file to render
     $.get(gon.routes.taxonomy_get_concept_information_path, {concept_id: currentConceptID, partial: partial}, function (data) {

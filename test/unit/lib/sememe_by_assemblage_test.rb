@@ -3,7 +3,7 @@ require './config/initializers/01_komet_init'
 require './lib/isaac_rest/sememe_rest'
 #require './lib/tasks/rest_fixtures.rake'
 class SememeAssemblageTest < Test::Unit::TestCase
-  include ETSUtilities
+  include KOMETUtilities
   include SememeRest
   include Fixtures
 
