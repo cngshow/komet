@@ -113,11 +113,12 @@
       suppressCellSelection: true,
       rowSelection: "single",
       onSelectionChanged: onGridSelection,
+      onGridReady: onGridReady,
       columnDefs:  [
-        {field: "id", headerName: 'UUID'},
+        {field: "id", headerName: 'ID', hide: 'true'},
         {field: "matching_terms", headerName: "Matching Terms"},
         {field: "concept_status", headerName: "Status"},
-        {field: "match_score", headerName: "Score", suppressSizeToFit: "false"}
+        {field: "match_score", headerName: "Score", suppressSizeToFit: "false", hide: 'true'}
       ]
     };
 
@@ -181,6 +182,10 @@
       console.log('Row with ID ' + selectedRow.id + ' ' + selectedRow.concept_status + '.');
       $.publish(EtsChannels.Taxonomy.taxonomySearchResultSelectedChannel, selectedRow.id);
     });
+  }
+
+  function onGridReady(event){
+    event.api.sizeColumnsToFit();
   }
 
   function taxonomyChangeSearchType(field){

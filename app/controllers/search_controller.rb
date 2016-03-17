@@ -111,11 +111,8 @@ class SearchController < ApplicationController
         # get the sememe version using the NID returned by the search, with its chronology expanded.
         sememe_version = SememeRest::get_sememe(action: SememeRestActions::ACTION_VERSION, uuid_or_id: result.matchNid, additional_req_params: {expand: 'chronology'})
 
-        # translate the NID in the sememe chronology into a UUID
-        uuid = IdAPIsRest.get_id(uuid_or_id: sememe_version.sememeChronology.referencedComponentNid, action: ACTION_TRANSLATE, additional_req_params: {outputType: 'uuid'}).value
-
         # add the information to the search array to be returned
-        search_data << {id: uuid, matching_terms: result.matchText, concept_status: sememe_version.sememeVersion.state.to_s, match_score: result.score.to_s}
+        search_data << {id: sememe_version.sememeChronology.referencedComponentNid, matching_terms: result.matchText, concept_status: sememe_version.sememeVersion.state.to_s, match_score: result.score.to_s}
       end
 
     elsif search_type == 'sememes'
@@ -125,7 +122,7 @@ class SearchController < ApplicationController
 
       if assemblage != nil
 
-        additional_params[:sememeAssemblageSequence] =  assemblage
+        additional_params[:sememeAssemblageId] =  assemblage
 
         recents_array = []
 
@@ -163,11 +160,8 @@ class SearchController < ApplicationController
         # get the sememe version using the NID returned by the search, with its chronology expanded.
         sememe_version = SememeRest::get_sememe(action: SememeRestActions::ACTION_VERSION, uuid_or_id: result.matchNid, additional_req_params: {expand: 'chronology'})
 
-        # translate the NID in the sememe chronology into a UUID
-        uuid = IdAPIsRest.get_id(uuid_or_id: sememe_version.sememeChronology.referencedComponentNid, action: ACTION_TRANSLATE, additional_req_params: {outputType: 'uuid'}).value
-
         # add the information to the search array to be returned
-        search_data << {id: uuid, matching_terms: result.matchText, concept_status: sememe_version.sememeVersion.state.to_s, match_score: result.score.to_s} #sememe_version.sememeVersion.state.to_s
+        search_data << {id: sememe_version.sememeChronology.referencedComponentNid, matching_terms: result.matchText, concept_status: sememe_version.sememeVersion.state.to_s, match_score: result.score.to_s} #sememe_version.sememeVersion.state.to_s
       end
 
     end
