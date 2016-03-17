@@ -1,32 +1,122 @@
-#Fixture created on 2016-03-11 12:45:00
+#Fixture created on 2016-03-17 16:55:35
 ---
 - matchNid: -2145698005
   matchText: Heart transplant
   score: 6.56234
+  active: false
+  expandables:
+    items:
+    - name: uuid
+      url: 1/id/translate/-2145698005?inputType=nid&outputType=uuid
+    - name: referencedConcept
+      url: ''
+  identifiers:
+  referencedConcept:
 - matchNid: -2145698035
   matchText: Heart repair
   score: 6.56234
+  active: false
+  expandables:
+    items:
+    - name: uuid
+      url: 1/id/translate/-2145698035?inputType=nid&outputType=uuid
+    - name: referencedConcept
+      url: ''
+  identifiers:
+  referencedConcept:
 - matchNid: -2145698029
   matchText: Heart ligation
   score: 6.56234
+  active: false
+  expandables:
+    items:
+    - name: uuid
+      url: 1/id/translate/-2145698029?inputType=nid&outputType=uuid
+    - name: referencedConcept
+      url: ''
+  identifiers:
+  referencedConcept:
 - matchNid: -2145698023
   matchText: Heart suturing
   score: 6.56234
+  active: false
+  expandables:
+    items:
+    - name: uuid
+      url: 1/id/translate/-2145698023?inputType=nid&outputType=uuid
+    - name: referencedConcept
+      url: ''
+  identifiers:
+  referencedConcept:
 - matchNid: -2145762643
   matchText: Fluttering heart
   score: 6.56234
+  active: false
+  expandables:
+    items:
+    - name: uuid
+      url: 1/id/translate/-2145762643?inputType=nid&outputType=uuid
+    - name: referencedConcept
+      url: ''
+  identifiers:
+  referencedConcept:
 - matchNid: -2145762649
   matchText: Bumping heart
   score: 6.56234
+  active: false
+  expandables:
+    items:
+    - name: uuid
+      url: 1/id/translate/-2145762649?inputType=nid&outputType=uuid
+    - name: referencedConcept
+      url: ''
+  identifiers:
+  referencedConcept:
 - matchNid: -2145656153
   matchText: Heart failure
   score: 6.56234
+  active: false
+  expandables:
+    items:
+    - name: uuid
+      url: 1/id/translate/-2145656153?inputType=nid&outputType=uuid
+    - name: referencedConcept
+      url: ''
+  identifiers:
+  referencedConcept:
 - matchNid: -2145364025
   matchText: Abdominal heart
   score: 6.56234
+  active: false
+  expandables:
+    items:
+    - name: uuid
+      url: 1/id/translate/-2145364025?inputType=nid&outputType=uuid
+    - name: referencedConcept
+      url: ''
+  identifiers:
+  referencedConcept:
 - matchNid: -2145171553
   matchText: Heart procedure
   score: 6.56234
+  active: false
+  expandables:
+    items:
+    - name: uuid
+      url: 1/id/translate/-2145171553?inputType=nid&outputType=uuid
+    - name: referencedConcept
+      url: ''
+  identifiers:
+  referencedConcept:
 - matchNid: -2145716911
   matchText: Cineradiography - heart
   score: 5.9001865
+  active: false
+  expandables:
+    items:
+    - name: uuid
+      url: 1/id/translate/-2145716911?inputType=nid&outputType=uuid
+    - name: referencedConcept
+      url: ''
+  identifiers:
+  referencedConcept:
