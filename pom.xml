@@ -84,6 +84,13 @@
 				<groupId>de.saumya.mojo</groupId>
 				<artifactId>jruby9-exec-maven-plugin</artifactId>
 				<version>0.2.2</version>
+				<dependencies>
+					<dependency>
+						<groupId>de.saumya.mojo</groupId>
+						<artifactId>ruby-tools</artifactId>
+						<version>1.1.4-patch1</version> <!--Dan patched this for https://github.com/torquebox/jruby9-maven-plugins/issues/1 -->
+					</dependency>
+				</dependencies>
 				<executions>
 					<execution>
 						<id>bundle install</id>
