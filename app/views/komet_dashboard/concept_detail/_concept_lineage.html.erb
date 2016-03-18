@@ -39,8 +39,10 @@
 
     try {
 
-      TaxonomyModule.buildTaxonomyTree("concept_lineage_parents_tree", true, TaxonomyModule.selectedTreeNode);
-      TaxonomyModule.buildTaxonomyTree("concept_lineage_children_tree", false, TaxonomyModule.selectedTreeNode);
+      var stated = $("#komet_concept_stated_inferred")[0].value
+
+      TaxonomyModule.buildTaxonomyTree("concept_lineage_parents_tree", stated, true, TaxonomyModule.selectedTreeNode);
+      TaxonomyModule.buildTaxonomyTree("concept_lineage_children_tree", stated, false, TaxonomyModule.selectedTreeNode);
 
       TaxonomyModule.concept_lineage_parents_tree.bind('ready.jstree', function (event, data) {
 
@@ -69,6 +71,7 @@
 
       TaxonomyModule.concept_lineage_parents_tree.on('changed.jstree', onChanged);
       TaxonomyModule.concept_lineage_children_tree.on('changed.jstree', onChanged);
+      
 
     }
     catch (err) {

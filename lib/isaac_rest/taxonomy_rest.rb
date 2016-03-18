@@ -63,11 +63,11 @@ module TaxonomyRest
   end
 
 #only one action
-  def get_isaac_root
-    Taxonomy.new(uuid: ISAAC_ROOT_ID, params: nil, action: ACTION_VERSION, action_constants: ACTION_CONSTANTS).rest_call
+  def get_isaac_root(additional_req_params: nil)
+    Taxonomy.new(uuid: ISAAC_ROOT_ID, params: additional_req_params, action: ACTION_VERSION, action_constants: ACTION_CONSTANTS).rest_call
   end
 
-  def get_isaac_concept(uuid:, additional_req_params:  nil)
+  def get_isaac_concept(uuid:, additional_req_params: nil)
     Taxonomy.new(uuid: uuid, params: additional_req_params, action: ACTION_VERSION, action_constants: ACTION_CONSTANTS).rest_call
   end
 

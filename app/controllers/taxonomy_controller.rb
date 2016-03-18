@@ -89,17 +89,24 @@ class TaxonomyController < ApplicationController
   # The current tree node is identified in the request params with the key :concept_id
   # If the tree is reversed so we are searching for parents of this node is identified in the request params with the key :parent_search (true/false)
   # If the parent of this node was already doing a reverse search is identified in the request params with the key :parent_reversed (true/false)
+  # Whether to display the stated (true) or inferred view of concepts with a request param of  :stated (true/false)
   #@return [json] the tree nodes to insert into the tree at the parent node passed in the request
   def load_tree_data
 
     current_id = params[:concept_id]
     parent_search = params[:parent_search]
+    stated = params[:stated]
     tree_nodes = []
     root = current_id.eql?('#')
 
+    # check to make sure the flag for stated or inferred view was passed in
+    if stated != nil
+      @stated = stated
+    end
+
     if root
       # load the ISAAC root node and children
-      isaac_root = TaxonomyRest.get_isaac_root
+      isaac_root = TaxonomyRest.get_isaac_root(additional_req_params: {stated: @stated})
       raw_nodes = rest_concept_version_to_json_tree(isaac_root, root: true, parent_search: parent_search)
       current_id = 0
 
@@ -107,7 +114,7 @@ class TaxonomyController < ApplicationController
       tree_nodes << {id: 0, concept_id: raw_nodes[0][:id], text: raw_nodes[0][:text], parent: '#', parent_reversed: false, parent_search: parent_search, icon: 'glyphicon glyphicon-fire komet-node-image-red', a_attr: {class: ''}, state: {opened: 'true'}}
       raw_nodes = raw_nodes.drop(1)
     else
-      isaac_concept = TaxonomyRest.get_isaac_concept(uuid: current_id)
+      isaac_concept = TaxonomyRest.get_isaac_concept(uuid: current_id, additional_req_params: {stated: @stated})
 
       if isaac_concept.is_a? CommonRest::UnexpectedResponse
         render json: [] and return
@@ -423,6 +430,8 @@ class TaxonomyController < ApplicationController
   end
 
   def initialize
+
+    @stated = 'false'
 
     @raw_tree_data = []
 

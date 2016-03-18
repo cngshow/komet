@@ -10,11 +10,10 @@
 
     <div class="komet-panel-tools">
 
-
-          <select id="komet_concept_stated_inferred" class="form-control komet-stated-inferred">
-            <option value="stated" selected>Stated View</option>
-            <option value="inferred">Inferred View</option>
-          </select>
+      <select id="komet_taxonomy_stated_inferred" class="form-control komet-stated-inferred" onchange="setStatedView(this)">
+        <option value="true">Stated View</option>
+        <option value="false">Inferred View</option>
+      </select>
 
       <div class="glyphicon glyphicon-time"></div>
       <div class="glyphicon glyphicon-refresh"></div>
@@ -30,18 +29,18 @@
 
   $(document).ready(function () {
 
-    //set ui to hour glass
-    Common.cursor_wait();
-    TaxonomyModule.initialize("taxonomy_tree");
+    $("#komet_taxonomy_stated_inferred option").filter(function() {
+      return $(this).text() == "<%= @stated %>";
+    }).prop('selected', true);
 
-    // set the tree to select the first node when it finishes loading
-    TaxonomyModule.taxonomy_tree.bind('ready.jstree', function (event, data) {
 
-      data.instance.select_node('ul > li:first');
+    TaxonomyModule.initialize("taxonomy_tree", $("#komet_taxonomy_stated_inferred")[0].value, false, null, true);
 
-      // set ui to regular cursor
-      Common.cursor_auto();
-    });
   });
+
+  function setStatedView(field){
+    TaxonomyModule.reloadTreeStatedView("taxonomy_tree", field.value);
+  }
+
 
 </script>

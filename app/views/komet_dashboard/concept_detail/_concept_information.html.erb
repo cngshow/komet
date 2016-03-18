@@ -29,9 +29,9 @@
       <span>Expand All</span>
 
       <div class="komet-flex-right">
-        <select id="komet_concept_stated_inferred" class="form-control komet-stated-inferred">
-          <option value="stated" selected>Stated View</option>
-          <option value="inferred">Inferred View</option>
+        <select id="komet_concept_stated_inferred" class="form-control komet-stated-inferred" onchange="setConceptStatedView(this)">
+          <option value="true">Stated View</option>
+          <option value="false">Inferred View</option>
         </select>
       </div>
     </div>
