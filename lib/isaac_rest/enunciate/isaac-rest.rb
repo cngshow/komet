@@ -74,15 +74,15 @@ module Java
     class Instant
 
       # (no documentation provided)
-      attr_accessor :nano
-      # (no documentation provided)
       attr_accessor :epochSecond
+      # (no documentation provided)
+      attr_accessor :nano
 
       # the json hash for this Instant
       def to_jaxb_json_hash
         _h = {}
-        _h['nano'] = nano.to_jaxb_json_hash unless nano.nil?
         _h['epochSecond'] = epochSecond.to_jaxb_json_hash unless epochSecond.nil?
+        _h['nano'] = nano.to_jaxb_json_hash unless nano.nil?
         return _h
       end
 
@@ -93,8 +93,8 @@ module Java
 
       #initializes this Instant with a json hash
       def init_jaxb_json_hash(_o)
-        @nano = Fixnum.from_json(_o['nano']) unless _o['nano'].nil?
         @epochSecond = Bignum.from_json(_o['epochSecond']) unless _o['epochSecond'].nil?
+        @nano = Fixnum.from_json(_o['nano']) unless _o['nano'].nil?
       end
 
       # constructs a Instant from a (parsed) JSON hash
@@ -244,63 +244,72 @@ module Gov
 
           module Data
 
-            module Search
+            module Sememe
 
               # (no documentation provided)
-              class RestSearchResult
+              class RestSememeChronology
 
-                # The internal identifier of the sememe that matched the query
-                attr_accessor :matchNid
-                # The text of the description that matched the query (may be blank, if the description is not available/active on the path used to populate this)
-                attr_accessor :matchText
-                # The Lucene Score for this result.  This value is only useful for ranking search results relative to other search results within the SAME QUERY
-                # execution.  It may not be used to rank one query against another.
-                attr_accessor :score
-                # Returns true if the sememe that matched the query is active (with the specified of default stamp,
-                # false if inactive.
-                attr_accessor :active
                 # The data that was not expanded as part of this call (but can be)
                 attr_accessor :expandables
-                # The (optionally) populated identifiers (UUIDs) of the sememe that matched the query.  Must pass expand=&#39;uuid&#39; to have
-                # this populated.
+                # The sememe sequence identifier of this sememe instance
+                attr_accessor :sememeSequence
+                # The concept sequence identifier of the concept that represents the type of this sememe
+                attr_accessor :assemblageSequence
+                # The NID identifier of the object that is referenced by this sememe instance.  This could represent a concept or a sememe.
+                attr_accessor :referencedComponentNid
+                # The permanent identifier object(s) attached to this sememe instance
                 attr_accessor :identifiers
-                # The (optionally) populated concept that is referenced (indirectly) by the sememe that matched the query.  This is calculated by
-                # looking up the sememe of the matchNid, and then getting the referenced component of that sememe.  If the referenced component
-                # is a concept, that is the concept that is returned.  If the referenced component is a sememe, then the process is repeated (following
-                # the referenced component reference of the sememe) - continuing until a concept is found.  If an (unusual) case occurs where the
-                # sememe chain doesn&#39;t lead to a concept, this will not be populated.
-                attr_accessor :referencedConcept
+                # The list of sememe versions.  Depending on the expand parameter, may be empty, the latest only, or all versions.
+                attr_accessor :versions
 
-                # the json hash for this RestSearchResult
+                # the json hash for this RestSememeChronology
                 def to_jaxb_json_hash
                   _h = {}
-                  _h['matchNid'] = matchNid.to_jaxb_json_hash unless matchNid.nil?
-                  _h['matchText'] = matchText.to_jaxb_json_hash unless matchText.nil?
-                  _h['score'] = score.to_jaxb_json_hash unless score.nil?
-                  _h['active'] = active.to_jaxb_json_hash unless active.nil?
                   _h['expandables'] = expandables.to_jaxb_json_hash unless expandables.nil?
+                  _h['sememeSequence'] = sememeSequence.to_jaxb_json_hash unless sememeSequence.nil?
+                  _h['assemblageSequence'] = assemblageSequence.to_jaxb_json_hash unless assemblageSequence.nil?
+                  _h['referencedComponentNid'] = referencedComponentNid.to_jaxb_json_hash unless referencedComponentNid.nil?
                   _h['identifiers'] = identifiers.to_jaxb_json_hash unless identifiers.nil?
-                  _h['referencedConcept'] = referencedConcept.to_jaxb_json_hash unless referencedConcept.nil?
+                  if !versions.nil?
+                    _ha = Array.new
+                    versions.each { |_item| _ha.push _item.to_jaxb_json_hash }
+                    _h['versions'] = _ha
+                  end
                   return _h
                 end
 
-                # the json (string form) for this RestSearchResult
+                # the json (string form) for this RestSememeChronology
                 def to_json
                   to_jaxb_json_hash.to_json
                 end
 
-                #initializes this RestSearchResult with a json hash
+                #initializes this RestSememeChronology with a json hash
                 def init_jaxb_json_hash(_o)
-                  @matchNid = Fixnum.from_json(_o['matchNid']) unless _o['matchNid'].nil?
-                  @matchText = String.from_json(_o['matchText']) unless _o['matchText'].nil?
-                  @score = Float.from_json(_o['score']) unless _o['score'].nil?
-                  @active = Boolean.from_json(_o['active']) unless _o['active'].nil?
                   @expandables = Gov::Vha::Isaac::Rest::Api::Data::Expandables.from_json(_o['expandables']) unless _o['expandables'].nil?
+                  @sememeSequence = Fixnum.from_json(_o['sememeSequence']) unless _o['sememeSequence'].nil?
+                  @assemblageSequence = Fixnum.from_json(_o['assemblageSequence']) unless _o['assemblageSequence'].nil?
+                  @referencedComponentNid = Fixnum.from_json(_o['referencedComponentNid']) unless _o['referencedComponentNid'].nil?
                   @identifiers = Gov::Vha::Isaac::Rest::Api1::Data::RestIdentifiedObject.from_json(_o['identifiers']) unless _o['identifiers'].nil?
-                  @referencedConcept = Gov::Vha::Isaac::Rest::Api1::Data::Concept::RestConceptChronology.from_json(_o['referencedConcept']) unless _o['referencedConcept'].nil?
+                  if !_o['versions'].nil?
+                    @versions = Array.new
+                    _oa = _o['versions']
+                    _oa.each { |_item|
+                      if (_item['@class'].nil?)
+                        @versions.push Gov::Vha::Isaac::Rest::Api1::Data::Sememe::RestSememeVersion.from_json(_item)
+                      else
+                        clazz_array_parts = _item['@class'].split('.')
+                        short_clazz = clazz_array_parts.pop
+                        clazz_package = clazz_array_parts.map do |e|
+                          e[0] = e.first.capitalize; e
+                        end.join("::")
+                        clazz = clazz_package + "::" + short_clazz
+                        @versions.push Object.const_get(clazz).send(:from_json, _item)
+                      end
+                    }
+                  end
                 end
 
-                # constructs a RestSearchResult from a (parsed) JSON hash
+                # constructs a RestSememeChronology from a (parsed) JSON hash
                 def self.from_json(o)
                   if o.nil?
                     return nil
@@ -1140,72 +1149,63 @@ module Gov
 
           module Data
 
-            module Sememe
+            module Search
 
               # (no documentation provided)
-              class RestSememeChronology
+              class RestSearchResult
 
+                # The internal identifier of the sememe that matched the query
+                attr_accessor :matchNid
+                # The text of the description that matched the query (may be blank, if the description is not available/active on the path used to populate this)
+                attr_accessor :matchText
+                # The Lucene Score for this result.  This value is only useful for ranking search results relative to other search results within the SAME QUERY
+                # execution.  It may not be used to rank one query against another.
+                attr_accessor :score
+                # Returns true if the sememe that matched the query is active (with the specified of default stamp,
+                # false if inactive.
+                attr_accessor :active
                 # The data that was not expanded as part of this call (but can be)
                 attr_accessor :expandables
-                # The sememe sequence identifier of this sememe instance
-                attr_accessor :sememeSequence
-                # The concept sequence identifier of the concept that represents the type of this sememe
-                attr_accessor :assemblageSequence
-                # The NID identifier of the object that is referenced by this sememe instance.  This could represent a concept or a sememe.
-                attr_accessor :referencedComponentNid
-                # The permanent identifier object(s) attached to this sememe instance
+                # The (optionally) populated identifiers (UUIDs) of the sememe that matched the query.  Must pass expand=&#39;uuid&#39; to have
+                # this populated.
                 attr_accessor :identifiers
-                # The list of sememe versions.  Depending on the expand parameter, may be empty, the latest only, or all versions.
-                attr_accessor :versions
+                # The (optionally) populated concept that is referenced (indirectly) by the sememe that matched the query.  This is calculated by
+                # looking up the sememe of the matchNid, and then getting the referenced component of that sememe.  If the referenced component
+                # is a concept, that is the concept that is returned.  If the referenced component is a sememe, then the process is repeated (following
+                # the referenced component reference of the sememe) - continuing until a concept is found.  If an (unusual) case occurs where the
+                # sememe chain doesn&#39;t lead to a concept, this will not be populated.
+                attr_accessor :referencedConcept
 
-                # the json hash for this RestSememeChronology
+                # the json hash for this RestSearchResult
                 def to_jaxb_json_hash
                   _h = {}
+                  _h['matchNid'] = matchNid.to_jaxb_json_hash unless matchNid.nil?
+                  _h['matchText'] = matchText.to_jaxb_json_hash unless matchText.nil?
+                  _h['score'] = score.to_jaxb_json_hash unless score.nil?
+                  _h['active'] = active.to_jaxb_json_hash unless active.nil?
                   _h['expandables'] = expandables.to_jaxb_json_hash unless expandables.nil?
-                  _h['sememeSequence'] = sememeSequence.to_jaxb_json_hash unless sememeSequence.nil?
-                  _h['assemblageSequence'] = assemblageSequence.to_jaxb_json_hash unless assemblageSequence.nil?
-                  _h['referencedComponentNid'] = referencedComponentNid.to_jaxb_json_hash unless referencedComponentNid.nil?
                   _h['identifiers'] = identifiers.to_jaxb_json_hash unless identifiers.nil?
-                  if !versions.nil?
-                    _ha = Array.new
-                    versions.each { |_item| _ha.push _item.to_jaxb_json_hash }
-                    _h['versions'] = _ha
-                  end
+                  _h['referencedConcept'] = referencedConcept.to_jaxb_json_hash unless referencedConcept.nil?
                   return _h
                 end
 
-                # the json (string form) for this RestSememeChronology
+                # the json (string form) for this RestSearchResult
                 def to_json
                   to_jaxb_json_hash.to_json
                 end
 
-                #initializes this RestSememeChronology with a json hash
+                #initializes this RestSearchResult with a json hash
                 def init_jaxb_json_hash(_o)
+                  @matchNid = Fixnum.from_json(_o['matchNid']) unless _o['matchNid'].nil?
+                  @matchText = String.from_json(_o['matchText']) unless _o['matchText'].nil?
+                  @score = Float.from_json(_o['score']) unless _o['score'].nil?
+                  @active = Boolean.from_json(_o['active']) unless _o['active'].nil?
                   @expandables = Gov::Vha::Isaac::Rest::Api::Data::Expandables.from_json(_o['expandables']) unless _o['expandables'].nil?
-                  @sememeSequence = Fixnum.from_json(_o['sememeSequence']) unless _o['sememeSequence'].nil?
-                  @assemblageSequence = Fixnum.from_json(_o['assemblageSequence']) unless _o['assemblageSequence'].nil?
-                  @referencedComponentNid = Fixnum.from_json(_o['referencedComponentNid']) unless _o['referencedComponentNid'].nil?
                   @identifiers = Gov::Vha::Isaac::Rest::Api1::Data::RestIdentifiedObject.from_json(_o['identifiers']) unless _o['identifiers'].nil?
-                  if !_o['versions'].nil?
-                    @versions = Array.new
-                    _oa = _o['versions']
-                    _oa.each { |_item|
-                      if (_item['@class'].nil?)
-                        @versions.push Gov::Vha::Isaac::Rest::Api1::Data::Sememe::RestSememeVersion.from_json(_item)
-                      else
-                        clazz_array_parts = _item['@class'].split('.')
-                        short_clazz = clazz_array_parts.pop
-                        clazz_package = clazz_array_parts.map do |e|
-                          e[0] = e.first.capitalize; e
-                        end.join("::")
-                        clazz = clazz_package + "::" + short_clazz
-                        @versions.push Object.const_get(clazz).send(:from_json, _item)
-                      end
-                    }
-                  end
+                  @referencedConcept = Gov::Vha::Isaac::Rest::Api1::Data::Concept::RestConceptChronology.from_json(_o['referencedConcept']) unless _o['referencedConcept'].nil?
                 end
 
-                # constructs a RestSememeChronology from a (parsed) JSON hash
+                # constructs a RestSearchResult from a (parsed) JSON hash
                 def self.from_json(o)
                   if o.nil?
                     return nil
@@ -1479,57 +1479,37 @@ module Gov
 
           module Data
 
-            module Enumerations
+            module Sememe
 
-              # (no documentation provided)
-              class RestConcreteDomainOperators < Gov::Vha::Isaac::Rest::Api1::Data::Enumerations::Enumeration
+              module DataTypes
 
                 # (no documentation provided)
-                attr_accessor :all
+                class RestDynamicSememeFloat < Gov::Vha::Isaac::Rest::Api1::Data::Sememe::RestDynamicSememeData
 
-                # the json hash for this RestConcreteDomainOperators
-                def to_jaxb_json_hash
-                  _h = super
-                  if !all.nil?
-                    _ha = Array.new
-                    all.each { |_item| _ha.push _item.to_jaxb_json_hash }
-                    _h['all'] = _ha
+
+                  # the json hash for this RestDynamicSememeFloat
+                  def to_jaxb_json_hash
+                    _h = super
+                    return _h
                   end
-                  return _h
-                end
 
-                #initializes this RestConcreteDomainOperators with a json hash
-                def init_jaxb_json_hash(_o)
-                  super _o
-                  if !_o['all'].nil?
-                    @all = Array.new
-                    _oa = _o['all']
-                    _oa.each { |_item|
-                      if (_item['@class'].nil?)
-                        @all.push Gov::Vha::Isaac::Rest::Api1::Data::Enumerations::RestConcreteDomainOperators.from_json(_item)
-                      else
-                        clazz_array_parts = _item['@class'].split('.')
-                        short_clazz = clazz_array_parts.pop
-                        clazz_package = clazz_array_parts.map do |e|
-                          e[0] = e.first.capitalize; e
-                        end.join("::")
-                        clazz = clazz_package + "::" + short_clazz
-                        @all.push Object.const_get(clazz).send(:from_json, _item)
-                      end
-                    }
+                  #initializes this RestDynamicSememeFloat with a json hash
+                  def init_jaxb_json_hash(_o)
+                    super _o
+                  end
+
+                  # constructs a RestDynamicSememeFloat from a (parsed) JSON hash
+                  def self.from_json(o)
+                    if o.nil?
+                      return nil
+                    else
+                      inst = new
+                      inst.init_jaxb_json_hash o
+                      return inst
+                    end
                   end
                 end
 
-                # constructs a RestConcreteDomainOperators from a (parsed) JSON hash
-                def self.from_json(o)
-                  if o.nil?
-                    return nil
-                  else
-                    inst = new
-                    inst.init_jaxb_json_hash o
-                    return inst
-                  end
-                end
               end
 
             end
@@ -1632,6 +1612,8 @@ module Gov
 
                 # The String text of the description of the associated concept
                 attr_accessor :referencedConceptDescription
+                # A boolean indicating whether the concept referred to by this RestSememeLogicGraphVersion is defined rather than primitive
+                attr_accessor :isReferencedConceptDefined
                 # The root node of the logical expression tree associated with the concept
                 attr_accessor :rootLogicNode
 
@@ -1639,6 +1621,7 @@ module Gov
                 def to_jaxb_json_hash
                   _h = super
                   _h['referencedConceptDescription'] = referencedConceptDescription.to_jaxb_json_hash unless referencedConceptDescription.nil?
+                  _h['isReferencedConceptDefined'] = isReferencedConceptDefined.to_jaxb_json_hash unless isReferencedConceptDefined.nil?
                   _h['rootLogicNode'] = rootLogicNode.to_jaxb_json_hash unless rootLogicNode.nil?
                   return _h
                 end
@@ -1647,6 +1630,7 @@ module Gov
                 def init_jaxb_json_hash(_o)
                   super _o
                   @referencedConceptDescription = String.from_json(_o['referencedConceptDescription']) unless _o['referencedConceptDescription'].nil?
+                  @isReferencedConceptDefined = Boolean.from_json(_o['isReferencedConceptDefined']) unless _o['isReferencedConceptDefined'].nil?
                   @rootLogicNode = Gov::Vha::Isaac::Rest::Api1::Data::Logic::RestLogicNode.from_json(_o['rootLogicNode']) unless _o['rootLogicNode'].nil?
                 end
 
@@ -1991,6 +1975,8 @@ module Gov
                 attr_accessor :conceptSequence
                 # Optionally-expandable RestConceptVersion corresponding to
                 attr_accessor :conceptVersion
+                # A boolean indicating whether the concept referred to by this RestConceptVersion is defined rather than primitive
+                attr_accessor :isConceptDefined
                 # The String text description of the concept referred to by this REST logic graph node. It is included as a convenience, as it may be retrieved based on the concept sequence.
                 attr_accessor :conceptDescription
 
@@ -2000,6 +1986,7 @@ module Gov
                   _h['expandables'] = expandables.to_jaxb_json_hash unless expandables.nil?
                   _h['conceptSequence'] = conceptSequence.to_jaxb_json_hash unless conceptSequence.nil?
                   _h['conceptVersion'] = conceptVersion.to_jaxb_json_hash unless conceptVersion.nil?
+                  _h['isConceptDefined'] = isConceptDefined.to_jaxb_json_hash unless isConceptDefined.nil?
                   _h['conceptDescription'] = conceptDescription.to_jaxb_json_hash unless conceptDescription.nil?
                   return _h
                 end
@@ -2010,6 +1997,7 @@ module Gov
                   @expandables = Gov::Vha::Isaac::Rest::Api::Data::Expandables.from_json(_o['expandables']) unless _o['expandables'].nil?
                   @conceptSequence = Fixnum.from_json(_o['conceptSequence']) unless _o['conceptSequence'].nil?
                   @conceptVersion = Gov::Vha::Isaac::Rest::Api1::Data::Concept::RestConceptVersion.from_json(_o['conceptVersion']) unless _o['conceptVersion'].nil?
+                  @isConceptDefined = Boolean.from_json(_o['isConceptDefined']) unless _o['isConceptDefined'].nil?
                   @conceptDescription = String.from_json(_o['conceptDescription']) unless _o['conceptDescription'].nil?
                 end
 
@@ -2543,37 +2531,57 @@ module Gov
 
           module Data
 
-            module Sememe
+            module Enumerations
 
-              module DataTypes
+              # (no documentation provided)
+              class RestConcreteDomainOperators < Gov::Vha::Isaac::Rest::Api1::Data::Enumerations::Enumeration
 
                 # (no documentation provided)
-                class RestDynamicSememeFloat < Gov::Vha::Isaac::Rest::Api1::Data::Sememe::RestDynamicSememeData
+                attr_accessor :all
 
-
-                  # the json hash for this RestDynamicSememeFloat
-                  def to_jaxb_json_hash
-                    _h = super
-                    return _h
+                # the json hash for this RestConcreteDomainOperators
+                def to_jaxb_json_hash
+                  _h = super
+                  if !all.nil?
+                    _ha = Array.new
+                    all.each { |_item| _ha.push _item.to_jaxb_json_hash }
+                    _h['all'] = _ha
                   end
+                  return _h
+                end
 
-                  #initializes this RestDynamicSememeFloat with a json hash
-                  def init_jaxb_json_hash(_o)
-                    super _o
-                  end
-
-                  # constructs a RestDynamicSememeFloat from a (parsed) JSON hash
-                  def self.from_json(o)
-                    if o.nil?
-                      return nil
-                    else
-                      inst = new
-                      inst.init_jaxb_json_hash o
-                      return inst
-                    end
+                #initializes this RestConcreteDomainOperators with a json hash
+                def init_jaxb_json_hash(_o)
+                  super _o
+                  if !_o['all'].nil?
+                    @all = Array.new
+                    _oa = _o['all']
+                    _oa.each { |_item|
+                      if (_item['@class'].nil?)
+                        @all.push Gov::Vha::Isaac::Rest::Api1::Data::Enumerations::RestConcreteDomainOperators.from_json(_item)
+                      else
+                        clazz_array_parts = _item['@class'].split('.')
+                        short_clazz = clazz_array_parts.pop
+                        clazz_package = clazz_array_parts.map do |e|
+                          e[0] = e.first.capitalize; e
+                        end.join("::")
+                        clazz = clazz_package + "::" + short_clazz
+                        @all.push Object.const_get(clazz).send(:from_json, _item)
+                      end
+                    }
                   end
                 end
 
+                # constructs a RestConcreteDomainOperators from a (parsed) JSON hash
+                def self.from_json(o)
+                  if o.nil?
+                    return nil
+                  else
+                    inst = new
+                    inst.init_jaxb_json_hash o
+                    return inst
+                  end
+                end
               end
 
             end
@@ -2854,6 +2862,85 @@ module Gov
 
           module Data
 
+            module Enumerations
+
+              # (no documentation provided)
+              class RestDynamicSememeDataType < Gov::Vha::Isaac::Rest::Api1::Data::Enumerations::Enumeration
+
+                # (no documentation provided)
+                attr_accessor :all
+
+                # the json hash for this RestDynamicSememeDataType
+                def to_jaxb_json_hash
+                  _h = super
+                  if !all.nil?
+                    _ha = Array.new
+                    all.each { |_item| _ha.push _item.to_jaxb_json_hash }
+                    _h['all'] = _ha
+                  end
+                  return _h
+                end
+
+                #initializes this RestDynamicSememeDataType with a json hash
+                def init_jaxb_json_hash(_o)
+                  super _o
+                  if !_o['all'].nil?
+                    @all = Array.new
+                    _oa = _o['all']
+                    _oa.each { |_item|
+                      if (_item['@class'].nil?)
+                        @all.push Gov::Vha::Isaac::Rest::Api1::Data::Enumerations::RestDynamicSememeDataType.from_json(_item)
+                      else
+                        clazz_array_parts = _item['@class'].split('.')
+                        short_clazz = clazz_array_parts.pop
+                        clazz_package = clazz_array_parts.map do |e|
+                          e[0] = e.first.capitalize; e
+                        end.join("::")
+                        clazz = clazz_package + "::" + short_clazz
+                        @all.push Object.const_get(clazz).send(:from_json, _item)
+                      end
+                    }
+                  end
+                end
+
+                # constructs a RestDynamicSememeDataType from a (parsed) JSON hash
+                def self.from_json(o)
+                  if o.nil?
+                    return nil
+                  else
+                    inst = new
+                    inst.init_jaxb_json_hash o
+                    return inst
+                  end
+                end
+              end
+
+            end
+
+          end
+
+        end
+
+      end
+
+    end
+
+  end
+
+end
+
+module Gov
+
+  module Vha
+
+    module Isaac
+
+      module Rest
+
+        module Api1
+
+          module Data
+
             module Sememe
 
               # (no documentation provided)
@@ -2915,85 +3002,6 @@ module Gov
                 end
 
                 # constructs a RestSememeDescriptionVersion from a (parsed) JSON hash
-                def self.from_json(o)
-                  if o.nil?
-                    return nil
-                  else
-                    inst = new
-                    inst.init_jaxb_json_hash o
-                    return inst
-                  end
-                end
-              end
-
-            end
-
-          end
-
-        end
-
-      end
-
-    end
-
-  end
-
-end
-
-module Gov
-
-  module Vha
-
-    module Isaac
-
-      module Rest
-
-        module Api1
-
-          module Data
-
-            module Enumerations
-
-              # (no documentation provided)
-              class RestDynamicSememeDataType < Gov::Vha::Isaac::Rest::Api1::Data::Enumerations::Enumeration
-
-                # (no documentation provided)
-                attr_accessor :all
-
-                # the json hash for this RestDynamicSememeDataType
-                def to_jaxb_json_hash
-                  _h = super
-                  if !all.nil?
-                    _ha = Array.new
-                    all.each { |_item| _ha.push _item.to_jaxb_json_hash }
-                    _h['all'] = _ha
-                  end
-                  return _h
-                end
-
-                #initializes this RestDynamicSememeDataType with a json hash
-                def init_jaxb_json_hash(_o)
-                  super _o
-                  if !_o['all'].nil?
-                    @all = Array.new
-                    _oa = _o['all']
-                    _oa.each { |_item|
-                      if (_item['@class'].nil?)
-                        @all.push Gov::Vha::Isaac::Rest::Api1::Data::Enumerations::RestDynamicSememeDataType.from_json(_item)
-                      else
-                        clazz_array_parts = _item['@class'].split('.')
-                        short_clazz = clazz_array_parts.pop
-                        clazz_package = clazz_array_parts.map do |e|
-                          e[0] = e.first.capitalize; e
-                        end.join("::")
-                        clazz = clazz_package + "::" + short_clazz
-                        @all.push Object.const_get(clazz).send(:from_json, _item)
-                      end
-                    }
-                  end
-                end
-
-                # constructs a RestDynamicSememeDataType from a (parsed) JSON hash
                 def self.from_json(o)
                   if o.nil?
                     return nil

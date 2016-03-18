@@ -1,4 +1,4 @@
-#Fixture created on 2016-03-11 12:45:00
+#Fixture created on 2016-03-17 16:55:36
 ---
 "@class": gov.vha.isaac.rest.api1.data.sememe.RestSememeLogicGraphVersion
 expandables:
@@ -17,6 +17,7 @@ sememeVersion:
   pathSequence: 7
 nestedSememes:
 referencedConceptDescription: dynamic sememe extension definition (ISAAC)
+isReferencedConceptDefined: false
 rootLogicNode:
   "@class": gov.vha.isaac.rest.api1.data.logic.RestUntypedConnectorNode
   nodeSemantic:
@@ -55,4 +56,5 @@ rootLogicNode:
         children: []
         conceptSequence: 56
         conceptVersion:
+        isConceptDefined: false
         conceptDescription: dynamic sememe assemblages (ISAAC)

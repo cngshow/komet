@@ -39,8 +39,10 @@ be shared with rails_komet and the PRISME project
 To pull the latest code do the following:
 <ol>
 <li>VCS -> Update Project - from within RubyMine</li>
+<li>open .gitignore and comment out /lib/rails__common with a #</li>
 <li>open a terminal and navigate to rails_komet/lib</li>
 <li>git submodule add https://github.com/VA-CTT/rails_common</li>
+<li>open .gitignore and uncomment /lib/rails__common</li>
 <li>run git reset from within the lib/rails_common directory</li>
 <li>run git  rm -f --cached rails_common from within the lib/rails_common directory if the line above fails</li>
 </ol>
