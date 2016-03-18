@@ -9,13 +9,13 @@
 
 </div>
 
-<div class="panel panel-default komet-no-margins komet-concept-panel" id="komet-concept-panel">
+<div class="panel panel-default komet-no-margins komet-panel" id="komet-concept-panel">
   <div class="panel-heading">
     <span class="panel-title komet-section-title">
       <div class="glyphicon glyphicon-link"></div>
       Concept Details
     </span>
-    <div class="komet-section-icons">
+    <div class="komet-panel-tools">
       <div class="glyphicon glyphicon-new-window"></div>
       <div class="glyphicon glyphicon-resize-full"></div>
       <div class="glyphicon glyphicon-remove"></div>
@@ -28,13 +28,11 @@
       <div class="glyphicon glyphicon-plus-sign" onclick="toggleConceptDetails('komet-concept-panel')"></div>
       <span>Expand All</span>
 
-      <div class="komet-concept-body-stated-inferred">
-        <div>
-        <select id="komet_concept_stated_inferred" class="form-control">
+      <div class="komet-flex-right">
+        <select id="komet_concept_stated_inferred" class="form-control komet-stated-inferred">
           <option value="stated" selected>Stated View</option>
           <option value="inferred">Inferred View</option>
         </select>
-        </div>
       </div>
     </div>
 

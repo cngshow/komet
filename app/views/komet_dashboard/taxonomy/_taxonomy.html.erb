@@ -1,38 +1,33 @@
-<div class="panel panel-default komet-no-margins">
+
+
+<div class="panel panel-default komet-no-margins komet-panel" id="komet_taxonomy_panel">
+
   <div class="panel-heading">
-    <span class="panel-title komet-section-title">Taxonomy</span>
-    <div class="komet-section-icons">
-      <div class="btn-group btn-group-xs concept-summary-buttons" role="group" aria-label="...">
-        <button type="button" class="btn btn-default" id="taxonomy_tree_button_stated">Stated</button>
-        <button type="button" class="btn btn-primary" id="taxonomy_tree_button_inferred">Inferred</button>
-      </div>
+
+    <span class="panel-title komet-section-title">
+      Taxonomy
+    </span>
+
+    <div class="komet-panel-tools">
+
+
+          <select id="komet_concept_stated_inferred" class="form-control komet-stated-inferred">
+            <option value="stated" selected>Stated View</option>
+            <option value="inferred">Inferred View</option>
+          </select>
+
       <div class="glyphicon glyphicon-time"></div>
       <div class="glyphicon glyphicon-refresh"></div>
+
     </div>
+
   </div>
 </div>
 
 <div id='taxonomy_tree'></div>
-<!--
-<div id='jstree'></div>
-<br><br>
-<div id='komet_tree'>
-  this is where the new tree should show up
-</div>
--->
-<script>
-  /*
-  function callAjax() {
-    $.get(gon.routes.taxonomy_test_ajax_js_path, null, function (data) {
-      $.get(gon.routes.taxonomy_test_render_partial_path, null, function (data2) {
-        $('#kma').html(data2);
-      });
-//      $('#kma').replaceWith("<%#= escape_javascript(render(:partial => '/komet_dashboard/concept_detail/kma', :locals => {:current => @current})) %>");
-      //bob('calling bob');
-    }, "script");
 
-  }
-  */
+<script>
+
   $(document).ready(function () {
 
     //set ui to hour glass
@@ -48,7 +43,5 @@
       Common.cursor_auto();
     });
   });
-
-//  TaxonomyModule2.initialize('#komet_tree', TaxonomyModule2.TreeDirection.UP);
 
 </script>

@@ -16,11 +16,27 @@
 
         <!-- description type, refset -->
         <div class="komet-concept-definition-title-block">
+
           <div class="komet-concept-definition-title">
             <%= desc_hash[:description_type_short] %>
           </div>
-          <span class="glyphicon glyphicon-text-size"></span>
-          <span><%= desc_hash[:language_short] %></span>
+
+          <!-- get the case significance and display an appropriate icon -->
+          <% if desc_hash[:case_significance_short] == 'true' %>
+
+              <span class="glyphicon glyphicon-text-size" title="<%= desc_hash[:case_significance] %>"></span>
+
+          <% else %>
+
+              <span class="komet-icon-stack" title="<%= desc_hash[:case_significance] %>">
+                <span class="glyphicon glyphicon-text-size komet-icon-stack-base"></span>
+                <span class="glyphicon glyphicon-ban-circle"></span>
+              </span>
+
+          <% end %>
+
+          <span title="<%= desc_hash[:language] %>"><%= desc_hash[:language_short] %></span>
+          <span><%= desc_hash[:state] %></span>
         </div>
 
         <!-- description text -->

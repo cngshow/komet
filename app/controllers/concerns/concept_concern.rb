@@ -20,6 +20,7 @@ module ConceptConcern
     descriptions.each do |description|
 
       return_description = {text: description.text}
+      return_description[:state] =  description.sememeVersion.state
 
       attributes = []
 
@@ -105,6 +106,23 @@ module ConceptConcern
               when 'English language'
                 return_description[:language_short] = 'EN'
 
+            end
+
+          when :case_significance
+
+            case converted_value
+
+              when 'description initial character sensitive'
+                return_description[:case_significance_short] = 'true'
+
+              when 'description case sensitive'
+                return_description[:case_significance_short] = 'true'
+
+              when 'description not case sensitive'
+                return_description[:case_significance_short] = 'false'
+
+              else
+                return_description[:case_significance_short] = 'false'
             end
 
         end

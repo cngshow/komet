@@ -41,7 +41,9 @@ Copyright Notice
 .ui-accordion-content{
   border: solid #aaaaaa 1px;
 }
-
+.ui-tabs .ui-tabs-panel{
+  padding:5px;
+}
 
 // KOMET Common styles
 .komet-no-margins{
@@ -51,9 +53,9 @@ Copyright Notice
   display: inline-block;
   font-size: larger;
 }
-.komet-section-icons{
-  float: right;
-  display: inline-block;
+.komet-flex-right{
+    flex-grow: 1;
+    text-align: right;
 }
 .komet-accordion-panel {
   overflow: visible !important;
@@ -62,7 +64,55 @@ Copyright Notice
   overflow: hidden;
   margin: 2px;
 }
+.komet-icon-stack {
+  display: inline-block;
+  line-height: 1em;
+  position: relative;
+  vertical-align: -15%;
+}
+.komet-icon-stack .komet-icon-stack-base {
+  font-size: 1em;
+}
+.komet-icon-stack [class^="komet-icon-"], .komet-icon-stack [class*=" komet-icon-"] {
+  display: block;
+  font-size: 1em;
+  line-height: inherit;
+  position: absolute;
+  text-align: center;
+}
+.komet-icon-stack .glyphicon{
+  font-size: 1em;
+}
+.komet-stated-inferred{
+  width: 150px;
+  height: 25px;
+  display: inline-block;
+  font-size: smaller !important;
+  padding: 3px 12px;
+}
 
+// KOMET Panel Styles
+.komet-panel .panel-heading {
+  background-color: #4f80d9;
+  display: flex;
+}
+.komet-panel .komet-panel-tools{
+  flex-grow: 1;
+  text-align: end;
+}
+.komet-panel .komet-panel-tools .glyphicon {
+  margin-left: 10px;
+  color: white;
+  vertical-align: middle;
+}
+.komet-panel .panel-title{
+  color: white;
+}
+.komet-panel .panel-body {
+  background-color: #eef1f3;
+  display: flex;
+  flex-direction: column;
+}
 
 // Taxonomy Common Styles
 .concept_detail_table{
@@ -127,17 +177,6 @@ Copyright Notice
   width: 20px;
   cursor: pointer;
 }
-.komet-concept-body-stated-inferred{
-  flex-grow: 1;
-  text-align: right;
-}
-.komet-concept-body-stated-inferred .form-control{
-  width: 150px;
-  height: 25px;
-  display: inline-block;
-  font-size: smaller;
-  padding: 3px 12px;
-}
 .concept-section{
   margin-top: 15px;
 }
@@ -181,7 +220,7 @@ Copyright Notice
   margin-right: 5px;
 }
 .komet-concept-definition-title-block{
-  width: 100px;
+  width: 125px;
 }
 .komet-concept-definition-title-block span{
   display: inline-block;
