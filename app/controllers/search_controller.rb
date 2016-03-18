@@ -38,14 +38,11 @@ class SearchController < ApplicationController
 
     $log.debug(search_term)
 
-    searchResults = SearchApis.get_search_api(action: ACTION_PREFIX, additional_req_params: {query: search_term})
+    results = SearchApis.get_search_api(action: ACTION_PREFIX, additional_req_params: {query: search_term, expand: 'referencedConcept'})
 
-    searchResults.each do |searchResult|
+    results.each do |result|
 
-      match_nid = searchResult.matchNid
-
-      concept = SememeRest::get_sememe(action: SememeRestActions::ACTION_VERSION, uuid_or_id: match_nid, additional_req_params: {expand: 'chronology'})
-      assemblage_suggestions_data << {label: searchResult.matchText , value: concept.sememeChronology.referencedComponentNid}
+      assemblage_suggestions_data << {label: result.matchText, value: result.referencedConcept.identifiers.uuids.first}
 
     end
 
@@ -85,7 +82,7 @@ class SearchController < ApplicationController
     search_type = params[:taxonomy_search_type]
     search_limit = params[:taxonomy_search_limit]
     new_search = params[:new_search]
-    additional_params = {query: search_text}
+    additional_params = {query: search_text, expand: 'referencedConcept'}
 
     if search_text == nil || search_text == ''
       render json: {total_rows: 0, page_data: []} and return
@@ -112,7 +109,7 @@ class SearchController < ApplicationController
         sememe_version = SememeRest::get_sememe(action: SememeRestActions::ACTION_VERSION, uuid_or_id: result.matchNid, additional_req_params: {expand: 'chronology'})
 
         # add the information to the search array to be returned
-        search_data << {id: sememe_version.sememeChronology.referencedComponentNid, matching_terms: result.matchText, concept_status: sememe_version.sememeVersion.state.to_s, match_score: result.score.to_s}
+        search_data << {id: result.referencedConcept.identifiers.uuids.first, matching_terms: result.matchText, concept_status: sememe_version.sememeVersion.state.to_s, match_score: result.score.to_s}
       end
 
     elsif search_type == 'sememes'
@@ -162,7 +159,7 @@ class SearchController < ApplicationController
         sememe_version = SememeRest::get_sememe(action: SememeRestActions::ACTION_VERSION, uuid_or_id: result.matchNid, additional_req_params: {expand: 'chronology'})
 
         # add the information to the search array to be returned
-        search_data << {id: sememe_version.sememeChronology.referencedComponentNid, matching_terms: result.matchText, concept_status: sememe_version.sememeVersion.state.to_s, match_score: result.score.to_s} #sememe_version.sememeVersion.state.to_s
+        search_data << {id: result.referencedConcept.identifiers.uuids.first, matching_terms: result.matchText, concept_status: sememe_version.sememeVersion.state.to_s, match_score: result.score.to_s} #sememe_version.sememeVersion.state.to_s
       end
 
     end
