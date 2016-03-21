@@ -12,18 +12,12 @@ class LogicGraphController < ApplicationController
     render json: some_graph_chronology.to_json
   end
 
+  #isaac_root ->  Concrete domain operator
   #curl http://localhost:3000/logic_graph/version/406e872b-2e19-5f5e-a71d-e4e4b2c68fe5
   def version
     id = params[:id]
-    id = "b26dc0a4-8c14-315c-8d15-0d5c79d86464"
     some_graph_version = LogicGraphRest.get_graph(action: ACTION_VERSION, uuid_or_id: id, additional_req_params: {})
-    json = {referenced_concept_description: some_graph_version.referencedConceptDescription,
-
-   }
-   #render json: json
-   render json: some_graph_version.to_json
-    #json = YAML.load_file('./tmp/_rest_1_logicGraph_version_id.yml')
-   # render json: json
+    render json: some_graph_version.to_json
   end
 
 end

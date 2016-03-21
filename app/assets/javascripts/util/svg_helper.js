@@ -17,14 +17,17 @@ Copyright Notice
  limitations under the License.
  */
 var SvgHelper = (function () {
- function startDiagram(svgId)
+
+    function startDiagram(svgId, conceptID)
  {
-     AjaxCache.fetch(gon.routes.logic_graph_version_path,{},function(data){
+     if (!conceptID) {
+         conceptID = ConceptsModule.getCurrentConceptId();
+     }
+     var route = gon.routes.logic_graph_version_path.replace(":id", conceptID.toString());
+     AjaxCache.fetch(route,{},function(data){
        //  console.log("data  " + JSON.stringify(data))
       drawConceptDiagram(svgId,data)
      })
-
-
  }
     function drawConceptDiagram(svgId ,data) {
 

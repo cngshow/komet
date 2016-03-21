@@ -1,5 +1,33 @@
 var ConceptsModule = (function () {
   var currentConceptID;
+  var panelStates = {};
+
+  function setPanelState(panelID, state, callback) {
+    if (panelStates[panelID] === undefined) {
+      panelStates[panelID] = [];
+    }
+    panelStates[panelID][0] = state;
+    if (callback){
+      panelStates[panelID][1] = callback;
+    }
+  }
+
+  function getPanelState(panelID) {
+    if(!panelStates[panelID]) {
+      return false;
+    }
+    return panelStates[panelID][0];
+  }
+
+  function restorePanelStates() {
+    for (var key in panelStates) {
+      var state = panelStates[key][0];
+      var callback = panelStates[key][1];
+      if (state) {
+        UIHelper.togglePanelDetails(key, callback);
+      }
+    }
+  }
 
   function subscribeToTaxonomyTree() {
 
@@ -33,7 +61,6 @@ var ConceptsModule = (function () {
     // make an ajax call to get the concept for the current concept and pass it the currently selected concept id and the name of a partial file to render
     $.get(gon.routes.taxonomy_get_concept_information_path, {concept_id: currentConceptID, partial: partial}, function (data) {
     });
-
   }
 
   function getCurrentConceptId() {
@@ -47,7 +74,10 @@ var ConceptsModule = (function () {
 
   return {
     initialize: init,
-    getCurrentConceptId: getCurrentConceptId
+    getCurrentConceptId: getCurrentConceptId,
+    setPanelState : setPanelState,
+    getPanelState : getPanelState,
+    restorePanelStates : restorePanelStates,
   };
 
 })();

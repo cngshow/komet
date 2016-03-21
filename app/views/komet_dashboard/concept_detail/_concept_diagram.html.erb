@@ -8,7 +8,7 @@
   <div class="komet-concept-section-panel-header">
 
     <!-- expand/collapse icon - controls details drawer -->
-    <div class="glyphicon glyphicon-plus-sign" onclick="UIHelper.togglePanelDetails('komet_concept_diagram_panel_',function(){SvgHelper.startDiagram('svgbasics');})"></div>
+    <div class="glyphicon glyphicon-plus-sign" onclick="UIHelper.togglePanelDetails('komet_concept_diagram_panel_',function(){SvgHelper.startDiagram('svgbasics', null);}, true)"></div>
 
     <!-- description type, refset -->
     <div>
@@ -26,5 +26,5 @@
 
 
 <script>
-
+ConceptsModule.restorePanelStates();
 </script>
