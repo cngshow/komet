@@ -20,7 +20,7 @@ Copyright Notice
  * Created by gbowman on 2/8/2016.
  */
 var UIHelper = (function () {
-
+    var toggle =false;
     function getActiveTabId(tabControlId) {
         var id = "#" + tabControlId;
         var idx = $(id).tabs("option", "active");
@@ -37,9 +37,51 @@ var UIHelper = (function () {
         var tabpage = getActiveTabId(tabControlId);
         return (tabpage !== undefined ? (tabpage === tabpageId) : false);
     }
+    function togglePanelDetails(panel_id,callback){
 
+        // toggle the visibility of the panel's detail drawer
+        $("#" + panel_id + " .komet-concept-section-panel-details").toggle();
+
+        var expander = $("#" + panel_id + " .glyphicon-plus-sign, #" + panel_id + " .glyphicon-minus-sign");
+
+        // change the displayed expander icon
+        if (expander.hasClass("glyphicon-plus-sign")){
+
+            expander.removeClass("glyphicon-plus-sign");
+            expander.addClass("glyphicon-minus-sign");
+            toggle=true;
+
+        } else {
+
+            expander.removeClass("glyphicon-minus-sign");
+            expander.addClass("glyphicon-plus-sign");
+            toggle=false;
+        }
+
+        // if the user clicked on the top level concept expander, change the associated text label
+        if (expander.parent().hasClass('komet-concept-body-tools')){
+
+            var item_text = expander[0].nextElementSibling;
+
+            if (item_text.innerHTML == "Expand All"){
+                item_text.innerHTML = "Collapse All";
+                toggle=true;
+            } else {
+                item_text.innerHTML = "Expand All";
+                toggle=false;
+            }
+        }
+        if (callback && toggle)
+            {
+              console.log(callback.toString());
+              callback();
+            }
+    }
     return {
         getActiveTabId: getActiveTabId,
-        isTabActive: isTabActive
+        isTabActive: isTabActive,
+        togglePanelDetails: togglePanelDetails
     };
 })();
+
+

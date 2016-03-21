@@ -1,10 +1,30 @@
-<h1>SVG Diagram</h1>
-<div id="svgbasics"></div>
+
+
+<div class="komet-concept-diagram-title">SVG Diagram</div>
+
+<div id="komet_concept_diagram_panel_" class="komet-concept-section-panel komet-concept-diagram-panel">
+
+  <!-- main header block - always visible -->
+  <div class="komet-concept-section-panel-header">
+
+    <!-- expand/collapse icon - controls details drawer -->
+    <div class="glyphicon glyphicon-plus-sign" onclick="UIHelper.togglePanelDetails('komet_concept_diagram_panel_',function(){SvgHelper.startDiagram('svgbasics');})"></div>
+
+    <!-- description type, refset -->
+    <div>
+      <span id="concept_diagram_header_text">Click here to view diagram</span>
+    </div>
+
+  </div>
+
+  <!-- details drawer - can be collapsed -->
+  <div class="komet-concept-section-panel-details">
+    <div style="height:800px;width:1000px " id="svgbasics"></div>
+  </div>
+
+</div>
+
+
 <script>
-  $(function() {
-    if (UIHelper.isTabActive('taxonomy_content_tabs', 'taxonomy_content_diagram')) {
-      $.get(gon.routes.taxonomy_svg_diagram_path, {concept_id: ConceptsModule.getCurrentConceptId}, function (data) {
-      }, "script");
-    }
-  });
+
 </script>
