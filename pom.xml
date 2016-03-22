@@ -130,7 +130,7 @@
 						<configuration>
 							<jrubyVerbose>true</jrubyVerbose>
 							<jrubyJvmArgs>-Xmx4000m</jrubyJvmArgs>
-							<execArgs>RAILS_ENV=${railsMode} RAILS_RELATIVE_URL_ROOT=rails_komet_a</execArgs>
+							<execArgs>RAILS_ENV=${railsMode} RAILS_RELATIVE_URL_ROOT=/rails_komet_a</execArgs>
 							<command>rake</command>
 							<args>devops:build_war</args>
 						</configuration>
@@ -144,7 +144,7 @@
 						<configuration>
 							<jrubyVerbose>true</jrubyVerbose>
 							<jrubyJvmArgs>-Xmx4000m</jrubyJvmArgs>
-							<execArgs>RAILS_ENV=${railsMode} RAILS_RELATIVE_URL_ROOT=rails_komet_b</execArgs>
+							<execArgs>RAILS_ENV=${railsMode} RAILS_RELATIVE_URL_ROOT=/rails_komet</execArgs>
 							<command>rake</command>
 							<args>devops:build_war</args>
 						</configuration>
