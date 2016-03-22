@@ -21,8 +21,6 @@
  */
 var UIHelper = (function () {
 
-    var open = false;
-
     function getActiveTabId(tabControlId) {
         var id = "#" + tabControlId;
         var idx = $(id).tabs("option", "active");

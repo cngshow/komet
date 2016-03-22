@@ -1,3 +1,10 @@
 # end isaac_root with a slash '/'
-<%= "isaac_root = " + (ENV['ISAAC_ROOT'].nil? ? "http://localhost:8180/" : ENV['ISAAC_ROOT'].to_s) %>
+<%
+if (ENV['ISAAC_ROOT'])
+  @isaac_root = ENV['ISAAC_ROOT']
+else
+  @isaac_root = Rails.env.development? ? "http://localhost:8180/" : "http://vadev.mantech.com:4848/isaac_root/"
+end
+%>
+<%= "isaac_root = #{@isaac_root}" %>
 
