@@ -25,7 +25,7 @@
   <div class="panel-body">
 
     <div class="komet-concept-body-tools">
-      <div class="glyphicon glyphicon-plus-sign" onclick="UIHelper.togglePanelDetails('komet-concept-panel')"></div>
+      <div class="glyphicon glyphicon-plus-sign" onclick="ConceptsModule.togglePanelDetails('komet-concept-panel')"></div>
       <span>Expand All</span>
 
       <div class="komet-flex-right">
@@ -66,6 +66,7 @@
   </div>
 </div>
 
+<!--
 <div id="taxonomy_content_tabs" class="taxonomy-content-tabs">
   <ul id="tabLabels">
     <li><a href='#taxonomy_content_details'>Details</a></li>
@@ -83,14 +84,14 @@
   <div id="taxonomy_content_members"></div>
   <div id="taxonomy_content_references"></div>
 </div>
-
+-->
 <script>
   // initialize the tabs on document ready
   $(document).ready(function () {
-    $("#taxonomy_content_tabs").tabs({
+    /*$("#taxonomy_content_tabs").tabs({
       active: 0
     });
-
+*/
     ConceptsModule.initialize();
 
     // render the SVG diagram when the diagram tabpage is selected
@@ -102,36 +103,4 @@
       });
     });
   });
-
-  function toggleConceptDetails(panel_id){
-
-    // toggle the visibility of the panel's detail drawer
-    $("#" + panel_id + " .komet-concept-section-panel-details").toggle();
-
-    var expander = $("#" + panel_id + " .glyphicon-plus-sign, #" + panel_id + " .glyphicon-minus-sign");
-
-    // change the displayed expander icon
-    if (expander.hasClass("glyphicon-plus-sign")){
-
-      expander.removeClass("glyphicon-plus-sign");
-      expander.addClass("glyphicon-minus-sign");
-    } else {
-
-      expander.removeClass("glyphicon-minus-sign");
-      expander.addClass("glyphicon-plus-sign");
-    }
-
-    // if the user clicked on the top level concept expander, change the associated text label
-    if (expander.parent().hasClass('komet-concept-body-tools')){
-
-      var item_text = expander[0].nextElementSibling;
-
-      if (item_text.innerHTML == "Expand All"){
-        item_text.innerHTML = "Collapse All";
-      } else {
-        item_text.innerHTML = "Expand All";
-      }
-    }
-
-  }
 </script>

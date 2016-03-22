@@ -369,7 +369,6 @@ class TaxonomyController < ApplicationController
         has_children = !concept.children.nil?
         child_count = (has_children ? concept.children.length : 0)
         badge = has_children ? "&nbsp;&nbsp;<span class=\"badge badge-success\" title=\"kma\">#{child_count}</span>" : ''
-        badge += has_children ? "&nbsp;&nbsp;<sup>#{child_count}</sup>" : ''
         desc << badge
 
         node = {}

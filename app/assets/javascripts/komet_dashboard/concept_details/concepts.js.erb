@@ -1,30 +1,90 @@
 var ConceptsModule = (function () {
+
   var currentConceptID;
   var panelStates = {};
 
+  function togglePanelDetails(panel_id, callback, preserveState) {
+
+    // get the panel's expander icon, or all expander icons if this is the top level expander
+    var expander = $("#" + panel_id + " .glyphicon-plus-sign, #" + panel_id + " .glyphicon-minus-sign");
+    var drawer = $("#" + panel_id + " .komet-concept-section-panel-details");
+
+    // if the user clicked on the top level concept expander, change the associated text label
+    if (expander.parent().hasClass('komet-concept-body-tools')) {
+
+      var item_text = expander[0].nextElementSibling;
+
+      if (item_text.innerHTML == "Expand All") {
+
+        item_text.innerHTML = "Collapse All";
+        open = true;
+
+      } else {
+
+        item_text.innerHTML = "Expand All";
+        open = false;
+      }
+    } else {
+      open = expander.hasClass("glyphicon-plus-sign");
+    }
+
+    // change the displayed expander icon
+    if (open) {
+
+      expander.removeClass("glyphicon-plus-sign");
+      expander.addClass("glyphicon-minus-sign");
+      drawer.show();
+
+    } else {
+
+      expander.removeClass("glyphicon-minus-sign");
+      expander.addClass("glyphicon-plus-sign");
+      drawer.hide();
+    }
+
+    // if there is a callback run it passing in if we are opening or closing
+    if (callback) {
+      callback(open);
+    }
+
+    // if we are preserving state set the current state of the panel into the ConceptsModule object.
+    if (preserveState) {
+      ConceptsModule.setPanelState(panel_id, open, callback);
+    }
+  }
+
   function setPanelState(panelID, state, callback) {
+
     if (panelStates[panelID] === undefined) {
       panelStates[panelID] = [];
     }
+
     panelStates[panelID][0] = state;
+
     if (callback){
       panelStates[panelID][1] = callback;
     }
   }
 
   function getPanelState(panelID) {
+
     if(!panelStates[panelID]) {
       return false;
     }
+
     return panelStates[panelID][0];
   }
 
   function restorePanelStates() {
+
     for (var key in panelStates) {
+
       var state = panelStates[key][0];
       var callback = panelStates[key][1];
+      console.log("restore state: " + key + " - state: " + state);
+
       if (state) {
-        UIHelper.togglePanelDetails(key, callback);
+        ConceptsModule.togglePanelDetails(key, callback);
       }
     }
   }
@@ -46,7 +106,6 @@ var ConceptsModule = (function () {
     $.subscribe(KometChannels.Taxonomy.taxonomySearchResultSelectedChannel, function (e, conceptID) {
 
       currentConceptID = conceptID;
-
       TaxonomyModule.selectedTreeNode = currentConceptID;
 
       loadConceptTabs();
@@ -78,6 +137,7 @@ var ConceptsModule = (function () {
     setPanelState : setPanelState,
     getPanelState : getPanelState,
     restorePanelStates : restorePanelStates,
+    togglePanelDetails: togglePanelDetails
   };
 
 })();
