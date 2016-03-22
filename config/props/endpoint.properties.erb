@@ -3,7 +3,7 @@
 if (ENV['ISAAC_ROOT'])
   @isaac_root = ENV['ISAAC_ROOT']
 else
-  @isaac_root = Rails.env.development? ? "http://localhost:8180/" : "http://vadev.mantech.com:4848/isaac_root/"
+  @isaac_root = Rails.env.development? ? "http://localhost:8180/" : "http://vadev.mantech.com:4848/isaac-rest-1.0-SNAPSHOT/"
 end
 %>
 <%= "isaac_root = #{@isaac_root}" %>
