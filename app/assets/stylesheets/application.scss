@@ -35,6 +35,12 @@ Copyright Notice
 @import "bootstrap-sprockets";
 @import "bootstrap";
 
+html, body{
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  padding: 0;
+}
 
 // jQuery UI Overrides
 // need to reiterate this style for some reason - gets lost on the search page for advanced options
@@ -43,6 +49,65 @@ Copyright Notice
 }
 .ui-tabs .ui-tabs-panel{
   padding:5px;
+}
+
+// KOMET Login styles
+.external.login{
+  background-color: #eef1f3;
+}
+.komet-external-header{
+  display: flex;
+  font-size: xx-large;
+  color: white;
+  width: 100%;
+  height: 5em;
+  background-color: #4f80d9;
+  justify-content: center;
+  align-items: center;
+
+}
+.komet-external-body{
+  background-color: #eef1f3;
+  display: flex;
+  height: 100%;
+  align-content: stretch;
+  align-items: stretch;
+  box-sizing: border-box;
+  padding: 10px;
+  width: 50%;
+  margin: auto;
+}
+.komet-external-left-column{
+  flex-grow: 1;
+  width: 55%;
+  font-weight: bold;
+  padding-top: 20px
+}
+.komet-external-right-column{
+  flex-grow: 1;
+  width: 45%;
+  align-self: flex-start;
+}
+.komet-external-login-form{
+  width: 94%;
+  height: 175px;
+  border: 2px solid black;
+  border-radius: 4px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  margin-left: auto;
+  padding: 20px;
+}
+
+.komet-external-login-form .form-control{
+  display: inline-block;
+  width: 200px;
+  margin-top: 10px;
+}
+
+.komet-external-login-form .btn{
+  margin-top: 10px;
 }
 
 // KOMET Common styles
