@@ -64,6 +64,12 @@ var TaxonomyModule = (function () {
                 }
             }
         };
+
+        // if this is a parent search make sure the loading text is oriented correctly.
+        if (parent_search) {
+            settings.core["strings"] = {"Loading ...": "<div class='komet-reverse-tree-node'>Loading ...</div>"};
+        }
+
         var tree = $("#" + tree_id).jstree(settings);
         tree.parent_search = parent_search;
         tree.starting_concept_id = starting_concept_id;

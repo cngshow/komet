@@ -26,62 +26,8 @@ class TaxonomyController < ApplicationController
 
   after_filter :byte_size unless Rails.env.production?
 
-  def rest_concept_version_to_json_tree(rest_concept_version, root: false, parent_search: false, multi_path: true)
-
-    concept_nodes = []
-
-    if root
-
-      root = {}
-      root[:id] = rest_concept_version.conChronology.identifiers.uuids.first
-      root[:text] = rest_concept_version.conChronology.description
-      concept_nodes << root
-    end
-
-    # if we are walking up the tree toward the root node get the parents of the current node, otherwise get the children
-    if boolean(parent_search)
-      concepts = !rest_concept_version.parents.nil? ? rest_concept_version.parents : []
-    else
-      concepts = !rest_concept_version.children.nil? ? rest_concept_version.children : []
-    end
-
-    concepts.each do |concept|
-
-      if concept.conChronology
-
-        uuid = concept.conChronology.identifiers.uuids.first
-        desc = concept.conChronology.description
-        has_children = !concept.children.nil?
-        child_count = (has_children ? concept.children.length : 0)
-        badge = has_children ? "&nbsp;&nbsp;<span class=\"badge badge-success\" title=\"kma\">#{child_count}</span>" : ''
-        badge += has_children ? "&nbsp;&nbsp;<sup>#{child_count}</sup>" : ''
-        desc << badge
-
-        node = {}
-        node[:id] = uuid
-        node[:text] = desc
-        node[:children] = has_children
-        node[:child_count] = child_count
-        has_parents = !concept.parents.nil?
-        parent_count = has_parents ? concept.parents.length : 0
-        node[:parent_count] = parent_count
-        parents = []
-
-        # if this node has parents and we want to see all parent paths then get the IDs of each parent
-        if has_parents && multi_path
-
-          concept.parents.each do |parent|
-            parents << parent.conChronology.identifiers.uuids.first
-          end
-        end
-
-        node[:parents] = parents
-
-        concept_nodes << node
-      end
-    end
-
-    concept_nodes
+  def taxonomy
+    @stated = 'false'
   end
 
   ##
@@ -236,8 +182,6 @@ class TaxonomyController < ApplicationController
     end
 
     @descriptions =  descriptions(concept_id) #ConceptRest::get_concept(action: ConceptRestActions::ACTION_DESCRIPTIONS, uuid: concept_id)
-
-
 
   end
 
@@ -395,6 +339,63 @@ class TaxonomyController < ApplicationController
     @concept_members << {term: 'Term 2', concept_id: concept_id}
     @concept_members << {term: 'Term 3', concept_id: '333333'}
 
+  end
+
+  def rest_concept_version_to_json_tree(rest_concept_version, root: false, parent_search: false, multi_path: true)
+
+    concept_nodes = []
+
+    if root
+
+      root = {}
+      root[:id] = rest_concept_version.conChronology.identifiers.uuids.first
+      root[:text] = rest_concept_version.conChronology.description
+      concept_nodes << root
+    end
+
+    # if we are walking up the tree toward the root node get the parents of the current node, otherwise get the children
+    if boolean(parent_search)
+      concepts = !rest_concept_version.parents.nil? ? rest_concept_version.parents : []
+    else
+      concepts = !rest_concept_version.children.nil? ? rest_concept_version.children : []
+    end
+
+    concepts.each do |concept|
+
+      if concept.conChronology
+
+        uuid = concept.conChronology.identifiers.uuids.first
+        desc = concept.conChronology.description
+        has_children = !concept.children.nil?
+        child_count = (has_children ? concept.children.length : 0)
+        badge = has_children ? "&nbsp;&nbsp;<span class=\"badge badge-success\" title=\"kma\">#{child_count}</span>" : ''
+        desc << badge
+
+        node = {}
+        node[:id] = uuid
+        node[:text] = desc
+        node[:children] = has_children
+        node[:child_count] = child_count
+        has_parents = !concept.parents.nil?
+        parent_count = has_parents ? concept.parents.length : 0
+        node[:parent_count] = parent_count
+        parents = []
+
+        # if this node has parents and we want to see all parent paths then get the IDs of each parent
+        if has_parents && multi_path
+
+          concept.parents.each do |parent|
+            parents << parent.conChronology.identifiers.uuids.first
+          end
+        end
+
+        node[:parents] = parents
+
+        concept_nodes << node
+      end
+    end
+
+    concept_nodes
   end
 
   def get_tree_node (id)

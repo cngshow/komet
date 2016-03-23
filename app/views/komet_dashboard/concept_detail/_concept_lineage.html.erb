@@ -6,7 +6,7 @@
     <div class="komet-concept-section-panel-header">
 
       <!-- expand/collapse icon - controls details drawer -->
-      <div class="glyphicon glyphicon-plus-sign" onclick="UIHelper.togglePanelDetails('komet_concept_lineage_panel_', null, true)"></div>
+      <div class="glyphicon glyphicon-plus-sign" onclick="ConceptsModule.togglePanelDetails('komet_concept_lineage_panel_', null, true)"></div>
 
       <!-- description type, refset -->
       <div>
@@ -35,49 +35,5 @@
   </div>
 
 <script>
-  $(document).ready(function () {
-
-    try {
-
-      var stated = $("#komet_concept_stated_inferred")[0].value
-
-      TaxonomyModule.buildTaxonomyTree("concept_lineage_parents_tree", stated, true, TaxonomyModule.selectedTreeNode);
-      TaxonomyModule.buildTaxonomyTree("concept_lineage_children_tree", stated, false, TaxonomyModule.selectedTreeNode);
-
-      TaxonomyModule.concept_lineage_parents_tree.bind('ready.jstree', function (event, data) {
-
-        if (data.instance._cnt == 0) {
-
-          TaxonomyModule.concept_lineage_parents_tree.html("<div class='komet-reverse-tree-node'>No Parents</div>");
-          $("#concept_lineage_header_text").html("No Parent");
-        } else{
-          $("#concept_lineage_header_text").html(data.instance.get_node('ul > li:first').text);
-        }
-      });
-
-      TaxonomyModule.concept_lineage_children_tree.bind('ready.jstree', function (event, data) {
-
-        if (data.instance._cnt == 0) {
-          TaxonomyModule.concept_lineage_children_tree.html("No Children");
-        }
-      });
-
-      // publish an event that passes the id of the concept selected to listeners
-      function onChanged(event, selectedObject) {
-
-        var conceptId = selectedObject.node.id;
-        $.publish(KometChannels.Taxonomy.taxonomyTreeNodeSelectedChannel, conceptId);
-      }
-
-      TaxonomyModule.concept_lineage_parents_tree.on('changed.jstree', onChanged);
-      TaxonomyModule.concept_lineage_children_tree.on('changed.jstree', onChanged);
-      
-
-    }
-    catch (err) {
-      console.log("*******  ERROR **********");
-      console.log(err.message);
-    }
-
-  });
+  ConceptsModule.setPanelState('komet_concept_lineage_panel_', null, null);
 </script>
