@@ -1,5 +1,4 @@
 
-
 <div class="komet-concept-diagram-title">SVG Diagram</div>
 
 <div id="komet_concept_diagram_panel_" class="komet-concept-section-panel komet-concept-diagram-panel">
@@ -8,7 +7,7 @@
   <div class="komet-concept-section-panel-header">
 
     <!-- expand/collapse icon - controls details drawer -->
-    <div class="glyphicon glyphicon-plus-sign" onclick="ConceptsModule.togglePanelDetails('komet_concept_diagram_panel_',function(open){ if(open){SvgHelper.startDiagram('svgbasics', null);}}, true)"></div>
+    <div class="glyphicon glyphicon-plus-sign" onclick="ConceptsModule.togglePanelDetails('komet_concept_diagram_panel_', null, true)"></div>
 
     <!-- description type, refset -->
     <div>
@@ -19,8 +18,12 @@
 
   <!-- details drawer - can be collapsed -->
   <div class="komet-concept-section-panel-details">
-    <div style="height:800px;width:1000px " id="svgbasics"></div>
+    <div style="height:800px;width:1000px " id="svgbasics" class="komet-concept-svg"></div>
   </div>
 
 </div>
+
+<script>
+  ConceptsModule.setPanelState('komet_concept_diagram_panel_', null, SvgHelper.renderDiagram);
+</script>
 

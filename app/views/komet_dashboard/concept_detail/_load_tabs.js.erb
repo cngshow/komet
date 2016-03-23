@@ -1,11 +1,22 @@
-console.log("^^^^^^^^^ Loading Tabs ^^^^^^^^^^^^");
 $('#komet_concept_definition_section').html("<%= j(render(:partial => 'komet_dashboard/concept_detail/concept_definition')) %>");
 $('#komet_concept_lineage_section').html("<%= j(render(:partial => 'komet_dashboard/concept_detail/concept_lineage')) %>");
 $('#komet_concept_diagram_section').html("<%= j(render(:partial => 'komet_dashboard/concept_detail/concept_diagram')) %>");
 
 // function to restore the states (open/closed) of all these divs.  Keep this last!!
-ConceptsModule.restorePanelStates();
 
+$(document).ready(function () {
+
+  try {
+    ConceptsModule.restorePanelStates();
+    ConceptsModule.loadLineageTrees();
+
+  }
+  catch (err) {
+    console.log("*******  ERROR **********");
+    console.log(err.message);
+  }
+
+});
 /*
 $('#taxonomy_content_details').html("<%#= j(render(:partial => 'komet_dashboard/concept_detail/concept_details')) %>");
 $('#taxonomy_content_diagram').html("<%#=j(render(:partial => 'komet_dashboard/concept_detail/concept_diagram')) %>");

@@ -8,9 +8,10 @@ var ConceptsModule = (function () {
     // get the panel's expander icon, or all expander icons if this is the top level expander
     var expander = $("#" + panel_id + " .glyphicon-plus-sign, #" + panel_id + " .glyphicon-minus-sign");
     var drawer = $("#" + panel_id + " .komet-concept-section-panel-details");
+    var topLevelExpander = expander.parent().hasClass('komet-concept-body-tools');
 
     // if the user clicked on the top level concept expander, change the associated text label
-    if (expander.parent().hasClass('komet-concept-body-tools')) {
+    if (topLevelExpander) {
 
       var item_text = expander[0].nextElementSibling;
 
@@ -28,7 +29,7 @@ var ConceptsModule = (function () {
       open = expander.hasClass("glyphicon-plus-sign");
     }
 
-    // change the displayed expander icon
+    // change the displayed expander icon and drawer visibility
     if (open) {
 
       expander.removeClass("glyphicon-plus-sign");
@@ -42,14 +43,29 @@ var ConceptsModule = (function () {
       drawer.hide();
     }
 
-    // if there is a callback run it passing in if we are opening or closing
-    if (callback) {
-      callback(open);
-    }
+    // save state if needed, and if there is a callback run it, passing the panel ID and open state.
+    if(topLevelExpander){
 
-    // if we are preserving state set the current state of the panel into the ConceptsModule object.
-    if (preserveState) {
-      ConceptsModule.setPanelState(panel_id, open, callback);
+      // if this is the top level loop through all saved panel states and run the callback if it has one
+      for (var key in panelStates) {
+
+        panelStates[key][0] = open;
+
+        if (panelStates[key].length > 1 && panelStates[key][1]){
+          panelStates[key][1](key, open);
+        }
+      }
+    } else {
+
+      // if we are preserving state set the current state of the panel into the ConceptsModule object.
+      if (preserveState) {
+        ConceptsModule.setPanelState(panel_id, open, callback);
+      }
+
+      //r un the callback
+      if (panelStates[panel_id].length > 1 && panelStates[panel_id][1]) {
+        panelStates[panel_id][1](panel_id, open);
+      }
     }
   }
 
@@ -59,7 +75,9 @@ var ConceptsModule = (function () {
       panelStates[panelID] = [];
     }
 
-    panelStates[panelID][0] = state;
+    if (state !== null) {
+      panelStates[panelID][0] = state;
+    }
 
     if (callback){
       panelStates[panelID][1] = callback;
@@ -87,6 +105,42 @@ var ConceptsModule = (function () {
         ConceptsModule.togglePanelDetails(key, callback);
       }
     }
+  }
+
+  function loadLineageTrees(){
+
+    var stated = $("#komet_concept_stated_inferred")[0].value
+
+    TaxonomyModule.buildTaxonomyTree("concept_lineage_parents_tree", stated, true, TaxonomyModule.selectedTreeNode);
+    TaxonomyModule.buildTaxonomyTree("concept_lineage_children_tree", stated, false, TaxonomyModule.selectedTreeNode);
+
+    TaxonomyModule.concept_lineage_parents_tree.bind('ready.jstree', function (event, data) {
+
+      if (data.instance._cnt == 0) {
+
+        TaxonomyModule.concept_lineage_parents_tree.html("<div class='komet-reverse-tree-node'>No Parents</div>");
+        $("#concept_lineage_header_text").html("No Parent");
+      } else{
+        $("#concept_lineage_header_text").html(data.instance.get_node('ul > li:first').text);
+      }
+    });
+
+    TaxonomyModule.concept_lineage_children_tree.bind('ready.jstree', function (event, data) {
+
+      if (data.instance._cnt == 0) {
+        TaxonomyModule.concept_lineage_children_tree.html("No Children");
+      }
+    });
+
+    // publish an event that passes the id of the concept selected to listeners
+    function onChanged(event, selectedObject) {
+
+      var conceptId = selectedObject.node.id;
+      $.publish(KometChannels.Taxonomy.taxonomyTreeNodeSelectedChannel, conceptId);
+    }
+
+    TaxonomyModule.concept_lineage_parents_tree.on('changed.jstree', onChanged);
+    TaxonomyModule.concept_lineage_children_tree.on('changed.jstree', onChanged);
   }
 
   function subscribeToTaxonomyTree() {
@@ -133,6 +187,7 @@ var ConceptsModule = (function () {
 
   return {
     initialize: init,
+    loadLineageTrees: loadLineageTrees,
     getCurrentConceptId: getCurrentConceptId,
     setPanelState : setPanelState,
     getPanelState : getPanelState,

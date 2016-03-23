@@ -419,8 +419,20 @@ var SvgHelper = (function () {
         return g;
     }
 
+    // function called when the diagram tab is clicked opened
+    function renderDiagram(panel_id, open){
+
+        var svg_id = $("#" + panel_id + " .komet-concept-svg").attr("id");
+
+        // only draw the diagram if it doesn't exist and will be visible
+        if($("#" + svg_id).svg('get') === undefined && open){
+            SvgHelper.startDiagram(svg_id, null);
+        }
+    }
+
     return {
         drawConceptDiagram: drawConceptDiagram,
-        startDiagram: startDiagram
+        startDiagram: startDiagram,
+        renderDiagram: renderDiagram
     };
 })();

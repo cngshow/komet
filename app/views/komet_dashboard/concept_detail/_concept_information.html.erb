@@ -88,19 +88,12 @@
 <script>
   // initialize the tabs on document ready
   $(document).ready(function () {
+
+    ConceptsModule.initialize();
+
     /*$("#taxonomy_content_tabs").tabs({
       active: 0
     });
-*/
-    ConceptsModule.initialize();
-
-    // render the SVG diagram when the diagram tabpage is selected
-    $("#tabLabels").on("click", ".svg_diagram", function(event){
-      // make an AJAX call to reload the concept diagram
-      var args = {concept: ConceptsModule.getCurrentConceptId()};
-      $.get(gon.routes.taxonomy_render_concept_diagram_path, args, function (data) {
-        $("#taxonomy_content_diagram").html(data);
-      });
-    });
+     */
   });
 </script>
