@@ -23,7 +23,9 @@ var SvgHelper = (function () {
      if (!conceptID) {
          conceptID = ConceptsModule.getCurrentConceptId();
      }
-     var route = gon.routes.logic_graph_version_path.replace(":id", conceptID.toString());
+
+   var route = gon.routes.logic_graph_version_path.replace(":id", conceptID.toString());
+   //  var route = gon.routes.logic_graph_version_path.replace(":id", 'b7065e3e-bf34-3de3-aee2-25802c0c00e4');
      AjaxCache.fetch(route,{},function(data){
        //  console.log("data  " + JSON.stringify(data))
       drawConceptDiagram(svgId,data)
@@ -41,10 +43,22 @@ var SvgHelper = (function () {
         var x = 10;
         var y = 10;
         var maxX = 10;
-        var rect1 = drawSctBox(svg, 10, 10, data.referencedConceptDescription, 0, "sct-primitive-concept");
+        var sctclass="";
+
+        if (data.isReferencedConceptDefined) {
+            sctClass = "sct-defined-concept";
+        }
+        else {
+
+            sctClass = "sct-primitive-concept";
+        }
+
+
+        var rect1 = drawSctBox(svg, 10, 10, data.referencedConceptDescription, 0, sctClass);
         x = x + 90;
         y = y + rect1.getBBox().height + 40;
         var circle1;
+        //console.log(data.rootLogicNode.children[0].nodeSemantic.name)
         if (data.rootLogicNode.children[0].nodeSemantic.name == "SUFFICIENT_SET") {
             circle1 = drawSubsumedByNode(svg, x, y);
         } else {
@@ -58,77 +72,44 @@ var SvgHelper = (function () {
         x = x + 40;
         y = y - 18;
         maxX = ((maxX < x) ? x : maxX);
-        $.each(toArray(data.rootLogicNode.children[0].children[0]), function(i, field) {
+        for (i = 0; i < data.rootLogicNode.children[0].children[0].children.length; i++) {
 
-
-            var splitstring = field.split(',')
-            var maxnumber =0;
-            for (i = 0; i < splitstring.length; i++) {
-
-                var field  = splitstring[i];
-                var splitval = field.split('~')
-                if (splitval.length > 0)
-                {
-
-                    if (splitval[1]=="CONCEPT")
-                    {
-                        var conceptconnect = splitstring[i +2].split('~')
-
-                        var rectParent = drawSctBox(svg, x, y, splitstring[i +3].split('~')[1] , conceptconnect[1], 'sct-defined-concept');
-
-                        connectElements(svg, circle2, rectParent, 'center', 'left', 'ClearTriangle');
-                        y = y + rectParent.getBBox().height + 25;
-                        maxX = ((maxX < x + rectParent.getBBox().width + 50) ? x + rectParent.getBBox().width + 50 : maxX);
-
-                    }
-                    if (splitval[1] == "ROLE_SOME") {
-
-                       var conceptconnect = splitstring[i +1].split('~')
-                       var rectAttr = drawSctBox(svg, x, y, splitval[1],'', "sct-attribute");
-                        connectElements(svg, circle2, rectAttr, 'center', 'left');
-                       var rectTarget = drawSctBox(svg, x + rectAttr.getBBox().width + 50, y, splitstring[i +1].split('~')[1],conceptconnect[2], 'sct-defined-concept');
-                      connectElements(svg, rectAttr, rectTarget, 'right', 'left');
-                      y = y + rectTarget.getBBox().height + 25;
-                      maxX = ((maxX < x + rectAttr.getBBox().width + 50 + rectTarget.getBBox().width + 50) ? x + rectAttr.getBBox().width + 50 + rectTarget.getBBox().width + 50 : maxX);
-                        maxnumber = maxnumber +1;
-                       if (maxnumber > 1)
-                       {
-                        y = y  + 15;
-                           maxnumber=0;
-                            var groupNode = drawAttributeGroupNode(svg, x, y);
-                            connectElements(svg, circle2, groupNode, 'center', 'left');
-                            var conjunctionNode = drawConjunctionNode(svg, x + 55, y);
-                            connectElements(svg, groupNode, conjunctionNode, 'right', 'left');
-                                sctClass = "sct-defined-concept";
-
-                                var rectRole = drawSctBox(svg, x + 85, y - 18, splitstring[1],'',"sct-attribute");
-                                connectElements(svg, conjunctionNode, rectRole, 'center', 'left');
-                                var rectRole2 = drawSctBox(svg, x + 85 + rectRole.getBBox().width + 30, y - 18, splitstring[i +1],conceptconnect[2], sctClass);
-                                connectElements(svg, rectRole, rectRole2, 'right', 'left');
-                                y = y + rectRole2.getBBox().height + 25;
-                                maxX = ((maxX < x + 85 + rectRole.getBBox().width + 30 + rectRole2.getBBox().width + 50) ? x + 85 + rectRole.getBBox().width + 30 + rectRole2.getBBox().width + 50 : maxX);
-                       }
-                    }
-                  //  if (splitval[1] == "AND") {
-                    //    var circle2 = drawConjunctionNode(svg, x, y);
-                      //  connectElements(svg, circle1, circle2, 'right', 'left', 'LineMarker');
-                    //}
-
-
+            if (data.rootLogicNode.children[0].children[0].children[i].nodeSemantic.name == "CONCEPT") {
+                if (data.rootLogicNode.children[0].children[0].children[i].isConceptDefined) {
+                    sctClass = "sct-defined-concept";
                 }
+                else {
+
+                    sctClass = "sct-primitive-concept";
+                }
+                var rectParent = drawSctBox(svg, x, y, data.rootLogicNode.children[0].children[0].children[i].conceptDescription, data.rootLogicNode.children[0].children[0].children[i].conceptSequence, sctClass);
+                connectElements(svg, circle2, rectParent, 'center', 'left', 'ClearTriangle');
+                y = y + rectParent.getBBox().height + 25;
+                maxX = ((maxX < x + rectParent.getBBox().width + 50) ? x + rectParent.getBBox().width + 50 : maxX);
+
+            }
+            else {
+
+                if (data.rootLogicNode.children[0].children[0].children[i].isConceptDefined) {
+                    sctClass = "sct-defined-concept";
+                }
+                else {
+
+                    sctClass = "sct-primitive-concept";
+                }
+
+                var rectAttr = drawSctBox(svg, x, y, data.rootLogicNode.children[0].children[0].children[i].connectorTypeConceptDescription, '', "sct-attribute");
+                connectElements(svg, circle2, rectAttr, 'center', 'left');
+                //  var rectTarget = drawSctBox(svg, x + rectAttr.getBBox().width + 50, y, data.rootLogicNode.children[0].children[0].children[0].connectorTypeConceptDescription ,data.rootLogicNode.children[0].children[0].children[0].connectorTypeConceptSequence , sctClass);
+                // connectElements(svg, rectAttr, rectTarget, 'right', 'left');
+                y = y + rectAttr.getBBox().height + 25;
+                maxX = ((maxX < x + rectAttr.getBBox().width + 50) ? x + rectAttr.getBBox().width + 50 : maxX);
+                //  y = y + rectTarget.getBBox().height + 25;
+                //  maxX = ((maxX < x + rectAttr.getBBox().width + 50 + rectTarget.getBBox().width + 50) ? x + rectAttr.getBBox().width + 50 + rectTarget.getBBox().width + 50 : maxX);
+
             }
 
-
-
-
-
-
-        });
-
-
-
-
-
+        }
 
         //currentConcept = concept;
         //currentSvgId = svgId;
