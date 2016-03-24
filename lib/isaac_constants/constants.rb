@@ -16,7 +16,8 @@ if Object.const_defined?("JTermAux")#refactor after maven build
   JTermAux.java_class.to_java.getDeclaredFields.each do |field|
     name = field.name
     uuid = JTermAux.java_class.to_java.getDeclaredField(name).get(JTermAux).getPrimordialUuid.to_s
-    ISAACConstants::TERMAUX[name] = uuid
+    translated = IdAPIsRest::get_id(action: IdAPIsRestActions::ACTION_TRANSLATE,uuid_or_id: uuid)
+    ISAACConstants::TERMAUX[name] = translated
   end
 end
 
