@@ -1,6 +1,6 @@
 class KometDashboardController < ApplicationController
 
-  before_action :setup_routes, :only => [:dashboard]
+  before_action :setup_routes, :setup_constants, :only => [:dashboard]
 
   def setup_routes
     routes = Rails.application.routes.named_routes.helpers.to_a
@@ -29,6 +29,11 @@ class KometDashboardController < ApplicationController
 
     $log.debug('routes hash passed to javascript is ' + routes_hash.to_s)
     gon.routes = routes_hash
+  end
+
+  def setup_constants
+    $log.debug('term_aux hash passed to javascript is ' + ISAACConstants::TERMAUX.to_s)
+    gon.term_aux = ISAACConstants::TERMAUX
   end
 
   def dashboard

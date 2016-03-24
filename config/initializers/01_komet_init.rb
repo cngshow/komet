@@ -18,6 +18,9 @@ require './lib/isaac_rest/sememe_rest'
 require './lib/isaac_rest/system_apis_rest'
 require './lib/isaac_rest/taxonomy_rest'
 
+#constants
+require './lib/isaac_constants/constants'
+
 $rest_cache = CachedHash.new($PROPS.fetch('KOMET.rest_cache_max').to_i)
 # Thread.new do
 #   sleep 3
