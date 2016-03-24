@@ -17,7 +17,7 @@ module ISAACConstants
       JTermAux.java_class.to_java.getDeclaredFields.each do |field|
         name = field.name
         uuid = JTermAux.java_class.to_java.getDeclaredField(name).get(JTermAux).getPrimordialUuid.to_s
-        translated = IdAPIsRest::get_id(action: IdAPIsRestActions::ACTION_TRANSLATE, uuid_or_id: uuid, additional_req_params: {"outputType" => "conceptSequence"})
+        translated = IdAPIsRest::get_id(action: IdAPIsRestActions::ACTION_TRANSLATE, uuid_or_id: uuid, additional_req_params: {"outputType" => "conceptSequence"}).to_json
         ISAACConstants::TERMAUX[name] = translated
       end
       TERMAUX.freeze
