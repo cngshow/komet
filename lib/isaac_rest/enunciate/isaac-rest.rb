@@ -174,7 +174,7 @@ module Gov
                     @parents = Array.new
                     _oa = _o['parents']
                     _oa.each { |_item|
-                      if (_item['@class'].nil?)
+                      if (_item.nil? || _item['@class'].nil?)
                         @parents.push Gov::Vha::Isaac::Rest::Api1::Data::Concept::RestConceptVersion.from_json(_item)
                       else
                         clazz_array_parts = _item['@class'].split('.')
@@ -191,7 +191,7 @@ module Gov
                     @children = Array.new
                     _oa = _o['children']
                     _oa.each { |_item|
-                      if (_item['@class'].nil?)
+                      if (_item.nil? || _item['@class'].nil?)
                         @children.push Gov::Vha::Isaac::Rest::Api1::Data::Concept::RestConceptVersion.from_json(_item)
                       else
                         clazz_array_parts = _item['@class'].split('.')
@@ -294,7 +294,7 @@ module Gov
                     @versions = Array.new
                     _oa = _o['versions']
                     _oa.each { |_item|
-                      if (_item['@class'].nil?)
+                      if (_item.nil? || _item['@class'].nil?)
                         @versions.push Gov::Vha::Isaac::Rest::Api1::Data::Sememe::RestSememeVersion.from_json(_item)
                       else
                         clazz_array_parts = _item['@class'].split('.')
@@ -389,7 +389,7 @@ module Gov
                     @nestedSememes = Array.new
                     _oa = _o['nestedSememes']
                     _oa.each { |_item|
-                      if (_item['@class'].nil?)
+                      if (_item.nil? || _item['@class'].nil?)
                         @nestedSememes.push Gov::Vha::Isaac::Rest::Api1::Data::Sememe::RestDynamicSememeVersion.from_json(_item)
                       else
                         clazz_array_parts = _item['@class'].split('.')
@@ -628,7 +628,7 @@ module Gov
                     @columnInfo = Array.new
                     _oa = _o['columnInfo']
                     _oa.each { |_item|
-                      if (_item['@class'].nil?)
+                      if (_item.nil? || _item['@class'].nil?)
                         @columnInfo.push Gov::Vha::Isaac::Rest::Api1::Data::Sememe::RestDynamicSememeColumnInfo.from_json(_item)
                       else
                         clazz_array_parts = _item['@class'].split('.')
@@ -841,7 +841,7 @@ module Gov
                   @uuids = Array.new
                   _oa = _o['uuids']
                   _oa.each { |_item|
-                    if (_item['@class'].nil?)
+                    if (_item.nil? || _item['@class'].nil?)
                       @uuids.push String.from_json(_item)
                     else
                       clazz_array_parts = _item['@class'].split('.')
@@ -921,7 +921,7 @@ module Gov
                   @items = Array.new
                   _oa = _o['items']
                   _oa.each { |_item|
-                    if (_item['@class'].nil?)
+                    if (_item.nil? || _item['@class'].nil?)
                       @items.push Gov::Vha::Isaac::Rest::Api::Data::Expandable.from_json(_item)
                     else
                       clazz_array_parts = _item['@class'].split('.')
@@ -1096,7 +1096,7 @@ module Gov
                     @children = Array.new
                     _oa = _o['children']
                     _oa.each { |_item|
-                      if (_item['@class'].nil?)
+                      if (_item.nil? || _item['@class'].nil?)
                         @children.push Gov::Vha::Isaac::Rest::Api1::Data::Logic::RestLogicNode.from_json(_item)
                       else
                         clazz_array_parts = _item['@class'].split('.')
@@ -1286,7 +1286,7 @@ module Gov
                     @versions = Array.new
                     _oa = _o['versions']
                     _oa.each { |_item|
-                      if (_item['@class'].nil?)
+                      if (_item.nil? || _item['@class'].nil?)
                         @versions.push Gov::Vha::Isaac::Rest::Api1::Data::Concept::RestConceptVersion.from_json(_item)
                       else
                         clazz_array_parts = _item['@class'].split('.')
@@ -1409,7 +1409,7 @@ module Gov
                     @columnValidatorTypes = Array.new
                     _oa = _o['columnValidatorTypes']
                     _oa.each { |_item|
-                      if (_item['@class'].nil?)
+                      if (_item.nil? || _item['@class'].nil?)
                         @columnValidatorTypes.push Gov::Vha::Isaac::Rest::Api1::Data::Enumerations::RestDynamicSememeValidatorType.from_json(_item)
                       else
                         clazz_array_parts = _item['@class'].split('.')
@@ -1426,7 +1426,7 @@ module Gov
                     @columnValidatorData = Array.new
                     _oa = _o['columnValidatorData']
                     _oa.each { |_item|
-                      if (_item['@class'].nil?)
+                      if (_item.nil? || _item['@class'].nil?)
                         @columnValidatorData.push Gov::Vha::Isaac::Rest::Api1::Data::Sememe::RestDynamicSememeData.from_json(_item)
                       else
                         clazz_array_parts = _item['@class'].split('.')
@@ -1698,7 +1698,7 @@ module Gov
                     @all = Array.new
                     _oa = _o['all']
                     _oa.each { |_item|
-                      if (_item['@class'].nil?)
+                      if (_item.nil? || _item['@class'].nil?)
                         @all.push Gov::Vha::Isaac::Rest::Api1::Data::Enumerations::RestSememeType.from_json(_item)
                       else
                         clazz_array_parts = _item['@class'].split('.')
@@ -2124,7 +2124,7 @@ module Gov
                     @all = Array.new
                     _oa = _o['all']
                     _oa.each { |_item|
-                      if (_item['@class'].nil?)
+                      if (_item.nil? || _item['@class'].nil?)
                         @all.push Gov::Vha::Isaac::Rest::Api1::Data::Enumerations::RestObjectChronologyType.from_json(_item)
                       else
                         clazz_array_parts = _item['@class'].split('.')
@@ -2557,7 +2557,7 @@ module Gov
                     @all = Array.new
                     _oa = _o['all']
                     _oa.each { |_item|
-                      if (_item['@class'].nil?)
+                      if (_item.nil? || _item['@class'].nil?)
                         @all.push Gov::Vha::Isaac::Rest::Api1::Data::Enumerations::RestConcreteDomainOperators.from_json(_item)
                       else
                         clazz_array_parts = _item['@class'].split('.')
@@ -2695,7 +2695,7 @@ module Gov
                     @all = Array.new
                     _oa = _o['all']
                     _oa.each { |_item|
-                      if (_item['@class'].nil?)
+                      if (_item.nil? || _item['@class'].nil?)
                         @all.push Gov::Vha::Isaac::Rest::Api1::Data::Enumerations::RestSupportedIdType.from_json(_item)
                       else
                         clazz_array_parts = _item['@class'].split('.')
@@ -2888,7 +2888,7 @@ module Gov
                     @all = Array.new
                     _oa = _o['all']
                     _oa.each { |_item|
-                      if (_item['@class'].nil?)
+                      if (_item.nil? || _item['@class'].nil?)
                         @all.push Gov::Vha::Isaac::Rest::Api1::Data::Enumerations::RestDynamicSememeDataType.from_json(_item)
                       else
                         clazz_array_parts = _item['@class'].split('.')
@@ -2986,7 +2986,7 @@ module Gov
                     @dialects = Array.new
                     _oa = _o['dialects']
                     _oa.each { |_item|
-                      if (_item['@class'].nil?)
+                      if (_item.nil? || _item['@class'].nil?)
                         @dialects.push Gov::Vha::Isaac::Rest::Api1::Data::Sememe::RestDynamicSememeVersion.from_json(_item)
                       else
                         clazz_array_parts = _item['@class'].split('.')
@@ -3066,7 +3066,7 @@ module Gov
                     @dataColumns = Array.new
                     _oa = _o['dataColumns']
                     _oa.each { |_item|
-                      if (_item['@class'].nil?)
+                      if (_item.nil? || _item['@class'].nil?)
                         @dataColumns.push Gov::Vha::Isaac::Rest::Api1::Data::Sememe::RestDynamicSememeData.from_json(_item)
                       else
                         clazz_array_parts = _item['@class'].split('.')
@@ -3263,7 +3263,7 @@ module Gov
                     @all = Array.new
                     _oa = _o['all']
                     _oa.each { |_item|
-                      if (_item['@class'].nil?)
+                      if (_item.nil? || _item['@class'].nil?)
                         @all.push Gov::Vha::Isaac::Rest::Api1::Data::Enumerations::RestNodeSemantic.from_json(_item)
                       else
                         clazz_array_parts = _item['@class'].split('.')
@@ -3342,7 +3342,7 @@ module Gov
                     @all = Array.new
                     _oa = _o['all']
                     _oa.each { |_item|
-                      if (_item['@class'].nil?)
+                      if (_item.nil? || _item['@class'].nil?)
                         @all.push Gov::Vha::Isaac::Rest::Api1::Data::Enumerations::RestDynamicSememeValidatorType.from_json(_item)
                       else
                         clazz_array_parts = _item['@class'].split('.')

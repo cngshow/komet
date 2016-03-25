@@ -16,16 +16,12 @@ class SememeVersionsTest < Test::Unit::TestCase
   def setup
     #build our isaac_root object from our yaml fixture
     json = YAML.load_file(FILES[Fixtures::SEMEME_VERSIONS])
-    @rest_sememe_v = Sememe.new(uuid: TEST_ID, params: nil, action: ACTION_VERSION, action_constants: ACTION_CONSTANTS).get_rest_class.send(:from_json, json)
+    @rest_sememe_v = Sememe.new(uuid: TEST_ID, params: nil, action: ACTION_VERSION, action_constants: ACTION_CONSTANTS).get_rest_class(json).send(:from_json, json)
   end
 
   def test_build_rest_sememe_by_version
-    begin
-      assert(!@rest_sememe_v.nil? , "The sememe was not properly converted from json to a RestSememeVersion!")
-      assert(@rest_sememe_v.class.eql?(Gov::Vha::Isaac::Rest::Api1::Data::Sememe::RestSememeDescriptionVersion) , "The sememe was not properly converted to a RestSememeVersion!")
-    rescue => ex
-      fail(FAIL_MESSAGE + ex.to_s)
-    end
+    assert(!@rest_sememe_v.nil?, "The sememe was not properly converted from json to a RestSememeVersion!")
+    assert(@rest_sememe_v.kind_of?(Gov::Vha::Isaac::Rest::Api1::Data::Sememe::RestSememeVersion), "The sememe was not properly converted to a RestSememeVersion!")
   end
 
   # Called after every test method runs. Can be used to tear

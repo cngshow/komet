@@ -1,4 +1,4 @@
-#Fixture created on 2016-03-17 16:55:35
+#Fixture created on 2016-03-25 09:30:34
 ---
 - "@class": gov.vha.isaac.rest.api1.data.sememe.RestSememeDescriptionVersion
   expandables:
@@ -6,18 +6,18 @@
     expandables:
       items:
       - name: versionsAll
-        url: rest/1/sememe/versions/2941235/
+        url: rest/1/sememe/versions/5734660/
       - name: versionsLatestOnly
-        url: rest/1/sememe/version/2941235/
-    sememeSequence: 2941235
+        url: rest/1/sememe/version/5734660/
+    sememeSequence: 5734660
     assemblageSequence: 63
-    referencedComponentNid: -2146638992
+    referencedComponentNid: -2143652882
     identifiers:
       uuids:
       - 8cf0aaeb-518e-3ee2-8082-cde525305d11
     versions:
   sememeVersion:
-    stampSequence: 60
+    stampSequence: 109
     state: ACTIVE
     time: 1012453200000
     authorSequence: 5
@@ -30,18 +30,18 @@
       expandables:
         items:
         - name: versionsAll
-          url: rest/1/sememe/versions/2941236/
+          url: rest/1/sememe/versions/5734661/
         - name: versionsLatestOnly
-          url: rest/1/sememe/version/2941236/
-      sememeSequence: 2941236
-      assemblageSequence: 77
-      referencedComponentNid: -2144120539
+          url: rest/1/sememe/version/5734661/
+      sememeSequence: 5734661
+      assemblageSequence: 78
+      referencedComponentNid: -2141134429
       identifiers:
         uuids:
         - 03412d8e-de9e-5c35-b033-e15ec0e43d93
       versions:
     sememeVersion:
-      stampSequence: 5
+      stampSequence: 54
       state: ACTIVE
       time: 1012453200000
       authorSequence: 5
@@ -52,7 +52,7 @@
     - "@class": gov.vha.isaac.rest.api1.data.sememe.dataTypes.RestDynamicSememeString
       columnNumber: 0
       data: '900000000000951010'
-  caseSignificanceConceptSequence: 111
+  caseSignificanceConceptSequence: 112
   languageConceptSequence: 8
   text: SNOMED CT Model Component
   descriptionTypeConceptSequence: 12
@@ -63,18 +63,18 @@
     expandables:
       items:
       - name: versionsAll
-        url: rest/1/sememe/versions/2941237/
+        url: rest/1/sememe/versions/5734662/
       - name: versionsLatestOnly
-        url: rest/1/sememe/version/2941237/
-    sememeSequence: 2941237
+        url: rest/1/sememe/version/5734662/
+    sememeSequence: 5734662
     assemblageSequence: 63
-    referencedComponentNid: -2146638992
+    referencedComponentNid: -2143652882
     identifiers:
       uuids:
       - 897ad324-0232-3735-b71f-de19434d9d32
     versions:
   sememeVersion:
-    stampSequence: 60
+    stampSequence: 109
     state: ACTIVE
     time: 1012453200000
     authorSequence: 5
@@ -87,18 +87,18 @@
       expandables:
         items:
         - name: versionsAll
-          url: rest/1/sememe/versions/2941238/
+          url: rest/1/sememe/versions/5734663/
         - name: versionsLatestOnly
-          url: rest/1/sememe/version/2941238/
-      sememeSequence: 2941238
-      assemblageSequence: 77
-      referencedComponentNid: -2144120537
+          url: rest/1/sememe/version/5734663/
+      sememeSequence: 5734663
+      assemblageSequence: 78
+      referencedComponentNid: -2141134427
       identifiers:
         uuids:
         - 1237c987-2047-5524-b489-deb8794e5d96
       versions:
     sememeVersion:
-      stampSequence: 5
+      stampSequence: 54
       state: ACTIVE
       time: 1012453200000
       authorSequence: 5
@@ -109,7 +109,7 @@
     - "@class": gov.vha.isaac.rest.api1.data.sememe.dataTypes.RestDynamicSememeString
       columnNumber: 0
       data: '900000000000952015'
-  caseSignificanceConceptSequence: 111
+  caseSignificanceConceptSequence: 112
   languageConceptSequence: 8
   text: SNOMED CT Model Component (metadata)
   descriptionTypeConceptSequence: 11

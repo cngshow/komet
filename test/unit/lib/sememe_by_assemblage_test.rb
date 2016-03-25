@@ -13,7 +13,7 @@ class SememeAssemblageTest < Test::Unit::TestCase
   def setup
     #build our isaac_root object from our yaml fixture
     json = YAML.load_file(FILES[Fixtures::SEMEME_BY_ASSEMBLAGE])
-    rest_sememe_assemblage = Sememe.new(uuid: TEST_ID, params: nil, action: ACTION_BY_ASSEMBLAGE, action_constants: ACTION_CONSTANTS).get_rest_class.send(:from_json, json.first)
+    rest_sememe_assemblage = Sememe.new(uuid: TEST_ID, params: nil, action: ACTION_BY_ASSEMBLAGE, action_constants: ACTION_CONSTANTS).get_rest_class(json.first).send(:from_json, json.first)
   end
 
   def test_build_rest_sememe_by_assemblage

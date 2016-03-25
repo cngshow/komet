@@ -1,15 +1,15 @@
-#Fixture created on 2016-03-17 16:55:35
+#Fixture created on 2016-03-25 09:30:34
 ---
 - "@class": gov.vha.isaac.rest.api1.data.sememe.RestDynamicSememeVersion
   expandables:
     items:
     - name: chronology
-      url: rest/1/sememe/chronology/422896
+      url: rest/1/sememe/chronology/3216321
     - name: nestedSememes
-      url: rest/1/sememe/version/422896/?expand=nestedSememes
+      url: rest/1/sememe/version/3216321/?expand=nestedSememes
   sememeChronology:
   sememeVersion:
-    stampSequence: 5
+    stampSequence: 54
     state: ACTIVE
     time: 1012453200000
     authorSequence: 5
@@ -24,19 +24,19 @@
   expandables:
     items:
     - name: chronology
-      url: rest/1/sememe/chronology/2941235
+      url: rest/1/sememe/chronology/5734660
     - name: nestedSememes
-      url: rest/1/sememe/version/2941235/?expand=nestedSememes
+      url: rest/1/sememe/version/5734660/?expand=nestedSememes
   sememeChronology:
   sememeVersion:
-    stampSequence: 60
+    stampSequence: 109
     state: ACTIVE
     time: 1012453200000
     authorSequence: 5
     moduleSequence: 0
     pathSequence: 7
   nestedSememes:
-  caseSignificanceConceptSequence: 111
+  caseSignificanceConceptSequence: 112
   languageConceptSequence: 8
   text: SNOMED CT Model Component
   descriptionTypeConceptSequence: 12
@@ -45,19 +45,19 @@
   expandables:
     items:
     - name: chronology
-      url: rest/1/sememe/chronology/2941237
+      url: rest/1/sememe/chronology/5734662
     - name: nestedSememes
-      url: rest/1/sememe/version/2941237/?expand=nestedSememes
+      url: rest/1/sememe/version/5734662/?expand=nestedSememes
   sememeChronology:
   sememeVersion:
-    stampSequence: 60
+    stampSequence: 109
     state: ACTIVE
     time: 1012453200000
     authorSequence: 5
     moduleSequence: 0
     pathSequence: 7
   nestedSememes:
-  caseSignificanceConceptSequence: 111
+  caseSignificanceConceptSequence: 112
   languageConceptSequence: 8
   text: SNOMED CT Model Component (metadata)
   descriptionTypeConceptSequence: 11

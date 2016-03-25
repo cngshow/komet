@@ -13,7 +13,7 @@ class LogicGraphChronologyTest < Test::Unit::TestCase
   def setup
     #build our object from our yaml fixture
     json = YAML.load_file(FILES[Fixtures::LOGIC_GRAPH_CHRONOLOGY])
-    @rest_graph_version = LogicGraph.new(uuid: TEST_UUID, params: nil, action: ACTION_CHRONOLOGY, action_constants: ACTION_CONSTANTS).get_rest_class.send(:from_json, json)
+    @rest_graph_version = LogicGraph.new(uuid: TEST_UUID, params: nil, action: ACTION_CHRONOLOGY, action_constants: ACTION_CONSTANTS).get_rest_class(json).send(:from_json, json)
   end
 
   def test_build_rest_graph_chronology

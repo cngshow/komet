@@ -1,121 +1,121 @@
-#Fixture created on 2016-03-17 16:55:35
+#Fixture created on 2016-03-25 09:30:35
 ---
-- matchNid: -2145698005
-  matchText: Heart transplant
-  score: 6.56234
-  active: false
+- matchNid: -2145197852
+  matchText: Heart
+  score: 10.525579
+  active: true
   expandables:
     items:
     - name: uuid
-      url: 1/id/translate/-2145698005?inputType=nid&outputType=uuid
+      url: 1/id/translate/-2145197852?inputType=nid&outputType=uuid
     - name: referencedConcept
       url: ''
   identifiers:
   referencedConcept:
-- matchNid: -2145698035
-  matchText: Heart repair
-  score: 6.56234
-  active: false
+- matchNid: -2145197868
+  matchText: Heart
+  score: 10.525579
+  active: true
   expandables:
     items:
     - name: uuid
-      url: 1/id/translate/-2145698035?inputType=nid&outputType=uuid
+      url: 1/id/translate/-2145197868?inputType=nid&outputType=uuid
     - name: referencedConcept
       url: ''
   identifiers:
   referencedConcept:
-- matchNid: -2145698029
-  matchText: Heart ligation
-  score: 6.56234
-  active: false
+- matchNid: -2147480856
+  matchText: Heart
+  score: 10.525579
+  active: true
   expandables:
     items:
     - name: uuid
-      url: 1/id/translate/-2145698029?inputType=nid&outputType=uuid
+      url: 1/id/translate/-2147480856?inputType=nid&outputType=uuid
     - name: referencedConcept
       url: ''
   identifiers:
   referencedConcept:
-- matchNid: -2145698023
-  matchText: Heart suturing
-  score: 6.56234
-  active: false
-  expandables:
-    items:
-    - name: uuid
-      url: 1/id/translate/-2145698023?inputType=nid&outputType=uuid
-    - name: referencedConcept
-      url: ''
-  identifiers:
-  referencedConcept:
-- matchNid: -2145762643
-  matchText: Fluttering heart
-  score: 6.56234
-  active: false
-  expandables:
-    items:
-    - name: uuid
-      url: 1/id/translate/-2145762643?inputType=nid&outputType=uuid
-    - name: referencedConcept
-      url: ''
-  identifiers:
-  referencedConcept:
-- matchNid: -2145762649
-  matchText: Bumping heart
-  score: 6.56234
-  active: false
-  expandables:
-    items:
-    - name: uuid
-      url: 1/id/translate/-2145762649?inputType=nid&outputType=uuid
-    - name: referencedConcept
-      url: ''
-  identifiers:
-  referencedConcept:
-- matchNid: -2145656153
-  matchText: Heart failure
-  score: 6.56234
-  active: false
-  expandables:
-    items:
-    - name: uuid
-      url: 1/id/translate/-2145656153?inputType=nid&outputType=uuid
-    - name: referencedConcept
-      url: ''
-  identifiers:
-  referencedConcept:
-- matchNid: -2145364025
+- matchNid: -2142377915
   matchText: Abdominal heart
-  score: 6.56234
+  score: 6.5784874
   active: false
   expandables:
     items:
     - name: uuid
-      url: 1/id/translate/-2145364025?inputType=nid&outputType=uuid
+      url: 1/id/translate/-2142377915?inputType=nid&outputType=uuid
     - name: referencedConcept
       url: ''
   identifiers:
   referencedConcept:
-- matchNid: -2145171553
+- matchNid: -2142670043
+  matchText: Heart failure
+  score: 6.5784874
+  active: false
+  expandables:
+    items:
+    - name: uuid
+      url: 1/id/translate/-2142670043?inputType=nid&outputType=uuid
+    - name: referencedConcept
+      url: ''
+  identifiers:
+  referencedConcept:
+- matchNid: -2142711895
+  matchText: Heart transplant
+  score: 6.5784874
+  active: false
+  expandables:
+    items:
+    - name: uuid
+      url: 1/id/translate/-2142711895?inputType=nid&outputType=uuid
+    - name: referencedConcept
+      url: ''
+  identifiers:
+  referencedConcept:
+- matchNid: -2142711913
+  matchText: Heart suturing
+  score: 6.5784874
+  active: false
+  expandables:
+    items:
+    - name: uuid
+      url: 1/id/translate/-2142711913?inputType=nid&outputType=uuid
+    - name: referencedConcept
+      url: ''
+  identifiers:
+  referencedConcept:
+- matchNid: -2142711919
+  matchText: Heart ligation
+  score: 6.5784874
+  active: false
+  expandables:
+    items:
+    - name: uuid
+      url: 1/id/translate/-2142711919?inputType=nid&outputType=uuid
+    - name: referencedConcept
+      url: ''
+  identifiers:
+  referencedConcept:
+- matchNid: -2142711925
+  matchText: Heart repair
+  score: 6.5784874
+  active: false
+  expandables:
+    items:
+    - name: uuid
+      url: 1/id/translate/-2142711925?inputType=nid&outputType=uuid
+    - name: referencedConcept
+      url: ''
+  identifiers:
+  referencedConcept:
+- matchNid: -2142185443
   matchText: Heart procedure
-  score: 6.56234
+  score: 6.5784874
   active: false
   expandables:
     items:
     - name: uuid
-      url: 1/id/translate/-2145171553?inputType=nid&outputType=uuid
-    - name: referencedConcept
-      url: ''
-  identifiers:
-  referencedConcept:
-- matchNid: -2145716911
-  matchText: Cineradiography - heart
-  score: 5.9001865
-  active: false
-  expandables:
-    items:
-    - name: uuid
-      url: 1/id/translate/-2145716911?inputType=nid&outputType=uuid
+      url: 1/id/translate/-2142185443?inputType=nid&outputType=uuid
     - name: referencedConcept
       url: ''
   identifiers:

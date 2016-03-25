@@ -93,6 +93,7 @@ end
 =begin
 load('./lib/isaac_rest/sememe_rest.rb')
 a = SememeRest::get_sememe(action: SememeRestActions::ACTION_BY_REFERENCED_COMPONENT,uuid_or_id: SememeRest::TEST_UUID_REF_COMP)
+a1 = SememeRest::get_sememe(action: SememeRestActions::ACTION_BY_REFERENCED_COMPONENT,uuid_or_id: "406e872b-2e19-5f5e-a71d-e4e4b2c68fe5",additional_req_params: ({expand: "chronology,nestedSememes"}))
 b = SememeRest::get_sememe(action: SememeRestActions::ACTION_CHRONOLOGY,uuid_or_id: SememeRest::TEST_ID)
 c = SememeRest::get_sememe(action: SememeRestActions::ACTION_VERSION,uuid_or_id: SememeRest::TEST_ID)
 d = SememeRest::get_sememe(action: SememeRestActions::ACTION_BY_ASSEMBLAGE,uuid_or_id: SememeRest::TEST_ID)

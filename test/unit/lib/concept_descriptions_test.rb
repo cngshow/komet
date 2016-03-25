@@ -16,7 +16,7 @@ class ConceptDescriptionsTest < Test::Unit::TestCase
     #build our isaac_root object from our yaml fixture
     json = YAML.load_file(FILES[Fixtures::CONCEPT_DESCRIPTIONS])
     #we will assume testing on the first one is sufficient
-    @rest_concept_descriptions = Concept.new(uuid: TEST_UUID, params: nil, action: ACTION_DESCRIPTIONS, action_constants: ACTION_CONSTANTS).get_rest_class.send(:from_json, json.first)
+    @rest_concept_descriptions = Concept.new(uuid: TEST_UUID, params: nil, action: ACTION_DESCRIPTIONS, action_constants: ACTION_CONSTANTS).get_rest_class(json.first).send(:from_json, json.first)
   end
 
   def test_build_rest_concept_descriptions

@@ -1,9 +1,9 @@
-#Fixture created on 2016-03-17 16:55:35
+#Fixture created on 2016-03-25 09:30:35
 ---
-assemblageConceptId: 58
+assemblageConceptId: 19
 sememeUsageDescription: This concept is used as an assemblage for defining new Sememe extensions.  The attached data columns describe what columns are required to define a new Sememe.
 columnInfo:
-- columnConceptSequence: 210
+- columnConceptSequence: 213
   columnName: column order
   columnDescription: Stores the column order of this column within a Dynamic Sememe Definition
   columnOrder: 0
@@ -15,7 +15,7 @@ columnInfo:
   columnRequired: true
   columnValidatorTypes:
   columnValidatorData:
-- columnConceptSequence: 211
+- columnConceptSequence: 214
   columnName: column name
   columnDescription: Stores the concept reference to the concept that defines the name of this column within a Dynamic Sememe Definition
   columnOrder: 1
@@ -27,7 +27,7 @@ columnInfo:
   columnRequired: true
   columnValidatorTypes:
   columnValidatorData:
-- columnConceptSequence: 212
+- columnConceptSequence: 215
   columnName: column type
   columnDescription: Stores the data type of this column within a Dynamic Sememe Definition
   columnOrder: 2
@@ -39,7 +39,7 @@ columnInfo:
   columnRequired: true
   columnValidatorTypes:
   columnValidatorData:
-- columnConceptSequence: 213
+- columnConceptSequence: 216
   columnName: column default value
   columnDescription: Stores the (optional) default value of this column within a Dynamic Sememe Definition
   columnOrder: 3
@@ -51,7 +51,7 @@ columnInfo:
   columnRequired: false
   columnValidatorTypes:
   columnValidatorData:
-- columnConceptSequence: 214
+- columnConceptSequence: 217
   columnName: column required
   columnDescription: Stores the (optional) flag to specify that this column is manditory within a Dynamic Sememe Definition
   columnOrder: 4
@@ -63,7 +63,7 @@ columnInfo:
   columnRequired: false
   columnValidatorTypes:
   columnValidatorData:
-- columnConceptSequence: 215
+- columnConceptSequence: 218
   columnName: column validator
   columnDescription: Stores the (optional) validator type which will be applied to user supplied data of this column within a Dynamic Sememe Definition
   columnOrder: 5
@@ -81,7 +81,7 @@ columnInfo:
   - "@class": gov.vha.isaac.rest.api1.data.sememe.dataTypes.RestDynamicSememeString
     columnNumber: 5
     data: COMPONENT_TYPE|EXTERNAL|GREATER_THAN|GREATER_THAN_OR_EQUAL|INTERVAL|IS_CHILD_OF|IS_KIND_OF|LESS_THAN|LESS_THAN_OR_EQUAL|REGEXP
-- columnConceptSequence: 216
+- columnConceptSequence: 219
   columnName: column validator data
   columnDescription: Stores the (optional) validator data which will be used by the validator to check the user input of this column within a Dynamic Sememe Definition
   columnOrder: 6

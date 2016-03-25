@@ -16,7 +16,7 @@ class SearchTest < Test::Unit::TestCase
   def test_search_descriptions
     begin
       json = YAML.load_file(FILES[Fixtures::SEARCH_DESCRIPTIONS])
-      results = SearchApi.new(params: nil, action: ACTION_DESCRIPTIONS, action_constants: ACTION_CONSTANTS).get_rest_class.send(:from_json, json.first)
+      results = SearchApi.new(params: nil, action: ACTION_DESCRIPTIONS, action_constants: ACTION_CONSTANTS).get_rest_class(json.first).send(:from_json, json.first)
       assert(! results.nil? , 'The Search result should not be empty!')
       assert(results.class.eql?(Gov::Vha::Isaac::Rest::Api1::Data::Search::RestSearchResult), 'The search matches should be of type Gov::Vha::Isaac::Rest::Api1::Data::Search::RestSearchResult.') unless  results.nil?
     rescue => ex
