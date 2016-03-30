@@ -19,3 +19,4 @@ rails_komet.war
 /lib/rails_common/
 /.project
 /.idea
+/context.txt

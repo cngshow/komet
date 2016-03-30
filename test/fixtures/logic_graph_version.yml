@@ -1,4 +1,4 @@
-#Fixture created on 2016-03-17 16:55:36
+#Fixture created on 2016-03-25 09:30:35
 ---
 "@class": gov.vha.isaac.rest.api1.data.sememe.RestSememeLogicGraphVersion
 expandables:
@@ -11,7 +11,7 @@ sememeChronology:
 sememeVersion:
   stampSequence: 1
   state: ACTIVE
-  time: 1456685492337
+  time: 1458628506934
   authorSequence: 5
   moduleSequence: 0
   pathSequence: 7
@@ -54,7 +54,7 @@ rootLogicNode:
         expandables:
         nodeUuid:
         children: []
-        conceptSequence: 56
+        conceptSequence: 59
         conceptVersion:
         isConceptDefined: false
         conceptDescription: dynamic sememe assemblages (ISAAC)

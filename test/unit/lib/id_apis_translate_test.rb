@@ -13,7 +13,7 @@ class IdApisTranslate < Test::Unit::TestCase
   def setup
     #build our object from our yaml fixture
     json = YAML.load_file(FILES[Fixtures::ID_API_TRANSLATE])
-    @rest_id_translate = IdAPIs.new(uuid: TEST_UUID, params: nil, action: ACTION_TRANSLATE, action_constants: ACTION_CONSTANTS).get_rest_class.send(:from_json, json)
+    @rest_id_translate = IdAPIs.new(uuid: TEST_UUID, params: nil, action: ACTION_TRANSLATE, action_constants: ACTION_CONSTANTS).get_rest_class(json).send(:from_json, json)
   end
 
   def test_build_rest_id_translate

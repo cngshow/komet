@@ -1,12 +1,12 @@
-#Fixture created on 2016-03-17 16:55:35
+#Fixture created on 2016-03-25 09:30:34
 ---
 description: SNOMED CT Model Component (metadata)
 expandables:
   items:
   - name: versionsAll
-    url: rest/1/concept/versions/421761/
+    url: rest/1/concept/versions/614445/
   - name: versionsLatestOnly
-    url: rest/1/concept/version/421761/
+    url: rest/1/concept/version/614445/
 identifiers:
   uuids:
   - a60bd881-9010-3260-9653-0c85716b4391

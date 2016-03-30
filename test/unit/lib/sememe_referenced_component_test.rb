@@ -15,13 +15,13 @@ class SememeReferencedComponentTest < Test::Unit::TestCase
   # to set up fixture information.
   def setup
     json = YAML.load_file(FILES[Fixtures::SEMEME_BY_REFERENCED_COMPONENT])
-    @rest_sememe_comp = Sememe.new(uuid: TEST_UUID_SEMEME_DEF, params: nil, action: ACTION_BY_REFERENCED_COMPONENT, action_constants: ACTION_CONSTANTS).get_rest_class.send(:from_json, json.first)
+    @rest_sememe_comp = Sememe.new(uuid: TEST_UUID_SEMEME_DEF, params: nil, action: ACTION_BY_REFERENCED_COMPONENT, action_constants: ACTION_CONSTANTS).get_rest_class(json.first).send(:from_json, json.first)
   end
 
   def test_build_rest_sememe_by_referenced_component
     begin
         assert(!@rest_sememe_comp.nil? , "The sememe was not properly converted from json to a RestSememeVersion!")
-        assert(@rest_sememe_comp.class.eql?(Gov::Vha::Isaac::Rest::Api1::Data::Sememe::RestSememeDescriptionVersion) , "The sememe was not properly converted to a RestSememeVersion!")
+        assert(@rest_sememe_comp.kind_of?(Gov::Vha::Isaac::Rest::Api1::Data::Sememe::RestSememeVersion) , "The sememe was not properly converted to a RestSememeVersion!")
     rescue => ex
       fail(FAIL_MESSAGE + ex.to_s)
     end

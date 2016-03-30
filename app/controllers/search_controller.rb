@@ -82,7 +82,7 @@ class SearchController < ApplicationController
     search_type = params[:taxonomy_search_type]
     search_limit = params[:taxonomy_search_limit]
     new_search = params[:new_search]
-    additional_params = {query: search_text, expand: 'referencedConcept'}
+    additional_params = {query: search_text, expand: 'referencedConcept,versionsLatestOnly'}
 
     if search_text == nil || search_text == ''
       render json: {total_rows: 0, page_data: []} and return
@@ -105,11 +105,8 @@ class SearchController < ApplicationController
 
       results.each do |result|
 
-        # get the sememe version using the NID returned by the search, with its chronology expanded.
-        sememe_version = SememeRest::get_sememe(action: SememeRestActions::ACTION_VERSION, uuid_or_id: result.matchNid, additional_req_params: {expand: 'chronology'})
-
         # add the information to the search array to be returned
-        search_data << {id: result.referencedConcept.identifiers.uuids.first, matching_terms: result.matchText, concept_status: sememe_version.sememeVersion.state.to_s, match_score: result.score.to_s}
+        search_data << {id: result.referencedConcept.identifiers.uuids.first, matching_terms: result.matchText, concept_status: result.referencedConcept.versions.first.conVersion.state, match_score: result.score}
       end
 
     elsif search_type == 'sememes'
@@ -155,11 +152,8 @@ class SearchController < ApplicationController
 
       results.each do |result|
 
-        # get the sememe version using the NID returned by the search, with its chronology expanded.
-        sememe_version = SememeRest::get_sememe(action: SememeRestActions::ACTION_VERSION, uuid_or_id: result.matchNid, additional_req_params: {expand: 'chronology'})
-
         # add the information to the search array to be returned
-        search_data << {id: result.referencedConcept.identifiers.uuids.first, matching_terms: result.matchText, concept_status: sememe_version.sememeVersion.state.to_s, match_score: result.score.to_s} #sememe_version.sememeVersion.state.to_s
+        search_data << {id: result.referencedConcept.identifiers.uuids.first, matching_terms: result.matchText, concept_status: result.referencedConcept.versions.first.conVersion.state, match_score: result.score}
       end
 
     end

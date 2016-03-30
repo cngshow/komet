@@ -1,7 +1,7 @@
 require 'test/unit'
 require './config/initializers/01_komet_init'
 require './lib/isaac_rest/sememe_rest'
-#require './lib/tasks/rest_fixtures.rake'
+#load './lib/tasks/rest_fixtures.rake'
 class SememeChronologyTest < Test::Unit::TestCase
   include KOMETUtilities
   include SememeRest
@@ -13,7 +13,7 @@ class SememeChronologyTest < Test::Unit::TestCase
   def setup
     #build our isaac_root object from our yaml fixture
     json = YAML.load_file(FILES[Fixtures::SEMEME_CHRONOLOGY])
-    @rest_sememe_chron = Sememe.new(uuid: TEST_ID, params: nil, action: ACTION_CHRONOLOGY, action_constants: ACTION_CONSTANTS).get_rest_class.send(:from_json, json)
+    @rest_sememe_chron = Sememe.new(uuid: TEST_ID, params: nil, action: ACTION_CHRONOLOGY, action_constants: ACTION_CONSTANTS).get_rest_class(json).send(:from_json, json)
   end
 
   def test_build_sememe_concept_chronology
@@ -27,8 +27,8 @@ class SememeChronologyTest < Test::Unit::TestCase
   #concept = SememeRest::get_sememe(action: SememeRestActions::ACTION_CHRONOLOGY, uuid_or_id: '-2145065647', additional_req_params: {expand: 'versionsAll'})
   def test_concept_versions
     versions = @rest_sememe_chron.versions #an array of versions
-    assert(versions.first.class.eql? Gov::Vha::Isaac::Rest::Api1::Data::Sememe::RestSememeDescriptionVersion)#Do I get my inherited subtype of RestSememeVersion
-    assert(versions.first.text.class.eql? String)#Do I get my string?
+    assert(versions.first.kind_of? Gov::Vha::Isaac::Rest::Api1::Data::Sememe::RestSememeVersion)#Do I get my inherited subtype of RestSememeVersion
+    assert(versions.first.text.class.eql? String)#Do I get my string?  RestSememeDescriptionVersion has this, RestDynamicSememeVersion does not
   end
 
   # Called after every test method runs. Can be used to tear

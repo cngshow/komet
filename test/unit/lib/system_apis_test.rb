@@ -47,7 +47,7 @@ class SystemApiTests < Test::Unit::TestCase
       types = []
 
       json.each do |j|
-        type = SystemApi.new(action: config.fetch(:action), action_constants: ACTION_CONSTANTS).get_rest_class.send(:from_json, j)
+        type = SystemApi.new(action: config.fetch(:action), action_constants: ACTION_CONSTANTS).get_rest_class(j).send(:from_json, j)
         types << type
       end
       assert(!types.empty?, "The #{config.fetch(:name)} rest response should not be empty!")

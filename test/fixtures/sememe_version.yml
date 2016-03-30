@@ -1,23 +1,19 @@
-#Fixture created on 2016-03-17 16:55:35
+#Fixture created on 2016-03-25 09:30:34
 ---
-"@class": gov.vha.isaac.rest.api1.data.sememe.RestSememeDescriptionVersion
+"@class": gov.vha.isaac.rest.api1.data.sememe.RestDynamicSememeVersion
 expandables:
   items:
   - name: chronology
-    url: rest/1/sememe/chronology/1996127
+    url: rest/1/sememe/chronology/2266066
   - name: nestedSememes
-    url: rest/1/sememe/version/1996127/?expand=nestedSememes
+    url: rest/1/sememe/version/2266066/?expand=nestedSememes
 sememeChronology:
 sememeVersion:
-  stampSequence: 21
+  stampSequence: 3
   state: ACTIVE
-  time: 1059624000000
+  time: 1448946000000
   authorSequence: 5
   moduleSequence: 0
   pathSequence: 7
 nestedSememes:
-caseSignificanceConceptSequence: 111
-languageConceptSequence: 8
-text: HEA (body structure)
-descriptionTypeConceptSequence: 11
-dialects:
+dataColumns: []

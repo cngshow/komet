@@ -84,28 +84,45 @@ module CommonRestBase
       r_val
     end
 
-    def get_rest_class
-      action_constants.fetch(action).fetch(CLAZZ_SYM)
+    def get_rest_class(json)
+      if (json.nil? || json['@class'].nil?)
+        clazz = action_constants.fetch(action).fetch(CLAZZ_SYM)
+      else
+        clazz_array_parts = json['@class'].split('.')
+        short_clazz = clazz_array_parts.pop
+        clazz_package = clazz_array_parts.map do |e|
+          e[0] = e.first.capitalize; e
+        end.join("::")
+        clazz = clazz_package + "::" + short_clazz
+        clazz = Object.const_get clazz
+        $log.debug("Using the class from the json it is " + clazz.to_s)
+        $log.debug("It would have been " + action_constants.fetch(action).fetch(CLAZZ_SYM).to_s)
+      end
+      clazz
     end
 
     def rest_call
       raise NotImplementedError.new('You need to implement me in your base class!')
     end
 
+    def convert_java_to_ruby(_item)
+
+    end
+
     #see https://github.com/stoicflame/enunciate/
     def enunciate_json(json)
-      clazz = get_rest_class
-
-      if (clazz.eql?(JSON) || json.class.eql?(CommonRest::UnexpectedResponse))
+      if (json.class.eql?(CommonRest::UnexpectedResponse))
         return json
       end
       r_val = nil
       if json.is_a? Array
         r_val = []
         json.each do |elem|
+          clazz = get_rest_class(elem)
           r_val.push(clazz.send(:from_json, elem))
         end
       else
+        clazz = get_rest_class(json)
         r_val = clazz.send(:from_json, json)
       end
       r_val

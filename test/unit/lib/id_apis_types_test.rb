@@ -13,7 +13,7 @@ class IdApisTypes < Test::Unit::TestCase
   def setup
     #build our object from our yaml fixture
     json = YAML.load_file(FILES[Fixtures::ID_API_TYPES])
-    @rest_id_types = IdAPIs.new(uuid: TEST_UUID, params: nil, action: ACTION_TYPES, action_constants: ACTION_CONSTANTS).get_rest_class.send(:from_json, json.first)
+    @rest_id_types = IdAPIs.new(uuid: TEST_UUID, params: nil, action: ACTION_TYPES, action_constants: ACTION_CONSTANTS).get_rest_class(json.first).send(:from_json, json.first)
 
   end
 

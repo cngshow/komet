@@ -1,16 +1,16 @@
-#Fixture created on 2016-03-17 16:55:35
+#Fixture created on 2016-03-25 09:30:34
 ---
 expandables:
   items:
   - name: chronology
-    url: rest/1/concept/chronology/421761
+    url: rest/1/concept/chronology/614445
   - name: parents
-    url: rest/1/concept/version/421761?expand=parents&stated=true
+    url: rest/1/concept/version/614445?expand=parents&stated=true
   - name: children
-    url: rest/1/concept/version/421761?expand=children&stated=true
+    url: rest/1/concept/version/614445?expand=children&stated=true
 conChronology:
 conVersion:
-  stampSequence: 60
+  stampSequence: 109
   state: ACTIVE
   time: 1012453200000
   authorSequence: 5

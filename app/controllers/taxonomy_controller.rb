@@ -35,7 +35,7 @@ class TaxonomyController < ApplicationController
   # The current tree node is identified in the request params with the key :concept_id
   # If the tree is reversed so we are searching for parents of this node is identified in the request params with the key :parent_search (true/false)
   # If the parent of this node was already doing a reverse search is identified in the request params with the key :parent_reversed (true/false)
-  # Whether to display the stated (true) or inferred view of concepts with a request param of  :stated (true/false)
+  # Whether to display the stated (true) or inferred view of concepts with a request param of :stated (true/false)
   #@return [json] the tree nodes to insert into the tree at the parent node passed in the request
   def load_tree_data
 
@@ -143,6 +143,7 @@ class TaxonomyController < ApplicationController
     partial = params[:partial]
 
     get_concept_summary(concept_id)
+    get_concept_sememes(concept_id)
     get_concept_details(concept_id)
     get_concept_diagram(concept_id)
     get_concept_expression(concept_id)
@@ -181,7 +182,21 @@ class TaxonomyController < ApplicationController
       concept_id = params[:concept_id].to_i
     end
 
-    @descriptions =  descriptions(concept_id) #ConceptRest::get_concept(action: ConceptRestActions::ACTION_DESCRIPTIONS, uuid: concept_id)
+    @descriptions =  descriptions(concept_id)
+
+  end
+
+  ##
+  # get_concept_sememes - RESTful route for populating concept sememes section using an http :GET
+  # The current tree node representing the concept is identified in the request params with the key :concept_id
+  # @return none - setting the @concept_sememes variable
+  def get_concept_sememes(concept_id = nil)
+
+    if concept_id == nil && params[:concept_id]
+      concept_id = params[:concept_id].to_i
+    end
+
+    @concept_sememes = sememes(concept_id) # descriptions(concept_id)
 
   end
 

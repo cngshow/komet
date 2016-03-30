@@ -9,6 +9,7 @@ Rails.application.routes.draw do
   get 'taxonomy/load_tree_data'
   get 'taxonomy/get_concept_information'
   get 'taxonomy/get_concept_summary'
+  get 'taxonomy/get_concept_sememes'
   get 'taxonomy/get_concept_details'
   get 'taxonomy/get_concept_expression'
   get 'taxonomy/get_concept_refsets'
