@@ -1,0 +1,85 @@
+<div class="komet-concept-sememes-title">Attached Sememes</div>
+
+  <div id="komet_concept_sememes_panel_" class="komet-concept-section-panel komet-concept-sememes-panel">
+
+    <!-- main header block - always visible -->
+    <div class="komet-concept-section-panel-header">
+
+      <!-- expand/collapse icon - controls details drawer -->
+      <div class="glyphicon glyphicon-plus-sign" onclick="ConceptsModule.togglePanelDetails('komet_concept_sememes_panel_', null, true)"></div>
+
+      <!-- description type, refset -->
+      <div>
+        View all sememes attached to this concept:
+      </div>
+
+    </div>
+
+    <!-- details drawer - can be collapsed -->
+    <div class="komet-concept-section-panel-details" style="display: block">
+
+      <% if @concept_sememes[:rows].length == 0 %>
+          <div class="komet-no-data-message">No Sememes.</div>
+      <% else %>
+
+          <table class="komet-concept-table">
+            <thead>
+              <tr>
+
+                <th title="Status Markers - for Active/Inactive and Current/Historical and Uncommitted">Status</th>
+                <th title="The assemblage concept that defines this sememe.">Assemblage</th>
+
+                <% @concept_sememes[:columns].each do |column| %>
+                  <th title="<%= column[:description] %>"><%= column[:name] %></th>
+                <% end %>
+
+              </tr>
+            </thead>
+
+            <tbody>
+
+            <% @concept_sememes[:rows].each do |row| %>
+
+                <tr>
+
+                  <td><%= row[:state] %></td>
+                  <td><%= row[:sememe_name] %></td>
+
+                  <% @concept_sememes[:columns].each do |column| %>
+
+                    <td>
+
+                      <% if row[:columns].has_key?(column[:id]) %>
+
+                          <span <%= 'title=' + row[:columns][column[:id]][:data] unless row[:columns][column[:id]][:display] == '' %>>
+
+                            <% if row[:columns][column[:id]][:display] == '' %>
+                                <%= row[:columns][column[:id]][:data] %>
+                            <% else %>
+                                <%= row[:columns][column[:id]][:display] %>
+                            <% end %>
+
+                          </span>
+
+                      <% end %>
+
+                    </td>
+
+                  <% end %>
+
+                </tr>
+
+            <% end %>
+
+            </tbody>
+          </table>
+
+      <% end %>
+
+    </div>
+
+  </div>
+
+<script>
+  
+</script>

@@ -179,19 +179,6 @@ html, body{
   flex-direction: column;
 }
 
-// Taxonomy Common Styles
-.concept_detail_table{
-  width: 100%;
-}
-.concept_detail_table td{
-  border-top: 1px black solid;
-  border-right: 1px black solid;
-  padding-left: 2px;
-}
-.concept_detail_info_button{
-  display: block;
-}
-
 // Taxonomy Tree Styles
 .komet-reverse-tree{
   transform: scaleX(-1);
@@ -267,10 +254,33 @@ html, body{
   padding: 10px;
   margin-top: 10px;
   display: none;
+  overflow-x: auto;
 }
 .concept-section-panel-spacer{
   margin: 5px;
   padding: 0px;
+}
+
+// Concept Viewer Table Styles
+.komet-concept-table{
+  width: 100%;
+  overflow: auto;
+  text-align: center;
+}
+.komet-concept-table th{
+  border: 1px black solid;
+  padding: 2px 0px;
+  height: 1.8em;
+  text-align: center;
+  text-transform: capitalize;
+}
+.komet-concept-table td{
+  border: 1px black solid;
+  padding: 0px 2px;
+  height: 1.8em;
+}
+.komet-concept-info-button{
+  display: block;
 }
 
 // Concept Viewer Definition Styles
@@ -321,10 +331,6 @@ html, body{
    color: #009bff;
    font-weight: bold;
  }
-.komet-concept-diagram-title{
-  color: #009bff;
-  font-weight: bold;
-}
 .komet-concept-lineage-tree-container{
   margin-left: 0%;
   margin-bottom: 10px;
@@ -332,6 +338,24 @@ html, body{
   border: 2px solid #009bff;
   border-radius: 4px;
   padding: 5px;
+}
+
+// Concept Viewer Sememes Styles
+.komet-concept-sememes-panel{
+  border-left: 4px solid #b59d00;
+}
+.komet-concept-sememes-title{
+  color: #b59d00;
+  font-weight: bold;
+}
+
+// Concept Viewer Diagram Styles
+.komet-concept-diagram-panel{
+  border-left: 4px solid #ab03fd;
+}
+.komet-concept-diagram-title{
+  color: #ab03fd;
+  font-weight: bold;
 }
 
 // details tab
