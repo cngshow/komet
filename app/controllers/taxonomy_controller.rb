@@ -196,7 +196,7 @@ class TaxonomyController < ApplicationController
       concept_id = params[:concept_id].to_i
     end
 
-    @concept_sememes = sememes(concept_id) # descriptions(concept_id)
+    @concept_sememes = get_attached_sememes(concept_id) # descriptions(concept_id)
 
   end
 

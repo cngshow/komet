@@ -26,6 +26,7 @@
             <thead>
               <tr>
 
+                <th>L</th>
                 <th title="Status Markers - for Active/Inactive and Current/Historical and Uncommitted">Status</th>
                 <th title="The assemblage concept that defines this sememe.">Assemblage</th>
 
@@ -38,40 +39,10 @@
 
             <tbody>
 
-            <% @concept_sememes[:rows].each do |row| %>
-
-                <tr>
-
-                  <td><%= row[:state] %></td>
-                  <td><%= row[:sememe_name] %></td>
-
-                  <% @concept_sememes[:columns].each do |column| %>
-
-                    <td>
-
-                      <% if row[:columns].has_key?(column[:id]) %>
-
-                          <span <%= 'title=' + row[:columns][column[:id]][:data] unless row[:columns][column[:id]][:display] == '' %>>
-
-                            <% if row[:columns][column[:id]][:display] == '' %>
-                                <%= row[:columns][column[:id]][:data] %>
-                            <% else %>
-                                <%= row[:columns][column[:id]][:display] %>
-                            <% end %>
-
-                          </span>
-
-                      <% end %>
-
-                    </td>
-
-                  <% end %>
-
-                </tr>
-
-            <% end %>
+              <% j(render(partial: 'komet_dashboard/concept_detail/concept_sememe_rows', collection: @concept_sememes[:rows], as: :row, locals: { depth: 0 })) %>
 
             </tbody>
+
           </table>
 
       <% end %>

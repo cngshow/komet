@@ -1,0 +1,39 @@
+<% $log.debug('Row name: ' + row[:sememe_name]) %>
+
+<tr>
+
+  <td><%= row[:level] %></td>
+  <td><%= row[:state] %></td>
+  <td><%= row[:sememe_name] %></td>
+
+  <% @concept_sememes[:columns].each do |column| %>
+
+      <td>
+
+        <% if row[:columns].has_key?(column[:id]) %>
+
+            <span <%= 'title=' + row[:columns][column[:id]][:data] unless row[:columns][column[:id]][:display] == '' %>>
+
+              <% if row[:columns][column[:id]][:display] == '' %>
+                  <%= row[:columns][column[:id]][:data] %>
+              <% else %>
+                  <%= row[:columns][column[:id]][:display] %>
+              <% end %>
+
+            </span>
+
+        <% end %>
+
+      </td>
+
+  <% end %>
+
+</tr>
+
+<% if row[:has_nested] %>
+
+    <tbody>
+      <% j(render(partial: 'komet_dashboard/concept_detail/concept_sememe_rows', collection: row[:nested_rows], as: :row, locals: { depth: depth + 1 })) %>
+    </tbody>
+    <% $log.debug('Row name: ' + row[:sememe_name]) %>
+<% end %>

@@ -160,14 +160,12 @@ module ConceptConcern
   end
 
   ##
-  # sememes - takes a uuid and returns all of the non-description sememes attached to it.
+  # get_attached_sememes - takes a uuid and returns all of the non-description sememes attached to it.
   # @param [String] uuid - The UUID to look up attached sememes for
-  # @return [object] a hash that contains an array of all the descriptions
-  def sememes(uuid)
+  # @return [object] a hash that contains an array of all the columns to be displayed and an array of all the sememes 
+  def get_attached_sememes(uuid)
 
     sememe_types = {}
-    data_rows = []
-    used_column_list = []
 
     # see if the sememe types object already exists in the session
     if session[:concept_sememe_types]
@@ -175,6 +173,23 @@ module ConceptConcern
     end
 
     sememes = SememeRest.get_sememe(action: SememeRestActions::ACTION_BY_REFERENCED_COMPONENT, uuid_or_id: uuid, additional_req_params: {expand: 'chronology,nestedSememes'})
+
+    display_data = process_attached_sememes(sememes, sememe_types, [], [], 1)
+
+    # put the sememe types object into the session
+    session[:concept_sememe_types] = display_data[:sememe_types]
+
+    return {columns: display_data[:used_column_list], rows: display_data[:data_rows]}
+
+  end
+
+  private
+
+  ##
+  # process_attached_sememes - recursively loops through an array of sememes and processes them for display.
+  # @param [RestSememeVersion] sememe_data - a hash with an array of sememes to process, a cached hash of all unique sememe data, an array of data rows for display, and an array of columns to display
+  # @return [object] a hash that contains an array of all the columns to be displayed and an array of all the sememes 
+  def process_attached_sememes(sememes, sememe_types, data_rows, used_column_list, level)
 
     # iterate over the array of sememes returned
     sememes.each do |sememe|
@@ -196,8 +211,14 @@ module ConceptConcern
 
         end
 
+        has_nested = false
+
+        if sememe.nestedSememes != nil && sememe.nestedSememes.length > 0
+          has_nested = true
+        end
+
         # start loading the row of sememe data with everything besides the data columns
-        data_row = {sememe_name: sememe_types[assemblage_sequence][:sememe_name], sememe_description: sememe_types[assemblage_sequence][:sememe_description], state: sememe.sememeVersion.state, columns: {}}
+        data_row = {sememe_name: sememe_types[assemblage_sequence][:sememe_name], sememe_description: sememe_types[assemblage_sequence][:sememe_description], state: sememe.sememeVersion.state, level: level, has_nested: has_nested, columns: {}}
 
         # loop through all of the sememe's data columns
         sememe.dataColumns.each{|row_column|
@@ -208,7 +229,7 @@ module ConceptConcern
             sememe_column = sememe_types[assemblage_sequence][:columns][row_column.columnNumber]
 
             # search to see if we have already added this column to our list of used columns.
-            is_column_used = used_column_list.find {|list_column|
+            is_column_used = used_column_list.find_index {|list_column|
               list_column[:id] == sememe_column.columnConceptSequence
             }
 
@@ -221,10 +242,10 @@ module ConceptConcern
             converted_value = ''
 
             # if the column is one of a specific set, make sure it has string data and see if it contains IDs. If it does look up their description
-            if (['column name'].include?(sememe_column.columnName)) && (row_column.data.kind_of? String) && find_ids(row_column.data)
+            if (['column name', 'target'].include?(sememe_column.columnName)) && (row_column.data.kind_of? String) && find_ids(row_column.data)
               converted_value = ConceptRest.get_concept(action: ConceptRestActions::ACTION_DESCRIPTIONS, uuid: row_column.data).first.text
 
-            # if the row is an array get the text values into a more readable form
+              # if the row is an array get the text values into a more readable form
             elsif row_column.data.kind_of? Array
 
               # loop through each item in the array and generate a comma separated list of values
@@ -249,21 +270,26 @@ module ConceptConcern
 
         }
 
-        # add the sememe data row to the array of return rows
-        data_rows << data_row
+      end
+
+      # if the sememe has nested sememes call this function again passing in those nested sememes and incrementing the level
+      if has_nested
+
+        sememes = sememe.nestedSememes
+        nested_sememe_data = process_attached_sememes(sememes, sememe_types, [], used_column_list, level + 1)
+
+        data_row[:nested_rows] = nested_sememe_data[:data_rows]
 
       end
 
+      # add the sememe data row to the array of return rows
+      data_rows << data_row
+
     end
 
-    # put the sememe types object into the session
-    session[:concept_sememe_types] = sememe_types
-
-    return {columns: used_column_list, rows: data_rows}
+    return {sememe_types: sememe_types, data_rows: data_rows, used_column_list: used_column_list}
 
   end
-
-  private
 
   def description_metadata(id)
     ver = ConceptRest.get_concept(action: ConceptRestActions::ACTION_DESCRIPTIONS, uuid: id).first
