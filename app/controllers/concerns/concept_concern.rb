@@ -218,7 +218,7 @@ module ConceptConcern
         end
 
         # start loading the row of sememe data with everything besides the data columns
-        data_row = {sememe_name: sememe_types[assemblage_sequence][:sememe_name], sememe_description: sememe_types[assemblage_sequence][:sememe_description], state: sememe.sememeVersion.state, level: level, has_nested: has_nested, columns: {}}
+        data_row = {sememe_name: sememe_types[assemblage_sequence][:sememe_name], sememe_description: sememe_types[assemblage_sequence][:sememe_description], id: assemblage_sequence, state: sememe.sememeVersion.state, level: level, has_nested: has_nested, columns: {}}
 
         # loop through all of the sememe's data columns
         sememe.dataColumns.each{|row_column|

@@ -99,7 +99,6 @@ var ConceptsModule = (function () {
 
       var state = panelStates[key][0];
       var callback = panelStates[key][1];
-      console.log("restore state: " + key + " - state: " + state);
 
       if (state) {
         ConceptsModule.togglePanelDetails(key, callback);
@@ -172,8 +171,31 @@ var ConceptsModule = (function () {
     var partial = 'komet_dashboard/concept_detail/load_tabs';
 
     // make an ajax call to get the concept for the current concept and pass it the currently selected concept id and the name of a partial file to render
-    $.get(gon.routes.taxonomy_get_concept_information_path, {concept_id: "7e4732b2-ef56-5d4d-9514-36ff17ec112f"/*currentConceptID */, partial: partial}, function (data) {
+    $.get(gon.routes.taxonomy_get_concept_information_path, {concept_id: currentConceptID, partial: partial}, function (data) {
     });
+  }
+
+  function toggleNestedTableRows(image, id){
+
+    // get reference to the block of nested rows
+    var nestedRows = $("#komet_concept_table_nested_row_" + id);
+
+    // change the displayed image and nested rows visibility
+    if (image.hasClass("glyphicon-arrow-right")){
+
+      image.removeClass("glyphicon-arrow-right");
+      image.addClass("glyphicon-arrow-down");
+      nestedRows.show();
+      image.parent().addClass("komet-concept-table-nested-indicator-open");
+
+    } else {
+
+      image.removeClass("glyphicon-arrow-down");
+      image.addClass("glyphicon-arrow-right");
+      nestedRows.hide();
+      image.parent().removeClass("komet-concept-table-nested-indicator-open");
+    }
+
   }
 
   function getCurrentConceptId() {
@@ -192,7 +214,8 @@ var ConceptsModule = (function () {
     setPanelState : setPanelState,
     getPanelState : getPanelState,
     restorePanelStates : restorePanelStates,
-    togglePanelDetails: togglePanelDetails
+    togglePanelDetails: togglePanelDetails,
+    toggleNestedTableRows: toggleNestedTableRows
   };
 
 })();

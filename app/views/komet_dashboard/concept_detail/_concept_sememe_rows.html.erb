@@ -1,19 +1,28 @@
-<% $log.debug('Row name: ' + row[:sememe_name]) %>
-
 <tr>
 
-  <td><%= row[:level] %></td>
+  <!-- show the nested rows indicator if this row has children -->
+  <td class="komet-concept-table-nested-indicator komet-concept-table-level-<%= row[:level] %>">
+    <% if row[:has_nested] %>
+
+        <div class="glyphicon glyphicon-arrow-right" onclick="ConceptsModule.toggleNestedTableRows($(this), <%= row[:id] %>)"></div>
+
+    <% end %>
+  </td>
   <td><%= row[:state] %></td>
   <td><%= row[:sememe_name] %></td>
 
+  <!-- loop through all of the columns -->
   <% @concept_sememes[:columns].each do |column| %>
 
       <td>
 
+        <!-- if the row has data for this column print it out, otherwise leave it empty -->
         <% if row[:columns].has_key?(column[:id]) %>
 
+            <!-- if this row has a display value, put a tooltip on the cell to show the row data -->
             <span <%= 'title=' + row[:columns][column[:id]][:data] unless row[:columns][column[:id]][:display] == '' %>>
 
+              <!-- if this row has a display value, show that in place of the row data -->
               <% if row[:columns][column[:id]][:display] == '' %>
                   <%= row[:columns][column[:id]][:data] %>
               <% else %>
@@ -30,10 +39,10 @@
 
 </tr>
 
+<!-- if this row has a children call this partial again for each child, increasing the depth count -->
 <% if row[:has_nested] %>
 
-    <tbody>
-      <% j(render(partial: 'komet_dashboard/concept_detail/concept_sememe_rows', collection: row[:nested_rows], as: :row, locals: { depth: depth + 1 })) %>
+    <tbody id="komet_concept_table_nested_row_<%= row[:id] %>" class="komet-concept-table-nested-row">
+      <%= render(partial: 'komet_dashboard/concept_detail/concept_sememe_rows', collection: row[:nested_rows], as: :row, locals: { depth: depth + 1 }) %>
     </tbody>
-    <% $log.debug('Row name: ' + row[:sememe_name]) %>
 <% end %>

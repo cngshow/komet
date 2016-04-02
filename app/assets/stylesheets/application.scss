@@ -282,6 +282,19 @@ html, body{
 .komet-concept-info-button{
   display: block;
 }
+.komet-concept-table-nested-row{
+  display: none;
+}
+.komet-concept-table-nested-row .komet-concept-table-nested-indicator{
+  border-top: none;
+  border-bottom: none;
+}
+.komet-concept-table-nested-indicator .glyphicon{
+  cursor: pointer;
+}
+td.komet-concept-table-nested-indicator.komet-concept-table-nested-indicator-open{
+  border-bottom: none;
+}
 
 // Concept Viewer Definition Styles
 .komet-concept-definition-panel{
