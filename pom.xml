@@ -21,6 +21,7 @@
 
 	<properties>
 		<rails_common.version>1.0-SNAPSHOT</rails_common.version>
+		<isaac.version>3.01-SNAPSHOT</isaac.version>
 		<!-- railsMode is automatically set to 'test' or 'production' - 'test' if the version number ends with '-SNAPSHOT'
 		or 'production' otherwise.  See ant execution below-->
 	</properties>
@@ -54,6 +55,13 @@
 			<type>zip</type>
 			<optional>true</optional> <!-- Not needed at runtime / transitively -->
 		</dependency>
+		<dependency>
+			<groupId>gov.vha.isaac.ochre.modules</groupId>
+			<artifactId>metadata</artifactId>
+			<version>${isaac.version}</version>
+			<type>yaml.zip</type>
+			<optional>true</optional> <!-- Not needed at runtime / transitively -->
+		</dependency>
 	</dependencies>
 
 	<build>
@@ -73,6 +81,19 @@
 						<configuration>
 							<includeArtifactIds>rails_common</includeArtifactIds>
 							<outputDirectory>${basedir}/lib/</outputDirectory>
+							<overWriteReleases>true</overWriteReleases>
+							<overWriteSnapshots>true</overWriteSnapshots>
+						</configuration>
+					</execution>
+					<execution>
+						<id>extract-yaml</id>
+						<phase>initialize</phase>
+						<goals>
+							<goal>unpack-dependencies</goal>
+						</goals>
+						<configuration>
+							<includeArtifactIds>metadata</includeArtifactIds>
+							<outputDirectory>${basedir}/config/generated/yaml</outputDirectory>
 							<overWriteReleases>true</overWriteReleases>
 							<overWriteSnapshots>true</overWriteSnapshots>
 						</configuration>
