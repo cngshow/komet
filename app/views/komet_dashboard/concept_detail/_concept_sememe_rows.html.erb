@@ -9,7 +9,7 @@
     <% end %>
   </td>
   <td><%= row[:state] %></td>
-  <td><%= row[:sememe_name] %></td>
+  <td data-menu-type="sememe" data-menu-uuid="<%= row[:uuid] %>"><%= row[:sememe_name] %></td>
 
   <!-- loop through all of the columns -->
   <% @concept_sememes[:columns].each do |column| %>
@@ -19,17 +19,29 @@
         <!-- if the row has data for this column print it out, otherwise leave it empty -->
         <% if row[:columns].has_key?(column[:id]) %>
 
-            <!-- if this row has a display value, put a tooltip on the cell to show the row data -->
-            <span <%= 'title=' + row[:columns][column[:id]][:data] unless row[:columns][column[:id]][:display] == '' %>>
+            <%
+               # if this row has a display value, show that in place of the row data and put a tooltip on the cell to show the row data
+               if row[:columns][column[:id]][:display] == ''
 
-              <!-- if this row has a display value, show that in place of the row data -->
-              <% if row[:columns][column[:id]][:display] == '' %>
-                  <%= row[:columns][column[:id]][:data] %>
-              <% else %>
-                  <%= row[:columns][column[:id]][:display] %>
-              <% end %>
+                 cell_display = row[:columns][column[:id]][:data]
+                 tooltip = ''
+               else
 
-            </span>
+                 cell_display = row[:columns][column[:id]][:display]
+                 tooltip = " title='#{row[:columns][column[:id]][:data]}'"
+               end
+
+               if (column[:data_type] =~ /uuid|nid|sctid/i)
+                 menu_attributes = "data-menu-type='sememe' data-menu-uuid='#{row[:columns][column[:id]][:data]}'"
+               else
+                 menu_attributes = "data-menu-type='value' data-menu-copy-value='#{cell_display}'"
+               end
+            %>
+
+            <div class="komet-concept-table-cell-content komet-context-menu" <%== menu_attributes + tooltip %>>
+
+              <%== cell_display %>
+            </div>
 
         <% end %>
 

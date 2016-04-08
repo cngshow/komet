@@ -29,6 +29,7 @@ Copyright Notice
  * file per style scope.
  *
  *= require jquery-ui
+ *= require_tree ../../../vendor/assets/stylesheets/contextMenu
  *= require_tree ../../../vendor/assets/stylesheets/jsTree
  *= require_tree ../../../vendor/assets/stylesheets/jq-ui-plugins
  */
@@ -49,6 +50,11 @@ html, body{
 }
 .ui-tabs .ui-tabs-panel{
   padding:5px;
+}
+
+// jQuery context-menu override to use glyphicons
+.context-menu-icon:before{
+  font-family: 'Glyphicons Halflings';
 }
 
 // KOMET Login styles
@@ -269,15 +275,22 @@ html, body{
 }
 .komet-concept-table th{
   border: 1px black solid;
-  padding: 2px 0px;
+  padding: 2px 2px;
   height: 1.8em;
   text-align: center;
   text-transform: capitalize;
 }
 .komet-concept-table td{
   border: 1px black solid;
-  padding: 0px 2px;
+  padding: 2px 2px;
   height: 1.8em;
+}
+.komet-concept-table-cell-content{
+  display: flex;
+  height: 100%;
+  width: 100%;
+  justify-content: center;
+  align-items: center;
 }
 .komet-concept-info-button{
   display: block;

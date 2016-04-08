@@ -57,7 +57,7 @@ class TaxonomyController < ApplicationController
       current_id = 0
 
       # load the root node into our return variable and then remove it from the raw nodes
-      tree_nodes << {id: 0, concept_id: raw_nodes[0][:id], text: raw_nodes[0][:text], parent: '#', parent_reversed: false, parent_search: parent_search, icon: 'glyphicon glyphicon-fire komet-node-image-red', a_attr: {class: ''}, state: {opened: 'true'}}
+      tree_nodes << {id: 0, concept_id: raw_nodes[0][:id], text: raw_nodes[0][:text], parent: '#', parent_reversed: false, parent_search: parent_search, icon: 'glyphicon glyphicon-fire', a_attr: {class: ''}, state: {opened: 'true'}}
       raw_nodes = raw_nodes.drop(1)
     else
       isaac_concept = TaxonomyRest.get_isaac_concept(uuid: current_id, additional_req_params: {stated: @stated})
@@ -71,7 +71,8 @@ class TaxonomyController < ApplicationController
 
     raw_nodes.each do |raw_node|
 
-      anchor_classes = ''
+      
+      anchor_attributes = { class: 'komet-context-menu', 'data-menu-type' => 'concept', 'data-menu-uuid' => raw_node[:id]}
       parent_search = params[:parent_search]
       parent_reversed = params[:parent_reversed]
       has_children = true
@@ -79,7 +80,7 @@ class TaxonomyController < ApplicationController
       # should this child node be reversed and is it the first node to be reversed - comes from node data
       if parent_reversed.eql?('false') && raw_node[:parent_count] > 1
 
-        anchor_classes = 'komet-reverse-tree-node'
+        anchor_attributes[:class] += ' komet-reverse-tree-node'
         parent_search = 'true'
         parent_reversed = 'true'
 
@@ -91,35 +92,35 @@ class TaxonomyController < ApplicationController
           # if the node has no parents identify it as a leaf, otherwise it is a branch
           if parent[:parents].length > 0
 
-            parent_icon_class = 'glyphicon glyphicon-book komet-node-image-red'
+            parent_icon_class = 'glyphicon glyphicon-book'
             parent_has_parents = true
           else
 
-            parent_icon_class = 'glyphicon glyphicon-leaf komet-node-image-red'
+            parent_icon_class = 'glyphicon glyphicon-leaf'
             parent_has_parents = false
           end
 
           # add the parent node above its child, making sure that it identified as a reverse search node
-          tree_nodes << {id: get_next_tree_id, concept_id: parent[:concept_id], text: parent[:text], children: parent_has_parents, parent_id: current_id, parent_reversed: true, parent_search: true, icon: parent_icon_class, a_attr: { class: 'komet-reverse-tree-node'}, li_attr: {class: 'komet-reverse-tree'}}
+          tree_nodes << {id: get_next_tree_id, concept_id: parent[:concept_id], text: parent[:text], children: parent_has_parents, parent_id: current_id, parent_reversed: true, parent_search: true, icon: parent_icon_class, a_attr: anchor_attributes, li_attr: {class: 'komet-reverse-tree'}}
 
         end
 
       elsif parent_search.eql?('true')
-        anchor_classes = 'komet-reverse-tree-node'
+        anchor_attributes[:class] += ' komet-reverse-tree-node'
       end
 
 
       # if the node has no children (or no parents if doing a parent search) identify it as a leaf, otherwise it is a branch
       if (!parent_search.eql?('true') && raw_node[:child_count] > 0) || (parent_search.eql?('true') && raw_node[:parent_count] > 0)
-        icon_class = 'glyphicon glyphicon-book komet-node-image-red'
+        icon_class = 'glyphicon glyphicon-book' # komet-node-image-red
 
       elsif (!parent_search.eql?('true') && raw_node[:child_count] == 0) || (parent_search.eql?('true') && raw_node[:parent_count] == 0)
 
-        icon_class = 'glyphicon glyphicon-leaf komet-node-image-red'
+        icon_class = 'glyphicon glyphicon-leaf'
         has_children = false
       end
 
-      node = {id: get_next_tree_id, concept_id: raw_node[:id], text: raw_node[:text], children: has_children, parent_reversed: parent_reversed, parent_search: parent_search, icon: icon_class, a_attr: { class: anchor_classes}}
+      node = {id: get_next_tree_id, concept_id: raw_node[:id], text: raw_node[:text], children: has_children, parent_reversed: parent_reversed, parent_search: parent_search, icon: icon_class, a_attr: anchor_attributes}
 
       # if the current ID is root, then add a 'parent' field to the node to satisfy the alternate JSON format of JSTree for this level of the tree
       if current_id == 0

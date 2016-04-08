@@ -198,11 +198,12 @@ module ConceptConcern
       if sememe.class == Gov::Vha::Isaac::Rest::Api1::Data::Sememe::RestDynamicSememeVersion
 
         assemblage_sequence = sememe.sememeChronology.assemblageSequence
+        uuid = sememe.sememeChronology.identifiers.uuids.first
 
         # check to see if our cache already has this sememe type, if not add its info to the cache so we only have to look up once
         if !sememe_types.has_key?(assemblage_sequence)
 
-          # use the assemblageSequence to do a concept_description call to get sememe name, then a sememe_sememeDefinition call to get the columns that sememe has.
+          # use the assemblage sequence to do a concept_description call to get sememe name, then a sememe_sememeDefinition call to get the columns that sememe has.
           sememe_types[assemblage_sequence] = {sememe_name: ConceptRest.get_concept(action: ConceptRestActions::ACTION_DESCRIPTIONS, uuid: assemblage_sequence).first.text}
           sememe_definition = SememeRest.get_sememe(action: SememeRestActions::ACTION_SEMEME_DEFINITION, uuid_or_id: assemblage_sequence)
 
@@ -218,7 +219,7 @@ module ConceptConcern
         end
 
         # start loading the row of sememe data with everything besides the data columns
-        data_row = {sememe_name: sememe_types[assemblage_sequence][:sememe_name], sememe_description: sememe_types[assemblage_sequence][:sememe_description], id: assemblage_sequence, state: sememe.sememeVersion.state, level: level, has_nested: has_nested, columns: {}}
+        data_row = {sememe_name: sememe_types[assemblage_sequence][:sememe_name], sememe_description: sememe_types[assemblage_sequence][:sememe_description], uuid: uuid, id: assemblage_sequence, state: sememe.sememeVersion.state, level: level, has_nested: has_nested, columns: {}}
 
         # loop through all of the sememe's data columns
         sememe.dataColumns.each{|row_column|
@@ -235,7 +236,7 @@ module ConceptConcern
 
             # If not added to our list of used columns add it to the end of the list
             if sememe_column && !is_column_used
-              used_column_list << {id: sememe_column.columnConceptSequence, name: sememe_column.columnName, description: sememe_column.columnDescription}
+              used_column_list << {id: sememe_column.columnConceptSequence, name: sememe_column.columnName, description: sememe_column.columnDescription, data_type: sememe_column.columnDataType.name}
             end
 
             data = row_column.data
