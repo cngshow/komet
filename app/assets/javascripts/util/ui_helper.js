@@ -38,9 +38,77 @@ var UIHelper = (function () {
         return (tabpage !== undefined ? (tabpage === tabpageId) : false);
     }
 
+    function initializeContextMenus() {
+
+        $.contextMenu({
+            selector: '.komet-context-menu',
+            build: function($triggerElement, e){
+
+                var items = {};
+
+                if ($triggerElement.attr("data-menu-type") === "sememe"){
+
+                    var uuid = $triggerElement.attr("data-menu-uuid");
+
+                    items.openConcept = {name:"Open in Concept Pane", icon: "context-menu-icon glyphicon-list-alt", callback: openConcept(uuid)};
+                    items.copyUuid = {name:"Copy UUID", icon: "context-menu-icon glyphicon-copy", callback: copyToClipboard(uuid)};
+
+                } else if ($triggerElement.attr("data-menu-type") === "concept"){
+
+                    var uuid = $triggerElement.attr("data-menu-uuid");
+
+                    items.openConcept = {name:"Open in Concept Pane", icon: "context-menu-icon glyphicon-list-alt", callback: openConcept(uuid)};
+                    items.copyUuid = {name:"Copy UUID", icon: "context-menu-icon glyphicon-copy", callback: copyToClipboard(uuid)};
+
+                } else {
+                    items.copy = {name:"Copy", icon: "context-menu-icon glyphicon-copy", callback: copyToClipboard($triggerElement.attr("data-menu-copy-value"))};
+                }
+
+
+                return {
+                    callback: function(){},
+                    items: items
+                };
+            },
+        });
+    }
+
+    // Context menu functions
+
+    function getOpenConceptIcon(opt, $itemElement, itemKey, item) {
+        // Set the content to the menu trigger selector and add an bootstrap icon to the item.
+        $itemElement.html('<span class="glyphicon glyphicon-star" aria-hidden="true"></span> ' + opt.selector);
+
+        // Add the context-menu-icon-updated class to the item
+        return 'context-menu-icon-updated';
+    }
+
+    function copyToClipboard(text) {
+
+        return function () {
+            // have to create a fake element with the value on the page to get copy to work
+            var textArea = document.createElement('textarea');
+            textArea.setAttribute('style','width:1px;border:0;opacity:0;');
+            document.body.appendChild(textArea);
+            textArea.value = text;
+            textArea.select();
+            document.execCommand('copy');
+            document.body.removeChild(textArea);
+
+        };
+    }
+
+    function openConcept(id) {
+
+        return function () {
+            $.publish(KometChannels.Taxonomy.taxonomyTreeNodeSelectedChannel, id)
+        };
+    }
+
     return {
         getActiveTabId: getActiveTabId,
-        isTabActive: isTabActive
+        isTabActive: isTabActive,
+        initializeContextMenus: initializeContextMenus
     };
 })();
 

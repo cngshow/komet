@@ -11,12 +11,16 @@
       <!-- description type, refset -->
       <div>
         View all sememes attached to this concept:
+
+        <% if @concept_sememes[:rows].length == 0 %>
+           No Sememes
+        <% end %>
       </div>
 
     </div>
 
     <!-- details drawer - can be collapsed -->
-    <div class="komet-concept-section-panel-details" style="display: block">
+    <div class="komet-concept-section-panel-details">
 
       <% if @concept_sememes[:rows].length == 0 %>
           <div class="komet-no-data-message">No Sememes.</div>
@@ -26,9 +30,11 @@
             <thead>
               <tr>
 
+                <th></th>
                 <th title="Status Markers - for Active/Inactive and Current/Historical and Uncommitted">Status</th>
                 <th title="The assemblage concept that defines this sememe.">Assemblage</th>
 
+                <!-- loop through and print out all the column headers -->
                 <% @concept_sememes[:columns].each do |column| %>
                   <th title="<%= column[:description] %>"><%= column[:name] %></th>
                 <% end %>
@@ -38,40 +44,11 @@
 
             <tbody>
 
-            <% @concept_sememes[:rows].each do |row| %>
-
-                <tr>
-
-                  <td><%= row[:state] %></td>
-                  <td><%= row[:sememe_name] %></td>
-
-                  <% @concept_sememes[:columns].each do |column| %>
-
-                    <td>
-
-                      <% if row[:columns].has_key?(column[:id]) %>
-
-                          <span <%= 'title=' + row[:columns][column[:id]][:data] unless row[:columns][column[:id]][:display] == '' %>>
-
-                            <% if row[:columns][column[:id]][:display] == '' %>
-                                <%= row[:columns][column[:id]][:data] %>
-                            <% else %>
-                                <%= row[:columns][column[:id]][:display] %>
-                            <% end %>
-
-                          </span>
-
-                      <% end %>
-
-                    </td>
-
-                  <% end %>
-
-                </tr>
-
-            <% end %>
+              <!-- render the rows partial once for each row in the sememes array -->
+              <%= render(partial: 'komet_dashboard/concept_detail/concept_sememe_rows', collection: @concept_sememes[:rows], as: :row, locals: { depth: 1 }) %>
 
             </tbody>
+
           </table>
 
       <% end %>
