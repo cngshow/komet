@@ -21,3 +21,4 @@ rails_komet.war
 /.idea
 /context.txt
 /config/generated/*
+.repository/
