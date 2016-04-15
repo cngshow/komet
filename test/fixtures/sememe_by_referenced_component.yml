@@ -1,4 +1,4 @@
-#Fixture created on 2016-03-25 09:30:34
+#Fixture created on 2016-04-12 19:09:59
 ---
 - "@class": gov.vha.isaac.rest.api1.data.sememe.RestDynamicSememeVersion
   expandables:

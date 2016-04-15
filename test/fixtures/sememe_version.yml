@@ -1,19 +1,34 @@
-#Fixture created on 2016-03-25 09:30:34
+#Fixture created on 2016-03-25 11:36:25
 ---
-"@class": gov.vha.isaac.rest.api1.data.sememe.RestDynamicSememeVersion
+"@class": gov.vha.isaac.rest.api1.data.sememe.RestSememeDescriptionVersion
 expandables:
   items:
-  - name: chronology
-    url: rest/1/sememe/chronology/2266066
   - name: nestedSememes
-    url: rest/1/sememe/version/2266066/?expand=nestedSememes
+    url: rest/1/sememe/version/5323888/?expand=nestedSememes,chronology
 sememeChronology:
+  expandables:
+    items:
+    - name: versionsAll
+      url: rest/1/sememe/versions/5323888/
+    - name: versionsLatestOnly
+      url: rest/1/sememe/version/5323888/
+  sememeSequence: 5323888
+  assemblageSequence: 63
+  referencedComponentNid: -2143811361
+  identifiers:
+    uuids:
+    - eceae2ca-2d57-34bc-b6df-5e376fc1fcaa
+  versions:
 sememeVersion:
-  stampSequence: 3
-  state: ACTIVE
-  time: 1448946000000
+  stampSequence: 104
+  state: INACTIVE
+  time: 1217476800000
   authorSequence: 5
   moduleSequence: 0
   pathSequence: 7
 nestedSememes:
-dataColumns: []
+caseSignificanceConceptSequence: 113
+languageConceptSequence: 8
+text: Heart failure excluded
+descriptionTypeConceptSequence: 11
+dialects:

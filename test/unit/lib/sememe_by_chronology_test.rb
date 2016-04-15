@@ -28,7 +28,6 @@ class SememeChronologyTest < Test::Unit::TestCase
   def test_concept_versions
     versions = @rest_sememe_chron.versions #an array of versions
     assert(versions.first.kind_of? Gov::Vha::Isaac::Rest::Api1::Data::Sememe::RestSememeVersion)#Do I get my inherited subtype of RestSememeVersion
-    assert(versions.first.text.class.eql? String)#Do I get my string?  RestSememeDescriptionVersion has this, RestDynamicSememeVersion does not
   end
 
   # Called after every test method runs. Can be used to tear

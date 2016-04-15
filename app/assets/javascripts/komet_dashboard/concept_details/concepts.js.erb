@@ -99,7 +99,6 @@ var ConceptsModule = (function () {
 
       var state = panelStates[key][0];
       var callback = panelStates[key][1];
-      console.log("restore state: " + key + " - state: " + state);
 
       if (state) {
         ConceptsModule.togglePanelDetails(key, callback);
@@ -111,8 +110,8 @@ var ConceptsModule = (function () {
 
     var stated = $("#komet_concept_stated_inferred")[0].value
 
-    TaxonomyModule.buildTaxonomyTree("concept_lineage_parents_tree", stated, true, TaxonomyModule.selectedTreeNode);
-    TaxonomyModule.buildTaxonomyTree("concept_lineage_children_tree", stated, false, TaxonomyModule.selectedTreeNode);
+    TaxonomyModule.buildTaxonomyTree("concept_lineage_parents_tree", stated, true, currentConceptID);
+    TaxonomyModule.buildTaxonomyTree("concept_lineage_children_tree", stated, false, currentConceptID);
 
     TaxonomyModule.concept_lineage_parents_tree.bind('ready.jstree', function (event, data) {
 
@@ -176,6 +175,29 @@ var ConceptsModule = (function () {
     });
   }
 
+  function toggleNestedTableRows(image, id){
+
+    // get reference to the block of nested rows
+    var nestedRows = $("#komet_concept_table_nested_row_" + id);
+
+    // change the displayed image and nested rows visibility
+    if (image.hasClass("glyphicon-arrow-right")){
+
+      image.removeClass("glyphicon-arrow-right");
+      image.addClass("glyphicon-arrow-down");
+      nestedRows.show();
+      image.parent().addClass("komet-concept-table-nested-indicator-open");
+
+    } else {
+
+      image.removeClass("glyphicon-arrow-down");
+      image.addClass("glyphicon-arrow-right");
+      nestedRows.hide();
+      image.parent().removeClass("komet-concept-table-nested-indicator-open");
+    }
+
+  }
+
   function getCurrentConceptId() {
     return currentConceptID;
   }
@@ -192,7 +214,8 @@ var ConceptsModule = (function () {
     setPanelState : setPanelState,
     getPanelState : getPanelState,
     restorePanelStates : restorePanelStates,
-    togglePanelDetails: togglePanelDetails
+    togglePanelDetails: togglePanelDetails,
+    toggleNestedTableRows: toggleNestedTableRows
   };
 
 })();

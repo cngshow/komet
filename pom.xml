@@ -1,16 +1,19 @@
 <?xml version="1.0"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
+	
+  <!-- in order to get the isaac yaml and the rails_common run this -->
+  <!-- mvn clean initialize -->
+  
 	<parent>
 		<groupId>gov.vha.isaac.ochre</groupId>
 		<artifactId>isaac-parent</artifactId>
-		<version>3.01-SNAPSHOT</version>
+		<version>3.02-SNAPSHOT</version>
 	</parent>
 
 	<groupId>gov.vha.isaac.gui.rails</groupId>
 	<artifactId>rails_komet</artifactId>
-	<version>1.3-SNAPSHOT</version>
+	<version>1.4-SNAPSHOT</version>
 	<packaging>pom</packaging>
 
 	<name>ISAAC Rails Komet Tooling</name>
@@ -20,7 +23,8 @@
 	</description>
 
 	<properties>
-		<rails_common.version>1.0-SNAPSHOT</rails_common.version>
+		<rails_common.version>1.1-SNAPSHOT</rails_common.version>
+		<isaac.version>${project.parent.version}</isaac.version>
 		<!-- railsMode is automatically set to 'test' or 'production' - 'test' if the version number ends with '-SNAPSHOT'
 		or 'production' otherwise.  See ant execution below-->
 	</properties>
@@ -54,6 +58,13 @@
 			<type>zip</type>
 			<optional>true</optional> <!-- Not needed at runtime / transitively -->
 		</dependency>
+		<dependency>
+			<groupId>gov.vha.isaac.ochre.modules</groupId>
+			<artifactId>metadata</artifactId>
+			<version>${isaac.version}</version>
+			<type>yaml.zip</type>
+			<optional>true</optional> <!-- Not needed at runtime / transitively -->
+		</dependency>
 	</dependencies>
 
 	<build>
@@ -73,6 +84,19 @@
 						<configuration>
 							<includeArtifactIds>rails_common</includeArtifactIds>
 							<outputDirectory>${basedir}/lib/</outputDirectory>
+							<overWriteReleases>true</overWriteReleases>
+							<overWriteSnapshots>true</overWriteSnapshots>
+						</configuration>
+					</execution>
+					<execution>
+						<id>extract-yaml</id>
+						<phase>initialize</phase>
+						<goals>
+							<goal>unpack-dependencies</goal>
+						</goals>
+						<configuration>
+							<includeArtifactIds>metadata</includeArtifactIds>
+							<outputDirectory>${basedir}/config/generated/yaml</outputDirectory>
 							<overWriteReleases>true</overWriteReleases>
 							<overWriteSnapshots>true</overWriteSnapshots>
 						</configuration>
@@ -160,7 +184,7 @@
 							<exportAntProperties>true</exportAntProperties>
 							<target name="set-build-type">
 								<condition property="railsMode" value="test" else="production">
-									<matches string="${project.version}" pattern=".*-SNAPSHOT"></matches>
+									<matches string="${project.version}" pattern=".*-SNAPSHOT" />
 								</condition>
 							</target>
 						</configuration>
