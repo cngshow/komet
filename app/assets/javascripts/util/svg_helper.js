@@ -25,9 +25,7 @@ var SvgHelper = (function () {
      }
 
    var route = gon.routes.logic_graph_version_path.replace(":id", conceptID.toString());
-     //console.log(conceptID.toString())
-  //  var route = gon.routes.logic_graph_version_path.replace(":id", 'b26dc0a4-8c14-315c-8d15-0d5c79d86464');
-     var rolegroup = gon.term_aux.ROLE_GROUP.value;
+   var rolegroup = gon.term_aux.ROLE_GROUP.value;
 
      AjaxCache.fetch(route,{},function(data){
        //  console.log("data  " + JSON.stringify(data))
@@ -35,7 +33,6 @@ var SvgHelper = (function () {
      })
  }
     function drawConceptDiagram(svgId ,data,rolegroup) {
-
 
         var id = "#" + svgId;
         $(id).svg();
@@ -61,12 +58,13 @@ var SvgHelper = (function () {
         x = x + 90;
         y = y + rect1.getBBox().height + 40;
         var circle1;
-        //console.log(data.rootLogicNode.children[0].nodeSemantic.name)
+
         if (data.rootLogicNode.children[0].nodeSemantic.name == "SUFFICIENT_SET") {
-            circle1 = drawSubsumedByNode(svg, x, y);
-        } else {
             circle1 = drawEquivalentNode(svg, x, y);
+        } else {
+            circle1 = drawSubsumedByNode(svg, x, y);
         }
+
         connectElements(svg, rect1, circle1, 'bottom-50', 'left');
         x = x + 55;
        var circle2 = drawConjunctionNode(svg, x, y);
@@ -78,19 +76,25 @@ var SvgHelper = (function () {
         var svgIsaModel = [];
         var svgAttrModel = [];
         var getelements = [];
-        //TD: once data problem is resolved need to loop through data objects and do code clean up
-         getelements.push(JSON.parse(toArray(data.rootLogicNode.children[0].children[0])))
-         //getelements.push(JSON.parse(toArray(data.rootLogicNode.children[0].children[0].children[0].children[0])))
 
+        for (i = 0; i < data.rootLogicNode.children[0].children[0].children.length; i++) {
+            getelements.push( JSON.parse(buildArray(data.rootLogicNode.children[0].children[0].children[i],"yes")) );
+           if(data.rootLogicNode.children[0].children[0].children[i].children.length > 0) {
+               for (a = 0; a < data.rootLogicNode.children[0].children[0].children[i].children[0].children.length; a++) {
+                   getelements.push(JSON.parse(buildArray(data.rootLogicNode.children[0].children[0].children[i].children[0].children[a], "no")));
+               }
+           }
+        }
 
         $.each(getelements, function(i, relationship) {
-            if (relationship.ISAElement == 'False') {
+            if (relationship.ISAElement == "True") {
                 svgIsaModel.push(relationship)
             }
             else {
 
                 svgAttrModel.push(relationship)
             }
+
         });
 
         sctClass = "sct-defined-concept";
@@ -100,124 +104,138 @@ var SvgHelper = (function () {
             } else {
                 sctClass = "sct-defined-concept";
             }
+
             var rectParent = drawSctBox(svg, x, y, relationship.conceptDescription, relationship.conceptSequence, sctClass);
             connectElements(svg, circle2, rectParent, 'center', 'left', 'ClearTriangle');
             y = y + rectParent.getBBox().height + 25;
             maxX = ((maxX < x + rectParent.getBBox().width + 50) ? x + rectParent.getBBox().width + 50 : maxX);
         });
-        $.each(svgAttrModel, function(i, relationship) {
-            if (relationship.conceptSequence ==rolegroup )
-            {
-                y = y + 15;
 
-                var groupNode = drawAttributeGroupNode(svg, x, y);
-                connectElements(svg, circle2, groupNode, 'center', 'left');
-                var conjunctionNode = drawConjunctionNode(svg, x + 55, y);
-                connectElements(svg, groupNode, conjunctionNode, 'right', 'left');
-                if (relationship.groupId == i) {
-                    if (!relationship.isConceptDefined) {
-                        sctClass = "sct-primitive-concept";
-                    } else {
-                        sctClass = "sct-defined-concept";
-                    }
-                    var rectRole = drawSctBox(svg, x + 85, y - 18, relationship.connectorTypeConceptDescription, relationship.connectorTypeConceptSequence,"sct-attribute");
-                    connectElements(svg, conjunctionNode, rectRole, 'center', 'left');
-                    var rectRole2 = drawSctBox(svg, x + 85 + rectRole.getBBox().width + 30, y - 18, relationship.conceptDescription,relationship.conceptSequence, sctClass);
-                    connectElements(svg, rectRole, rectRole2, 'right', 'left');
-                    y = y + rectRole2.getBBox().height + 25;
-                    maxX = ((maxX < x + 85 + rectRole.getBBox().width + 30 + rectRole2.getBBox().width + 50) ? x + 85 + rectRole.getBBox().width + 30 + rectRole2.getBBox().width + 50 : maxX);
-                }
+        // load ungrouped attributes
+        $.each(svgAttrModel, function(i, relationship) {
+            if (!relationship.isConceptDefined) {
+                sctClass = "sct-primitive-concept";
+            } else {
+                sctClass = "sct-defined-concept";
             }
-            else
-            {
-                if (!relationship.isConceptDefined) {
+
+            if (relationship.connectorTypeConceptSequence == "0") {
+                var rectAttr = drawSctBox(svg, x, y,  relationship.connectorTypeConceptDescription, relationship.connectorTypeConceptSequence,"sct-attribute");
+                connectElements(svg, circle2, rectAttr, 'center', 'left');
+                var rectTarget = drawSctBox(svg, x + rectAttr.getBBox().width + 50, y,  relationship.conceptDescription,relationship.conceptSequence, sctClass);
+                connectElements(svg, rectAttr, rectTarget, 'right', 'left');
+                y = y + rectTarget.getBBox().height + 25;
+                maxX = ((maxX < x + rectAttr.getBBox().width + 50 + rectTarget.getBBox().width + 50) ? x + rectAttr.getBBox().width + 50 + rectTarget.getBBox().width + 50 : maxX);
+            }
+        });
+        y = y + 15;
+
+        var groupNode
+        var conjunctionNode
+        $.each(svgAttrModel, function(m, relationship) {
+
+          if (relationship.connectorTypeConceptSequence == rolegroup) {
+                  groupNode = drawAttributeGroupNode(svg, x, y);
+                connectElements(svg, circle2, groupNode, 'center', 'left');
+                  conjunctionNode = drawConjunctionNode(svg, x + 55, y);
+                connectElements(svg, groupNode, conjunctionNode, 'right', 'left');
+            }
+
+            if (!relationship.isConceptDefined) {
                     sctClass = "sct-primitive-concept";
                 } else {
                     sctClass = "sct-defined-concept";
                 }
-
-                    var rectAttr = drawSctBox(svg, x, y, relationship.connectorTypeConceptDescription, relationship.connectorTypeConceptSequence, "sct-attribute");
-                    connectElements(svg, circle2, rectAttr, 'center', 'left');
-                    var rectTarget = drawSctBox(svg, x + rectAttr.getBBox().width + 50, y, relationship.conceptDescription,relationship.conceptSequence, sctClass);
-                    connectElements(svg, rectAttr, rectTarget, 'right', 'left');
-                    y = y + rectTarget.getBBox().height + 25;
-                    maxX = ((maxX < x + rectAttr.getBBox().width + 50 + rectTarget.getBBox().width + 50) ? x + rectAttr.getBBox().width + 50 + rectTarget.getBBox().width + 50 : maxX);
-
+            if (relationship.connectorTypeConceptSequence != rolegroup) {
+                var rectRole = drawSctBox(svg, x + 85, y - 18, relationship.connectorTypeConceptDescription, relationship.connectorTypeConceptSequence, "sct-attribute");
+                connectElements(svg, conjunctionNode, rectRole, 'center', 'left');
+                var rectRole2 = drawSctBox(svg, x + 85 + rectRole.getBBox().width + 30, y - 18, relationship.conceptDescription, relationship.conceptSequence, sctClass);
+                connectElements(svg, rectRole, rectRole2, 'right', 'left');
+                y = y + rectRole2.getBBox().height + 25;
+                maxX = ((maxX < x + 85 + rectRole.getBBox().width + 30 + rectRole2.getBBox().width + 50) ? x + 85 + rectRole.getBBox().width + 30 + rectRole2.getBBox().width + 50 : maxX);
             }
 
-
         });
+
         //currentConcept = concept;
         //currentSvgId = svgId;
     }
 
-
-    function toArray(obj) {
+    function buildArray(obj,isaelement) {
         var result = [];
-        var result2 = []
         var counter =0;
+        var dontaddme="false";
         var sstring = "";
         for (var prop in obj) {
             var value = obj[prop];
             if (prop == 'nodeSemantic')
             {
-                sstring = ' {'
-                if (obj["nodeSemantic"].name == "ROLE_SOME")
+                sstring = '{'
+                if (obj["nodeSemantic"].name == "ROLE_SOME" || isaelement == "no")
                 {
-                    sstring = sstring + '"ISAElement":"True",';
-                }
-                else
-                {
+                    dontaddme="true";
                     sstring = sstring + '"ISAElement":"False",';
                 }
+                else
+                {
+                    sstring = sstring + '"ISAElement":"True",';
+                    dontaddme="false";
+                }
                 sstring = sstring + '"' + prop + '":"'+  obj["nodeSemantic"].name + '",'
-
+                if (obj["nodeSemantic"].name == "ROLE_SOME" &&  parseInt(obj["children"].length) > 0 && counter == 0)
+                {
+                    counter = counter + 1
+                    sstring = sstring +  getConceptNodeValues(obj["children"][0])
+                }
             }
-            if (prop == 'children')
+
+            if (prop == 'children' &&  dontaddme == "false")
             {
-                if(typeof obj[prop][0] ==  'undefined' )
-                {
-                    sstring = sstring +  '"conceptSequence":"null",'
-                }
-                else
-                {
-                    sstring = sstring +  '"conceptSequence":"'+  obj[prop][0].conceptSequence + '",'
-                }
-
-                if(typeof obj[prop][0] ==  'undefined' )
-                {
-                    sstring = sstring +  '"conceptDescription":"null",'
-                }
-                else
-                {
-                    sstring = sstring +  '"conceptDescription":"'+  obj[prop][0].conceptDescription + '",'
-                }
-
-                if(typeof obj[prop][0] ==  'undefined' )
-                {
-                    sstring = sstring +  '"isConceptDefined":"null",'
-                }
-                else
-                {
-                    sstring = sstring +  '"isConceptDefined":"'+  obj[prop][0].isConceptDefined + '",'
-                }
+                sstring = sstring + '"conceptSequence":"' +  obj["conceptSequence"] + '",'
+                sstring = sstring + '"conceptDescription":"' +  obj["conceptDescription"] + '",'
+                sstring = sstring + '"isConceptDefined":"' +  obj["isConceptDefined"] + '",'
             }
+
             if (prop == 'connectorTypeConceptDescription')
             {
                 sstring = sstring +  '"' + prop + '":"'+  obj["connectorTypeConceptDescription"] + '",'
             }
+
             if (prop == 'connectorTypeConceptSequence')
             {
                 sstring = sstring + '"' +   prop + '":"'+  obj["connectorTypeConceptSequence"] + '",'
+            } else if(typeof obj["connectorTypeConceptSequence"] ==  'undefined' )
+            {
+                sstring = sstring + '"connectorTypeConceptSequence":"' +  "0" + '",'
             }
-
-
         }
         sstring = sstring.substring(0, sstring.length - 1)
-        sstring = sstring + "}";
+        sstring = sstring +  "}";
         result.push(sstring);
         return sstring;
 
+    }
+
+
+    function getConceptNodeValues(obj) {
+        var sstring = "";
+        for (var prop in obj) {
+            if(typeof obj["conceptSequence"] !=  'undefined' )
+            {
+                sstring = sstring + '"conceptSequence":"' +  obj["conceptSequence"] + '",'
+            }
+            if(typeof obj["conceptDescription"] !=  'undefined' )
+            {
+                sstring = sstring + '"conceptDescription":"' +  obj["conceptDescription"] + '",'
+            }
+            if(typeof obj["isConceptDefined"] !=  'undefined' )
+            {
+                sstring = sstring + '"isConceptDefined":"' +  obj["isConceptDefined"] + '",'
+            }
+
+        }
+
+        return sstring
     }
 
 
@@ -267,7 +285,7 @@ var SvgHelper = (function () {
     }
 
     function drawSctBox(svg, x, y, label, sctid, cssClass) {
-        //console.log("In svg: " + label + " " + sctid + " " + cssClass);
+
         var idSequence = 0;
         // x,y coordinates of the top-left corner
         var testText = "Test";
@@ -283,7 +301,7 @@ var SvgHelper = (function () {
             testText = sctid.toString();
         }
         var fontFamily = '"Helvetica Neue",Helvetica,Arial,sans-serif';
-        //var fontFamily = 'sans-serif';
+
         var tempText = svg.text(x, y, testText, {fontFamily: fontFamily, fontSize: '12', fill: 'black'});
         var textHeight = tempText.getBBox().height;
         var textWidth = tempText.getBBox().width;
