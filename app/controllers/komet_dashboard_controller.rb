@@ -33,9 +33,17 @@ class KometDashboardController < ApplicationController
   end
 
   def setup_constants
-    initialize_isaac_constants
-    $log.debug('term_aux hash passed to javascript is ' + ISAACConstants::TERMAUX.to_s)
-    gon.term_aux = ISAACConstants::TERMAUX
+    initialize_isaac_constants#to_do, remove
+    $log.debug('term_aux hash passed to javascript is ' + ISAACConstants::TERMAUX.to_s)#to_do, remove
+    gon.term_aux = ISAACConstants::TERMAUX#to_do, remove
+    hash = {}
+    Dir.glob('./config/generated/yaml/*.yaml') do |file|
+      prefix = File.basename(file).split('.').first.to_sym
+      json = YAML.load_file file
+      $log.debug("gon jason is " + json.inspect)
+      hash[prefix] = json
+    end
+    gon.isaac = hash
   end
 
   def dashboard
