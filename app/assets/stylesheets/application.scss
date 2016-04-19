@@ -70,7 +70,6 @@ html, body{
   background-color: #4f80d9;
   justify-content: center;
   align-items: center;
-
 }
 .komet-external-body{
   background-color: #eef1f3;
@@ -105,13 +104,11 @@ html, body{
   margin-left: auto;
   padding: 20px;
 }
-
 .komet-external-login-form .form-control{
   display: inline-block;
   width: 200px;
   margin-top: 10px;
 }
-
 .komet-external-login-form .btn{
   margin-top: 10px;
 }
@@ -160,6 +157,11 @@ html, body{
   display: inline-block;
   font-size: smaller !important;
   padding: 3px 12px;
+}
+
+// KOMET Navigation styles
+.komet_dashboard .navbar{
+  margin-bottom: 0px;
 }
 
 // KOMET Panel Styles
