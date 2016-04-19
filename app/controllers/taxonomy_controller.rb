@@ -39,96 +39,61 @@ class TaxonomyController < ApplicationController
   #@return [json] the tree nodes to insert into the tree at the parent node passed in the request
   def load_tree_data
 
-    current_id = params[:concept_id]
+    selected_concept_id = params[:concept_id]
     parent_search = params[:parent_search]
+    parent_reversed = params[:parent_reversed]
     stated = params[:stated]
+    tree_walk_levels = params[:tree_walk_levels]
     tree_nodes = []
-    root = current_id.eql?('#')
+    root = selected_concept_id.eql?('#')
 
     # check to make sure the flag for stated or inferred view was passed in
     if stated != nil
       @stated = stated
     end
 
-    if root
-      # load the ISAAC root node and children
-      isaac_root = TaxonomyRest.get_isaac_root(additional_req_params: {stated: @stated})
-      raw_nodes = rest_concept_version_to_json_tree(isaac_root, root: true, parent_search: parent_search)
-      current_id = 0
-
-      # load the root node into our return variable and then remove it from the raw nodes
-      tree_nodes << {id: 0, concept_id: raw_nodes[0][:id], text: raw_nodes[0][:text], parent: '#', parent_reversed: false, parent_search: parent_search, icon: 'glyphicon glyphicon-fire', a_attr: {class: ''}, state: {opened: 'true'}}
-      raw_nodes = raw_nodes.drop(1)
+    # check to make the number of levels to walk the tree was passed in
+    if tree_walk_levels == nil
+      tree_walk_levels = 2
     else
-      isaac_concept = TaxonomyRest.get_isaac_concept(uuid: current_id, additional_req_params: {stated: @stated})
-
-      if isaac_concept.is_a? CommonRest::UnexpectedResponse
-        render json: [] and return
-      end
-
-      raw_nodes = rest_concept_version_to_json_tree(isaac_concept, parent_search: parent_search)
+      tree_walk_levels = tree_walk_levels.to_i + 1
     end
 
-    raw_nodes.each do |raw_node|
+    additional_req_params = {stated: @stated}
 
-      
-      anchor_attributes = { class: 'komet-context-menu', 'data-menu-type' => 'concept', 'data-menu-uuid' => raw_node[:id]}
-      parent_search = params[:parent_search]
-      parent_reversed = params[:parent_reversed]
-      has_children = true
+    if boolean(parent_search)
 
-      # should this child node be reversed and is it the first node to be reversed - comes from node data
-      if parent_reversed.eql?('false') && raw_node[:parent_count] > 1
+      additional_req_params[:childDepth] = 0
+      additional_req_params[:parentHeight] = tree_walk_levels
+    else
 
-        anchor_attributes[:class] += ' komet-reverse-tree-node'
-        parent_search = 'true'
-        parent_reversed = 'true'
-
-        # loop though all parents besides the first one (the already open path)
-        raw_node[:parents].drop(1).each do |parent_id|
-
-          parent = get_tree_node(parent_id)
-
-          # if the node has no parents identify it as a leaf, otherwise it is a branch
-          if parent[:parents].length > 0
-
-            parent_icon_class = 'glyphicon glyphicon-book'
-            parent_has_parents = true
-          else
-
-            parent_icon_class = 'glyphicon glyphicon-leaf'
-            parent_has_parents = false
-          end
-
-          # add the parent node above its child, making sure that it identified as a reverse search node
-          tree_nodes << {id: get_next_tree_id, concept_id: parent[:concept_id], text: parent[:text], children: parent_has_parents, parent_id: current_id, parent_reversed: true, parent_search: true, icon: parent_icon_class, a_attr: anchor_attributes, li_attr: {class: 'komet-reverse-tree'}}
-
-        end
-
-      elsif parent_search.eql?('true')
-        anchor_attributes[:class] += ' komet-reverse-tree-node'
-      end
-
-
-      # if the node has no children (or no parents if doing a parent search) identify it as a leaf, otherwise it is a branch
-      if (!parent_search.eql?('true') && raw_node[:child_count] > 0) || (parent_search.eql?('true') && raw_node[:parent_count] > 0)
-        icon_class = 'glyphicon glyphicon-book' # komet-node-image-red
-
-      elsif (!parent_search.eql?('true') && raw_node[:child_count] == 0) || (parent_search.eql?('true') && raw_node[:parent_count] == 0)
-
-        icon_class = 'glyphicon glyphicon-leaf'
-        has_children = false
-      end
-
-      node = {id: get_next_tree_id, concept_id: raw_node[:id], text: raw_node[:text], children: has_children, parent_reversed: parent_reversed, parent_search: parent_search, icon: icon_class, a_attr: anchor_attributes}
-
-      # if the current ID is root, then add a 'parent' field to the node to satisfy the alternate JSON format of JSTree for this level of the tree
-      if current_id == 0
-        node[:parent] = '0'
-      end
-
-      tree_nodes << node
+      additional_req_params[:childDepth] = tree_walk_levels
+      additional_req_params[:parentHeight] = 1
     end
+
+    if root
+
+      # load the ISAAC root node and children
+      isaac_concept = TaxonomyRest.get_isaac_root(additional_req_params: additional_req_params)
+
+      # load the root node into our return variable
+      tree_nodes << {id: 0, concept_id: isaac_concept.conChronology.identifiers.uuids.first, text: isaac_concept.conChronology.description, parent: '#', parent_reversed: false, parent_search: parent_search, icon: 'glyphicon glyphicon-fire', a_attr: {class: ''}, state: {opened: 'true'}}
+
+      selected_concept_id = 0
+    else
+      isaac_concept = TaxonomyRest.get_isaac_concept(uuid: selected_concept_id, additional_req_params: additional_req_params)
+    end
+
+    if isaac_concept.is_a? CommonRest::UnexpectedResponse
+      render json: [] and return
+    end
+
+    raw_nodes = process_rest_concept(isaac_concept, tree_walk_levels, first_level: true, parent_search: parent_search)
+
+    if selected_concept_id == params[:starting_concept_id]
+      selected_concept_id = '#'
+    end
+    tree_nodes = process_tree_level(raw_nodes, tree_nodes, selected_concept_id, parent_search, parent_reversed, true)
 
     render json: tree_nodes
   end
@@ -357,61 +322,163 @@ class TaxonomyController < ApplicationController
 
   end
 
-  def rest_concept_version_to_json_tree(rest_concept_version, root: false, parent_search: false, multi_path: true)
+  ##
+  # get_concept_parent_path - RESTful route for populating concept members tab using an http :GET
+  # The current tree node representing the concept is identified in the request params with the key :concept_id
+  # @return none - setting the @concept_members variable
+  def get_concept_parent_path(concept_id = nil)
 
+    if concept_id == nil && params[:concept_id]
+      concept_id = params[:concept_id].to_i
+    end
+
+    @concept_members = []
+
+    @concept_members << {term: 'Term 1', concept_id: Time.now.to_s}
+    @concept_members << {term: 'Term 2', concept_id: concept_id}
+    @concept_members << {term: 'Term 3', concept_id: '333333'}
+
+  end
+
+  def process_rest_concept(concept, tree_walk_levels, first_level: false, parent_search: false, multi_path: true)
+    $log.debug('*** rest_concept_version_to_json_tree called: ' + concept.conChronology.description)
     concept_nodes = []
 
-    if root
+    node = {}
+    uuid = concept.conChronology.identifiers.uuids.first
+    desc = concept.conChronology.description
+    node[:has_children] = !concept.children.nil?
+    child_count = (node[:has_children] ? concept.children.length : 0)
+    badge = node[:has_children] ? "&nbsp;&nbsp;<span class=\"badge badge-success\" title=\"kma\">#{child_count}</span>" : ''
+    desc << badge
 
-      root = {}
-      root[:id] = rest_concept_version.conChronology.identifiers.uuids.first
-      root[:text] = rest_concept_version.conChronology.description
-      concept_nodes << root
-    end
+    node[:id] = uuid
+    node[:text] = desc
+    node[:child_count] = child_count
+    node[:has_parents] = !concept.parents.nil?
+    parent_count = node[:has_parents] ? concept.parents.length : 0
+    node[:parent_count] = parent_count
+    parents = []
 
-    # if we are walking up the tree toward the root node get the parents of the current node, otherwise get the children
-    if boolean(parent_search)
-      concepts = !rest_concept_version.parents.nil? ? rest_concept_version.parents : []
-    else
-      concepts = !rest_concept_version.children.nil? ? rest_concept_version.children : []
-    end
+    # if this node has parents and we want to see all parent paths then get the IDs of each parent
+    if tree_walk_levels > 1 && node[:has_parents] && !boolean(parent_search) || (parent_count > 1 && multi_path)
 
-    concepts.each do |concept|
-
-      if concept.conChronology
-
-        uuid = concept.conChronology.identifiers.uuids.first
-        desc = concept.conChronology.description
-        has_children = !concept.children.nil?
-        child_count = (has_children ? concept.children.length : 0)
-        badge = has_children ? "&nbsp;&nbsp;<span class=\"badge badge-success\" title=\"kma\">#{child_count}</span>" : ''
-        desc << badge
-
-        node = {}
-        node[:id] = uuid
-        node[:text] = desc
-        node[:children] = has_children
-        node[:child_count] = child_count
-        has_parents = !concept.parents.nil?
-        parent_count = has_parents ? concept.parents.length : 0
-        node[:parent_count] = parent_count
-        parents = []
-
-        # if this node has parents and we want to see all parent paths then get the IDs of each parent
-        if has_parents && multi_path
-
-          concept.parents.each do |parent|
-            parents << parent.conChronology.identifiers.uuids.first
-          end
-        end
-
-        node[:parents] = parents
-
-        concept_nodes << node
+      concept.parents.each do |parent|
+        parents << parent.conChronology.identifiers.uuids.first
       end
     end
 
+    node[:parents] = parents
+    relation = :children
+
+    # if we are walking up the tree toward the root node get the parents of the current node, otherwise get the children
+    if tree_walk_levels > 1 && boolean(parent_search) && !concept.parents.nil?
+
+      relation = :parents
+      related_concepts = concept.parents
+
+    elsif tree_walk_levels > 1 && !boolean(parent_search) && !concept.children.nil?
+      related_concepts = concept.children
+    else
+      related_concepts = []
+    end
+
+    processed_related_concepts = []
+
+    related_concepts.each do |related_concept|
+      processed_related_concepts.concat(process_rest_concept(related_concept, tree_walk_levels - 1, parent_search: parent_search, multi_path: multi_path))
+    end
+
+    if first_level
+      concept_nodes = processed_related_concepts
+    else
+      $log.debug('*** data process: ' + node[:text])
+      node[relation] = processed_related_concepts
+      concept_nodes << node
+    end
+
     concept_nodes
+  end
+
+  def process_tree_level (raw_nodes, tree_nodes, current_node_id, parent_search_param, parent_reversed_param, first_level)
+
+    raw_nodes.each do |raw_node|
+
+      anchor_attributes = { class: 'komet-context-menu', 'data-menu-type' => 'concept', 'data-menu-uuid' => raw_node[:id]}
+      parent_search = parent_search_param
+      parent_reversed = parent_reversed_param
+      show_expander = true
+      relation = :children
+      has_relation = :has_children
+
+      if boolean(parent_search)
+
+        relation = :parents
+        has_relation = :has_parents
+      end
+
+      # should this child node be reversed and is it the first node to be reversed - comes from node data
+      if !boolean(parent_reversed) && raw_node[:parent_count] > 1
+
+        anchor_attributes[:class] += ' komet-reverse-tree-node'
+        parent_search = 'true'
+        parent_reversed = 'true'
+
+        # loop though all parents besides the first one (the already open path)
+        raw_node[:parents].drop(1).each do |parent_id|
+
+          parent = get_tree_node(parent_id)
+
+          # if the node has no parents identify it as a leaf, otherwise it is a branch
+          if parent[:parents].length > 0
+
+            parent_icon_class = 'glyphicon glyphicon-book'
+            parent_has_parents = true
+          else
+
+            parent_icon_class = 'glyphicon glyphicon-leaf'
+            parent_has_parents = false
+          end
+
+          # add the parent node above its child, making sure that it identified as a reverse search node
+          tree_nodes << {id: get_next_tree_id, concept_id: parent[:concept_id], text: parent[:text], children: parent_has_parents, parent_reversed: true, parent_search: true, icon: parent_icon_class, a_attr: anchor_attributes, li_attr: {class: 'komet-reverse-tree'}}
+
+        end
+
+      elsif boolean(parent_search)
+        anchor_attributes[:class] += ' komet-reverse-tree-node'
+      end
+
+      # if the node has no children (or no parents if doing a parent search) identify it as a leaf, otherwise it is a branch
+      if raw_node[has_relation]
+        icon_class = 'glyphicon glyphicon-book' # komet-node-image-red
+      else
+
+        icon_class = 'glyphicon glyphicon-leaf'
+        show_expander = false
+      end
+
+      node = {id: get_next_tree_id, concept_id: raw_node[:id], text: raw_node[:text], parent_reversed: parent_reversed, parent_search: parent_search, icon: icon_class, a_attr: anchor_attributes}
+
+      # if the current ID is root, then add a 'parent' field to the node to satisfy the alternate JSON format of JSTree for this level of the tree
+      if current_node_id == 0 || current_node_id == '#' || !first_level
+        node[:parent] = current_node_id.to_s
+      end
+
+      if raw_node[relation].length == 0
+        node[:children] = show_expander
+      end
+
+      tree_nodes << node
+      $log.debug('### tree process: ' + node[:text])
+
+      if raw_node[relation].length > 0
+        process_tree_level(raw_node[relation], tree_nodes, node[:id], parent_search_param, parent_reversed_param, false)
+      end
+
+    end
+
+    return tree_nodes
   end
 
   def get_tree_node (id)
