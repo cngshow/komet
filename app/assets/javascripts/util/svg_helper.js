@@ -25,7 +25,7 @@ var SvgHelper = (function () {
      }
 
    var route = gon.routes.logic_graph_version_path.replace(":id", conceptID.toString());
-   var rolegroup = gon.term_aux.ROLE_GROUP.value;
+   var rolegroup = gon.IsaacMetadataAuxiliary.ROLE_GROUP.uuids[0].translation.value;
 
      AjaxCache.fetch(route,{},function(data){
        //  console.log("data  " + JSON.stringify(data))
