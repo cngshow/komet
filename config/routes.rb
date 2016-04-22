@@ -5,20 +5,10 @@ Rails.application.routes.draw do
 
   get 'komet_dashboard/dashboard'
   get 'komet_dashboard/metadata'
-  get 'komet_dashboard/taxonomy/taxonomy' => 'taxonomy#taxonomy'
-  get 'taxonomy/load_tree_data'
-  get 'taxonomy/get_concept_information'
-  get 'taxonomy/get_concept_summary'
-  get 'taxonomy/get_concept_sememes'
-  get 'taxonomy/get_concept_details'
-  get 'taxonomy/get_concept_expression'
-  get 'taxonomy/get_concept_refsets'
-  get 'taxonomy/get_concept_references'
-  get 'taxonomy/get_concept_members'
-  #get 'taxonomy/test_ajax_js'
-  #get 'taxonomy/test_render_partial'
-  get 'taxonomy/render_concept_diagram'
-  get 'taxonomy/svg_diagram'
+  get 'komet_dashboard/load_tree_data', :as => :taxonomy_load_tree_data
+  get 'komet_dashboard/get_concept_information', :as => :taxonomy_get_concept_information
+  get 'komet_dashboard/get_concept_summary', :as => :taxonomy_get_concept_summary
+  get 'komet_dashboard/get_concept_sememes', :as => :taxonomy_get_concept_sememes
 
   get 'search/get_assemblage_suggestions'
   get 'search/get_assemblage_recents'

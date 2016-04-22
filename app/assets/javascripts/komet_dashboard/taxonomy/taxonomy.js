@@ -301,9 +301,9 @@ var TaxonomyModule = (function () {
         });
     }
 
-    function init(tree_id, stated, parent_search, starting_concept_id, select_item) {
+    function init() {
 
-        buildTaxonomyTree(tree_id, stated, parent_search, starting_concept_id, select_item);
+        this.tree = new KometTaxonomyTree("taxonomy_tree", $("#komet_taxonomy_stated_inferred")[0].value, false, null, true);
     }
 
     return {

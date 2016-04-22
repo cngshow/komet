@@ -2,6 +2,7 @@ var ConceptsModule = (function () {
 
   var currentConceptID;
   var panelStates = {};
+  var trees = [];
   const PARENTS_TREE = "concept_lineage_parents_tree";
   const CHILDREN_TREE = "concept_lineage_children_tree";
 
@@ -112,26 +113,26 @@ var ConceptsModule = (function () {
 
     var stated = $("#komet_concept_stated_inferred")[0].value
 
-    TaxonomyModule.buildTaxonomyTree(PARENTS_TREE, stated, true, currentConceptID);
-    TaxonomyModule.buildTaxonomyTree(CHILDREN_TREE, stated, false, currentConceptID);
+    trees[PARENTS_TREE] = new KometTaxonomyTree(PARENTS_TREE, stated, true, currentConceptID);
+    trees[CHILDREN_TREE] = new KometTaxonomyTree(CHILDREN_TREE, stated, false, currentConceptID);
 
-    TaxonomyModule[PARENTS_TREE].bind('ready.jstree', function (event, data) {
+    trees[PARENTS_TREE].tree.bind('ready.jstree', function (event, data) {
 
       // should use data.instance._cnt, but never has count anymore
       if (data.instance._model.data["#"].children.length == 0) {
 
-        TaxonomyModule[PARENTS_TREE].html("<div class='komet-reverse-tree-node'>No Parents</div>");
+        trees[PARENTS_TREE].tree.html("<div class='komet-reverse-tree-node'>No Parents</div>");
         $("#concept_lineage_header_text").html("No Parent");
       } else{
         $("#concept_lineage_header_text").html(data.instance.get_node('ul > li:first').text);
       }
     });
 
-    TaxonomyModule[CHILDREN_TREE].bind('ready.jstree', function (event, data) {
+    trees[CHILDREN_TREE].tree.bind('ready.jstree', function (event, data) {
 
       // should use data.instance._cnt, but never has count anymore
       if (data.instance._model.data["#"].children.length == 0) {
-        TaxonomyModule[CHILDREN_TREE].html("No Children");
+        trees[CHILDREN_TREE].tree.html("No Children");
       }
     });
   }
@@ -152,8 +153,8 @@ var ConceptsModule = (function () {
     $.subscribe(KometChannels.Taxonomy.taxonomySearchResultSelectedChannel, function (e, conceptID) {
 
       currentConceptID = conceptID;
-      TaxonomyModule[PARENTS_TREE].selectedConceptID = currentConceptID;
-      TaxonomyModule[CHILDREN_TREE].selectedConceptID = currentConceptID;
+      trees[PARENTS_TREE].selectedConceptID = currentConceptID;
+      trees[CHILDREN_TREE].selectedConceptID = currentConceptID;
       loadConceptTabs();
     });
   }
@@ -193,8 +194,7 @@ var ConceptsModule = (function () {
   // show this concept in the taxonomy tree
   function linkToTaxonomyTree() {
 
-    TaxonomyModule.findNodeInTree(
-        'taxonomy_tree',
+    TaxonomyModule.tree.findNodeInTree(
         ConceptsModule.getCurrentConceptId(),
         $('#komet_concept_stated_inferred')[0].value,
         function (foundNodeId) {
