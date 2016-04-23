@@ -1,17 +1,17 @@
 <div class="komet-concept-lineage-title">LINEAGE</div>
 
-  <div id="komet_concept_lineage_panel_" class="komet-concept-section-panel komet-concept-lineage-panel">
+  <div id="komet_concept_lineage_panel_<%= @viewer_id %>" class="komet-concept-section-panel komet-concept-lineage-panel">
 
     <!-- main header block - always visible -->
     <div class="komet-concept-section-panel-header">
 
       <!-- expand/collapse icon - controls details drawer -->
-      <div class="glyphicon glyphicon-plus-sign" onclick="ConceptsModule.togglePanelDetails('komet_concept_lineage_panel_', null, true)"></div>
+      <div class="glyphicon glyphicon-plus-sign" onclick="ConceptsModule.viewers[<%= @viewer_id %>].togglePanelDetails('komet_concept_lineage_panel_<%= @viewer_id %>', null, true)"></div>
 
       <!-- description type, refset -->
       <div>
         Parent:
-        <span id="concept_lineage_header_text">No Parent</span>
+        <span id="concept_lineage_header_text_<%= @viewer_id %>">No Parent</span>
       </div>
 
     </div>
@@ -21,12 +21,12 @@
 
       <div class="komet-concept-lineage-tree-container">
         <div>Parents</div>
-        <div id="concept_lineage_parents_tree" class="komet-reverse-tree">No Parents</div>
+        <div id="concept_lineage_parents_tree_<%= @viewer_id %>" class="komet-reverse-tree">No Parents</div>
       </div>
 
       <div class="komet-concept-lineage-tree-container">
         <div>Children</div>
-        <div id="concept_lineage_children_tree">No Children</div>
+        <div id="concept_lineage_children_tree_<%= @viewer_id %>">No Children</div>
       </div>
 
 
@@ -35,7 +35,7 @@
   </div>
 
 <script>
-  ConceptsModule.setPanelState('komet_concept_lineage_panel_', null, null);
+  ConceptsModule.viewers[<%= @viewer_id %>].setPanelState('komet_concept_lineage_panel_<%= @viewer_id %>', null, null);
 
   var json = [{
     "id": 873260856786581,
@@ -567,6 +567,6 @@
     }
   };
 
-  var tree = $("#concept_lineage_children_tree2").jstree(settings);
+  var tree = $("#concept_lineage_children_tree2_<%= @viewer_id %>").jstree(settings);
 
 </script>

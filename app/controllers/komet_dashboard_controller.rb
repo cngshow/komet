@@ -99,14 +99,17 @@ class KometDashboardController < ApplicationController
   ##
   # get_concept_information - RESTful route for populating concept details pane using an http :GET
   # The current tree node representing the concept is identified in the request params with the key :concept_id
+  # Whether to display the stated (true) or inferred view of concepts with a request param of :stated (true/false)
   # The javascript partial to render is identified in the request params with the key :partial
   # @return [javascript] render a javascript partial that re-renders all needed partials
   def get_concept_information
 
-    concept_id = params[:concept_id]
+    @concept_id = params[:concept_id]
+    @stated = params[:stated]
+    @viewer_id = get_next_id
 
-    get_concept_summary(concept_id)
-    get_concept_sememes(concept_id)
+    get_concept_summary(@concept_id)
+    get_concept_sememes(@concept_id)
 
     render partial: params[:partial]
 
@@ -241,7 +244,7 @@ class KometDashboardController < ApplicationController
           end
 
           # add the parent node above its child, making sure that it identified as a reverse search node
-          tree_nodes << {id: get_next_tree_id, concept_id: parent[:concept_id], text: parent[:text], children: parent_has_parents, parent_reversed: true, parent_search: true, icon: parent_icon_class, a_attr: anchor_attributes, li_attr: {class: 'komet-reverse-tree'}}
+          tree_nodes << {id: get_next_id, concept_id: parent[:concept_id], text: parent[:text], children: parent_has_parents, parent_reversed: true, parent_search: true, icon: parent_icon_class, a_attr: anchor_attributes, li_attr: {class: 'komet-reverse-tree'}}
 
         end
 
@@ -258,7 +261,7 @@ class KometDashboardController < ApplicationController
         show_expander = false
       end
 
-      node = {id: get_next_tree_id, concept_id: raw_node[:id], text: raw_node[:text], parent_reversed: parent_reversed, parent_search: parent_search, icon: icon_class, a_attr: anchor_attributes}
+      node = {id: get_next_id, concept_id: raw_node[:id], text: raw_node[:text], parent_reversed: parent_reversed, parent_search: parent_search, icon: icon_class, a_attr: anchor_attributes}
 
       # if the current ID is root, then add a 'parent' field to the node to satisfy the alternate JSON format of JSTree for this level of the tree
       if current_node_id == 0 || current_node_id == '#' || !first_level
@@ -281,13 +284,13 @@ class KometDashboardController < ApplicationController
     return tree_nodes
   end
 
-  def get_next_tree_id
+  def get_next_id
     return java.lang.System.nanoTime
   end
 
   def dashboard
     foo
-    @stated = 'false'
+    @stated = 'true'
   end
 
   def setup_routes
@@ -323,11 +326,13 @@ class KometDashboardController < ApplicationController
     initialize_isaac_constants #to_do, remove
     $log.debug('term_aux hash passed to javascript is ' + ISAACConstants::TERMAUX.to_s) #to_do, remove
     gon.term_aux = ISAACConstants::TERMAUX #to_do, remove
+=begin
     constants_file = './config/generated/yaml/IsaacMetadataAuxiliary.yaml'
     prefix = File.basename(constants_file).split('.').first.to_sym
     json = YAML.load_file constants_file
     translated_hash = add_translations(json)
     gon.IsaacMetadataAuxiliary = translated_hash
+=end
   end
 
   def metadata

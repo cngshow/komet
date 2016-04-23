@@ -1,18 +1,18 @@
 <div class="komet-concept-definition-title">CONCEPT</div>
-<button onclick="ConceptsModule.linkToTaxonomyTree();">Link</button>
+
 <% @descriptions[:descriptions].each_with_index do |desc_hash, concept_index| %>
 
     <% if concept_index > 0 %>
         <div class="concept-section-panel-spacer"></div>
     <% end %>
 
-    <div id="komet_concept_definition_panel_<%= desc_hash[:uuid] %>" class="komet-concept-section-panel komet-concept-definition-panel">
+    <div id="komet_concept_definition_panel_<%= @viewer_id %>_<%= desc_hash[:uuid] %>" class="komet-concept-section-panel komet-concept-definition-panel">
 
       <!-- main header block - always visible -->
       <div class="komet-concept-section-panel-header">
 
         <!-- expand/collapse icon - controls details drawer -->
-        <div class="glyphicon glyphicon-plus-sign" onclick="ConceptsModule.togglePanelDetails('komet_concept_definition_panel_<%= desc_hash[:uuid] %>')"></div>
+        <div class="glyphicon glyphicon-plus-sign" onclick="ConceptsModule.viewers[<%= @viewer_id %>].togglePanelDetails('komet_concept_definition_panel_<%= @viewer_id %>_<%= desc_hash[:uuid] %>')"></div>
 
         <!-- description type, refset -->
         <div class="komet-concept-definition-title-block">

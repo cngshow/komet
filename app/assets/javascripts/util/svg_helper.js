@@ -18,20 +18,17 @@ Copyright Notice
  */
 var SvgHelper = (function () {
 
-    function startDiagram(svgId, conceptID)
- {
-     if (!conceptID) {
-         conceptID = ConceptsModule.getCurrentConceptId();
-     }
+    function startDiagram(svgId, conceptID){
 
-   var route = gon.routes.logic_graph_version_path.replace(":id", conceptID.toString());
-   var rolegroup = gon.IsaacMetadataAuxiliary.ROLE_GROUP.uuids[0].translation.value;
+        var route = gon.routes.logic_graph_version_path.replace(":id", conceptID.toString());
+        var rolegroup = gon.IsaacMetadataAuxiliary.ROLE_GROUP.uuids[0].translation.value;
 
-     AjaxCache.fetch(route,{},function(data){
-       //  console.log("data  " + JSON.stringify(data))
-      drawConceptDiagram(svgId,data,rolegroup)
-     })
- }
+        AjaxCache.fetch(route,{},function(data){
+            //  console.log("data  " + JSON.stringify(data))
+            drawConceptDiagram(svgId,data,rolegroup)
+        });
+    }
+
     function drawConceptDiagram(svgId ,data,rolegroup) {
 
         var id = "#" + svgId;
@@ -496,13 +493,13 @@ var SvgHelper = (function () {
     }
 
     // function called when the diagram tab is clicked opened
-    function renderDiagram(panel_id, open){
+    function renderDiagram(panel_id, open, concept_id){
 
         var svg_id = $("#" + panel_id + " .komet-concept-svg").attr("id");
 
         // only draw the diagram if it doesn't exist and will be visible
         if($("#" + svg_id).svg('get') === undefined && open){
-            SvgHelper.startDiagram(svg_id, null);
+            SvgHelper.startDiagram(svg_id, concept_id);
         }
     }
 

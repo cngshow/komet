@@ -169,6 +169,9 @@ html, body{
   background-color: #4f80d9;
   display: flex;
 }
+.komet-panel .panel-heading .glyphicon {
+  cursor: pointer;
+}
 .komet-panel .komet-panel-tools{
   flex-grow: 1;
   text-align: end;

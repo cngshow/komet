@@ -41,7 +41,7 @@ class KometTaxonomyTree{
                 nodeToLoad = node.id;
             }
 
-            if (!(((startingConceptID === undefined) || (startingConceptID === null)))) {
+            if (startingConceptID !== undefined && startingConceptID !== null) {
                 nodeToLoad = startingConceptID;
             }
 
@@ -108,6 +108,7 @@ class KometTaxonomyTree{
         this.parentSearch = parentSearch;
         this.startingConceptID = startingConceptID;
         this.selectItem = selectItem;
+        this.stated = stated;
         this.tree.on('after_open.jstree', onAfterOpen);
         this.tree.on('after_close.jstree', onAfterClose);
         this.tree.on('changed.jstree', onChanged);
@@ -140,7 +141,7 @@ class KometTaxonomyTree{
 
             this.selectedConceptID = conceptID;
 
-            $.publish(KometChannels.Taxonomy.taxonomyTreeNodeSelectedChannel, [this.treeID, conceptID]);
+            $.publish(KometChannels.Taxonomy.taxonomyTreeNodeSelectedChannel, [this.treeID, conceptID, this.stated]);
         }
     }
 

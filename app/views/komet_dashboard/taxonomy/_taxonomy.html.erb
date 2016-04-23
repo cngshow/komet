@@ -1,5 +1,3 @@
-
-
 <div class="panel panel-default komet-no-margins komet-panel" id="komet_taxonomy_panel">
 
   <div class="panel-heading">
@@ -33,14 +31,11 @@
       return $(this)[0].value == "<%= @stated %>";
     }).prop('selected', true);
 
-
     TaxonomyModule.initialize();
-
+    ConceptsModule.initialize();
   });
 
   function setStatedView(field){
     TaxonomyModule.reloadTreeStatedView("taxonomy_tree", field.value);
   }
-
-
 </script>
