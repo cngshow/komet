@@ -326,13 +326,13 @@ class KometDashboardController < ApplicationController
     initialize_isaac_constants #to_do, remove
     $log.debug('term_aux hash passed to javascript is ' + ISAACConstants::TERMAUX.to_s) #to_do, remove
     gon.term_aux = ISAACConstants::TERMAUX #to_do, remove
-=begin
+
     constants_file = './config/generated/yaml/IsaacMetadataAuxiliary.yaml'
     prefix = File.basename(constants_file).split('.').first.to_sym
     json = YAML.load_file constants_file
     translated_hash = add_translations(json)
     gon.IsaacMetadataAuxiliary = translated_hash
-=end
+
   end
 
   def metadata
