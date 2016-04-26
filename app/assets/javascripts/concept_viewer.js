@@ -17,9 +17,9 @@
  limitations under the License.
  */
     
-class ConceptViewer {
+var ConceptViewer = function(viewerID, currentConceptID) {
 
-    constructor(viewerID, currentConceptID) {
+    ConceptViewer.prototype.init = function(viewerID, currentConceptID) {
 
         this.viewerID = viewerID;
         this.currentConceptID = currentConceptID;
@@ -30,9 +30,9 @@ class ConceptViewer {
         
         //this.subscribeToTaxonomyTree();
         //this.subscribeToSearch();
-    }
+    };
 
-    togglePanelDetails(panelID, callback, preserveState) {
+    ConceptViewer.prototype.togglePanelDetails = function(panelID, callback, preserveState) {
 
         // get the panel's expander icon, or all expander icons if this is the top level expander
         var expander = $("#" + panelID + " .glyphicon-plus-sign, #" + panelID + " .glyphicon-minus-sign");
@@ -96,9 +96,9 @@ class ConceptViewer {
                 this.panelStates[panelID][1](panelID, open, this.currentConceptID);
             }
         }
-    }
+    };
 
-    setPanelState(panelID, state, callback) {
+    ConceptViewer.prototype.setPanelState = function(panelID, state, callback) {
 
         if (this.panelStates[panelID] === undefined) {
             this.panelStates[panelID] = [];
@@ -111,18 +111,18 @@ class ConceptViewer {
         if (callback){
             this.panelStates[panelID][1] = callback;
         }
-    }
+    };
 
-    getPanelState(panelID) {
+    ConceptViewer.prototype.getPanelState = function(panelID) {
 
         if(!this.panelStates[panelID]) {
             return false;
         }
 
         return this.panelStates[panelID][0];
-    }
+    };
 
-    restorePanelStates() {
+    ConceptViewer.prototype.restorePanelStates = function() {
 
         for (var key in this.panelStates) {
 
@@ -133,9 +133,9 @@ class ConceptViewer {
                 this.togglePanelDetails(key, callback);
             }
         }
-    }
+    };
 
-    loadLineageTrees(){
+    ConceptViewer.prototype.loadLineageTrees = function(){
 
         var stated = $("#komet_concept_stated_inferred_" + this.viewerID)[0].value
 
@@ -161,9 +161,9 @@ class ConceptViewer {
                 this.trees[this.CHILDREN_TREE].tree.html("No Children");
             }
         }.bind(this));
-    }
+    };
 
-    subscribeToTaxonomyTree() {
+    ConceptViewer.prototype.subscribeToTaxonomyTree = function() {
 
         // listen for the onChange event broadcast by any of the taxonomy this.trees.
         $.subscribe(KometChannels.Taxonomy.taxonomyTreeNodeSelectedChannel, function (e, treeID, conceptID) {
@@ -171,9 +171,9 @@ class ConceptViewer {
             this.currentConceptID = conceptID;
             ConceptsModule.loadViewerData();
         });
-    }
+    };
 
-    subscribeToSearch() {
+    ConceptViewer.prototype.subscribeToSearch = function() {
 
         // listen for the onChange event broadcast by selecting a search result.
         $.subscribe(KometChannels.Taxonomy.taxonomySearchResultSelectedChannel, function (e, conceptID) {
@@ -183,9 +183,9 @@ class ConceptViewer {
             this.trees[this.CHILDREN_TREE].selectedConceptID = this.currentConceptID;
             ConceptsModule.loadViewerData();
         });
-    }
+    };
 
-    loadConceptTabs() {
+    ConceptViewer.prototype.loadConceptTabs = function() {
 
         // the path to a javascript partial file that will re-render all the appropriate partials once the ajax call returns
         var partial = 'komet_dashboard/concept_detail/load_tabs';
@@ -193,9 +193,9 @@ class ConceptViewer {
         // make an ajax call to get the concept for the current concept and pass it the currently selected concept id and the name of a partial file to render
         $.get(gon.routes.taxonomy_get_concept_information_path, {concept_id: this.currentConceptID, partial: partial}, function (data) {
         });
-    }
+    };
 
-    toggleNestedTableRows(image, id){
+    ConceptViewer.prototype.toggleNestedTableRows = function(image, id){
 
         // get reference to the block of nested rows
         var nestedRows = $("#komet_concept_table_nested_row_" + this.viewerID + "_" + id);
@@ -215,18 +215,21 @@ class ConceptViewer {
             nestedRows.hide();
             image.parent().removeClass("komet-concept-table-nested-indicator-open");
         }
-    }
+    };
 
     // show this concept in the taxonomy tree
-    linkToTaxonomyTree() {
+    ConceptViewer.prototype.linkToTaxonomyTree = function() {
 
         TaxonomyModule.tree.findNodeInTree(
             this.currentConceptID,
-            $('#komet_concept_stated_inferred')[0].value,
+            $('#komet_concept_stated_inferred_' + this.viewerID)[0].value,
             function (foundNodeId) {
                 console.log('Linked - taxonomy tree node ID: ' + foundNodeId);
             },
             true
         );
-    }
-}
+    };
+
+    // call our constructor function
+    this.init(viewerID, currentConceptID)
+};

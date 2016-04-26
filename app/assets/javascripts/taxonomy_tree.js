@@ -17,20 +17,19 @@
  limitations under the License.
  */
 
-class KometTaxonomyTree{
+var KometTaxonomyTree = function(treeID, stated, parentSearch, startingConceptID, selectItem){
 
-    constructor (treeID, stated, parentSearch, startingConceptID, selectItem) {
-
+    KometTaxonomyTree.prototype.init = function(treeID, stated, parentSearch, startingConceptID, selectItem){
         this.treeID = treeID;
         this.selectedConceptID;
         this.tree;
 
         this.buildTaxonomyTree(stated, parentSearch, startingConceptID, selectItem);
-    }
+    };
 
-    buildTaxonomyTree(stated, parentSearch, startingConceptID, selectItem) {
+    KometTaxonomyTree.prototype.buildTaxonomyTree = function(stated, parentSearch, startingConceptID, selectItem) {
 
-        var getParameters =  function (node) {
+        var getParameters = function(node) {
 
             var nodeToLoad;
             var params = null;
@@ -143,23 +142,23 @@ class KometTaxonomyTree{
 
             $.publish(KometChannels.Taxonomy.taxonomyTreeNodeSelectedChannel, [this.treeID, conceptID, this.stated]);
         }
-    }
+    };
 
     // destroy the current tree and reload it using the specified stated view
-    reloadTreeStatedView(stated) {
+    KometTaxonomyTree.prototype.reloadTreeStatedView = function(stated) {
 
         this.tree.jstree(true).destroy();
         this.buildTaxonomyTree(stated, this.parentSearch, this.startingConceptID, this.selectItem);
-    }
+    };
 
     // destroy the current tree and reload it using the conceptID as a starting point
-    rebaseTreeAtConcept(conceptID, stated) {
+    KometTaxonomyTree.prototype.rebaseTreeAtConcept = function(conceptID, stated) {
 
         this.tree.jstree(true).destroy();
         this.buildTaxonomyTree(stated, false, conceptID, true);
-    }
+    };
 
-    getNodeIDByConceptID(conceptID){
+    KometTaxonomyTree.prototype.getNodeIDByConceptID = function(conceptID){
 
         var treeModel = this.tree.jstree(true)._model.data;
         var nodeID;
@@ -173,7 +172,7 @@ class KometTaxonomyTree{
         }
 
         return nodeID;
-    }
+    };
 
     /*
      * findNodeInTree - find the target node in the tree, populating its lineage path if it is not currently in the tree
@@ -183,7 +182,7 @@ class KometTaxonomyTree{
      * @param selectTheNode - should the target node be selected once it is found (default true)
      * @param suppressChangeEvent - should the tree onchange event be fired if the target node is selected (default true)
      */
-    findNodeInTree(conceptID, stated, returnFunction, selectTheNode, suppressChangeEvent) {
+    KometTaxonomyTree.prototype.findNodeInTree = function(conceptID, stated, returnFunction, selectTheNode, suppressChangeEvent) {
 
         // create a deferred object so that when the node is found we can return the node ID to the calling function
         var deferredReturn = $.Deferred();
@@ -297,14 +296,17 @@ class KometTaxonomyTree{
             // put the target node ID into the return callback so the calling function has access to it
             returnFunction(data);
         }.bind(this));
-    }
+    };
 
-    selectNode(nodeID, suppressChangeEvent){
+    KometTaxonomyTree.prototype.selectNode = function(nodeID, suppressChangeEvent){
 
         var tree = this.tree.jstree(true);
 
         tree.deselect_all(true);
         tree._open_to(nodeID);
         tree.select_node(nodeID, suppressChangeEvent, false);
-    }
-}
+    };
+
+    // call our constructor function
+    this.init(treeID, stated, parentSearch, startingConceptID, selectItem);
+};
