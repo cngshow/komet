@@ -24,7 +24,7 @@ var ConceptViewer = function(viewerID, currentConceptID) {
         this.viewerID = viewerID;
         this.currentConceptID = currentConceptID;
         this.panelStates = {};
-        this.trees = [];
+        this.trees = {};
         this.PARENTS_TREE = "concept_lineage_parents_tree_" + viewerID;
         this.CHILDREN_TREE = "concept_lineage_children_tree_" + viewerID;
         
@@ -130,6 +130,7 @@ var ConceptViewer = function(viewerID, currentConceptID) {
             var callback = this.panelStates[key][1];
 
             if (state) {
+                console.log("********* Restoring Open Pane ********");
                 this.togglePanelDetails(key, callback);
             }
         }
@@ -139,8 +140,14 @@ var ConceptViewer = function(viewerID, currentConceptID) {
 
         var stated = $("#komet_concept_stated_inferred_" + this.viewerID)[0].value
 
-        this.trees[this.PARENTS_TREE] = new KometTaxonomyTree(this.PARENTS_TREE, stated, true, this.currentConceptID);
-        this.trees[this.CHILDREN_TREE] = new KometTaxonomyTree(this.CHILDREN_TREE, stated, false, this.currentConceptID);
+        if (this.trees.hasOwnProperty(this.PARENTS_TREE) && this.trees[this.PARENTS_TREE].tree.jstree(true)){
+
+            this.trees[this.PARENTS_TREE].tree.jstree(true).destroy();
+            this.trees[this.CHILDREN_TREE].tree.jstree(true).destroy();
+        }
+
+        this.trees[this.PARENTS_TREE] = new KometTaxonomyTree(this.PARENTS_TREE, stated, true, this.currentConceptID, false, this.viewerID);
+        this.trees[this.CHILDREN_TREE] = new KometTaxonomyTree(this.CHILDREN_TREE, stated, false, this.currentConceptID, false, this.viewerID);
 
         this.trees[this.PARENTS_TREE].tree.bind('ready.jstree', function (event, data) {
 

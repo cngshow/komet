@@ -106,7 +106,11 @@ class KometDashboardController < ApplicationController
 
     @concept_id = params[:concept_id]
     @stated = params[:stated]
-    @viewer_id = get_next_id
+    @viewer_id =  params[:viewer_id]
+
+    if @viewer_id == nil
+      @viewer_id = get_next_id
+    end
 
     get_concept_summary(@concept_id)
     get_concept_sememes(@concept_id)
@@ -144,7 +148,7 @@ class KometDashboardController < ApplicationController
   end
 
   def process_rest_concept(concept, tree_walk_levels, first_level: false, parent_search: false, multi_path: true)
-    $log.debug('*** rest_concept_version_to_json_tree called: ' + concept.conChronology.description)
+
     concept_nodes = []
 
     node = {}
@@ -273,7 +277,6 @@ class KometDashboardController < ApplicationController
       end
 
       tree_nodes << node
-      $log.debug('### tree process: ' + node[:text])
 
       if raw_node[relation].length > 0
         process_tree_level(raw_node[relation], tree_nodes, node[:id], parent_search_param, parent_reversed_param, false)
@@ -332,6 +335,7 @@ class KometDashboardController < ApplicationController
     json = YAML.load_file constants_file
     translated_hash = add_translations(json)
     gon.IsaacMetadataAuxiliary = translated_hash
+
 
   end
 

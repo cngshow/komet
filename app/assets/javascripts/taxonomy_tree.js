@@ -17,12 +17,12 @@
  limitations under the License.
  */
 
-var KometTaxonomyTree = function(treeID, stated, parentSearch, startingConceptID, selectItem){
+var KometTaxonomyTree = function(treeID, stated, parentSearch, startingConceptID, selectItem, viewerID){
 
-    KometTaxonomyTree.prototype.init = function(treeID, stated, parentSearch, startingConceptID, selectItem){
+    KometTaxonomyTree.prototype.init = function(treeID, stated, parentSearch, startingConceptID, selectItem, viewerID){
+
         this.treeID = treeID;
-        this.selectedConceptID;
-        this.tree;
+        this.viewerID = viewerID;
 
         this.buildTaxonomyTree(stated, parentSearch, startingConceptID, selectItem);
     };
@@ -110,7 +110,7 @@ var KometTaxonomyTree = function(treeID, stated, parentSearch, startingConceptID
         this.stated = stated;
         this.tree.on('after_open.jstree', onAfterOpen);
         this.tree.on('after_close.jstree', onAfterClose);
-        this.tree.on('changed.jstree', onChanged);
+        this.tree.on('changed.jstree', onChanged.bind(this));
 
         // set the tree to select the first node when it finishes loading
         this.tree.bind('ready.jstree', function (event, data) {
@@ -140,7 +140,7 @@ var KometTaxonomyTree = function(treeID, stated, parentSearch, startingConceptID
 
             this.selectedConceptID = conceptID;
 
-            $.publish(KometChannels.Taxonomy.taxonomyTreeNodeSelectedChannel, [this.treeID, conceptID, this.stated]);
+            $.publish(KometChannels.Taxonomy.taxonomyTreeNodeSelectedChannel, [this.treeID, conceptID, this.stated, this.viewerID]);
         }
     };
 
@@ -308,5 +308,5 @@ var KometTaxonomyTree = function(treeID, stated, parentSearch, startingConceptID
     };
 
     // call our constructor function
-    this.init(treeID, stated, parentSearch, startingConceptID, selectItem);
+    this.init(treeID, stated, parentSearch, startingConceptID, selectItem, viewerID);
 };

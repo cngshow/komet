@@ -180,7 +180,7 @@
     selectedRows.forEach( function(selectedRow, index) {
 
       console.log('Row with ID ' + selectedRow.id + ' ' + selectedRow.concept_status + '.');
-      $.publish(KometChannels.Taxonomy.taxonomySearchResultSelectedChannel, selectedRow.id);
+      $.publish(KometChannels.Taxonomy.taxonomySearchResultSelectedChannel, [selectedRow.id, TaxonomyModule.getLinkedViewerID()]);
     });
   }
 
