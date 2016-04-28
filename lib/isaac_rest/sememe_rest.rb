@@ -39,7 +39,7 @@ module SememeRest
   BY_ASSEMBLAGE_SEMEME_PATH = SEMEME_PATH + "byAssemblage/{id}"
   DEFINITION_SEMEME_PATH = SEMEME_PATH + "sememeDefinition/{id}"
   TYPE_SEMEME_PATH = SEMEME_PATH + "sememeType/{id}"
-  TEST_ID = "030b4081-ee61-487f-b433-922bd6b62279"#useful for testing the actions VERSION, CHRONOLOGY, BY_ASSEMBLAGE
+  TEST_ID = "1f5bd727-27c5-59b9-bcc3-964d6155a010"#useful for testing the actions VERSION, CHRONOLOGY, BY_ASSEMBLAGE
   TEST_SEMEME_TYPE_ID = '3621bf47-a54c-5f6e-a68d-c4dcb7156815'
 
   TEST_UUID_REF_COMP = "a60bd881-9010-3260-9653-0c85716b4391"

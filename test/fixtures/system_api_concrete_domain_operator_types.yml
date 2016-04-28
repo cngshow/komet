@@ -1,0 +1,17 @@
+#Fixture created on 2016-04-28 09:20:17
+---
+- "@class": gov.vha.isaac.rest.api1.data.enumerations.RestConcreteDomainOperatorsType
+  name: EQUALS
+  enumId: 0
+- "@class": gov.vha.isaac.rest.api1.data.enumerations.RestConcreteDomainOperatorsType
+  name: LESS_THAN
+  enumId: 1
+- "@class": gov.vha.isaac.rest.api1.data.enumerations.RestConcreteDomainOperatorsType
+  name: LESS_THAN_EQUALS
+  enumId: 2
+- "@class": gov.vha.isaac.rest.api1.data.enumerations.RestConcreteDomainOperatorsType
+  name: GREATER_THAN
+  enumId: 3
+- "@class": gov.vha.isaac.rest.api1.data.enumerations.RestConcreteDomainOperatorsType
+  name: GREATER_THAN_EQUALS
+  enumId: 4

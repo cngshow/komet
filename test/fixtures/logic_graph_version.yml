@@ -1,17 +1,19 @@
-#Fixture created on 2016-04-12 19:04:51
+#Fixture created on 2016-04-28 09:20:18
 ---
 "@class": gov.vha.isaac.rest.api1.data.sememe.RestSememeLogicGraphVersion
 expandables:
   items:
   - name: chronology
-    url: rest/1/sememe/chronology/309
-  - name: nestedSememes
-    url: rest/1/sememe/version/309/?expand=nestedSememes
+    url: rest/1/sememe/chronology/306
+  - name: referencedDetails
+    url: ''
+  - name: logicNodeUuids
+    url: rest/1/logicGraph/version/306?expand=logicNodeUuids
 sememeChronology:
 sememeVersion:
   stampSequence: 1
   state: ACTIVE
-  time: 1458628506934
+  time: 1461176521811
   authorSequence: 5
   moduleSequence: 0
   pathSequence: 7
@@ -21,40 +23,33 @@ isReferencedConceptDefined: false
 rootLogicNode:
   "@class": gov.vha.isaac.rest.api1.data.logic.RestUntypedConnectorNode
   nodeSemantic:
-    "@class": gov.vha.isaac.rest.api1.data.enumerations.RestNodeSemantic
+    "@class": gov.vha.isaac.rest.api1.data.enumerations.RestNodeSemanticType
     name: DEFINITION_ROOT
     enumId: 5
-  expandables:
-    items: []
   nodeUuid:
   children:
   - "@class": gov.vha.isaac.rest.api1.data.logic.RestUntypedConnectorNode
     nodeSemantic:
-      "@class": gov.vha.isaac.rest.api1.data.enumerations.RestNodeSemantic
+      "@class": gov.vha.isaac.rest.api1.data.enumerations.RestNodeSemanticType
       name: NECESSARY_SET
       enumId: 0
-    expandables:
-      items: []
     nodeUuid:
     children:
     - "@class": gov.vha.isaac.rest.api1.data.logic.RestUntypedConnectorNode
       nodeSemantic:
-        "@class": gov.vha.isaac.rest.api1.data.enumerations.RestNodeSemantic
+        "@class": gov.vha.isaac.rest.api1.data.enumerations.RestNodeSemanticType
         name: AND
         enumId: 2
-      expandables:
-        items: []
       nodeUuid:
       children:
       - "@class": gov.vha.isaac.rest.api1.data.logic.RestConceptNode
         nodeSemantic:
-          "@class": gov.vha.isaac.rest.api1.data.enumerations.RestNodeSemantic
+          "@class": gov.vha.isaac.rest.api1.data.enumerations.RestNodeSemanticType
           name: CONCEPT
           enumId: 8
-        expandables:
         nodeUuid:
         children: []
-        conceptSequence: 59
+        conceptSequence: 58
         conceptVersion:
         isConceptDefined: false
         conceptDescription: dynamic sememe assemblages (ISAAC)

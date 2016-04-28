@@ -1,0 +1,5 @@
+#Fixture created on 2016-04-28 09:20:17
+---
+"@class": gov.vha.isaac.rest.api1.data.enumerations.RestSememeType
+name: Dynamic Sememe
+enumId: 5

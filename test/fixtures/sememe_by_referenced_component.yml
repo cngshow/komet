@@ -1,12 +1,14 @@
-#Fixture created on 2016-04-12 19:09:59
+#Fixture created on 2016-04-28 09:20:16
 ---
 - "@class": gov.vha.isaac.rest.api1.data.sememe.RestDynamicSememeVersion
   expandables:
     items:
     - name: chronology
-      url: rest/1/sememe/chronology/3216321
+      url: rest/1/sememe/chronology/3216341
+    - name: referencedDetails
+      url: ''
     - name: nestedSememes
-      url: rest/1/sememe/version/3216321/?expand=nestedSememes
+      url: rest/1/sememe/version/3216341?expand=nestedSememes
   sememeChronology:
   sememeVersion:
     stampSequence: 54
@@ -20,45 +22,3 @@
   - "@class": gov.vha.isaac.rest.api1.data.sememe.dataTypes.RestDynamicSememeString
     columnNumber: 0
     data: '900000000000441003'
-- "@class": gov.vha.isaac.rest.api1.data.sememe.RestSememeDescriptionVersion
-  expandables:
-    items:
-    - name: chronology
-      url: rest/1/sememe/chronology/5734660
-    - name: nestedSememes
-      url: rest/1/sememe/version/5734660/?expand=nestedSememes
-  sememeChronology:
-  sememeVersion:
-    stampSequence: 109
-    state: ACTIVE
-    time: 1012453200000
-    authorSequence: 5
-    moduleSequence: 0
-    pathSequence: 7
-  nestedSememes:
-  caseSignificanceConceptSequence: 112
-  languageConceptSequence: 8
-  text: SNOMED CT Model Component
-  descriptionTypeConceptSequence: 12
-  dialects:
-- "@class": gov.vha.isaac.rest.api1.data.sememe.RestSememeDescriptionVersion
-  expandables:
-    items:
-    - name: chronology
-      url: rest/1/sememe/chronology/5734662
-    - name: nestedSememes
-      url: rest/1/sememe/version/5734662/?expand=nestedSememes
-  sememeChronology:
-  sememeVersion:
-    stampSequence: 109
-    state: ACTIVE
-    time: 1012453200000
-    authorSequence: 5
-    moduleSequence: 0
-    pathSequence: 7
-  nestedSememes:
-  caseSignificanceConceptSequence: 112
-  languageConceptSequence: 8
-  text: SNOMED CT Model Component (metadata)
-  descriptionTypeConceptSequence: 11
-  dialects:

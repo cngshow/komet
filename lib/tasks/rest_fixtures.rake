@@ -10,11 +10,17 @@ module Fixtures
   SEMEME_CHRONOLOGY = :sememe_chronology
   SEMEME_BY_REFERENCED_COMPONENT = :sememe_ref_comp
   SEMEME_DEFINITION = :sememe_def
+  SEMEME_TYPE = :sememe_type
   ID_API_TYPES = :id_api_types
   ID_API_TRANSLATE = :id_translate_types
   SYSTEM_API_DYNAMIC_SEMEME_VALIDATOR_TYPE = :system_api_dynamic_sememe_validator_type
   SYSTEM_API_OBJECT_CHRONOLOGY_TYPE = :system_api_object_chronology_type
   SYSTEM_API_SEMEME_TYPE = :system_api_sememe_type
+  SYSTEM_API_CONCRETE_DOMAIN_OPERATOR_TYPES = :system_api_concrete_domain_operator_types
+  SYSTEM_API_NODE_SEMANTIC_TYPE = :system_api_node_semantic_type
+  SYSTEM_API_SUPPORTED_ID_TYPES = :system_api_supported_id_types
+  SYSTEM_API_OBJECT_CHRONOLOGY_TYPE_BY_ID = :system_api_object_chronology_type_by_id
+  SYSTEM_API_SYSTEM_INFO = :system_api_system_info
   SYSTEM_API_DYNAMIC_SEMEME_DATA_TYPE = :system_api_dynamic_sememe_data_type
   # search descriptions and prefix fixtures
   SEARCH_DESCRIPTIONS = :search_descriptions
@@ -30,10 +36,16 @@ module Fixtures
       SEMEME_CHRONOLOGY => './test/fixtures/sememe_chronology.yml',
       SEMEME_BY_REFERENCED_COMPONENT => './test/fixtures/sememe_by_referenced_component.yml',
       SEMEME_DEFINITION => './test/fixtures/sememe_dynamic_definition.yml',
+      SEMEME_TYPE => './test/fixtures/sememe_sememe_type.yml',
       SYSTEM_API_DYNAMIC_SEMEME_VALIDATOR_TYPE => './test/fixtures/system_api_dynamic_sememe_validator_type.yml',
       SYSTEM_API_OBJECT_CHRONOLOGY_TYPE => './test/fixtures/system_api_object_chronology_type.yml',
       SYSTEM_API_SEMEME_TYPE => './test/fixtures/system_api_sememe_type.yml',
       SYSTEM_API_DYNAMIC_SEMEME_DATA_TYPE => './test/fixtures/system_api_dynamic_sememe_data_type.yml',
+      SYSTEM_API_CONCRETE_DOMAIN_OPERATOR_TYPES => './test/fixtures/system_api_concrete_domain_operator_types.yml',
+      SYSTEM_API_NODE_SEMANTIC_TYPE => './test/fixtures/system_api_node_semantic_type.yml',
+      SYSTEM_API_SUPPORTED_ID_TYPES => './test/fixtures/system_api_supported_id_types.yml',
+      SYSTEM_API_OBJECT_CHRONOLOGY_TYPE_BY_ID => './test/fixtures/system_api_object_chronology_type_by_id.yml',
+      SYSTEM_API_SYSTEM_INFO => './test/fixtures/system_api_system_info.yml',
       ID_API_TYPES => './test/fixtures/id_api_types.yml',
       ID_API_TRANSLATE => './test/fixtures/id_api_translate.yml',
       SEARCH_DESCRIPTIONS => './test/fixtures/search_descriptions.yml',
@@ -96,6 +108,10 @@ namespace :rest_fixtures do
     SememeRest::get_sememe(action: SememeRestActions::ACTION_SEMEME_DEFINITION, uuid_or_id: SememeRest::TEST_UUID_SEMEME_DEF) #the simple fact that we fetch the rest data motivates a yaml file's generation in temp.
     file_loc = KOMETUtilities::TMP_FILE_PREFIX + url_to_path_string(SememeRest::DEFINITION_SEMEME_PATH) + KOMETUtilities::YML_EXT
     FileUtils.cp(file_loc, FILES[SEMEME_DEFINITION])
+
+    SememeRest::get_sememe(action: SememeRestActions::ACTION_SEMEME_TYPE, uuid_or_id: SememeRest::TEST_SEMEME_TYPE_ID) #the simple fact that we fetch the rest data motivates a yaml file's generation in temp.
+    file_loc = KOMETUtilities::TMP_FILE_PREFIX + url_to_path_string(SememeRest::TYPE_SEMEME_PATH) + KOMETUtilities::YML_EXT
+    FileUtils.cp(file_loc, FILES[SEMEME_TYPE])
   end
 
   LOGIC_GRAPHS_LAMBDA = -> do
@@ -143,6 +159,26 @@ namespace :rest_fixtures do
     SystemApis::get_system_api(action: SystemApiActions::ACTION_SEMEME_TYPE)
     file_loc = KOMETUtilities::TMP_FILE_PREFIX + url_to_path_string(SystemApis::PATH_SEMEME_TYPE) + KOMETUtilities::YML_EXT
     FileUtils.cp(file_loc, FILES[SYSTEM_API_SEMEME_TYPE])
+
+    SystemApis::get_system_api(action: SystemApiActions::ACTION_CONCRETE_DOMAIN_OPERATOR_TYPES)
+    file_loc = KOMETUtilities::TMP_FILE_PREFIX + url_to_path_string(SystemApis::PATH_CONCRETE_DOMAIN_OPERATOR_TYPES) + KOMETUtilities::YML_EXT
+    FileUtils.cp(file_loc, FILES[SYSTEM_API_CONCRETE_DOMAIN_OPERATOR_TYPES])
+
+    SystemApis::get_system_api(action: SystemApiActions::ACTION_NODE_SEMANTIC_TYPE)
+    file_loc = KOMETUtilities::TMP_FILE_PREFIX + url_to_path_string(SystemApis::PATH_NODE_SEMANTIC_TYPE) + KOMETUtilities::YML_EXT
+    FileUtils.cp(file_loc, FILES[SYSTEM_API_NODE_SEMANTIC_TYPE])
+
+    SystemApis::get_system_api(action: SystemApiActions::ACTION_SUPPORTED_ID_TYPES)
+    file_loc = KOMETUtilities::TMP_FILE_PREFIX + url_to_path_string(SystemApis::PATH_SUPPORTED_ID_TYPES) + KOMETUtilities::YML_EXT
+    FileUtils.cp(file_loc, FILES[SYSTEM_API_SUPPORTED_ID_TYPES])
+
+    SystemApis::get_system_api(action: SystemApiActions::ACTION_OBJECT_CHRONOLOGY_TYPE_BY_ID)
+    file_loc = KOMETUtilities::TMP_FILE_PREFIX + url_to_path_string(SystemApis::PATH_OBJECT_CHRONOLOGY_TYPE_BY_ID) + KOMETUtilities::YML_EXT
+    FileUtils.cp(file_loc, FILES[SYSTEM_API_OBJECT_CHRONOLOGY_TYPE_BY_ID])
+
+    SystemApis::get_system_api(action: SystemApiActions::ACTION_SYSTEM_INFO)
+    file_loc = KOMETUtilities::TMP_FILE_PREFIX + url_to_path_string(SystemApis::PATH_SYSTEM_INFO) + KOMETUtilities::YML_EXT
+    FileUtils.cp(file_loc, FILES[SYSTEM_API_SYSTEM_INFO])
   end
 
   SEARCH_API_LAMBDA = -> do
@@ -162,3 +198,4 @@ namespace :rest_fixtures do
 
 end
 # bundle exec rake rest_fixtures:build
+# load ('./lib/tasks/rest_fixtures.rake')
