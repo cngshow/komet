@@ -23,6 +23,11 @@ module SystemApiActions
   ACTION_OBJECT_CHRONOLOGY_TYPE = :object_chronology_type
   ACTION_SEMEME_TYPE = :sememe_type
   ACTION_DYNAMIC_SEMEME_DATA_TYPE = :dynamic_sememe_data_type
+  ACTION_CONCRETE_DOMAIN_OPERATOR_TYPES = :concrete_domain_operator_types
+  ACTION_NODE_SEMANTIC_TYPE = :node_semantic_type
+  ACTION_SUPPORTED_ID_TYPES = :supported_id_types
+  ACTION_OBJECT_CHRONOLOGY_TYPE_BY_ID = :object_chronology_type_by_id
+  ACTION_SYSTEM_INFO = :system_info
 end
 
 module SystemApis
@@ -30,16 +35,29 @@ module SystemApis
   include CommonActionSyms
   extend self
 
-  PATH_SYSTEM_API = $PROPS['ENDPOINT.isaac_root'] + "rest/1/system/enumeration/"
-  PATH_DYNAMIC_SEMEME_VALIDATOR_TYPE = PATH_SYSTEM_API + "restDynamicSememeValidatorType"
-  PATH_OBJECT_CHRONOLOGY_TYPE = PATH_SYSTEM_API + "restObjectChronologyType"
-  PATH_SEMEME_TYPE = PATH_SYSTEM_API + "restSememeType"
-  PATH_DYNAMIC_SEMEME_DATA_TYPE = PATH_SYSTEM_API + "restDynamicSememeDataType"
+  PATH_SYSTEM_API = $PROPS['ENDPOINT.isaac_root'] + "rest/1/system/"
+  PATH_SYSTEM_API_ENUMERATION =PATH_SYSTEM_API + "enumeration/"
+  PATH_DYNAMIC_SEMEME_VALIDATOR_TYPE = PATH_SYSTEM_API_ENUMERATION + "restDynamicSememeValidatorType"
+  PATH_OBJECT_CHRONOLOGY_TYPE = PATH_SYSTEM_API_ENUMERATION + "restObjectChronologyType"
+  PATH_SEMEME_TYPE = PATH_SYSTEM_API_ENUMERATION + "restSememeType"
+  PATH_DYNAMIC_SEMEME_DATA_TYPE = PATH_SYSTEM_API_ENUMERATION + "restDynamicSememeDataType"
+
+  PATH_CONCRETE_DOMAIN_OPERATOR_TYPES = PATH_SYSTEM_API_ENUMERATION + "restConcreteDomainOperatorTypes"
+  PATH_NODE_SEMANTIC_TYPE = PATH_SYSTEM_API_ENUMERATION + "restNodeSemanticType"
+  PATH_SUPPORTED_ID_TYPES = PATH_SYSTEM_API_ENUMERATION + "restSupportedIdTypes"
+  PATH_OBJECT_CHRONOLOGY_TYPE_BY_ID = PATH_SYSTEM_API + "objectChronologyType/{id}"
+  PATH_SYSTEM_INFO = PATH_SYSTEM_API + "systemInfo"
 
   # these are not used!!
   PARAMS_DYNAMIC_SEMEME_VALIDATOR_TYPE = {}
   PARAMS_OBJECT_CHRONOLOGY_TYPE = {}
   PARAMS_SEMEME_TYPE = {}
+  PARAMS_DYNAMIC_SEMEME_DATA_TYPE = {}
+
+  PARAMS_CONCRETE_DOMAIN_OPERATOR_TYPES = {}
+  PARAMS_NODE_SEMANTIC_TYPE = {}
+  PARAMS_SUPPORTED_ID_TYPES = {}
+  PARAMS_OBJECT_CHRONOLOGY_TYPE_BY_ID = {}
   PARAMS_DYNAMIC_SEMEME_DATA_TYPE = {}
 
   ACTION_CONSTANTS = {
@@ -58,7 +76,7 @@ module SystemApis
       ACTION_DYNAMIC_SEMEME_DATA_TYPE => {
           PATH_SYM => PATH_DYNAMIC_SEMEME_DATA_TYPE,
           STARTING_PARAMS_SYM => PARAMS_DYNAMIC_SEMEME_DATA_TYPE,
-          CLAZZ_SYM => Gov::Vha::Isaac::Rest::Api1::Data::Enumerations::RestDynamicSememeDataType}
+          CLAZZ_SYM => Gov::Vha::Isaac::Rest::Api1::Data::Enumerations::RestDynamicSememeDataType},
   }
 
   class << self
