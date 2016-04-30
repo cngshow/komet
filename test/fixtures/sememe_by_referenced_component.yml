@@ -1,4 +1,4 @@
-#Fixture created on 2016-04-29 16:29:02
+#Fixture created on 2016-04-29 16:52:55
 ---
 - "@class": gov.vha.isaac.rest.api1.data.sememe.RestDynamicSememeVersion
   expandables:
@@ -11,6 +11,7 @@
       url: rest/1/sememe/version/3216341?expand=nestedSememes
   sememeChronology:
   sememeVersion:
+    "@class": gov.vha.isaac.rest.api1.data.RestStampedVersion
     stampSequence: 54
     state: ACTIVE
     time: 1012453200000

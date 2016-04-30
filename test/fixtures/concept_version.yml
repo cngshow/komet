@@ -1,5 +1,6 @@
-#Fixture created on 2016-04-29 16:29:01
+#Fixture created on 2016-04-29 16:52:54
 ---
+"@class": gov.vha.isaac.rest.api1.data.concept.RestConceptVersion
 expandables:
   items:
   - name: chronology
@@ -10,6 +11,7 @@ expandables:
     url: rest/1/concept/version/614445?expand=children&stated=true
 conChronology:
 conVersion:
+  "@class": gov.vha.isaac.rest.api1.data.RestStampedVersion
   stampSequence: 109
   state: ACTIVE
   time: 1012453200000
@@ -19,3 +21,4 @@ conVersion:
 parents:
 children:
 childCount:
+parentCount:

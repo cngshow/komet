@@ -1,4 +1,4 @@
-#Fixture created on 2016-04-29 16:29:02
+#Fixture created on 2016-04-29 16:52:55
 ---
 "@class": gov.vha.isaac.rest.api1.data.search.RestSearchResults
 paginationData:
@@ -6,10 +6,10 @@ paginationData:
   previousUrl: rest/1/search/descriptions/?query=heart&pageNum=1&maxPageSize=0
   nextUrl: rest/1/search/descriptions/?query=heart&pageNum=2&maxPageSize=10
   pageNum: 1
-  maxPageSize: 10
   approximateTotal: 1000
 results:
-- matchNid: -2145197832
+- "@class": gov.vha.isaac.rest.api1.data.search.RestSearchResult
+  matchNid: -2145197832
   matchText: Heart
   score: 10.525579
   active: true
@@ -25,7 +25,8 @@ results:
       url: ''
   identifiers:
   referencedConcept:
-- matchNid: -2145197848
+- "@class": gov.vha.isaac.rest.api1.data.search.RestSearchResult
+  matchNid: -2145197848
   matchText: Heart
   score: 10.525579
   active: true
@@ -41,7 +42,8 @@ results:
       url: ''
   identifiers:
   referencedConcept:
-- matchNid: -2147480856
+- "@class": gov.vha.isaac.rest.api1.data.search.RestSearchResult
+  matchNid: -2147480856
   matchText: Heart
   score: 10.525579
   active: true
@@ -57,7 +59,8 @@ results:
       url: ''
   identifiers:
   referencedConcept:
-- matchNid: -2140761185
+- "@class": gov.vha.isaac.rest.api1.data.search.RestSearchResult
+  matchNid: -2140761185
   matchText: Heart procedure
   score: 6.5784874
   active: false
@@ -73,7 +76,8 @@ results:
       url: ''
   identifiers:
   referencedConcept:
-- matchNid: -2141140010
+- "@class": gov.vha.isaac.rest.api1.data.search.RestSearchResult
+  matchNid: -2141140010
   matchText: Abdominal heart
   score: 6.5784874
   active: false
@@ -89,7 +93,8 @@ results:
       url: ''
   identifiers:
   referencedConcept:
-- matchNid: -2146638835
+- "@class": gov.vha.isaac.rest.api1.data.search.RestSearchResult
+  matchNid: -2146638835
   matchText: Heart SPECT
   score: 6.5784874
   active: true
@@ -105,7 +110,8 @@ results:
       url: ''
   identifiers:
   referencedConcept:
-- matchNid: -2145445575
+- "@class": gov.vha.isaac.rest.api1.data.search.RestSearchResult
+  matchNid: -2145445575
   matchText: Heart rate
   score: 6.5784874
   active: true
@@ -121,7 +127,8 @@ results:
       url: ''
   identifiers:
   referencedConcept:
-- matchNid: -2146658030
+- "@class": gov.vha.isaac.rest.api1.data.search.RestSearchResult
+  matchNid: -2146658030
   matchText: Heart Scan
   score: 6.5784874
   active: true
@@ -137,7 +144,8 @@ results:
       url: ''
   identifiers:
   referencedConcept:
-- matchNid: -2145463258
+- "@class": gov.vha.isaac.rest.api1.data.search.RestSearchResult
+  matchNid: -2145463258
   matchText: Heart study
   score: 6.5784874
   active: true
@@ -153,7 +161,8 @@ results:
       url: ''
   identifiers:
   referencedConcept:
-- matchNid: -2145480092
+- "@class": gov.vha.isaac.rest.api1.data.search.RestSearchResult
+  matchNid: -2145480092
   matchText: Heart sounds
   score: 6.5784874
   active: true

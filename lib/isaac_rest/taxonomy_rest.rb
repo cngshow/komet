@@ -31,7 +31,7 @@ module TaxonomyRest
   ISAAC_UUID_PARAM = :id
   #ISAAC_ROOT_ID = 'cc0b2455-f546-48fa-90e8-e214cc8478d6'  #old databases
   ISAAC_ROOT_ID =  '7c21b6c5-cf11-5af9-893b-743f004c97f5'
-  VERSION_TAXONOMY_STARTING_PARAMS = {expand: 'chronology', childDepth: 1, parentHeight: 1, countChildren: true}
+  VERSION_TAXONOMY_STARTING_PARAMS = {expand: 'chronology', childDepth: 1, parentHeight: 1, countChildren: true, countParents: true}
 
   ACTION_CONSTANTS = {
       ACTION_VERSION => {PATH_SYM => VERSION_TAXONOMY_PATH, STARTING_PARAMS_SYM => VERSION_TAXONOMY_STARTING_PARAMS, CLAZZ_SYM => Gov::Vha::Isaac::Rest::Api1::Data::Concept::RestConceptVersion},

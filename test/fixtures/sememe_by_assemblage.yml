@@ -1,4 +1,4 @@
-#Fixture created on 2016-04-29 16:29:02
+#Fixture created on 2016-04-29 16:52:55
 ---
 "@class": gov.vha.isaac.rest.api1.data.sememe.RestSememeVersions
 paginationData:
@@ -6,7 +6,6 @@ paginationData:
   previousUrl: rest/1/sememe/byAssemblage/1f5bd727-27c5-59b9-bcc3-964d6155a010?pageNum=1&maxPageSize=0
   nextUrl: rest/1/sememe/byAssemblage/1f5bd727-27c5-59b9-bcc3-964d6155a010?pageNum=2&maxPageSize=10
   pageNum: 1
-  maxPageSize: 10
   approximateTotal: 55
 results:
 - "@class": gov.vha.isaac.rest.api1.data.sememe.RestDynamicSememeVersion
@@ -20,6 +19,7 @@ results:
       url: rest/1/sememe/version/2421291?expand=nestedSememes
   sememeChronology:
   sememeVersion:
+    "@class": gov.vha.isaac.rest.api1.data.RestStampedVersion
     stampSequence: 50
     state: ACTIVE
     time: 1452142800000
@@ -39,6 +39,7 @@ results:
       url: rest/1/sememe/version/2421292?expand=nestedSememes
   sememeChronology:
   sememeVersion:
+    "@class": gov.vha.isaac.rest.api1.data.RestStampedVersion
     stampSequence: 50
     state: ACTIVE
     time: 1452142800000
@@ -58,6 +59,7 @@ results:
       url: rest/1/sememe/version/2421293?expand=nestedSememes
   sememeChronology:
   sememeVersion:
+    "@class": gov.vha.isaac.rest.api1.data.RestStampedVersion
     stampSequence: 50
     state: ACTIVE
     time: 1452142800000
@@ -77,6 +79,7 @@ results:
       url: rest/1/sememe/version/2421294?expand=nestedSememes
   sememeChronology:
   sememeVersion:
+    "@class": gov.vha.isaac.rest.api1.data.RestStampedVersion
     stampSequence: 50
     state: ACTIVE
     time: 1452142800000
@@ -96,6 +99,7 @@ results:
       url: rest/1/sememe/version/2421295?expand=nestedSememes
   sememeChronology:
   sememeVersion:
+    "@class": gov.vha.isaac.rest.api1.data.RestStampedVersion
     stampSequence: 50
     state: ACTIVE
     time: 1452142800000
@@ -115,6 +119,7 @@ results:
       url: rest/1/sememe/version/2421296?expand=nestedSememes
   sememeChronology:
   sememeVersion:
+    "@class": gov.vha.isaac.rest.api1.data.RestStampedVersion
     stampSequence: 50
     state: ACTIVE
     time: 1452142800000
@@ -134,6 +139,7 @@ results:
       url: rest/1/sememe/version/2421297?expand=nestedSememes
   sememeChronology:
   sememeVersion:
+    "@class": gov.vha.isaac.rest.api1.data.RestStampedVersion
     stampSequence: 50
     state: ACTIVE
     time: 1452142800000
@@ -153,6 +159,7 @@ results:
       url: rest/1/sememe/version/2421298?expand=nestedSememes
   sememeChronology:
   sememeVersion:
+    "@class": gov.vha.isaac.rest.api1.data.RestStampedVersion
     stampSequence: 50
     state: ACTIVE
     time: 1452142800000
@@ -172,6 +179,7 @@ results:
       url: rest/1/sememe/version/2421299?expand=nestedSememes
   sememeChronology:
   sememeVersion:
+    "@class": gov.vha.isaac.rest.api1.data.RestStampedVersion
     stampSequence: 50
     state: ACTIVE
     time: 1452142800000
@@ -191,6 +199,7 @@ results:
       url: rest/1/sememe/version/2421300?expand=nestedSememes
   sememeChronology:
   sememeVersion:
+    "@class": gov.vha.isaac.rest.api1.data.RestStampedVersion
     stampSequence: 50
     state: ACTIVE
     time: 1452142800000

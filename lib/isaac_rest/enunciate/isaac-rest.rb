@@ -94,6 +94,9 @@ module Concept
     # The number of child concept(s) of the concept at this point in time (&#39;is a&#39; relationships).  Depending on the expand parameter, this may not be returned.
     # This will not be returned if the children field is populated.
     attr_accessor :childCount
+    # The number of parent concept(s) of the concept at this point in time (&#39;is a&#39; relationships).  Depending on the expand parameter, this may not be returned.
+    # This will not be returned if the parents field is populated.
+    attr_accessor :parentCount
 
     # the json hash for this RestConceptVersion
     def to_jaxb_json_hash
@@ -112,6 +115,7 @@ module Concept
         _h['children'] = _ha
       end
       _h['childCount'] = childCount.to_jaxb_json_hash unless childCount.nil?
+      _h['parentCount'] = parentCount.to_jaxb_json_hash unless parentCount.nil?
       return _h
     end
 
@@ -156,6 +160,7 @@ module Concept
          }
       end
       @childCount = Fixnum.from_json(_o['childCount']) unless _o['childCount'].nil?
+      @parentCount = Fixnum.from_json(_o['parentCount']) unless _o['parentCount'].nil?
     end
 
     # constructs a RestConceptVersion from a (parsed) JSON hash
@@ -1257,8 +1262,6 @@ module Data
     attr_accessor :nextUrl
     # The page (of maximum size pageSize) number from beginning of dataset starting at 1
     attr_accessor :pageNum
-    # The page max size.  Must be an integer &gt;= 0
-    attr_accessor :maxPageSize
     # Estimated size of set of all matching values of which the current page is a subset. Value is negative if and only if unknown. May be affected by filtering.
     attr_accessor :approximateTotal
 
@@ -1268,7 +1271,6 @@ module Data
       _h['previousUrl'] = previousUrl.to_jaxb_json_hash unless previousUrl.nil?
       _h['nextUrl'] = nextUrl.to_jaxb_json_hash unless nextUrl.nil?
       _h['pageNum'] = pageNum.to_jaxb_json_hash unless pageNum.nil?
-      _h['maxPageSize'] = maxPageSize.to_jaxb_json_hash unless maxPageSize.nil?
       _h['approximateTotal'] = approximateTotal.to_jaxb_json_hash unless approximateTotal.nil?
       return _h
     end
@@ -1283,7 +1285,6 @@ module Data
       @previousUrl = String.from_json(_o['previousUrl']) unless _o['previousUrl'].nil?
       @nextUrl = String.from_json(_o['nextUrl']) unless _o['nextUrl'].nil?
       @pageNum = Fixnum.from_json(_o['pageNum']) unless _o['pageNum'].nil?
-      @maxPageSize = Fixnum.from_json(_o['maxPageSize']) unless _o['maxPageSize'].nil?
       @approximateTotal = Fixnum.from_json(_o['approximateTotal']) unless _o['approximateTotal'].nil?
     end
 
@@ -2975,6 +2976,61 @@ module Api1
 
 module Data
 
+module Logic
+
+  # (no documentation provided)
+  class RestUntypedConnectorNode < Gov::Vha::Isaac::Rest::Api1::Data::Logic::RestLogicNode 
+
+
+    # the json hash for this RestUntypedConnectorNode
+    def to_jaxb_json_hash
+      _h = super
+      return _h
+    end
+
+    #initializes this RestUntypedConnectorNode with a json hash
+    def init_jaxb_json_hash(_o)
+      super _o
+    end
+
+    # constructs a RestUntypedConnectorNode from a (parsed) JSON hash
+    def self.from_json(o)
+      if o.nil?
+        return nil
+      else
+        inst = new
+        inst.init_jaxb_json_hash o
+        return inst
+      end
+    end
+  end
+
+end
+
+end
+
+end
+
+end
+
+end
+
+end
+
+end
+
+module Gov
+
+module Vha
+
+module Isaac
+
+module Rest
+
+module Api1
+
+module Data
+
 module Sememe
 
   # (no documentation provided)
@@ -3034,61 +3090,6 @@ module Sememe
     end
 
     # constructs a RestSememeDescriptionVersion from a (parsed) JSON hash
-    def self.from_json(o)
-      if o.nil?
-        return nil
-      else
-        inst = new
-        inst.init_jaxb_json_hash o
-        return inst
-      end
-    end
-  end
-
-end
-
-end
-
-end
-
-end
-
-end
-
-end
-
-end
-
-module Gov
-
-module Vha
-
-module Isaac
-
-module Rest
-
-module Api1
-
-module Data
-
-module Logic
-
-  # (no documentation provided)
-  class RestUntypedConnectorNode < Gov::Vha::Isaac::Rest::Api1::Data::Logic::RestLogicNode 
-
-
-    # the json hash for this RestUntypedConnectorNode
-    def to_jaxb_json_hash
-      _h = super
-      return _h
-    end
-
-    #initializes this RestUntypedConnectorNode with a json hash
-    def init_jaxb_json_hash(_o)
-      super _o
-    end
-
-    # constructs a RestUntypedConnectorNode from a (parsed) JSON hash
     def self.from_json(o)
       if o.nil?
         return nil

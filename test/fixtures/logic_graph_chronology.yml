@@ -1,5 +1,6 @@
-#Fixture created on 2016-04-29 16:29:03
+#Fixture created on 2016-04-29 16:52:56
 ---
+"@class": gov.vha.isaac.rest.api1.data.sememe.RestSememeChronology
 expandables:
   items:
   - name: versionsAll
@@ -12,6 +13,7 @@ referencedComponentNid: -2147483632
 referencedComponentNidObjectType:
 referencedComponentNidDescription:
 identifiers:
+  "@class": gov.vha.isaac.rest.api1.data.RestIdentifiedObject
   uuids:
   - 8092df3b-27cc-4ca4-a590-1839d2e6c00e
 versions:

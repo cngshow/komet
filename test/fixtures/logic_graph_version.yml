@@ -1,4 +1,4 @@
-#Fixture created on 2016-04-29 16:29:03
+#Fixture created on 2016-04-29 16:52:56
 ---
 "@class": gov.vha.isaac.rest.api1.data.sememe.RestSememeLogicGraphVersion
 expandables:
@@ -11,6 +11,7 @@ expandables:
     url: rest/1/logicGraph/version/306?expand=logicNodeUuids
 sememeChronology:
 sememeVersion:
+  "@class": gov.vha.isaac.rest.api1.data.RestStampedVersion
   stampSequence: 1
   state: ACTIVE
   time: 1461176521811

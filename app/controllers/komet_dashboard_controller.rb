@@ -174,6 +174,12 @@ class KometDashboardController < ApplicationController
 
     if node[:has_parents]
       node[:parent_count] = concept.parents.length
+
+    elsif tree_walk_levels == 0 && concept.parentCount != 0 && boolean(parent_search)
+
+      node[:parent_count] = concept.parentCount
+      node[:has_parents] = true
+
     else
       node[:parent_count] = 0
     end
@@ -181,7 +187,7 @@ class KometDashboardController < ApplicationController
     node[:parents] = []
 
     # if this node has parents and we want to see all parent paths then get the IDs of each parent
-    if tree_walk_levels > 0 && node[:has_parents] && !boolean(parent_search) || (node[:parent_count] > 1 && multi_path)
+    if tree_walk_levels > 0 && node[:has_parents] && !boolean(parent_search) || (tree_walk_levels > 0 && node[:parent_count] > 1 && multi_path)
 
       concept.parents.each do |parent|
         node[:parents] << parent.conChronology.identifiers.uuids.first

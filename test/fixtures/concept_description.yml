@@ -1,4 +1,4 @@
-#Fixture created on 2016-04-29 16:29:01
+#Fixture created on 2016-04-29 16:52:54
 ---
 - "@class": gov.vha.isaac.rest.api1.data.sememe.RestSememeDescriptionVersion
   expandables:
@@ -6,6 +6,7 @@
     - name: referencedDetails
       url: ''
   sememeChronology:
+    "@class": gov.vha.isaac.rest.api1.data.sememe.RestSememeChronology
     expandables:
       items:
       - name: versionsAll
@@ -18,10 +19,12 @@
     referencedComponentNidObjectType:
     referencedComponentNidDescription:
     identifiers:
+      "@class": gov.vha.isaac.rest.api1.data.RestIdentifiedObject
       uuids:
       - 8cf0aaeb-518e-3ee2-8082-cde525305d11
     versions:
   sememeVersion:
+    "@class": gov.vha.isaac.rest.api1.data.RestStampedVersion
     stampSequence: 109
     state: ACTIVE
     time: 1012453200000
@@ -35,6 +38,7 @@
       - name: referencedDetails
         url: ''
     sememeChronology:
+      "@class": gov.vha.isaac.rest.api1.data.sememe.RestSememeChronology
       expandables:
         items:
         - name: versionsAll
@@ -47,10 +51,12 @@
       referencedComponentNidObjectType:
       referencedComponentNidDescription:
       identifiers:
+        "@class": gov.vha.isaac.rest.api1.data.RestIdentifiedObject
         uuids:
         - 03412d8e-de9e-5c35-b033-e15ec0e43d93
       versions:
     sememeVersion:
+      "@class": gov.vha.isaac.rest.api1.data.RestStampedVersion
       stampSequence: 54
       state: ACTIVE
       time: 1012453200000
@@ -73,6 +79,7 @@
       - name: referencedDetails
         url: ''
     sememeChronology:
+      "@class": gov.vha.isaac.rest.api1.data.sememe.RestSememeChronology
       expandables:
         items:
         - name: versionsAll
@@ -85,10 +92,12 @@
       referencedComponentNidObjectType:
       referencedComponentNidDescription:
       identifiers:
+        "@class": gov.vha.isaac.rest.api1.data.RestIdentifiedObject
         uuids:
         - 8b8e7dcc-6905-54ba-9f3d-5c4f2fe1ad11
       versions:
     sememeVersion:
+      "@class": gov.vha.isaac.rest.api1.data.RestStampedVersion
       stampSequence: 54
       state: ACTIVE
       time: 1012453200000
@@ -111,6 +120,7 @@
       - name: referencedDetails
         url: ''
     sememeChronology:
+      "@class": gov.vha.isaac.rest.api1.data.sememe.RestSememeChronology
       expandables:
         items:
         - name: versionsAll
@@ -123,10 +133,12 @@
       referencedComponentNidObjectType:
       referencedComponentNidDescription:
       identifiers:
+        "@class": gov.vha.isaac.rest.api1.data.RestIdentifiedObject
         uuids:
         - 49970dd0-2e0d-5217-8729-fe364bc73771
       versions:
     sememeVersion:
+      "@class": gov.vha.isaac.rest.api1.data.RestStampedVersion
       stampSequence: 54
       state: ACTIVE
       time: 1012453200000
@@ -149,6 +161,7 @@
     - name: referencedDetails
       url: ''
   sememeChronology:
+    "@class": gov.vha.isaac.rest.api1.data.sememe.RestSememeChronology
     expandables:
       items:
       - name: versionsAll
@@ -161,10 +174,12 @@
     referencedComponentNidObjectType:
     referencedComponentNidDescription:
     identifiers:
+      "@class": gov.vha.isaac.rest.api1.data.RestIdentifiedObject
       uuids:
       - 897ad324-0232-3735-b71f-de19434d9d32
     versions:
   sememeVersion:
+    "@class": gov.vha.isaac.rest.api1.data.RestStampedVersion
     stampSequence: 109
     state: ACTIVE
     time: 1012453200000
@@ -178,6 +193,7 @@
       - name: referencedDetails
         url: ''
     sememeChronology:
+      "@class": gov.vha.isaac.rest.api1.data.sememe.RestSememeChronology
       expandables:
         items:
         - name: versionsAll
@@ -190,10 +206,12 @@
       referencedComponentNidObjectType:
       referencedComponentNidDescription:
       identifiers:
+        "@class": gov.vha.isaac.rest.api1.data.RestIdentifiedObject
         uuids:
         - 1237c987-2047-5524-b489-deb8794e5d96
       versions:
     sememeVersion:
+      "@class": gov.vha.isaac.rest.api1.data.RestStampedVersion
       stampSequence: 54
       state: ACTIVE
       time: 1012453200000
@@ -216,6 +234,7 @@
       - name: referencedDetails
         url: ''
     sememeChronology:
+      "@class": gov.vha.isaac.rest.api1.data.sememe.RestSememeChronology
       expandables:
         items:
         - name: versionsAll
@@ -228,10 +247,12 @@
       referencedComponentNidObjectType:
       referencedComponentNidDescription:
       identifiers:
+        "@class": gov.vha.isaac.rest.api1.data.RestIdentifiedObject
         uuids:
         - a317408f-02ca-5b66-a398-fe5bedf1e93a
       versions:
     sememeVersion:
+      "@class": gov.vha.isaac.rest.api1.data.RestStampedVersion
       stampSequence: 54
       state: ACTIVE
       time: 1012453200000
@@ -254,6 +275,7 @@
       - name: referencedDetails
         url: ''
     sememeChronology:
+      "@class": gov.vha.isaac.rest.api1.data.sememe.RestSememeChronology
       expandables:
         items:
         - name: versionsAll
@@ -266,10 +288,12 @@
       referencedComponentNidObjectType:
       referencedComponentNidDescription:
       identifiers:
+        "@class": gov.vha.isaac.rest.api1.data.RestIdentifiedObject
         uuids:
         - 731cbc72-cb0a-54bc-a4f7-57aeb9720411
       versions:
     sememeVersion:
+      "@class": gov.vha.isaac.rest.api1.data.RestStampedVersion
       stampSequence: 54
       state: ACTIVE
       time: 1012453200000
