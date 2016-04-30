@@ -77,19 +77,20 @@ class SearchController < ApplicationController
   #@return [json] the search results - an array of hashes {id:, matching_text:, concept_status:, score:}
   def get_search_results
 
+    search_results = {}
     search_data = []
     search_text = params[:taxonomy_search_text]
     search_type = params[:taxonomy_search_type]
-    search_limit = params[:taxonomy_search_limit]
-    new_search = params[:new_search]
-    additional_params = {query: search_text, expand: 'referencedConcept,versionsLatestOnly'}
+    page_size = params[:taxonomy_search_page_size]
+    page_number = params[:taxonomy_search_page_number]
+    additional_params = {query: search_text, expand: 'referencedConcept,versionsLatestOnly', pageNum: page_number}
 
     if search_text == nil || search_text == ''
       render json: {total_rows: 0, page_data: []} and return
     end
 
-    if search_limit != nil || search_limit == ''
-      additional_params[:limit] =  search_limit
+    if page_size != nil || page_size == ''
+      additional_params[:maxPageSize] =  page_size
     end
 
     if search_type == 'descriptions'
@@ -103,7 +104,10 @@ class SearchController < ApplicationController
       # perform a description search with the parameters we set
       results = SearchApis.get_search_api(action: ACTION_DESCRIPTIONS, additional_req_params: additional_params)
 
-      results.each do |result|
+      search_results[:total_number] = results.paginationData.approximateTotal
+      search_results[:page_number] = results.paginationData.pageNum
+
+      results.results.each do |result|
 
         # add the information to the search array to be returned
         search_data << {id: result.referencedConcept.identifiers.uuids.first, matching_terms: result.matchText, concept_status: result.referencedConcept.versions.first.conVersion.state, match_score: result.score}
@@ -150,7 +154,10 @@ class SearchController < ApplicationController
       # perform a sememe search with the parameters we set
       results = SearchApis.get_search_api(action: ACTION_SEMEMES, additional_req_params: additional_params)
 
-      results.each do |result|
+      search_results[:total_number] = results.paginationData.approximateTotal
+      search_results[:page_number] = results.paginationData.pageNum
+
+      results.results.each do |result|
 
         # add the information to the search array to be returned
         search_data << {id: result.referencedConcept.identifiers.uuids.first, matching_terms: result.matchText, concept_status: result.referencedConcept.versions.first.conVersion.state, match_score: result.score}
@@ -158,7 +165,8 @@ class SearchController < ApplicationController
 
     end
 
-    render json: search_data
+    search_results[:data] = search_data
+    render json: search_results
   end
 
   def initialize

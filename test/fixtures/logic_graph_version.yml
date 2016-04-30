@@ -1,4 +1,4 @@
-#Fixture created on 2016-04-28 09:20:18
+#Fixture created on 2016-04-29 16:29:03
 ---
 "@class": gov.vha.isaac.rest.api1.data.sememe.RestSememeLogicGraphVersion
 expandables:
@@ -15,7 +15,7 @@ sememeVersion:
   state: ACTIVE
   time: 1461176521811
   authorSequence: 5
-  moduleSequence: 0
+  moduleSequence: 6
   pathSequence: 7
 nestedSememes:
 referencedConceptDescription: dynamic sememe extension definition (ISAAC)

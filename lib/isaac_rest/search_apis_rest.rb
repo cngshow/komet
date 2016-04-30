@@ -46,19 +46,19 @@ module SearchApis
       ACTION_DESCRIPTIONS => {
           PATH_SYM => PATH_DESCRIPTIONS,
           STARTING_PARAMS_SYM => PARAMS_DESCRIPTIONS,
-          CLAZZ_SYM => Gov::Vha::Isaac::Rest::Api1::Data::Search::RestSearchResult},
+          CLAZZ_SYM => Gov::Vha::Isaac::Rest::Api1::Data::Search::RestSearchResults},
       ACTION_PREFIX => {
           PATH_SYM => PATH_PREFIX,
           STARTING_PARAMS_SYM => PARAMS_PREFIX,
-          CLAZZ_SYM => Gov::Vha::Isaac::Rest::Api1::Data::Search::RestSearchResult},
+          CLAZZ_SYM => Gov::Vha::Isaac::Rest::Api1::Data::Search::RestSearchResults},
       ACTION_SEMEMES => {
           PATH_SYM => PATH_SEMEMES,
           STARTING_PARAMS_SYM => PARAMS_SEMEMES,
-          CLAZZ_SYM => Gov::Vha::Isaac::Rest::Api1::Data::Search::RestSearchResult},
+          CLAZZ_SYM => Gov::Vha::Isaac::Rest::Api1::Data::Search::RestSearchResults},
       ACTION_BY_REFERENCED_COMPONENT => {
           PATH_SYM => PATH_BY_REFERENCED_COMPONENT,
           STARTING_PARAMS_SYM => PARAMS_BY_REFERENCED_COMPONENT,
-          CLAZZ_SYM => Gov::Vha::Isaac::Rest::Api1::Data::Search::RestSearchResult}
+          CLAZZ_SYM => Gov::Vha::Isaac::Rest::Api1::Data::Search::RestSearchResults}
   }
 
   class << self

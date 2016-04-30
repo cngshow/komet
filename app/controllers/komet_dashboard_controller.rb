@@ -52,9 +52,7 @@ class KometDashboardController < ApplicationController
 
     # check to make the number of levels to walk the tree was passed in
     if tree_walk_levels == nil
-      tree_walk_levels = 2
-    else
-      tree_walk_levels = tree_walk_levels.to_i + 1
+      tree_walk_levels = 1
     end
 
     additional_req_params = {stated: @stated}
@@ -152,39 +150,53 @@ class KometDashboardController < ApplicationController
     concept_nodes = []
 
     node = {}
-    uuid = concept.conChronology.identifiers.uuids.first
-    desc = concept.conChronology.description
+    node[:id] = concept.conChronology.identifiers.uuids.first
+    node[:text] = concept.conChronology.description
     node[:has_children] = !concept.children.nil?
-    child_count = (node[:has_children] ? concept.children.length : 0)
-    badge = node[:has_children] ? "&nbsp;&nbsp;<span class=\"badge badge-success\" title=\"kma\">#{child_count}</span>" : ''
-    desc << badge
 
-    node[:id] = uuid
-    node[:text] = desc
-    node[:child_count] = child_count
+    if node[:has_children]
+      node[:child_count] = concept.children.length
+
+    elsif tree_walk_levels == 0 && concept.childCount != 0
+
+      node[:child_count] = concept.childCount
+      node[:has_children] = true
+
+    else
+      node[:child_count] = 0
+    end
+
+    if node[:child_count] != 0
+      node[:text] << "&nbsp;&nbsp;<span class=\"badge badge-success\" title=\"kma\">#{node[:child_count]}</span>"
+    end
+
     node[:has_parents] = !concept.parents.nil?
-    parent_count = node[:has_parents] ? concept.parents.length : 0
-    node[:parent_count] = parent_count
-    parents = []
+
+    if node[:has_parents]
+      node[:parent_count] = concept.parents.length
+    else
+      node[:parent_count] = 0
+    end
+
+    node[:parents] = []
 
     # if this node has parents and we want to see all parent paths then get the IDs of each parent
-    if tree_walk_levels > 1 && node[:has_parents] && !boolean(parent_search) || (parent_count > 1 && multi_path)
+    if tree_walk_levels > 0 && node[:has_parents] && !boolean(parent_search) || (node[:parent_count] > 1 && multi_path)
 
       concept.parents.each do |parent|
-        parents << parent.conChronology.identifiers.uuids.first
+        node[:parents] << parent.conChronology.identifiers.uuids.first
       end
     end
 
-    node[:parents] = parents
     relation = :children
 
     # if we are walking up the tree toward the root node get the parents of the current node, otherwise get the children
-    if tree_walk_levels > 1 && boolean(parent_search) && !concept.parents.nil?
+    if tree_walk_levels > 0 && boolean(parent_search) && !concept.parents.nil?
 
       relation = :parents
       related_concepts = concept.parents
 
-    elsif tree_walk_levels > 1 && !boolean(parent_search) && !concept.children.nil?
+    elsif tree_walk_levels > 0 && !boolean(parent_search) && !concept.children.nil?
       related_concepts = concept.children
     else
       related_concepts = []

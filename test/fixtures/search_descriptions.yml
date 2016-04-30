@@ -1,5 +1,14 @@
-#Fixture created on 2016-04-28 09:20:17
+#Fixture created on 2016-04-29 16:29:02
 ---
+"@class": gov.vha.isaac.rest.api1.data.search.RestSearchResults
+paginationData:
+  "@class": gov.vha.isaac.rest.api.data.Pagination
+  previousUrl: rest/1/search/descriptions/?query=heart&pageNum=1&maxPageSize=0
+  nextUrl: rest/1/search/descriptions/?query=heart&pageNum=2&maxPageSize=10
+  pageNum: 1
+  maxPageSize: 10
+  approximateTotal: 1000
+results:
 - matchNid: -2145197832
   matchText: Heart
   score: 10.525579

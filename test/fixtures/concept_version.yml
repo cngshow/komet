@@ -1,4 +1,4 @@
-#Fixture created on 2016-04-28 09:20:16
+#Fixture created on 2016-04-29 16:29:01
 ---
 expandables:
   items:
@@ -14,7 +14,7 @@ conVersion:
   state: ACTIVE
   time: 1012453200000
   authorSequence: 5
-  moduleSequence: 0
+  moduleSequence: 194063
   pathSequence: 7
 parents:
 children:

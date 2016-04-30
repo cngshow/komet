@@ -1,4 +1,4 @@
-#Fixture created on 2016-04-28 09:20:16
+#Fixture created on 2016-04-29 16:29:01
 ---
 - "@class": gov.vha.isaac.rest.api1.data.sememe.RestSememeDescriptionVersion
   expandables:
@@ -26,7 +26,7 @@
     state: ACTIVE
     time: 1012453200000
     authorSequence: 5
-    moduleSequence: 0
+    moduleSequence: 194063
     pathSequence: 7
   nestedSememes:
   - "@class": gov.vha.isaac.rest.api1.data.sememe.RestDynamicSememeVersion
@@ -55,7 +55,7 @@
       state: ACTIVE
       time: 1012453200000
       authorSequence: 5
-      moduleSequence: 0
+      moduleSequence: 62
       pathSequence: 7
     nestedSememes: []
     dataColumns:
@@ -93,7 +93,7 @@
       state: ACTIVE
       time: 1012453200000
       authorSequence: 5
-      moduleSequence: 0
+      moduleSequence: 62
       pathSequence: 7
     nestedSememes: []
     dataColumns:
@@ -131,7 +131,7 @@
       state: ACTIVE
       time: 1012453200000
       authorSequence: 5
-      moduleSequence: 0
+      moduleSequence: 62
       pathSequence: 7
     nestedSememes: []
     dataColumns:
@@ -169,7 +169,7 @@
     state: ACTIVE
     time: 1012453200000
     authorSequence: 5
-    moduleSequence: 0
+    moduleSequence: 194063
     pathSequence: 7
   nestedSememes:
   - "@class": gov.vha.isaac.rest.api1.data.sememe.RestDynamicSememeVersion
@@ -198,7 +198,7 @@
       state: ACTIVE
       time: 1012453200000
       authorSequence: 5
-      moduleSequence: 0
+      moduleSequence: 62
       pathSequence: 7
     nestedSememes: []
     dataColumns:
@@ -236,7 +236,7 @@
       state: ACTIVE
       time: 1012453200000
       authorSequence: 5
-      moduleSequence: 0
+      moduleSequence: 62
       pathSequence: 7
     nestedSememes: []
     dataColumns:
@@ -274,7 +274,7 @@
       state: ACTIVE
       time: 1012453200000
       authorSequence: 5
-      moduleSequence: 0
+      moduleSequence: 62
       pathSequence: 7
     nestedSememes: []
     dataColumns:

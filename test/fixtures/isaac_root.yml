@@ -1,4 +1,4 @@
-#Fixture created on 2016-04-28 09:20:15
+#Fixture created on 2016-04-29 16:29:01
 ---
 expandables:
   items:
@@ -24,7 +24,7 @@ conVersion:
   state: ACTIVE
   time: 1461176521811
   authorSequence: 5
-  moduleSequence: 0
+  moduleSequence: 6
   pathSequence: 7
 parents:
 children:
@@ -54,7 +54,7 @@ children:
     state: ACTIVE
     time: 1452142800000
     authorSequence: 5
-    moduleSequence: 0
+    moduleSequence: 86
     pathSequence: 7
   parents:
   children:
@@ -85,7 +85,7 @@ children:
     state: ACTIVE
     time: 1448946000000
     authorSequence: 5
-    moduleSequence: 0
+    moduleSequence: 64
     pathSequence: 7
   parents:
   children:
@@ -116,7 +116,7 @@ children:
     state: ACTIVE
     time: 1461176521811
     authorSequence: 5
-    moduleSequence: 0
+    moduleSequence: 6
     pathSequence: 7
   parents:
   children:
@@ -147,7 +147,7 @@ children:
     state: ACTIVE
     time: 1461176521811
     authorSequence: 5
-    moduleSequence: 0
+    moduleSequence: 6
     pathSequence: 7
   parents:
   children:
@@ -178,7 +178,7 @@ children:
     state: ACTIVE
     time: 1461176521811
     authorSequence: 5
-    moduleSequence: 0
+    moduleSequence: 6
     pathSequence: 7
   parents:
   children:
@@ -209,7 +209,7 @@ children:
     state: ACTIVE
     time: 1461176521811
     authorSequence: 5
-    moduleSequence: 0
+    moduleSequence: 6
     pathSequence: 7
   parents:
   children:
@@ -240,7 +240,7 @@ children:
     state: ACTIVE
     time: 1461176521811
     authorSequence: 5
-    moduleSequence: 0
+    moduleSequence: 6
     pathSequence: 7
   parents:
   children:
@@ -271,7 +271,7 @@ children:
     state: ACTIVE
     time: 1461176521811
     authorSequence: 5
-    moduleSequence: 0
+    moduleSequence: 6
     pathSequence: 7
   parents:
   children:
@@ -302,7 +302,7 @@ children:
     state: ACTIVE
     time: 1461176521811
     authorSequence: 5
-    moduleSequence: 0
+    moduleSequence: 6
     pathSequence: 7
   parents:
   children:
@@ -333,7 +333,7 @@ children:
     state: ACTIVE
     time: 1461176521811
     authorSequence: 5
-    moduleSequence: 0
+    moduleSequence: 6
     pathSequence: 7
   parents:
   children:
@@ -364,7 +364,7 @@ children:
     state: ACTIVE
     time: 1461176521811
     authorSequence: 5
-    moduleSequence: 0
+    moduleSequence: 6
     pathSequence: 7
   parents:
   children:
@@ -395,7 +395,7 @@ children:
     state: ACTIVE
     time: 1461176521811
     authorSequence: 5
-    moduleSequence: 0
+    moduleSequence: 6
     pathSequence: 7
   parents:
   children:
@@ -426,7 +426,7 @@ children:
     state: ACTIVE
     time: 1461176521811
     authorSequence: 5
-    moduleSequence: 0
+    moduleSequence: 6
     pathSequence: 7
   parents:
   children:
@@ -457,7 +457,7 @@ children:
     state: ACTIVE
     time: 1461176521811
     authorSequence: 5
-    moduleSequence: 0
+    moduleSequence: 6
     pathSequence: 7
   parents:
   children:
@@ -488,7 +488,7 @@ children:
     state: ACTIVE
     time: 1461176521811
     authorSequence: 5
-    moduleSequence: 0
+    moduleSequence: 6
     pathSequence: 7
   parents:
   children:
@@ -519,7 +519,7 @@ children:
     state: ACTIVE
     time: 1461176521811
     authorSequence: 5
-    moduleSequence: 0
+    moduleSequence: 6
     pathSequence: 7
   parents:
   children:
@@ -550,7 +550,7 @@ children:
     state: ACTIVE
     time: 1461176521811
     authorSequence: 5
-    moduleSequence: 0
+    moduleSequence: 6
     pathSequence: 7
   parents:
   children:
@@ -581,7 +581,7 @@ children:
     state: ACTIVE
     time: 1461176521811
     authorSequence: 5
-    moduleSequence: 0
+    moduleSequence: 6
     pathSequence: 7
   parents:
   children:
@@ -612,7 +612,7 @@ children:
     state: ACTIVE
     time: 1461176521811
     authorSequence: 5
-    moduleSequence: 0
+    moduleSequence: 6
     pathSequence: 7
   parents:
   children:
@@ -643,7 +643,7 @@ children:
     state: ACTIVE
     time: 1461176521811
     authorSequence: 5
-    moduleSequence: 0
+    moduleSequence: 6
     pathSequence: 7
   parents:
   children:
@@ -674,7 +674,7 @@ children:
     state: ACTIVE
     time: 1461176521811
     authorSequence: 5
-    moduleSequence: 0
+    moduleSequence: 6
     pathSequence: 7
   parents:
   children:
@@ -705,7 +705,7 @@ children:
     state: ACTIVE
     time: 1461176521811
     authorSequence: 5
-    moduleSequence: 0
+    moduleSequence: 6
     pathSequence: 7
   parents:
   children:
@@ -736,7 +736,7 @@ children:
     state: ACTIVE
     time: 1461176521811
     authorSequence: 5
-    moduleSequence: 0
+    moduleSequence: 6
     pathSequence: 7
   parents:
   children:
@@ -767,7 +767,7 @@ children:
     state: ACTIVE
     time: 1461176521811
     authorSequence: 5
-    moduleSequence: 0
+    moduleSequence: 6
     pathSequence: 7
   parents:
   children:
@@ -798,7 +798,7 @@ children:
     state: ACTIVE
     time: 1461176521811
     authorSequence: 5
-    moduleSequence: 0
+    moduleSequence: 6
     pathSequence: 7
   parents:
   children:
@@ -829,7 +829,7 @@ children:
     state: ACTIVE
     time: 1461176521811
     authorSequence: 5
-    moduleSequence: 0
+    moduleSequence: 6
     pathSequence: 7
   parents:
   children:
@@ -860,7 +860,7 @@ children:
     state: ACTIVE
     time: 1461176521811
     authorSequence: 5
-    moduleSequence: 0
+    moduleSequence: 6
     pathSequence: 7
   parents:
   children:
@@ -891,7 +891,7 @@ children:
     state: ACTIVE
     time: 1461176521811
     authorSequence: 5
-    moduleSequence: 0
+    moduleSequence: 6
     pathSequence: 7
   parents:
   children:
@@ -922,7 +922,7 @@ children:
     state: ACTIVE
     time: 1461176521811
     authorSequence: 5
-    moduleSequence: 0
+    moduleSequence: 6
     pathSequence: 7
   parents:
   children:
@@ -953,7 +953,7 @@ children:
     state: ACTIVE
     time: 1461176521811
     authorSequence: 5
-    moduleSequence: 0
+    moduleSequence: 6
     pathSequence: 7
   parents:
   children:
@@ -984,7 +984,7 @@ children:
     state: ACTIVE
     time: 1461176521811
     authorSequence: 5
-    moduleSequence: 0
+    moduleSequence: 6
     pathSequence: 7
   parents:
   children:
@@ -1015,7 +1015,7 @@ children:
     state: ACTIVE
     time: 1461176521811
     authorSequence: 5
-    moduleSequence: 0
+    moduleSequence: 6
     pathSequence: 7
   parents:
   children:
