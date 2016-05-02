@@ -23,6 +23,11 @@ module SystemApiActions
   ACTION_OBJECT_CHRONOLOGY_TYPE = :object_chronology_type
   ACTION_SEMEME_TYPE = :sememe_type
   ACTION_DYNAMIC_SEMEME_DATA_TYPE = :dynamic_sememe_data_type
+  ACTION_CONCRETE_DOMAIN_OPERATOR_TYPES = :concrete_domain_operator_types
+  ACTION_NODE_SEMANTIC_TYPE = :node_semantic_type
+  ACTION_SUPPORTED_ID_TYPES = :supported_id_types
+  ACTION_OBJECT_CHRONOLOGY_TYPE_BY_ID = :object_chronology_type_by_id
+  ACTION_SYSTEM_INFO = :system_info
 end
 
 module SystemApis
@@ -30,17 +35,32 @@ module SystemApis
   include CommonActionSyms
   extend self
 
-  PATH_SYSTEM_API = $PROPS['ENDPOINT.isaac_root'] + "rest/1/system/enumeration/"
-  PATH_DYNAMIC_SEMEME_VALIDATOR_TYPE = PATH_SYSTEM_API + "restDynamicSememeValidatorType"
-  PATH_OBJECT_CHRONOLOGY_TYPE = PATH_SYSTEM_API + "restObjectChronologyType"
-  PATH_SEMEME_TYPE = PATH_SYSTEM_API + "restSememeType"
-  PATH_DYNAMIC_SEMEME_DATA_TYPE = PATH_SYSTEM_API + "restDynamicSememeDataType"
+  TEST_UUID = '406e872b-2e19-5f5e-a71d-e4e4b2c68fe5'
+
+  PATH_SYSTEM_API = $PROPS['ENDPOINT.isaac_root'] + "rest/1/system/"
+  PATH_SYSTEM_API_ENUMERATION =PATH_SYSTEM_API + "enumeration/"
+  PATH_DYNAMIC_SEMEME_VALIDATOR_TYPE = PATH_SYSTEM_API_ENUMERATION + "restDynamicSememeValidatorType"
+  PATH_OBJECT_CHRONOLOGY_TYPE = PATH_SYSTEM_API_ENUMERATION + "restObjectChronologyType"
+  PATH_SEMEME_TYPE = PATH_SYSTEM_API_ENUMERATION + "restSememeType"
+  PATH_DYNAMIC_SEMEME_DATA_TYPE = PATH_SYSTEM_API_ENUMERATION + "restDynamicSememeDataType"
+
+  PATH_CONCRETE_DOMAIN_OPERATOR_TYPES = PATH_SYSTEM_API_ENUMERATION + "restConcreteDomainOperatorTypes"
+  PATH_NODE_SEMANTIC_TYPE = PATH_SYSTEM_API_ENUMERATION + "restNodeSemanticType"
+  PATH_SUPPORTED_ID_TYPES = PATH_SYSTEM_API_ENUMERATION + "restSupportedIdTypes"
+  PATH_OBJECT_CHRONOLOGY_TYPE_BY_ID = PATH_SYSTEM_API + "objectChronologyType/{id}"
+  PATH_SYSTEM_INFO = PATH_SYSTEM_API + "systemInfo"
 
   # these are not used!!
   PARAMS_DYNAMIC_SEMEME_VALIDATOR_TYPE = {}
   PARAMS_OBJECT_CHRONOLOGY_TYPE = {}
   PARAMS_SEMEME_TYPE = {}
   PARAMS_DYNAMIC_SEMEME_DATA_TYPE = {}
+
+  PARAMS_CONCRETE_DOMAIN_OPERATOR_TYPES = {}
+  PARAMS_NODE_SEMANTIC_TYPE = {}
+  PARAMS_SUPPORTED_ID_TYPES = {}
+  PARAMS_OBJECT_CHRONOLOGY_TYPE_BY_ID = {}
+  PARAMS_SYSTEM_INFO = {}
 
   ACTION_CONSTANTS = {
       ACTION_DYNAMIC_SEMEME_VALIDATOR_TYPE => {
@@ -58,7 +78,27 @@ module SystemApis
       ACTION_DYNAMIC_SEMEME_DATA_TYPE => {
           PATH_SYM => PATH_DYNAMIC_SEMEME_DATA_TYPE,
           STARTING_PARAMS_SYM => PARAMS_DYNAMIC_SEMEME_DATA_TYPE,
-          CLAZZ_SYM => Gov::Vha::Isaac::Rest::Api1::Data::Enumerations::RestDynamicSememeDataType}
+          CLAZZ_SYM => Gov::Vha::Isaac::Rest::Api1::Data::Enumerations::RestDynamicSememeDataType},
+      ACTION_CONCRETE_DOMAIN_OPERATOR_TYPES => {
+          PATH_SYM => PATH_CONCRETE_DOMAIN_OPERATOR_TYPES,
+          STARTING_PARAMS_SYM => PARAMS_CONCRETE_DOMAIN_OPERATOR_TYPES,
+          CLAZZ_SYM => Gov::Vha::Isaac::Rest::Api1::Data::Enumerations::RestConcreteDomainOperatorsType},
+      ACTION_NODE_SEMANTIC_TYPE => {
+          PATH_SYM => PATH_NODE_SEMANTIC_TYPE,
+          STARTING_PARAMS_SYM => PARAMS_NODE_SEMANTIC_TYPE,
+          CLAZZ_SYM => Gov::Vha::Isaac::Rest::Api1::Data::Enumerations::RestNodeSemanticType},
+      ACTION_SUPPORTED_ID_TYPES => {
+          PATH_SYM => PATH_SUPPORTED_ID_TYPES,
+          STARTING_PARAMS_SYM => PARAMS_SUPPORTED_ID_TYPES,
+          CLAZZ_SYM => Gov::Vha::Isaac::Rest::Api1::Data::Enumerations::RestSupportedIdType},
+      ACTION_OBJECT_CHRONOLOGY_TYPE_BY_ID => {
+          PATH_SYM => PATH_OBJECT_CHRONOLOGY_TYPE_BY_ID,
+          STARTING_PARAMS_SYM => PARAMS_OBJECT_CHRONOLOGY_TYPE_BY_ID,
+          CLAZZ_SYM => Gov::Vha::Isaac::Rest::Api1::Data::Enumerations::RestObjectChronologyType},
+      ACTION_SYSTEM_INFO => {
+          PATH_SYM => PATH_SYSTEM_INFO,
+          STARTING_PARAMS_SYM => PARAMS_SYSTEM_INFO,
+          CLAZZ_SYM => Gov::Vha::Isaac::Rest::Api1::Data::SystemInfo},
   }
 
   class << self
@@ -69,12 +109,18 @@ module SystemApis
     include CommonRest
     register_rest(rest_module: SystemApis, rest_actions: SystemApiActions)
 
-    def initialize(action:, action_constants:)
+    attr_accessor :uuid
+
+    def initialize(uuid: nil, action:, action_constants:)
+      @uuid = uuid.to_s unless uuid.nil?
+      uuid_check uuid: uuid if action_constants == SystemApiActions::ACTION_OBJECT_CHRONOLOGY_TYPE_BY_ID
       super(params: {}, action: action, action_constants: action_constants)
     end
 
     def rest_call
-      json = rest_fetch(url_string: get_url, params: get_params, raw_url: get_url)
+      url = get_url
+      url_string = url.gsub('{id}', uuid.to_s)
+      json = rest_fetch(url_string: url_string, params: get_params, raw_url: get_url)
       enunciate_json(json)
     end
   end
@@ -84,8 +130,8 @@ module SystemApis
   end
 
 
-  def get_system_api(action:)
-    SystemApi.new(action: action, action_constants: ACTION_CONSTANTS).rest_call
+  def get_system_api(action:, uuid_or_id: nil)
+    SystemApi.new(action: action, uuid: uuid_or_id, action_constants: ACTION_CONSTANTS).rest_call
   end
 end
 
@@ -96,5 +142,10 @@ a = SystemApis::get_system_api(action: SystemApiActions::ACTION_DYNAMIC_SEMEME_V
 b = SystemApis::get_system_api(action: SystemApiActions::ACTION_OBJECT_CHRONOLOGY_TYPE)
 c = SystemApis::get_system_api(action: SystemApiActions::ACTION_SEMEME_TYPE)
 d = SystemApis::get_system_api(action: SystemApiActions::ACTION_DYNAMIC_SEMEME_DATA_TYPE)
+e = SystemApis::get_system_api(action: SystemApiActions::ACTION_CONCRETE_DOMAIN_OPERATOR_TYPES)
+f = SystemApis::get_system_api(action: SystemApiActions::ACTION_NODE_SEMANTIC_TYPE)
+g = SystemApis::get_system_api(action: SystemApiActions::ACTION_SUPPORTED_ID_TYPES)
+h = SystemApis::get_system_api(action: SystemApiActions::ACTION_OBJECT_CHRONOLOGY_TYPE_BY_ID, uuid_or_id: SystemApis::TEST_UUID)
+i = SystemApis::get_system_api(action: SystemApiActions::ACTION_SYSTEM_INFO)
 
 =end

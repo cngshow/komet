@@ -9,12 +9,16 @@ I put it in the directory where JRuby is installed.
 
 https://s3.amazonaws.com/jruby.org/downloads/9.0.4.0/jruby-complete-9.0.4.0.jar
 
+You need to make sure you have the source code for the ISAAC-rest project on your system.
+https://github.com/VA-CTT/ISAAC-rest
+
 In rails root you will find a file called setup.bat.template.
 Move this file to setup.bat, then you will need to modify the following environment variables:
 
 GEM_HOME : (this is in line 2, make sure you create the directory you reference)<br>
 JAVA_HOME : (Line 4)<br>
 JRUBY_JAR: (This references JRuby's complete jar file.  Line 8)<br>
+ISAAC_PATH: (Line 6, the path to the folder where your Isaac Rest project is installed)
 
 From a dos shell make sure you are in rails root (you can see the app directory right?), and run:
 ```
@@ -55,7 +59,15 @@ You should now see an rails_common directory under the lib directory.
 
 In RubyMine you may see a message concerning rails_common being under source control. If/when you do, click the add root button. This will allow you to make changes within the rails_komet project to the code in rails_common and commit those changes as well.
 
+<br>
+<hr>
 
+Open a terminal and navigate to rails root and run the command:<br>
+mvn clean initialize<br>
+This will create the file:<br>
+./config/generated/yaml/IsaacMetadataAuxiliary.yaml<br>
+Now run the following command to build the Isaac Rest project<br>
+bundle exec rake isaac:build_isaac_rest
 
 <br>
 <hr>

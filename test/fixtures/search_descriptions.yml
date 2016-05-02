@@ -1,122 +1,180 @@
-#Fixture created on 2016-04-12 19:04:50
+#Fixture created on 2016-04-29 16:52:55
 ---
-- matchNid: -2145197852
+"@class": gov.vha.isaac.rest.api1.data.search.RestSearchResults
+paginationData:
+  "@class": gov.vha.isaac.rest.api.data.Pagination
+  previousUrl: rest/1/search/descriptions/?query=heart&pageNum=1&maxPageSize=0
+  nextUrl: rest/1/search/descriptions/?query=heart&pageNum=2&maxPageSize=10
+  pageNum: 1
+  approximateTotal: 1000
+results:
+- "@class": gov.vha.isaac.rest.api1.data.search.RestSearchResult
+  matchNid: -2145197832
   matchText: Heart
   score: 10.525579
   active: true
   expandables:
     items:
     - name: uuid
-      url: 1/id/translate/-2145197852?inputType=nid&outputType=uuid
+      url: rest/1/id/translate/-2145197832?inputType=nid&outputType=uuid
     - name: referencedConcept
+      url: ''
+    - name: versionsLatestOnly
+      url: ''
+    - name: versionsAll
       url: ''
   identifiers:
   referencedConcept:
-- matchNid: -2145197868
+- "@class": gov.vha.isaac.rest.api1.data.search.RestSearchResult
+  matchNid: -2145197848
   matchText: Heart
   score: 10.525579
   active: true
   expandables:
     items:
     - name: uuid
-      url: 1/id/translate/-2145197868?inputType=nid&outputType=uuid
+      url: rest/1/id/translate/-2145197848?inputType=nid&outputType=uuid
     - name: referencedConcept
+      url: ''
+    - name: versionsLatestOnly
+      url: ''
+    - name: versionsAll
       url: ''
   identifiers:
   referencedConcept:
-- matchNid: -2147480856
+- "@class": gov.vha.isaac.rest.api1.data.search.RestSearchResult
+  matchNid: -2147480856
   matchText: Heart
   score: 10.525579
   active: true
   expandables:
     items:
     - name: uuid
-      url: 1/id/translate/-2147480856?inputType=nid&outputType=uuid
+      url: rest/1/id/translate/-2147480856?inputType=nid&outputType=uuid
     - name: referencedConcept
+      url: ''
+    - name: versionsLatestOnly
+      url: ''
+    - name: versionsAll
       url: ''
   identifiers:
   referencedConcept:
-- matchNid: -2142377915
-  matchText: Abdominal heart
-  score: 6.5784874
-  active: false
-  expandables:
-    items:
-    - name: uuid
-      url: 1/id/translate/-2142377915?inputType=nid&outputType=uuid
-    - name: referencedConcept
-      url: ''
-  identifiers:
-  referencedConcept:
-- matchNid: -2142670043
-  matchText: Heart failure
-  score: 6.5784874
-  active: false
-  expandables:
-    items:
-    - name: uuid
-      url: 1/id/translate/-2142670043?inputType=nid&outputType=uuid
-    - name: referencedConcept
-      url: ''
-  identifiers:
-  referencedConcept:
-- matchNid: -2142711895
-  matchText: Heart transplant
-  score: 6.5784874
-  active: false
-  expandables:
-    items:
-    - name: uuid
-      url: 1/id/translate/-2142711895?inputType=nid&outputType=uuid
-    - name: referencedConcept
-      url: ''
-  identifiers:
-  referencedConcept:
-- matchNid: -2142711913
-  matchText: Heart suturing
-  score: 6.5784874
-  active: false
-  expandables:
-    items:
-    - name: uuid
-      url: 1/id/translate/-2142711913?inputType=nid&outputType=uuid
-    - name: referencedConcept
-      url: ''
-  identifiers:
-  referencedConcept:
-- matchNid: -2142711919
-  matchText: Heart ligation
-  score: 6.5784874
-  active: false
-  expandables:
-    items:
-    - name: uuid
-      url: 1/id/translate/-2142711919?inputType=nid&outputType=uuid
-    - name: referencedConcept
-      url: ''
-  identifiers:
-  referencedConcept:
-- matchNid: -2142711925
-  matchText: Heart repair
-  score: 6.5784874
-  active: false
-  expandables:
-    items:
-    - name: uuid
-      url: 1/id/translate/-2142711925?inputType=nid&outputType=uuid
-    - name: referencedConcept
-      url: ''
-  identifiers:
-  referencedConcept:
-- matchNid: -2142185443
+- "@class": gov.vha.isaac.rest.api1.data.search.RestSearchResult
+  matchNid: -2140761185
   matchText: Heart procedure
   score: 6.5784874
   active: false
   expandables:
     items:
     - name: uuid
-      url: 1/id/translate/-2142185443?inputType=nid&outputType=uuid
+      url: rest/1/id/translate/-2140761185?inputType=nid&outputType=uuid
     - name: referencedConcept
+      url: ''
+    - name: versionsLatestOnly
+      url: ''
+    - name: versionsAll
+      url: ''
+  identifiers:
+  referencedConcept:
+- "@class": gov.vha.isaac.rest.api1.data.search.RestSearchResult
+  matchNid: -2141140010
+  matchText: Abdominal heart
+  score: 6.5784874
+  active: false
+  expandables:
+    items:
+    - name: uuid
+      url: rest/1/id/translate/-2141140010?inputType=nid&outputType=uuid
+    - name: referencedConcept
+      url: ''
+    - name: versionsLatestOnly
+      url: ''
+    - name: versionsAll
+      url: ''
+  identifiers:
+  referencedConcept:
+- "@class": gov.vha.isaac.rest.api1.data.search.RestSearchResult
+  matchNid: -2146638835
+  matchText: Heart SPECT
+  score: 6.5784874
+  active: true
+  expandables:
+    items:
+    - name: uuid
+      url: rest/1/id/translate/-2146638835?inputType=nid&outputType=uuid
+    - name: referencedConcept
+      url: ''
+    - name: versionsLatestOnly
+      url: ''
+    - name: versionsAll
+      url: ''
+  identifiers:
+  referencedConcept:
+- "@class": gov.vha.isaac.rest.api1.data.search.RestSearchResult
+  matchNid: -2145445575
+  matchText: Heart rate
+  score: 6.5784874
+  active: true
+  expandables:
+    items:
+    - name: uuid
+      url: rest/1/id/translate/-2145445575?inputType=nid&outputType=uuid
+    - name: referencedConcept
+      url: ''
+    - name: versionsLatestOnly
+      url: ''
+    - name: versionsAll
+      url: ''
+  identifiers:
+  referencedConcept:
+- "@class": gov.vha.isaac.rest.api1.data.search.RestSearchResult
+  matchNid: -2146658030
+  matchText: Heart Scan
+  score: 6.5784874
+  active: true
+  expandables:
+    items:
+    - name: uuid
+      url: rest/1/id/translate/-2146658030?inputType=nid&outputType=uuid
+    - name: referencedConcept
+      url: ''
+    - name: versionsLatestOnly
+      url: ''
+    - name: versionsAll
+      url: ''
+  identifiers:
+  referencedConcept:
+- "@class": gov.vha.isaac.rest.api1.data.search.RestSearchResult
+  matchNid: -2145463258
+  matchText: Heart study
+  score: 6.5784874
+  active: true
+  expandables:
+    items:
+    - name: uuid
+      url: rest/1/id/translate/-2145463258?inputType=nid&outputType=uuid
+    - name: referencedConcept
+      url: ''
+    - name: versionsLatestOnly
+      url: ''
+    - name: versionsAll
+      url: ''
+  identifiers:
+  referencedConcept:
+- "@class": gov.vha.isaac.rest.api1.data.search.RestSearchResult
+  matchNid: -2145480092
+  matchText: Heart sounds
+  score: 6.5784874
+  active: true
+  expandables:
+    items:
+    - name: uuid
+      url: rest/1/id/translate/-2145480092?inputType=nid&outputType=uuid
+    - name: referencedConcept
+      url: ''
+    - name: versionsLatestOnly
+      url: ''
+    - name: versionsAll
       url: ''
   identifiers:
   referencedConcept:

@@ -1,5 +1,6 @@
-#Fixture created on 2016-04-12 19:09:59
+#Fixture created on 2016-04-29 16:52:55
 ---
+"@class": gov.vha.isaac.rest.api1.data.RestId
 value: 406e872b-2e19-5f5e-a71d-e4e4b2c68fe5
 idType:
   "@class": gov.vha.isaac.rest.api1.data.enumerations.RestSupportedIdType

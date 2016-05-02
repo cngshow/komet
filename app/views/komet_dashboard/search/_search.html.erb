@@ -21,8 +21,8 @@
           <%= select_tag :taxonomy_search_type, options_for_select([['Descriptions', 'descriptions'], ['Sememes', 'sememes']], 'descriptions'), :onchange => 'taxonomyChangeSearchType(this)' %>
 
           <div class="pull-right">
-            <%= label_tag :taxonomy_search_limit, 'Limit:' %>
-            <%= select_tag :taxonomy_search_limit, options_for_select([['100'], ['500'], ['1000'], ['10000']], '100')  %>
+            <%= label_tag :taxonomy_search_page_size, 'Page Size:' %>
+            <%= select_tag :taxonomy_search_page_size, options_for_select([['25'], ['50'], ['100'], ['250']], '25')  %>
           </div>
         </div>
 
@@ -110,10 +110,12 @@
     // set the options for the result grid
     gridOptions = {
       enableColResize: true,
+      enableSorting: true,
       suppressCellSelection: true,
       rowSelection: "single",
       onSelectionChanged: onGridSelection,
       onGridReady: onGridReady,
+      rowModelType: 'pagination',
       columnDefs:  [
         {field: "id", headerName: 'ID', hide: 'true'},
         {field: "matching_terms", headerName: "Matching Terms"},
@@ -132,45 +134,42 @@
   function getResultData(){
 
     // load the parameters from the form to add to the query string sent in the ajax data call
-    //var searchParams = "?taxonomy_search_text=f*&taxonomy_search_type=sememes&taxonomy_search_treat_as_string=false&taxonomy_search_description_type=fsn&newSearch=true";
-    var searchParams = "?taxonomy_search_text=" + $("#taxonomy_search_text").val() + "&taxonomy_search_limit=" + $("#taxonomy_search_limit").val()
+
+    var searchParams = "?taxonomy_search_text=" + $("#taxonomy_search_text").val() + "&taxonomy_search_page_size=" + $("#taxonomy_search_page_size").val()
                       + "&taxonomy_search_type=" + $("#taxonomy_search_type").val() + "&new_search=" + newSearch;
 
     // set only the parameters needed based on the search type
     if ($("#taxonomy_search_type").val() === "descriptions"){
-      console.log("descript");
       searchParams += "&taxonomy_search_description_type=" + $("#taxonomy_search_description_type").val();
     }
     else {
-      console.log("sememes");
       searchParams += "&taxonomy_search_treat_as_string=" + $("#taxonomy_search_treat_as_string").val() + "&taxonomy_search_assemblage_id=" + $("#taxonomy_search_assemblage_id").val()
                     + "&taxonomy_search_assemblage_display=" + $("#taxonomy_search_assemblage_display").val();
     }
 
-    // make an ajax call to get the data
-    $.get( gon.routes.search_get_search_results_path + searchParams, function( data ) {
+    var pageSize = Number($("#taxonomy_search_page_size").val());
 
-      // set the grid datasource options, including processing the data rows
-      var dataSource = {
+    // set the grid datasource options, including processing the data rows
+    var dataSource = {
 
-        rowCount: data.length,
-        pageSize: 15,
-        getRows: function (params) {
+      pageSize: pageSize,
+      getRows: function (params) {
 
-          console.log('asking for ' + params.startRow + ' to ' + params.endRow);
+        var pageNumber = params.endRow / pageSize;
 
-          var rowsThisPage = data.slice(params.startRow, params.endRow);
-          var lastRow = -1;
+        searchParams += "&taxonomy_search_page_number=" + pageNumber;
 
-          params.successCallback(rowsThisPage);
-        }
-      };
+        // make an ajax call to get the data
+        $.get( gon.routes.search_get_search_results_path + searchParams, function( search_results ) {
+          params.successCallback(search_results.data, search_results.total_number);
+        });
+      }
+    };
 
-      gridOptions.api.setDatasource(dataSource);
+    gridOptions.api.setDatasource(dataSource);
 
-      // reload the recents menu
-      loadAssemblageRecents();
-    });
+    // reload the recents menu
+    loadAssemblageRecents();
   }
 
   function onGridSelection(){
@@ -180,7 +179,7 @@
     selectedRows.forEach( function(selectedRow, index) {
 
       console.log('Row with ID ' + selectedRow.id + ' ' + selectedRow.concept_status + '.');
-      $.publish(KometChannels.Taxonomy.taxonomySearchResultSelectedChannel, selectedRow.id);
+      $.publish(KometChannels.Taxonomy.taxonomySearchResultSelectedChannel, [selectedRow.id, TaxonomyModule.getLinkedViewerID()]);
     });
   }
 

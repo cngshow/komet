@@ -187,7 +187,7 @@ module ConceptConcern
 
   ##
   # process_attached_sememes - recursively loops through an array of sememes and processes them for display.
-  # @param [RestSememeVersion] sememe_data - a hash with an array of sememes to process, a cached hash of all unique sememe data, an array of data rows for display, and an array of columns to display
+  # @param [RestSememeVersion] sememes - a hash with an array of sememes to process, a cached hash of all unique sememe data, an array of data rows for display, and an array of columns to display
   # @return [object] a hash that contains an array of all the columns to be displayed and an array of all the sememes 
   def process_attached_sememes(sememes, sememe_types, data_rows, used_column_list, level)
 

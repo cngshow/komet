@@ -1,29 +1,29 @@
 
 <div class="komet-concept-diagram-title">SVG Diagram</div>
 
-<div id="komet_concept_diagram_panel_" class="komet-concept-section-panel komet-concept-diagram-panel">
+<div id="komet_concept_diagram_panel_<%= @viewer_id %>" class="komet-concept-section-panel komet-concept-diagram-panel">
 
   <!-- main header block - always visible -->
   <div class="komet-concept-section-panel-header">
 
     <!-- expand/collapse icon - controls details drawer -->
-    <div class="glyphicon glyphicon-plus-sign" onclick="ConceptsModule.togglePanelDetails('komet_concept_diagram_panel_', null, true)"></div>
+    <div class="glyphicon glyphicon-plus-sign" onclick="ConceptsModule.viewers[<%= @viewer_id %>].togglePanelDetails('komet_concept_diagram_panel_<%= @viewer_id %>', null, true)"></div>
 
     <!-- description type, refset -->
     <div>
-      <span id="concept_diagram_header_text">Click here to view diagram</span>
+      <span id="concept_diagram_header_text_<%= @viewer_id %>">Click here to view diagram</span>
     </div>
 
   </div>
 
   <!-- details drawer - can be collapsed -->
   <div class="komet-concept-section-panel-details">
-    <div style="height:800px;width:1000px " id="svgbasics" class="komet-concept-svg"></div>
+    <div style="height:800px;width:1000px " id="svgbasics_<%= @viewer_id %>" class="komet-concept-svg"></div>
   </div>
 
 </div>
 
 <script>
-  ConceptsModule.setPanelState('komet_concept_diagram_panel_', null, SvgHelper.renderDiagram);
+  ConceptsModule.viewers[<%= @viewer_id %>].setPanelState('komet_concept_diagram_panel_<%= @viewer_id %>', null, SvgHelper.renderDiagram);
 </script>
 

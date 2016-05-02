@@ -1,221 +1,75 @@
 var ConceptsModule = (function () {
 
-  var currentConceptID;
   var panelStates = {};
-
-  function togglePanelDetails(panel_id, callback, preserveState) {
-
-    // get the panel's expander icon, or all expander icons if this is the top level expander
-    var expander = $("#" + panel_id + " .glyphicon-plus-sign, #" + panel_id + " .glyphicon-minus-sign");
-    var drawer = $("#" + panel_id + " .komet-concept-section-panel-details");
-    var topLevelExpander = expander.parent().hasClass('komet-concept-body-tools');
-
-    // if the user clicked on the top level concept expander, change the associated text label
-    if (topLevelExpander) {
-
-      var item_text = expander[0].nextElementSibling;
-
-      if (item_text.innerHTML == "Expand All") {
-
-        item_text.innerHTML = "Collapse All";
-        open = true;
-
-      } else {
-
-        item_text.innerHTML = "Expand All";
-        open = false;
-      }
-    } else {
-      open = expander.hasClass("glyphicon-plus-sign");
-    }
-
-    // change the displayed expander icon and drawer visibility
-    if (open) {
-
-      expander.removeClass("glyphicon-plus-sign");
-      expander.addClass("glyphicon-minus-sign");
-      drawer.show();
-
-    } else {
-
-      expander.removeClass("glyphicon-minus-sign");
-      expander.addClass("glyphicon-plus-sign");
-      drawer.hide();
-    }
-
-    // save state if needed, and if there is a callback run it, passing the panel ID and open state.
-    if(topLevelExpander){
-
-      // if this is the top level loop through all saved panel states and run the callback if it has one
-      for (var key in panelStates) {
-
-        panelStates[key][0] = open;
-
-        if (panelStates[key].length > 1 && panelStates[key][1]){
-          panelStates[key][1](key, open);
-        }
-      }
-    } else {
-
-      // if we are preserving state set the current state of the panel into the ConceptsModule object.
-      if (preserveState) {
-        ConceptsModule.setPanelState(panel_id, open, callback);
-      }
-
-      //r un the callback
-      if (panelStates[panel_id].length > 1 && panelStates[panel_id][1]) {
-        panelStates[panel_id][1](panel_id, open);
-      }
-    }
-  }
-
-  function setPanelState(panelID, state, callback) {
-
-    if (panelStates[panelID] === undefined) {
-      panelStates[panelID] = [];
-    }
-
-    if (state !== null) {
-      panelStates[panelID][0] = state;
-    }
-
-    if (callback){
-      panelStates[panelID][1] = callback;
-    }
-  }
-
-  function getPanelState(panelID) {
-
-    if(!panelStates[panelID]) {
-      return false;
-    }
-
-    return panelStates[panelID][0];
-  }
-
-  function restorePanelStates() {
-
-    for (var key in panelStates) {
-
-      var state = panelStates[key][0];
-      var callback = panelStates[key][1];
-
-      if (state) {
-        ConceptsModule.togglePanelDetails(key, callback);
-      }
-    }
-  }
-
-  function loadLineageTrees(){
-
-    var stated = $("#komet_concept_stated_inferred")[0].value
-
-    TaxonomyModule.buildTaxonomyTree("concept_lineage_parents_tree", stated, true, currentConceptID);
-    TaxonomyModule.buildTaxonomyTree("concept_lineage_children_tree", stated, false, currentConceptID);
-
-    TaxonomyModule.concept_lineage_parents_tree.bind('ready.jstree', function (event, data) {
-
-      if (data.instance._cnt == 0) {
-
-        TaxonomyModule.concept_lineage_parents_tree.html("<div class='komet-reverse-tree-node'>No Parents</div>");
-        $("#concept_lineage_header_text").html("No Parent");
-      } else{
-        $("#concept_lineage_header_text").html(data.instance.get_node('ul > li:first').text);
-      }
-    });
-
-    TaxonomyModule.concept_lineage_children_tree.bind('ready.jstree', function (event, data) {
-
-      if (data.instance._cnt == 0) {
-        TaxonomyModule.concept_lineage_children_tree.html("No Children");
-      }
-    });
-
-    // publish an event that passes the id of the concept selected to listeners
-    function onChanged(event, selectedObject) {
-
-      var conceptId = selectedObject.node.id;
-      $.publish(KometChannels.Taxonomy.taxonomyTreeNodeSelectedChannel, conceptId);
-    }
-
-    TaxonomyModule.concept_lineage_parents_tree.on('changed.jstree', onChanged);
-    TaxonomyModule.concept_lineage_children_tree.on('changed.jstree', onChanged);
-  }
+  var viewers = {};
+  var viewerMode = "single";
 
   function subscribeToTaxonomyTree() {
 
-    // listen for the onChange event broadcast by any of the taxonomy trees.
-    $.subscribe(KometChannels.Taxonomy.taxonomyTreeNodeSelectedChannel, function (e, conceptID) {
+    // listen for the onChange event broadcast by any of the taxonomy this.trees.
+    $.subscribe(KometChannels.Taxonomy.taxonomyTreeNodeSelectedChannel, function (e, treeID, conceptID, stated, viewerID) {
 
-      currentConceptID = conceptID;
-
-      loadConceptTabs()
+      //this.currentConceptID = conceptID;
+      ConceptsModule.loadViewerData(conceptID, stated, viewerID);
     });
   }
 
   function subscribeToSearch() {
 
     // listen for the onChange event broadcast by selecting a search result.
-    $.subscribe(KometChannels.Taxonomy.taxonomySearchResultSelectedChannel, function (e, conceptID) {
+    $.subscribe(KometChannels.Taxonomy.taxonomySearchResultSelectedChannel, function (e, conceptID, viewerID) {
 
-      currentConceptID = conceptID;
-      TaxonomyModule.selectedTreeNode = currentConceptID;
-
-      loadConceptTabs();
+      ConceptsModule.loadViewerData(conceptID, TaxonomyModule.defaultStatedView, viewerID);
     });
   }
 
-  function loadConceptTabs() {
+  function loadViewerData(conceptID, stated, viewerID) {
 
     // the path to a javascript partial file that will re-render all the appropriate partials once the ajax call returns
-    var partial = 'komet_dashboard/concept_detail/load_tabs';
+    var partial = 'komet_dashboard/concept_detail/concept_information';
 
     // make an ajax call to get the concept for the current concept and pass it the currently selected concept id and the name of a partial file to render
-    $.get(gon.routes.taxonomy_get_concept_information_path, {concept_id: currentConceptID, partial: partial}, function (data) {
+    $.get(gon.routes.taxonomy_get_concept_information_path, {concept_id: conceptID, stated: stated, partial: partial, viewer_id: viewerID}, function (data) {
+
+      try {
+        $('#komet_east_pane').html(data);
+
+      }
+      catch (err) {
+        console.log("*******  ERROR **********");
+        console.log(err.message);
+        throw err;
+      }
+
     });
   }
 
-  function toggleNestedTableRows(image, id){
+  function createViewer(viewerID, conceptID) {
 
-    // get reference to the block of nested rows
-    var nestedRows = $("#komet_concept_table_nested_row_" + id);
+    viewers[viewerID] = new ConceptViewer(viewerID, conceptID);
 
-    // change the displayed image and nested rows visibility
-    if (image.hasClass("glyphicon-arrow-right")){
-
-      image.removeClass("glyphicon-arrow-right");
-      image.addClass("glyphicon-arrow-down");
-      nestedRows.show();
-      image.parent().addClass("komet-concept-table-nested-indicator-open");
-
-    } else {
-
-      image.removeClass("glyphicon-arrow-down");
-      image.addClass("glyphicon-arrow-right");
-      nestedRows.hide();
-      image.parent().removeClass("komet-concept-table-nested-indicator-open");
+    if (viewerMode === "single"){
+      TaxonomyModule.setLinkedViewerID(viewerID);
     }
-
   }
 
-  function getCurrentConceptId() {
-    return currentConceptID;
+  function setStatedView(viewerID, field){
+    loadViewerData(viewers[viewerID].currentConceptID, field.value, viewerID);
   }
 
-  function init() {
+  function init(){
+
     subscribeToTaxonomyTree();
     subscribeToSearch();
+
   }
 
   return {
     initialize: init,
-    loadLineageTrees: loadLineageTrees,
-    getCurrentConceptId: getCurrentConceptId,
-    setPanelState : setPanelState,
-    getPanelState : getPanelState,
-    restorePanelStates : restorePanelStates,
-    togglePanelDetails: togglePanelDetails,
-    toggleNestedTableRows: toggleNestedTableRows
+    createViewer: createViewer,
+    loadViewerData: loadViewerData,
+    setStatedView: setStatedView,
+    viewers: viewers
   };
 
 })();

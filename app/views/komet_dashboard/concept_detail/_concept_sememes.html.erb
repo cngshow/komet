@@ -1,12 +1,12 @@
 <div class="komet-concept-sememes-title">Attached Sememes</div>
 
-  <div id="komet_concept_sememes_panel_" class="komet-concept-section-panel komet-concept-sememes-panel">
+  <div id="komet_concept_sememes_panel_<%= @viewer_id %>" class="komet-concept-section-panel komet-concept-sememes-panel">
 
     <!-- main header block - always visible -->
     <div class="komet-concept-section-panel-header">
 
       <!-- expand/collapse icon - controls details drawer -->
-      <div class="glyphicon glyphicon-plus-sign" onclick="ConceptsModule.togglePanelDetails('komet_concept_sememes_panel_', null, true)"></div>
+      <div class="glyphicon glyphicon-plus-sign" onclick="ConceptsModule.viewers[<%= @viewer_id %>].togglePanelDetails('komet_concept_sememes_panel_<%= @viewer_id %>', null, true)"></div>
 
       <!-- description type, refset -->
       <div>

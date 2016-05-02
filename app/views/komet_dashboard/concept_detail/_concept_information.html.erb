@@ -1,18 +1,7 @@
-<style>
-  .taxonomy-content-tabs {
-    font-size: smaller;
-  }
-</style>
-
-<div>
-
-
-</div>
-
-<div class="panel panel-default komet-no-margins komet-panel" id="komet-concept-panel">
+<div class="panel panel-default komet-no-margins komet-panel" id="komet_concept_panel_<%= @viewer_id %>">
   <div class="panel-heading">
     <span class="panel-title komet-section-title">
-      <div class="glyphicon glyphicon-link"></div>
+      <div class="glyphicon glyphicon-link" onclick="ConceptsModule.viewers[<%= @viewer_id %>].linkToTaxonomyTree();" title="Show in Taxonomy Tree"></div>
       Concept Details
     </span>
     <div class="komet-panel-tools">
@@ -25,76 +14,47 @@
   <div class="panel-body">
 
     <div class="komet-concept-body-tools">
-      <div class="glyphicon glyphicon-plus-sign" onclick="ConceptsModule.togglePanelDetails('komet-concept-panel')"></div>
+      <div class="glyphicon glyphicon-plus-sign" onclick="ConceptsModule.viewers[<%= @viewer_id %>].togglePanelDetails('komet_concept_panel_<%= @viewer_id %>')"></div>
       <span>Expand All</span>
 
       <div class="komet-flex-right">
-        <select id="komet_concept_stated_inferred" class="form-control komet-stated-inferred" onchange="setConceptStatedView(this)">
+        <select id="komet_concept_stated_inferred_<%= @viewer_id %>" class="form-control komet-stated-inferred" onchange="ConceptsModule.setStatedView(<%= @viewer_id %>, this)">
           <option value="true">Stated View</option>
           <option value="false">Inferred View</option>
         </select>
       </div>
     </div>
 
-    <!-- concept attribute section
-    <div id="komet_concept_attribute_section">
-
-      <div class="komet-concept-attribute-title">Concept</div>
-
-      <div id="komet_concept_attribute_panel" class="komet-concept-attribute-panel">
-
-        <div class="komet-floated-bar">
-
-          <div class="glyphicon glyphicon-plus-sign"></div>
-          <div class="komet-concept-attribute-title">Attribute</div>
-
-          <div class="komet-concept-attribute-primitive">
-            Primitive
-          </div>
-
-        </div>
-
-      </div>
-    </div>
-    -->
-
     <!-- concept definition section -->
-    <div id="komet_concept_definition_section" class="concept-section"></div>
-    <div id="komet_concept_sememes_section" class="concept-section"></div>
-    <div id="komet_concept_lineage_section" class="concept-section"></div>
-    <div id="komet_concept_diagram_section" class="concept-section"></div>
+    <div id="komet_concept_definition_section_<%= @viewer_id %>" class="concept-section"></div>
+    <div id="komet_concept_sememes_section_<%= @viewer_id %>" class="concept-section"></div>
+    <div id="komet_concept_lineage_section_<%= @viewer_id %>" class="concept-section"></div>
+    <div id="komet_concept_diagram_section_<%= @viewer_id %>" class="concept-section"></div>
 
   </div>
 </div>
 
-<!--
-<div id="taxonomy_content_tabs" class="taxonomy-content-tabs">
-  <ul id="tabLabels">
-    <li><a href='#taxonomy_content_details'>Details</a></li>
-    <li class="svg_diagram"><a href='#taxonomy_content_diagram'>Diagram</a></li>
-    <li><a href='#taxonomy_content_expression'>Expression</a></li>
-    <li><a href='#taxonomy_content_refsets'>Refsets</a></li>
-    <li><a href='#taxonomy_content_members'>Members</a></li>
-    <li><a href='#taxonomy_content_references'>References</a></li>
-  </ul>
-  <div id="taxonomy_content_summary"></div>
-  <div id="taxonomy_content_details"></div>
-  <div id="taxonomy_content_diagram"></div>
-  <div id="taxonomy_content_expression"></div>
-  <div id="taxonomy_content_refsets"></div>
-  <div id="taxonomy_content_members"></div>
-  <div id="taxonomy_content_references"></div>
-</div>
--->
 <script>
-  // initialize the tabs on document ready
+
+  if (!ConceptsModule.viewers.hasOwnProperty('<%= @viewer_id %>')) {
+    ConceptsModule.createViewer("<%= @viewer_id %>", "<%= @concept_id %>");
+  } else {
+    ConceptsModule.viewers[<%= @viewer_id %>].currentConceptID = "<%= @concept_id %>";
+  }
+
+  $('#komet_concept_definition_section_<%= @viewer_id %>').html("<%= j(render(:partial => 'komet_dashboard/concept_detail/concept_definition')) %>");
+  $('#komet_concept_sememes_section_<%= @viewer_id %>').html("<%= j(render(:partial => 'komet_dashboard/concept_detail/concept_sememes')) %>");
+  $('#komet_concept_lineage_section_<%= @viewer_id %>').html("<%= j(render(:partial => 'komet_dashboard/concept_detail/concept_lineage')) %>");
+  $('#komet_concept_diagram_section_<%= @viewer_id %>').html("<%= j(render(:partial => 'komet_dashboard/concept_detail/concept_diagram')) %>");
+
   $(document).ready(function () {
 
-    ConceptsModule.initialize();
+    $("#komet_concept_stated_inferred_<%= @viewer_id %> option").filter(function() {
+      return $(this)[0].value == "<%= @stated %>";
+    }).prop('selected', true);
 
-    /*$("#taxonomy_content_tabs").tabs({
-      active: 0
-    });
-     */
+    ConceptsModule.viewers[<%= @viewer_id %>].restorePanelStates();
+    ConceptsModule.viewers[<%= @viewer_id %>].loadLineageTrees();
+    UIHelper.initializeContextMenus();
   });
 </script>

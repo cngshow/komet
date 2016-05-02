@@ -1,0 +1,5 @@
+#Fixture created on 2016-04-28 08:41:09
+---
+"@class": gov.vha.isaac.rest.api1.data.enumerations.RestObjectChronologyType
+name: Concept
+enumId: 0
