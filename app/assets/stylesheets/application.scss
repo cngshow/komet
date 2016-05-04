@@ -51,6 +51,11 @@ html, body{
 .ui-tabs .ui-tabs-panel{
   padding:5px;
 }
+.ui-autocomplete {
+  max-height: 140px;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
 
 // jQuery context-menu override to use glyphicons
 .context-menu-icon:before{
@@ -157,6 +162,15 @@ html, body{
   display: inline-block;
   font-size: smaller !important;
   padding: 3px 12px;
+}
+.komet-form-error {
+   background-color: #ff5000;
+   border: solid #ff5000 1px;
+   color: white;
+   padding-left: 5px;
+}
+.komet-form-error .glyphicon {
+  margin-right: 5px;
 }
 
 // KOMET Navigation styles
@@ -421,6 +435,13 @@ td.komet-concept-table-nested-indicator.komet-concept-table-nested-indicator-ope
 }
 
 // Search Styles
+.komet-search-combo-row{
+  display: flex;
+}
+.komet-search-combo-column{
+  display: flex;
+  flex-direction: column;
+}
 .komet-search-combo-field{
   font-size:100%;
 }

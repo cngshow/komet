@@ -38,9 +38,9 @@ class SearchController < ApplicationController
 
     $log.debug(search_term)
 
-    results = SearchApis.get_search_api(action: ACTION_PREFIX, additional_req_params: {query: search_term, expand: 'referencedConcept'})
+    results = SearchApis.get_search_api(action: ACTION_PREFIX, additional_req_params: {query: search_term, maxPageSize: 25, expand: 'referencedConcept'})
 
-    results.each do |result|
+    results.results.each do |result|
 
       assemblage_suggestions_data << {label: result.matchText, value: result.referencedConcept.identifiers.uuids.first}
 
