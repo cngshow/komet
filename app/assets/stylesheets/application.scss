@@ -48,8 +48,11 @@ html, body{
 .ui-accordion-content{
   border: solid #aaaaaa 1px;
 }
+.ui-tabs{
+  padding:0px;
+}
 .ui-tabs .ui-tabs-panel{
-  padding:5px;
+  padding:0px;
 }
 .ui-autocomplete {
   max-height: 140px;
@@ -336,11 +339,12 @@ td.komet-concept-table-nested-indicator.komet-concept-table-nested-indicator-ope
   color: #ff9100;
   font-weight: bold;
 }
-.komet-concept-definition-title-block .glyphicon{
+.komet-concept-definition-title-block{
+  min-width: 125px;
   margin-right: 5px;
 }
-.komet-concept-definition-title-block{
-  width: 125px;
+.komet-concept-definition-title-block .glyphicon{
+  margin-right: 5px;
 }
 .komet-concept-definition-title-block span{
   display: inline-block;
@@ -383,6 +387,7 @@ td.komet-concept-table-nested-indicator.komet-concept-table-nested-indicator-ope
   border: 2px solid #009bff;
   border-radius: 4px;
   padding: 5px;
+  overflow-x: auto;
 }
 
 // Concept Viewer Sememes Styles
