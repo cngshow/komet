@@ -288,6 +288,11 @@ html, body{
   margin: 5px;
   padding: 0px;
 }
+.komet-concept-details-hr{
+  width: 100%;
+  border: 1px solid #d1d1d1;
+  margin: 10px 0px;
+}
 
 // Concept Viewer Table Styles
 .komet-concept-table{
@@ -331,45 +336,60 @@ td.komet-concept-table-nested-indicator.komet-concept-table-nested-indicator-ope
   border-bottom: none;
 }
 
-// Concept Viewer Definition Styles
-.komet-concept-definition-panel{
-  border-left: 4px solid #ff9100;
+// Concept Viewer Attribute Styles
+.komet-concept-attributes-panel{
+  border-left: 4px solid #5ec200;
 }
-.komet-concept-definition-title{
-  color: #ff9100;
+.komet-concept-attributes-title{
+  color: #5ec200;
   font-weight: bold;
 }
-.komet-concept-definition-title-block{
-  min-width: 125px;
-  margin-right: 5px;
-}
-.komet-concept-definition-title-block .glyphicon{
-  margin-right: 5px;
-}
-.komet-concept-definition-title-block span{
-  display: inline-block;
-}
-.komet-concept-definition-text{
-  flex-grow: 1;
-}
-.komet-concept-definition-details-row{
+.komet-concept-attributes-details-row{
   display: flex;
   flex-wrap: wrap;
   justify-content: space-between;
 }
-.komet-concept-definition-details-row div{
+.komet-concept-attributes-details-row div{
   margin-right: 10px;
 }
-.komet-concept-definition-details-name{
+.komet-concept-attributes-details-name{
   flex: 1 0 100px;
 }
-.komet-concept-definition-details-date{
-  margin-right: 20px;
+
+// Concept Viewer Description Styles
+.komet-concept-description-panel{
+  border-left: 4px solid #ff9100;
 }
-.komet-concept-definition-details-hr{
-  width: 100%;
-  border: 1px solid #d1d1d1;
-  margin: 10px 0px;
+.komet-concept-description-title{
+  color: #ff9100;
+  font-weight: bold;
+}
+.komet-concept-description-title-block{
+  min-width: 125px;
+  margin-right: 5px;
+}
+.komet-concept-description-title-block .glyphicon{
+  margin-right: 5px;
+}
+.komet-concept-description-title-block span{
+  display: inline-block;
+}
+.komet-concept-description-text{
+  flex-grow: 1;
+}
+.komet-concept-description-details-row{
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+}
+.komet-concept-description-details-row div{
+  margin-right: 10px;
+}
+.komet-concept-description-details-name{
+  flex: 1 0 100px;
+}
+.komet-concept-description-details-time{
+  margin-right: 20px;
 }
 
 // Concept Viewer Lineage Styles

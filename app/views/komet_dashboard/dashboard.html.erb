@@ -45,7 +45,7 @@
     $("#tp-search").html('<%= escape_javascript render :partial => 'komet_dashboard/search/search'%>');
     $("#tp-favorites").html('<%= escape_javascript render :partial => 'komet_dashboard/favorites/favorites'%>');
     $("#tabs").tabs();
-    $('#dashboard-splitter').split({orientation: 'vertical', limit: 250});
+    $('#dashboard-splitter').split({orientation: 'vertical', position: '41%', limit: 250});
   });
 </script>
 

@@ -31,11 +31,37 @@ module ConceptConcern
   ##
   # descriptions - takes a uuid and returns all of the description concepts attached to it.
   # @param [String] uuid - The UUID to look up descriptions for
-  # @return [object] a hash that contains an array of all the descriptions
-  def descriptions(uuid)
+  # @return [object] an array of hashes that contains the attributes
+  def get_attributes(uuid)
 
-    return_descriptions = {uuid: uuid}
-    return_descriptions[:descriptions] = []
+    return_attributes = []
+    attributes = ConceptRest.get_concept(action: ConceptRestActions::ACTION_VERSION, uuid: uuid, additional_req_params: {expand: 'chronology'})
+
+    return_attributes << {label: 'Text', value: attributes.conChronology.description}
+    return_attributes << {label: 'State', value: attributes.conVersion.state}
+    return_attributes << {label: 'Time', value: DateTime.strptime((attributes.conVersion.time / 1000).to_s, '%s').strftime('%m/%d/%Y')}
+
+    author = description_metadata(attributes.conVersion.authorSequence)
+
+    if author == 'user'
+      author = 'System User'
+    end
+
+    return_attributes << {label: 'Author', value: author}
+
+    return_attributes << {label: 'Module', value: description_metadata(attributes.conVersion.moduleSequence)}
+    return_attributes << {label: 'Path', value: description_metadata(attributes.conVersion.pathSequence)}
+    return_attributes << {label: 'UUID', value: uuid}
+
+  end
+
+  ##
+  # get_descriptions - takes a uuid and returns all of the description concepts attached to it.
+  # @param [String] uuid - The UUID to look up descriptions for
+  # @return [object] a hash that contains an array of all the descriptions
+  def get_descriptions(uuid)
+
+    return_descriptions = {uuid: uuid, descriptions: []}
     descriptions = ConceptRest.get_concept(action: ConceptRestActions::ACTION_DESCRIPTIONS, uuid: uuid)
 
     if descriptions.is_a? CommonRest::UnexpectedResponse
@@ -52,25 +78,26 @@ module ConceptConcern
 
       # get the description UUID information and add it to the attributes array
       description_uuid = description.sememeChronology.identifiers.uuids.first
-      description_date = DateTime.strptime((description.sememeVersion.time / 1000).to_s, '%s').strftime('%m/%d/%Y')
+      description_state = description.sememeVersion.state
+      description_time = DateTime.strptime((description.sememeVersion.time / 1000).to_s, '%s').strftime('%m/%d/%Y')
       description_author = description_metadata(description.sememeVersion.authorSequence)
+      description_module = description_metadata(description.sememeVersion.moduleSequence)
+      description_path = description_metadata(description.sememeVersion.pathSequence)
 
       if description_author == 'user'
         description_author = 'System User'
       end
 
       return_description[:uuid] = description_uuid
-      attributes << {label: 'Generated UUID', text: description_uuid, date: description_date, author: description_author}
+      attributes << {label: 'UUID', text: description_uuid, state: description_state, time: description_time, author: description_author, module: description_module, path: description_path}
 
       # get the description SCTID information if there is one and add it to the attributes array
       sctid = IdAPIsRest.get_id(uuid_or_id: uuid, action: IdAPIsRestActions::ACTION_TRANSLATE, additional_req_params: {outputType: 'sctid'})
 
       if sctid.respond_to?(:value)
 
-        sctid_date = description_date
-        sctid_author = description_author
 
-        attributes << {label: 'SCTID', text: sctid.value, date: sctid_date, author: sctid_author}
+        attributes << {label: 'SCTID', text: sctid.value, state: description_state, time: description_time, author: description_author, module: description_module, path: description_path}
 
       end
 
@@ -78,21 +105,25 @@ module ConceptConcern
       # loop thru the dialects array, pull out all the language refsets, and add them to the attributes array
       description.dialects.each do |dialect|
 
-        refset_name = description_metadata(dialect.sememeChronology.assemblageSequence)
-        refset_date = DateTime.strptime((dialect.sememeVersion.time / 1000).to_s, '%s').strftime('%m/%d/%Y')
-        refset_author = description_metadata(dialect.sememeVersion.authorSequence)
+        dialect_name = description_metadata(dialect.sememeChronology.assemblageSequence)
+        dialect_state = dialect.sememeVersion.state
+        dialect_time = DateTime.strptime((dialect.sememeVersion.time / 1000).to_s, '%s').strftime('%m/%d/%Y')
+        dialect_author = description_metadata(dialect.sememeVersion.authorSequence)
+        dialect_module = description_metadata(dialect.sememeVersion.moduleSequence)
+        dialect_path = description_metadata(dialect.sememeVersion.pathSequence)
 
-        if refset_author == 'user'
-          refset_author = 'System User'
+
+        if dialect_author == 'user'
+          dialect_author = 'System User'
         end
 
-        case refset_name
+        case dialect_name
 
           when 'US English dialect'
-            refset_name = 'US English'
+            dialect_name = 'US English'
         end
 
-        attributes << {label: 'Refset', text: refset_name, date: refset_date, author: refset_author}
+        attributes << {label: 'Refset', text: dialect_name, state: dialect_state, time: dialect_time, author: dialect_author, module: dialect_module, path: dialect_path}
       end
 
       return_description[:attributes] = attributes
@@ -244,7 +275,13 @@ module ConceptConcern
 
             # if the column is one of a specific set, make sure it has string data and see if it contains IDs. If it does look up their description
             if (['column name', 'target'].include?(sememe_column.columnName)) && (row_column.data.kind_of? String) && find_ids(row_column.data)
-              converted_value = ConceptRest.get_concept(action: ConceptRestActions::ACTION_DESCRIPTIONS, uuid: row_column.data).first.text
+
+              # the description should be included, but if not look it up
+              if row_column.respond_to?('conceptDescription')
+                converted_value = row_column.conceptDescription
+              else
+                converted_value = ConceptRest.get_concept(action: ConceptRestActions::ACTION_DESCRIPTIONS, uuid: row_column.data).first.text
+              end
 
               # if the row is an array get the text values into a more readable form
             elsif row_column.data.kind_of? Array
