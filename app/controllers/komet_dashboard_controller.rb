@@ -114,7 +114,6 @@ class KometDashboardController < ApplicationController
 
     get_concept_summary(@concept_id)
     get_concept_sememes(@concept_id)
-
     render partial: params[:partial]
 
   end
@@ -146,6 +145,17 @@ class KometDashboardController < ApplicationController
     @concept_sememes = get_attached_sememes(concept_id) # descriptions(concept_id)
 
   end
+
+  ##
+  # get_concept_refsets - RESTful route for populating concept refsets section using an http :GET
+  # The current tree node representing the concept is identified in the request params with the key :concept_id
+  # @return none - setting the refsets variable
+  def get_concept_refsets()
+    concept_id = params[:concept_id]
+    refsets = get_refsets(concept_id) # descriptions(concept_id)
+    render json: refsets
+  end
+
 
   def process_rest_concept(concept, tree_walk_levels, first_level: false, parent_search: false, multi_path: true)
 

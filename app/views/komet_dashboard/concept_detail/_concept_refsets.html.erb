@@ -1,46 +1,119 @@
-<% if @concept_refsets == nil %>
-    <div class="komet-no-data-message">No members.</div>
-<% else %>
+<div class="komet-concept-lineage-title">Refsets</div>
 
-    <% @concept_refsets.each do |refset| %>
+<div id="komet_concept_refsets_panel_<%= @viewer_id %>" class="komet-concept-section-panel komet-concept-lineage-panel">
 
-        <div class="concept-section-title"><%= refset[:title]%></div>
+  <!-- main header block - always visible -->
+  <div class="komet-concept-section-panel-header">
 
-      <% if refset[:members].empty? %>
-          <div class="komet-no-data-message">No members.</div>
-      <% else %>
+    <!-- expand/collapse icon - controls details drawer -->
+    <div class="glyphicon glyphicon-plus-sign" onclick="ConceptsModule.viewers[<%= @viewer_id %>].togglePanelDetails('komet_concept_refsets_panel_<%= @viewer_id %>', null, true)"></div>
 
-        <table class="concept_detail_table">
-          <thead>
-          <tr>
-            <th>Name</th>
-            <th>Number</th>
-          </tr>
-          </thead>
-          <tbody>
+    <!-- description type, refset -->
+    <div>
+      Click here to view refsets
+    </div>
 
-            <% refset[:members].each do |member| %>
+  </div>
 
-              <tr>
-                <td>
-                  <%= member[:name] %>
-                </td>
-                <td>
-                  <%= member[:number] %>
-                  <span class="glyphicon glyphicon-info-sign pull-right"></span>
-                </td>
-              </tr>
+  <!-- details drawer - can be collapsed -->
+  <div class="komet-concept-section-panel-details">
 
-            <% end %>
+    <div id="refsets_grid" style="height: 450px;" class="ag-fresh"></div>
 
-          </tbody>
-        </table>
+  </div>
 
-      <% end %>
+</div>
 
-      <br><br>
+<script>
+  ConceptsModule.viewers[<%= @viewer_id %>].setPanelState('komet_concept_refsets_panel_<%= @viewer_id %>', null,  loadRefsetsGrid('<%= @concept_id %>'));
 
-    <% end %>
+  var gridOptions;
+  function loadRefsetsGrid(uuid) {
 
-<% end %>
+    // If a grid already exists destroy it or it will create a second grid
+    if (gridOptions){
+      gridOptions.api.destroy();
+    }
+    // set the options for the result grid
+    gridOptions = {
+      enableColResize: true,
+      enableSorting: true,
+      suppressCellSelection: true,
+      rowSelection: "single",
+      onGridReady: onGridReady,
+      rowModelType: 'pagination'
+    };
+
+    new agGrid.Grid($("#refsets_grid").get(0), gridOptions);
+    getResultData(uuid);
+  }
+
+  function getResultData(uuid){
+    // load the parameters from the form to add to the query string sent in the ajax data call
+
+    var pageSize = 25;
+    var refsetsParams="?concept_id=" + uuid;
+    // set the grid datasource options, including processing the data rows
+    var dataSource = {
+
+      pageSize: pageSize,
+      getRows: function (params) {
+
+        var pageNumber = params.endRow / pageSize;
+
+        refsetsParams += "&taxonomy_refsets_page_number=" + pageNumber;
+
+        // make an ajax call to get the data
+        $.get( gon.routes.taxonomy_get_concept_refsets_path + refsetsParams, function( refsets_results ) {
+          $.each(refsets_results.columns,function(index,value) {
+            value.cellRenderer = renderCell
+          });
+          gridOptions.api.setColumnDefs(refsets_results.columns);
+          params.successCallback(refsets_results.data, refsets_results.total_number);
+        });
+      }
+    };
+
+    gridOptions.api.setDatasource(dataSource);
+
+  }
+
+  function renderCell(params)
+  {
+    if(params.value != undefined) {
+      var cell_display = "";
+      var tooltip = "";
+      var menu_attributes = "";
+
+      //if this row has a display value, show that in place of the row data and put a tooltip on the cell to show the row data
+      if (params.value.display === '') {
+        cell_display = params.value.data;
+        tooltip = '';
+      }
+      else {
+        cell_display = params.value.display;
+        tooltip = " title='" + params.value.data + "'";
+      }
+
+      if (['uuid', 'nid', 'sctid'].indexOf(params.colDef.data_type) >= 0) {
+        menu_attributes = "data-menu-type='sememe' data-menu-uuid='" + params.value.data + "'";
+      }
+      else {
+        menu_attributes = "data-menu-type='value' data-menu-copy-value='" + cell_display + "'"
+      }
+
+      return '<div class="komet-concept-table-cell-content komet-context-menu" ' + menu_attributes + tooltip + ' >' + cell_display + ' </div>'
+    }
+
+  }
+
+    function onGridReady(event){
+    event.api.sizeColumnsToFit();
+  }
+
+
+
+
+
+</script>
 

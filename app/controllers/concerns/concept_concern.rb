@@ -183,7 +183,131 @@ module ConceptConcern
 
   end
 
+  ##
+  # get_refsets - takes a uuid and returns all of the refset attached to it.
+  # @param [String] uuid - The UUID to look up attached sememes for
+  # @return [object] a hash that contains an array of all the columns to be displayed and an array of all the refsets
+  def get_refsets(uuid)
+
+    refsets_results = {}
+    sememe_types = {}
+    page_size = 25
+    page_number = params[:taxonomy_refsets_page_number]
+    additional_params = {expand: 'chronology,nestedSememes,referencedDetails', pageNum: page_number}
+
+
+      additional_params[:maxPageSize] =  page_size
+
+
+    results = SememeRest.get_sememe(action: SememeRestActions::ACTION_BY_ASSEMBLAGE, uuid_or_id: uuid, additional_req_params:additional_params )
+
+    refsets_results[:total_number] = results.paginationData.approximateTotal
+    refsets_results[:page_number] = results.paginationData.pageNum
+    use_column_list = [];
+
+    display_data = process_attached_refsets(results.results, sememe_types, [],use_column_list)
+
+    refsets_results[:data] = display_data
+    refsets_results[:columns] = use_column_list
+    return refsets_results
+  end
+
   private
+
+  ##
+  # process_attached_refsets - recursively loops through an array of sememes and processes them for display.
+  # @param [RestSememeVersion] sememes - a hash with an array of sememes to process, a cached hash of all unique sememe data, an array of data rows for display, and an array of columns to display
+  # @return [object] a hash that contains an array of all the columns to be displayed and an array of all the refsets
+  def process_attached_refsets(sememes, sememe_types, data_rows, used_column_list)
+
+    #Defining first 2 columns of grid.
+    used_column_list << {id:'state', field: 'state', headerName: 'status', data_type: 'string'}
+    used_column_list << {id:'referencedComponentNidDescription', field: 'referencedComponentNidDescription', headerName: 'Component', data_type: 'string'}
+    # iterate over the array of sememes returned
+    sememes.each do |sememe|
+
+      # process dynamic sememe version types
+      if sememe.class == Gov::Vha::Isaac::Rest::Api1::Data::Sememe::RestDynamicSememeVersion
+
+        assemblage_sequence = sememe.sememeChronology.assemblageSequence
+        uuid = sememe.sememeChronology.identifiers.uuids.first
+
+        # check to see if our cache already has this sememe type, if not add its info to the cache so we only have to look up once
+        if !sememe_types.has_key?(assemblage_sequence)
+
+          # use the assemblage sequence to do a concept_description call to get sememe name, then a sememe_sememeDefinition call to get the columns that sememe has.
+          sememe_types[assemblage_sequence] = {sememe_name: ConceptRest.get_concept(action: ConceptRestActions::ACTION_DESCRIPTIONS, uuid: assemblage_sequence).first.text}
+          sememe_definition = SememeRest.get_sememe(action: SememeRestActions::ACTION_SEMEME_DEFINITION, uuid_or_id: assemblage_sequence)
+
+          sememe_types[assemblage_sequence][:sememe_description] = sememe_definition.sememeUsageDescription
+          sememe_types[assemblage_sequence][:columns] = sememe_definition.columnInfo
+
+        end
+
+
+        # start loading the row of sememe data with everything besides the data columns
+        data_row = {sememe_name: sememe_types[assemblage_sequence][:sememe_name], sememe_description: sememe_types[assemblage_sequence][:sememe_description], uuid: uuid, id: assemblage_sequence, state: {data:sememe.sememeVersion.state,display:''},referencedComponentNidDescription: {data:sememe.sememeChronology.referencedComponentNidDescription,display:''} ,columns: {}}
+
+        # loop through all of the sememe's data columns
+        sememe.dataColumns.each{|row_column|
+
+          # make sure the column is not empty
+          if row_column != nil && sememe_types[assemblage_sequence][:columns][row_column.columnNumber] != nil
+
+            sememe_column = sememe_types[assemblage_sequence][:columns][row_column.columnNumber]
+
+            # search to see if we have already added this column to our list of used columns.
+            is_column_used = used_column_list.find_index {|list_column|
+              list_column[:id] == sememe_column.columnConceptSequence
+            }
+
+            # If not added to our list of used columns add it to the end of the list
+            if sememe_column && !is_column_used
+              used_column_list << {id:sememe_column.columnConceptSequence, field: sememe_column.columnName, headerName: sememe_column.columnName, data_type: sememe_column.columnDataType.name}
+            end
+
+            data = row_column.data
+            converted_value = ''
+
+            # if the column is one of a specific set, make sure it has string data and see if it contains IDs. If it does look up their description
+            if (['column name', 'target'].include?(sememe_column.columnName)) && (row_column.data.kind_of? String) && find_ids(row_column.data)
+              converted_value = ConceptRest.get_concept(action: ConceptRestActions::ACTION_DESCRIPTIONS, uuid: row_column.data).first.text
+
+              # if the row is an array get the text values into a more readable form
+            elsif row_column.data.kind_of? Array
+
+              # loop through each item in the array and generate a comma separated list of values
+              row_column.data.each_with_index { |item, index|
+
+                separator = ', '
+
+                if index == 0
+                  data = '';
+                  separator = ''
+                end
+
+                data += separator + item['data'].to_s
+              }
+
+            end
+
+            # add the sememe column id and data to the sememe data row
+            data_row[sememe_column.columnName]= {data: data, display: converted_value}
+
+          end
+
+        }
+
+      end
+
+      # add the sememe data row to the array of return rows
+      data_rows << data_row
+
+    end
+
+    return  data_rows
+
+  end
 
   ##
   # process_attached_sememes - recursively loops through an array of sememes and processes them for display.
