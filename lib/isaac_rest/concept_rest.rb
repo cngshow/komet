@@ -88,7 +88,7 @@ load('./lib/isaac_rest/concept_rest.rb')
 a = ConceptRest::get_concept(action: ConceptRestActions::ACTION_DESCRIPTIONS,uuid: 'cc0b2455-f546-48fa-90e8-e214cc8478d6')
 b = ConceptRest::get_concept(action: ConceptRestActions::ACTION_CHRONOLOGY,uuid: 'cc0b2455-f546-48fa-90e8-e214cc8478d6')
 c = ConceptRest::get_concept(action: ConceptRestActions::ACTION_VERSION,uuid: 'cc0b2455-f546-48fa-90e8-e214cc8478d6')
-=end
 #note this will fail!  Use the module ConceptRestActions!!
 # c = ConceptRest::get_concept(action: "version",uuid: 'cc0b2455-f546-48fa-90e8-e214cc8478d6')
 #  a = Concept.new(uuid: "ddd", params: nil, action: :version, action_constants: ACTION_CONSTANTS)
+=end

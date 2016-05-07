@@ -38,6 +38,10 @@ var UIHelper = (function () {
         return (tabpage !== undefined ? (tabpage === tabpageId) : false);
     }
 
+    function generateFormErrorMessage(message){
+        return '<div class="komet-form-error"><div class="glyphicon glyphicon-alert"></div>' + message + '</div>';
+    }
+
     function initializeContextMenus() {
 
         $.contextMenu({
@@ -108,7 +112,8 @@ var UIHelper = (function () {
     return {
         getActiveTabId: getActiveTabId,
         isTabActive: isTabActive,
-        initializeContextMenus: initializeContextMenus
+        initializeContextMenus: initializeContextMenus,
+        generateFormErrorMessage: generateFormErrorMessage
     };
 })();
 
