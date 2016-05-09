@@ -32,7 +32,10 @@ var SvgHelper = (function () {
     function drawConceptDiagram(svgId ,data,rolegroup) {
 
         var id = "#" + svgId;
-        $(id).svg();
+        $(id).svg({
+            settings: {
+                width: '1000px',
+                height: '500px'}});
         var svg = $(id).svg('get');
 
         loadDefs(svg);
@@ -495,7 +498,7 @@ var SvgHelper = (function () {
     // function called when the diagram tab is clicked opened
     function renderDiagram(panel_id, open, concept_id){
 
-        var svg_id = $("#" + panel_id + " .komet-concept-svg").attr("id");
+        var svg_id = $("#" + panel_id ).attr("id");
 
         // only draw the diagram if it doesn't exist and will be visible
         if($("#" + svg_id).svg('get') === undefined && open){
