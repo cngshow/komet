@@ -1,46 +1,30 @@
-<% if @concept_refsets == nil %>
-    <div class="komet-no-data-message">No members.</div>
-<% else %>
+<div class="komet-concept-lineage-title">Refsets</div>
 
-    <% @concept_refsets.each do |refset| %>
+<div id="komet_concept_refsets_panel_<%= @viewer_id %>" class="komet-concept-section-panel komet-concept-lineage-panel">
 
-        <div class="concept-section-title"><%= refset[:title]%></div>
+  <!-- main header block - always visible -->
+  <div class="komet-concept-section-panel-header">
 
-      <% if refset[:members].empty? %>
-          <div class="komet-no-data-message">No members.</div>
-      <% else %>
+    <!-- expand/collapse icon - controls details drawer -->
+    <div class="glyphicon glyphicon-plus-sign" onclick="ConceptsModule.viewers[<%= @viewer_id %>].togglePanelDetails('komet_concept_refsets_panel_<%= @viewer_id %>', null, true)"></div>
 
-        <table class="concept_detail_table">
-          <thead>
-          <tr>
-            <th>Name</th>
-            <th>Number</th>
-          </tr>
-          </thead>
-          <tbody>
+    <!-- description type, refset -->
+    <div>
+      Click here to view refsets
+    </div>
 
-            <% refset[:members].each do |member| %>
+  </div>
 
-              <tr>
-                <td>
-                  <%= member[:name] %>
-                </td>
-                <td>
-                  <%= member[:number] %>
-                  <span class="glyphicon glyphicon-info-sign pull-right"></span>
-                </td>
-              </tr>
+  <!-- details drawer - can be collapsed -->
+  <div class="komet-concept-section-panel-details">
 
-            <% end %>
+    <div id="refsets_grid_<%= @viewer_id %>" style="height: 450px;" class="ag-fresh"></div>
 
-          </tbody>
-        </table>
+  </div>
 
-      <% end %>
+</div>
 
-      <br><br>
-
-    <% end %>
-
-<% end %>
+<script>
+  ConceptsModule.viewers[<%= @viewer_id %>].setPanelState('komet_concept_refsets_panel_<%= @viewer_id %>', null, ConceptsModule.viewers[<%= @viewer_id %>].loadRefsetGrid.bind(ConceptsModule.viewers[<%= @viewer_id %>]));
+</script>
 

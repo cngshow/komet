@@ -3,24 +3,8 @@
     KOMET Dashboard
 <% end %>
 
-<style type="text/css" media="all">
-  #dashboard-splitter {
-    height: 91%;
-    width: 100%;
-    position: absolute;
-  }
-
-  #west-pane {
-    /*background-color: red;*/
-  }
-
-  #east-pane {
-    /*background-color: yellow;*/
-  }
-</style>
-
-<div id="dashboard-splitter" class="row">
-  <div id="west-pane">
+<div id="komet_dashboard_splitter" class="row">
+  <div id="komet_west_pane">
     <div id="tabs">
       <ul>
         <li><a href='#tp-taxonomy'>Taxonomy</a></li>
@@ -34,9 +18,7 @@
       <div id="tp-refsets"></div>
     </div>
   </div>
-  <div id="komet_east_pane">
-
-  </div>
+  <div id="komet_east_pane"></div>
 </div>
 
 <script>
@@ -45,7 +27,7 @@
     $("#tp-search").html('<%= escape_javascript render :partial => 'komet_dashboard/search/search'%>');
     $("#tp-favorites").html('<%= escape_javascript render :partial => 'komet_dashboard/favorites/favorites'%>');
     $("#tabs").tabs();
-    $('#dashboard-splitter').split({orientation: 'vertical', limit: 250});
+    $('#komet_dashboard_splitter').split({orientation: 'vertical', position: '41%', limit: 250});
   });
 </script>
 

@@ -38,6 +38,10 @@ var UIHelper = (function () {
         return (tabpage !== undefined ? (tabpage === tabpageId) : false);
     }
 
+    function generateFormErrorMessage(message){
+        return '<div class="komet-form-error"><div class="glyphicon glyphicon-alert"></div>' + message + '</div>';
+    }
+
     function initializeContextMenus() {
 
         $.contextMenu({
@@ -46,18 +50,21 @@ var UIHelper = (function () {
 
                 var items = {};
 
-                if ($triggerElement.attr("data-menu-type") === "sememe"){
+                if ($triggerElement.attr("data-menu-type") === "sememe" || $triggerElement.attr("data-menu-type") === "concept"){
 
                     var uuid = $triggerElement.attr("data-menu-uuid");
 
-                    items.openConcept = {name:"Open in Concept Pane", icon: "context-menu-icon glyphicon-list-alt", callback: openConcept(uuid)};
-                    items.copyUuid = {name:"Copy UUID", icon: "context-menu-icon glyphicon-copy", callback: copyToClipboard(uuid)};
+                    items.openConcept = {name:"Open in Concept Pane", icon: "context-menu-icon glyphicon-list-alt", callback: openConcept($triggerElement, uuid)};
 
-                } else if ($triggerElement.attr("data-menu-type") === "concept"){
+                    if (ConceptsModule.viewers.inlineViewerCount < ConceptsModule.viewers.maxInlineViewers) {
+                        items.openNewConceptViwer = {
+                            name: "Open in New Concept Viewer",
+                            icon: "context-menu-icon glyphicon-list-alt",
+                            callback: openConcept($triggerElement, uuid, "new")
+                        };
+                    }
 
-                    var uuid = $triggerElement.attr("data-menu-uuid");
-
-                    items.openConcept = {name:"Open in Concept Pane", icon: "context-menu-icon glyphicon-list-alt", callback: openConcept(uuid)};
+                    //items.openConceptNewWindow = {name:"Open in New Window", icon: "context-menu-icon glyphicon-list-alt", callback: openConcept($triggerElement, uuid, "popup")};
                     items.copyUuid = {name:"Copy UUID", icon: "context-menu-icon glyphicon-copy", callback: copyToClipboard(uuid)};
 
                 } else {
@@ -98,17 +105,31 @@ var UIHelper = (function () {
         };
     }
 
-    function openConcept(id) {
+    function openConcept(element, id, viewerID) {
 
         return function () {
-            $.publish(KometChannels.Taxonomy.taxonomyTreeNodeSelectedChannel, id)
+
+            if (viewerID === undefined){
+
+                var conceptPanel = element.parents("id^='komet_concept_panel_'");
+
+                if (conceptPanel.length > 0){
+                    viewerID = conceptPanel[0].attr("data-komet-viewer-id");
+                } else{
+                    viewerID = TaxonomyModule.getLinkedViewerID();
+                }
+            }
+
+            $.publish(KometChannels.Taxonomy.taxonomyTreeNodeSelectedChannel, ["", id, null, viewerID]);
+
         };
     }
 
     return {
         getActiveTabId: getActiveTabId,
         isTabActive: isTabActive,
-        initializeContextMenus: initializeContextMenus
+        initializeContextMenus: initializeContextMenus,
+        generateFormErrorMessage: generateFormErrorMessage
     };
 })();
 

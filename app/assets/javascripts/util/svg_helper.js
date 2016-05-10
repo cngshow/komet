@@ -32,7 +32,10 @@ var SvgHelper = (function () {
     function drawConceptDiagram(svgId ,data,rolegroup) {
 
         var id = "#" + svgId;
-        $(id).svg();
+        $(id).svg({
+            settings: {
+                width: '1000px',
+                height: '500px'}});
         var svg = $(id).svg('get');
 
         loadDefs(svg);
@@ -213,7 +216,6 @@ var SvgHelper = (function () {
 
     }
 
-
     function getConceptNodeValues(obj) {
         var sstring = "";
         for (var prop in obj) {
@@ -234,9 +236,6 @@ var SvgHelper = (function () {
 
         return sstring
     }
-
-
-
 
     function loadDefs(svg) {
 

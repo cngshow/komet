@@ -9,6 +9,7 @@ Rails.application.routes.draw do
   get 'komet_dashboard/get_concept_information', :as => :taxonomy_get_concept_information
   get 'komet_dashboard/get_concept_summary', :as => :taxonomy_get_concept_summary
   get 'komet_dashboard/get_concept_sememes', :as => :taxonomy_get_concept_sememes
+  get 'komet_dashboard/get_concept_refsets', :as => :taxonomy_get_concept_refsets
 
   get 'search/get_assemblage_suggestions'
   get 'search/get_assemblage_recents'

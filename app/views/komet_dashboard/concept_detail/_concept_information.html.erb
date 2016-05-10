@@ -1,13 +1,13 @@
-<div class="panel panel-default komet-no-margins komet-panel" id="komet_concept_panel_<%= @viewer_id %>">
+<div class="panel panel-default komet-no-margins komet-panel" id="komet_concept_panel_<%= @viewer_id %>" data-komet-viewer-id="<%= @viewer_id %>">
   <div class="panel-heading">
     <span class="panel-title komet-section-title">
       <div class="glyphicon glyphicon-link" onclick="ConceptsModule.viewers[<%= @viewer_id %>].linkToTaxonomyTree();" title="Show in Taxonomy Tree"></div>
-      Concept Details
+      <%= @attributes[0][:value] %>
     </span>
     <div class="komet-panel-tools">
-      <div class="glyphicon glyphicon-new-window"></div>
-      <div class="glyphicon glyphicon-resize-full"></div>
-      <div class="glyphicon glyphicon-remove"></div>
+      <!--<div class="glyphicon glyphicon-new-window"></div>
+      <div class="glyphicon glyphicon-resize-full"></div>-->
+      <div class="glyphicon glyphicon-remove" onclick="ConceptsModule.closeViewer(<%= @viewer_id %>)"></div>
     </div>
   </div>
 
@@ -25,36 +25,39 @@
       </div>
     </div>
 
-    <!-- concept definition section -->
-    <div id="komet_concept_definition_section_<%= @viewer_id %>" class="concept-section"></div>
+    <div id="komet_concept_attributes_section_<%= @viewer_id %>" class="concept-section"></div>
+    <div id="komet_concept_descriptions_section_<%= @viewer_id %>" class="concept-section"></div>
     <div id="komet_concept_sememes_section_<%= @viewer_id %>" class="concept-section"></div>
     <div id="komet_concept_lineage_section_<%= @viewer_id %>" class="concept-section"></div>
     <div id="komet_concept_diagram_section_<%= @viewer_id %>" class="concept-section"></div>
+    <div id="komet_concept_refsets_section_<%= @viewer_id %>" class="concept-section"></div>
 
   </div>
+
+  <script>
+
+    if (!ConceptsModule.viewers.hasOwnProperty('<%= @viewer_id %>')) {
+      ConceptsModule.createViewer("<%= @viewer_id %>", "<%= @concept_id %>");
+    } else {
+      ConceptsModule.viewers[<%= @viewer_id %>].currentConceptID = "<%= @concept_id %>";
+    }
+    $('#komet_concept_attributes_section_<%= @viewer_id %>').html("<%= j(render(:partial => 'komet_dashboard/concept_detail/concept_attributes')) %>");
+    $('#komet_concept_descriptions_section_<%= @viewer_id %>').html("<%= j(render(:partial => 'komet_dashboard/concept_detail/concept_descriptions')) %>");
+    $('#komet_concept_sememes_section_<%= @viewer_id %>').html("<%= j(render(:partial => 'komet_dashboard/concept_detail/concept_sememes')) %>");
+    $('#komet_concept_lineage_section_<%= @viewer_id %>').html("<%= j(render(:partial => 'komet_dashboard/concept_detail/concept_lineage')) %>");
+    $('#komet_concept_diagram_section_<%= @viewer_id %>').html("<%= j(render(:partial => 'komet_dashboard/concept_detail/concept_diagram')) %>");
+    $('#komet_concept_refsets_section_<%= @viewer_id %>').html("<%= j(render(:partial => 'komet_dashboard/concept_detail/concept_refsets')) %>");
+    $(document).ready(function () {
+
+      $("#komet_concept_stated_inferred_<%= @viewer_id %> option").filter(function() {
+        return $(this)[0].value == "<%= @stated %>";
+      }).prop('selected', true);
+
+      ConceptsModule.viewers[<%= @viewer_id %>].restorePanelStates();
+      ConceptsModule.viewers[<%= @viewer_id %>].loadLineageTrees();
+      UIHelper.initializeContextMenus();
+    });
+  </script>
 </div>
 
-<script>
 
-  if (!ConceptsModule.viewers.hasOwnProperty('<%= @viewer_id %>')) {
-    ConceptsModule.createViewer("<%= @viewer_id %>", "<%= @concept_id %>");
-  } else {
-    ConceptsModule.viewers[<%= @viewer_id %>].currentConceptID = "<%= @concept_id %>";
-  }
-
-  $('#komet_concept_definition_section_<%= @viewer_id %>').html("<%= j(render(:partial => 'komet_dashboard/concept_detail/concept_definition')) %>");
-  $('#komet_concept_sememes_section_<%= @viewer_id %>').html("<%= j(render(:partial => 'komet_dashboard/concept_detail/concept_sememes')) %>");
-  $('#komet_concept_lineage_section_<%= @viewer_id %>').html("<%= j(render(:partial => 'komet_dashboard/concept_detail/concept_lineage')) %>");
-  $('#komet_concept_diagram_section_<%= @viewer_id %>').html("<%= j(render(:partial => 'komet_dashboard/concept_detail/concept_diagram')) %>");
-
-  $(document).ready(function () {
-
-    $("#komet_concept_stated_inferred_<%= @viewer_id %> option").filter(function() {
-      return $(this)[0].value == "<%= @stated %>";
-    }).prop('selected', true);
-
-    ConceptsModule.viewers[<%= @viewer_id %>].restorePanelStates();
-    ConceptsModule.viewers[<%= @viewer_id %>].loadLineageTrees();
-    UIHelper.initializeContextMenus();
-  });
-</script>

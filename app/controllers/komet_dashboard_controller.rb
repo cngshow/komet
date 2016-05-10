@@ -18,12 +18,14 @@ Copyright Notice
 =end
 
 require './lib/isaac_rest/taxonomy_rest'
+require './lib/rails_common/util/controller_helpers'
 
 ##
 # KometDashboardController -
 # handles the loading of the taxonomy tree
 class KometDashboardController < ApplicationController
   include TaxonomyConcern, ConceptConcern, InstrumentationConcern, ISAACConstants
+  include CommonController
 
   before_action :setup_routes, :setup_constants, :only => [:dashboard]
   after_filter :byte_size unless Rails.env.production?
@@ -53,6 +55,8 @@ class KometDashboardController < ApplicationController
     # check to make the number of levels to walk the tree was passed in
     if tree_walk_levels == nil
       tree_walk_levels = 1
+    else
+      tree_walk_levels = tree_walk_levels.to_i
     end
 
     additional_req_params = {stated: @stated}
@@ -106,28 +110,42 @@ class KometDashboardController < ApplicationController
     @stated = params[:stated]
     @viewer_id =  params[:viewer_id]
 
-    if @viewer_id == nil
+    if @viewer_id == nil || @viewer_id == ''
       @viewer_id = get_next_id
     end
 
-    get_concept_summary(@concept_id)
+    get_concept_attributes(@concept_id)
+    get_concept_descriptions(@concept_id)
     get_concept_sememes(@concept_id)
-
     render partial: params[:partial]
 
   end
 
   ##
-  # get_concept_summary - RESTful route for populating concept summary tab using an http :GET
+  # get_concept_attributes - RESTful route for populating concept attribute tab using an http :GET
   # The current tree node representing the concept is identified in the request params with the key :concept_id
-  # @return none - setting the @concept_summary variable
-  def get_concept_summary(concept_id = nil)
+  # @return none - setting the @attributes variable
+  def get_concept_attributes(concept_id = nil)
 
     if concept_id == nil && params[:concept_id]
       concept_id = params[:concept_id].to_i
     end
 
-    @descriptions =  descriptions(concept_id)
+    @attributes =  get_attributes(concept_id)
+
+  end
+
+  ##
+  # get_concept_descriptions - RESTful route for populating concept summary tab using an http :GET
+  # The current tree node representing the concept is identified in the request params with the key :concept_id
+  # @return none - setting the @descriptions variable
+  def get_concept_descriptions(concept_id = nil)
+
+    if concept_id == nil && params[:concept_id]
+      concept_id = params[:concept_id].to_i
+    end
+
+    @descriptions =  get_descriptions(concept_id)
 
   end
 
@@ -144,6 +162,17 @@ class KometDashboardController < ApplicationController
     @concept_sememes = get_attached_sememes(concept_id) # descriptions(concept_id)
 
   end
+
+  ##
+  # get_concept_refsets - RESTful route for populating concept refsets section using an http :GET
+  # The current tree node representing the concept is identified in the request params with the key :concept_id
+  # @return none - setting the refsets variable
+  def get_concept_refsets()
+    concept_id = params[:concept_id]
+    refsets = get_refsets(concept_id) # descriptions(concept_id)
+    render json: refsets
+  end
+
 
   def process_rest_concept(concept, tree_walk_levels, first_level: false, parent_search: false, multi_path: true)
 
@@ -314,35 +343,6 @@ class KometDashboardController < ApplicationController
     @stated = 'true'
   end
 
-  def setup_routes
-    routes = Rails.application.routes.named_routes.helpers.to_a
-    routes_hash = {}
-    routes.each do |route|
-      begin
-        routes_hash[route.to_s] = self.send(route)
-      rescue ActionController::UrlGenerationError => ex
-        if (ex.message =~ /missing required keys: \[(.*?)\]/)
-          keys = $1
-          keys = keys.split(',')
-          keys.map! do |e|
-            e.gsub!(':', '')
-            e.strip
-          end
-          required_keys_hash = {}
-          keys.each do |key|
-            required_keys_hash[key.to_sym] = ':' + key.to_s
-          end
-          routes_hash[route.to_s] = self.send(route, required_keys_hash)
-        else
-          raise ex
-        end
-      end
-    end
-
-    $log.debug('routes hash passed to javascript is ' + routes_hash.to_s)
-    gon.routes = routes_hash
-  end
-
   def setup_constants
     initialize_isaac_constants #to_do, remove
     $log.debug('term_aux hash passed to javascript is ' + ISAACConstants::TERMAUX.to_s) #to_do, remove
@@ -353,8 +353,6 @@ class KometDashboardController < ApplicationController
     json = YAML.load_file constants_file
     translated_hash = add_translations(json)
     gon.IsaacMetadataAuxiliary = translated_hash
-
-
   end
 
   def metadata

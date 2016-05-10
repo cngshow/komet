@@ -1,0 +1,89 @@
+<div class="komet-concept-description-title">DESCRIPTIONS</div>
+
+<% @descriptions[:descriptions].each_with_index do |description, concept_index| %>
+
+    <% if concept_index > 0 %>
+        <div class="concept-section-panel-spacer"></div>
+    <% end %>
+
+    <div id="komet_concept_description_panel_<%= @viewer_id %>_<%= description[:uuid] %>" class="komet-concept-section-panel komet-concept-description-panel">
+
+      <!-- main header block - always visible -->
+      <div class="komet-concept-section-panel-header">
+
+        <!-- expand/collapse icon - controls details drawer -->
+        <div class="glyphicon glyphicon-plus-sign" onclick="ConceptsModule.viewers[<%= @viewer_id %>].togglePanelDetails('komet_concept_description_panel_<%= @viewer_id %>_<%= description[:uuid] %>')"></div>
+
+        <!-- description type, refset -->
+        <div class="komet-concept-description-title-block">
+
+          <div class="komet-concept-description-title">
+            <%= description[:description_type_short] %>
+          </div>
+
+          <!-- get the case significance and display an appropriate icon -->
+          <% if description[:case_significance_short] == 'true' %>
+
+              <span class="glyphicon glyphicon-text-size" title="<%= description[:case_significance] %>"></span>
+
+          <% else %>
+
+              <span class="komet-icon-stack" title="<%= description[:case_significance] %>">
+                <span class="glyphicon glyphicon-text-size komet-icon-stack-base"></span>
+                <span class="glyphicon glyphicon-ban-circle"></span>
+              </span>
+
+          <% end %>
+
+          <span title="<%= description[:language] %>"><%= description[:language_short] %></span>
+          <span><%= description[:state] %></span>
+        </div>
+
+        <!-- description text -->
+        <div class="komet-concept-description-text">
+          <%= description[:text] %>
+        </div>
+
+      </div>
+
+      <!-- details drawer - can be collapsed -->
+      <div class="komet-concept-section-panel-details">
+
+        <!-- loop through the description attributes -->
+        <% description[:attributes].each_with_index do |attribute, attribute_index| %>
+
+            <% if attribute_index > 0 %>
+                <hr class="komet-concept-details-hr" />
+            <% end %>
+
+          <div class="komet-concept-description-details-row">
+
+            <div class="komet-concept-description-details-name">
+              <%= attribute[:label] %>: <%= attribute[:text] %>
+            </div>
+
+            <div class="komet-concept-description-details-state">
+              Sate: <%= attribute[:state] %>
+            </div>
+
+            <div class="komet-concept-description-details-time">
+              Time: <%= attribute[:time] %>
+            </div>
+
+            <div class="komet-concept-description-details-author">
+              Author: <%= attribute[:author] %>
+            </div>
+
+            <div class="komet-concept-description-details-path">
+              Path: <%= attribute[:path] %>
+            </div>
+
+          </div>
+
+        <% end %>
+
+      </div>
+
+    </div>
+
+<% end %>
