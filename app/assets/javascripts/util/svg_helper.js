@@ -216,7 +216,6 @@ var SvgHelper = (function () {
 
     }
 
-
     function getConceptNodeValues(obj) {
         var sstring = "";
         for (var prop in obj) {
@@ -237,9 +236,6 @@ var SvgHelper = (function () {
 
         return sstring
     }
-
-
-
 
     function loadDefs(svg) {
 
@@ -498,7 +494,7 @@ var SvgHelper = (function () {
     // function called when the diagram tab is clicked opened
     function renderDiagram(panel_id, open, concept_id){
 
-        var svg_id = $("#" + panel_id ).attr("id");
+        var svg_id = $("#" + panel_id + " .komet-concept-svg").attr("id");
 
         // only draw the diagram if it doesn't exist and will be visible
         if($("#" + svg_id).svg('get') === undefined && open){

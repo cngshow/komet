@@ -55,6 +55,8 @@ class KometDashboardController < ApplicationController
     # check to make the number of levels to walk the tree was passed in
     if tree_walk_levels == nil
       tree_walk_levels = 1
+    else
+      tree_walk_levels = tree_walk_levels.to_i
     end
 
     additional_req_params = {stated: @stated}
@@ -108,7 +110,7 @@ class KometDashboardController < ApplicationController
     @stated = params[:stated]
     @viewer_id =  params[:viewer_id]
 
-    if @viewer_id == nil
+    if @viewer_id == nil || @viewer_id == ''
       @viewer_id = get_next_id
     end
 

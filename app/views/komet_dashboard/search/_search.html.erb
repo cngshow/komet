@@ -30,7 +30,7 @@
 
           <div class="pull-right">
             <%= label_tag :taxonomy_search_page_size, 'Page Size:' %>
-            <%= select_tag :taxonomy_search_page_size, options_for_select([['25'], ['50'], ['100'], ['250']], '25')  %>
+            <%= select_tag :taxonomy_search_page_size, options_for_select([['25'], ['50'], ['100'], ['250'], ['500'], ['1000']], '25')  %>
           </div>
         </div>
 
@@ -76,7 +76,7 @@
 <% end %>
 
 <br>
-
+<button id="taxonomy_search_export" onclick="TaxonomySearchModule.exportCSV()">CSV Export</button>
 <div id="taxonomy_search_results" style="height: 450px;" class="ag-fresh"></div>
 
 <script>

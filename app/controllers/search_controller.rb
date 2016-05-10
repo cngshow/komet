@@ -83,7 +83,7 @@ class SearchController < ApplicationController
     search_type = params[:taxonomy_search_type]
     page_size = params[:taxonomy_search_page_size]
     page_number = params[:taxonomy_search_page_number]
-    additional_params = {query: search_text, expand: 'referencedConcept,versionsLatestOnly', pageNum: page_number}
+    additional_params = {query: search_text, expand: 'referencedConcept,versionsLatestOnly', pageNum: page_number, allowedStates: 'active,inactive'}
 
     if search_text == nil || search_text == ''
       render json: {total_rows: 0, page_data: []} and return

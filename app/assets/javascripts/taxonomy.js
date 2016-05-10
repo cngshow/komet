@@ -25,7 +25,7 @@ var TaxonomyModule = (function () {
 
         this.defaultStatedView = $("#komet_taxonomy_stated_inferred")[0].value;
 
-        this.tree = new KometTaxonomyTree("taxonomy_tree", this.defaultStatedView, false, null, true);
+        this.tree = new KometTaxonomyTree("taxonomy_tree", this.defaultStatedView, false, null, true, "new");
     }
 
     // listen for the onChange event broadcast by the trees on the details panes. If they have items selected then reload this tree

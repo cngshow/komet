@@ -27,6 +27,8 @@ var ConceptViewer = function(viewerID, currentConceptID) {
         this.trees = {};
         this.PARENTS_TREE = "concept_lineage_parents_tree_" + viewerID;
         this.CHILDREN_TREE = "concept_lineage_children_tree_" + viewerID;
+        this.refsetGridOptions;
+        this.REFSET_GRID = "refsets_grid_" + viewerID;
         
         //this.subscribeToTaxonomyTree();
         //this.subscribeToSearch();
@@ -236,6 +238,93 @@ var ConceptViewer = function(viewerID, currentConceptID) {
             true
         );
     };
+
+    ConceptViewer.prototype.loadRefsetGrid = function(panelID, open, conceptID) {
+
+        if(!(!this.refsetGridOptions && open)){
+            return;
+        }
+
+        // If a grid already exists destroy it or it will create a second grid
+        if (this.refsetGridOptions) {
+            this.refsetGridOptions.api.destroy();
+        }
+
+        // set the options for the result grid
+        this.refsetGridOptions = {
+            enableColResize: true,
+            enableSorting: true,
+            suppressCellSelection: true,
+            rowSelection: "single",
+            onGridReady: onGridReady,
+            rowModelType: 'pagination'
+        };
+
+        function onGridReady(event) {
+            event.api.sizeColumnsToFit();
+        }
+
+        new agGrid.Grid($("#" + this.REFSET_GRID).get(0), this.refsetGridOptions);
+        this.getRefsetResultData(conceptID);
+    };
+
+    ConceptViewer.prototype.getRefsetResultData = function(uuid) {
+
+        // load the parameters from the form to add to the query string sent in the ajax data call
+        var pageSize = 25;
+        var refsetsParams = "?concept_id=" + uuid;
+
+        function renderCell(params) {
+
+            if (params.value != undefined) {
+                var cell_display = "";
+                var tooltip = "";
+                var menu_attributes = "";
+
+                //if this row has a display value, show that in place of the row data and put a tooltip on the cell to show the row data
+                if (params.value.display === '') {
+                    cell_display = params.value.data;
+                    tooltip = '';
+                }
+                else {
+                    cell_display = params.value.display;
+                    tooltip = " title='" + params.value.data + "'";
+                }
+
+                if (['uuid', 'nid', 'sctid'].indexOf(params.colDef.data_type) >= 0) {
+                    menu_attributes = "data-menu-type='sememe' data-menu-uuid='" + params.value.data + "'";
+                }
+                else {
+                    menu_attributes = "data-menu-type='value' data-menu-copy-value='" + cell_display + "'"
+                }
+
+                return '<div class="komet-concept-table-cell-content komet-context-menu" ' + menu_attributes + tooltip + ' >' + cell_display + ' </div>'
+            }
+        }
+
+        // set the grid datasource options, including processing the data rows
+        var dataSource = {
+
+            pageSize: pageSize,
+            getRows: function (params) {
+
+                var pageNumber = params.endRow / pageSize;
+
+                refsetsParams += "&taxonomy_refsets_page_number=" + pageNumber;
+
+                // make an ajax call to get the data
+                $.get(gon.routes.taxonomy_get_concept_refsets_path + refsetsParams, function (refsets_results) {
+                    $.each(refsets_results.columns, function (index, value) {
+                        value.cellRenderer = renderCell
+                    });
+                    this.refsetGridOptions.api.setColumnDefs(refsets_results.columns);
+                    params.successCallback(refsets_results.data, refsets_results.total_number);
+                }.bind(this));
+            }.bind(this)
+        };
+
+        this.refsetGridOptions.api.setDatasource(dataSource);
+    }
 
     // call our constructor function
     this.init(viewerID, currentConceptID)
