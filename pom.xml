@@ -13,7 +13,7 @@
 
 	<groupId>gov.vha.isaac.gui.rails</groupId>
 	<artifactId>rails_komet</artifactId>
-	<version>1.6-SNAPSHOT</version>
+	<version>1.5.1-SNAPSHOT</version>
 	<packaging>pom</packaging>
 
 	<name>ISAAC Rails Komet Tooling</name>
