@@ -42,7 +42,7 @@ module CoordinateRest
 
   ACTION_CONSTANTS = {
       ACTION_COORDINATES_TOKEN => {PATH_SYM => COORDINATES_TOKEN_PATH, STARTING_PARAMS_SYM => {}, CLAZZ_SYM => Gov::Vha::Isaac::Rest::Api1::Data::RestCoordinatesToken},
-      ACTION_COORDINATES => {PATH_SYM => COORDINATES_PATH, STARTING_PARAMS_SYM => {}, CLAZZ_SYM => Gov::Vha::Isaac::Rest::Api1::Data::RestCoordinatesToken},
+      ACTION_COORDINATES => {PATH_SYM => COORDINATES_PATH, STARTING_PARAMS_SYM => {}, CLAZZ_SYM => Gov::Vha::Isaac::Rest::Api1::Data::Coordinate::RestCoordinates},
       ACTION_LANGUAGE_COORDINATE => {PATH_SYM => LANGUAGE_COORDINATE_PATH, STARTING_PARAMS_SYM => {}, CLAZZ_SYM => Gov::Vha::Isaac::Rest::Api1::Data::Coordinate::RestLanguageCoordinate},
       ACTION_LOGIC_COORDINATE => {PATH_SYM => LOGIC_COORDINATE_PATH, STARTING_PARAMS_SYM => {}, CLAZZ_SYM => Gov::Vha::Isaac::Rest::Api1::Data::Coordinate::RestLogicCoordinate},
       ACTION_STAMP_COORDINATE => {PATH_SYM => STAMP_COORDINATE_PATH, STARTING_PARAMS_SYM => {}, CLAZZ_SYM => Gov::Vha::Isaac::Rest::Api1::Data::Coordinate::RestStampCoordinate},
@@ -86,4 +86,7 @@ c = CoordinateRest::get_coordinate(action: CoordinateRestActions::ACTION_LANGUAG
 d = CoordinateRest::get_coordinate(action: CoordinateRestActions::ACTION_LOGIC_COORDINATE)
 e = CoordinateRest::get_coordinate(action: CoordinateRestActions::ACTION_STAMP_COORDINATE)
 f = CoordinateRest::get_coordinate(action: CoordinateRestActions::ACTION_TAXONOMY_COORDINATE)
+
+
+
 =end
