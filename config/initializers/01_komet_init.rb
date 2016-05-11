@@ -1,6 +1,9 @@
 ##
 # Do common initialization tasks in komet tooling
 #
+
+REST_API_VERSIONS = [:"1.2"].freeze
+
 require './lib/rails_common/props/prop_loader'
 require './lib/rails_common/logging/open_logging'
 require './lib/rails_common/logging/logging'
@@ -20,7 +23,6 @@ require './lib/isaac_rest/taxonomy_rest'
 require './lib/isaac_rest/coordinate_rest'
 
 $rest_cache = CachedHash.new($PROPS.fetch('KOMET.rest_cache_max').to_i)
-
 
 #constants (depends on the rest cache!)
 require './lib/isaac_constants/constants'
