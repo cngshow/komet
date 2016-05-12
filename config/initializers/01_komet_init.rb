@@ -23,7 +23,8 @@ require './lib/isaac_rest/taxonomy_rest'
 require './lib/isaac_rest/coordinate_rest'
 
 $rest_cache = CachedHash.new($PROPS.fetch('KOMET.rest_cache_max').to_i)
-
+ISAAC_ROOT = $PROPS['PRISME.isaac_root'].nil? ? $PROPS['ENDPOINT.isaac_root'] : $PROPS['PRISME.isaac_root']
+$log.always("I am pointed to #{ISAAC_ROOT}")
 #constants (depends on the rest cache!)
 require './lib/isaac_constants/constants'
 # Thread.new do

@@ -148,7 +148,7 @@ module CommonRestBase
 
     def self.invoke(url:)
       $log.debug('invoke')
-      isaac_root_url = $PROPS['ENDPOINT.isaac_root']
+      isaac_root_url = ISAAC_ROOT
       uri = nil
       action = nil
       module_ = nil

@@ -32,7 +32,7 @@ module SememeRest
   include CommonActionSyms
   extend self
 
-  SEMEME_PATH = $PROPS['ENDPOINT.isaac_root'] + "rest/1/sememe/"
+  SEMEME_PATH = ISAAC_ROOT + "rest/1/sememe/"
   CHRONOLOGY_SEMEME_PATH = SEMEME_PATH + "chronology/{id}"
   VERSION_SEMEME_PATH = SEMEME_PATH + "version/{id}"
   BY_REFERENCED_COMPONENT_SEMEME_PATH = SEMEME_PATH + "byReferencedComponent/{id}"

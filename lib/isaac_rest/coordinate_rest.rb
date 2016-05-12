@@ -32,7 +32,7 @@ module CoordinateRest
   include CommonActionSyms
   extend self
 
-  COORDINATE_REST_PATH = $PROPS['ENDPOINT.isaac_root'] + 'rest/1/coordinate/'
+  COORDINATE_REST_PATH = ISAAC_ROOT + 'rest/1/coordinate/'
   COORDINATES_TOKEN_PATH = COORDINATE_REST_PATH + 'coordinatesToken'
   COORDINATES_PATH = COORDINATE_REST_PATH + 'coordinates'
   LANGUAGE_COORDINATE_PATH = COORDINATE_REST_PATH + 'languageCoordinate'
