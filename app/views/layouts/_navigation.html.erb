@@ -1,3 +1,4 @@
+<link rel="stylesheet" href="//code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css">
 <nav class="navbar navbar-default">
   <div class="navbar-header">
     <a class="navbar-brand" href="#">KOMET Tooling</a>
@@ -5,8 +6,33 @@
   <div>
     <ul class="nav navbar-nav">
       <li><a href="<%=root_path%>" ><span class="glyphicon glyphicon-home"> Home</span></a></li>
-      <li><a href="#">Page 2</a></li>
-      <li><a href="#">Page 3</a></li>
+      <li><a id="settings" href="#">Settings</a></li>
+      <div id="dialog-form" title="User's Preference">
+        <form>
+          <div>
+             <table>
+                 <tr> <td>Select Language:&nbsp;&nbsp;</td><td><select id="komet_concept_language" >
+                      </select></td>
+                 </tr>
+             </table>
+          </div><br><br>
+           <table id="description_type"  width='80%'  cellpadding='2' cellspacing='3'>
+             <tr  style='background-color: #4f80d9;color:white'><td>Rank</td><td>Dialect Preference</td></tr>
+             </table>
+            <br><br>
+           <table id="dialecttbl"  width='80%'  cellpadding='2' cellspacing='3'>
+             <tr  style='background-color: #4f80d9;color:white'><td>Rank</td><td>Description Type</td></tr>
+           </table>
+            <br><br>
+
+          </form>
+      </div>
     </ul>
   </div>
 </nav>
+<script>
+
+  $(document).ready(function () {
+    PreferenceModule.initialize();
+    });
+</script>

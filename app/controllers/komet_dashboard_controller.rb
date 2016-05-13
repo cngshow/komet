@@ -163,6 +163,31 @@ class KometDashboardController < ApplicationController
 
   end
 
+  def get_concept_languages_dialect()
+    uuid = params[:uuid]
+    languages = get_languages_dialect(uuid)
+    render json: languages
+  end
+
+  # gets default/ users preference coordinates
+  def get_coordinates
+    getcoordinates_results = {}
+    getcoordinates_results = CoordinateRest.get_coordinate(action: CoordinateRestActions::ACTION_COORDINATES)
+    value = getcoordinates_results.languageCoordinate.to_json
+    render json:  getcoordinates_results.to_json
+  end
+
+  def get_coordinatestoken
+  hash = { }
+  hash[:language] = params[:language]
+  hash[:dialectPrefs] = params[:dialectPrefs]
+  hash[:descriptionTypePrefs] = params[:descriptionTypePrefs]
+  results =  CoordinateRest.get_coordinate(action: CoordinateRestActions::ACTION_COORDINATES_TOKEN,  additional_req_params: hash)
+  session[:coordinatestoken] = results
+  render json:  results.to_json
+
+  end
+
   ##
   # get_concept_refsets - RESTful route for populating concept refsets section using an http :GET
   # The current tree node representing the concept is identified in the request params with the key :concept_id
@@ -353,6 +378,9 @@ class KometDashboardController < ApplicationController
     json = YAML.load_file constants_file
     translated_hash = add_translations(json)
     gon.IsaacMetadataAuxiliary = translated_hash
+
+    session[:coordinatestoken] = CoordinateRest.get_coordinate(action: CoordinateRestActions::ACTION_COORDINATES_TOKEN)
+
   end
 
   def metadata

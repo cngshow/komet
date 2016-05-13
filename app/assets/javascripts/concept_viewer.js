@@ -132,7 +132,6 @@ var ConceptViewer = function(viewerID, currentConceptID) {
             var callback = this.panelStates[key][1];
 
             if (state) {
-                console.log("********* Restoring Open Pane ********");
                 this.togglePanelDetails(key, callback);
             }
         }
@@ -227,14 +226,12 @@ var ConceptViewer = function(viewerID, currentConceptID) {
     };
 
     // show this concept in the taxonomy tree
-    ConceptViewer.prototype.linkToTaxonomyTree = function() {
+    ConceptViewer.prototype.showInTaxonomyTree = function() {
 
         TaxonomyModule.tree.findNodeInTree(
             this.currentConceptID,
             $('#komet_concept_stated_inferred_' + this.viewerID)[0].value,
-            function (foundNodeId) {
-                console.log('Linked - taxonomy tree node ID: ' + foundNodeId);
-            },
+            function (foundNodeId) {},
             true
         );
     };
@@ -324,7 +321,24 @@ var ConceptViewer = function(viewerID, currentConceptID) {
         };
 
         this.refsetGridOptions.api.setDatasource(dataSource);
-    }
+    };
+
+    ConceptViewer.prototype.toggleLinkIcon = function(){
+        $('#komet_concept_panel_tree_link_' + this.viewerID).toggle();
+    };
+
+    ConceptViewer.prototype.swapLinkIcon = function(linked){
+
+        var linkIcon = $('#komet_concept_panel_tree_link_' + this.viewerID);
+
+        linkIcon.toggleClass("fa-chain", linked);
+        linkIcon.toggleClass("fa-chain-broken", !linked);
+        this.toggleTreeIcon();
+    };
+
+    ConceptViewer.prototype.toggleTreeIcon = function(){
+        $('#komet_concept_panel_tree_show_' + this.viewerID).toggle();
+    };
 
     // call our constructor function
     this.init(viewerID, currentConceptID)

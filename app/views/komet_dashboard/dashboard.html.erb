@@ -9,12 +9,12 @@
       <ul>
         <li><a href='#tp-taxonomy'>Taxonomy</a></li>
         <li><a href='#tp-search'>Search</a></li>
-        <li><a href='#tp-favorites'>Favorites</a></li>
+        <!--<li><a href='#tp-favorites'>Favorites</a></li>-->
         <li><a href='#tp-refsets'>Refsets</a></li>
       </ul>
       <div id="tp-taxonomy"></div>
       <div id="tp-search"></div>
-      <div id="tp-favorites"></div>
+      <!--<div id="tp-favorites"></div>-->
       <div id="tp-refsets"></div>
     </div>
   </div>
@@ -25,9 +25,9 @@
   $(document).ready(function () {
     $("#tp-taxonomy").html('<%= escape_javascript render :partial => 'komet_dashboard/taxonomy/taxonomy'%>');
     $("#tp-search").html('<%= escape_javascript render :partial => 'komet_dashboard/search/search'%>');
-    $("#tp-favorites").html('<%= escape_javascript render :partial => 'komet_dashboard/favorites/favorites'%>');
+    //$("#tp-favorites").html('<%#= escape_javascript render :partial => 'komet_dashboard/favorites/favorites'%>');
     $("#tabs").tabs();
-    $('#komet_dashboard_splitter').split({orientation: 'vertical', position: '41%', limit: 250});
+    $('#komet_dashboard_splitter').enhsplitter({height: "91%", width: "100%", position: "41%", onDragStart: function (e) {TaxonomyModule.nestedSplittersExist()}, onDragEnd: function (e) {TaxonomyModule.refreshSplitters()}});
   });
 </script>
 

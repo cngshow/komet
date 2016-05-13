@@ -225,10 +225,7 @@ module ConceptConcern
     page_size = 25
     page_number = params[:taxonomy_refsets_page_number]
     additional_params = {expand: 'chronology,nestedSememes,referencedDetails', pageNum: page_number}
-
-
       additional_params[:maxPageSize] =  page_size
-
 
     results = SememeRest.get_sememe(action: SememeRestActions::ACTION_BY_ASSEMBLAGE, uuid_or_id: uuid, additional_req_params:additional_params )
 
@@ -457,4 +454,18 @@ module ConceptConcern
     ver = ConceptRest.get_concept(action: ConceptRestActions::ACTION_DESCRIPTIONS, uuid: id).first
     ver.text
   end
+
+ # get list of language,dialect and description type in user's preference screen
+  def get_languages_dialect(uuid)
+    results = {}
+    ver = ConceptRest.get_concept(action: ConceptRestActions::ACTION_VERSION, uuid: uuid, additional_req_params: {includeChildren: 'true'})
+    results[:children] = ver.children
+
+    return results
+  end
+
+
+
+
+
 end

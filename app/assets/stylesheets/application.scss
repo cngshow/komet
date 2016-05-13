@@ -29,12 +29,14 @@ Copyright Notice
  * file per style scope.
  *
  *= require jquery-ui
+ *= require jquery.enhsplitter
  *= require_tree ../../../vendor/assets/stylesheets/contextMenu
  *= require_tree ../../../vendor/assets/stylesheets/jsTree
- *= require_tree ../../../vendor/assets/stylesheets/jq-ui-plugins
  */
 @import "bootstrap-sprockets";
 @import "bootstrap";
+@import "font-awesome-sprockets";
+@import "font-awesome";
 
 html, body{
   width: 100%;
@@ -156,7 +158,7 @@ html, body{
   position: absolute;
   text-align: center;
 }
-.komet-icon-stack .glyphicon{
+.komet-icon-stack .glyphicon {
   font-size: 1em;
 }
 .komet-stated-inferred{
@@ -172,7 +174,7 @@ html, body{
    color: white;
    padding-left: 5px;
 }
-.komet-form-error .glyphicon {
+.komet-form-error .glyphicon, .komet-form-error .fa {
   margin-right: 5px;
 }
 .komet-splitter{
@@ -192,20 +194,26 @@ html, body{
   width: 100%;
   position: absolute;
 }
+#komet_east_pane{
+  overflow: hidden;
+}
 
 // KOMET Panel Styles
 .komet-panel .panel-heading {
   background-color: #4f80d9;
   display: flex;
 }
-.komet-panel .panel-heading .glyphicon {
+.komet-panel .glyphicon, .komet-panel .fa {
   cursor: pointer;
+}
+.komet-panel .komet-section-title .glyphicon, .komet-panel .komet-section-title .fa{
+  margin-right: 4px;
 }
 .komet-panel .komet-panel-tools{
   flex-grow: 1;
   text-align: end;
 }
-.komet-panel .komet-panel-tools .glyphicon {
+.komet-panel .komet-panel-tools .glyphicon, .komet-panel .komet-panel-tools .fa {
   margin-left: 10px;
   color: white;
   vertical-align: middle;
@@ -253,7 +261,11 @@ html, body{
   flex-grow: 1;
   text-align: end;
 }
-.komet-concept-panel .komet-section-icons .glyphicon{
+.komet-concept-panel .komet-section-icons img{
+  width: 17px;
+  height: 20px;
+}
+.komet-concept-panel .komet-section-icons .glyphicon, .komet-concept-panel .komet-section-icons .fa{
   margin-left: 10px;
 }
 .komet-concept-panel .panel-body {
@@ -265,7 +277,7 @@ html, body{
   display: flex;
   align-items: baseline;
 }
-.komet-concept-body-tools .glyphicon{
+.komet-concept-body-tools .glyphicon, .komet-concept-body-tools .fa{
   width: 20px;
   cursor: pointer;
 }
@@ -341,7 +353,7 @@ html, body{
   border-top: none;
   border-bottom: none;
 }
-.komet-concept-table-nested-indicator .glyphicon{
+.komet-concept-table-nested-indicator .glyphicon, .komet-concept-table-nested-indicator .fa{
   cursor: pointer;
 }
 td.komet-concept-table-nested-indicator.komet-concept-table-nested-indicator-open{
@@ -380,7 +392,7 @@ td.komet-concept-table-nested-indicator.komet-concept-table-nested-indicator-ope
   min-width: 125px;
   margin-right: 5px;
 }
-.komet-concept-description-title-block .glyphicon{
+.komet-concept-description-title-block .glyphicon, .komet-concept-description-title-block .fa{
   margin-right: 5px;
 }
 .komet-concept-description-title-block span{
@@ -495,5 +507,14 @@ td.komet-concept-table-nested-indicator.komet-concept-table-nested-indicator-ope
 #taxonomy_search_export{
   height: 20px;
   font-size: .75em;
+  display: none;
+}
+.change-rank.up:after {
+  content: attr(data-icon);
+}
+.change-rank.down:after {
+  content: attr(data-icon);
+}
+.no-close .ui-dialog-titlebar-close {
   display: none;
 }
