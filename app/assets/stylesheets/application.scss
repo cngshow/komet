@@ -497,3 +497,12 @@ td.komet-concept-table-nested-indicator.komet-concept-table-nested-indicator-ope
   font-size: .75em;
   display: none;
 }
+.change-rank.up:after {
+  content: attr(data-icon);
+}
+.change-rank.down:after {
+  content: attr(data-icon);
+}
+.no-close .ui-dialog-titlebar-close {
+  display: none;
+}
