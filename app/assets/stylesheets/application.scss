@@ -194,6 +194,9 @@ html, body{
   width: 100%;
   position: absolute;
 }
+#komet_east_pane{
+  overflow: hidden;
+}
 
 // KOMET Panel Styles
 .komet-panel .panel-heading {

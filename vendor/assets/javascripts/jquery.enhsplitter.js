@@ -259,6 +259,7 @@
                 splitters.splice(id, 1);
                 splitterCount--;
                 splitter.remove();
+                self.data('splitter', null);
                 var not_null = false;
                 for (var i = splitters.length; i--;) {
                     if (splitters[i] !== null) {

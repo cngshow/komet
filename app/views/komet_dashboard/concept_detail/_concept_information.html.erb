@@ -1,7 +1,7 @@
 <div class="panel panel-default komet-no-margins komet-panel" id="komet_concept_panel_<%= @viewer_id %>" data-komet-viewer-id="<%= @viewer_id %>">
   <div class="panel-heading">
     <span class="panel-title komet-section-title">
-      <span id="komet_concept_panel_tree_link_<%= @viewer_id %>" class="fa fa-chain-broken" onclick="ConceptsModule.toggleLinkToTaxonomy(<%= @viewer_id %>, true);" title="Link to Taxonomy Tree"></span>
+      <span id="komet_concept_panel_tree_link_<%= @viewer_id %>" class="fa fa-chain-broken" onclick="ConceptsModule.toggleLinkToTaxonomy(<%= @viewer_id %>, TaxonomyModule.getLinkedViewerID() != '<%= @viewer_id %>');" title="Link to Taxonomy Tree"></span>
       <span id="komet_concept_panel_tree_show_<%= @viewer_id %>" class="fa fa-tree" onclick="ConceptsModule.viewers[<%= @viewer_id %>].showInTaxonomyTree();" title="Show in Taxonomy Tree"></span>
       <%= @attributes[0][:value] %>
     </span>
@@ -46,6 +46,10 @@
       if (TaxonomyModule.getLinkedViewerID() == "<%= @viewer_id %>"){
         ConceptsModule.viewers["<%= @viewer_id %>"].swapLinkIcon(true);
       }
+    }
+
+    if (TaxonomyModule.getLinkedViewerID() == <%= @viewer_id %> && TaxonomyModule.tree.selectedConceptID != ConceptsModule.viewers[<%= @viewer_id %>].currentConceptID) {
+      ConceptsModule.viewers[<%= @viewer_id %>].showInTaxonomyTree();
     }
 
     $('#komet_concept_attributes_section_<%= @viewer_id %>').html("<%= j(render(:partial => 'komet_dashboard/concept_detail/concept_attributes')) %>");

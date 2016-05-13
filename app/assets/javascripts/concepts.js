@@ -86,7 +86,7 @@ var ConceptsModule = (function () {
 
                     var documentFragment = range.createContextualFragment(data);
 
-                    viewerElement[0].parentNode.scrollTop = 0;
+                    viewerElement.scrollParent()[0].scrollTop = 0;
                     viewerElement[0].parentNode.replaceChild(documentFragment, viewerElement[0]);
                 }
             }
@@ -145,29 +145,38 @@ var ConceptsModule = (function () {
 
     function toggleLinkToTaxonomy(viewerID, linkToTree) {
 
-        var otherViewer;
+        var otherViewerID;
 
         if (linkToTree) {
 
-            otherViewer = TaxonomyModule.getLinkedViewerID();
+            otherViewerID = TaxonomyModule.getLinkedViewerID();
 
-            if (otherViewer != undefined && otherViewer != "new" && otherViewer != viewerID && viewers[otherViewer] != undefined) {
-                viewers[otherViewer].swapLinkIcon(false);
+            if (otherViewerID != undefined && otherViewerID != "new" && otherViewerID != viewerID && viewers[otherViewerID] != undefined) {
+                viewers[otherViewerID].swapLinkIcon(false);
             }
 
             TaxonomyModule.setLinkedViewerID(viewerID);
+
+            if (TaxonomyModule.tree.selectedConceptID != viewers[viewerID].currentConceptID) {
+                viewers[viewerID].showInTaxonomyTree();
+            }
 
         } else {
 
             if (viewers.inlineViewers.length > 1){
 
-                otherViewer = viewers[viewers.inlineViewers.findIndex(function (value){
+                var viewerIndex = viewers.inlineViewers.findIndex(findOtherViewer);
+                otherViewerID = viewers.inlineViewers[viewerIndex];
+
+                function findOtherViewer(value){
                     return value != viewerID;
-                })];
+                }
 
-                TaxonomyModule.setLinkedViewerID(otherViewer);
+                TaxonomyModule.setLinkedViewerID(otherViewerID);
+                viewers[otherViewerID].swapLinkIcon(true);
+                //viewers[viewerID].swapLinkIcon(false);
 
-            } else if (viewers.inlineViewers.length == 0){
+            } else {
                 TaxonomyModule.setLinkedViewerID("new");
             }
         }

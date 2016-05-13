@@ -114,7 +114,7 @@ var UIHelper = (function () {
                 var conceptPanel = element.parents("div[id^=komet_concept_panel_]");
 
                 if (conceptPanel.length > 0){
-                    viewerID = conceptPanel[0].attr("data-komet-viewer-id");
+                    viewerID = conceptPanel.first().attr("data-komet-viewer-id");
                 } else{
                     viewerID = TaxonomyModule.getLinkedViewerID();
                 }
