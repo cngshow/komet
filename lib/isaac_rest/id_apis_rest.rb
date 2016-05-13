@@ -28,7 +28,7 @@ module IdAPIsRest
   include CommonActionSyms
   extend self
 
-  ID_APIS_PATH = $PROPS['ENDPOINT.isaac_root'] + 'rest/1/id/'
+  ID_APIS_PATH = ISAAC_ROOT + 'rest/1/id/'
   TYPES_PATH = ID_APIS_PATH + 'types'
   TYPES_TRANSLATE_PATH = ID_APIS_PATH + 'translate/{id}'
 

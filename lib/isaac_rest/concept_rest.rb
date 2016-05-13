@@ -29,7 +29,7 @@ module ConceptRest
   include CommonActionSyms
   extend self
 
-  CONCEPT_PATH = $PROPS['ENDPOINT.isaac_root'] + 'rest/1/concept/'
+  CONCEPT_PATH = ISAAC_ROOT + 'rest/1/concept/'
   CHRONOLOGY_CONCEPT_PATH = CONCEPT_PATH + 'chronology/{id}'
   VERSION_CONCEPT_PATH = CONCEPT_PATH + 'version/{id}'
   DESCRIPTIONS_CONCEPT_PATH = CONCEPT_PATH + 'descriptions/{id}'
