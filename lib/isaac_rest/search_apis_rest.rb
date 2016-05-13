@@ -30,7 +30,7 @@ module SearchApis
   include CommonActionSyms
   extend self
 
-  PATH_SEARCH_API = $PROPS['ENDPOINT.isaac_root'] + 'rest/1/search/'
+  PATH_SEARCH_API = ISAAC_ROOT + 'rest/1/search/'
   PATH_DESCRIPTIONS = PATH_SEARCH_API + 'descriptions'
   PATH_PREFIX = PATH_SEARCH_API + 'prefix'
   PATH_SEMEMES = PATH_SEARCH_API + 'sememes'

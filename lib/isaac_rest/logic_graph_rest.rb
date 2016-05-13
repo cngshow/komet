@@ -28,7 +28,7 @@ module LogicGraphRest
   include CommonActionSyms
   extend self
 
-  LOGIC_GRAPH_PATH = $PROPS['ENDPOINT.isaac_root'] + 'rest/1/logicGraph/'
+  LOGIC_GRAPH_PATH = ISAAC_ROOT + 'rest/1/logicGraph/'
   CHRONOLOGY_PATH = LOGIC_GRAPH_PATH + 'chronology/{id}'
   VERSION_PATH = LOGIC_GRAPH_PATH + 'version/{id}'
 

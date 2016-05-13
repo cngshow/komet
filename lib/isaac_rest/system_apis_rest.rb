@@ -37,7 +37,7 @@ module SystemApis
 
   TEST_UUID = '406e872b-2e19-5f5e-a71d-e4e4b2c68fe5'
 
-  PATH_SYSTEM_API = $PROPS['ENDPOINT.isaac_root'] + "rest/1/system/"
+  PATH_SYSTEM_API = ISAAC_ROOT + "rest/1/system/"
   PATH_SYSTEM_API_ENUMERATION =PATH_SYSTEM_API + "enumeration/"
   PATH_DYNAMIC_SEMEME_VALIDATOR_TYPE = PATH_SYSTEM_API_ENUMERATION + "restDynamicSememeValidatorType"
   PATH_OBJECT_CHRONOLOGY_TYPE = PATH_SYSTEM_API_ENUMERATION + "restObjectChronologyType"
