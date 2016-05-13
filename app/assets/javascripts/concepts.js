@@ -2,7 +2,7 @@ var ConceptsModule = (function () {
 
     var panelStates = {};
     var viewers = {};
-    viewers.inlineViewerCount = 0;
+    viewers.inlineViewers = [];
     viewers.maxInlineViewers = 2;
     var viewerMode = "single";
 
@@ -58,22 +58,20 @@ var ConceptsModule = (function () {
 
                 if (newViewer === "new") {
 
-                    viewers.inlineViewerCount += 1;
+                    if ((viewers.inlineViewers.length + 1) % 2) {
 
-                    if (viewers.inlineViewerCount % 2) {
-
-                        var splitter = '<div id="komet_east_pane_splitter_' + viewers.inlineViewerCount + '" class="komet-splitter"><div>' + data + '</div></div>';
+                        var splitter = '<div id="komet_east_pane_splitter_1" class="komet-splitter"><div>' + data + '</div></div>';
                         var documentFragment = range.createContextualFragment(splitter);
                         $('#komet_east_pane').append(documentFragment);
 
 
                     } else {
 
-                        var splitter = $("#komet_east_pane_splitter_" + (viewers.inlineViewerCount - 1));
+                        var splitter = $("#komet_east_pane_splitter_1");
 
                         var documentFragment = range.createContextualFragment("<div>" + data + "</div>");
                         splitter.append(documentFragment);
-                        splitter.split({orientation: 'vertical', position: '50%', limit: 50});
+                        splitter.enhsplitter({height: "100%", width: "100%"});
                     }
 
                 } else if (newViewer === "popup"){
@@ -105,24 +103,30 @@ var ConceptsModule = (function () {
 
         viewers[viewerID] = new ConceptViewer(viewerID, conceptID);
 
-        if (viewerMode === "single") {
-            TaxonomyModule.setLinkedViewerID(viewerID);
+        if ($("#komet_concept_panel_" + viewerID).parents("#komet_east_pane").length > 0){
+
+            viewers.inlineViewers.push(viewerID);
+            //TaxonomyModule.setLinkedViewerID(viewerID);
+            toggleLinkToTaxonomy(viewerID, true);
         }
     }
 
     function closeViewer(viewerID) {
 
-        if (!(viewers.inlineViewerCount % 2)) {
-            $("#komet_east_pane_splitter_" + (viewers.inlineViewerCount - 1)).split().destroy();
+        var splitter = $("#komet_east_pane_splitter_1");
+
+        if (!(viewers.inlineViewers.length % 2)) {
+            splitter.enhsplitter('remove');
         }
 
         $('#komet_concept_panel_' + viewerID).parent().remove();
         delete viewers[viewerID];
-        viewers.inlineViewerCount -= 1;
+
+        viewers.inlineViewers.splice(viewers.inlineViewers.indexOf(viewerID), 1);
 
         var otherViewer;
 
-        if (viewers.inlineViewerCount === 1) {
+        if (viewers.inlineViewers.length === 1) {
 
             otherViewer = $("div[id^=komet_concept_panel_]");
             otherViewer.parent().attr("style", "");
@@ -130,12 +134,45 @@ var ConceptsModule = (function () {
 
         if (TaxonomyModule.getLinkedViewerID() == viewerID) {
 
-            if (viewers.inlineViewerCount === 1) {
-                TaxonomyModule.setLinkedViewerID(otherViewer.attr("data-komet-viewer-id"));
+            if (viewers.inlineViewers.length === 1) {
+                toggleLinkToTaxonomy(otherViewer.attr("data-komet-viewer-id"), true);
             } else {
+                TaxonomyModule.setLinkedViewerID("new");
+                splitter.remove();
+            }
+        }
+    }
+
+    function toggleLinkToTaxonomy(viewerID, linkToTree) {
+
+        var otherViewer;
+
+        if (linkToTree) {
+
+            otherViewer = TaxonomyModule.getLinkedViewerID();
+
+            if (otherViewer != undefined && otherViewer != "new" && otherViewer != viewerID && viewers[otherViewer] != undefined) {
+                viewers[otherViewer].swapLinkIcon(false);
+            }
+
+            TaxonomyModule.setLinkedViewerID(viewerID);
+
+        } else {
+
+            if (viewers.inlineViewers.length > 1){
+
+                otherViewer = viewers[viewers.inlineViewers.findIndex(function (value){
+                    return value != viewerID;
+                })];
+
+                TaxonomyModule.setLinkedViewerID(otherViewer);
+
+            } else if (viewers.inlineViewers.length == 0){
                 TaxonomyModule.setLinkedViewerID("new");
             }
         }
+
+        viewers[viewerID].swapLinkIcon(linkToTree);
     }
 
     function setStatedView(viewerID, field) {
@@ -154,6 +191,7 @@ var ConceptsModule = (function () {
         loadViewerData: loadViewerData,
         setStatedView: setStatedView,
         closeViewer: closeViewer,
+        toggleLinkToTaxonomy: toggleLinkToTaxonomy,
         viewers: viewers
     };
 

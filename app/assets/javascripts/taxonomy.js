@@ -20,6 +20,8 @@ Copyright Notice
 var TaxonomyModule = (function () {
 
     var linkedViewerID;
+    var nestedSplitters;
+    var hasNestedSplitters = false;
 
     function init() {
 
@@ -51,10 +53,25 @@ var TaxonomyModule = (function () {
         return linkedViewerID;
     }
 
+    function nestedSplittersExist(){
+
+        nestedSplitters = $("#komet_east_pane_splitter_1");
+        hasNestedSplitters = nestedSplitters.find(".splitter_bar").length > 0;
+    }
+
+    function refreshSplitters(){
+
+        if (hasNestedSplitters){
+            nestedSplitters.enhsplitter('refresh');
+        }
+    }
+
     return {
         initialize: init,
         setLinkedViewerID: setLinkedViewerID,
-        getLinkedViewerID: getLinkedViewerID
+        getLinkedViewerID: getLinkedViewerID,
+        nestedSplittersExist: nestedSplittersExist,
+        refreshSplitters: refreshSplitters
     };
 
 })();

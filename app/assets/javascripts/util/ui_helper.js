@@ -56,7 +56,7 @@ var UIHelper = (function () {
 
                     items.openConcept = {name:"Open in Concept Pane", icon: "context-menu-icon glyphicon-list-alt", callback: openConcept($triggerElement, uuid)};
 
-                    if (ConceptsModule.viewers.inlineViewerCount < ConceptsModule.viewers.maxInlineViewers) {
+                    if (ConceptsModule.viewers.inlineViewers.length < ConceptsModule.viewers.maxInlineViewers) {
                         items.openNewConceptViwer = {
                             name: "Open in New Concept Viewer",
                             icon: "context-menu-icon glyphicon-list-alt",
@@ -111,7 +111,7 @@ var UIHelper = (function () {
 
             if (viewerID === undefined){
 
-                var conceptPanel = element.parents("id^='komet_concept_panel_'");
+                var conceptPanel = element.parents("div[id^=komet_concept_panel_]");
 
                 if (conceptPanel.length > 0){
                     viewerID = conceptPanel[0].attr("data-komet-viewer-id");
