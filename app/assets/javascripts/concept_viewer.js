@@ -230,7 +230,7 @@ var ConceptViewer = function(viewerID, currentConceptID) {
 
         TaxonomyModule.tree.findNodeInTree(
             this.currentConceptID,
-            $('#komet_concept_stated_inferred_' + this.viewerID)[0].value,
+            TaxonomyModule.getStatedView(),
             function (foundNodeId) {},
             true
         );
@@ -269,7 +269,7 @@ var ConceptViewer = function(viewerID, currentConceptID) {
 
         // load the parameters from the form to add to the query string sent in the ajax data call
         var pageSize = 25;
-        var refsetsParams = "?concept_id=" + uuid;
+        var refsetsParams = "?concept_id=" + uuid + "&stated=" + this.getStatedView();
 
         function renderCell(params) {
 
@@ -338,6 +338,10 @@ var ConceptViewer = function(viewerID, currentConceptID) {
 
     ConceptViewer.prototype.toggleTreeIcon = function(){
         $('#komet_concept_panel_tree_show_' + this.viewerID).toggle();
+    };
+
+    ConceptViewer.prototype.getStatedView = function(){
+        return $('#komet_concept_stated_inferred_' + this.viewerID)[0].value;
     };
 
     // call our constructor function

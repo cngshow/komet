@@ -18,9 +18,9 @@ Copyright Notice
  */
 var SvgHelper = (function () {
 
-    function startDiagram(svgId, conceptID){
+    function startDiagram(svgId, conceptID, stated){
 
-        var route = gon.routes.logic_graph_version_path.replace(":id", conceptID.toString());
+        var route = gon.routes.logic_graph_version_path.replace(":id", conceptID.toString()) + "?stated=" + stated;
         var rolegroup = gon.IsaacMetadataAuxiliary.ROLE_GROUP.uuids[0].translation.value;
 
         AjaxCache.fetch(route,{},function(data){
@@ -498,7 +498,7 @@ var SvgHelper = (function () {
 
         // only draw the diagram if it doesn't exist and will be visible
         if($("#" + svg_id).svg('get') === undefined && open){
-            SvgHelper.startDiagram(svg_id, concept_id);
+            SvgHelper.startDiagram(svg_id, concept_id, ConceptsModule.viewers[panel_id.substring(panel_id.lastIndexOf("_") + 1)].getStatedView());
         }
     }
 
