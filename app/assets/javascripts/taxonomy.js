@@ -66,12 +66,17 @@ var TaxonomyModule = (function () {
         }
     }
 
+    function getStatedView(){
+        return $("#komet_taxonomy_stated_inferred")[0].value;
+    };
+
     return {
         initialize: init,
         setLinkedViewerID: setLinkedViewerID,
         getLinkedViewerID: getLinkedViewerID,
         nestedSplittersExist: nestedSplittersExist,
-        refreshSplitters: refreshSplitters
+        refreshSplitters: refreshSplitters,
+        getStatedView: getStatedView
     };
 
 })();

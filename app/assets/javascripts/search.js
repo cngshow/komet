@@ -22,7 +22,7 @@ var TaxonomySearchModule = (function () {
         });
 
         // load any previous assemblage queries into a menu for the user to select from
-        //loadAssemblageRecents();
+        loadAssemblageRecents();
     }
 
     function loadResultGrid() {
@@ -174,7 +174,7 @@ var TaxonomySearchModule = (function () {
 
                 // use the html function to escape any html that may have been entered by the user
                 var valueText = $("<li>").text(value.text).html();
-                options += "<li><a href=\"#\" onclick=\"useAssemblageRecent('" + value.id + "', '" + valueText + "')\">" + valueText + "</a></li>";
+                options += "<li><a href=\"#\" onclick=\"TaxonomySearchModule.useAssemblageRecent('" + value.id + "', '" + valueText + "')\">" + valueText + "</a></li>";
             });
 
             $("#taxonomy_search_assemblage_recents").html(options);
@@ -195,6 +195,7 @@ var TaxonomySearchModule = (function () {
         initialize: init,
         loadResultGrid: loadResultGrid,
         changeSearchType: changeSearchType,
+        useAssemblageRecent: useAssemblageRecent,
         exportCSV: exportCSV
     };
 
