@@ -31,17 +31,18 @@ module ConceptConcern
   ##
   # descriptions - takes a uuid and returns all of the description concepts attached to it.
   # @param [String] uuid - The UUID to look up descriptions for
+  # @param [Boolean] stated - Whether to display the stated (true) or inferred view of concepts
   # @return [object] an array of hashes that contains the attributes
-  def get_attributes(uuid)
+  def get_attributes(uuid, stated)
 
     return_attributes = []
-    attributes = ConceptRest.get_concept(action: ConceptRestActions::ACTION_VERSION, uuid: uuid, additional_req_params: {expand: 'chronology'})
+    attributes = ConceptRest.get_concept(action: ConceptRestActions::ACTION_VERSION, uuid: uuid, additional_req_params: {expand: 'chronology', stated: stated})
 
     return_attributes << {label: 'Text', value: attributes.conChronology.description}
     return_attributes << {label: 'State', value: attributes.conVersion.state}
     return_attributes << {label: 'Time', value: DateTime.strptime((attributes.conVersion.time / 1000).to_s, '%s').strftime('%m/%d/%Y')}
 
-    author = description_metadata(attributes.conVersion.authorSequence)
+    author = description_metadata(attributes.conVersion.authorSequence, stated)
 
     if author == 'user'
       author = 'System User'
@@ -49,8 +50,8 @@ module ConceptConcern
 
     return_attributes << {label: 'Author', value: author}
 
-    return_attributes << {label: 'Module', value: description_metadata(attributes.conVersion.moduleSequence)}
-    return_attributes << {label: 'Path', value: description_metadata(attributes.conVersion.pathSequence)}
+    return_attributes << {label: 'Module', value: description_metadata(attributes.conVersion.moduleSequence, stated)}
+    return_attributes << {label: 'Path', value: description_metadata(attributes.conVersion.pathSequence, stated)}
     return_attributes << {label: 'UUID', value: uuid}
 
   end
@@ -58,11 +59,12 @@ module ConceptConcern
   ##
   # get_descriptions - takes a uuid and returns all of the description concepts attached to it.
   # @param [String] uuid - The UUID to look up descriptions for
+  # @param [Boolean] stated - Whether to display the stated (true) or inferred view of concepts
   # @return [object] a hash that contains an array of all the descriptions
-  def get_descriptions(uuid)
+  def get_descriptions(uuid, stated)
 
     return_descriptions = {uuid: uuid, descriptions: []}
-    descriptions = ConceptRest.get_concept(action: ConceptRestActions::ACTION_DESCRIPTIONS, uuid: uuid)
+    descriptions = ConceptRest.get_concept(action: ConceptRestActions::ACTION_DESCRIPTIONS, uuid: uuid, additional_req_params: {stated: stated})
 
     if descriptions.is_a? CommonRest::UnexpectedResponse
       return return_descriptions
@@ -80,9 +82,9 @@ module ConceptConcern
       description_uuid = description.sememeChronology.identifiers.uuids.first
       description_state = description.sememeVersion.state
       description_time = DateTime.strptime((description.sememeVersion.time / 1000).to_s, '%s').strftime('%m/%d/%Y')
-      description_author = description_metadata(description.sememeVersion.authorSequence)
-      description_module = description_metadata(description.sememeVersion.moduleSequence)
-      description_path = description_metadata(description.sememeVersion.pathSequence)
+      description_author = description_metadata(description.sememeVersion.authorSequence, stated)
+      description_module = description_metadata(description.sememeVersion.moduleSequence, stated)
+      description_path = description_metadata(description.sememeVersion.pathSequence, stated)
 
       if description_author == 'user'
         description_author = 'System User'
@@ -105,12 +107,12 @@ module ConceptConcern
       # loop thru the dialects array, pull out all the language refsets, and add them to the attributes array
       description.dialects.each do |dialect|
 
-        dialect_name = description_metadata(dialect.sememeChronology.assemblageSequence)
+        dialect_name = description_metadata(dialect.sememeChronology.assemblageSequence, stated)
         dialect_state = dialect.sememeVersion.state
         dialect_time = DateTime.strptime((dialect.sememeVersion.time / 1000).to_s, '%s').strftime('%m/%d/%Y')
-        dialect_author = description_metadata(dialect.sememeVersion.authorSequence)
-        dialect_module = description_metadata(dialect.sememeVersion.moduleSequence)
-        dialect_path = description_metadata(dialect.sememeVersion.pathSequence)
+        dialect_author = description_metadata(dialect.sememeVersion.authorSequence, stated)
+        dialect_module = description_metadata(dialect.sememeVersion.moduleSequence, stated)
+        dialect_path = description_metadata(dialect.sememeVersion.pathSequence, stated)
 
 
         if dialect_author == 'user'
@@ -130,7 +132,7 @@ module ConceptConcern
 
       METADATA_HASH.each_pair do |key, value|
 
-       converted_value = description_metadata(description.send(value).to_s)
+       converted_value = description_metadata(description.send(value).to_s, stated)
        return_description[key] = converted_value
 
         case key
@@ -193,8 +195,9 @@ module ConceptConcern
   ##
   # get_attached_sememes - takes a uuid and returns all of the non-description sememes attached to it.
   # @param [String] uuid - The UUID to look up attached sememes for
+  # @param [Boolean] stated - Whether to display the stated (true) or inferred view of concepts
   # @return [object] a hash that contains an array of all the columns to be displayed and an array of all the sememes 
-  def get_attached_sememes(uuid)
+  def get_attached_sememes(uuid, stated)
 
     sememe_types = {}
 
@@ -203,9 +206,9 @@ module ConceptConcern
       #sememe_types = session[:concept_sememe_types]
     end
 
-    sememes = SememeRest.get_sememe(action: SememeRestActions::ACTION_BY_REFERENCED_COMPONENT, uuid_or_id: uuid, additional_req_params: {expand: 'chronology,nestedSememes'})
+    sememes = SememeRest.get_sememe(action: SememeRestActions::ACTION_BY_REFERENCED_COMPONENT, uuid_or_id: uuid, additional_req_params: {expand: 'chronology,nestedSememes', stated: stated})
 
-    display_data = process_attached_sememes(sememes, sememe_types, [], [], 1)
+    display_data = process_attached_sememes(stated, sememes, sememe_types, [], [], 1)
 
     # put the sememe types object into the session
     session[:concept_sememe_types] = display_data[:sememe_types]
@@ -217,14 +220,15 @@ module ConceptConcern
   ##
   # get_refsets - takes a uuid and returns all of the refset attached to it.
   # @param [String] uuid - The UUID to look up attached sememes for
+  # @param [Boolean] stated - Whether to display the stated (true) or inferred view of concepts
   # @return [object] a hash that contains an array of all the columns to be displayed and an array of all the refsets
-  def get_refsets(uuid)
+  def get_refsets(uuid, stated)
 
     refsets_results = {}
     sememe_types = {}
     page_size = 25
     page_number = params[:taxonomy_refsets_page_number]
-    additional_params = {expand: 'chronology,nestedSememes,referencedDetails', pageNum: page_number}
+    additional_params = {expand: 'chronology,nestedSememes,referencedDetails', pageNum: page_number, stated: stated}
       additional_params[:maxPageSize] =  page_size
 
     results = SememeRest.get_sememe(action: SememeRestActions::ACTION_BY_ASSEMBLAGE, uuid_or_id: uuid, additional_req_params:additional_params )
@@ -233,7 +237,7 @@ module ConceptConcern
     refsets_results[:page_number] = results.paginationData.pageNum
     use_column_list = [];
 
-    display_data = process_attached_refsets(results.results, sememe_types, [],use_column_list)
+    display_data = process_attached_refsets(stated, results.results, sememe_types, [],use_column_list)
 
     refsets_results[:data] = display_data
     refsets_results[:columns] = use_column_list
@@ -245,8 +249,11 @@ module ConceptConcern
   ##
   # process_attached_refsets - recursively loops through an array of sememes and processes them for display.
   # @param [RestSememeVersion] sememes - a hash with an array of sememes to process, a cached hash of all unique sememe data, an array of data rows for display, and an array of columns to display
+  # @param [Boolean] stated - Whether to display the stated (true) or inferred view of concepts
   # @return [object] a hash that contains an array of all the columns to be displayed and an array of all the refsets
-  def process_attached_refsets(sememes, sememe_types, data_rows, used_column_list)
+  def process_attached_refsets(stated, sememes, sememe_types, data_rows, used_column_list)
+
+    additional_req_params = {stated: stated}
 
     #Defining first 2 columns of grid.
     used_column_list << {id:'state', field: 'state', headerName: 'status', data_type: 'string'}
@@ -264,8 +271,8 @@ module ConceptConcern
         if !sememe_types.has_key?(assemblage_sequence)
 
           # use the assemblage sequence to do a concept_description call to get sememe name, then a sememe_sememeDefinition call to get the columns that sememe has.
-          sememe_types[assemblage_sequence] = {sememe_name: ConceptRest.get_concept(action: ConceptRestActions::ACTION_DESCRIPTIONS, uuid: assemblage_sequence).first.text}
-          sememe_definition = SememeRest.get_sememe(action: SememeRestActions::ACTION_SEMEME_DEFINITION, uuid_or_id: assemblage_sequence)
+          sememe_types[assemblage_sequence] = {sememe_name: ConceptRest.get_concept(action: ConceptRestActions::ACTION_DESCRIPTIONS, uuid: assemblage_sequence, additional_req_params: additional_req_params).first.text}
+          sememe_definition = SememeRest.get_sememe(action: SememeRestActions::ACTION_SEMEME_DEFINITION, uuid_or_id: assemblage_sequence, additional_req_params: additional_req_params)
 
           sememe_types[assemblage_sequence][:sememe_description] = sememe_definition.sememeUsageDescription
           sememe_types[assemblage_sequence][:columns] = sememe_definition.columnInfo
@@ -299,7 +306,7 @@ module ConceptConcern
 
             # if the column is one of a specific set, make sure it has string data and see if it contains IDs. If it does look up their description
             if (['column name', 'target'].include?(sememe_column.columnName)) && (row_column.data.kind_of? String) && find_ids(row_column.data)
-              converted_value = ConceptRest.get_concept(action: ConceptRestActions::ACTION_DESCRIPTIONS, uuid: row_column.data).first.text
+              converted_value = ConceptRest.get_concept(action: ConceptRestActions::ACTION_DESCRIPTIONS, uuid: row_column.data, additional_req_params: additional_req_params).first.text
 
               # if the row is an array get the text values into a more readable form
             elsif row_column.data.kind_of? Array
@@ -341,7 +348,9 @@ module ConceptConcern
   # process_attached_sememes - recursively loops through an array of sememes and processes them for display.
   # @param [RestSememeVersion] sememes - a hash with an array of sememes to process, a cached hash of all unique sememe data, an array of data rows for display, and an array of columns to display
   # @return [object] a hash that contains an array of all the columns to be displayed and an array of all the sememes 
-  def process_attached_sememes(sememes, sememe_types, data_rows, used_column_list, level)
+  def process_attached_sememes(stated, sememes, sememe_types, data_rows, used_column_list, level)
+
+    additional_req_params = {stated: stated}
 
     # iterate over the array of sememes returned
     sememes.each do |sememe|
@@ -356,8 +365,8 @@ module ConceptConcern
         if !sememe_types.has_key?(assemblage_sequence)
 
           # use the assemblage sequence to do a concept_description call to get sememe name, then a sememe_sememeDefinition call to get the columns that sememe has.
-          sememe_types[assemblage_sequence] = {sememe_name: ConceptRest.get_concept(action: ConceptRestActions::ACTION_DESCRIPTIONS, uuid: assemblage_sequence).first.text}
-          sememe_definition = SememeRest.get_sememe(action: SememeRestActions::ACTION_SEMEME_DEFINITION, uuid_or_id: assemblage_sequence)
+          sememe_types[assemblage_sequence] = {sememe_name: ConceptRest.get_concept(action: ConceptRestActions::ACTION_DESCRIPTIONS, uuid: assemblage_sequence, additional_req_params: additional_req_params).first.text}
+          sememe_definition = SememeRest.get_sememe(action: SememeRestActions::ACTION_SEMEME_DEFINITION, uuid_or_id: assemblage_sequence, additional_req_params: additional_req_params)
 
           sememe_types[assemblage_sequence][:sememe_description] = sememe_definition.sememeUsageDescription
           sememe_types[assemblage_sequence][:columns] = sememe_definition.columnInfo
@@ -401,7 +410,7 @@ module ConceptConcern
               if row_column.respond_to?('conceptDescription')
                 converted_value = row_column.conceptDescription
               else
-                converted_value = ConceptRest.get_concept(action: ConceptRestActions::ACTION_DESCRIPTIONS, uuid: row_column.data).first.text
+                converted_value = ConceptRest.get_concept(action: ConceptRestActions::ACTION_DESCRIPTIONS, uuid: row_column.data, additional_req_params: additional_req_params).first.text
               end
 
               # if the row is an array get the text values into a more readable form
@@ -435,7 +444,7 @@ module ConceptConcern
       if has_nested
 
         sememes = sememe.nestedSememes
-        nested_sememe_data = process_attached_sememes(sememes, sememe_types, [], used_column_list, level + 1)
+        nested_sememe_data = process_attached_sememes(stated, sememes, sememe_types, [], used_column_list, level + 1)
 
         data_row[:nested_rows] = nested_sememe_data[:data_rows]
 
@@ -450,7 +459,7 @@ module ConceptConcern
 
   end
 
-  def description_metadata(id)
+  def description_metadata(id, stated)
     ver = ConceptRest.get_concept(action: ConceptRestActions::ACTION_DESCRIPTIONS, uuid: id).first
     ver.text
   end

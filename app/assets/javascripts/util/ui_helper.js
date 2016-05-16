@@ -109,9 +109,10 @@ var UIHelper = (function () {
 
         return function () {
 
-            if (viewerID === undefined){
+            var stated;
+            var conceptPanel = element.parents("div[id^=komet_concept_panel_]");
 
-                var conceptPanel = element.parents("div[id^=komet_concept_panel_]");
+            if (viewerID === undefined){
 
                 if (conceptPanel.length > 0){
                     viewerID = conceptPanel.first().attr("data-komet-viewer-id");
@@ -120,8 +121,13 @@ var UIHelper = (function () {
                 }
             }
 
-            $.publish(KometChannels.Taxonomy.taxonomyTreeNodeSelectedChannel, ["", id, null, viewerID]);
+            if (conceptPanel.length > 0){
+                stated = ConceptsModule.viewers[viewerID].getStatedView();
+            } else{
+                stated = TaxonomyModule.getStatedView();
+            }
 
+            $.publish(KometChannels.Taxonomy.taxonomyTreeNodeSelectedChannel, ["", id, stated, viewerID]);
         };
     }
 
