@@ -399,6 +399,13 @@ class KometDashboardController < ApplicationController
   def metadata
   end
 
+  def version
+    @version = $PROPS['PRISME.isaac_root']
+    @version = 'Unversioned by PRISME.' if @version.nil?
+    @version = {version: @version}
+    render json: @version
+  end
+
   private
   def add_translations(json)
     translated_hash = json.deep_dup
