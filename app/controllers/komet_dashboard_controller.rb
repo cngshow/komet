@@ -400,7 +400,7 @@ class KometDashboardController < ApplicationController
   end
 
   def version
-    @version = $PROPS['PRISME.isaac_root']
+    @version = $PROPS['PRISME.war_version']
     @version = 'Unversioned by PRISME.' if @version.nil?
     @version = {version: @version}
     render json: @version
