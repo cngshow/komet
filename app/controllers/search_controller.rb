@@ -33,12 +33,13 @@ class SearchController < ApplicationController
   #@return [json] a list of matching assemblage text and ids - array of hashes {label:, value:}
   def get_assemblage_suggestions
 
+    coordinates_token = session[:coordinatestoken].token
     search_term = params[:term]
     assemblage_suggestions_data = []
 
     $log.debug(search_term)
 
-    results = SearchApis.get_search_api(action: ACTION_PREFIX, additional_req_params: {query: search_term, maxPageSize: 25, expand: 'referencedConcept'})
+    results = SearchApis.get_search_api(action: ACTION_PREFIX, additional_req_params: {coordToken: coordinates_token, query: search_term, maxPageSize: 25, expand: 'referencedConcept'})
 
     results.results.each do |result|
 
@@ -77,13 +78,14 @@ class SearchController < ApplicationController
   #@return [json] the search results - an array of hashes {id:, matching_text:, concept_status:, score:}
   def get_search_results
 
+    coordinates_token = session[:coordinatestoken].token
     search_results = {}
     search_data = []
     search_text = params[:taxonomy_search_text]
     search_type = params[:taxonomy_search_type]
     page_size = params[:taxonomy_search_page_size]
     page_number = params[:taxonomy_search_page_number]
-    additional_params = {query: search_text, expand: 'referencedConcept,versionsLatestOnly', pageNum: page_number, allowedStates: 'active,inactive'}
+    additional_params = {coordToken: coordinates_token, query: search_text, expand: 'referencedConcept,versionsLatestOnly', pageNum: page_number}
 
     if search_text == nil || search_text == ''
       render json: {total_rows: 0, page_data: []} and return
