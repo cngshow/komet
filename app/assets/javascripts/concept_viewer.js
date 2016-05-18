@@ -344,6 +344,10 @@ var ConceptViewer = function(viewerID, currentConceptID) {
         return $('#komet_concept_stated_inferred_' + this.viewerID)[0].value;
     };
 
+    ConceptViewer.prototype.exportCSV  = function(){
+        this.refsetGridOptions.api.exportDataAsCsv({allColumns: true});
+    };
+
     // call our constructor function
     this.init(viewerID, currentConceptID)
 };
