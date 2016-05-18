@@ -132,7 +132,7 @@ class SearchController < ApplicationController
 
         # only proceed if the array does not already contain the id and term that were searched for
         already_exist = recents_array.find {|recent|
-          (recent['id'] == assemblage && recent['text'] == params[:taxonomy_search_assemblage_display])
+          (recent[:id] == assemblage && recent[:text] == params[:taxonomy_search_assemblage_display])
         }
 
         if already_exist == nil

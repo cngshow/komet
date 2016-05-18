@@ -290,9 +290,13 @@ html, body{
   border: 1px solid #d1d1d1;
   padding: 4px;
   margin: 2px;
+  flex-wrap: wrap;
+  min-width: min-content;
+
 }
 .komet-concept-section-panel-header{
   display: flex;
+  flex-wrap: wrap;
 }
 .komet-concept-section-panel-header .glyphicon-plus-sign, .komet-concept-section-panel-header .glyphicon-minus-sign{
   margin-right: 10px;

@@ -114,9 +114,9 @@ class KometDashboardController < ApplicationController
       @viewer_id = get_next_id
     end
 
-    get_concept_attributes(@concept_id)
-    get_concept_descriptions(@concept_id)
-    get_concept_sememes(@concept_id)
+    get_concept_attributes(@concept_id, @stated)
+    get_concept_descriptions(@concept_id, @stated)
+    get_concept_sememes(@concept_id, @stated)
     render partial: params[:partial]
 
   end
@@ -125,13 +125,17 @@ class KometDashboardController < ApplicationController
   # get_concept_attributes - RESTful route for populating concept attribute tab using an http :GET
   # The current tree node representing the concept is identified in the request params with the key :concept_id
   # @return none - setting the @attributes variable
-  def get_concept_attributes(concept_id = nil)
+  def get_concept_attributes(concept_id = nil, stated = nil)
 
     if concept_id == nil && params[:concept_id]
       concept_id = params[:concept_id].to_i
     end
 
-    @attributes =  get_attributes(concept_id)
+    if stated == nil && params[:stated]
+      stated = params[:stated]
+    end
+
+    @attributes =  get_attributes(concept_id, stated)
 
   end
 
@@ -139,13 +143,17 @@ class KometDashboardController < ApplicationController
   # get_concept_descriptions - RESTful route for populating concept summary tab using an http :GET
   # The current tree node representing the concept is identified in the request params with the key :concept_id
   # @return none - setting the @descriptions variable
-  def get_concept_descriptions(concept_id = nil)
+  def get_concept_descriptions(concept_id = nil, stated = nil)
 
     if concept_id == nil && params[:concept_id]
       concept_id = params[:concept_id].to_i
     end
 
-    @descriptions =  get_descriptions(concept_id)
+    if stated == nil && params[:stated]
+      stated = params[:stated]
+    end
+
+    @descriptions =  get_descriptions(concept_id, stated)
 
   end
 
@@ -153,13 +161,17 @@ class KometDashboardController < ApplicationController
   # get_concept_sememes - RESTful route for populating concept sememes section using an http :GET
   # The current tree node representing the concept is identified in the request params with the key :concept_id
   # @return none - setting the @concept_sememes variable
-  def get_concept_sememes(concept_id = nil)
+  def get_concept_sememes(concept_id = nil, stated = nil)
 
     if concept_id == nil && params[:concept_id]
       concept_id = params[:concept_id].to_i
     end
 
-    @concept_sememes = get_attached_sememes(concept_id) # descriptions(concept_id)
+    if stated == nil && params[:stated]
+      stated = params[:stated]
+    end
+
+    @concept_sememes = get_attached_sememes(concept_id, stated) # descriptions(concept_id)
 
   end
 
@@ -194,7 +206,8 @@ class KometDashboardController < ApplicationController
   # @return none - setting the refsets variable
   def get_concept_refsets()
     concept_id = params[:concept_id]
-    refsets = get_refsets(concept_id) # descriptions(concept_id)
+    stated = params[:stated]
+    refsets = get_refsets(concept_id, stated) # descriptions(concept_id)
     render json: refsets
   end
 
@@ -384,6 +397,13 @@ class KometDashboardController < ApplicationController
   end
 
   def metadata
+  end
+
+  def version
+    @version = $PROPS['PRISME.war_version']
+    @version = 'Unversioned by PRISME.' if @version.nil?
+    @version = {version: @version}
+    render json: @version
   end
 
   private
