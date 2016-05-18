@@ -35,8 +35,10 @@ module ConceptConcern
   # @return [object] an array of hashes that contains the attributes
   def get_attributes(uuid, stated)
 
+    coordinates_token = session[:coordinatestoken].token
     return_attributes = []
-    attributes = ConceptRest.get_concept(action: ConceptRestActions::ACTION_VERSION, uuid: uuid, additional_req_params: {expand: 'chronology', stated: stated})
+
+    attributes = ConceptRest.get_concept(action: ConceptRestActions::ACTION_VERSION, uuid: uuid, additional_req_params: {coordToken: coordinates_token, expand: 'chronology', stated: stated})
 
     return_attributes << {label: 'Text', value: attributes.conChronology.description}
     return_attributes << {label: 'State', value: attributes.conVersion.state}
@@ -63,8 +65,9 @@ module ConceptConcern
   # @return [object] a hash that contains an array of all the descriptions
   def get_descriptions(uuid, stated)
 
+    coordinates_token = session[:coordinatestoken].token
     return_descriptions = {uuid: uuid, descriptions: []}
-    descriptions = ConceptRest.get_concept(action: ConceptRestActions::ACTION_DESCRIPTIONS, uuid: uuid, additional_req_params: {stated: stated})
+    descriptions = ConceptRest.get_concept(action: ConceptRestActions::ACTION_DESCRIPTIONS, uuid: uuid, additional_req_params: {coordToken: coordinates_token, stated: stated})
 
     if descriptions.is_a? CommonRest::UnexpectedResponse
       return return_descriptions
@@ -199,6 +202,7 @@ module ConceptConcern
   # @return [object] a hash that contains an array of all the columns to be displayed and an array of all the sememes 
   def get_attached_sememes(uuid, stated)
 
+    coordinates_token = session[:coordinatestoken].token
     sememe_types = {}
 
     # see if the sememe types object already exists in the session
@@ -206,7 +210,7 @@ module ConceptConcern
       #sememe_types = session[:concept_sememe_types]
     end
 
-    sememes = SememeRest.get_sememe(action: SememeRestActions::ACTION_BY_REFERENCED_COMPONENT, uuid_or_id: uuid, additional_req_params: {expand: 'chronology,nestedSememes', stated: stated})
+    sememes = SememeRest.get_sememe(action: SememeRestActions::ACTION_BY_REFERENCED_COMPONENT, uuid_or_id: uuid, additional_req_params: {coordToken: coordinates_token, expand: 'chronology,nestedSememes', stated: stated})
 
     display_data = process_attached_sememes(stated, sememes, sememe_types, [], [], 1)
 
@@ -224,12 +228,13 @@ module ConceptConcern
   # @return [object] a hash that contains an array of all the columns to be displayed and an array of all the refsets
   def get_refsets(uuid, stated)
 
+    coordinates_token = session[:coordinatestoken].token
     refsets_results = {}
     sememe_types = {}
     page_size = 25
     page_number = params[:taxonomy_refsets_page_number]
-    additional_params = {expand: 'chronology,nestedSememes,referencedDetails', pageNum: page_number, stated: stated}
-      additional_params[:maxPageSize] =  page_size
+    additional_params = {coordToken: coordinates_token, expand: 'chronology,nestedSememes,referencedDetails', pageNum: page_number, stated: stated}
+    additional_params[:maxPageSize] =  page_size
 
     results = SememeRest.get_sememe(action: SememeRestActions::ACTION_BY_ASSEMBLAGE, uuid_or_id: uuid, additional_req_params:additional_params )
 
@@ -253,7 +258,8 @@ module ConceptConcern
   # @return [object] a hash that contains an array of all the columns to be displayed and an array of all the refsets
   def process_attached_refsets(stated, sememes, sememe_types, data_rows, used_column_list)
 
-    additional_req_params = {stated: stated}
+    coordinates_token = session[:coordinatestoken].token
+    additional_req_params = {coordToken: coordinates_token, stated: stated}
 
     #Defining first 2 columns of grid.
     used_column_list << {id:'state', field: 'state', headerName: 'status', data_type: 'string'}
@@ -350,7 +356,8 @@ module ConceptConcern
   # @return [object] a hash that contains an array of all the columns to be displayed and an array of all the sememes 
   def process_attached_sememes(stated, sememes, sememe_types, data_rows, used_column_list, level)
 
-    additional_req_params = {stated: stated}
+    coordinates_token = session[:coordinatestoken].token
+    additional_req_params = {coordToken: coordinates_token, stated: stated}
 
     # iterate over the array of sememes returned
     sememes.each do |sememe|
@@ -460,21 +467,22 @@ module ConceptConcern
   end
 
   def description_metadata(id, stated)
-    ver = ConceptRest.get_concept(action: ConceptRestActions::ACTION_DESCRIPTIONS, uuid: id).first
+
+    coordinates_token = session[:coordinatestoken].token
+    additional_req_params = {coordToken: coordinates_token, stated: stated}
+
+    ver = ConceptRest.get_concept(action: ConceptRestActions::ACTION_DESCRIPTIONS, uuid: id, additional_req_params: additional_req_params).first
     ver.text
   end
 
  # get list of language,dialect and description type in user's preference screen
   def get_languages_dialect(uuid)
+
     results = {}
     ver = ConceptRest.get_concept(action: ConceptRestActions::ACTION_VERSION, uuid: uuid, additional_req_params: {includeChildren: 'true'})
     results[:children] = ver.children
 
     return results
   end
-
-
-
-
 
 end

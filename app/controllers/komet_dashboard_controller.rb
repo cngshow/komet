@@ -39,6 +39,7 @@ class KometDashboardController < ApplicationController
   #@return [json] the tree nodes to insert into the tree at the parent node passed in the request
   def load_tree_data
 
+    coordinates_token = session[:coordinatestoken].token
     selected_concept_id = params[:concept_id]
     parent_search = params[:parent_search]
     parent_reversed = params[:parent_reversed]
@@ -59,7 +60,7 @@ class KometDashboardController < ApplicationController
       tree_walk_levels = tree_walk_levels.to_i
     end
 
-    additional_req_params = {stated: @stated}
+    additional_req_params = {coordToken: coordinates_token, stated: @stated}
 
     if boolean(parent_search)
 
