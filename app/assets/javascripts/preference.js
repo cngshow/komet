@@ -57,9 +57,40 @@ var PreferenceModule = (function () {
         $("#settings").on( "click", function() {
             dialog.dialog( "open" );
             //Get default goordinates
+
             var getcoordinates = "";
             var descriptiontypepreferences= "";
             var dialectassemblagepreferences="";
+
+            document.getElementById('description_type').innerHTML ="";
+            document.getElementById('dialecttbl').innerHTML ="";
+            var tr = document.createElement("TR");
+            tr.setAttribute("id", "heading1");
+            tr.setAttribute("style", "background-color: #4f80d9;color:white")
+            document.getElementById('description_type').appendChild(tr);
+
+            var tr1 = document.createElement("TR");
+            tr1.setAttribute("id", "heading2");
+            tr1.setAttribute("style", "background-color: #4f80d9;color:white")
+            document.getElementById('dialecttbl').appendChild(tr1);
+
+            var td1 = document.createElement("TD");
+            td1.innerHTML ='Rank';
+            document.getElementById("heading1").appendChild(td1);
+
+            var td2 = document.createElement("TD");
+            td2.innerHTML = 'Dialect Preference';
+            document.getElementById("heading1").appendChild(td2);
+
+            var td4 = document.createElement("TD");
+            td4.innerHTML ='Rank';
+            document.getElementById("heading2").appendChild(td4);
+
+            var td3 = document.createElement("TD");
+            td3.innerHTML = 'Description Type';
+            document.getElementById("heading2").appendChild(td3);
+
+
             $.get( gon.routes.taxonomy_get_coordinates_path, function( getcoordinates_results ) {
                 $( "#komet_concept_language" ).val(getcoordinates_results.languageCoordinate.language);
                 descriptiontypepreferences = getcoordinates_results.languageCoordinate.dialectAssemblagePreferences;
