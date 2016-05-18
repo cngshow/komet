@@ -123,7 +123,7 @@ module Concept
         @versions = Array.new
         _oa = _o['versions']
         _oa.each { | _item | 
-           if (_item.nil? || _item['@class'].nil?)
+          if ((_item.nil? || _item['@class'].nil?) rescue true)
              @versions.push Gov::Vha::Isaac::Rest::Api1::Data::Concept::RestConceptVersion.from_json(_item)
            else
              clazz_array_parts = _item['@class'].split('.')
@@ -185,6 +185,9 @@ module Concept
     attr_accessor :conChronology
     # The StampedVersion details for this version of this concept.
     attr_accessor :conVersion
+    # A boolean indicating whether the concept is fully-defined or primitive.  true for fully-defined, false for primitive
+    # This value is not populated / returned if the concept does not contain a logic graph from which to derive the information.
+    attr_accessor :isConceptDefined
     # The parent concepts(s) of the concept at this point in time (&#39;is a&#39; relationships).  Depending on the expand parameter, this may not be returned.
     attr_accessor :parents
     # The child concepts(s) of the concept at this point in time (&#39;is a&#39; relationships).  Depending on the expand parameter, this may not be returned.
@@ -207,6 +210,7 @@ module Concept
       _h['expandables'] = expandables.to_jaxb_json_hash unless expandables.nil?
       _h['conChronology'] = conChronology.to_jaxb_json_hash unless conChronology.nil?
       _h['conVersion'] = conVersion.to_jaxb_json_hash unless conVersion.nil?
+      _h['isConceptDefined'] = isConceptDefined.to_jaxb_json_hash unless isConceptDefined.nil?
       if !parents.nil?
         _ha = Array.new
         parents.each { | _item | _ha.push _item.to_jaxb_json_hash }
@@ -237,6 +241,7 @@ module Concept
       @expandables = Gov::Vha::Isaac::Rest::Api::Data::Expandables.from_json(_o['expandables']) unless _o['expandables'].nil?
       @conChronology = Gov::Vha::Isaac::Rest::Api1::Data::Concept::RestConceptChronology.from_json(_o['conChronology']) unless _o['conChronology'].nil?
       @conVersion = Gov::Vha::Isaac::Rest::Api1::Data::RestStampedVersion.from_json(_o['conVersion']) unless _o['conVersion'].nil?
+      @isConceptDefined = Boolean.from_json(_o['isConceptDefined']) unless _o['isConceptDefined'].nil?
       if !_o['parents'].nil?
         @parents = Array.new
         _oa = _o['parents']
@@ -1033,24 +1038,29 @@ module Data
 
     # The full version number of this API.  Note, this is an array, because in the future
     # the API may simultaneously support versions such as [1.3, 2.0] for reverse compatibility.
+    # 
+    # The agreement with Komet is that we do &quot;Major.Minor.Revision&quot;
+    # The Major version only changes in concert with the rest API paths changing from /1/ to /2/ for example.
+    # The Minor version is changed whenever we change a previously existing API or data structure - such that it
+    # may break existing code in KOMET.  Note, you can add new APIs / properties to existing data structures without
+    # breaking KOMET.
+    # The Revision is changed whenever we make a change that modifies the API, but only in a way that won&#39;t impact
+    # existing KOMET functionality - such as adding a new API, adding a new data structure, adding a field to an existing
+    # data structure.
     attr_accessor :supportedAPIVersions
-    # ISAAC DB Maven dependency
+    # REST API Implementation Version - aka the version number of the software running here.
+    attr_accessor :apiImplementationVersion
+    # The version number of the database being used by this instance.
     attr_accessor :isaacDbDependency
-    # Source Code Management URL
+    # Source Code Management URL that contains the source code for the software running here.
     attr_accessor :scmUrl
-    # ISAAC Version
+    # The version of ISAAC that the rest service is running on top of.
     attr_accessor :isaacVersion
-    # ISAAC GUI Version
-    attr_accessor :isaacGuiVersion
-    # ISAAC Assembly Version
-    attr_accessor :assemblyVersion
-    # Metadata Version
-    attr_accessor :metadataVersion
     # Software Licenses
     attr_accessor :appLicenses
     # Database Licenses
     attr_accessor :dbLicenses
-    # Additional Database Maven Dependencies
+    # The source content that was built into the underlying database.
     attr_accessor :dbDependencies
 
     # the json hash for this SystemInfo
@@ -1061,12 +1071,10 @@ module Data
         supportedAPIVersions.each { | _item | _ha.push _item.to_jaxb_json_hash }
         _h['supportedAPIVersions'] = _ha
       end
+      _h['apiImplementationVersion'] = apiImplementationVersion.to_jaxb_json_hash unless apiImplementationVersion.nil?
       _h['isaacDbDependency'] = isaacDbDependency.to_jaxb_json_hash unless isaacDbDependency.nil?
       _h['scmUrl'] = scmUrl.to_jaxb_json_hash unless scmUrl.nil?
       _h['isaacVersion'] = isaacVersion.to_jaxb_json_hash unless isaacVersion.nil?
-      _h['isaacGuiVersion'] = isaacGuiVersion.to_jaxb_json_hash unless isaacGuiVersion.nil?
-      _h['assemblyVersion'] = assemblyVersion.to_jaxb_json_hash unless assemblyVersion.nil?
-      _h['metadataVersion'] = metadataVersion.to_jaxb_json_hash unless metadataVersion.nil?
       if !appLicenses.nil?
         _ha = Array.new
         appLicenses.each { | _item | _ha.push _item.to_jaxb_json_hash }
@@ -1107,12 +1115,10 @@ module Data
           end
          }
       end
+      @apiImplementationVersion = String.from_json(_o['apiImplementationVersion']) unless _o['apiImplementationVersion'].nil?
       @isaacDbDependency = Gov::Vha::Isaac::Rest::Api1::Data::Systeminfo::RestDependencyInfo.from_json(_o['isaacDbDependency']) unless _o['isaacDbDependency'].nil?
       @scmUrl = String.from_json(_o['scmUrl']) unless _o['scmUrl'].nil?
       @isaacVersion = String.from_json(_o['isaacVersion']) unless _o['isaacVersion'].nil?
-      @isaacGuiVersion = String.from_json(_o['isaacGuiVersion']) unless _o['isaacGuiVersion'].nil?
-      @assemblyVersion = String.from_json(_o['assemblyVersion']) unless _o['assemblyVersion'].nil?
-      @metadataVersion = String.from_json(_o['metadataVersion']) unless _o['metadataVersion'].nil?
       if !_o['appLicenses'].nil?
         @appLicenses = Array.new
         _oa = _o['appLicenses']
@@ -1334,6 +1340,81 @@ module Data
       end
     end
   end
+
+end
+
+end
+
+end
+
+end
+
+end
+
+end
+
+module Gov
+
+module Vha
+
+module Isaac
+
+module Rest
+
+module Api1
+
+module Data
+
+module Coordinate
+
+  # (no documentation provided)
+  class RestCoordinates 
+
+    # taxonomyCoordinate
+    attr_accessor :taxonomyCoordinate
+    # stampCoordinate
+    attr_accessor :stampCoordinate
+    # languageCoordinate
+    attr_accessor :languageCoordinate
+    # logicCoordinate
+    attr_accessor :logicCoordinate
+
+    # the json hash for this RestCoordinates
+    def to_jaxb_json_hash
+      _h = {}
+      _h['taxonomyCoordinate'] = taxonomyCoordinate.to_jaxb_json_hash unless taxonomyCoordinate.nil?
+      _h['stampCoordinate'] = stampCoordinate.to_jaxb_json_hash unless stampCoordinate.nil?
+      _h['languageCoordinate'] = languageCoordinate.to_jaxb_json_hash unless languageCoordinate.nil?
+      _h['logicCoordinate'] = logicCoordinate.to_jaxb_json_hash unless logicCoordinate.nil?
+      return _h
+    end
+
+    # the json (string form) for this RestCoordinates
+    def to_json
+      to_jaxb_json_hash.to_json
+    end
+
+    #initializes this RestCoordinates with a json hash
+    def init_jaxb_json_hash(_o)
+      @taxonomyCoordinate = Gov::Vha::Isaac::Rest::Api1::Data::Coordinate::RestTaxonomyCoordinate.from_json(_o['taxonomyCoordinate']) unless _o['taxonomyCoordinate'].nil?
+      @stampCoordinate = Gov::Vha::Isaac::Rest::Api1::Data::Coordinate::RestStampCoordinate.from_json(_o['stampCoordinate']) unless _o['stampCoordinate'].nil?
+      @languageCoordinate = Gov::Vha::Isaac::Rest::Api1::Data::Coordinate::RestLanguageCoordinate.from_json(_o['languageCoordinate']) unless _o['languageCoordinate'].nil?
+      @logicCoordinate = Gov::Vha::Isaac::Rest::Api1::Data::Coordinate::RestLogicCoordinate.from_json(_o['logicCoordinate']) unless _o['logicCoordinate'].nil?
+    end
+
+    # constructs a RestCoordinates from a (parsed) JSON hash
+    def self.from_json(o)
+      if o.nil?
+        return nil
+      else
+        inst = new
+        inst.init_jaxb_json_hash o
+        return inst
+      end
+    end
+  end
+
+end
 
 end
 
@@ -1869,6 +1950,114 @@ module Api1
 
 module Data
 
+module Sememe
+
+  # (no documentation provided)
+  class RestDynamicSememeDefinition 
+
+    # The concept sequence of the concept that is used as an assemblage.  The rest of the descriptive details of the
+    # sememe assemblage (returned in this object) are read from this concept.
+    attr_accessor :assemblageConceptId
+    # the user-friendly description of the overall purpose of this sememe
+    attr_accessor :sememeUsageDescription
+    # the column information that describes the data that may be returned as part of a sememe instance.
+    attr_accessor :columnInfo
+    # Return the RestObjectChronologyType of the restriction on referenced components for this sememe (if any - may return null)
+    # 
+    # If there is a restriction, the nid set for the referenced component in an instance of this sememe must be of the type listed here.
+    # 
+    # See rest/1/enumeration/restObjectChronologyType for a list of potential object types returned.
+    attr_accessor :referencedComponentTypeRestriction
+    # Return the RestSememeType of the sub restriction on referenced components for this DynamicSememe (if any - may return null)
+    # 
+    # If there is a restriction, the nid set for the referenced component in an instance of this sememe must be of the type listed here.
+    # 
+    # This is only applicable when #referencedComponentTypeRestriction returns RestObjectChronologyType#SEMEME
+    # 
+    # See rest/1/enumeration/restSememeType for a list of potential object types returned.
+    attr_accessor :referencedComponentTypeSubRestriction
+
+    # the json hash for this RestDynamicSememeDefinition
+    def to_jaxb_json_hash
+      _h = {}
+      _h['assemblageConceptId'] = assemblageConceptId.to_jaxb_json_hash unless assemblageConceptId.nil?
+      _h['sememeUsageDescription'] = sememeUsageDescription.to_jaxb_json_hash unless sememeUsageDescription.nil?
+      if !columnInfo.nil?
+        _ha = Array.new
+        columnInfo.each { | _item | _ha.push _item.to_jaxb_json_hash }
+        _h['columnInfo'] = _ha
+      end
+      _h['referencedComponentTypeRestriction'] = referencedComponentTypeRestriction.to_jaxb_json_hash unless referencedComponentTypeRestriction.nil?
+      _h['referencedComponentTypeSubRestriction'] = referencedComponentTypeSubRestriction.to_jaxb_json_hash unless referencedComponentTypeSubRestriction.nil?
+      return _h
+    end
+
+    # the json (string form) for this RestDynamicSememeDefinition
+    def to_json
+      to_jaxb_json_hash.to_json
+    end
+
+    #initializes this RestDynamicSememeDefinition with a json hash
+    def init_jaxb_json_hash(_o)
+      @assemblageConceptId = Fixnum.from_json(_o['assemblageConceptId']) unless _o['assemblageConceptId'].nil?
+      @sememeUsageDescription = String.from_json(_o['sememeUsageDescription']) unless _o['sememeUsageDescription'].nil?
+      if !_o['columnInfo'].nil?
+        @columnInfo = Array.new
+        _oa = _o['columnInfo']
+        _oa.each { | _item | 
+           if (_item.nil? || _item['@class'].nil?)
+             @columnInfo.push Gov::Vha::Isaac::Rest::Api1::Data::Sememe::RestDynamicSememeColumnInfo.from_json(_item)
+           else
+             clazz_array_parts = _item['@class'].split('.')
+             short_clazz = clazz_array_parts.pop
+             clazz_package = clazz_array_parts.map do |e| e[0] = e.first.capitalize; e end.join("::")
+             clazz = clazz_package + "::" + short_clazz
+             @columnInfo.push Object.const_get(clazz).send(:from_json, _item)
+          end
+         }
+      end
+      @referencedComponentTypeRestriction = Gov::Vha::Isaac::Rest::Api1::Data::Enumerations::RestObjectChronologyType.from_json(_o['referencedComponentTypeRestriction']) unless _o['referencedComponentTypeRestriction'].nil?
+      @referencedComponentTypeSubRestriction = Gov::Vha::Isaac::Rest::Api1::Data::Enumerations::RestSememeType.from_json(_o['referencedComponentTypeSubRestriction']) unless _o['referencedComponentTypeSubRestriction'].nil?
+    end
+
+    # constructs a RestDynamicSememeDefinition from a (parsed) JSON hash
+    def self.from_json(o)
+      if o.nil?
+        return nil
+      else
+        inst = new
+        inst.init_jaxb_json_hash o
+        return inst
+      end
+    end
+  end
+
+end
+
+end
+
+end
+
+end
+
+end
+
+end
+
+end
+
+module Gov
+
+module Vha
+
+module Isaac
+
+module Rest
+
+module Api1
+
+module Data
+
 module Coordinate
 
   # (no documentation provided)
@@ -1947,114 +2136,6 @@ module Coordinate
     end
 
     # constructs a RestStampCoordinate from a (parsed) JSON hash
-    def self.from_json(o)
-      if o.nil?
-        return nil
-      else
-        inst = new
-        inst.init_jaxb_json_hash o
-        return inst
-      end
-    end
-  end
-
-end
-
-end
-
-end
-
-end
-
-end
-
-end
-
-end
-
-module Gov
-
-module Vha
-
-module Isaac
-
-module Rest
-
-module Api1
-
-module Data
-
-module Sememe
-
-  # (no documentation provided)
-  class RestDynamicSememeDefinition 
-
-    # The concept sequence of the concept that is used as an assemblage.  The rest of the descriptive details of the
-    # sememe assemblage (returned in this object) are read from this concept.
-    attr_accessor :assemblageConceptId
-    # the user-friendly description of the overall purpose of this sememe
-    attr_accessor :sememeUsageDescription
-    # the column information that describes the data that may be returned as part of a sememe instance.
-    attr_accessor :columnInfo
-    # Return the RestObjectChronologyType of the restriction on referenced components for this sememe (if any - may return null)
-    # 
-    # If there is a restriction, the nid set for the referenced component in an instance of this sememe must be of the type listed here.
-    # 
-    # See rest/1/enumeration/restObjectChronologyType for a list of potential object types returned.
-    attr_accessor :referencedComponentTypeRestriction
-    # Return the RestSememeType of the sub restriction on referenced components for this DynamicSememe (if any - may return null)
-    # 
-    # If there is a restriction, the nid set for the referenced component in an instance of this sememe must be of the type listed here.
-    # 
-    # This is only applicable when #referencedComponentTypeRestriction returns RestObjectChronologyType#SEMEME
-    # 
-    # See rest/1/enumeration/restSememeType for a list of potential object types returned.
-    attr_accessor :referencedComponentTypeSubRestriction
-
-    # the json hash for this RestDynamicSememeDefinition
-    def to_jaxb_json_hash
-      _h = {}
-      _h['assemblageConceptId'] = assemblageConceptId.to_jaxb_json_hash unless assemblageConceptId.nil?
-      _h['sememeUsageDescription'] = sememeUsageDescription.to_jaxb_json_hash unless sememeUsageDescription.nil?
-      if !columnInfo.nil?
-        _ha = Array.new
-        columnInfo.each { | _item | _ha.push _item.to_jaxb_json_hash }
-        _h['columnInfo'] = _ha
-      end
-      _h['referencedComponentTypeRestriction'] = referencedComponentTypeRestriction.to_jaxb_json_hash unless referencedComponentTypeRestriction.nil?
-      _h['referencedComponentTypeSubRestriction'] = referencedComponentTypeSubRestriction.to_jaxb_json_hash unless referencedComponentTypeSubRestriction.nil?
-      return _h
-    end
-
-    # the json (string form) for this RestDynamicSememeDefinition
-    def to_json
-      to_jaxb_json_hash.to_json
-    end
-
-    #initializes this RestDynamicSememeDefinition with a json hash
-    def init_jaxb_json_hash(_o)
-      @assemblageConceptId = Fixnum.from_json(_o['assemblageConceptId']) unless _o['assemblageConceptId'].nil?
-      @sememeUsageDescription = String.from_json(_o['sememeUsageDescription']) unless _o['sememeUsageDescription'].nil?
-      if !_o['columnInfo'].nil?
-        @columnInfo = Array.new
-        _oa = _o['columnInfo']
-        _oa.each { | _item | 
-           if (_item.nil? || _item['@class'].nil?)
-             @columnInfo.push Gov::Vha::Isaac::Rest::Api1::Data::Sememe::RestDynamicSememeColumnInfo.from_json(_item)
-           else
-             clazz_array_parts = _item['@class'].split('.')
-             short_clazz = clazz_array_parts.pop
-             clazz_package = clazz_array_parts.map do |e| e[0] = e.first.capitalize; e end.join("::")
-             clazz = clazz_package + "::" + short_clazz
-             @columnInfo.push Object.const_get(clazz).send(:from_json, _item)
-          end
-         }
-      end
-      @referencedComponentTypeRestriction = Gov::Vha::Isaac::Rest::Api1::Data::Enumerations::RestObjectChronologyType.from_json(_o['referencedComponentTypeRestriction']) unless _o['referencedComponentTypeRestriction'].nil?
-      @referencedComponentTypeSubRestriction = Gov::Vha::Isaac::Rest::Api1::Data::Enumerations::RestSememeType.from_json(_o['referencedComponentTypeSubRestriction']) unless _o['referencedComponentTypeSubRestriction'].nil?
-    end
-
-    # constructs a RestDynamicSememeDefinition from a (parsed) JSON hash
     def self.from_json(o)
       if o.nil?
         return nil
@@ -2499,70 +2580,32 @@ module Vha
 
 module Isaac
 
-module Ochre
-
-module Api
-
-  # (no documentation provided)
-  class State
-
-    # 
-    INACTIVE = "INACTIVE"
-
-    # 
-    ACTIVE = "ACTIVE"
-
-    # 
-    PRIMORDIAL = "PRIMORDIAL"
-
-    # 
-    CANCELED = "CANCELED"
-  end
-
-end
-
-end
-
-end
-
-end
-
-end
-
-module Gov
-
-module Vha
-
-module Isaac
-
 module Rest
 
 module Api1
 
 module Data
 
-module Logic
+module Sememe
+
+module DataTypes
 
   # (no documentation provided)
-  class RestLiteralNodeInstant < Gov::Vha::Isaac::Rest::Api1::Data::Logic::RestLogicNode 
+  class RestDynamicSememeArray < Gov::Vha::Isaac::Rest::Api1::Data::Sememe::RestDynamicSememeData 
 
-    # RestLiteralNodeInstant contains a literal Instant value, literalValue
-    attr_accessor :literalValue
 
-    # the json hash for this RestLiteralNodeInstant
+    # the json hash for this RestDynamicSememeArray
     def to_jaxb_json_hash
       _h = super
-      _h['literalValue'] = literalValue.to_jaxb_json_hash unless literalValue.nil?
       return _h
     end
 
-    #initializes this RestLiteralNodeInstant with a json hash
+    #initializes this RestDynamicSememeArray with a json hash
     def init_jaxb_json_hash(_o)
       super _o
-      @literalValue = java.time::Instant.from_json(_o['literalValue']) unless _o['literalValue'].nil?
     end
 
-    # constructs a RestLiteralNodeInstant from a (parsed) JSON hash
+    # constructs a RestDynamicSememeArray from a (parsed) JSON hash
     def self.from_json(o)
       if o.nil?
         return nil
@@ -2573,6 +2616,8 @@ module Logic
       end
     end
   end
+
+end
 
 end
 
@@ -2632,6 +2677,65 @@ module DataTypes
   end
 
 end
+
+end
+
+end
+
+end
+
+end
+
+end
+
+end
+
+end
+
+module Gov
+
+module Vha
+
+module Isaac
+
+module Rest
+
+module Api1
+
+module Data
+
+module Logic
+
+  # (no documentation provided)
+  class RestLiteralNodeInstant < Gov::Vha::Isaac::Rest::Api1::Data::Logic::RestLogicNode 
+
+    # RestLiteralNodeInstant contains a literal Instant value, literalValue
+    attr_accessor :literalValue
+
+    # the json hash for this RestLiteralNodeInstant
+    def to_jaxb_json_hash
+      _h = super
+      _h['literalValue'] = literalValue.to_jaxb_json_hash unless literalValue.nil?
+      return _h
+    end
+
+    #initializes this RestLiteralNodeInstant with a json hash
+    def init_jaxb_json_hash(_o)
+      super _o
+      @literalValue = java.time::Instant.from_json(_o['literalValue']) unless _o['literalValue'].nil?
+    end
+
+    # constructs a RestLiteralNodeInstant from a (parsed) JSON hash
+    def self.from_json(o)
+      if o.nil?
+        return nil
+      else
+        inst = new
+        inst.init_jaxb_json_hash o
+        return inst
+      end
+    end
+  end
 
 end
 
@@ -2869,48 +2973,25 @@ module Vha
 
 module Isaac
 
-module Rest
+module Ochre
 
-module Api1
-
-module Data
-
-module Sememe
-
-module DataTypes
+module Api
 
   # (no documentation provided)
-  class RestDynamicSememeArray < Gov::Vha::Isaac::Rest::Api1::Data::Sememe::RestDynamicSememeData 
+  class State
 
+    # 
+    INACTIVE = "INACTIVE"
 
-    # the json hash for this RestDynamicSememeArray
-    def to_jaxb_json_hash
-      _h = super
-      return _h
-    end
+    # 
+    ACTIVE = "ACTIVE"
 
-    #initializes this RestDynamicSememeArray with a json hash
-    def init_jaxb_json_hash(_o)
-      super _o
-    end
+    # 
+    PRIMORDIAL = "PRIMORDIAL"
 
-    # constructs a RestDynamicSememeArray from a (parsed) JSON hash
-    def self.from_json(o)
-      if o.nil?
-        return nil
-      else
-        inst = new
-        inst.init_jaxb_json_hash o
-        return inst
-      end
-    end
+    # 
+    CANCELED = "CANCELED"
   end
-
-end
-
-end
-
-end
 
 end
 
