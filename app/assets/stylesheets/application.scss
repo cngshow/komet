@@ -229,6 +229,17 @@ html, body{
 }
 
 // Taxonomy Tree Styles
+.komet_dashboard .splitter_panel .komet-tree-node-icon{
+  width: 18px;
+  height: 18px;
+  margin-top: 2px;
+}
+.komet-tree-node-defined::before{
+  content: image-url("icon_defined.svg");
+}
+.komet-tree-node-primitive::before{
+  content: image-url("icon_primitive.svg");
+}
 .komet-reverse-tree{
   transform: scaleX(-1);
   transform: scaleY(-1);
@@ -373,6 +384,9 @@ td.komet-concept-table-nested-indicator.komet-concept-table-nested-indicator-ope
 .komet-concept-attributes-title{
   color: #5ec200;
   font-weight: bold;
+}
+.komet-concept-attributes-status{
+  margin-right: 5px;
 }
 .komet-concept-attributes-details-row{
   display: flex;

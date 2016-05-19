@@ -42,6 +42,15 @@ module ConceptConcern
 
     return_attributes << {label: 'Text', value: attributes.conChronology.description}
     return_attributes << {label: 'State', value: attributes.conVersion.state}
+
+    if attributes.isConceptDefined.nil? || !boolean(attributes.isConceptDefined)
+      defined = 'Primitive'
+    else
+      defined = 'Fully Defined'
+    end
+
+    return_attributes << {label: 'Defined', value: defined}
+
     return_attributes << {label: 'Time', value: DateTime.strptime((attributes.conVersion.time / 1000).to_s, '%s').strftime('%m/%d/%Y')}
 
     author = description_metadata(attributes.conVersion.authorSequence, stated)

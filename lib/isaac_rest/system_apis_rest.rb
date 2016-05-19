@@ -98,7 +98,7 @@ module SystemApis
       ACTION_SYSTEM_INFO => {
           PATH_SYM => PATH_SYSTEM_INFO,
           STARTING_PARAMS_SYM => PARAMS_SYSTEM_INFO,
-          CLAZZ_SYM => Gov::Vha::Isaac::Rest::Api1::Data::SystemInfo},
+          CLAZZ_SYM => Gov::Vha::Isaac::Rest::Api1::Data::RestSystemInfo},
   }
 
   class << self
