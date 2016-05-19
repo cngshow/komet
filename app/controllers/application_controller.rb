@@ -20,13 +20,18 @@ class ApplicationController < ActionController::Base
   #REST_API_VERSIONS
   def ensure_rest_version
     begin
-      @@invalid_rest_server ||= (SystemApis::get_system_api(action: SystemApiActions::ACTION_SYSTEM_INFO).supportedAPIVersions.map do |e| e.split('.').slice(0, 2).join('.') end & REST_API_VERSIONS.map(&:to_s)).empty? # '&' is intersection operator for arrays
-    rescue CommonRest::UnexpectedResponse, Faraday::ConnectionFailed => ex
-      if (ex.is_a? CommonRest::UnexpectedResponse)
-        @unexpected_message = ex.body
+      response = SystemApis::get_system_api(action: SystemApiActions::ACTION_SYSTEM_INFO)
+      unless response.is_a? CommonRest::UnexpectedResponse
+        @@invalid_rest_server ||= (response.supportedAPIVersions.map do |e|
+          e.split('.').slice(0, 2).join('.')
+        end & REST_API_VERSIONS.map(&:to_s)).empty? # '&' is intersection operator for arrays
       else
-        @unexpected_message = ex.message
+        @unexpected_message = response.body
       end
+    rescue Faraday::ConnectionFailed => ex
+      @unexpected_message = ex.message
+    end
+    if (@unexpected_message)
       $log.warn("The isaac rest server is not available.  Message is: #{@unexpected_message}")
       render 'errors/isaac_initializing'
       return
