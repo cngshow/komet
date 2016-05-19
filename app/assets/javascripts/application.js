@@ -28,12 +28,13 @@ Copyright Notice
 // Read Sprockets README (https://github.com/rails/sprockets#sprockets-directives) for details
 // about supported directives.
 //
-//= require jquery
+//= require jquery2
 //= require jquery_ujs
 //= require jquery-ui
 //= require moment.js
 //= require ag-grid.min.js
 //= require jquery.enhsplitter
+//= require jquery.minicolors
 //= require jquery.contextMenu.min.js
 //= require_tree ../../../vendor/assets/javascripts/jquery-svg
 //= require_tree ../../../vendor/assets/javascripts/jsTree

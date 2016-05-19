@@ -8,24 +8,47 @@
       <li><a href="javascript: location.replace('<%= komet_dashboard_dashboard_path %>')">Taxonomy Dashboard</a></li>
       <li><a id="settings" href="#">Settings</a></li>
       <div id="dialog-form" title="User's Preference">
-        <form>
-          <div>
-             <table>
-                 <tr> <td>Select Language:&nbsp;&nbsp;</td><td><select id="komet_concept_language" >
-                      </select></td>
-                 </tr>
-             </table>
-          </div><br><br>
-           <table id="description_type"  width='80%'  cellpadding='2' cellspacing='3'>
+        <div id="tabs">
+          <ul>
+            <li><a href='#useroptions'>Options</a></li>
+            <li><a href='#color-module'>Color Module</a></li>
 
-             </table>
-            <br><br>
-           <table id="dialecttbl"  width='80%'  cellpadding='2' cellspacing='3'>
+          </ul>
+          <div id="useroptions">
+            <form>
+              <div>
+                <table>
+                  <tr> <td>Select Language:&nbsp;&nbsp;</td><td><select id="komet_concept_language" >
+                  </select></td>
+                  </tr>
+                </table>
+              </div><br><br>
+              <table id="description_type"  width='80%'  cellpadding='2' cellspacing='3'>
 
-           </table>
-            <br><br>
+              </table>
+              <br><br>
+              <table id="dialecttbl"  width='80%'  cellpadding='2' cellspacing='3'>
 
-          </form>
+              </table>
+
+              <br><br>
+              <div>
+                <div  width='60%' style="background-color: #4f80d9;color:white">Status</div>
+                <input type="radio" name="status" value="Active">Active<br>
+                <input type="radio" name="status" value="Inactive">InActive<br>
+                <input type="radio" name="status" checked="checked" value="Active,Inactive">Both<br>
+              </div>
+            </form>
+          </div>
+          <div id="color-module">
+
+            <table id="listofmodule"  width='90%'   cellpadding='2' cellspacing='3'>
+
+            </table>
+          </div>
+        </div>
+
+
       </div>
     </ul>
   </div>
@@ -33,6 +56,7 @@
 <script>
 
   $(document).ready(function () {
+    $("#tabs").tabs();
     PreferenceModule.initialize();
     });
 </script>

@@ -185,8 +185,14 @@ class KometDashboardController < ApplicationController
   # gets default/ users preference coordinates
   def get_coordinates
     getcoordinates_results = {}
-    getcoordinates_results = CoordinateRest.get_coordinate(action: CoordinateRestActions::ACTION_COORDINATES)
+    token = session[:coordinatestoken].token
+    additional_req_params = {coordToken: token}
+    $log.debug("token get_coordinates #{token}" )
+    getcoordinates_results = CoordinateRest.get_coordinate(action: CoordinateRestActions::ACTION_COORDINATES,additional_req_params: additional_req_params)
     value = getcoordinates_results.languageCoordinate.to_json
+    getcoordinates_results = JSON.parse(getcoordinates_results.to_json)
+    getcoordinates_results[:colormodule]= session[:colormodule]
+
     render json:  getcoordinates_results.to_json
   end
 
@@ -195,8 +201,11 @@ class KometDashboardController < ApplicationController
   hash[:language] = params[:language]
   hash[:dialectPrefs] = params[:dialectPrefs]
   hash[:descriptionTypePrefs] = params[:descriptionTypePrefs]
+  hash[:allowedStates]= params[:allowedStates]
+  session[:colormodule] =params[:colormodule]
   results =  CoordinateRest.get_coordinate(action: CoordinateRestActions::ACTION_COORDINATES_TOKEN,  additional_req_params: hash)
   session[:coordinatestoken] = results
+ $log.debug("token get_coordinatestoken #{results.token}" )
   render json:  results.to_json
 
   end
@@ -392,8 +401,9 @@ class KometDashboardController < ApplicationController
     json = YAML.load_file constants_file
     translated_hash = add_translations(json)
     gon.IsaacMetadataAuxiliary = translated_hash
-
-    session[:coordinatestoken] = CoordinateRest.get_coordinate(action: CoordinateRestActions::ACTION_COORDINATES_TOKEN)
+    results =CoordinateRest.get_coordinate(action: CoordinateRestActions::ACTION_COORDINATES_TOKEN)
+    $log.debug("token initial #{results.token}" )
+    session[:coordinatestoken] = results
 
   end
 
