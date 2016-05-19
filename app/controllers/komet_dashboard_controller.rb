@@ -78,7 +78,8 @@ class KometDashboardController < ApplicationController
       isaac_concept = TaxonomyRest.get_isaac_root(additional_req_params: additional_req_params)
 
       # load the root node into our return variable
-      tree_nodes << {id: 0, concept_id: isaac_concept.conChronology.identifiers.uuids.first, text: isaac_concept.conChronology.description, parent: '#', parent_reversed: false, parent_search: parent_search, icon: 'glyphicon glyphicon-fire', a_attr: {class: ''}, state: {opened: 'true'}}
+      root_anchor_attributes = { class: 'komet-context-menu', 'data-menu-type' => 'concept', 'data-menu-uuid' => isaac_concept.conChronology.identifiers.uuids.first}
+      tree_nodes << {id: 0, concept_id: isaac_concept.conChronology.identifiers.uuids.first, text: isaac_concept.conChronology.description, parent: '#', parent_reversed: false, parent_search: parent_search, icon: 'komet-tree-node-icon komet-tree-node-primitive', a_attr: root_anchor_attributes, state: {opened: 'true'}}
 
       selected_concept_id = 0
     else
@@ -221,6 +222,11 @@ class KometDashboardController < ApplicationController
     node[:id] = concept.conChronology.identifiers.uuids.first
     node[:text] = concept.conChronology.description
     node[:has_children] = !concept.children.nil?
+    node[:defined] = concept.isConceptDefined
+
+    if node[:defined].nil?
+      node[:defined] = false
+    end
 
     if node[:has_children]
       node[:child_count] = concept.children.length
@@ -342,12 +348,18 @@ class KometDashboardController < ApplicationController
         anchor_attributes[:class] += ' komet-reverse-tree-node'
       end
 
+      if boolean(raw_node[:defined])
+        icon_class = 'komet-tree-node-icon komet-tree-node-defined'
+      else
+        icon_class = 'komet-tree-node-icon komet-tree-node-primitive'
+      end
+
       # if the node has no children (or no parents if doing a parent search) identify it as a leaf, otherwise it is a branch
       if raw_node[has_relation]
-        icon_class = 'glyphicon glyphicon-book' # komet-node-image-red
+        # icon_class = 'komet-tree-node-icon' # komet-node-image-red
       else
 
-        icon_class = 'glyphicon glyphicon-leaf'
+        # icon_class = 'glyphicon glyphicon-leaf'
         show_expander = false
       end
 
