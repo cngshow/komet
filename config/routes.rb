@@ -5,6 +5,7 @@ Rails.application.routes.draw do
 
   get 'komet_dashboard/dashboard'
   get 'komet_dashboard/metadata'
+  get 'komet_dashboard/version'
   get 'komet_dashboard/load_tree_data', :as => :taxonomy_load_tree_data
   get 'komet_dashboard/get_concept_information', :as => :taxonomy_get_concept_information
   get 'komet_dashboard/get_concept_summary', :as => :taxonomy_get_concept_summary

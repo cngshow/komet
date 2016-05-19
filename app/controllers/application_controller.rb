@@ -19,7 +19,7 @@ class ApplicationController < ActionController::Base
 
   #REST_API_VERSIONS
   def ensure_rest_version
-    @@invalid_rest_server ||= (SystemApis::get_system_api(action: SystemApiActions::ACTION_SYSTEM_INFO).supportedAPIVersions & REST_API_VERSIONS.map(&:to_s)).empty? # '&' is intersection operator for arrays
+    @@invalid_rest_server ||= (SystemApis::get_system_api(action: SystemApiActions::ACTION_SYSTEM_INFO).supportedAPIVersions.map do |e| e.split('.').slice(0,2).join('.') end & REST_API_VERSIONS.map(&:to_s)).empty? # '&' is intersection operator for arrays
     if(@@invalid_rest_server)
       versions = SystemApis::get_system_api(action: SystemApiActions::ACTION_SYSTEM_INFO).supportedAPIVersions
       render :file => (trinidad? ? 'public/invalid_issac_rest.html' : "#{Rails.root}/../invalid_issac_rest.html")

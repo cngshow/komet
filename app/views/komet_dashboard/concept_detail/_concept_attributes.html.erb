@@ -9,8 +9,17 @@
       <div class="glyphicon glyphicon-plus-sign" onclick="ConceptsModule.viewers[<%= @viewer_id %>].togglePanelDetails('komet_concept_attributes_panel_<%= @viewer_id %>', null, true)"></div>
 
       <!-- Status -->
-      <div>
+      <div class="komet-concept-attributes-status">
         <%= @attributes[1][:value] %>
+      </div>
+
+      <!-- Defined -->
+      <div>
+        <% if @attributes[2][:value] == 'Primitive' %>
+            <div class="komet-tree-node-icon komet-tree-node-primitive" title="<%= @attributes[2][:value] %>"></div>
+        <% else %>
+            <div class="komet-tree-node-icon komet-tree-node-defined" title="<%= @attributes[2][:value] %>"></div>
+        <% end %>
       </div>
 
     </div>
@@ -19,7 +28,7 @@
     <div class="komet-concept-section-panel-details">
 
       <!-- loop through the attributes attributes -->
-      <% @attributes.drop(1).each_with_index do |attribute, attribute_index| %>
+      <% @attributes.drop(3).each_with_index do |attribute, attribute_index| %>
 
           <% if attribute_index > 0 %>
               <hr class="komet-concept-details-hr" />
