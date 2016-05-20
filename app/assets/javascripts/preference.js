@@ -28,14 +28,6 @@ var PreferenceModule = (function () {
             height: 600,
             width: 550,
             dialogClass: "no-close",
-            show: {
-                effect: "blind",
-                duration: 1000
-            },
-            hide: {
-                effect: "explode",
-                duration: 1000
-            },
             modal: true,
             buttons: {
                 "Apply changes": applyChanges,
@@ -229,6 +221,7 @@ var PreferenceModule = (function () {
             });
 
             dialog.dialog( "close" );
+            location.replace(gon.routes.komet_dashboard_dashboard_path);
         }
 
     }
