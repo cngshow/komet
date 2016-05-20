@@ -380,7 +380,7 @@ class KometDashboardController < ApplicationController
           hash['moduleid'].to_s == raw_node[:module].to_s
         }
 
-        if color
+        if color &&  color[1]['colorid'] != ''
           flag = ' <span class="komet-node-module-flag" style="background-color: ' + color[1]['colorid'] + '; color: ' + color[1]['colorid'] + ';"></span>'
         end
       end
