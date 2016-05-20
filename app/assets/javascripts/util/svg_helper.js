@@ -60,7 +60,7 @@ var SvgHelper = (function () {
            var maxX = 10;
            var sctclass = "";
 
-           if (data.isReferencedConceptDefined) {
+           if (data.isReferencedConceptDefined === 'true') {
                sctClass = "sct-defined-concept";
            }
            else {
@@ -112,12 +112,12 @@ var SvgHelper = (function () {
 
            });
 
-           sctClass = "sct-defined-concept";
+          // sctClass = "sct-defined-concept";
            $.each(svgIsaModel, function (i, relationship) {
-               if (!relationship.isConceptDefined) {
-                   sctClass = "sct-primitive-concept";
-               } else {
+               if (relationship.isConceptDefined === 'true') {
                    sctClass = "sct-defined-concept";
+               } else {
+                   sctClass = "sct-primitive-concept";
                }
 
                var rectParent = drawSctBox(svg, x, y, relationship.conceptDescription, relationship.conceptSequence, sctClass);
@@ -128,10 +128,10 @@ var SvgHelper = (function () {
 
            // load ungrouped attributes
            $.each(svgAttrModel, function (i, relationship) {
-               if (!relationship.isConceptDefined) {
-                   sctClass = "sct-primitive-concept";
-               } else {
+               if (relationship.isConceptDefined === 'true') {
                    sctClass = "sct-defined-concept";
+               } else {
+                   sctClass = "sct-primitive-concept";
                }
 
                if (relationship.connectorTypeConceptSequence == "0") {
@@ -156,11 +156,12 @@ var SvgHelper = (function () {
                    connectElements(svg, groupNode, conjunctionNode, 'right', 'left');
                }
 
-               if (!relationship.isConceptDefined) {
-                   sctClass = "sct-primitive-concept";
-               } else {
+               if (relationship.isConceptDefined === 'true') {
                    sctClass = "sct-defined-concept";
+               } else {
+                   sctClass = "sct-primitive-concept";
                }
+
                if (relationship.connectorTypeConceptSequence != rolegroup) {
                    var rectRole = drawSctBox(svg, x + 85, y - 18, relationship.connectorTypeConceptDescription, relationship.connectorTypeConceptSequence, "sct-attribute");
                    connectElements(svg, conjunctionNode, rectRole, 'center', 'left');

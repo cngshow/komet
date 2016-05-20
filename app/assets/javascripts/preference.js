@@ -158,7 +158,6 @@ var PreferenceModule = (function () {
 
                     var colorheadingtd2 = document.createElement("TD");
                     colorheadingtd2.innerHTML = 'Color';
-                    console.log(getcoordinates_results.colormodule);
                     document.getElementById("colorheading").appendChild(colorheadingtd2);
                     $.each(getcoordinates_results.colormodule,function(index,value) {
                         populateColormodule(value.moduleid ,value.module_name,value.colorid)
