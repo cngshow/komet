@@ -30,11 +30,11 @@ var PreferenceModule = (function () {
             dialogClass: "no-close",
             show: {
                 effect: "blind",
-                duration: 1000
+                duration: 100
             },
             hide: {
-                effect: "explode",
-                duration: 1000
+                effect: "blind",
+                duration: 100
             },
             modal: true,
             buttons: {
