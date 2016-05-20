@@ -106,7 +106,7 @@ module ConceptConcern
       attributes << {label: 'UUID', text: description_uuid, state: description_state, time: description_time, author: description_author, module: description_module, path: description_path}
 
       # get the description SCTID information if there is one and add it to the attributes array
-      sctid = IdAPIsRest.get_id(uuid_or_id: uuid, action: IdAPIsRestActions::ACTION_TRANSLATE, additional_req_params: {outputType: 'sctid'})
+      sctid = IdAPIsRest.get_id(uuid_or_id: description_uuid, action: IdAPIsRestActions::ACTION_TRANSLATE, additional_req_params: {outputType: 'sctid'})
 
       if sctid.respond_to?(:value)
         attributes << {label: 'SCTID', text: sctid.value, state: description_state, time: description_time, author: description_author, module: description_module, path: description_path}
