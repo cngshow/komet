@@ -121,7 +121,7 @@ var KometTaxonomyTree = function(treeID, stated, parentSearch, startingConceptID
 
             // set ui to regular cursor
             Common.cursor_auto();
-        });
+        }.bind(this));
 
         function onAfterOpen(node, selected) {
             //publish what we expect our observers to need in a way that allows them not to understand

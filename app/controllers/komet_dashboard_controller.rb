@@ -232,6 +232,10 @@ class KometDashboardController < ApplicationController
     node[:text] = concept.conChronology.description
     node[:has_children] = !concept.children.nil?
     node[:defined] = concept.isConceptDefined
+    node[:state] = concept.conVersion.state
+    node[:author] = concept.conVersion.authorSequence
+    node[:module] = concept.conVersion.moduleSequence
+    node[:path] = concept.conVersion.pathSequence
 
     if node[:defined].nil?
       node[:defined] = false
@@ -363,16 +367,25 @@ class KometDashboardController < ApplicationController
         icon_class = 'komet-tree-node-icon komet-tree-node-primitive'
       end
 
-      # if the node has no children (or no parents if doing a parent search) identify it as a leaf, otherwise it is a branch
-      if raw_node[has_relation]
-        # icon_class = 'komet-tree-node-icon' # komet-node-image-red
-      else
+      flag = ''
 
-        # icon_class = 'glyphicon glyphicon-leaf'
+      # if the node has no children (or no parents if doing a parent search) identify it as a leaf, otherwise it is a branch
+      if !raw_node[has_relation]
         show_expander = false
       end
 
-      node = {id: get_next_id, concept_id: raw_node[:id], text: raw_node[:text], parent_reversed: parent_reversed, parent_search: parent_search, icon: icon_class, a_attr: anchor_attributes}
+      if session['colormodule']
+
+        color = session['colormodule'].find{|key, hash|
+          hash['moduleid'].to_s == raw_node[:module].to_s
+        }
+
+        if color
+          flag = ' <span class="komet-node-module-flag" style="background-color: ' + color[1]['colorid'] + '; color: ' + color[1]['colorid'] + ';"></span>'
+        end
+      end
+
+      node = {id: get_next_id, concept_id: raw_node[:id], text: raw_node[:text] + flag, parent_reversed: parent_reversed, parent_search: parent_search, icon: icon_class, a_attr: anchor_attributes}
 
       # if the current ID is root, then add a 'parent' field to the node to satisfy the alternate JSON format of JSTree for this level of the tree
       if current_node_id == 0 || current_node_id == '#' || !first_level
