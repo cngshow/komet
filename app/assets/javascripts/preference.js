@@ -28,6 +28,14 @@ var PreferenceModule = (function () {
             height: 600,
             width: 550,
             dialogClass: "no-close",
+            show: {
+                effect: "blind",
+                duration: 1000
+            },
+            hide: {
+                effect: "explode",
+                duration: 1000
+            },
             modal: true,
             buttons: {
                 "Apply changes": applyChanges,
@@ -55,10 +63,9 @@ var PreferenceModule = (function () {
             var dialectassemblagepreferences="";
             var allowedstates =[];
 
-            //Gets list of all the module
+            //Gets list of all the module.creating color module table from rest api call by passing constant uuid
             var uuidParams =  "?uuid=" +  gon.IsaacMetadataAuxiliary.MODULE.uuids[0].uuid;
             // make an ajax call to get the data
-
             $.get(gon.routes.taxonomy_get_concept_languages_dialect_path + uuidParams, function( results ) {
                 document.getElementById('listofmodule').innerHTML ="";
 
@@ -135,7 +142,7 @@ var PreferenceModule = (function () {
                 //checked selected  values in status list
                 selectAllowedstates(allowedstates);
 
-
+                // this recreating color module table from session
                 if (getcoordinates_results.colormodule != null)
                 {
                     document.getElementById('listofmodule').innerHTML ="";
@@ -208,7 +215,7 @@ var PreferenceModule = (function () {
             });
 
             $('input[name=color_id]').each(function() {
-               var splitvalue = this.id.split('~');
+                var splitvalue = this.id.split('~');
                 colormodule.push({module_name:splitvalue[0],moduleid:splitvalue[1] ,colorid:this.value }) ;
             });
             dialect_values = dialect_values.substring(0  ,dialect_values.length -1); // removing comma from end of the string
@@ -221,25 +228,24 @@ var PreferenceModule = (function () {
             });
 
             dialog.dialog( "close" );
-            location.replace(gon.routes.komet_dashboard_dashboard_path);
         }
 
     }
-
+// sets selected value of status radion button list
     function selectAllowedstates(values)
     {
         var statues ="";
         var inactive ="";
         for (var i = 0, count = values.length; i < count; i++) {
-             if (values[i].name === 'Active')
-             {
-                 statues = 'Active'
-             }
+            if (values[i].name === 'Active')
+            {
+                statues = 'Active'
+            }
             if (values[i].name === 'Inactive' &&  statues === 'Active')
             {
                 statues += ',Inactive'
             }
-           if (values[i].name === 'Inactive' &&  statues === "")
+            if (values[i].name === 'Inactive' &&  statues === "")
             {
                 statues  = 'Inactive'
             }
@@ -248,6 +254,7 @@ var PreferenceModule = (function () {
         $("input[name=status][value='" + statues + "']").attr('checked', 'checked');
     }
 
+    // adding row to color module table
     function populateColormodule(conceptSequence,description,colorvalue)
     {
         var tr = document.createElement("TR");
@@ -260,21 +267,21 @@ var PreferenceModule = (function () {
         document.getElementById("colorTr" +conceptSequence).appendChild(td2);
 
         var td3 = document.createElement("TD");
-        td3.innerHTML ='<input name="color_id" class="demo"  type="text" id="' + description + '~' + conceptSequence + '" size="6" style="height:40px" data-control="hue" value="' + colorvalue + '" />';
+        td3.innerHTML ='<input name="color_id" class="demo" title="Click here to change color"  type="text" id="' + description + '~' + conceptSequence + '" size="6" style="height:40px" data-control="hue" value="' + colorvalue + '" />';
 
         document.getElementById("colorTr" + conceptSequence).appendChild(td3);
     }
 
-   // creates table of description type and dialect
+    // creates table of description type and dialect
     function populateControls(tablename,uuid,arrya_ids)
     {
         var counter =0;
         var get_default_ids =[];
         var get_default_values_id =[];
 
-      if (tablename === 'dialecttbl')
-      { counter =10;
-      }
+        if (tablename === 'dialecttbl')
+        { counter =10;
+        }
         uuidParams =  "?uuid=" + uuid;
         $.get( gon.routes.taxonomy_get_concept_languages_dialect_path + uuidParams, function( results ) {
             $.each(results.children,function(index,value) {
@@ -296,7 +303,7 @@ var PreferenceModule = (function () {
                 counter = counter + 1;
                 for(var j = 0; j < get_default_values_id.length; j++)
                 {
-                   if( parseInt(items_used[i]) === parseInt(get_default_values_id[j].id)  )
+                    if( parseInt(items_used[i]) === parseInt(get_default_values_id[j].id)  )
                     {
                         renderTbl(get_default_values_id,counter,tablename,j);
                     }
@@ -317,7 +324,7 @@ var PreferenceModule = (function () {
         });
     }
 
-
+// add row to description type and dialect table
     function renderTbl(value,counter,tblname,index)
     {
         var tr = document.createElement("TR");
@@ -334,7 +341,7 @@ var PreferenceModule = (function () {
         document.getElementById("Tr" + counter).appendChild(td2);
 
         var td3 = document.createElement("TD");
-        td3.innerHTML ='<input   type="text" name="' + tblname  + '" id="rank_"' + counter + '" size="2" value="' + value[index].id + '" />';
+        td3.innerHTML ='<input   type="hidden" name="' + tblname  + '" id="rank_"' + counter + '" size="2" value="' + value[index].id + '" />';
         document.getElementById("Tr" + counter).appendChild(td3);
 
     }
