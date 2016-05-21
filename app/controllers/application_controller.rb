@@ -19,8 +19,24 @@ class ApplicationController < ActionController::Base
 
   #REST_API_VERSIONS
   def ensure_rest_version
-    @@invalid_rest_server ||= (SystemApis::get_system_api(action: SystemApiActions::ACTION_SYSTEM_INFO).supportedAPIVersions.map do |e| e.split('.').slice(0,2).join('.') end & REST_API_VERSIONS.map(&:to_s)).empty? # '&' is intersection operator for arrays
-    if(@@invalid_rest_server)
+    begin
+      response = SystemApis::get_system_api(action: SystemApiActions::ACTION_SYSTEM_INFO)
+      unless response.is_a? CommonRest::UnexpectedResponse
+        @@invalid_rest_server ||= (response.supportedAPIVersions.map do |e|
+          e.split('.').slice(0, 2).join('.')
+        end & REST_API_VERSIONS.map(&:to_s)).empty? # '&' is intersection operator for arrays
+      else
+        @unexpected_message = response.body
+      end
+    rescue Faraday::ConnectionFailed => ex
+      @unexpected_message = ex.message
+    end
+    if (@unexpected_message)
+      $log.warn("The isaac rest server is not available.  Message is: #{@unexpected_message}")
+      render 'errors/isaac_initializing'
+      return
+    end
+    if (@@invalid_rest_server)
       versions = SystemApis::get_system_api(action: SystemApiActions::ACTION_SYSTEM_INFO).supportedAPIVersions
       render :file => (trinidad? ? 'public/invalid_issac_rest.html' : "#{Rails.root}/../invalid_issac_rest.html")
       $log.fatal("The isaac rest server this instance of Komet is pointed to is invalid!")

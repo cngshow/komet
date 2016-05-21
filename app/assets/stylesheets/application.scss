@@ -30,6 +30,7 @@ Copyright Notice
  *
  *= require jquery-ui
  *= require jquery.enhsplitter
+ *= require jquery.minicolors
  *= require_tree ../../../vendor/assets/stylesheets/contextMenu
  *= require_tree ../../../vendor/assets/stylesheets/jsTree
  */
@@ -246,12 +247,12 @@ html, body{
 .komet-reverse-tree-node{
   transform: scaleY(-1);
 }
-.komet-node-image-red:after{
+.komet-node-module-flag:after{
   margin-left: 2px;
   content: "i";
   height: 100%;
-  background-color: red;
-  color: red;
+  background-color: inherit;
+  color: inherit;
 }
 .komet-node-image-yellow{
   background-color: yellow !important;
@@ -407,14 +408,18 @@ td.komet-concept-table-nested-indicator.komet-concept-table-nested-indicator-ope
   color: #ff9100;
   font-weight: bold;
 }
-.komet-concept-description-title-block{
-  min-width: 125px;
+.komet-concept-description-panel-header{
+  flex-wrap: nowrap;
+}
+.komet-concept-description-panel-header .glyphicon, .komet-concept-description-panel-header .fa{
   margin-right: 5px;
 }
-.komet-concept-description-title-block .glyphicon, .komet-concept-description-title-block .fa{
-  margin-right: 5px;
+.komet-concept-description-header-block{
+  display: flex;
+  flex-direction: column;
+  flex-wrap: wrap;
 }
-.komet-concept-description-title-block span{
+.komet-concept-description-header-block span{
   display: inline-block;
 }
 .komet-concept-description-text{

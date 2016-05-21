@@ -25,16 +25,16 @@ var PreferenceModule = (function () {
             autoOpen: false,
             closeOnEscape: false,
             position: ["bottom",70],
-            height: 500,
+            height: 600,
             width: 550,
             dialogClass: "no-close",
             show: {
                 effect: "blind",
-                duration: 1000
+                duration: 100
             },
             hide: {
-                effect: "explode",
-                duration: 1000
+                effect: "blind",
+                duration: 100
             },
             modal: true,
             buttons: {
@@ -61,6 +61,42 @@ var PreferenceModule = (function () {
             var getcoordinates = "";
             var descriptiontypepreferences= "";
             var dialectassemblagepreferences="";
+            var allowedstates =[];
+
+            //Gets list of all the module.creating color module table from rest api call by passing constant uuid
+            var uuidParams =  "?uuid=" +  gon.IsaacMetadataAuxiliary.MODULE.uuids[0].uuid;
+            // make an ajax call to get the data
+            $.get(gon.routes.taxonomy_get_concept_languages_dialect_path + uuidParams, function( results ) {
+                document.getElementById('listofmodule').innerHTML ="";
+
+                var colorheadingtr = document.createElement("TR");
+                colorheadingtr.setAttribute("id", "colorheading");
+                colorheadingtr.setAttribute("style", "background-color: #4f80d9;color:white")
+                document.getElementById('listofmodule').appendChild(colorheadingtr);
+
+                var colorheadingtd1 = document.createElement("TD");
+                colorheadingtd1.innerHTML ='Module';
+                document.getElementById("colorheading").appendChild(colorheadingtd1);
+
+                var colorheadingtd2 = document.createElement("TD");
+                colorheadingtd2.innerHTML = 'Color';
+                document.getElementById("colorheading").appendChild(colorheadingtd2);
+                $.each(results.children,function(index,value) {
+                    populateColormodule(value.conChronology.conceptSequence,value.conChronology.description)
+                });
+                $('.demo').minicolors();
+            });
+
+
+            // Gets list of all the languages based on constant uuid value
+            uuidParams =  "?uuid=" +  gon.IsaacMetadataAuxiliary.LANGUAGE.uuids[0].uuid;
+            // make an ajax call to get the data
+            $.get(gon.routes.taxonomy_get_concept_languages_dialect_path + uuidParams, function( results ) {
+                $.each(results.children,function(index,value) {
+                    $("#komet_concept_language").append($("<option />").val(value.conChronology.conceptSequence).text(value.conChronology.description));
+                });
+            });
+
 
             document.getElementById('description_type').innerHTML ="";
             document.getElementById('dialecttbl').innerHTML ="";
@@ -93,28 +129,45 @@ var PreferenceModule = (function () {
 
             $.get( gon.routes.taxonomy_get_coordinates_path, function( getcoordinates_results ) {
                 $( "#komet_concept_language" ).val(getcoordinates_results.languageCoordinate.language);
+
                 descriptiontypepreferences = getcoordinates_results.languageCoordinate.dialectAssemblagePreferences;
                 dialectassemblagepreferences= getcoordinates_results.languageCoordinate.descriptionTypePreferences;
-
+                allowedstates =getcoordinates_results.stampCoordinate.allowedStates;
                 // Gets list of all the dialect based on constant uuid value
-                populateControls('description_type',gon.IsaacMetadataAuxiliary.DIALECT_ASSEMBLAGE.uuids[0].uuid,descriptiontypepreferences)
+                populateControls('dialecttbl',gon.IsaacMetadataAuxiliary.DIALECT_ASSEMBLAGE.uuids[0].uuid,descriptiontypepreferences)
 
                 // Gets list of all the description type based on constant uuid value
-                populateControls('dialecttbl',gon.IsaacMetadataAuxiliary.DESCRIPTION_TYPE.uuids[0].uuid,dialectassemblagepreferences)
+                populateControls('description_type',gon.IsaacMetadataAuxiliary.DESCRIPTION_TYPE.uuids[0].uuid,dialectassemblagepreferences)
 
+                //checked selected  values in status list
+                selectAllowedstates(allowedstates);
 
+                // this recreating color module table from session
+                if (getcoordinates_results.colormodule != null)
+                {
+                    document.getElementById('listofmodule').innerHTML ="";
+
+                    var colorheadingtr = document.createElement("TR");
+                    colorheadingtr.setAttribute("id", "colorheading");
+                    colorheadingtr.setAttribute("style", "background-color: #4f80d9;color:white")
+                    document.getElementById('listofmodule').appendChild(colorheadingtr);
+
+                    var colorheadingtd1 = document.createElement("TD");
+                    colorheadingtd1.innerHTML ='Module';
+                    document.getElementById("colorheading").appendChild(colorheadingtd1);
+
+                    var colorheadingtd2 = document.createElement("TD");
+                    colorheadingtd2.innerHTML = 'Color';
+                    document.getElementById("colorheading").appendChild(colorheadingtd2);
+                    $.each(getcoordinates_results.colormodule,function(index,value) {
+                        populateColormodule(value.moduleid ,value.module_name,value.colorid)
+                    });
+                    $('.demo').minicolors();
+                }
             });
 
         });
 
-        // Gets list of all the languages based on constant uuid value
-        var uuidParams =  "?uuid=" +  gon.IsaacMetadataAuxiliary.LANGUAGE.uuids[0].uuid;
-        // make an ajax call to get the data
-        $.get(gon.routes.taxonomy_get_concept_languages_dialect_path + uuidParams, function( results ) {
-            $.each(results.children,function(index,value) {
-                $("#komet_concept_language").append($("<option />").val(value.conChronology.conceptSequence).text(value.conChronology.description));
-            });
-        });
 
         //this events are used to rank the description type and dialect rows
         $(document).on("click", ".change-rank.up", function (ev) {
@@ -145,40 +198,89 @@ var PreferenceModule = (function () {
 
         // passes the users preference to get coordinatetoken api and creates sessions
         function applyChanges() {
-            var description_values =""
-            var dialect_values =""
+            var description_values ="";
+            var dialect_values ="";
             var language_values=$( "#komet_concept_language" ).val();
-            var params = ""
+            var allowedStates=$('input[type=radio]:checked').val();
+            var colormodule=[];
+            var params = "";
+            var moduleid="";
 
             $('input[name=description_type]').each(function() {
                 description_values += this.value + ',' ;
             });
-            $('input[name=dialect_txt]').each(function() {
+            $('input[name=dialecttbl]').each(function() {
                 dialect_values += this.value + ',' ;
             });
 
+            $('input[name=color_id]').each(function() {
+                var splitvalue = this.id.split('~');
+                colormodule.push({module_name:splitvalue[0],moduleid:splitvalue[1] ,colorid:this.value }) ;
+            });
             dialect_values = dialect_values.substring(0  ,dialect_values.length -1); // removing comma from end of the string
             description_values = description_values.substring(0  ,description_values.length -1);// removing comma from end of the string
 
-            params = {language: language_values , dialectPrefs: dialect_values ,descriptionTypePrefs:description_values} ;
+            params = {language: language_values , dialectPrefs: dialect_values ,descriptionTypePrefs:description_values, allowedStates:allowedStates ,colormodule:colormodule} ;
 
-            $.get( gon.routes.taxonomy_get_coordinatestoken , params, function( results ) {
+            $.get( gon.routes.taxonomy_get_coordinatestoken_path , params, function( results ) {
+
             });
 
             dialog.dialog( "close" );
         }
 
     }
-   // creates table of description type and dialect
+// sets selected value of status radion button list
+    function selectAllowedstates(values)
+    {
+        var statues ="";
+        var inactive ="";
+        for (var i = 0, count = values.length; i < count; i++) {
+            if (values[i].name === 'Active')
+            {
+                statues = 'Active'
+            }
+            if (values[i].name === 'Inactive' &&  statues === 'Active')
+            {
+                statues += ',Inactive'
+            }
+            if (values[i].name === 'Inactive' &&  statues === "")
+            {
+                statues  = 'Inactive'
+            }
+
+        }
+        $("input[name=status][value='" + statues + "']").attr('checked', 'checked');
+    }
+
+    // adding row to color module table
+    function populateColormodule(conceptSequence,description,colorvalue)
+    {
+        var tr = document.createElement("TR");
+        tr.setAttribute("id", "colorTr" + conceptSequence );
+
+        document.getElementById('listofmodule').appendChild(tr);
+
+        var td2 = document.createElement("TD");
+        td2.innerHTML = description;
+        document.getElementById("colorTr" +conceptSequence).appendChild(td2);
+
+        var td3 = document.createElement("TD");
+        td3.innerHTML ='<input name="color_id" class="demo" title="Click here to change color"  type="text" id="' + description + '~' + conceptSequence + '" size="6" style="height:40px" data-control="hue" value="' + colorvalue + '" />';
+
+        document.getElementById("colorTr" + conceptSequence).appendChild(td3);
+    }
+
+    // creates table of description type and dialect
     function populateControls(tablename,uuid,arrya_ids)
     {
         var counter =0;
         var get_default_ids =[];
         var get_default_values_id =[];
 
-      if (tablename === 'dialecttbl')
-      { counter =10;
-      }
+        if (tablename === 'dialecttbl')
+        { counter =10;
+        }
         uuidParams =  "?uuid=" + uuid;
         $.get( gon.routes.taxonomy_get_concept_languages_dialect_path + uuidParams, function( results ) {
             $.each(results.children,function(index,value) {
@@ -189,19 +291,20 @@ var PreferenceModule = (function () {
             var items = get_default_ids;
             var items_used = arrya_ids;
             var items_compared = Array();
+            var items_adddescription_id =[];
 
             $.each(items, function(i, val){
                 if($.inArray(val, items_used) < 0)
                     items_compared.push(val);
             });
             // create rows that match coordination id with users pref coordination id
-            for (var i = 0, count = get_default_values_id.length; i < count; i++) {
+            for (var i = 0, count = items_used.length; i < count; i++) {
                 counter = counter + 1;
-                for(var j = 0; j < items_used.length; j++)
+                for(var j = 0; j < get_default_values_id.length; j++)
                 {
-                    if( parseInt(get_default_values_id[i].id) === parseInt(items_used[j]) )
+                    if( parseInt(items_used[i]) === parseInt(get_default_values_id[j].id)  )
                     {
-                        renderTbl( get_default_values_id,counter,tablename,i);
+                        renderTbl(get_default_values_id,counter,tablename,j);
                     }
                 }
             }
@@ -220,25 +323,25 @@ var PreferenceModule = (function () {
         });
     }
 
-
+// add row to description type and dialect table
     function renderTbl(value,counter,tblname,index)
     {
         var tr = document.createElement("TR");
-        tr.setAttribute("id", "myTr" + counter);
+        tr.setAttribute("id", "Tr" + counter);
         tr.setAttribute("data-cnt",counter);
         document.getElementById(tblname).appendChild(tr);
 
         var td1 = document.createElement("TD");
         td1.innerHTML ='<a  href="#"  class="change-rank up" data-icon="&#9650;"></a>&nbsp<a  href="#"  class="change-rank down" data-icon="&#9660;"></a>';
-        document.getElementById("myTr" + counter).appendChild(td1);
+        document.getElementById("Tr" + counter).appendChild(td1);
 
         var td2 = document.createElement("TD");
         td2.innerHTML = value[index].description;
-        document.getElementById("myTr" + counter).appendChild(td2);
+        document.getElementById("Tr" + counter).appendChild(td2);
 
         var td3 = document.createElement("TD");
-        td3.innerHTML ='<input   type="hidden" name="description_type" id="rank_"' + counter + '" size="2" value="' + value[index].id + '" />';
-        document.getElementById("myTr" + counter).appendChild(td3);
+        td3.innerHTML ='<input   type="hidden" name="' + tblname  + '" id="rank_"' + counter + '" size="2" value="' + value[index].id + '" />';
+        document.getElementById("Tr" + counter).appendChild(td3);
 
     }
 

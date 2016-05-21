@@ -106,15 +106,13 @@ module ConceptConcern
       attributes << {label: 'UUID', text: description_uuid, state: description_state, time: description_time, author: description_author, module: description_module, path: description_path}
 
       # get the description SCTID information if there is one and add it to the attributes array
-      sctid = IdAPIsRest.get_id(uuid_or_id: uuid, action: IdAPIsRestActions::ACTION_TRANSLATE, additional_req_params: {outputType: 'sctid'})
+      sctid = IdAPIsRest.get_id(uuid_or_id: description_uuid, action: IdAPIsRestActions::ACTION_TRANSLATE, additional_req_params: {outputType: 'sctid'})
 
       if sctid.respond_to?(:value)
-
-
         attributes << {label: 'SCTID', text: sctid.value, state: description_state, time: description_time, author: description_author, module: description_module, path: description_path}
-
       end
 
+      header_dialects = ''
 
       # loop thru the dialects array, pull out all the language refsets, and add them to the attributes array
       description.dialects.each do |dialect|
@@ -125,7 +123,7 @@ module ConceptConcern
         dialect_author = description_metadata(dialect.sememeVersion.authorSequence, stated)
         dialect_module = description_metadata(dialect.sememeVersion.moduleSequence, stated)
         dialect_path = description_metadata(dialect.sememeVersion.pathSequence, stated)
-
+        dialect_acceptability = dialect.dataColumns.first.data
 
         if dialect_author == 'user'
           dialect_author = 'System User'
@@ -135,12 +133,29 @@ module ConceptConcern
 
           when 'US English dialect'
             dialect_name = 'US English'
+          when 'GB English dialect'
+            dialect_name = 'GB English'
         end
 
-        attributes << {label: 'Refset', text: dialect_name, state: dialect_state, time: dialect_time, author: dialect_author, module: dialect_module, path: dialect_path}
+        if header_dialects != ''
+          header_dialects += ' ,'
+        end
+
+        header_dialects += dialect_name
+
+        if dialect_acceptability.to_s == $PROPS['KOMET.preferred_concept_id']
+
+          dialect_acceptability = 'Preferred'
+          header_dialects += ' (Preferred)'
+        else
+          dialect_acceptability = 'Acceptable'
+        end
+
+        attributes << {label: 'Refset', text: dialect_name, acceptability: dialect_acceptability, state: dialect_state, time: dialect_time, author: dialect_author, module: dialect_module, path: dialect_path}
       end
 
       return_description[:attributes] = attributes
+      return_description[:header_dialects] = header_dialects
 
       METADATA_HASH.each_pair do |key, value|
 

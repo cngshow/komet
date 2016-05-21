@@ -5,14 +5,21 @@ var ConceptsModule = (function () {
     viewers.inlineViewers = [];
     viewers.maxInlineViewers = 2;
     var viewerMode = "single";
+    var loading = false;
+    var deferred;
 
     function subscribeToTaxonomyTree() {
 
         // listen for the onChange event broadcast by any of the taxonomy this.trees.
         $.subscribe(KometChannels.Taxonomy.taxonomyTreeNodeSelectedChannel, function (e, treeID, conceptID, stated, viewerID) {
 
-            //this.currentConceptID = conceptID;
-            ConceptsModule.loadViewerData(conceptID, stated, viewerID);
+            if (deferred && deferred.state() == "pending"){
+                deferred.done(function(){
+                    ConceptsModule.loadViewerData(conceptID, stated, TaxonomyModule.getLinkedViewerID())
+                }.bind(this));
+            } else {
+                ConceptsModule.loadViewerData(conceptID, stated, viewerID);
+            }
         });
     }
 
@@ -26,6 +33,9 @@ var ConceptsModule = (function () {
     }
 
     function loadViewerData(conceptID, stated, viewerID) {
+
+        loading = true;
+        deferred = $.Deferred();
 
         // the path to a javascript partial file that will re-render all the appropriate partials once the ajax call returns
         var partial = 'komet_dashboard/concept_detail/concept_information';
@@ -88,6 +98,7 @@ var ConceptsModule = (function () {
 
                     viewerElement.scrollParent()[0].scrollTop = 0;
                     viewerElement[0].parentNode.replaceChild(documentFragment, viewerElement[0]);
+                    deferred.resolve();
                 }
             }
             catch (err) {
@@ -109,6 +120,9 @@ var ConceptsModule = (function () {
             //TaxonomyModule.setLinkedViewerID(viewerID);
             toggleLinkToTaxonomy(viewerID, true);
         }
+
+        loading = false;
+        deferred.resolve();
     }
 
     function closeViewer(viewerID) {

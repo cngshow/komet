@@ -8,12 +8,12 @@
 	<parent>
 		<groupId>gov.vha.isaac.ochre</groupId>
 		<artifactId>isaac-parent</artifactId>
-		<version>3.04</version>
+		<version>3.05</version>
 	</parent>
 
 	<groupId>gov.vha.isaac.gui.rails</groupId>
 	<artifactId>rails_komet</artifactId>
-	<version>1.9</version>
+	<version>1.10</version>
 	<packaging>pom</packaging>
 
 	<name>ISAAC Rails Komet Tooling</name>
