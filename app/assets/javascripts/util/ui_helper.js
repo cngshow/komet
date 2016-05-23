@@ -122,7 +122,12 @@ var UIHelper = (function () {
             }
 
             if (conceptPanel.length > 0){
-                stated = ConceptsModule.viewers[viewerID].getStatedView();
+
+                if (viewerID == "new"){
+                    stated = ConceptsModule.viewers[conceptPanel.first().attr("data-komet-viewer-id")].getStatedView();
+                } else {
+                    stated = ConceptsModule.viewers[viewerID].getStatedView();
+                }
             } else{
                 stated = TaxonomyModule.getStatedView();
             }
