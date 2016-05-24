@@ -305,6 +305,10 @@ var KometTaxonomyTree = function(treeID, stated, parentSearch, startingConceptID
         tree.deselect_all(true);
         tree._open_to(nodeID);
         tree.select_node(nodeID, suppressChangeEvent, false);
+
+        var node = $("#" + nodeID + "_anchor");
+        node.scrollParent()[0].scrollTop = node.position().top;
+
     };
 
     // call our constructor function

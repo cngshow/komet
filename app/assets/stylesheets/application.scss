@@ -240,6 +240,12 @@ html, body{
 .komet-tree-node-primitive::before{
   content: image-url("icon_primitive.svg");
 }
+.komet-tree-node-defined-arrow::before{
+  content: image-url("icon_defined_arrow.svg");
+}
+.komet-tree-node-primitive-arrow::before{
+  content: image-url("icon_primitive_arrow.svg");
+}
 .komet-reverse-tree{
   transform: scaleX(-1);
   transform: scaleY(-1);
@@ -253,11 +259,6 @@ html, body{
   height: 100%;
   background-color: inherit;
   color: inherit;
-}
-.komet-node-image-yellow{
-  background-color: yellow !important;
-  width:10px !important;
-  right: 4px;
 }
 
 // Concept Viewer Styles
