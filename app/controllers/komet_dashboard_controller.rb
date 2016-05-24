@@ -226,6 +226,7 @@ class KometDashboardController < ApplicationController
   def process_rest_concept(concept, tree_walk_levels, first_level: false, parent_search: false, multi_path: true)
 
     concept_nodes = []
+    has_many_parents = false
 
     node = {}
     node[:id] = concept.conChronology.identifiers.uuids.first
@@ -273,11 +274,30 @@ class KometDashboardController < ApplicationController
 
     node[:parents] = []
 
-    # if this node has parents and we want to see all parent paths then get the IDs of each parent
+    # if this node has parents and we want to see all parent paths then get the details of each parent
     if tree_walk_levels > 0 && node[:has_parents] && !boolean(parent_search) || (tree_walk_levels > 0 && node[:parent_count] > 1 && multi_path)
 
+      has_many_parents = true
+
       concept.parents.each do |parent|
-        node[:parents] << parent.conChronology.identifiers.uuids.first
+
+        parent_node = {}
+
+        parent_node[:id] = parent.conChronology.identifiers.uuids.first
+        parent_node[:text] = parent.conChronology.description
+        parent_node[:defined] = parent.isConceptDefined
+        parent_node[:state] = parent.conVersion.state
+        parent_node[:author] = parent.conVersion.authorSequence
+        parent_node[:module] = parent.conVersion.moduleSequence
+        parent_node[:path] = parent.conVersion.pathSequence
+        parent_node[:has_parents] = parent.parentCount.to_i > 0
+        parent_node[:parent_count] = parent.parentCount
+
+        if parent_node[:defined].nil?
+          parent_node[:defined] = false
+        end
+        
+        node[:parents] << parent_node
       end
     end
 
@@ -302,6 +322,11 @@ class KometDashboardController < ApplicationController
     end
 
     if first_level
+
+      if has_many_parents
+        concept_nodes << node
+      end
+
       concept_nodes = processed_related_concepts
     else
       $log.debug('*** data process: ' + node[:text])
@@ -337,23 +362,25 @@ class KometDashboardController < ApplicationController
         parent_reversed = 'true'
 
         # loop though all parents besides the first one (the already open path)
-        raw_node[:parents].drop(1).each do |parent_id|
+        raw_node[:parents].each do |parent|
 
-          parent = get_tree_node(parent_id)
+          if boolean(parent[:defined])
+            parent_icon_class = 'komet-tree-node-icon komet-tree-node-defined'
+          else
+            parent_icon_class = 'komet-tree-node-icon komet-tree-node-primitive'
+          end
 
           # if the node has no parents identify it as a leaf, otherwise it is a branch
-          if parent[:parents].length > 0
-
-            parent_icon_class = 'glyphicon glyphicon-book'
+          if parent[:parent_count] > 0
             parent_has_parents = true
           else
-
-            parent_icon_class = 'glyphicon glyphicon-leaf'
             parent_has_parents = false
           end
 
+          parent_flags = get_tree_node_flag('module', raw_node[:module])
+
           # add the parent node above its child, making sure that it identified as a reverse search node
-          tree_nodes << {id: get_next_id, concept_id: parent[:concept_id], text: parent[:text], children: parent_has_parents, parent_reversed: true, parent_search: true, icon: parent_icon_class, a_attr: anchor_attributes, li_attr: {class: 'komet-reverse-tree'}}
+          tree_nodes << {id: get_next_id, concept_id: parent[:concept_id], text: parent[:text] + parent_flags, children: parent_has_parents, parent_reversed: true, parent_search: true, icon: parent_icon_class, a_attr: anchor_attributes, li_attr: {class: 'komet-reverse-tree'}}
 
         end
 
@@ -374,18 +401,9 @@ class KometDashboardController < ApplicationController
         show_expander = false
       end
 
-      if session['colormodule']
+      flags = get_tree_node_flag('module', raw_node[:module])
 
-        color = session['colormodule'].find{|key, hash|
-          hash['moduleid'].to_s == raw_node[:module].to_s
-        }
-
-        if color &&  color[1]['colorid'] != ''
-          flag = ' <span class="komet-node-module-flag" style="background-color: ' + color[1]['colorid'] + '; color: ' + color[1]['colorid'] + ';"></span>'
-        end
-      end
-
-      node = {id: get_next_id, concept_id: raw_node[:id], text: raw_node[:text] + flag, parent_reversed: parent_reversed, parent_search: parent_search, icon: icon_class, a_attr: anchor_attributes}
+      node = {id: get_next_id, concept_id: raw_node[:id], text: raw_node[:text] + flags, parent_reversed: parent_reversed, parent_search: parent_search, icon: icon_class, a_attr: anchor_attributes}
 
       # if the current ID is root, then add a 'parent' field to the node to satisfy the alternate JSON format of JSTree for this level of the tree
       if current_node_id == 0 || current_node_id == '#' || !first_level
@@ -407,6 +425,24 @@ class KometDashboardController < ApplicationController
     return tree_nodes
   end
 
+  def get_tree_node_flag(flag_name, flag_id)
+
+    flag = '';
+
+    if session['color' + flag_name]
+
+      color = session['color' + flag_name].find{|key, hash|
+        hash[flag_name + 'id'].to_s == flag_id.to_s
+      }
+
+      if color &&  color[1]['colorid'] != ''
+        flag = ' <span class="komet-node-' + flag_name + '-flag" style="background-color: ' + color[1]['colorid'] + '; color: ' + color[1]['colorid'] + ';"></span>'
+      end
+    end
+
+    return flag
+  end
+
   def get_next_id
     return java.lang.System.nanoTime
   end
@@ -426,9 +462,14 @@ class KometDashboardController < ApplicationController
     json = YAML.load_file constants_file
     translated_hash = add_translations(json)
     gon.IsaacMetadataAuxiliary = translated_hash
-    results =CoordinateRest.get_coordinate(action: CoordinateRestActions::ACTION_COORDINATES_TOKEN)
-    $log.debug("token initial #{results.token}" )
-    session[:coordinatestoken] = results
+
+    if !session[:coordinatestoken]
+      results =CoordinateRest.get_coordinate(action: CoordinateRestActions::ACTION_COORDINATES_TOKEN)
+      session[:coordinatestoken] = results
+    end
+
+    $log.debug("token initial #{session[:coordinatestoken].token}" )
+
 
   end
 

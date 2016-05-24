@@ -230,6 +230,7 @@ var PreferenceModule = (function () {
             });
 
             dialog.dialog( "close" );
+            location.replace(gon.routes.komet_dashboard_dashboard_path);
         }
 
     }
