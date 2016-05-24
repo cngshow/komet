@@ -19,6 +19,7 @@
 var PreferenceModule = (function () {
     function init() {
 
+        document.getElementById('loadingdiv').style.display ="block";
         var dialog, form
 
         dialog = $( "#dialog-form" ).dialog({
@@ -164,6 +165,8 @@ var PreferenceModule = (function () {
                     });
                     $('.demo').minicolors();
                 }
+
+                document.getElementById('loadingdiv').style.display ="none";
             });
 
         });
