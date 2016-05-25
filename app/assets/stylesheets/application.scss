@@ -253,12 +253,54 @@ html, body{
 .komet-reverse-tree-node{
   transform: scaleY(-1);
 }
+.komet-node-module-flag {
+  position: relative;
+  display: inline-block;
+}
 .komet-node-module-flag:after{
   margin-left: 2px;
-  content: "i";
-  height: 100%;
-  background-color: inherit;
-  color: inherit;
+  width: 0;
+  height: 0;
+  border-width: 8px 4px;
+  border-style: solid;
+  border-color: inherit;
+  content: "";
+  display: block;
+  position: relative;
+  top: 3px;
+}
+.komet-node-path-flag {
+  position: relative;
+  display: inline-block;
+}
+.komet-node-path-flag:after{
+  margin-left: 2px;
+  width: 0;
+  height: 0;
+  border: 6px solid;
+  border-color: inherit;
+  border-radius: 50%;
+  content: "";
+  display: block;
+  position: relative;
+  top: 3px;
+}
+.komet-node-refsets-flag {
+  position: relative;
+  display: inline-block;
+}
+.komet-node-refsets-flag:after{
+  margin-left: 2px;
+  width: 0;
+  height: 0;
+  border-left: 10px solid transparent;
+  border-right: 10px solid transparent;
+  border-bottom: 10px solid;
+  border-bottom-color: inherit;
+  content: "";
+  display: block;
+  position: relative;
+  top: 3px;
 }
 
 // Concept Viewer Styles

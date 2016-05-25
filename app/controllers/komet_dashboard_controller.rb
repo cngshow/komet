@@ -60,7 +60,7 @@ class KometDashboardController < ApplicationController
       tree_walk_levels = tree_walk_levels.to_i
     end
 
-    additional_req_params = {coordToken: coordinates_token, stated: @stated}
+    additional_req_params = {coordToken: coordinates_token, stated: @stated, sememeMembership: true}
 
     if boolean(parent_search)
 
@@ -237,6 +237,7 @@ class KometDashboardController < ApplicationController
     node[:author] = concept.conVersion.authorSequence
     node[:module] = concept.conVersion.moduleSequence
     node[:path] = concept.conVersion.pathSequence
+    node[:refsets] = concept.sememeMembership
 
     if node[:defined].nil?
       node[:defined] = false
@@ -360,9 +361,9 @@ class KometDashboardController < ApplicationController
       show_expander = true
       relation = :children
       has_relation = :has_children
-      flags = get_tree_node_flag('module', raw_node[:module])
-      flags << get_tree_node_flag('refset', raw_node[:refsets])
-      flags << get_tree_node_flag('path', raw_node[:path])
+      flags = get_tree_node_flag('module', [raw_node[:module]])
+      flags << get_tree_node_flag('refsets', raw_node[:refsets])
+      flags << get_tree_node_flag('path', [raw_node[:path]])
 
       if boolean(parent_search)
 
@@ -402,7 +403,7 @@ class KometDashboardController < ApplicationController
           end
 
           parent_flags = get_tree_node_flag('module', parent[:module])
-          parent_flags << get_tree_node_flag('refset', parent[:refsets])
+          parent_flags << get_tree_node_flag('refsets', parent[:refsets])
           parent_flags << get_tree_node_flag('path', parent[:path])
 
           parent_node_text = parent[:text] + parent[:badge] + parent_flags
@@ -457,12 +458,12 @@ class KometDashboardController < ApplicationController
 
     if session['color' + flag_name]
 
-      color = session['color' + flag_name].find{|key, hash|
-        hash[flag_name + 'id'].to_s == ids_to_match.to_s
+      colors = session['color' + flag_name].find_all{|key, hash|
+        hash[flag_name + 'id'].to_i.in?(ids_to_match) && hash['colorid'] != ''
       }
 
-      if color &&  color[1]['colorid'] != ''
-        flag = ' <span class="komet-node-' + flag_name + '-flag" style="background-color: ' + color[1]['colorid'] + '; color: ' + color[1]['colorid'] + ';"></span>'
+      colors.each do |color|
+        flag = ' <span class="komet-node-' + flag_name + '-flag" style="border-color: ' + color[1]['colorid'] + ';"></span>'
       end
     end
 
@@ -488,6 +489,9 @@ class KometDashboardController < ApplicationController
     json = YAML.load_file constants_file
     translated_hash = add_translations(json)
     gon.IsaacMetadataAuxiliary = translated_hash
+
+    session[:colorpath] = {'0' => {'path_name' => 'development', 'pathid' => '7', 'colorid' => '#4f80d9'}}
+    session[:colorrefsets] = {'0' => {'refsets_name' => 'development', 'refsetsid' => '74', 'colorid' => '#ff9100'}}
 
     if !session[:coordinatestoken]
       results =CoordinateRest.get_coordinate(action: CoordinateRestActions::ACTION_COORDINATES_TOKEN)
