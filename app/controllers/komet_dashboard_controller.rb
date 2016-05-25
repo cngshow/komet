@@ -489,10 +489,7 @@ class KometDashboardController < ApplicationController
     json = YAML.load_file constants_file
     translated_hash = add_translations(json)
     gon.IsaacMetadataAuxiliary = translated_hash
-
-    session[:colorpath] = {'0' => {'path_name' => 'development', 'pathid' => '7', 'colorid' => '#4f80d9'}}
-    session[:colorrefsets] = {'0' => {'refsets_name' => 'development', 'refsetsid' => '74', 'colorid' => '#ff9100'}}
-
+    
     if !session[:coordinatestoken]
       results =CoordinateRest.get_coordinate(action: CoordinateRestActions::ACTION_COORDINATES_TOKEN)
       session[:coordinatestoken] = results
