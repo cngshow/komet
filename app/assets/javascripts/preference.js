@@ -19,7 +19,7 @@
 var PreferenceModule = (function () {
     function init() {
 
-        document.getElementById('loadingdiv').style.display ="block";
+
         var dialog, form
 
         dialog = $( "#dialog-form" ).dialog({
@@ -58,7 +58,7 @@ var PreferenceModule = (function () {
         $("#settings").on( "click", function() {
             dialog.dialog( "open" );
             //Get default goordinates
-
+            document.getElementById('loadingdiv').style.display ="block";
             var getcoordinates = "";
             var descriptiontypepreferences= "";
             var dialectassemblagepreferences="";
@@ -108,9 +108,8 @@ var PreferenceModule = (function () {
 
 
             $.get( gon.routes.taxonomy_get_coordinates_path, function( getcoordinates_results ) {
-                console.log(getcoordinates_results.languageCoordinate.language);
 
-                $('#komet_concept_language').val(getcoordinates_results.languageCoordinate.language).attr("selected", "selected");
+                 selectItemByValue(document.getElementById('komet_concept_language'),getcoordinates_results.languageCoordinate.language)
                 descriptiontypepreferences = getcoordinates_results.languageCoordinate.dialectAssemblagePreferences;
                 dialectassemblagepreferences= getcoordinates_results.languageCoordinate.descriptionTypePreferences;
                 allowedstates =getcoordinates_results.stampCoordinate.allowedStates;
@@ -134,9 +133,9 @@ var PreferenceModule = (function () {
                 {
                     populateColorpath(getcoordinates_results.colorpath);
                 }
-                document.getElementById('loadingdiv').style.display ="none";
-            });
 
+            });
+            document.getElementById('loadingdiv').style.display ="none";
         });
 
 
@@ -166,6 +165,8 @@ var PreferenceModule = (function () {
                 }
             }
         });
+
+
 
         // passes the users preference to get coordinatetoken api and creates sessions
         function applyChanges() {
@@ -207,6 +208,15 @@ var PreferenceModule = (function () {
         }
 
     }
+    function selectItemByValue(elmnt, value){
+
+        for(var i=0; i < elmnt.options.length; i++)
+        {
+            if(elmnt.options[i].value == value)
+                elmnt.selectedIndex = i;
+        }
+    }
+
 // sets selected value of status radion button list
     function selectAllowedstates(values)
     {
@@ -306,26 +316,28 @@ var PreferenceModule = (function () {
     // adding row to color module table
     function populateColormodule(colormodule)
     {
-        document.getElementById('listofmodule').innerHTML ="";
 
-        var colorheadingtr = document.createElement("TR");
-        colorheadingtr.setAttribute("id", "colorheading");
-        colorheadingtr.setAttribute("style", "background-color: #4f80d9;color:white")
-        document.getElementById('listofmodule').appendChild(colorheadingtr);
-
-        var colorheadingtd1 = document.createElement("TD");
-        colorheadingtd1.innerHTML ='Module';
-        document.getElementById("colorheading").appendChild(colorheadingtd1);
-
-        var colorheadingtd2 = document.createElement("TD");
-        colorheadingtd2.innerHTML = 'Color';
-        document.getElementById("colorheading").appendChild(colorheadingtd2);
         if(colormodule === '')
         {
             //Gets list of all the module.creating color module table from rest api call by passing constant uuid
             var uuidParams =  "?uuid=" +  gon.IsaacMetadataAuxiliary.MODULE.uuids[0].uuid;
             // make an ajax call to get the data for module color list
             $.get(gon.routes.taxonomy_get_concept_languages_dialect_path + uuidParams, function( results ) {
+                document.getElementById('listofmodule').innerHTML ="";
+
+                var colorheadingtr = document.createElement("TR");
+                colorheadingtr.setAttribute("id", "colorheading");
+                colorheadingtr.setAttribute("style", "background-color: #4f80d9;color:white")
+                document.getElementById('listofmodule').appendChild(colorheadingtr);
+
+                var colorheadingtd1 = document.createElement("TD");
+                colorheadingtd1.innerHTML ='Module';
+                document.getElementById("colorheading").appendChild(colorheadingtd1);
+
+                var colorheadingtd2 = document.createElement("TD");
+                colorheadingtd2.innerHTML = 'Color';
+                document.getElementById("colorheading").appendChild(colorheadingtd2);
+
                 $.each(results.children,function(index,value) {
                     var tr = document.createElement("TR");
                     tr.setAttribute("id", "colorTr" + value.conChronology.conceptSequence);
@@ -339,11 +351,26 @@ var PreferenceModule = (function () {
                     td3.innerHTML = '<input name="color_id" class="demo" title="Click here to change color"  type="text" id="' + value.conChronology.description + '~' + value.conChronology.conceptSequence + '" size="6" style="height:40px" data-control="hue" value="" />';
 
                     document.getElementById("colorTr" + value.conChronology.conceptSequence).appendChild(td3);
+                    $('.demo').minicolors();
                 });
 
             });
         }
         else {
+            document.getElementById('listofmodule').innerHTML ="";
+
+            var colorheadingtr = document.createElement("TR");
+            colorheadingtr.setAttribute("id", "colorheading");
+            colorheadingtr.setAttribute("style", "background-color: #4f80d9;color:white")
+            document.getElementById('listofmodule').appendChild(colorheadingtr);
+
+            var colorheadingtd1 = document.createElement("TD");
+            colorheadingtd1.innerHTML ='Module';
+            document.getElementById("colorheading").appendChild(colorheadingtd1);
+
+            var colorheadingtd2 = document.createElement("TD");
+            colorheadingtd2.innerHTML = 'Color';
+            document.getElementById("colorheading").appendChild(colorheadingtd2);
             $.each(colormodule, function (index, value) {
                 var tr = document.createElement("TR");
                 tr.setAttribute("id", "colorTr" + value.moduleid);
@@ -357,10 +384,11 @@ var PreferenceModule = (function () {
                 td3.innerHTML = '<input name="color_id" class="demo" title="Click here to change color"  type="text" id="' + value.module_name + '~' + value.moduleid + '" size="6" style="height:40px" data-control="hue" value="' + value.colorid + '" />';
 
                 document.getElementById("colorTr" + value.moduleid).appendChild(td3);
+                $('.demo').minicolors();
             });
 
         }
-        $('.demo').minicolors();
+
     }
 
     // creates table of description type and dialect
@@ -432,7 +460,7 @@ var PreferenceModule = (function () {
         document.getElementById("Tr" + counter).appendChild(td2);
 
         var td3 = document.createElement("TD");
-        td3.innerHTML ='<input   type="text" name="' + tblname  + '" id="rank_"' + counter + '" size="2" value="' + value[index].id + '" />';
+        td3.innerHTML ='<input   type="hidden" name="' + tblname  + '" id="rank_"' + counter + '" size="2" value="' + value[index].id + '" />';
         document.getElementById("Tr" + counter).appendChild(td3);
 
     }
@@ -444,7 +472,9 @@ var PreferenceModule = (function () {
         renderTbl: renderTbl,
         populateColormodule: populateColormodule,
         populateColorpath: populateColorpath,
-        populateControls: populateControls
+        populateControls: populateControls,
+        selectAllowedstates: selectAllowedstates,
+        selectItemByValue: selectItemByValue
 
 
 
