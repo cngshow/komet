@@ -12,7 +12,8 @@
           <ul>
             <li><a href='#useroptions'>Options</a></li>
             <li><a href='#color-module'>Color Module</a></li>
-
+            <li><a href='#colorpath-module'>Color Path</a></li>
+            <!--<li><a href='#komet_preferences_refsets_colors'>Color Refsets</a></li>-->
           </ul>
           <div id="useroptions">
             <form>
@@ -23,17 +24,46 @@
                   </tr>
                 </table>
               </div><br><br>
-              <table id="description_type"  width='80%'  cellpadding='2' cellspacing='3'>
+
+              <table id="description_type"  width='80%' style="z-index:990"  cellpadding='2' cellspacing='3'>
 
               </table>
               <br><br>
-              <table id="dialecttbl"  width='80%'  cellpadding='2' cellspacing='3'>
+              <div id="loadingdiv" style=" z-index:999  ">
+                &nbsp;&nbsp;&nbsp; Loading..... <svg width='28px' height='28px' xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"
+                                                     preserveAspectRatio="xMidYMid" class="uil-default"><rect x="0" y="0" width="100" height="100" fill="none"
+                                                                                                              class="bk"></rect><rect  x='46.5' y='40' width='5' height='10' rx='5' ry='5' fill='#00b2ff' transform='rotate(0 50 50) translate(0 -30)'>
+                <animate attributeName='opacity' from='1' to='0' dur='1s' begin='0s' repeatCount='indefinite'/></rect>
+                <rect  x='46.5' y='40' width='7' height='20' rx='5' ry='5' fill='#00b2ff' transform='rotate(30 50 50) translate(0 -30)'>
+                  <animate attributeName='opacity' from='1' to='0' dur='1s' begin='0.08333333333333333s' repeatCount='indefinite'/></rect>
+                <rect  x='46.5' y='40' width='7' height='20' rx='5' ry='5' fill='#00b2ff' transform='rotate(60 50 50) translate(0 -30)'>
+                  <animate attributeName='opacity' from='1' to='0' dur='1s' begin='0.16666666666666666s' repeatCount='indefinite'/></rect>
+                <rect  x='46.5' y='40' width='7' height='20' rx='5' ry='5' fill='#00b2ff' transform='rotate(90 50 50) translate(0 -30)'>
+                  <animate attributeName='opacity' from='1' to='0' dur='1s' begin='0.25s' repeatCount='indefinite'/></rect>
+                <rect  x='46.5' y='40' width='7' height='20' rx='5' ry='5' fill='#00b2ff' transform='rotate(120 50 50) translate(0 -30)'>
+                  <animate attributeName='opacity' from='1' to='0' dur='1s' begin='0.3333333333333333s' repeatCount='indefinite'/></rect>
+                <rect  x='46.5' y='40' width='7' height='20' rx='5' ry='5' fill='#00b2ff' transform='rotate(150 50 50) translate(0 -30)'>
+                  <animate attributeName='opacity' from='1' to='0' dur='1s' begin='0.4166666666666667s' repeatCount='indefinite'/></rect>
+                <rect  x='46.5' y='40' width='7' height='20' rx='5' ry='5' fill='#00b2ff' transform='rotate(180 50 50) translate(0 -30)'>
+                  <animate attributeName='opacity' from='1' to='0' dur='1s' begin='0.5s' repeatCount='indefinite'/></rect>
+                <rect  x='46.5' y='40' width='7' height='20' rx='5' ry='5' fill='#00b2ff' transform='rotate(210 50 50) translate(0 -30)'>
+                  <animate attributeName='opacity' from='1' to='0' dur='1s' begin='0.5833333333333334s' repeatCount='indefinite'/></rect>
+                <rect  x='46.5' y='40' width='7' height='20' rx='5' ry='5' fill='#00b2ff' transform='rotate(240 50 50) translate(0 -30)'>
+                  <animate attributeName='opacity' from='1' to='0' dur='1s' begin='0.6666666666666666s' repeatCount='indefinite'/></rect>
+                <rect  x='46.5' y='40' width='7' height='20' rx='5' ry='5' fill='#00b2ff' transform='rotate(270 50 50) translate(0 -30)'>
+                  <animate attributeName='opacity' from='1' to='0' dur='1s' begin='0.75s' repeatCount='indefinite'/></rect>
+                <rect  x='46.5' y='40' width='7' height='20' rx='5' ry='5' fill='#00b2ff' transform='rotate(300 50 50) translate(0 -30)'>
+                  <animate attributeName='opacity' from='1' to='0' dur='1s' begin='0.8333333333333334s' repeatCount='indefinite'/></rect>
+                <rect  x='46.5' y='40' width='7' height='20' rx='5' ry='5' fill='#00b2ff' transform='rotate(330 50 50) translate(0 -30)'>
+                  <animate attributeName='opacity' from='1' to='0' dur='1s' begin='0.9166666666666666s' repeatCount='indefinite'/></rect></svg>
+              </div>
+              <table id="dialecttbl"  width='80%'style="z-index:990" cellpadding='2' cellspacing='3'>
 
               </table>
 
               <br><br>
               <div>
-                <div  width='60%' style="background-color: #4f80d9;color:white">Status</div>
+                <div  width='60%' style="background-color: #4f80d9;color:white;z-index:990">Status</div>
                 <input type="radio" name="status" value="Active">Active<br>
                 <input type="radio" name="status" value="Inactive">InActive<br>
                 <input type="radio" name="status" checked="checked" value="Active,Inactive">Both<br>
@@ -41,13 +71,29 @@
             </form>
           </div>
           <div id="color-module">
-
             <table id="listofmodule"  width='90%'   cellpadding='2' cellspacing='3'>
+            </table>
 
+          </div>
+          <!--<div id="colorpath-module">
+            <table id="listofpath"  width='90%'   cellpadding='2' cellspacing='3'>
             </table>
           </div>
-        </div>
 
+          <div id="komet_preferences_refsets_colors">
+
+            <table id="komet_preferences_refsets_table">
+
+              <tr style="background-color: #4f80d9; color:white;">
+                <td>Refset</td>
+                <td>Color</td>
+              </tr>
+
+            </table>
+
+          </div>-->
+
+        </div>
 
       </div>
     </ul>

@@ -60,7 +60,7 @@ class KometDashboardController < ApplicationController
       tree_walk_levels = tree_walk_levels.to_i
     end
 
-    additional_req_params = {coordToken: coordinates_token, stated: @stated}
+    additional_req_params = {coordToken: coordinates_token, stated: @stated, sememeMembership: true}
 
     if boolean(parent_search)
 
@@ -193,6 +193,7 @@ class KometDashboardController < ApplicationController
     value = getcoordinates_results.languageCoordinate.to_json
     getcoordinates_results = JSON.parse(getcoordinates_results.to_json)
     getcoordinates_results[:colormodule]= session[:colormodule]
+    getcoordinates_results[:colorpath]= session[:colorpath]
 
     render json:  getcoordinates_results.to_json
   end
@@ -204,11 +205,60 @@ class KometDashboardController < ApplicationController
   hash[:descriptionTypePrefs] = params[:descriptionTypePrefs]
   hash[:allowedStates]= params[:allowedStates]
   session[:colormodule] =params[:colormodule]
+  session[:colorpath] =params[:colorpath]
   results =  CoordinateRest.get_coordinate(action: CoordinateRestActions::ACTION_COORDINATES_TOKEN,  additional_req_params: hash)
   session[:coordinatestoken] = results
  $log.debug("token get_coordinatestoken #{results.token}" )
   render json:  results.to_json
 
+  end
+
+  def get_refset_list
+
+    coordinates_token = session[:coordinatestoken].token
+    stated = params[:stated]
+
+    # check to make sure the flag for stated or inferred view was passed in
+    if stated != nil
+      @stated = stated
+    end
+
+    additional_req_params = {coordToken: coordinates_token, stated: @stated, childDepth: 50}
+
+    refsets = TaxonomyRest.get_isaac_concept(uuid: $PROPS['KOMET.assemblage_concept_id'], additional_req_params: additional_req_params)
+
+    if refsets.is_a? CommonRest::UnexpectedResponse
+      render json: [] and return
+    end
+
+    processed_refsets = process_refset_list(refsets)
+
+    render json: processed_refsets.to_json
+
+  end
+
+  def process_refset_list(concept)
+
+    refset_nodes = {}
+
+    node = {}
+    node[concept.conChronology.conceptSequence] = concept.conChronology.description
+    has_children = !concept.children.nil?
+
+    # get the children
+    if has_children
+      children = concept.children
+    else
+
+      children = []
+      refset_nodes.merge!(node)
+    end
+
+    children.each do |child|
+      refset_nodes.merge!(process_refset_list(child))
+    end
+
+    refset_nodes
   end
 
   ##
@@ -226,6 +276,7 @@ class KometDashboardController < ApplicationController
   def process_rest_concept(concept, tree_walk_levels, first_level: false, parent_search: false, multi_path: true)
 
     concept_nodes = []
+    has_many_parents = false
 
     node = {}
     node[:id] = concept.conChronology.identifiers.uuids.first
@@ -236,6 +287,7 @@ class KometDashboardController < ApplicationController
     node[:author] = concept.conVersion.authorSequence
     node[:module] = concept.conVersion.moduleSequence
     node[:path] = concept.conVersion.pathSequence
+    node[:refsets] = concept.sememeMembership
 
     if node[:defined].nil?
       node[:defined] = false
@@ -248,13 +300,10 @@ class KometDashboardController < ApplicationController
 
       node[:child_count] = concept.childCount
       node[:has_children] = true
+      node[:has_children] = true
 
     else
       node[:child_count] = 0
-    end
-
-    if node[:child_count] != 0
-      node[:text] << "&nbsp;&nbsp;<span class=\"badge badge-success\" title=\"kma\">#{node[:child_count]}</span>"
     end
 
     node[:has_parents] = !concept.parents.nil?
@@ -271,13 +320,49 @@ class KometDashboardController < ApplicationController
       node[:parent_count] = 0
     end
 
+    if !boolean(parent_search) && node[:child_count] != 0
+      node[:badge] = "&nbsp;&nbsp;<span class=\"badge badge-success\" title=\"kma\">#{node[:child_count]}</span>"
+
+    elsif boolean(parent_search) && node[:parent_count] != 0
+      node[:badge] = "&nbsp;&nbsp;<span class=\"badge badge-success\" title=\"kma\">#{node[:parent_count]}</span>"
+    else
+      node[:badge] = ''
+    end
+
     node[:parents] = []
 
-    # if this node has parents and we want to see all parent paths then get the IDs of each parent
-    if tree_walk_levels > 0 && node[:has_parents] && !boolean(parent_search) || (tree_walk_levels > 0 && node[:parent_count] > 1 && multi_path)
+    # if this node has parents and we want to see all parent paths then get the details of each parent
+    if tree_walk_levels > 0  && !boolean(parent_search) && node[:parent_count] > 1 && multi_path
+
+      has_many_parents = true
+
+      if first_level
+        node[:badge] = "&nbsp;&nbsp;<span class=\"badge badge-success\" title=\"kma\">#{node[:parent_count]}</span>"
+      end
 
       concept.parents.each do |parent|
-        node[:parents] << parent.conChronology.identifiers.uuids.first
+
+        parent_node = {}
+
+        parent_node[:id] = parent.conChronology.identifiers.uuids.first
+        parent_node[:text] = parent.conChronology.description
+        parent_node[:defined] = parent.isConceptDefined
+        parent_node[:state] = parent.conVersion.state
+        parent_node[:author] = parent.conVersion.authorSequence
+        parent_node[:module] = parent.conVersion.moduleSequence
+        parent_node[:path] = parent.conVersion.pathSequence
+        parent_node[:has_parents] = parent.parentCount.to_i > 0
+        parent_node[:parent_count] = parent.parentCount
+
+        if node[:parent_count] != 0
+          parent_node[:badge] = "&nbsp;&nbsp;<span class=\"badge badge-success\" title=\"kma\">#{parent_node[:parent_count]}</span>"
+        end
+
+        if parent_node[:defined].nil?
+          parent_node[:defined] = false
+        end
+        
+        node[:parents] << parent_node
       end
     end
 
@@ -302,7 +387,12 @@ class KometDashboardController < ApplicationController
     end
 
     if first_level
-      concept_nodes = processed_related_concepts
+
+      if has_many_parents
+        concept_nodes << node
+      end
+
+      concept_nodes.concat(processed_related_concepts)
     else
       $log.debug('*** data process: ' + node[:text])
       node[relation] = processed_related_concepts
@@ -322,43 +412,14 @@ class KometDashboardController < ApplicationController
       show_expander = true
       relation = :children
       has_relation = :has_children
+      flags = get_tree_node_flag('module', [raw_node[:module]])
+      flags << get_tree_node_flag('refsets', raw_node[:refsets])
+      flags << get_tree_node_flag('path', [raw_node[:path]])
 
       if boolean(parent_search)
 
         relation = :parents
         has_relation = :has_parents
-      end
-
-      # should this child node be reversed and is it the first node to be reversed - comes from node data
-      if !boolean(parent_reversed) && raw_node[:parent_count] > 1
-
-        anchor_attributes[:class] += ' komet-reverse-tree-node'
-        parent_search = 'true'
-        parent_reversed = 'true'
-
-        # loop though all parents besides the first one (the already open path)
-        raw_node[:parents].drop(1).each do |parent_id|
-
-          parent = get_tree_node(parent_id)
-
-          # if the node has no parents identify it as a leaf, otherwise it is a branch
-          if parent[:parents].length > 0
-
-            parent_icon_class = 'glyphicon glyphicon-book'
-            parent_has_parents = true
-          else
-
-            parent_icon_class = 'glyphicon glyphicon-leaf'
-            parent_has_parents = false
-          end
-
-          # add the parent node above its child, making sure that it identified as a reverse search node
-          tree_nodes << {id: get_next_id, concept_id: parent[:concept_id], text: parent[:text], children: parent_has_parents, parent_reversed: true, parent_search: true, icon: parent_icon_class, a_attr: anchor_attributes, li_attr: {class: 'komet-reverse-tree'}}
-
-        end
-
-      elsif boolean(parent_search)
-        anchor_attributes[:class] += ' komet-reverse-tree-node'
       end
 
       if boolean(raw_node[:defined])
@@ -367,25 +428,60 @@ class KometDashboardController < ApplicationController
         icon_class = 'komet-tree-node-icon komet-tree-node-primitive'
       end
 
-      flag = ''
+      # should this child node be reversed and is it the first node to be reversed - comes from node data
+      if !boolean(parent_reversed) && raw_node[:parent_count] > 1
+
+        anchor_attributes[:class] << ' komet-reverse-tree-node'
+        parent_id = get_next_id
+        node_text = 'Parents of ' + raw_node[:text] + raw_node[:badge] + flags
+        icon_class << '-arrow'
+
+        parent_nodes = []
+        # loop though all parents besides the first one (the already open path)
+        raw_node[:parents].each do |parent|
+
+          if boolean(parent[:defined])
+            parent_icon_class = 'komet-tree-node-icon komet-tree-node-defined-arrow'
+          else
+            parent_icon_class = 'komet-tree-node-icon komet-tree-node-primitive-arrow'
+          end
+
+          # if the node has no parents identify it as a leaf, otherwise it is a branch
+          if parent[:parent_count] > 0
+            parent_has_parents = true
+          else
+            parent_has_parents = false
+          end
+
+          parent_flags = get_tree_node_flag('module', parent[:module])
+          parent_flags << get_tree_node_flag('refsets', parent[:refsets])
+          parent_flags << get_tree_node_flag('path', parent[:path])
+
+          parent_node_text = parent[:text] + parent[:badge] + parent_flags
+
+          # add the parent node above its child, making sure that it identified as a reverse search node
+          parent_nodes << {id: get_next_id, concept_id: parent[:id], text: parent_node_text, children: parent_has_parents, parent_reversed: true, parent_search: true, icon: parent_icon_class, a_attr: anchor_attributes}
+        end
+
+        tree_nodes << {id: parent_id, concept_id: raw_node[:id], text: node_text, children: parent_nodes, parent_reversed: true, parent_search: true, icon: icon_class, a_attr: anchor_attributes, li_attr: {class: 'komet-reverse-tree'}}
+
+        # jump to the next node in raw_nodes
+        next
+
+      elsif boolean(parent_search)
+
+        icon_class << '-arrow'
+        anchor_attributes[:class] << ' komet-reverse-tree-node'
+      end
 
       # if the node has no children (or no parents if doing a parent search) identify it as a leaf, otherwise it is a branch
       if !raw_node[has_relation]
         show_expander = false
       end
 
-      if session['colormodule']
+      node_text = raw_node[:text] + raw_node[:badge] + flags
 
-        color = session['colormodule'].find{|key, hash|
-          hash['moduleid'].to_s == raw_node[:module].to_s
-        }
-
-        if color &&  color[1]['colorid'] != ''
-          flag = ' <span class="komet-node-module-flag" style="background-color: ' + color[1]['colorid'] + '; color: ' + color[1]['colorid'] + ';"></span>'
-        end
-      end
-
-      node = {id: get_next_id, concept_id: raw_node[:id], text: raw_node[:text] + flag, parent_reversed: parent_reversed, parent_search: parent_search, icon: icon_class, a_attr: anchor_attributes}
+      node = {id: get_next_id, concept_id: raw_node[:id], text: node_text, parent_reversed: parent_reversed, parent_search: parent_search, icon: icon_class, a_attr: anchor_attributes}
 
       # if the current ID is root, then add a 'parent' field to the node to satisfy the alternate JSON format of JSTree for this level of the tree
       if current_node_id == 0 || current_node_id == '#' || !first_level
@@ -407,6 +503,24 @@ class KometDashboardController < ApplicationController
     return tree_nodes
   end
 
+  def get_tree_node_flag(flag_name, ids_to_match)
+
+    flag = '';
+
+    if session['color' + flag_name]
+
+      colors = session['color' + flag_name].find_all{|key, hash|
+        hash[flag_name + 'id'].to_i.in?(ids_to_match) && hash['colorid'] != ''
+      }
+
+      colors.each do |color|
+        flag = ' <span class="komet-node-' + flag_name + '-flag" style="border-color: ' + color[1]['colorid'] + ';"></span>'
+      end
+    end
+
+    return flag
+  end
+
   def get_next_id
     return java.lang.System.nanoTime
   end
@@ -426,9 +540,14 @@ class KometDashboardController < ApplicationController
     json = YAML.load_file constants_file
     translated_hash = add_translations(json)
     gon.IsaacMetadataAuxiliary = translated_hash
-    results =CoordinateRest.get_coordinate(action: CoordinateRestActions::ACTION_COORDINATES_TOKEN)
-    $log.debug("token initial #{results.token}" )
-    session[:coordinatestoken] = results
+
+    if !session[:coordinatestoken]
+      results =CoordinateRest.get_coordinate(action: CoordinateRestActions::ACTION_COORDINATES_TOKEN)
+      session[:coordinatestoken] = results
+    end
+
+    $log.debug("token initial #{session[:coordinatestoken].token}" )
+
 
   end
 

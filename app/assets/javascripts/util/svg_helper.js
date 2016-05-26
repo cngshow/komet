@@ -60,7 +60,7 @@ var SvgHelper = (function () {
            var maxX = 10;
            var sctclass = "";
 
-           if (data.isReferencedConceptDefined === 'true') {
+           if (data.isReferencedConceptDefined === true) {
                sctClass = "sct-defined-concept";
            }
            else {
@@ -114,7 +114,7 @@ var SvgHelper = (function () {
 
           // sctClass = "sct-defined-concept";
            $.each(svgIsaModel, function (i, relationship) {
-               if (relationship.isConceptDefined === 'true') {
+               if (relationship.isConceptDefined === true) {
                    sctClass = "sct-defined-concept";
                } else {
                    sctClass = "sct-primitive-concept";
@@ -128,7 +128,7 @@ var SvgHelper = (function () {
 
            // load ungrouped attributes
            $.each(svgAttrModel, function (i, relationship) {
-               if (relationship.isConceptDefined === 'true') {
+               if (relationship.isConceptDefined === true) {
                    sctClass = "sct-defined-concept";
                } else {
                    sctClass = "sct-primitive-concept";
@@ -156,7 +156,7 @@ var SvgHelper = (function () {
                    connectElements(svg, groupNode, conjunctionNode, 'right', 'left');
                }
 
-               if (relationship.isConceptDefined === 'true') {
+               if (relationship.isConceptDefined === true) {
                    sctClass = "sct-defined-concept";
                } else {
                    sctClass = "sct-primitive-concept";
