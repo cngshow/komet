@@ -117,6 +117,7 @@ var PreferenceModule = (function () {
 
             $.get( gon.routes.taxonomy_get_coordinates_path, function( getcoordinates_results ) {
                 selectItemByValue(document.getElementById('komet_concept_language'),getcoordinates_results.languageCoordinate.language);
+               $("#komet_concept_language").val(getcoordinates_results.languageCoordinate.language);
                 descriptiontypepreferences = getcoordinates_results.languageCoordinate.descriptionTypePreferences;
                 dialectassemblagepreferences= getcoordinates_results.languageCoordinate.dialectAssemblagePreferences;
                 allowedstates =getcoordinates_results.stampCoordinate.allowedStates;
@@ -483,7 +484,7 @@ var PreferenceModule = (function () {
         });
     }
     function selectItemByValue(elmnt, value){
-     console.log(value);
+     //console.log(value);
         for(var i=0; i < elmnt.options.length; i++)
         {
             if(elmnt.options[i].value == value)
