@@ -26,7 +26,7 @@ var PreferenceModule = (function () {
         refsetList = {};
         refsetRows = [];
 
-        document.getElementById('loadingdiv').style.display ="block";
+
         var dialog, form
 
 
@@ -58,6 +58,22 @@ var PreferenceModule = (function () {
             }
         });
 
+        // Gets list of all the languages based on constant uuid value
+        var uuidParams =  "?uuid=" +  gon.IsaacMetadataAuxiliary.LANGUAGE.uuids[0].uuid;
+        // make an ajax call to get the data
+        $.get(gon.routes.taxonomy_get_concept_languages_dialect_path + uuidParams, function( results ) {
+            $.each(results.children,function(index,value) {
+                $("#komet_concept_language").append($("<option />").val(value.conChronology.conceptSequence).text(value.conChronology.description));
+            });
+        });
+
+
+        populateColormodule('');
+        populateColorpath('');
+
+
+
+
         form = dialog.find( "form" ).on( "submit", function( event ) {
             event.preventDefault();
             applyChanges();
@@ -72,22 +88,10 @@ var PreferenceModule = (function () {
             var dialectassemblagepreferences="";
             var allowedstates =[];
 
-
-            populateColormodule('');
-            populateColorpath('');
-
-
-            // Gets list of all the languages based on constant uuid value
-            var uuidParams =  "?uuid=" +  gon.IsaacMetadataAuxiliary.LANGUAGE.uuids[0].uuid;
-            // make an ajax call to get the data
-            $.get(gon.routes.taxonomy_get_concept_languages_dialect_path + uuidParams, function( results ) {
-                $.each(results.children,function(index,value) {
-                    $("#komet_concept_language").append($("<option />").val(value.conChronology.conceptSequence).text(value.conChronology.description));
-                });
-            });
-
             document.getElementById('description_type').innerHTML ="";
             document.getElementById('dialecttbl').innerHTML ="";
+
+
             var tr = document.createElement("TR");
             tr.setAttribute("id", "heading1");
             tr.setAttribute("style", "background-color: #4f80d9;color:white");
@@ -114,10 +118,9 @@ var PreferenceModule = (function () {
             td3.innerHTML = 'Description Type';
             document.getElementById("heading2").appendChild(td3);
 
-
             $.get( gon.routes.taxonomy_get_coordinates_path, function( getcoordinates_results ) {
                 selectItemByValue(document.getElementById('komet_concept_language'),getcoordinates_results.languageCoordinate.language);
-               $("#komet_concept_language").val(getcoordinates_results.languageCoordinate.language);
+                $("#komet_concept_language").val(getcoordinates_results.languageCoordinate.language);
                 descriptiontypepreferences = getcoordinates_results.languageCoordinate.descriptionTypePreferences;
                 dialectassemblagepreferences= getcoordinates_results.languageCoordinate.dialectAssemblagePreferences;
                 allowedstates =getcoordinates_results.stampCoordinate.allowedStates;
@@ -133,16 +136,17 @@ var PreferenceModule = (function () {
                 // this recreating color module table from session
                 if (getcoordinates_results.colormodule != null)
                 {
+                    document.getElementById('listofmodule').innerHTML ="";
                     populateColormodule(getcoordinates_results.colormodule);
                 }
 
                 // this recreating path color  table from session
-               if (getcoordinates_results.colorpath != null) {
+                if (getcoordinates_results.colorpath != null) {
+                    document.getElementById('listofpath').innerHTML ="";
                     populateColorpath(getcoordinates_results.colorpath);
                 }
-                document.getElementById('loadingdiv').style.display ="none";
-            });
 
+            });
             // get the list of refsets to populate the refsets dropdown
             /*
             $.get(gon.routes.taxonomy_get_refset_list_path, function(refset_data) {
@@ -484,7 +488,7 @@ var PreferenceModule = (function () {
         });
     }
     function selectItemByValue(elmnt, value){
-     //console.log(value);
+     console.log(value);
         for(var i=0; i < elmnt.options.length; i++)
         {
             if(elmnt.options[i].value == value)
