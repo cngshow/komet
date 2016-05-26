@@ -17,7 +17,14 @@
  limitations under the License.
  */
 var PreferenceModule = (function () {
+
+    var refsetList = {};
+    var refsetRows = [];
+
     function init() {
+
+        refsetList = {};
+        refsetRows = [];
 
         document.getElementById('loadingdiv').style.display ="block";
         var dialog, form
@@ -137,6 +144,14 @@ var PreferenceModule = (function () {
                 document.getElementById('loadingdiv').style.display ="none";
             });
 
+            // get the list of refsets to populate the refsets dropdown
+            /*
+            $.get(gon.routes.taxonomy_get_refset_list_path, function(refset_data) {
+
+                refsetList = refset_data;
+                createRefsetFieldRow();
+            });
+            */
         });
 
 
@@ -207,7 +222,50 @@ var PreferenceModule = (function () {
         }
 
     }
-// sets selected value of status radion button list
+
+    // create a new select field for choosing a refset and color picker
+    function createRefsetFieldRow(){
+
+        var rowID = window.performance.now();
+
+        refsetRows.push(rowID);
+
+        var refsetRow = document.createElement("tr");
+        var refsetIDCell = document.createElement("td");
+        var refsetColorCell = document.createElement("td");
+        var refsetSelect = '<select id="komet_preferences_refset_id_' + rowID + '">';
+
+        var options = "";
+
+        Object.keys(refsetList).forEach( function(refsetID) {
+            options += '<option value="' + refsetID + '">' + refsetList[refsetID] + '</option>';
+        });
+
+        refsetSelect += options + '</select>';
+
+        refsetIDCell.innerHTML = refsetSelect;
+        refsetRow.appendChild(refsetIDCell);
+
+        var colorPicker = '<input name="color_id" class="demo" title="Click here to change color"  type="text" id="komet_preferences_refset_color_"' + rowID + '" size="6" style="height:40px" data-control="hue" value="" />';
+
+        refsetColorCell.innerHTML = colorPicker;
+        refsetRow.appendChild(refsetColorCell);
+
+        $("#komet_preferences_refsets_table").append(refsetRow);
+    }
+
+    function deleteRefsetFieldRow(rowID){
+
+        $("#komet_preferences_refset_id_" + rowID).remove();
+
+        var index = refsetRows.indexOf(rowID);
+
+        if (index > -1) {
+            refsetRows.splice(index, 1);
+        }
+    }
+
+    // sets selected value of status radion button list
     function selectAllowedstates(values)
     {
         var statues ="";

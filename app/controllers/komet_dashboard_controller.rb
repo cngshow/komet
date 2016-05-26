@@ -213,6 +213,54 @@ class KometDashboardController < ApplicationController
 
   end
 
+  def get_refset_list
+
+    coordinates_token = session[:coordinatestoken].token
+    stated = params[:stated]
+
+    # check to make sure the flag for stated or inferred view was passed in
+    if stated != nil
+      @stated = stated
+    end
+
+    additional_req_params = {coordToken: coordinates_token, stated: @stated, childDepth: 50}
+
+    refsets = TaxonomyRest.get_isaac_concept(uuid: $PROPS['KOMET.assemblage_concept_id'], additional_req_params: additional_req_params)
+
+    if refsets.is_a? CommonRest::UnexpectedResponse
+      render json: [] and return
+    end
+
+    processed_refsets = process_refset_list(refsets)
+
+    render json: processed_refsets.to_json
+
+  end
+
+  def process_refset_list(concept)
+
+    refset_nodes = {}
+
+    node = {}
+    node[concept.conChronology.conceptSequence] = concept.conChronology.description
+    has_children = !concept.children.nil?
+
+    # get the children
+    if has_children
+      children = concept.children
+    else
+
+      children = []
+      refset_nodes.merge!(node)
+    end
+
+    children.each do |child|
+      refset_nodes.merge!(process_refset_list(child))
+    end
+
+    refset_nodes
+  end
+
   ##
   # get_concept_refsets - RESTful route for populating concept refsets section using an http :GET
   # The current tree node representing the concept is identified in the request params with the key :concept_id
@@ -492,7 +540,7 @@ class KometDashboardController < ApplicationController
     json = YAML.load_file constants_file
     translated_hash = add_translations(json)
     gon.IsaacMetadataAuxiliary = translated_hash
-    
+
     if !session[:coordinatestoken]
       results =CoordinateRest.get_coordinate(action: CoordinateRestActions::ACTION_COORDINATES_TOKEN)
       session[:coordinatestoken] = results
