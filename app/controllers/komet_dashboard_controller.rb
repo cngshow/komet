@@ -193,6 +193,7 @@ class KometDashboardController < ApplicationController
     value = getcoordinates_results.languageCoordinate.to_json
     getcoordinates_results = JSON.parse(getcoordinates_results.to_json)
     getcoordinates_results[:colormodule]= session[:colormodule]
+    getcoordinates_results[:colorpath]= session[:colorpath]
 
     render json:  getcoordinates_results.to_json
   end
@@ -204,6 +205,7 @@ class KometDashboardController < ApplicationController
   hash[:descriptionTypePrefs] = params[:descriptionTypePrefs]
   hash[:allowedStates]= params[:allowedStates]
   session[:colormodule] =params[:colormodule]
+  session[:colorpath] =params[:colorpath]
   results =  CoordinateRest.get_coordinate(action: CoordinateRestActions::ACTION_COORDINATES_TOKEN,  additional_req_params: hash)
   session[:coordinatestoken] = results
  $log.debug("token get_coordinatestoken #{results.token}" )
@@ -249,6 +251,7 @@ class KometDashboardController < ApplicationController
     elsif tree_walk_levels == 0 && concept.childCount != 0
 
       node[:child_count] = concept.childCount
+      node[:has_children] = true
       node[:has_children] = true
 
     else

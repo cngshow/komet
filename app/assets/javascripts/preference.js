@@ -64,33 +64,13 @@ var PreferenceModule = (function () {
             var dialectassemblagepreferences="";
             var allowedstates =[];
 
-            //Gets list of all the module.creating color module table from rest api call by passing constant uuid
-            var uuidParams =  "?uuid=" +  gon.IsaacMetadataAuxiliary.MODULE.uuids[0].uuid;
-            // make an ajax call to get the data
-            $.get(gon.routes.taxonomy_get_concept_languages_dialect_path + uuidParams, function( results ) {
-                document.getElementById('listofmodule').innerHTML ="";
 
-                var colorheadingtr = document.createElement("TR");
-                colorheadingtr.setAttribute("id", "colorheading");
-                colorheadingtr.setAttribute("style", "background-color: #4f80d9;color:white")
-                document.getElementById('listofmodule').appendChild(colorheadingtr);
-
-                var colorheadingtd1 = document.createElement("TD");
-                colorheadingtd1.innerHTML ='Module';
-                document.getElementById("colorheading").appendChild(colorheadingtd1);
-
-                var colorheadingtd2 = document.createElement("TD");
-                colorheadingtd2.innerHTML = 'Color';
-                document.getElementById("colorheading").appendChild(colorheadingtd2);
-                $.each(results.children,function(index,value) {
-                    populateColormodule(value.conChronology.conceptSequence,value.conChronology.description)
-                });
-                $('.demo').minicolors();
-            });
+            populateColormodule('');
+            populateColorpath('');
 
 
             // Gets list of all the languages based on constant uuid value
-            uuidParams =  "?uuid=" +  gon.IsaacMetadataAuxiliary.LANGUAGE.uuids[0].uuid;
+            var uuidParams =  "?uuid=" +  gon.IsaacMetadataAuxiliary.LANGUAGE.uuids[0].uuid;
             // make an ajax call to get the data
             $.get(gon.routes.taxonomy_get_concept_languages_dialect_path + uuidParams, function( results ) {
                 $.each(results.children,function(index,value) {
@@ -98,17 +78,16 @@ var PreferenceModule = (function () {
                 });
             });
 
-
             document.getElementById('description_type').innerHTML ="";
             document.getElementById('dialecttbl').innerHTML ="";
             var tr = document.createElement("TR");
             tr.setAttribute("id", "heading1");
-            tr.setAttribute("style", "background-color: #4f80d9;color:white")
+            tr.setAttribute("style", "background-color: #4f80d9;color:white");
             document.getElementById('description_type').appendChild(tr);
 
             var tr1 = document.createElement("TR");
             tr1.setAttribute("id", "heading2");
-            tr1.setAttribute("style", "background-color: #4f80d9;color:white")
+            tr1.setAttribute("style", "background-color: #4f80d9;color:white");
             document.getElementById('dialecttbl').appendChild(tr1);
 
             var td1 = document.createElement("TD");
@@ -129,16 +108,17 @@ var PreferenceModule = (function () {
 
 
             $.get( gon.routes.taxonomy_get_coordinates_path, function( getcoordinates_results ) {
-                $( "#komet_concept_language" ).val(getcoordinates_results.languageCoordinate.language);
+                console.log(getcoordinates_results.languageCoordinate.language);
 
+                $('#komet_concept_language').val(getcoordinates_results.languageCoordinate.language).attr("selected", "selected");
                 descriptiontypepreferences = getcoordinates_results.languageCoordinate.dialectAssemblagePreferences;
                 dialectassemblagepreferences= getcoordinates_results.languageCoordinate.descriptionTypePreferences;
                 allowedstates =getcoordinates_results.stampCoordinate.allowedStates;
                 // Gets list of all the dialect based on constant uuid value
-                populateControls('dialecttbl',gon.IsaacMetadataAuxiliary.DIALECT_ASSEMBLAGE.uuids[0].uuid,descriptiontypepreferences)
+                populateControls('dialecttbl',gon.IsaacMetadataAuxiliary.DIALECT_ASSEMBLAGE.uuids[0].uuid,dialectassemblagepreferences)
 
                 // Gets list of all the description type based on constant uuid value
-                populateControls('description_type',gon.IsaacMetadataAuxiliary.DESCRIPTION_TYPE.uuids[0].uuid,dialectassemblagepreferences)
+                populateControls('description_type',gon.IsaacMetadataAuxiliary.DESCRIPTION_TYPE.uuids[0].uuid,descriptiontypepreferences)
 
                 //checked selected  values in status list
                 selectAllowedstates(allowedstates);
@@ -146,26 +126,14 @@ var PreferenceModule = (function () {
                 // this recreating color module table from session
                 if (getcoordinates_results.colormodule != null)
                 {
-                    document.getElementById('listofmodule').innerHTML ="";
-
-                    var colorheadingtr = document.createElement("TR");
-                    colorheadingtr.setAttribute("id", "colorheading");
-                    colorheadingtr.setAttribute("style", "background-color: #4f80d9;color:white")
-                    document.getElementById('listofmodule').appendChild(colorheadingtr);
-
-                    var colorheadingtd1 = document.createElement("TD");
-                    colorheadingtd1.innerHTML ='Module';
-                    document.getElementById("colorheading").appendChild(colorheadingtd1);
-
-                    var colorheadingtd2 = document.createElement("TD");
-                    colorheadingtd2.innerHTML = 'Color';
-                    document.getElementById("colorheading").appendChild(colorheadingtd2);
-                    $.each(getcoordinates_results.colormodule,function(index,value) {
-                        populateColormodule(value.moduleid ,value.module_name,value.colorid)
-                    });
-                    $('.demo').minicolors();
+                    populateColormodule(getcoordinates_results.colormodule);
                 }
 
+                // this recreating path color  table from session
+               if (getcoordinates_results.colorpath != null)
+                {
+                    populateColorpath(getcoordinates_results.colorpath);
+                }
                 document.getElementById('loadingdiv').style.display ="none";
             });
 
@@ -206,6 +174,7 @@ var PreferenceModule = (function () {
             var language_values=$( "#komet_concept_language" ).val();
             var allowedStates=$('input[type=radio]:checked').val();
             var colormodule=[];
+            var colorpath=[];
             var params = "";
             var moduleid="";
 
@@ -220,10 +189,14 @@ var PreferenceModule = (function () {
                 var splitvalue = this.id.split('~');
                 colormodule.push({module_name:splitvalue[0],moduleid:splitvalue[1] ,colorid:this.value }) ;
             });
+            $('input[name=colorpath]').each(function() {
+                var splitvalue = this.id.split('~');
+                colorpath.push({path_name:splitvalue[0],pathid:splitvalue[1] ,colorid:this.value }) ;
+            });
             dialect_values = dialect_values.substring(0  ,dialect_values.length -1); // removing comma from end of the string
             description_values = description_values.substring(0  ,description_values.length -1);// removing comma from end of the string
 
-            params = {language: language_values , dialectPrefs: dialect_values ,descriptionTypePrefs:description_values, allowedStates:allowedStates ,colormodule:colormodule} ;
+            params = {language: language_values , dialectPrefs: dialect_values ,descriptionTypePrefs:description_values, allowedStates:allowedStates ,colormodule:colormodule,colorpath:colorpath} ;
 
             $.get( gon.routes.taxonomy_get_coordinatestoken_path , params, function( results ) {
 
@@ -257,22 +230,137 @@ var PreferenceModule = (function () {
         $("input[name=status][value='" + statues + "']").attr('checked', 'checked');
     }
 
-    // adding row to color module table
-    function populateColormodule(conceptSequence,description,colorvalue)
+
+    function populateColorpath(pathvalue)
     {
-        var tr = document.createElement("TR");
-        tr.setAttribute("id", "colorTr" + conceptSequence );
 
-        document.getElementById('listofmodule').appendChild(tr);
+        if (pathvalue === '')
+        {
+            // make an ajax call to get the data for path color list
+            var   uuidParams =  "?uuid=" +  gon.IsaacMetadataAuxiliary.PATH.uuids[0].uuid;
+            $.get(gon.routes.taxonomy_get_concept_languages_dialect_path + uuidParams, function( results ) {
+                document.getElementById('listofpath').innerHTML ="";
+                var colorpathheadingtr = document.createElement("TR");
+                colorpathheadingtr.setAttribute("id", "colorpathheading");
+                colorpathheadingtr.setAttribute("style", "background-color: #4f80d9;color:white")
+                document.getElementById('listofpath').appendChild(colorpathheadingtr);
 
-        var td2 = document.createElement("TD");
-        td2.innerHTML = description;
-        document.getElementById("colorTr" +conceptSequence).appendChild(td2);
+                var colorpathheadingtd1 = document.createElement("TD");
+                colorpathheadingtd1.innerHTML ='Path';
+                document.getElementById("colorpathheading").appendChild(colorpathheadingtd1);
 
-        var td3 = document.createElement("TD");
-        td3.innerHTML ='<input name="color_id" class="demo" title="Click here to change color"  type="text" id="' + description + '~' + conceptSequence + '" size="6" style="height:40px" data-control="hue" value="' + colorvalue + '" />';
+                var colorpathheadingtd2 = document.createElement("TD");
+                colorpathheadingtd2.innerHTML = 'Color';
+                document.getElementById("colorpathheading").appendChild(colorpathheadingtd2);
+                $.each(results.children,function(index,value) {
+                    var tr = document.createElement("TR");
+                    tr.setAttribute("id", "colorpathtr" + value.conChronology.conceptSequence);
+                    document.getElementById('listofpath').appendChild(tr);
 
-        document.getElementById("colorTr" + conceptSequence).appendChild(td3);
+                    var td2 = document.createElement("TD");
+                    td2.innerHTML = value.conChronology.description;
+                    document.getElementById("colorpathtr" + value.conChronology.conceptSequence).appendChild(td2);
+
+                    var td3 = document.createElement("TD");
+                    td3.innerHTML = '<input name="colorpath" class="pathcolordemo" title="Click here to change color"  type="text" id="' + value.conChronology.description + '~' + value.conChronology.conceptSequence + '" size="6" style="height:40px" data-control="hue" value="" />';
+
+                    document.getElementById("colorpathtr" + value.conChronology.conceptSequence).appendChild(td3);
+                    $('.pathcolordemo').minicolors();
+                });
+            });
+        }
+        else {
+            document.getElementById('listofpath').innerHTML ="";
+            var colorpathheadingtr = document.createElement("TR");
+            colorpathheadingtr.setAttribute("id", "colorpathheading");
+            colorpathheadingtr.setAttribute("style", "background-color: #4f80d9;color:white")
+            document.getElementById('listofpath').appendChild(colorpathheadingtr);
+
+            var colorpathheadingtd1 = document.createElement("TD");
+            colorpathheadingtd1.innerHTML ='Path';
+            document.getElementById("colorpathheading").appendChild(colorpathheadingtd1);
+
+            var colorpathheadingtd2 = document.createElement("TD");
+            colorpathheadingtd2.innerHTML = 'Color';
+            document.getElementById("colorpathheading").appendChild(colorpathheadingtd2);
+            $.each(pathvalue, function (index, value) {
+                var tr = document.createElement("TR");
+                tr.setAttribute("id", "colorpathtr" + value.pathid);
+                document.getElementById('listofpath').appendChild(tr);
+
+                var td2 = document.createElement("TD");
+                td2.innerHTML = value.path_name;
+                document.getElementById("colorpathtr" + value.pathid).appendChild(td2);
+
+                var td3 = document.createElement("TD");
+                td3.innerHTML = '<input name="colorpath" class="pathcolordemo" title="Click here to change path color"  type="text" id="' + value.path_name + '~' + value.pathid + '" size="6" style="height:40px" data-control="hue" value="' + value.colorid + '" />';
+
+                document.getElementById("colorpathtr" + value.pathid).appendChild(td3);
+                $('.pathcolordemo').minicolors();
+            });
+        }
+
+
+
+    }
+    // adding row to color module table
+    function populateColormodule(colormodule)
+    {
+        document.getElementById('listofmodule').innerHTML ="";
+
+        var colorheadingtr = document.createElement("TR");
+        colorheadingtr.setAttribute("id", "colorheading");
+        colorheadingtr.setAttribute("style", "background-color: #4f80d9;color:white")
+        document.getElementById('listofmodule').appendChild(colorheadingtr);
+
+        var colorheadingtd1 = document.createElement("TD");
+        colorheadingtd1.innerHTML ='Module';
+        document.getElementById("colorheading").appendChild(colorheadingtd1);
+
+        var colorheadingtd2 = document.createElement("TD");
+        colorheadingtd2.innerHTML = 'Color';
+        document.getElementById("colorheading").appendChild(colorheadingtd2);
+        if(colormodule === '')
+        {
+            //Gets list of all the module.creating color module table from rest api call by passing constant uuid
+            var uuidParams =  "?uuid=" +  gon.IsaacMetadataAuxiliary.MODULE.uuids[0].uuid;
+            // make an ajax call to get the data for module color list
+            $.get(gon.routes.taxonomy_get_concept_languages_dialect_path + uuidParams, function( results ) {
+                $.each(results.children,function(index,value) {
+                    var tr = document.createElement("TR");
+                    tr.setAttribute("id", "colorTr" + value.conChronology.conceptSequence);
+                    document.getElementById('listofmodule').appendChild(tr);
+
+                    var td2 = document.createElement("TD");
+                    td2.innerHTML = value.conChronology.description;
+                    document.getElementById("colorTr" + value.conChronology.conceptSequence).appendChild(td2);
+
+                    var td3 = document.createElement("TD");
+                    td3.innerHTML = '<input name="color_id" class="demo" title="Click here to change color"  type="text" id="' + value.conChronology.description + '~' + value.conChronology.conceptSequence + '" size="6" style="height:40px" data-control="hue" value="" />';
+
+                    document.getElementById("colorTr" + value.conChronology.conceptSequence).appendChild(td3);
+                });
+
+            });
+        }
+        else {
+            $.each(colormodule, function (index, value) {
+                var tr = document.createElement("TR");
+                tr.setAttribute("id", "colorTr" + value.moduleid);
+                document.getElementById('listofmodule').appendChild(tr);
+
+                var td2 = document.createElement("TD");
+                td2.innerHTML = value.module_name;
+                document.getElementById("colorTr" + value.moduleid).appendChild(td2);
+
+                var td3 = document.createElement("TD");
+                td3.innerHTML = '<input name="color_id" class="demo" title="Click here to change color"  type="text" id="' + value.module_name + '~' + value.moduleid + '" size="6" style="height:40px" data-control="hue" value="' + value.colorid + '" />';
+
+                document.getElementById("colorTr" + value.moduleid).appendChild(td3);
+            });
+
+        }
+        $('.demo').minicolors();
     }
 
     // creates table of description type and dialect
@@ -344,7 +432,7 @@ var PreferenceModule = (function () {
         document.getElementById("Tr" + counter).appendChild(td2);
 
         var td3 = document.createElement("TD");
-        td3.innerHTML ='<input   type="hidden" name="' + tblname  + '" id="rank_"' + counter + '" size="2" value="' + value[index].id + '" />';
+        td3.innerHTML ='<input   type="text" name="' + tblname  + '" id="rank_"' + counter + '" size="2" value="' + value[index].id + '" />';
         document.getElementById("Tr" + counter).appendChild(td3);
 
     }
@@ -353,7 +441,12 @@ var PreferenceModule = (function () {
     return {
 
         initialize: init,
-        renderTbl: renderTbl
+        renderTbl: renderTbl,
+        populateColormodule: populateColormodule,
+        populateColorpath: populateColorpath,
+        populateControls: populateControls
+
+
 
     };
 
