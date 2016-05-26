@@ -117,8 +117,8 @@ var PreferenceModule = (function () {
 
             $.get( gon.routes.taxonomy_get_coordinates_path, function( getcoordinates_results ) {
                 selectItemByValue(document.getElementById('komet_concept_language'),getcoordinates_results.languageCoordinate.language);
-                descriptiontypepreferences = getcoordinates_results.languageCoordinate.dialectAssemblagePreferences;
-                dialectassemblagepreferences= getcoordinates_results.languageCoordinate.descriptionTypePreferences;
+                descriptiontypepreferences = getcoordinates_results.languageCoordinate.descriptionTypePreferences;
+                dialectassemblagepreferences= getcoordinates_results.languageCoordinate.dialectAssemblagePreferences;
                 allowedstates =getcoordinates_results.stampCoordinate.allowedStates;
                 // Gets list of all the dialect based on constant uuid value
                 populateControls('dialecttbl',gon.IsaacMetadataAuxiliary.DIALECT_ASSEMBLAGE.uuids[0].uuid,dialectassemblagepreferences)
