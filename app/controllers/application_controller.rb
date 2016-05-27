@@ -7,6 +7,7 @@ class ApplicationController < ActionController::Base
   protect_from_forgery with: :exception
 
   before_action :ensure_rest_version
+  before_action :ensure_roles, except: [:logout]
 
   rescue_from Exception, :with => :internal_error
 
@@ -47,4 +48,31 @@ class ApplicationController < ActionController::Base
     end
   end
 
+  def ensure_roles
+    roles = session[Roles::SESSION_USER_ROLES]
+    user = session[Roles::SESSION_USER]
+    password = session[Roles::SESSION_PASSWORD]
+    session[Roles::SESSION_LAST_ROLE_CHECK] =  100.years.ago if session[Roles::SESSION_LAST_ROLE_CHECK].nil?
+    time_for_recheck = (Time.now - session[Roles::SESSION_LAST_ROLE_CHECK]) > $PROPS['KOMET.roles_recheck_in_seconds'].to_i
+    if (session[Roles::SESSION_LAST_ROLE_CHECK].nil? || time_for_recheck)
+      #refetch roles
+      if (Rails.env.development? && !boolean($PROPS['PRISME.use_prisme_root']))
+        load './lib/roles_test/roles.rb'
+        user = params['komet_username'] unless params['komet_username'].nil?
+        password = params['komet_password'] unless params['komet_password'].nil?
+        roles = RolesTest::user_roles(user: user, password: password)
+        session[Roles::SESSION_LAST_ROLE_CHECK] = Time.now
+      else
+        #get roles from prisme
+        puts "Hi"
+        session[Roles::SESSION_LAST_ROLE_CHECK] = Time.now
+      end
+      if (roles)
+        session[Roles::SESSION_USER] = user
+        session[Roles::SESSION_USER_ROLES] = roles
+        session[Roles::SESSION_PASSWORD] = password
+      end
+    end
+    roles
+  end
 end

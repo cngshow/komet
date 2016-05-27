@@ -38,7 +38,10 @@ class KometDashboardController < ApplicationController
   # Whether to display the stated (true) or inferred view of concepts with a request param of :stated (true/false)
   #@return [json] the tree nodes to insert into the tree at the parent node passed in the request
   def load_tree_data
-
+#    roles = session[Roles::SESSION_USER_ROLES]
+#    if(roles.include?(Roles::DEV_SUPER_USER))
+#      #do something
+#    end
     coordinates_token = session[:coordinatestoken].token
     selected_concept_id = params[:concept_id]
     parent_search = params[:parent_search]
@@ -525,14 +528,31 @@ class KometDashboardController < ApplicationController
     return java.lang.System.nanoTime
   end
 
+  def login
+    roles = session[Roles::SESSION_USER_ROLES]
+    if(roles)
+      redirect_to komet_dashboard_dashboard_url
+    else
+      #not authenticated - redirect to the naughty page
+      flash[:error] = "Invalid username or password."
+      redirect_to root_url
+    end
+  end
+
+  def logout
+    session.delete(:current_user)
+    session.delete(:current_user_roles)
+    session.delete(:current_password)
+    flash[:notice] = "You have been logged out."
+    redirect_to root_url
+  end
+
   def dashboard
-    foo
     @stated = 'true'
   end
 
   def setup_constants
     initialize_isaac_constants #to_do, remove
-    $log.debug('term_aux hash passed to javascript is ' + ISAACConstants::TERMAUX.to_s) #to_do, remove
     gon.term_aux = ISAACConstants::TERMAUX #to_do, remove
 
     constants_file = './config/generated/yaml/IsaacMetadataAuxiliary.yaml'

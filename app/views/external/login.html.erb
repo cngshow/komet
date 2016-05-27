@@ -1,36 +1,115 @@
+<style>
+  /******************************** flash styles *****************************/
+  .argInputError {
+    border: 2px solid red;
+    background-color: #f0f0f0;
+  }
+  div.field_with_errors label {
+    font-style: italic;
+    padding: 5px;
+    background-color: #c00;
+    color: white;
+    display: table;
+    border-radius: 5px;
+  }
+  .fieldWithErrors {
+    padding: 2px;
+    background-color: #c00;
+    display: table;
+  }
+  #errorExplanation, #error_explanation, #flash_alert {
+    width: 400px;
+    border: 2px solid red;
+    padding: 7px;
+    padding-bottom: 12px;
+    margin-bottom: 20px;
+    background-color: #f0f0f0;
+  }
+  #flash_notice {
+    width: 400px;
+    margin: 0 auto;
+    margin-top: 1cm;
+    border: 2px solid green;
+    padding: 7px;
+    padding-bottom: 12px;
+    margin-bottom: 20px;
+    background-color: #f0f0f0;
+  }
+  #flash_error, #flash_error h2 {
+    text-align: left;
+    font-weight: bold;
+    padding: 5px 5px 5px 15px;
+    font-size: 12px;
+    margin: -7px;
+    background-color: #c00;
+    color: #fff;
+  }
+  #flash_error, #flash_error p {
+    color: #333;
+    margin-bottom: 0;
+    padding: 5px;
+  }
+  #flash_error, #flash_error ul li {
+    font-size: 12px;
+    list-style: square;
+    font-weight: normal;
+  }
+  #flash_error {
+    width: 400px;
+    margin: 0 auto;
+    margin-top: 1cm;
+    border: 2px solid red;
+    padding: 7px;
+    padding-bottom: 12px;
+    margin-bottom: 20px;
+    background-color: #f0f0f0;
+  }
+  #errorExplanation, #error_explanation h2 {
+    text-align: left;
+    font-weight: bold;
+    padding: 5px 5px 5px 15px;
+    font-size: 12px;
+    margin: -7px;
+    background-color: #c00;
+    color: #fff;
+  }
+  #errorExplanation, #error_explanation p {
+    color: #333;
+    margin-bottom: 0;
+    padding: 5px;
+  }
+  #errorExplanation, #error_explanation ul li {
+    font-size: 12px;
+    list-style: square;
+  }
+</style>
 
+<div class="komet-external-header">KOMET Tooling</div>
 
-  <div class="komet-external-header">KOMET Tooling</div>
-
-  <div class="komet-external-body">
-
-    <div class="komet-external-left-column">
-      Welcome to the KOMET tooling system for viewing, entering, and editing terminology concepts for Veterans Affairs medical applications.
-      You must be an authorized user to access this system. Please login below. If you do not have a login contact your VA manager.
-    </div>
-
-    <div class="komet-external-right-column">
-
-      <form action='<%= komet_dashboard_dashboard_path %>' class="komet-external-login-form">
-
-        <div>
-          <label for="komet-username">User Name:</label>
-          <input class="form-control" id="komet_username"/>
-        </div>
-
-        <div>
-          <label for="komet-password">Password:</label>
-          <input class="form-control" id="komet_password"/>
-        </div>
-
-        <div>
-          <button class="btn btn-primary" type="submit" value="Submit" >Login</button>
-        </div>
-
-      </form>
-
-    </div>
-
+<div class="komet-external-body">
+  <div class="komet-external-left-column">
+    Welcome to the KOMET tooling system for viewing, entering, and editing terminology concepts for Veterans Affairs
+    medical applications.
+    You must be an authorized user to access this system. Please login below. If you do not have a login contact your VA
+    manager.
   </div>
+  <div class="komet-external-right-column">
+    <%= form_tag komet_dashboard_login_path, class: "komet-external-login-form", id: "komet-external-login-form" do %>
+        <div>
+          <%= label_tag 'komet_username', 'User Name:' %><br>
+          <%= text_field_tag :komet_username %>
+        </div>
+        <div>
+          <%= label_tag 'komet_password', 'Password:' %><br>
+          <%= password_field_tag :komet_password %>
+        </div>
+
+        <div>
+          <br>
+          <%= submit_tag 'Login'%>
+        </div>
+    <% end %>
+  </div>
+</div>
 
 
