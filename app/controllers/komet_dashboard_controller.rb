@@ -29,6 +29,7 @@ class KometDashboardController < ApplicationController
 
   before_action :setup_routes, :setup_constants, :only => [:dashboard]
   after_filter :byte_size unless Rails.env.production?
+  skip_before_action :ensure_roles, only: [:logout]
 
   ##
   # load_tree_data - RESTful route for populating the taxonomy tree using an http :GET
@@ -530,7 +531,7 @@ class KometDashboardController < ApplicationController
 
   def login
     roles = session[Roles::SESSION_USER_ROLES]
-    if(roles)
+    unless(roles.nil? || roles.empty?)
       redirect_to komet_dashboard_dashboard_url
     else
       #not authenticated - redirect to the naughty page
@@ -540,6 +541,7 @@ class KometDashboardController < ApplicationController
   end
 
   def logout
+    roles = session[Roles::SESSION_USER_ROLES]
     session.delete(:current_user)
     session.delete(:current_user_roles)
     session.delete(:current_password)

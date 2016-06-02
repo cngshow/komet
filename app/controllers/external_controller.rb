@@ -22,6 +22,5 @@ Copyright Notice
 # ExternalController -
 # handles the login and all resources outside of login
 class ExternalController < ApplicationController
-
-
+  skip_before_action :ensure_roles
 end
