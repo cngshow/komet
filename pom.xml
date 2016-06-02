@@ -23,7 +23,7 @@
 	</description>
 
 	<properties>
-		<rails_common.version>1.3</rails_common.version>
+		<rails_common.version>1.4</rails_common.version>
 		<isaac.version>${project.parent.version}</isaac.version>
 		<!-- railsMode is automatically set to 'test' or 'production' - 'test' if the version number ends with '-SNAPSHOT'
 		or 'production' otherwise.  See ant execution below-->
