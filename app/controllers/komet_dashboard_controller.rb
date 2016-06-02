@@ -29,7 +29,6 @@ class KometDashboardController < ApplicationController
 
   before_action :setup_routes, :setup_constants, :only => [:dashboard]
   after_filter :byte_size unless Rails.env.production?
-  skip_before_action :ensure_roles, only: [:logout]
 
   ##
   # load_tree_data - RESTful route for populating the taxonomy tree using an http :GET
@@ -527,26 +526,6 @@ class KometDashboardController < ApplicationController
 
   def get_next_id
     return java.lang.System.nanoTime
-  end
-
-  def login
-    roles = session[Roles::SESSION_USER_ROLES]
-    unless(roles.nil? || roles.empty?)
-      redirect_to komet_dashboard_dashboard_url
-    else
-      #not authenticated - redirect to the naughty page
-      flash[:error] = "Invalid username or password."
-      redirect_to root_url
-    end
-  end
-
-  def logout
-    roles = session[Roles::SESSION_USER_ROLES]
-    session.delete(:current_user)
-    session.delete(:current_user_roles)
-    session.delete(:current_password)
-    flash[:notice] = "You have been logged out."
-    redirect_to root_url
   end
 
   def dashboard

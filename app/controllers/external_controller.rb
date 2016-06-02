@@ -22,5 +22,33 @@ Copyright Notice
 # ExternalController -
 # handles the login and all resources outside of login
 class ExternalController < ApplicationController
-  skip_before_action :ensure_roles
+
+  skip_before_action :ensure_roles, only: [:logout, :login]
+
+  def login
+    #render external#login
+  end
+
+  def authenticate
+    roles = session[Roles::SESSION_USER_ROLES]
+    unless(roles.nil? || roles.empty?)
+      redirect_to komet_dashboard_dashboard_url
+    else
+      #not authenticated - redirect to the naughty page
+      flash[:error] = "Invalid username or password."
+      redirect_to root_url
+    end
+  end
+
+  def logout
+    roles = session[Roles::SESSION_USER_ROLES]
+    session.delete(:current_user)
+    session.delete(:current_user_roles)
+    session.delete(:current_password)
+    flash[:notice] = "You have been logged out."
+    redirect_to root_url
+  end
+
+
+
 end

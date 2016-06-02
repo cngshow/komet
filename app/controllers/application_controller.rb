@@ -10,7 +10,7 @@ class ApplicationController < ActionController::Base
   protect_from_forgery with: :exception
 
   before_action :ensure_rest_version
-  before_action :ensure_roles, except: [:root]
+  before_action :ensure_roles
 
   rescue_from Exception, :with => :internal_error
 
@@ -104,6 +104,7 @@ class ApplicationController < ActionController::Base
         session[Roles::SESSION_PASSWORD] = nil
       end
     end
+    $log.debug("The roles for user #{session[Roles::SESSION_USER]} are #{roles}")
     roles
   end
 
