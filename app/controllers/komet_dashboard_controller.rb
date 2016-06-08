@@ -194,7 +194,7 @@ class KometDashboardController < ApplicationController
     getcoordinates_results = JSON.parse(getcoordinates_results.to_json)
     getcoordinates_results[:colormodule]= session[:colormodule]
     getcoordinates_results[:colorpath]= session[:colorpath]
-
+    getcoordinates_results[:colorrefsets]= session[:colorrefsets]
     render json:  getcoordinates_results.to_json
   end
 
@@ -206,6 +206,7 @@ class KometDashboardController < ApplicationController
   hash[:allowedStates]= params[:allowedStates]
   session[:colormodule] =params[:colormodule]
   session[:colorpath] =params[:colorpath]
+  session[:colorrefsets] =params[:colorrefsets]
   results =  CoordinateRest.get_coordinate(action: CoordinateRestActions::ACTION_COORDINATES_TOKEN,  additional_req_params: hash)
   session[:coordinatestoken] = results
  $log.debug("token get_coordinatestoken #{results.token}" )

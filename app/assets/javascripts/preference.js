@@ -20,15 +20,13 @@ var PreferenceModule = (function () {
 
     var refsetList = {};
     var refsetRows = [];
-
+    var rowCount=0;
     function init() {
 
         refsetList = {};
         refsetRows = [];
 
-
         var dialog, form
-
 
         dialog = $( "#dialog-form" ).dialog({
             autoOpen: false,
@@ -60,18 +58,21 @@ var PreferenceModule = (function () {
 
         // Gets list of all the languages based on constant uuid value
         var uuidParams =  "?uuid=" +  gon.IsaacMetadataAuxiliary.LANGUAGE.uuids[0].uuid;
-        // make an ajax call to get the data
+        // make an ajax call to get the data for language on option tab
         $.get(gon.routes.taxonomy_get_concept_languages_dialect_path + uuidParams, function( results ) {
             $.each(results.children,function(index,value) {
                 $("#komet_concept_language").append($("<option />").val(value.conChronology.conceptSequence).text(value.conChronology.description));
             });
         });
 
+        populateColormodule(''); // populate color module
+        populateColorpath(''); // populate color path
 
-        populateColormodule('');
-        populateColorpath('');
-
-
+        // get the list of refsets to populate the refsets dropdown
+        $.get(gon.routes.taxonomy_get_refset_list_path, function(refset_data) {
+            refsetList = refset_data;
+            createRefsetFieldRow();
+        });
 
 
         form = dialog.find( "form" ).on( "submit", function( event ) {
@@ -145,16 +146,47 @@ var PreferenceModule = (function () {
                     document.getElementById('listofpath').innerHTML ="";
                     populateColorpath(getcoordinates_results.colorpath);
                 }
+                if (getcoordinates_results.colorrefsets != null) {
+
+                    document.getElementById('komet_preferences_refsets_table').innerHTML ="";
+
+                    var colorheadingtr = document.createElement("TR");
+                    colorheadingtr.setAttribute("id", "colorrefset");
+                    colorheadingtr.setAttribute("style", "background-color: #4f80d9;color:white;text-align: center")
+                    document.getElementById('komet_preferences_refsets_table').appendChild(colorheadingtr);
+
+                    var colorheadingtd0 = document.createElement("TD");
+                    colorheadingtd0.innerHTML ='ID';
+                    document.getElementById("colorrefset").appendChild(colorheadingtd0);
+
+                    var colorheadingtd1 = document.createElement("TD");
+                    colorheadingtd1.innerHTML ='Color';
+                    document.getElementById("colorrefset").appendChild(colorheadingtd1);
+
+                    var colorheadingtd2 = document.createElement("TD");
+                    colorheadingtd2.innerHTML = 'Refset';
+                    document.getElementById("colorrefset").appendChild(colorheadingtd2);
+
+                    var colorheadingtd3 = document.createElement("TD");
+                    colorheadingtd3.innerHTML = 'Delete';
+                    document.getElementById("colorrefset").appendChild(colorheadingtd3);
+
+                    $.each(getcoordinates_results.colorrefsets, function (index, value) {
+                        addRefsetRow(value.refsets_name,value.colorid,value.refsetsid)
+                    });
+
+                }
 
             });
-            // get the list of refsets to populate the refsets dropdown
-            /*
-            $.get(gon.routes.taxonomy_get_refset_list_path, function(refset_data) {
 
-                refsetList = refset_data;
-                createRefsetFieldRow();
+            $(document).on("click", "#applybtn", function (ev) {
+                var refsetname=$("#komet_preferences_refset_id option:selected").text();
+                var refsetsid=$("#komet_preferences_refset_id option:selected").val();
+                    var colorid=$("#color_id").val();
+                addRefsetRow(refsetname,colorid,refsetsid);
             });
-            */
+
+
         });
 
 
@@ -195,7 +227,7 @@ var PreferenceModule = (function () {
             var colorpath=[];
             var params = "";
             var moduleid="";
-
+            var colorrefsets = [];
             $('input[name=description_type]').each(function() {
                 description_values += this.value + ',' ;
             });
@@ -205,19 +237,30 @@ var PreferenceModule = (function () {
 
             $('input[name=color_id]').each(function() {
                 var splitvalue = this.id.split('~');
-                colormodule.push({module_name:splitvalue[0],moduleid:splitvalue[1] ,colorid:this.value }) ;
+                if (splitvalue[0] != "color_id")
+                {
+                    colormodule.push({module_name:splitvalue[0],moduleid:splitvalue[1] ,colorid:this.value }) ;
+                }
+
             });
             $('input[name=colorpath]').each(function() {
                 var splitvalue = this.id.split('~');
                 colorpath.push({path_name:splitvalue[0],pathid:splitvalue[1] ,colorid:this.value }) ;
             });
+
+            $('input[name=colorrefsets]').each(function() {
+                var splitvalue = this.id.split('~');
+                colorrefsets.push({refsets_name:splitvalue[0],refsetsid:splitvalue[1],colorid:this.value}) ;
+            });
+
+
             dialect_values = dialect_values.substring(0  ,dialect_values.length -1); // removing comma from end of the string
             description_values = description_values.substring(0  ,description_values.length -1);// removing comma from end of the string
 
-            params = {language: language_values , dialectPrefs: dialect_values ,descriptionTypePrefs:description_values, allowedStates:allowedStates ,colormodule:colormodule,colorpath:colorpath} ;
+            params = {language: language_values , dialectPrefs: dialect_values ,descriptionTypePrefs:description_values, allowedStates:allowedStates ,colormodule:colormodule,colorpath:colorpath,colorrefsets:colorrefsets} ;
 
             $.get( gon.routes.taxonomy_get_coordinatestoken_path , params, function( results ) {
-
+                console.log(results);
             });
 
             dialog.dialog( "close" );
@@ -226,47 +269,112 @@ var PreferenceModule = (function () {
 
     }
 
-    // create a new select field for choosing a refset and color picker
-    function createRefsetFieldRow(){
-
-        var rowID = window.performance.now();
-
-        refsetRows.push(rowID);
-
-        var refsetRow = document.createElement("tr");
-        var refsetIDCell = document.createElement("td");
-        var refsetColorCell = document.createElement("td");
-        var refsetSelect = '<select id="komet_preferences_refset_id_' + rowID + '">';
-
-        var options = "";
-
-        Object.keys(refsetList).forEach( function(refsetID) {
-            options += '<option value="' + refsetID + '">' + refsetList[refsetID] + '</option>';
-        });
-
-        refsetSelect += options + '</select>';
-
-        refsetIDCell.innerHTML = refsetSelect;
-        refsetRow.appendChild(refsetIDCell);
-
-        var colorPicker = '<input name="color_id" class="demo" title="Click here to change color"  type="text" id="komet_preferences_refset_color_"' + rowID + '" size="6" style="height:40px" data-control="hue" value="" />';
-
-        refsetColorCell.innerHTML = colorPicker;
-        refsetRow.appendChild(refsetColorCell);
-
-        $("#komet_preferences_refsets_table").append(refsetRow);
-    }
-
     function deleteRefsetFieldRow(rowID){
 
-        $("#komet_preferences_refset_id_" + rowID).remove();
+       // $("#tr1").remove();
+       // var index = refsetRows.indexOf('tr1');
 
+         $("#tr" + rowID).remove();
         var index = refsetRows.indexOf(rowID);
 
         if (index > -1) {
             refsetRows.splice(index, 1);
         }
     }
+
+    // create a new select field for choosing a refset and color picker
+    function createRefsetFieldRow(){
+
+        var options = "";
+        var refsetSelect = '<select style="width:270px" id="komet_preferences_refset_id">';
+
+        Object.keys(refsetList).forEach( function(refsetID) {
+            options += '<option value="' + refsetID + '">' + refsetList[refsetID] + '</option>';
+        });
+
+        refsetSelect += options + '</select>';
+        document.getElementById('getdd').innerHTML =refsetSelect;
+
+        //  refsetRows.push(rowID);
+        document.getElementById('komet_preferences_refsets_table').innerHTML ="";
+
+        var colorheadingtr = document.createElement("TR");
+        colorheadingtr.setAttribute("id", "colorrefset");
+        colorheadingtr.setAttribute("style", "background-color: #4f80d9;color:white;text-align: center")
+        document.getElementById('komet_preferences_refsets_table').appendChild(colorheadingtr);
+
+        var colorheadingtd0 = document.createElement("TD");
+        colorheadingtd0.innerHTML ='ID';
+        document.getElementById("colorrefset").appendChild(colorheadingtd0);
+
+        var colorheadingtd1 = document.createElement("TD");
+        colorheadingtd1.innerHTML ='Color';
+        document.getElementById("colorrefset").appendChild(colorheadingtd1);
+
+        var colorheadingtd2 = document.createElement("TD");
+        colorheadingtd2.innerHTML = 'Refset';
+        document.getElementById("colorrefset").appendChild(colorheadingtd2);
+
+        var colorheadingtd3 = document.createElement("TD");
+        colorheadingtd3.innerHTML = 'Delete';
+        document.getElementById("colorrefset").appendChild(colorheadingtd3);
+
+    }
+
+    function addRefsetRow(refset,colorid,refsetsid)    {
+        rowCount = rowCount + 1;
+       // var rowID = window.performance.now();
+        var tblrowcount = 0;
+        var  founditem='false';
+        $("#komet_preferences_refsets_table").find('tr').each(function (i, el) {
+            var $tds = $(this).find('td');
+            var    refsetsIds = $tds.eq(0).text();
+            var    colorids = $tds.eq(1).text();
+            var   refsetss = $tds.eq(2).text();
+            tblrowcount = tblrowcount + 1
+            if (parseInt(refsetsIds) === parseInt(refsetsid) && tblrowcount > 1)
+            {
+               // $tds.eq(1).setAttribute("style", "border:outset 1px black;width:15px;background-color:" + colorid );
+                founditem='true';
+                $tds.eq(1).css("background-color", "#" + colorid);
+                return false;
+            }
+            else
+            {
+
+                founditem='false';
+
+            }
+        });
+            if (founditem === 'false')
+            {
+
+                var refsetRow = document.createElement("tr");
+                var refsetDeleteCell = document.createElement("td");
+                var refsetColorCell = document.createElement("td");
+                var refsetIDCell = document.createElement("td");
+                var refsetCell = document.createElement("td");
+                refsetRow.setAttribute("id", "tr" + rowCount);
+
+                refsetIDCell.innerHTML = refsetsid;
+                refsetCell.innerHTML ="&nbsp;&nbsp;" + refset;
+                refsetColorCell.setAttribute("style", "border:outset 1px black;width:15px;background-color:" + colorid );
+                refsetDeleteCell.setAttribute("style", "text-align: center" );
+                refsetDeleteCell.innerHTML='<a name="removeRow" onclick="PreferenceModule.deleteRefsetFieldRow(' + rowCount + ')">X</a>';
+                refsetColorCell.innerHTML = '<input name="colorrefsets"  type="hidden" id="' + refset + '~' + refsetsid + '" size="6" style="height:40px" data-control="hue" value=" ' + colorid + ' "  />';
+
+                refsetRow.appendChild(refsetIDCell);
+                refsetRow.appendChild(refsetColorCell);
+                refsetRow.appendChild(refsetCell);
+                refsetRow.appendChild(refsetDeleteCell);
+
+                $("#komet_preferences_refsets_table").append(refsetRow);
+            }
+
+
+
+    }
+
 
     // sets selected value of status radion button list
     function selectAllowedstates(values)    {
@@ -320,7 +428,7 @@ var PreferenceModule = (function () {
                     document.getElementById("colorpathtr" + value.conChronology.conceptSequence).appendChild(td2);
 
                     var td3 = document.createElement("TD");
-                    td3.innerHTML = '<input name="colorpath" class="pathcolordemo" title="Click here to change color"  type="text" id="' + value.conChronology.description + '~' + value.conChronology.conceptSequence + '" size="6" style="height:40px" data-control="hue" value="" />';
+                    td3.innerHTML = '<input name="colorpath" class="pathcolordemo" title="Click here to change color"  type="hidden" id="' + value.conChronology.description + '~' + value.conChronology.conceptSequence + '" size="6" style="height:40px" data-control="hue" value="" />';
 
                     document.getElementById("colorpathtr" + value.conChronology.conceptSequence).appendChild(td3);
                     $('.pathcolordemo').minicolors();
@@ -351,7 +459,7 @@ var PreferenceModule = (function () {
                 document.getElementById("colorpathtr" + value.pathid).appendChild(td2);
 
                 var td3 = document.createElement("TD");
-                td3.innerHTML = '<input name="colorpath" class="pathcolordemo" title="Click here to change path color"  type="text" id="' + value.path_name + '~' + value.pathid + '" size="6" style="height:40px" data-control="hue" value="' + value.colorid + '" />';
+                td3.innerHTML = '<input name="colorpath" class="pathcolordemo" title="Click here to change path color"  type="hidden" id="' + value.path_name + '~' + value.pathid + '" size="6" style="height:40px" data-control="hue" value="' + value.colorid + '" />';
 
                 document.getElementById("colorpathtr" + value.pathid).appendChild(td3);
                 $('.pathcolordemo').minicolors();
@@ -394,7 +502,7 @@ var PreferenceModule = (function () {
                     document.getElementById("colorTr" + value.conChronology.conceptSequence).appendChild(td2);
 
                     var td3 = document.createElement("TD");
-                    td3.innerHTML = '<input name="color_id" class="demo" title="Click here to change color"  type="text" id="' + value.conChronology.description + '~' + value.conChronology.conceptSequence + '" size="6" style="height:40px" data-control="hue" value="" />';
+                    td3.innerHTML = '<input name="color_id" class="demo" title="Click here to change color"  type="hidden" id="' + value.conChronology.description + '~' + value.conChronology.conceptSequence + '" size="6" style="height:40px" data-control="hue" value="" />';
 
                     document.getElementById("colorTr" + value.conChronology.conceptSequence).appendChild(td3);
                     $('.demo').minicolors();
@@ -427,7 +535,7 @@ var PreferenceModule = (function () {
                 document.getElementById("colorTr" + value.moduleid).appendChild(td2);
 
                 var td3 = document.createElement("TD");
-                td3.innerHTML = '<input name="color_id" class="demo" title="Click here to change color"  type="text" id="' + value.module_name + '~' + value.moduleid + '" size="6" style="height:40px" data-control="hue" value="' + value.colorid + '" />';
+                td3.innerHTML = '<input name="color_id" class="demo" title="Click here to change color"  type="hidden" id="' + value.module_name + '~' + value.moduleid + '" size="6" style="height:40px" data-control="hue" value="' + value.colorid + '" />';
 
                 document.getElementById("colorTr" + value.moduleid).appendChild(td3);
                 $('.demo').minicolors();
@@ -525,7 +633,10 @@ var PreferenceModule = (function () {
         populateColorpath: populateColorpath,
         populateControls: populateControls,
         selectAllowedstates: selectAllowedstates,
-        selectItemByValue: selectItemByValue
+        selectItemByValue: selectItemByValue,
+        createRefsetFieldRow:createRefsetFieldRow,
+        addRefsetRow: addRefsetRow,
+        deleteRefsetFieldRow: deleteRefsetFieldRow
 
 
     };
