@@ -24,7 +24,7 @@ require './lib/rails_common/util/controller_helpers'
 # KometDashboardController -
 # handles the loading of the taxonomy tree
 class KometDashboardController < ApplicationController
-  include TaxonomyConcern, ConceptConcern, InstrumentationConcern, ISAACConstants
+  include TaxonomyConcern, ConceptConcern, InstrumentationConcern
   include CommonController
 
   before_action :setup_routes, :setup_constants, :only => [:dashboard]
@@ -534,23 +534,18 @@ class KometDashboardController < ApplicationController
   end
 
   def setup_constants
-    initialize_isaac_constants #to_do, remove
-    gon.term_aux = ISAACConstants::TERMAUX #to_do, remove
-
     constants_file = './config/generated/yaml/IsaacMetadataAuxiliary.yaml'
     prefix = File.basename(constants_file).split('.').first.to_sym
     json = YAML.load_file constants_file
     translated_hash = add_translations(json)
-    gon.IsaacMetadataAuxiliary = translated_hash
-
+    $isaac_metadata_auxiliary = translated_hash
+    $isaac_metadata_auxiliary.freeze
+    gon.IsaacMetadataAuxiliary = $isaac_metadata_auxiliary
     if !session[:coordinatestoken]
       results =CoordinateRest.get_coordinate(action: CoordinateRestActions::ACTION_COORDINATES_TOKEN)
       session[:coordinatestoken] = results
     end
-
     $log.debug("token initial #{session[:coordinatestoken].token}" )
-
-
   end
 
   def metadata
