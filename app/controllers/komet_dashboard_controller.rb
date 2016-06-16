@@ -534,12 +534,14 @@ class KometDashboardController < ApplicationController
   end
 
   def setup_constants
-    constants_file = './config/generated/yaml/IsaacMetadataAuxiliary.yaml'
-    prefix = File.basename(constants_file).split('.').first.to_sym
-    json = YAML.load_file constants_file
-    translated_hash = add_translations(json)
-    $isaac_metadata_auxiliary = translated_hash
-    $isaac_metadata_auxiliary.freeze
+    if $isaac_metadata_auxiliary.nil?
+      constants_file = './config/generated/yaml/IsaacMetadataAuxiliary.yaml'
+      prefix = File.basename(constants_file).split('.').first.to_sym
+      json = YAML.load_file constants_file
+      translated_hash = add_translations(json)
+      $isaac_metadata_auxiliary = translated_hash
+      $isaac_metadata_auxiliary.freeze
+    end
     gon.IsaacMetadataAuxiliary = $isaac_metadata_auxiliary
     if !session[:coordinatestoken]
       results =CoordinateRest.get_coordinate(action: CoordinateRestActions::ACTION_COORDINATES_TOKEN)
