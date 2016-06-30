@@ -53,6 +53,7 @@ html, body{
 }
 .ui-tabs{
   padding:0px;
+  overflow: auto;
 }
 .ui-tabs .ui-tabs-panel{
   padding:0px;
@@ -66,6 +67,15 @@ html, body{
 // jQuery context-menu override to use glyphicons
 .context-menu-icon:before{
   font-family: 'Glyphicons Halflings';
+}
+
+// enhsplitter Overrides
+// Need this so the splitter bar doesn't overlap dialog windows
+.splitter-vertical > .splitter_bar, .splitter-horizontal > .splitter_bar{
+  z-index: 10;
+}
+.splitter_container.splitter-active > .splitter_bar{
+  z-index: 11;
 }
 
 // KOMET Login styles
@@ -94,13 +104,13 @@ html, body{
   margin: auto;
 }
 .komet-external-left-column{
-  flex-grow: 1;
+  flex: 1 1 auto;
   width: 55%;
   font-weight: bold;
   padding-top: 20px
 }
 .komet-external-right-column{
-  flex-grow: 1;
+  flex: 1 1 auto;
   width: 45%;
   align-self: flex-start;
 }
@@ -133,8 +143,8 @@ html, body{
   font-size: larger;
 }
 .komet-flex-right{
-    flex-grow: 1;
-    text-align: right;
+  flex: 1 1 auto;
+  text-align: right;
 }
 .komet-accordion-panel {
   overflow: visible !important;
@@ -168,12 +178,13 @@ html, body{
   display: inline-block;
   font-size: smaller !important;
   padding: 3px 12px;
+  flex: 0 0 auto;
 }
 .komet-form-error {
-   background-color: #ff5000;
-   border: solid #ff5000 1px;
-   color: white;
-   padding-left: 5px;
+  background-color: #ff5000;
+  border: solid #ff5000 1px;
+  color: white;
+  padding-left: 5px;
 }
 .komet-form-error .glyphicon, .komet-form-error .fa {
   margin-right: 5px;
@@ -203,6 +214,8 @@ html, body{
 .komet-panel .panel-heading {
   background-color: #4f80d9;
   display: flex;
+  flex-wrap: wrap;
+  overflow-x: auto;
 }
 .komet-panel .glyphicon, .komet-panel .fa {
   cursor: pointer;
@@ -211,8 +224,10 @@ html, body{
   margin-right: 4px;
 }
 .komet-panel .komet-panel-tools{
-  flex-grow: 1;
+  flex: 1 1 auto;
   text-align: end;
+  display: flex;
+  justify-content: flex-end
 }
 .komet-panel .komet-panel-tools .glyphicon, .komet-panel .komet-panel-tools .fa {
   margin-left: 10px;
@@ -313,7 +328,7 @@ html, body{
 }
 .komet-concept-panel .komet-section-icons{
   color: white;
-  flex-grow: 1;
+  flex: 1 1 auto;
   text-align: end;
 }
 .komet-concept-panel .komet-section-icons img{
@@ -330,6 +345,7 @@ html, body{
 }
 .komet-concept-body-tools{
   display: flex;
+  flex-wrap: wrap;
   align-items: baseline;
 }
 .komet-concept-body-tools .glyphicon, .komet-concept-body-tools .fa{
@@ -346,7 +362,7 @@ html, body{
   padding: 4px;
   margin: 2px;
   flex-wrap: wrap;
-  min-width: min-content;
+  min-width: 150px;
 
 }
 .komet-concept-section-panel-header{
@@ -461,12 +477,18 @@ td.komet-concept-table-nested-indicator.komet-concept-table-nested-indicator-ope
   display: flex;
   flex-direction: column;
   flex-wrap: wrap;
+  width: 100%
 }
 .komet-concept-description-header-block span{
   display: inline-block;
+  margin-right: 4px;
+}
+.komet-concept-description-info{
+  display: flex;
+  flex-wrap: wrap;
 }
 .komet-concept-description-text{
-  flex-grow: 1;
+  flex: 1 1 auto;
 }
 .komet-concept-description-details-row{
   display: flex;

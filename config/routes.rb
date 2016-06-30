@@ -3,6 +3,9 @@ Rails.application.routes.draw do
   match 'logic_graph/chronology/:id' => 'logic_graph#chronology', :as => :logic_graph_chronology, via: [:get]
   match 'logic_graph/version/:id' => 'logic_graph#version', :as => :logic_graph_version, via: [:get]
 
+  post 'external/authenticate', as: :login
+  get  'external/logout', :as => :logout
+
   get 'komet_dashboard/dashboard'
   get 'komet_dashboard/metadata'
   get 'komet_dashboard/version'

@@ -30,10 +30,9 @@ require './lib/isaac_rest/sememe_rest'
 require './lib/isaac_rest/system_apis_rest'
 require './lib/isaac_rest/taxonomy_rest'
 require './lib/isaac_rest/coordinate_rest'
+require './lib/rails_common/roles/roles'
 
 $rest_cache = CachedHash.new($PROPS.fetch('KOMET.rest_cache_max').to_i)
-#constants (depends on the rest cache!)
-require './lib/isaac_constants/constants'
 
 
 # Thread.new do

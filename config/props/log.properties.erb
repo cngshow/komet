@@ -1,10 +1,15 @@
 pattern = [%l][%d][%F][%L] %m\n
-filename = ./log/komet.log
+#Do not give absolute paths for filename and file_name_rails.  The relative path is base on catalina.home
+#filename is the name of the log file that contains developer logs and third party logs (such as faraday)
+filename = komet.log
+#filename_rails is the log where rails and active record logs its stuff.
+filename_rails = rails_komet.log
 #valid values for roll_by are 'number' and 'date'
 roll_by = number
 #caller_tracing values are true or false.  If set to true the file and line number data is logged
 caller_tracing = true
-
+#if true, we add a console appender
+append_stdout = true
 ########################################################################################################################
 # environment specific setup (development, test, or production)
 ########################################################################################################################

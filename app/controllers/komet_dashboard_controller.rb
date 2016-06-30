@@ -24,7 +24,7 @@ require './lib/rails_common/util/controller_helpers'
 # KometDashboardController -
 # handles the loading of the taxonomy tree
 class KometDashboardController < ApplicationController
-  include TaxonomyConcern, ConceptConcern, InstrumentationConcern, ISAACConstants
+  include TaxonomyConcern, ConceptConcern, InstrumentationConcern
   include CommonController
 
   before_action :setup_routes, :setup_constants, :only => [:dashboard]
@@ -38,7 +38,10 @@ class KometDashboardController < ApplicationController
   # Whether to display the stated (true) or inferred view of concepts with a request param of :stated (true/false)
   #@return [json] the tree nodes to insert into the tree at the parent node passed in the request
   def load_tree_data
-
+#    roles = session[Roles::SESSION_USER_ROLES]
+#    if(roles.include?(Roles::DEV_SUPER_USER))
+#      #do something
+#    end
     coordinates_token = session[:coordinatestoken].token
     selected_concept_id = params[:concept_id]
     parent_search = params[:parent_search]
@@ -194,7 +197,7 @@ class KometDashboardController < ApplicationController
     getcoordinates_results = JSON.parse(getcoordinates_results.to_json)
     getcoordinates_results[:colormodule]= session[:colormodule]
     getcoordinates_results[:colorpath]= session[:colorpath]
-
+    getcoordinates_results[:colorrefsets]= session[:colorrefsets]
     render json:  getcoordinates_results.to_json
   end
 
@@ -206,6 +209,7 @@ class KometDashboardController < ApplicationController
   hash[:allowedStates]= params[:allowedStates]
   session[:colormodule] =params[:colormodule]
   session[:colorpath] =params[:colorpath]
+  session[:colorrefsets] =params[:colorrefsets]
   results =  CoordinateRest.get_coordinate(action: CoordinateRestActions::ACTION_COORDINATES_TOKEN,  additional_req_params: hash)
   session[:coordinatestoken] = results
  $log.debug("token get_coordinatestoken #{results.token}" )
@@ -526,29 +530,24 @@ class KometDashboardController < ApplicationController
   end
 
   def dashboard
-    foo
     @stated = 'true'
   end
 
   def setup_constants
-    initialize_isaac_constants #to_do, remove
-    $log.debug('term_aux hash passed to javascript is ' + ISAACConstants::TERMAUX.to_s) #to_do, remove
-    gon.term_aux = ISAACConstants::TERMAUX #to_do, remove
-
-    constants_file = './config/generated/yaml/IsaacMetadataAuxiliary.yaml'
-    prefix = File.basename(constants_file).split('.').first.to_sym
-    json = YAML.load_file constants_file
-    translated_hash = add_translations(json)
-    gon.IsaacMetadataAuxiliary = translated_hash
-
+    if $isaac_metadata_auxiliary.nil?
+      constants_file = './config/generated/yaml/IsaacMetadataAuxiliary.yaml'
+      prefix = File.basename(constants_file).split('.').first.to_sym
+      json = YAML.load_file constants_file
+      translated_hash = add_translations(json)
+      $isaac_metadata_auxiliary = translated_hash
+      $isaac_metadata_auxiliary.freeze
+    end
+    gon.IsaacMetadataAuxiliary = $isaac_metadata_auxiliary
     if !session[:coordinatestoken]
       results =CoordinateRest.get_coordinate(action: CoordinateRestActions::ACTION_COORDINATES_TOKEN)
       session[:coordinatestoken] = results
     end
-
     $log.debug("token initial #{session[:coordinatestoken].token}" )
-
-
   end
 
   def metadata
