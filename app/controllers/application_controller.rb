@@ -73,6 +73,9 @@ class ApplicationController < ActionController::Base
         session[Roles::SESSION_LAST_ROLE_CHECK] = Time.now
       else
         $log.debug("Getting the roles from PRISME")
+        #todo
+        #nil check on prop below needed, error log will never be seen
+        #wrap in begin end block
         roles_url = URI($PROPS['PRISME.prisme_roles_url'])
         $log.error("The roles url is not set!  Was this instance of Komet deployed from Prisme?  If not you must manually set the property.  See ./config/props/prisme.properties") if roles_url.nil?
         conn = get_rest_connection(roles_url.base_url)
