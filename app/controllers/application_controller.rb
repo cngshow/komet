@@ -76,8 +76,11 @@ class ApplicationController < ActionController::Base
         #todo
         #nil check on prop below needed, error log will never be seen
         #wrap in begin end block
-        roles_url = URI($PROPS['PRISME.prisme_roles_url'])
-        $log.error("The roles url is not set!  Was this instance of Komet deployed from Prisme?  If not you must manually set the property.  See ./config/props/prisme.properties") if roles_url.nil?
+        begin
+          roles_url = URI($PROPS['PRISME.prisme_roles_url'])
+        rescue
+          $log.error("The roles url is not set!  Was this instance of Komet deployed from Prisme?  If not you must manually set the property.  See ./config/props/prisme.properties")
+        end
         conn = get_rest_connection(roles_url.base_url)
         response = nil
         error = false
