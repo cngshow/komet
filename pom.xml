@@ -13,7 +13,7 @@
 
 	<groupId>gov.vha.isaac.gui.rails</groupId>
 	<artifactId>rails_komet</artifactId>
-	<version>1.13</version>
+	<version>1.14</version>
 	<packaging>pom</packaging>
 
 	<name>ISAAC Rails Komet Tooling</name>
@@ -23,7 +23,7 @@
 	</description>
 
 	<properties>
-		<rails_common.version>1.7</rails_common.version>
+		<rails_common.version>1.8</rails_common.version>
 		<isaac.version>${project.parent.version}</isaac.version>
 		<!-- railsMode is automatically set to 'test' or 'production' - 'test' if the version number ends with '-SNAPSHOT'
 		or 'production' otherwise.  See ant execution below-->
