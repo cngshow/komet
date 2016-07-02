@@ -11,8 +11,13 @@ class ApplicationController < ActionController::Base
 
   before_action :ensure_rest_version
   before_action :ensure_roles
+  before_action :set_render_menu
 
   rescue_from Exception, :with => :internal_error
+
+  def set_render_menu
+    @set_render_menu = true
+  end
 
   def internal_error(e)
     $log.error(e.message)
