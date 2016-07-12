@@ -1,9 +1,9 @@
+#if prisme.properties is present prisme must be up!
 #edits here require a restart to your Komet instance
 #Edit prisme_root to use prisme for roles.
 #prisme_root=http://localhost:8080/rails_prisme/
 #prisme_roles_url=https://localhost:443/roles/get_roles
 #Edit this to true to default to the prisme instead of the test roles test harness.
-#use_prisme=false
 #war_group_id=gov.vha.isaac.gui.rails
 #war_artifact_id=rails_komet
 #war_version=1.11

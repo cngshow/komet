@@ -72,7 +72,7 @@ class ApplicationController < ActionController::Base
     time_for_recheck = (Time.now - session[Roles::SESSION_LAST_ROLE_CHECK]) > $PROPS['KOMET.roles_recheck_in_seconds'].to_i
     if (session[Roles::SESSION_LAST_ROLE_CHECK].nil? || time_for_recheck)
       $log.debug("Refetching the roles")
-      if (Rails.env.development? && !boolean($PROPS['PRISME.use_prisme']))
+      if (!FileTest.exists?("#{Rails.root}/config/props/prisme.properties"))
         load './lib/roles_test/roles.rb'
         roles = RolesTest::user_roles(user: user, password: password)
         session[Roles::SESSION_LAST_ROLE_CHECK] = Time.now
