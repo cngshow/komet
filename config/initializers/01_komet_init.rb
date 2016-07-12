@@ -9,14 +9,21 @@ require './lib/rails_common/logging/open_logging'
 require './lib/rails_common/logging/logging'
 require './lib/utilities/cached_hash'
 require './lib/rails_common/util/helpers'
-
+final_root = nil
 #All the rest libs depend on ISAAC_ROOT.   The line below mus be above those requires.
 if ($PROPS['PRISME.isaac_root'])
   ir = $PROPS['PRISME.isaac_root']
   ir << '/' unless ir[-1].eql?('/')
   ISAAC_ROOT = ir
 else
-  ISAAC_ROOT = $PROPS['ENDPOINT.isaac_root']
+  root_possibilites = eval $PROPS['ENDPOINT.isaac_root']
+  root_possibilites.each do |url|
+    if KOMETUtilities::isaac_rest_site_up?(uri: URI(url))
+      final_root = url
+      break
+    end
+  end
+  ISAAC_ROOT = final_root
 end
 $log.always("I am pointed to #{ISAAC_ROOT}")
 #in developer mode it is nice to have the rest classes fully loaded so all the registration takes place, for example:

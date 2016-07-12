@@ -3,8 +3,10 @@
 if (ENV['ISAAC_ROOT'])
   @isaac_root = ENV['ISAAC_ROOT']
 else
-  @isaac_root = Rails.env.development? ? "http://localhost:8180/" : "http://localhost:8080/isaac-rest/"
+#all urls must end in a slash!!!
+  @isaac_root = "['http://localhost:8180/', 'http://localhost:8080/isaac-rest/', 'https://vadev.mantech.com:4848/isaac-rest/' ]"
 end
 %>
+#order matters.  The first url to respond in a positive fashion wins!
 <%= "isaac_root = #{@isaac_root}" %>
 
