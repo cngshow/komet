@@ -10,7 +10,8 @@ I put it in the directory where JRuby is installed.
 https://s3.amazonaws.com/jruby.org/downloads/9.0.4.0/jruby-complete-9.0.4.0.jar
 
 You need to make sure you have the source code for the ISAAC-rest project on your system.
-https://github.com/VA-CTT/ISAAC-rest
+
+git clone https://cshupp@vadev.mantech.com:4848/git/r/ISAAC-rest.git
 
 In rails root you will find a file called setup.bat.template.
 Move this file to setup.bat, then you will need to modify the following environment variables:
@@ -40,12 +41,12 @@ bundle install
 We have moved the prop loader and logging code into a git repository at https://github.com/VA-CTT/rails_common.git so that the code can
 be shared with rails_komet and the PRISME project
 
-To pull the latest code do the following:
+To pull the latest code do the following (replace my username with yours where appropriate.):
 <ol>
 <li>VCS -> Update Project - from within RubyMine</li>
 <li>open .gitignore and comment out /lib/rails__common with a #</li>
 <li>open a terminal and navigate to rails_komet/lib</li>
-<li>git submodule add https://github.com/VA-CTT/rails_common</li>
+<li>git submodule add https://cshupp@vadev.mantech.com:4848/git/r/rails_common.git
 <li>open .gitignore and uncomment /lib/rails__common</li>
 <li>run git reset from within the lib/rails_common directory</li>
 <li>run git  rm -f --cached rails_common from within the lib/rails_common directory if the line above fails</li>
