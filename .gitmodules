@@ -1,3 +1,3 @@
-[submodule "lib/rails_common"]
-	path = lib/rails_common
-	url = https://github.com/VA-CTT/rails_common
+[submodule "rails_common"]
+	path = rails_common
+	url = https://vadev.mantech.com:4848/git/r/rails_common.git
