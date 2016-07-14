@@ -24,6 +24,21 @@ Rails.application.routes.draw do
   get 'search/get_search_results'
   post 'search/get_search_results'
 
+  get 'mapping/mapping'
+  get 'mapping/get_overview_sets_results'
+  get 'mapping/get_overview_items_results'
+  get 'mapping/map_set_editor'
+  post 'mapping/process_map_set'
+  get 'mapping/map_item_editor'
+  post 'mapping/process_map_item'
+  get 'mapping/get_item_source_suggestions'
+  get 'mapping/get_item_source_recents'
+  get 'mapping/get_item_target_suggestions'
+  get 'mapping/get_item_target_recents'
+  get 'mapping/get_item_kind_of_suggestions'
+  get 'mapping/get_item_kind_of_recents'
+  get 'mapping/get_target_candidates_results'
+
   # You can have the root of your site routed with "root"
   root 'external#login'
 

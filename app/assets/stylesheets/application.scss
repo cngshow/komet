@@ -194,6 +194,9 @@ html, body{
   width: 100%;
   position: absolute;
 }
+.komet-active-control{
+  color: blue;
+}
 
 // KOMET Navigation styles
 .komet_dashboard .navbar{
@@ -606,4 +609,9 @@ td.komet-concept-table-nested-indicator.komet-concept-table-nested-indicator-ope
 }
 .no-close .ui-dialog-titlebar-close {
   display: none;
+}
+
+// Mapping Sets Styles
+.komet-mapping-overview-sets-stamp-active{
+  color: blue;
 }
