@@ -124,32 +124,7 @@ class SearchController < ApplicationController
       if assemblage != nil && assemblage != ''
 
         additional_params[:sememeAssemblageId] =  assemblage
-
-        recents_array = []
-
-        # see if the recents array already exists in the session
-        if session[:search_assemblage_recents]
-          recents_array = session[:search_assemblage_recents]
-        end
-
-        # only proceed if the array does not already contain the id and term that were searched for
-        already_exist = recents_array.find {|recent|
-          (recent[:id] == assemblage && recent[:text] == params[:taxonomy_search_assemblage_display])
-        }
-
-        if already_exist == nil
-
-          # if the recents array has the max of 20 items remove the last item before adding a new one
-          if recents_array.length == 20
-            recents_array.delete_at(19)
-          end
-
-          # put the current items into the beginning of the array
-          recents_array.insert(0, {id: assemblage, text: params[:taxonomy_search_assemblage_display]})
-
-          # put the array into the session
-          session[:search_assemblage_recents] = recents_array
-        end
+        add_to_recents(:search_assemblage_recents, assemblage, params[:taxonomy_search_assemblage_display])
 
       end
 
