@@ -25,7 +25,7 @@ var PreferenceModule = (function () {
 
         refsetList = {};
         refsetRows = [];
-
+        $.minicolors.defaults.position = 'bottom right';
         var dialog, form
 
         dialog = $( "#dialog-form" ).dialog({
@@ -33,7 +33,7 @@ var PreferenceModule = (function () {
             closeOnEscape: false,
             position: ["bottom",70],
             height: 600,
-            width: 550,
+            width: 650,
             dialogClass: "no-close",
             show: {
                 effect: "blind",
