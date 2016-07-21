@@ -1,0 +1,150 @@
+<%= form_tag('/mapping/process_map_item', method: 'post', id: 'komet_mapping_item_editor_form') do %>
+
+    <%= hidden_field_tag :komet_mapping_item_editor_set_id, @map_item[:set_id] %>
+
+    <div>
+
+      <div>
+
+        <%= label_tag :komet_mapping_item_editor_source_display, 'Source Concept:' %>
+        <input id="komet_mapping_item_editor_source" name="komet_mapping_item_editor_source" class="hide" value="<%= @map_item[:source_display] ? @map_item[:source_display] : '' %>">
+
+        <div id="komet_mapping_item_editor_source_fields" class="input-group">
+
+          <input id="komet_mapping_item_editor_source_display" name="komet_mapping_item_editor_source_display" class="form-control" value="<%= @map_item[:source_display] ? @map_item[:source_display] : '' %>">
+
+          <div class="input-group-btn komet-search-combo-field">
+
+            <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+              <span class="caret"></span>
+            </button>
+
+            <ul id="komet_mapping_item_editor_source_recents" class="dropdown-menu dropdown-menu-right">
+            </ul>
+
+          </div><!-- /btn-group -->
+
+        </div><!-- /input-group -->
+
+      </div>
+
+      <div id="komet_mapping_item_editor_target_candidates_search_section">
+
+        <%= label_tag :komet_mapping_item_editor_target_candidates_search, 'Candidate Criteria:' %>
+        <%= text_field_tag (:komet_mapping_item_editor_target_candidates_search) %>
+
+        <div class="komet-flex-right">
+          <%= label_tag :komet_mapping_item_editor_target_candidates_page_size, 'Page Size:' %>
+          <%= select_tag :komet_mapping_item_editor_target_candidates_page_size, options_for_select([['25'], ['50'], ['100'], ['250'], ['500'], ['1000']], '25')  %>
+        </div>
+
+        <div class="komet-flex-right">
+          <button type="button" class="btn btn-primary" onclick="MappingModule.loadTargetCandidatesGrid(true)">Search</button>
+        </div>
+      </div>
+
+      <div>
+
+        <div>
+          <%= label_tag :komet_mapping_item_editor_advanced_description_type, 'Description Type:' %>
+          <%= select_tag :komet_mapping_item_editor_description_type, options_for_select([['No Restrictions', ''], ['Fully Specified Name'], ['Synonym'], ['Description']], '')  %>
+        </div>
+
+        <div>
+          <%= label_tag :komet_mapping_item_editor_advanced_description_type, 'Advanced Description Type:' %>
+          <%= select_tag :komet_mapping_item_editor_advanced_description_type, options_for_select(@advanced_descriptions, '')  %>
+        </div>
+
+        <div>
+          <%= label_tag :komet_mapping_item_editor_code_system, 'Target Code System:' %>
+          <%= select_tag :komet_mapping_item_editor_code_system, options_for_select(@code_systems, '')  %>
+        </div>
+
+        <div>
+          <%= label_tag :komet_mapping_item_editor_assemblage, 'Target is a member of Assemblage:' %>
+          <%= select_tag :komet_mapping_item_editor_assemblage, options_for_select(@assemblages, '')  %>
+        </div>
+
+        <div>
+
+          <%= label_tag :komet_mapping_item_editor_kind_of_display, 'Target is Kind Of:' %>
+          <input id="komet_mapping_item_editor_kind_of" name="komet_mapping_item_editor_kind_of" class="hide">
+
+          <div id="komet_mapping_item_editor_kind_of_fields" class="input-group">
+
+            <input id="komet_mapping_item_editor_kind_of_display" name="komet_mapping_item_editor_kind_of_display" class="form-control">
+
+            <div class="input-group-btn komet-search-combo-field">
+
+              <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                <span class="caret"></span>
+              </button>
+
+              <ul id="komet_mapping_item_editor_kind_of_recents" class="dropdown-menu dropdown-menu-right">
+              </ul>
+
+            </div><!-- /btn-group -->
+
+          </div><!-- /input-group -->
+
+        </div>
+
+      </div>
+
+      <div>
+        Mapping Candidates
+        <div id="komet_mapping_item_editor_target_candidates" style="height: 450px;" class="ag-fresh"></div>
+      </div>
+
+      <div>
+
+        <%= label_tag :komet_mapping_item_editor_target_display, 'Target Concept:' %>
+        <input id="komet_mapping_item_editor_target" name="komet_mapping_item_editor_target" class="hide" value="<%= @map_item[:target] ? @map_item[:target] : '' %>">
+
+        <div id="komet_mapping_item_editor_target_fields" class="input-group">
+
+          <input id="komet_mapping_item_editor_target_display" name="komet_mapping_item_editor_target_display" class="form-control" value="<%= @map_item[:target_display] ? @map_item[:target_display] : '' %>">
+
+          <div class="input-group-btn komet-search-combo-field">
+
+            <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+              <span class="caret"></span>
+            </button>
+
+            <ul id="komet_mapping_item_editor_target_recents" class="dropdown-menu dropdown-menu-right">
+            </ul>
+
+          </div><!-- /btn-group -->
+
+        </div><!-- /input-group -->
+
+      </div>
+
+      <div>
+        <%= label_tag :komet_mapping_item_editor_qualifier, 'Qualifier:' %>
+        <%= select_tag :komet_mapping_item_editor_qualifier, options_for_select([['No Qualifier'], ['Broader Than'], ['Exact'], ['Narrower Than']], @map_item[:review_state]), class: 'form-control' %>
+      </div>
+
+      <div>
+        <%= label_tag :komet_mapping_item_editor_review_state, 'Review State:' %>
+        <%= select_tag :komet_mapping_item_editor_review_state, options_for_select([['No Status'], ['Pending'], ['Reviewed']], @map_item[:review_state]), class: 'form-control' %>
+      </div>
+
+      <div>
+        <button class="btn btn-primary">Save</button>
+        <button onclick="window.close();" class="btn btn-default">Cancel</button>
+      </div>
+
+    </div>
+
+<% end %>
+
+<script>
+
+  $(document).ready(function () {
+
+    MappingModule.initializeItemEditor();
+  });
+
+</script>
+

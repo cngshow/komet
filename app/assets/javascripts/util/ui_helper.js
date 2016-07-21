@@ -136,11 +136,28 @@ var UIHelper = (function () {
         };
     }
 
+    // function to switch a field between enabled and disabled
+    function toggleFieldAvailability(field_name, enable){
+
+        var field = $("#" + field_name);
+
+        if (enable){
+
+            field.removeClass("ui-state-disabled");
+            field.addClass("ui-state-enabled");
+        } else {
+
+            field.removeClass("ui-state-enabled");
+            field.addClass("ui-state-disabled");
+        }
+    }
+
     return {
         getActiveTabId: getActiveTabId,
         isTabActive: isTabActive,
         initializeContextMenus: initializeContextMenus,
-        generateFormErrorMessage: generateFormErrorMessage
+        generateFormErrorMessage: generateFormErrorMessage,
+        toggleFieldAvailability: toggleFieldAvailability
     };
 })();
 

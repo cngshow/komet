@@ -1,0 +1,44 @@
+<%= form_tag('/mapping/process_map_set', method: 'post', id: 'komet_mapping_set_editor_form') do %>
+
+    <%= hidden_field_tag :komet_mapping_set_editor_set_id, @map_set[:id] %>
+
+    <div>
+
+      <div>
+        <%= label_tag :komet_mapping_set_editor_name, 'Name:' %>
+        <%= text_field_tag :komet_mapping_set_editor_name, @map_set[:name], class: 'form-control' %>
+      </div>
+
+      <div>
+        <%= label_tag :komet_mapping_set_editor_purpose, 'Purpose:' %>
+        <%= text_field_tag :komet_mapping_set_editor_purpose, @map_set[:purpose], class: 'form-control' %>
+      </div>
+
+      <div>
+        <%= label_tag :komet_mapping_set_editor_description, 'Description:' %>
+        <%= text_area_tag :komet_mapping_set_editor_description, @map_set[:description], class: 'form-control' %>
+      </div>
+
+      <div>
+        <%= label_tag :komet_mapping_set_editor_review_state, 'Review State:' %>
+        <%= select_tag :komet_mapping_set_editor_review_state, options_for_select([['No Status'], ['Pending'], ['Reviewed']], @map_set[:review_state]), class: 'form-control' %>
+      </div>
+
+      <div>
+        <button class="btn btn-primary">Save</button>
+        <button onclick="window.close();" class="btn btn-default">Cancel</button>
+      </div>
+
+    </div>
+
+<% end %>
+
+<script>
+
+  $(document).ready(function () {
+
+    MappingModule.initializeSetEditor();
+  });
+
+</script>
+

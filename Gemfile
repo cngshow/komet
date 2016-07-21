@@ -34,6 +34,9 @@ gem 'sdoc', '~> 0.4.0', group: :doc
 #    gem 'capistrano-rails'
 # end
 
+group :development do
+  gem 'yard'
+end
 
 # Windows does not include zoneinfo files, so bundle the tzinfo-data gem
 gem 'tzinfo-data', platforms: [:mingw, :mswin, :x64_mingw, :jruby]
@@ -42,7 +45,6 @@ gem 'tzinfo-data', platforms: [:mingw, :mswin, :x64_mingw, :jruby]
 gem 'bootstrap-sass', '~> 3.3.6'
 gem 'font-awesome-sass', '~> 4.6.2'
 gem 'trinidad', require: nil
-gem 'yard'
 gem 'jquery-ui-rails'
 gem 'logging', '~> 2.0'
 gem 'gon'

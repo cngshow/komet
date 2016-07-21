@@ -530,23 +530,14 @@ class KometDashboardController < ApplicationController
   end
 
   def dashboard
-    @stated = 'true'
-  end
 
-  def setup_constants
-    if $isaac_metadata_auxiliary.nil?
-      constants_file = './config/generated/yaml/IsaacMetadataAuxiliary.yaml'
-      prefix = File.basename(constants_file).split('.').first.to_sym
-      json = YAML.load_file constants_file
-      translated_hash = add_translations(json)
-      $isaac_metadata_auxiliary = translated_hash
-      $isaac_metadata_auxiliary.freeze
-    end
-    gon.IsaacMetadataAuxiliary = $isaac_metadata_auxiliary
+    @stated = 'true'
+
     if !session[:coordinatestoken]
       results =CoordinateRest.get_coordinate(action: CoordinateRestActions::ACTION_COORDINATES_TOKEN)
       session[:coordinatestoken] = results
     end
+
     $log.debug("token initial #{session[:coordinatestoken].token}" )
   end
 
@@ -558,21 +549,6 @@ class KometDashboardController < ApplicationController
     @version = 'Unversioned by PRISME.' if @version.nil?
     @version = {version: @version}
     render json: @version
-  end
-
-  private
-  def add_translations(json)
-    translated_hash = json.deep_dup
-    json.keys.each do |k|
-      translated_array = []
-      json[k]['uuids'].each do |uuid|
-        translation = JSON.parse IdAPIsRest::get_id(action: IdAPIsRestActions::ACTION_TRANSLATE, uuid_or_id: uuid, additional_req_params: {"outputType" => "conceptSequence"}).to_json
-        translated_array << {uuid: uuid, translation: translation}
-      end
-      translated_hash[k]['uuids'] = translated_array
-    end
-    #json_to_yaml_file(translated_hash,'reema')
-    translated_hash
   end
 
 end

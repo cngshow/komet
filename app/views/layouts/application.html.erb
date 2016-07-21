@@ -14,7 +14,7 @@
 </head>
 <body class="<%= controller_name %> <%= action_name %>">
 <header>
-  <%= render 'layouts/navigation' %>
+  <%= render 'layouts/navigation' if @set_render_menu%>
 </header>
 <main role="main" class="container-fluid">
   <%= render 'layouts/messages' %>
