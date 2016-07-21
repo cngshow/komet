@@ -28,6 +28,12 @@ class ApplicationController < ActionController::Base
 
   #REST_API_VERSIONS
   def ensure_rest_version
+    if ISAAC_ROOT.empty?
+      $log.warn('The isaac rest service is not available. All attempts to connect to possible ISAAC Rest Services Failed in the application initializer code (01_komet_init.rb)')
+      render 'errors/isaac_rest_init_error'
+      return
+    end
+
     begin
       response = SystemApis::get_system_api(action: SystemApiActions::ACTION_SYSTEM_INFO)
       unless response.is_a? CommonRest::UnexpectedResponse
