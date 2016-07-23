@@ -366,7 +366,6 @@ html, body{
   margin: 2px;
   flex-wrap: wrap;
   min-width: 150px;
-
 }
 .komet-concept-section-panel-header{
   display: flex;
@@ -525,6 +524,33 @@ td.komet-concept-table-nested-indicator.komet-concept-table-nested-indicator-ope
   padding: 5px;
   overflow-x: auto;
 }
+.komet-concept-lineage-summary-container{
+  width: 100%;
+  padding-left: 7%;
+  padding-right: 7%;
+  margin-bottom: 10px;
+}
+.komet-concept-lineage-summary-details{
+  border: 2px solid #357ebd;
+  border-radius: 4px;
+  background-color: #357ebd;
+  color: white;
+  width: 100%;
+  display: inline-block;
+}
+.komet-concept-lineage-summary-text{
+  display: flex;
+  flex-direction: row;
+}
+.komet-concept-lineage-summary-attributes{
+  border: 2px solid #357ebd;
+  border-radius: 4px;
+  background-color: rgba(30, 144, 255, 0.17);
+  color: black;
+  width: 45%;
+  display: inline-block;
+  vertical-align: top;
+}
 
 // Concept Viewer Sememes Styles
 .komet-concept-sememes-panel{
@@ -615,3 +641,5 @@ td.komet-concept-table-nested-indicator.komet-concept-table-nested-indicator-ope
 .komet-mapping-overview-sets-stamp-active{
   color: blue;
 }
+
+

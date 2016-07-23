@@ -148,7 +148,7 @@ var ConceptViewer = function(viewerID, currentConceptID) {
         }
 
         this.trees[this.PARENTS_TREE] = new KometTaxonomyTree(this.PARENTS_TREE, stated, true, this.currentConceptID, false, this.viewerID);
-        this.trees[this.CHILDREN_TREE] = new KometTaxonomyTree(this.CHILDREN_TREE, stated, false, this.currentConceptID, false, this.viewerID);
+        this.trees[this.CHILDREN_TREE] = new KometTaxonomyTree(this.CHILDREN_TREE, stated, false, this.currentConceptID, false, this.viewerID, false);
 
         this.trees[this.PARENTS_TREE].tree.bind('ready.jstree', function (event, data) {
 
