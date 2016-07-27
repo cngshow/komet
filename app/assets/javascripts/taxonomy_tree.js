@@ -17,12 +17,12 @@
  limitations under the License.
  */
 
-var KometTaxonomyTree = function(treeID, stated, parentSearch, startingConceptID, selectItem, viewerID, multiPath){
+var KometTaxonomyTree = function(treeID, stated, parentSearch, startingConceptID, selectItem, windowType, multiPath){
 
-    KometTaxonomyTree.prototype.init = function(treeID, stated, parentSearch, startingConceptID, selectItem, viewerID, multiPath){
+    KometTaxonomyTree.prototype.init = function(treeID, stated, parentSearch, startingConceptID, selectItem, windowType, multiPath){
 
         this.treeID = treeID;
-        this.viewerID = viewerID;
+        this.windowType = windowType;
 
         this.buildTaxonomyTree(stated, parentSearch, startingConceptID, selectItem, multiPath);
     };
@@ -142,10 +142,16 @@ var KometTaxonomyTree = function(treeID, stated, parentSearch, startingConceptID
         function onChanged(event, selectedObject) {
 
             var conceptID = selectedObject.node.original.concept_id;
+            var viewerID = WindowManager.getLinkedViewerID();
+            var viewer = this.tree.parents("div[id^=komet_viewer_]");
+
+            if (viewer.length > 0){
+                viewerID = viewer.first().attr("data-komet-viewer-id");
+            }
 
             this.selectedConceptID = conceptID;
 
-            $.publish(KometChannels.Taxonomy.taxonomyTreeNodeSelectedChannel, [this.treeID, conceptID, this.stated, this.viewerID]);
+            $.publish(KometChannels.Taxonomy.taxonomyTreeNodeSelectedChannel, [this.treeID, conceptID, this.stated, viewerID, this.windowType]);
         }
     };
 
@@ -330,5 +336,5 @@ var KometTaxonomyTree = function(treeID, stated, parentSearch, startingConceptID
     };
 
     // call our constructor function
-    this.init(treeID, stated, parentSearch, startingConceptID, selectItem, viewerID, multiPath);
+    this.init(treeID, stated, parentSearch, startingConceptID, selectItem, windowType, multiPath);
 };

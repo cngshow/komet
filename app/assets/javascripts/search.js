@@ -123,7 +123,7 @@ var TaxonomySearchModule = (function () {
         selectedRows.forEach( function(selectedRow, index) {
 
             console.log('Row with ID ' + selectedRow.id + ' ' + selectedRow.concept_status + '.');
-            $.publish(KometChannels.Taxonomy.taxonomySearchResultSelectedChannel, [selectedRow.id, TaxonomyModule.getLinkedViewerID()]);
+            $.publish(KometChannels.Taxonomy.taxonomySearchResultSelectedChannel, [selectedRow.id, WindowManager.getLinkedViewerID()]);
         });
     }
 

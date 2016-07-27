@@ -4,7 +4,7 @@
   <td class="komet-concept-table-nested-indicator komet-concept-table-level-<%= row[:level] %>">
     <% if row[:has_nested] %>
 
-        <div class="glyphicon glyphicon-arrow-right" onclick="ConceptsModule.viewers[<%= @viewer_id %>].toggleNestedTableRows($(this), <%= row[:id] %>)"></div>
+        <div class="glyphicon glyphicon-arrow-right" onclick="WindowManager.viewers[<%= @viewer_id %>].toggleNestedTableRows($(this), <%= row[:id] %>)"></div>
 
     <% end %>
   </td>

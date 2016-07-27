@@ -520,7 +520,7 @@ var SvgHelper = (function () {
 
         // only draw the diagram if it doesn't exist and will be visible
         if($("#" + svg_id).svg('get') === undefined && open){
-            SvgHelper.startDiagram(svg_id, concept_id, ConceptsModule.viewers[panel_id.substring(panel_id.lastIndexOf("_") + 1)].getStatedView());
+            SvgHelper.startDiagram(svg_id, concept_id, WindowManager.viewers[panel_id.substring(panel_id.lastIndexOf("_") + 1)].getStatedView());
         }
     }
 
