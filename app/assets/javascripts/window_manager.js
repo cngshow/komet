@@ -4,6 +4,8 @@ var WindowManager = (function () {
     viewers.inlineViewers = [];
     viewers.maxInlineViewers = 2;
     var linkedViewerID;
+    var nestedSplitters;
+    var hasNestedSplitters = false;
     var viewerMode = "single";
     const INLINE = "inline";
     const NEW = "new";
@@ -52,15 +54,19 @@ var WindowManager = (function () {
 
     function createViewer(viewer) {
 
+        var viewerExists = WindowManager.viewers.hasOwnProperty(viewer.viewerID);
+
         viewers[viewer.viewerID] = viewer;
 
+        // if the new viewer is not a popup
         if ($("#komet_viewer_" + viewer.viewerID).parents("#komet_east_pane").length > 0){
 
-            viewers.inlineViewers.push(viewer.viewerID);
-            //TaxonomyModule.setLinkedViewerID(viewerID);
+            if (!viewerExists) {
+                viewers.inlineViewers.push(viewer.viewerID);
+            }
+
             toggleViewerLinkage(viewer.viewerID, true);
         }
-
     }
 
     function closeViewer(viewerID) {
@@ -137,14 +143,30 @@ var WindowManager = (function () {
         linkedViewerID = viewerID;
 
         TaxonomyModule.tree.windowType = windowType;
-        
-        if (windowType != NEW && TaxonomyModule.tree.selectedConceptID != viewers[viewerID].currentConceptID) {
+
+        if (viewers[viewerID] instanceof ConceptViewer && windowType != NEW && TaxonomyModule.tree.selectedConceptID != viewers[viewerID].currentConceptID) {
             viewers[viewerID].showInTaxonomyTree();
+
+        } else if (viewers[viewerID] instanceof MappingViewer && windowType != NEW && MappingModule.tree.selectedSetID != viewers[viewerID].currentSetID) {
+            viewers[viewerID].showInMappingTree();
         }
     }
 
     function getLinkedViewerID(){
         return linkedViewerID;
+    }
+
+    function nestedSplittersExist(){
+
+        nestedSplitters = $("#komet_east_pane_splitter_1");
+        hasNestedSplitters = nestedSplitters.find(".splitter_bar").length > 0;
+    }
+
+    function refreshSplitters(){
+
+        if (hasNestedSplitters){
+            nestedSplitters.enhsplitter('refresh');
+        }
     }
 
     function init() {
@@ -159,6 +181,8 @@ var WindowManager = (function () {
         toggleViewerLinkage: toggleViewerLinkage,
         setLinkedViewerID: setLinkedViewerID,
         getLinkedViewerID: getLinkedViewerID,
+        nestedSplittersExist: nestedSplittersExist,
+        refreshSplitters: refreshSplitters,
         INLINE: INLINE,
         NEW: NEW,
         POPUP: POPUP,

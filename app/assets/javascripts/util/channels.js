@@ -33,8 +33,7 @@ var KometChannels = {
         taxonomyDetailsTreeNodeSelectedChannel: "Taxonomy/TaxonomyDetailsTree/NodeSelected",
         taxonomySearchResultSelectedChannel: "Taxonomy/Search/ResultSelected"
     },
-    //whoever adds in another real namespace can whack this silly example
-    SomethingElse: {
-        someOtherChannel: "foo/faa/fee"
+    Mapping: {
+        mappingTreeNodeSelectedChannel: "Mapping/MappingTree/NodeSelected"
     }
 };

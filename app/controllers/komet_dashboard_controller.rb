@@ -510,10 +510,6 @@ class KometDashboardController < ApplicationController
     return flag
   end
 
-  def get_next_id
-    return java.lang.System.nanoTime
-  end
-
   def dashboard
 
     @stated = 'true'

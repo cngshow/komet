@@ -37,7 +37,7 @@
 
   <script>
 
-    if (!WindowManager.viewers.hasOwnProperty('<%= @viewer_id %>')) {
+    if (!WindowManager.viewers.hasOwnProperty('<%= @viewer_id %>') || !(WindowManager.viewers[<%= @viewer_id %>] instanceof ConceptViewer)) {
       ConceptsModule.createViewer("<%= @viewer_id %>", "<%= @concept_id %>");
     } else {
 

@@ -230,7 +230,7 @@ html, body{
   flex: 1 1 auto;
   text-align: end;
   display: flex;
-  justify-content: flex-end
+  justify-content: flex-end;
 }
 .komet-panel .komet-panel-tools .glyphicon, .komet-panel .komet-panel-tools .fa {
   margin-left: 10px;
@@ -239,6 +239,18 @@ html, body{
 }
 .komet-panel .panel-title{
   color: white;
+}
+.komet-panel .komet-panel-filters{
+    flex: 1 1 auto;
+    display: flex;
+    justify-content: space-between;
+    color: white;
+}
+.komet-panel-filters .form-control{
+    height: 28px;
+    font-size: small;
+    padding-bottom: 4px;
+    padding-top: 4px;
 }
 .komet-panel .panel-body {
   background-color: #eef1f3;
@@ -602,7 +614,7 @@ td.komet-concept-table-nested-indicator.komet-concept-table-nested-indicator-ope
 }
 
 // Search Styles
-#tp-search{
+#komet_search_tab {
   padding: 2px;
 }
 .komet-search-combo-row{
@@ -638,8 +650,28 @@ td.komet-concept-table-nested-indicator.komet-concept-table-nested-indicator-ope
 }
 
 // Mapping Sets Styles
+#komet_mapping_tree_text_filter{
+    min-width: 125px;
+    max-width: 250px;
+    margin-right: 10px;
+}
+#komet_mapping_tree_set_filter{
+    min-width: 125px;
+    max-width: 250px;
+    margin-right: 10px;
+}
+#komet_mapping_tree_reload{
+    align-self: center;
+}
+#komet_mapping_tree_panel .panel-body{
+    background-color: white;
+}
+#komet_mapping_tree .komet-tree-node-icon{
+    color: blue;
+}
 .komet-mapping-overview-sets-stamp-active{
   color: blue;
 }
+
 
 

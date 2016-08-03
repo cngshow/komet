@@ -29,9 +29,7 @@ var ConceptViewer = function(viewerID, currentConceptID) {
         this.CHILDREN_TREE = "concept_lineage_children_tree_" + viewerID;
         this.refsetGridOptions;
         this.REFSET_GRID = "refsets_grid_" + viewerID;
-        
-        //this.subscribeToTaxonomyTree();
-        //this.subscribeToSearch();
+
     };
 
     ConceptViewer.prototype.togglePanelDetails = function(panelID, callback, preserveState) {
@@ -40,6 +38,7 @@ var ConceptViewer = function(viewerID, currentConceptID) {
         var expander = $("#" + panelID + " .glyphicon-plus-sign, #" + panelID + " .glyphicon-minus-sign");
         var drawer = $("#" + panelID + " .komet-concept-section-panel-details");
         var topLevelExpander = expander.parent().hasClass('komet-concept-body-tools');
+        var open;
 
         // if the user clicked on the top level concept expander, change the associated text label
         if (topLevelExpander) {
@@ -171,38 +170,6 @@ var ConceptViewer = function(viewerID, currentConceptID) {
         }.bind(this));
     };
 
-    ConceptViewer.prototype.subscribeToTaxonomyTree = function() {
-
-        // listen for the onChange event broadcast by any of the taxonomy this.trees.
-        $.subscribe(KometChannels.Taxonomy.taxonomyTreeNodeSelectedChannel, function (e, treeID, conceptID) {
-
-            this.currentConceptID = conceptID;
-            ConceptsModule.loadViewerData();
-        });
-    };
-
-    ConceptViewer.prototype.subscribeToSearch = function() {
-
-        // listen for the onChange event broadcast by selecting a search result.
-        $.subscribe(KometChannels.Taxonomy.taxonomySearchResultSelectedChannel, function (e, conceptID) {
-
-            this.currentConceptID = conceptID;
-            this.trees[this.PARENTS_TREE].selectedConceptID = this.currentConceptID;
-            this.trees[this.CHILDREN_TREE].selectedConceptID = this.currentConceptID;
-            ConceptsModule.loadViewerData();
-        });
-    };
-
-    ConceptViewer.prototype.loadConceptTabs = function() {
-
-        // the path to a javascript partial file that will re-render all the appropriate partials once the ajax call returns
-        var partial = 'komet_dashboard/concept_detail/load_tabs';
-
-        // make an ajax call to get the concept for the current concept and pass it the currently selected concept id and the name of a partial file to render
-        $.get(gon.routes.taxonomy_get_concept_information_path, {concept_id: this.currentConceptID, partial: partial}, function (data) {
-        });
-    };
-
     ConceptViewer.prototype.toggleNestedTableRows = function(image, id){
 
         // get reference to the block of nested rows
@@ -321,10 +288,6 @@ var ConceptViewer = function(viewerID, currentConceptID) {
         };
 
         this.refsetGridOptions.api.setDatasource(dataSource);
-    };
-
-    ConceptViewer.prototype.toggleLinkIcon = function(){
-        $('#komet_concept_panel_tree_link_' + this.viewerID).toggle();
     };
 
     ConceptViewer.prototype.swapLinkIcon = function(linked){

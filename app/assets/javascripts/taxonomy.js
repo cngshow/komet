@@ -19,10 +19,6 @@ Copyright Notice
 
 var TaxonomyModule = (function () {
 
-    var linkedViewerID;
-    var nestedSplitters;
-    var hasNestedSplitters = false;
-
     function init() {
 
         this.defaultStatedView = $("#komet_taxonomy_stated_inferred")[0].value;
@@ -43,27 +39,12 @@ var TaxonomyModule = (function () {
         reloadTree(TaxonomyModule[event.currentTarget.id].selectedConceptID);
     }
 
-    function nestedSplittersExist(){
-
-        nestedSplitters = $("#komet_east_pane_splitter_1");
-        hasNestedSplitters = nestedSplitters.find(".splitter_bar").length > 0;
-    }
-
-    function refreshSplitters(){
-
-        if (hasNestedSplitters){
-            nestedSplitters.enhsplitter('refresh');
-        }
-    }
-
     function getStatedView(){
         return $("#komet_taxonomy_stated_inferred")[0].value;
     };
 
     return {
         initialize: init,
-        nestedSplittersExist: nestedSplittersExist,
-        refreshSplitters: refreshSplitters,
         getStatedView: getStatedView
     };
 

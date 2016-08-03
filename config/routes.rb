@@ -24,7 +24,9 @@ Rails.application.routes.draw do
   get 'search/get_search_results'
   post 'search/get_search_results'
 
-  get 'mapping/mapping'
+  get 'komet_dashboard/mapping/mapping'
+  get 'mapping/load_tree_data'
+  get 'mapping/load_mapping_viewer'
   get 'mapping/get_overview_sets_results'
   get 'mapping/get_overview_items_results'
   get 'mapping/map_set_editor'
