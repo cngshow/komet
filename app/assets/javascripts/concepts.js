@@ -6,15 +6,14 @@ var ConceptsModule = (function () {
     viewers.maxInlineViewers = 2;
     var viewerMode = "single";
     var loading = false;
-    var deferred;
 
     function subscribeToTaxonomyTree() {
 
         // listen for the onChange event broadcast by any of the taxonomy this.trees.
         $.subscribe(KometChannels.Taxonomy.taxonomyTreeNodeSelectedChannel, function (e, treeID, conceptID, stated, viewerID, windowType) {
 
-            if (deferred && deferred.state() == "pending"){
-                deferred.done(function(){
+            if (WindowManager.deferred && WindowManager.deferred.state() == "pending"){
+                WindowManager.deferred.done(function(){
                     ConceptsModule.loadViewerData(conceptID, stated, WindowManager.getLinkedViewerID(), windowType)
                 }.bind(this));
             } else {
@@ -35,7 +34,7 @@ var ConceptsModule = (function () {
     function loadViewerData(conceptID, stated, viewerID, windowType) {
 
         loading = true;
-        deferred = $.Deferred();
+        WindowManager.deferred = $.Deferred();
 
         if (WindowManager.viewers.inlineViewers.length == 0 || WindowManager.getLinkedViewerID() == WindowManager.NEW){
             windowType = WindowManager.NEW;
@@ -59,7 +58,7 @@ var ConceptsModule = (function () {
                 if (windowType != WindowManager.NEW && windowType != WindowManager.POPUP) {
 
                     WindowManager.viewers[viewerID].refsetGridOptions = null;
-                    deferred.resolve();
+                    WindowManager.deferred.resolve();
                 }
             }
             catch (err) {
@@ -74,7 +73,7 @@ var ConceptsModule = (function () {
     function createViewer(viewerID, conceptID) {
 
         WindowManager.createViewer(new ConceptViewer(viewerID, conceptID));
-        deferred.resolve();
+        WindowManager.deferred.resolve();
     }
 
     function setStatedView(viewerID, field) {

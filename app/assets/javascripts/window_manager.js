@@ -10,6 +10,7 @@ var WindowManager = (function () {
     var nestedSplitters;
     var hasNestedSplitters = false;
     var viewerMode = "single";
+    var deferred = null;
 
 
     function loadViewerData(viewerContent, viewerID, viewerType, windowType) {
@@ -184,6 +185,7 @@ var WindowManager = (function () {
         getLinkedViewerID: getLinkedViewerID,
         nestedSplittersExist: nestedSplittersExist,
         refreshSplitters: refreshSplitters,
+        deferred: deferred,
         INLINE: INLINE,
         NEW: NEW,
         POPUP: POPUP,

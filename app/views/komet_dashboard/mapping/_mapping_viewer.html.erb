@@ -31,10 +31,16 @@
       WindowManager.viewers[<%= @viewer_id %>].showInMappingTree();
     }
 
+    var SET_LIST = 'komet_dashboard/mapping/map_set_list';
+    var SET_DETAILS = 'komet_dashboard/mapping/map_set_details';
+    var SET_EDITOR = 'komet_dashboard/mapping/map_set_editor';
+    var ITEM_EDITOR = 'komet_dashboard/mapping/map_item_editor';
+
     <%
         if @mapping_action == 'set_list'
             partial = 'komet_dashboard/mapping/map_set_list'
-
+        elsif @mapping_action == 'set_details'
+            partial = 'komet_dashboard/mapping/map_set_details'
         end
     %>
 

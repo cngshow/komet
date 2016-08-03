@@ -34,9 +34,7 @@ class MappingController < ApplicationController
         if true #!session['map_set_data']
 
             session['map_tree_data'] = [{id: '1', set_id: '1', text: 'Set 1', icon: 'komet-tree-node-icon fa fa-folder', a_attr: {class: 'komet-context-menu', 'data-menu-type' => 'map_set', 'data-menu-uuid' => '1'}},
-                                        {id: '2', set_id: '2', text: 'Set 2', icon: 'komet-tree-node-icon fa fa-folder', a_attr: {class: 'komet-context-menu', 'data-menu-type' => 'map_set', 'data-menu-uuid' => '2'}},
-                                        {id: '3', set_id: '3', text: 'Set 3', icon: 'komet-tree-node-icon fa fa-folder', a_attr: {class: 'komet-context-menu', 'data-menu-type' => 'map_set', 'data-menu-uuid' => '3'}},
-                                        {id: '4', set_id: '4', text: 'Set 4', icon: 'komet-tree-node-icon fa fa-folder', a_attr: {class: 'komet-context-menu', 'data-menu-type' => 'map_set', 'data-menu-uuid' => '4'}}]
+                                        {id: '2', set_id: '2', text: 'Set 2', icon: 'komet-tree-node-icon fa fa-folder', a_attr: {class: 'komet-context-menu', 'data-menu-type' => 'map_set', 'data-menu-uuid' => '2'}}]
 
             session['map_set_data'] = [{id: '1', name: 'Set 1', purpose: 'Test 1', description: 'Set 1 Description', review_state: 'Pending', status: 'Active', time: '10/10/2016', module: 'Development', path: 'Path'},
                                        {id: '2', name: 'Set 2', purpose: 'Test 2', description: 'Set 2 Description', review_state: 'Pending', status: 'Active', time: '10/10/2016', module: 'Development', path: 'Path'}]
@@ -53,8 +51,13 @@ class MappingController < ApplicationController
 
         text_filter = params[:text_filter]
         set_filter = params[:set_filter]
+        mapping_tree = []
 
-        mapping_tree = [id: '0', set_id: '0', text: 'Mapping Sets', icon: 'komet-tree-node-icon fa fa-tree', children: session['map_tree_data'], state: {opened: 'true'}]
+        session['map_set_data'].each do |set|
+            mapping_tree << {id: get_next_id, set_id: set[:id], text: set[:name], icon: 'komet-tree-node-icon fa fa-folder', a_attr: {class: 'komet-context-menu', 'data-menu-type' => 'map_set', 'data-menu-uuid' => set[:id]}}
+        end
+
+        mapping_tree = [id: '0', set_id: '0', text: 'Mapping Sets', icon: 'komet-tree-node-icon fa fa-tree', children: mapping_tree, state: {opened: 'true'}]
 
         render json: mapping_tree
 
@@ -68,8 +71,12 @@ class MappingController < ApplicationController
         @mapping_action = params[:mapping_action]
         @viewer_id =  params[:viewer_id]
 
-        if @viewer_id == nil || @viewer_id == ''  || @viewer_id == 'new'
+        if @viewer_id == nil || @viewer_id == '' || @viewer_id == 'new'
             @viewer_id = get_next_id
+        end
+
+        if @mapping_action == 'set_details'
+            map_set_editor
         end
 
         render partial: params[:partial]
@@ -92,6 +99,22 @@ class MappingController < ApplicationController
         render json: results
     end
 
+    def map_set_editor
+
+        if @set_id == nil
+            @set_id = params[:set_id]
+        end
+
+        if @set_id
+
+            @map_set = session['map_set_data'].select { |set|
+                set[:id] == @set_id
+            }.first
+        else
+            @map_set = {id: nil, name: nil, purpose: nil, description: nil, review_state: nil, status: 'No Status', time: nil, module: nil, path: nil}
+        end
+    end
+
     def get_overview_items_results
 
         coordinates_token = session[:coordinatestoken].token
@@ -112,20 +135,6 @@ class MappingController < ApplicationController
 
         results[:data] = matching_items
         render json: results
-    end
-
-    def map_set_editor
-
-        set_id = params[:set_id]
-
-        if set_id
-
-            @map_set = session['map_set_data'].select { |set|
-                set[:id] == set_id
-            }.first
-        else
-            @map_set = {id: nil, name: nil, purpose: nil, description: nil, review_state: nil, status: 'No Status', time: nil, module: nil, path: nil}
-        end
     end
 
     def process_map_set
