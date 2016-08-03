@@ -11,7 +11,13 @@ var MappingModule = (function () {
 
         subscribeToMappingTree();
 
-        this.tree = new KometMappingTree("komet_mapping_tree", WindowManager.NEW);
+        var windowType;
+
+        /*if (WindowManager.viewers.inlineViewers.length == 0){
+            windowType = WindowManager.NEW;
+        }*/
+
+        this.tree = new KometMappingTree("komet_mapping_tree", null);
 
         /*
         showOverviewSTAMP = false;
@@ -30,9 +36,11 @@ var MappingModule = (function () {
 
             if (WindowManager.viewers.inlineViewers.length == WindowManager.viewers.maxInlineViewers){
 
-                windowType = WindowManager.INLINE;
-                viewerID = WindowManager.getLinkedViewerID();
+                //windowType = WindowManager.INLINE;
+
             }
+
+            viewerID = WindowManager.getLinkedViewerID();
 
             if (deferred && deferred.state() == "pending"){
                 deferred.done(function(){
@@ -54,6 +62,10 @@ var MappingModule = (function () {
 
         if (mapping_action == "set_list"){
             params.set_id = id;
+        }
+
+        if (WindowManager.viewers.inlineViewers.length == 0 || WindowManager.getLinkedViewerID() == WindowManager.NEW){
+            windowType = WindowManager.NEW;
         }
 
 

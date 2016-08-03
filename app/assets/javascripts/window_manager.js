@@ -1,20 +1,21 @@
 var WindowManager = (function () {
 
-    var viewers = {};
-    viewers.inlineViewers = [];
-    viewers.maxInlineViewers = 2;
-    var linkedViewerID;
-    var nestedSplitters;
-    var hasNestedSplitters = false;
-    var viewerMode = "single";
     const INLINE = "inline";
     const NEW = "new";
     const POPUP = "popup";
+    var viewers = {};
+    viewers.inlineViewers = [];
+    viewers.maxInlineViewers = 2;
+    var linkedViewerID = NEW;
+    var nestedSplitters;
+    var hasNestedSplitters = false;
+    var viewerMode = "single";
+
 
     function loadViewerData(viewerContent, viewerID, viewerType, windowType) {
 
         if (windowType == NEW && viewers.inlineViewerCount === viewers.maxInlineViewers){
-            alert("You can not have more than two concept viewers open in the dashboard at one time.");
+            alert("You can not have more than two viewers open in the dashboard at one time.");
             return;
         }
 
@@ -142,10 +143,10 @@ var WindowManager = (function () {
 
         linkedViewerID = viewerID;
 
-        TaxonomyModule.tree.windowType = windowType;
-
         if (viewers[viewerID] instanceof ConceptViewer && windowType != NEW && TaxonomyModule.tree.selectedConceptID != viewers[viewerID].currentConceptID) {
+            //TaxonomyModule.tree.windowType = windowType;
             viewers[viewerID].showInTaxonomyTree();
+
 
         } else if (viewers[viewerID] instanceof MappingViewer && windowType != NEW && MappingModule.tree.selectedSetID != viewers[viewerID].currentSetID) {
             viewers[viewerID].showInMappingTree();

@@ -27,21 +27,32 @@
     $(document).ready(function () {
 
         $("#komet_taxonomy_tab").html('<%= escape_javascript render :partial => 'komet_dashboard/taxonomy/taxonomy'%>');
-        $("#komet_search_tab").html('<%= escape_javascript render :partial => 'komet_dashboard/search/search'%>');
 
         $("#komet_dashboard_tabs").tabs({
             activate: function(event, tabs ) {
 
-                if (tabs.newPanel[0].id == "komet_mapping_tab"){
+                if (tabs.newPanel[0].id == "komet_taxonomy_tab"){
+
+                    if (tabs.newPanel.html() == ""){
+                        tabs.newPanel.html('<%= escape_javascript render :partial => 'komet_dashboard/taxonomy/taxonomy'%>');
+                    }
+
+                } else if (tabs.newPanel[0].id == "komet_mapping_tab"){
 
                     if (tabs.newPanel.html() == ""){
                         tabs.newPanel.html('<%= escape_javascript render :partial => 'komet_dashboard/mapping/mapping_tree'%>');
+                    }
+
+                } else if (tabs.newPanel[0].id == "komet_search_tab"){
+
+                    if (tabs.newPanel.html() == ""){
+                        tabs.newPanel.html('<%= escape_javascript render :partial => 'komet_dashboard/search/search'%>');
                     }
                 }
             }
         });
 
-        //$("#komet_dashboard_tabs").tabs({active:1});
+        //$("#komet_dashboard_tabs").tabs({active:0});
 
         $('#komet_dashboard_splitter').enhsplitter({
             height: "91%",

@@ -37,6 +37,10 @@ var ConceptsModule = (function () {
         loading = true;
         deferred = $.Deferred();
 
+        if (WindowManager.viewers.inlineViewers.length == 0 || WindowManager.getLinkedViewerID() == WindowManager.NEW){
+            windowType = WindowManager.NEW;
+        }
+
         // the path to a javascript partial file that will re-render all the appropriate partials once the ajax call returns
         var partial = 'komet_dashboard/concept_detail/concept_information';
 
