@@ -209,7 +209,6 @@ var MappingViewer = function(viewerID, currentSetID) {
         // enable map set specific actions
         UIHelper.toggleFieldAvailability("komet_mapping_overview_set_delete_" + this.viewerID, true);
         UIHelper.toggleFieldAvailability("komet_mapping_overview_set_edit_" + this.viewerID, true);
-        UIHelper.toggleFieldAvailability("komet_mapping_overview_item_create_" + this.viewerID, true);
 
         var selectedRows = this.overviewSetsGridOptions.api.getSelectedRows();
 
@@ -277,9 +276,14 @@ var MappingViewer = function(viewerID, currentSetID) {
 
     MappingViewer.prototype.initializeSetEditor = function(){
 
+        $("#komet_mapping_set_tabs_" + this.viewerID).tabs();
+
         if (this.currentSetID != null && this.currentSetID != ""){
             this.loadOverviewItemsGrid();
+
+            UIHelper.toggleFieldAvailability("komet_mapping_overview_item_create_" + this.viewerID, true);
         }
+
 
         $("#komet_mapping_set_editor_form_" + this.viewerID).submit(function () {
 
@@ -296,7 +300,103 @@ var MappingViewer = function(viewerID, currentSetID) {
             // have to return false to stop the form from posting twice.
             return false;
         });
+
+        // setup the source field autocomplete functionality
+        $("#komet_mapping_set_editor_source_display_" + this.viewerID).autocomplete({
+            source: gon.routes.mapping_get_item_source_suggestions_path,
+            minLength: 3,
+            select: this.onSetSourceSuggestionSelection,
+            change: this.onSetSourceSuggestionChange
+        });
+
+        this.loadSetSourceRecents();
+
+        // setup the target field autocomplete functionality
+        $("#komet_mapping_set_editor_target_display_" + this.viewerID).autocomplete({
+            source: gon.routes.mapping_get_item_target_suggestions_path,
+            minLength: 3,
+            select: this.onSetTargetSuggestionSelection,
+            change: this.onSetTargetSuggestionChange
+        });
+
+        this.loadSetTargetRecents();
     };
+
+    MappingViewer.prototype.onSetSourceSuggestionSelection = function(event, ui){
+
+        $("#komet_mapping_set_editor_source_display_" + this.viewerID).val(ui.item.label);
+        $("#komet_mapping_set_editor_source_" + this.viewerID).val(ui.item.value);
+        return false;
+    }.bind(this);
+
+    MappingViewer.prototype.onSetSourceSuggestionChange = function(event, ui){
+
+        if (!ui.item) {
+            event.target.value = "";
+            $("#komet_mapping_set_editor_source_" + this.viewerID).val("");
+        }
+    }.bind(this);
+
+    MappingViewer.prototype.loadSetSourceRecents = function(){
+
+        $.get(gon.routes.mapping_get_item_source_recents_path, function (data) {
+
+            var options = "";
+
+            $.each(data, function (index, value) {
+
+                // use the html function to escape any html that may have been entered by the user
+                var valueText = $("<li>").text(value.text).html();
+                options += "<li><a href=\"#\" onclick=\"WindowManager.viewers[" + this.viewerID + "].useSetSourceRecent('" + value.id + "', '" + valueText + "')\">" + valueText + "</a></li>";
+            }.bind(this));
+
+            $("#komet_mapping_set_editor_source_recents_" + this.viewerID).html(options);
+        }.bind(this));
+    };
+
+    MappingViewer.prototype.useSetSourceRecent = function(id, text){
+
+        $("#komet_mapping_set_editor_source_display_" + this.viewerID).val(text);
+        $("#komet_mapping_set_editor_source_" + this.viewerID).val(id);
+    }.bind(this);
+
+    MappingViewer.prototype.onSetTargetSuggestionSelection = function(event, ui){
+
+        $("#komet_mapping_set_editor_target_display_" + this.viewerID).val(ui.item.label);
+        $("#komet_mapping_set_editor_target_" + this.viewerID).val(ui.item.value);
+        return false;
+    }.bind(this);
+
+    MappingViewer.prototype.onSetTargetSuggestionChange = function(event, ui){
+
+        if (!ui.item) {
+            event.target.value = "";
+            $("#komet_mapping_set_editor_target_" + this.viewerID).val("");
+        }
+    }.bind(this);
+
+    MappingViewer.prototype.loadSetTargetRecents = function(){
+
+        $.get(gon.routes.mapping_get_item_target_recents_path, function (data) {
+
+            var options = "";
+
+            $.each(data, function (index, value) {
+
+                // use the html function to escape any html that may have been entered by the user
+                var valueText = $("<li>").text(value.text).html();
+                options += "<li><a href=\"#\" onclick=\"WindowManager.viewers[" + this.viewerID + "].useSetTargetRecent('" + value.id + "', '" + valueText + "')\">" + valueText + "</a></li>";
+            }.bind(this));
+
+            $("#komet_mapping_set_editor_target_recents_" + this.viewerID).html(options);
+        }.bind(this));
+    };
+
+    MappingViewer.prototype.useSetTargetRecent = function(id, text){
+
+        $("#komet_mapping_set_editor_target_display_" + this.viewerID).val(text);
+        $("#komet_mapping_set_editor_target_" + this.viewerID).val(id);
+    }.bind(this);
 
     MappingViewer.prototype.loadOverviewItemsGrid = function(){
 
@@ -401,6 +501,278 @@ var MappingViewer = function(viewerID, currentSetID) {
 
         selectedRows.forEach(function (selectedRow, index) {
             console.log("Editing map item " + selectedRow.id);
+        });
+    }.bind(this);
+
+    MappingViewer.prototype.onItemSourceSuggestionSelection = function(event, ui) {
+
+        $("#komet_mapping_item_editor_source_display_" + this.viewerID).val(ui.item.label);
+        $("#komet_mapping_item_editor_source_" + this.viewerID).val(ui.item.value);
+        return false;
+    }.bind(this);
+
+    MappingViewer.prototype.onItemSourceSuggestionChange = function(event, ui) {
+
+        if (!ui.item) {
+            event.target.value = "";
+            $("#komet_mapping_item_editor_source_" + this.viewerID).val("");
+        }
+    }.bind(this);
+
+    MappingViewer.prototype.loadItemSourceRecents = function() {
+
+        $.get(gon.routes.mapping_get_item_source_recents_path, function (data) {
+
+            var options = "";
+
+            $.each(data, function (index, value) {
+
+                // use the html function to escape any html that may have been entered by the user
+                var valueText = $("<li>").text(value.text).html();
+                options += "<li><a href=\"#\" onclick=\"WindowManager.viewers[" + this.viewerID + "].useItemSourceRecent('" + value.id + "', '" + valueText + "')\">" + valueText + "</a></li>";
+            }.bind(this));
+
+            $("#komet_mapping_item_editor_source_recents_" + this.viewerID).html(options);
+        }.bind(this));
+    };
+
+    MappingViewer.prototype.useItemSourceRecent = function(id, text) {
+
+        $("#komet_mapping_item_editor_source_display_" + this.viewerID).val(text);
+        $("#komet_mapping_item_editor_source_" + this.viewerID).val(id);
+    }.bind(this);
+
+    MappingViewer.prototype.onItemTargetSuggestionSelection = function(event, ui) {
+
+        $("#komet_mapping_item_editor_target_display_" + this.viewerID).val(ui.item.label);
+        $("#komet_mapping_item_editor_target_" + this.viewerID).val(ui.item.value);
+        return false;
+    }.bind(this);
+
+    MappingViewer.prototype.onItemTargetSuggestionChange = function(event, ui) {
+
+        if (!ui.item) {
+            event.target.value = "";
+            $("#komet_mapping_item_editor_target_" + this.viewerID).val("");
+        }
+    }.bind(this);
+
+    MappingViewer.prototype.loadItemTargetRecents = function() {
+
+        $.get(gon.routes.mapping_get_item_target_recents_path, function (data) {
+
+            var options = "";
+
+            $.each(data, function (index, value) {
+
+                // use the html function to escape any html that may have been entered by the user
+                var valueText = $("<li>").text(value.text).html();
+                options += "<li><a href=\"#\" onclick=\"WindowManager.viewers[" + this.viewerID + "].useItemTargetRecent('" + value.id + "', '" + valueText + "')\">" + valueText + "</a></li>";
+            }.bind(this));
+
+            $("#komet_mapping_item_editor_target_recents_" + this.viewerID).html(options);
+        }.bind(this));
+    };
+
+    MappingViewer.prototype.useItemTargetRecent = function(id, text) {
+
+        $("#komet_mapping_item_editor_target_display_" + this.viewerID).val(text);
+        $("#komet_mapping_item_editor_target_" + this.viewerID).val(id);
+    }.bind(this);
+
+    MappingViewer.prototype.openItemEditor = function(newItem) {
+
+        var url = gon.routes.mapping_map_item_editor_path + "?set_id=" + $("#komet_mapping_set_editor_set_id_" + this.viewerID).val() + "&viewer_id=" + this.viewerID;
+
+        if (!newItem) {
+            url += "&item_id=" + this.overviewItemsGridOptions.api.getSelectedRows()[0].id;
+        }
+
+        this.itemEditorWindow = window.open(url, "MapItemEditor", "width=1010,height=680");
+    };
+
+    MappingViewer.prototype.initializeItemEditor = function() {
+
+        // setup the source field autocomplete functionality
+        $("#komet_mapping_item_editor_source_display_" + this.viewerID).autocomplete({
+            source: gon.routes.mapping_get_item_source_suggestions_path,
+            minLength: 3,
+            select: this.onItemSourceSuggestionSelection,
+            change: this.onItemSourceSuggestionChange
+        });
+
+        this.loadItemSourceRecents();
+
+        // setup the target field autocomplete functionality
+        $("#komet_mapping_item_editor_target_display_" + this.viewerID).autocomplete({
+            source: gon.routes.mapping_get_item_target_suggestions_path,
+            minLength: 3,
+            select: this.onItemTargetSuggestionSelection,
+            change: this.onItemTargetSuggestionChange
+        });
+
+        this.loadItemTargetRecents();
+
+        // setup the Kind Of field autocomplete functionality
+        $("#komet_mapping_item_editor_kind_of_display_" + this.viewerID).autocomplete({
+            source: gon.routes.mapping_get_item_kind_of_suggestions_path,
+            minLength: 3,
+            select: this.onItemKindOfSuggestionSelection,
+            change: this.onItemKindOfSuggestionChange
+        });
+
+        this.loadItemKindOfRecents();
+
+        var thisViewer = this;
+
+        // set the form to post the data to the controller and upon success reload the Items grid and close the window.
+        $("#komet_mapping_item_editor_form_" + this.viewerID).submit(function () {
+            window.opener.console.log("Hello");
+            $.ajax({
+                type: "POST",
+                url: $(this).attr("action"),
+                data: $(this).serialize(), //new FormData($(this)[0]),
+                success: function () {
+
+                    console.log("viewer: " + thisViewer.viewerID);
+                    window.opener.console.log("Success!");
+                    window.opener.WindowManager.viewers[thisViewer.viewerID].loadOverviewItemsGrid($("#komet_mapping_item_editor_set_id_" + thisViewer.viewerID).val());
+                    window.close();
+                }
+            });
+
+            // have to return false to stop the form from posting twice.
+            return false;
+        });
+
+        this.loadTargetCandidatesGrid();
+    };
+
+    MappingViewer.prototype.onItemKindOfSuggestionSelection = function(event, ui) {
+
+        $("#komet_mapping_item_editor_kind_of_display_" + this.viewerID).val(ui.item.label);
+        $("#komet_mapping_item_editor_kind_of_" + this.viewerID).val(ui.item.value);
+        return false;
+    }.bind(this);
+
+    MappingViewer.prototype.onItemKindOfSuggestionChange = function(event, ui) {
+
+        if (!ui.item) {
+            event.target.value = "";
+            $("#komet_mapping_item_editor_kind_of_" + this.viewerID).val("");
+        }
+    }.bind(this);
+
+    MappingViewer.prototype.loadItemKindOfRecents = function() {
+
+        $.get(gon.routes.mapping_get_item_kind_of_recents_path, function (data) {
+
+            var options = "";
+
+            $.each(data, function (index, value) {
+
+                // use the html function to escape any html that may have been entered by the user
+                var valueText = $("<li>").text(value.text).html();
+                options += "<li><a href=\"#\" onclick=\"WindowManager.viewers[" + this.viewerID + "].useItemKindOfRecent('" + value.id + "', '" + valueText + "')\">" + valueText + "</a></li>";
+            }.bind(this));
+
+            $("#komet_mapping_item_editor_kind_of_recents_" + this.viewerID).html(options);
+        }.bind(this));
+    };
+
+    MappingViewer.prototype.useItemKindOfRecent = function(id, text) {
+
+        $("#komet_mapping_item_editor_kind_of_display_" + this.viewerID).val(text);
+        $("#komet_mapping_item_editor_kind_of_" + this.viewerID).val(id);
+    }.bind(this);
+
+    MappingViewer.prototype.loadTargetCandidatesGrid = function(showData) {
+
+        // If a grid already exists destroy it or it will create a second grid
+        if (this.targetCandidatesGridOptions) {
+            this.targetCandidatesGridOptions.api.destroy();
+        }
+
+        // set the options for the result grid
+        this.targetCandidatesGridOptions = {
+            enableColResize: true,
+            enableSorting: true,
+            suppressCellSelection: true,
+            rowSelection: "single",
+            onSelectionChanged: this.onTargetCandidatesGridSelection,
+            onGridReady: this.onGridReady,
+            rowModelType: 'pagination',
+            columnDefs: [
+                {field: "id", headerName: "id", hide: "true"},
+                {field: "concept", headerName: "Concept"},
+                {field: "code_system", headerName: "Code System"},
+                {field: "status", headerName: "Status"}
+            ]
+        };
+
+        new agGrid.Grid($("#komet_mapping_item_editor_target_candidates_" + this.viewerID).get(0), this.targetCandidatesGridOptions);
+
+        if (showData == undefined) {
+            this.targetCandidatesGridOptions.api.showNoRowsOverlay()
+        } else {
+            this.getTargetCandidatesData();
+        }
+    };
+
+    MappingViewer.prototype.getTargetCandidatesData = function() {
+
+        $("#komet_taxonomy_search_form_" + this.viewerID).find(".komet-form-error").remove();
+
+        var search_text = $("#komet_mapping_item_editor_target_candidates_search_" + this.viewerID).val();
+
+        if (search_text === ""){
+
+            $("#komet_mapping_item_editor_target_candidates_search_section_" + this.viewerID).after(UIHelper.generateFormErrorMessage("Candidate Criteria cannot be blank."));
+            return;
+        }
+
+        // load the parameters from the form to add to the query string sent in the ajax data call
+        var page_size = $("#komet_mapping_item_editor_target_candidates_page_size_" + this.viewerID).val();
+        var description_type = $("#komet_mapping_item_editor_description_type_" + this.viewerID).val();
+        var advanced_description_type = $("#komet_mapping_item_editor_advanced_description_type_" + this.viewerID).val();
+        var code_system = $("#komet_mapping_item_editor_code_system_" + this.viewerID).val();
+        var assemblage = $("#komet_mapping_item_editor_assemblage_" + this.viewerID).val();
+        var kind_of = $("#komet_mapping_item_editor_kind_of_" + this.viewerID).val();
+
+        var searchParams = "?search_text=" + search_text + "&page_size=" + page_size + "&description_type=" + description_type
+            + "&advanced_description_type=" + advanced_description_type + "&code_system=" + code_system + "&assemblage=" + assemblage + "&kind_of=" + kind_of;
+
+        var pageSize = Number(page_size);
+
+        // set the grid datasource options, including processing the data rows
+        var dataSource = {
+
+            pageSize: pageSize,
+            getRows: function (params) {
+
+                var pageNumber = params.endRow / pageSize;
+
+                searchParams += "&page_number=" + pageNumber;
+
+                // make an ajax call to get the data
+                $.get(gon.routes.mapping_get_target_candidates_results_path + searchParams, function (search_results) {
+
+                    params.successCallback(search_results.data, search_results.total_number);
+                }.bind(this));
+            }.bind(this)
+        };
+
+        this.targetCandidatesGridOptions.api.setDatasource(dataSource);
+    };
+
+    MappingViewer.prototype.onTargetCandidatesGridSelection = function() {
+
+        var selectedRows = this.targetCandidatesGridOptions.api.getSelectedRows();
+
+        selectedRows.forEach(function (selectedRow, index) {
+
+            $("#komet_mapping_item_editor_target_" + this.viewerID).val(selectedRow.id);
+            $("#komet_mapping_item_editor_target_display_" + this.viewerID).val(selectedRow.concept);
         });
     }.bind(this);
 

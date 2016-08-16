@@ -36,8 +36,8 @@ class MappingController < ApplicationController
             session['map_tree_data'] = [{id: '1', set_id: '1', text: 'Set 1', icon: 'komet-tree-node-icon fa fa-folder', a_attr: {class: 'komet-context-menu', 'data-menu-type' => 'map_set', 'data-menu-uuid' => '1'}},
                                         {id: '2', set_id: '2', text: 'Set 2', icon: 'komet-tree-node-icon fa fa-folder', a_attr: {class: 'komet-context-menu', 'data-menu-type' => 'map_set', 'data-menu-uuid' => '2'}}]
 
-            session['map_set_data'] = [{id: '1', name: 'Set 1', purpose: 'Test 1', description: 'Set 1 Description', review_state: 'Pending', status: 'Active', time: '10/10/2016', module: 'Development', path: 'Path'},
-                                       {id: '2', name: 'Set 2', purpose: 'Test 2', description: 'Set 2 Description', review_state: 'Pending', status: 'Active', time: '10/10/2016', module: 'Development', path: 'Path'}]
+            session['map_set_data'] = [{id: '1', name: 'Set 1', purpose: 'Test 1', description: 'Set 1 Description', version: '11/11/2011', vuid: '1111', source: '1', source_display: 'Source 1', source_version: '10/10/2011', target: '1', target_display: 'Target 1', target_version: '11/11/2011', rules: 'Here are rules...', state: 'Pending', status: 'Active', time: '10/10/2016', module: 'Development', path: 'Path'},
+                                       {id: '2', name: 'Set 2', purpose: 'Test 2', description: 'Set 2 Description', version: '02/02/2022', vuid: '2222', source: '2', source_display: 'Source 2', source_version: '02/02/2022', target: '2', target_display: 'Target 2', target_version: '02/02/2022', rules: 'Here are rules...', state: 'Pending', status: 'Active', time: '02/02/2022', module: 'Development', path: 'Path'}]
 
             session['map_item_data'] = [{id: '1', set_id: '1', source: '11', source_display: 'Source 11', target: 'Target 11', target_display: 'Target 11', qualifier: 'No Qualifier', comments: 'This is a comment', review_state: 'Pending', status: 'Active', time: '10/10/2016', module: 'Development', path: 'Path'},
                                         {id: '2', set_id: '1', source: '12', source_display: 'Source 12', target: 'Target 12', target_display: 'Target 12', qualifier: 'No Qualifier', comments: 'This is a comment', review_state: 'Pending', status: 'Active', time: '10/10/2016', module: 'Development', path: 'Path'},
@@ -107,11 +107,18 @@ class MappingController < ApplicationController
 
         if @set_id
 
+
+
             @map_set = session['map_set_data'].select { |set|
                 set[:id] == @set_id
             }.first
+
+            @viewer_title = @map_set[:name]
         else
-            @map_set = {id: nil, name: nil, purpose: nil, description: nil, review_state: nil, status: 'No Status', time: nil, module: nil, path: nil}
+
+            @map_set = {id: nil, name: nil, purpose: nil, description: nil, version: nil, vuid: nil, source: nil, source_display: nil, source_version: nil, target: nil, target_display: nil, target_version: nil, rules: nil, state: nil, status: 'Active', time: nil, module: nil, path: nil}
+
+            @viewer_title = "Create New Map Set"
         end
     end
 
@@ -143,9 +150,10 @@ class MappingController < ApplicationController
         set_name = params[:komet_mapping_set_editor_name]
         purpose = params[:komet_mapping_set_editor_purpose]
         description = params[:komet_mapping_set_editor_description]
-        review_state = params[:komet_mapping_set_editor_review_state]
+        status = params[:komet_mapping_set_editor_status]
+        state = params[:komet_mapping_set_editor_state]
 
-        set = {name: set_name, purpose: purpose, description: description, review_state: review_state, status: 'Active', time: Time.now.strftime('%m/%d/%Y %H:%M'), module: 'Development', path: 'Path'}
+        set = {name: set_name, purpose: purpose, description: description, version: version, vuid: vuid, source: source, source_display: source_display, source_version: source_version, target: target, target_display: target_display, target_version: target_version, state: state, status: status, time: Time.now.strftime('%m/%d/%Y %H:%M'), module: 'Development', path: 'Path'}
 
         if set_id && set_id != ''
 
@@ -171,6 +179,7 @@ class MappingController < ApplicationController
 
         set_id = params[:set_id]
         item_id = params[:item_id]
+        @viewer_id = params[:viewer_id]
 
         if item_id
 
@@ -189,6 +198,8 @@ class MappingController < ApplicationController
 
         # get the list of assemblages
         @assemblages = [['No Restrictions', ''], ['SNOMED CT']]
+
+        render 'komet_dashboard/mapping/map_item_editor'
 
     end
 
