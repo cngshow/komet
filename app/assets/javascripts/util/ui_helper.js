@@ -131,6 +131,12 @@ var UIHelper = (function () {
         };
     }
 
+    function openAddEditConcept()
+    {
+        //  callback: openConcept($triggerElement, uuid, null, WindowManager.NEW)
+         $.publish(KometChannels.Taxonomy.taxonomyAddEditConceptChannel, ['', WindowManager.getLinkedViewerID()]);
+
+    }
     // function to switch a field between enabled and disabled
     function toggleFieldAvailability(field_name, enable){
 
@@ -152,7 +158,8 @@ var UIHelper = (function () {
         isTabActive: isTabActive,
         initializeContextMenus: initializeContextMenus,
         generateFormErrorMessage: generateFormErrorMessage,
-        toggleFieldAvailability: toggleFieldAvailability
+        toggleFieldAvailability: toggleFieldAvailability,
+        openAddEditConcept: openAddEditConcept
     };
 })();
 

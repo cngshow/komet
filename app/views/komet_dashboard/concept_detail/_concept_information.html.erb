@@ -1,4 +1,5 @@
 <div class="panel panel-default komet-no-margins komet-panel" id="komet_viewer_<%= @viewer_id %>" data-komet-viewer-id="<%= @viewer_id %>">
+  <div style="cursor: hand" onclick="UIHelper.openAddEditConcept()" id="createconcept">Create Concept</div><br>
   <div class="panel-heading">
     <span class="panel-title komet-section-title">
       <span id="komet_concept_panel_tree_link_<%= @viewer_id %>" class="fa fa-chain-broken" onclick="WindowManager.toggleViewerLinkage(<%= @viewer_id %>, WindowManager.getLinkedViewerID() != '<%= @viewer_id %>');" title="Link to Taxonomy Tree"></span>

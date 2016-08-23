@@ -95,6 +95,21 @@ class KometDashboardController < ApplicationController
 
   end
 
+  def get_concept_add_edit
+
+    @concept_id = params[:concept_id]
+    @stated = params[:stated]
+    @viewer_id =  params[:viewer_id]
+
+    if @viewer_id == nil || @viewer_id == '' || @viewer_id == 'new'
+      @viewer_id = get_next_id
+    end
+
+
+    render partial: params[:partial]
+
+  end
+
   ##
   # get_concept_attributes - RESTful route for populating concept attribute tab using an http :GET
   # The current tree node representing the concept is identified in the request params with the key :concept_id
