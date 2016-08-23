@@ -38,7 +38,7 @@ class KometDashboardController < ApplicationController
   # Whether to display the stated (true) or inferred view of concepts with a request param of :stated (true/false)
   #@return [json] the tree nodes to insert into the tree at the parent node passed in the request
   def load_tree_data
-#    roles = session[Roles::SESSION_USER_ROLES]
+#    roles = session[Roles::SESSION_ROLES_ROOT][Roles::SESSION_USER_ROLES]
 #    if(roles.include?(Roles::DEV_SUPER_USER))
 #      #do something
 #    end
