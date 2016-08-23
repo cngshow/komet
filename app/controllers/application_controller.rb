@@ -70,7 +70,7 @@ class ApplicationController < ActionController::Base
   def ensure_roles
     $log.debug("Ensuring roles for #{request.fullpath}")
     user_name = ssoi_headers
-    @ssoi = user_name.nil? #we are using ssoi
+    @ssoi = !user_name.to_s.strip.empty? #we are using ssoi
     $log.debug("SSOI headers present? " + ssoi?.to_s + " ssoi user is #{user_name}")
     roles = session[Roles::SESSION_ROLES_ROOT][Roles::SESSION_USER_ROLES]
     user = session[Roles::SESSION_ROLES_ROOT][Roles::SESSION_USER]
