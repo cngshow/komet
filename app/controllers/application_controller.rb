@@ -86,7 +86,7 @@ class ApplicationController < ActionController::Base
     time_for_recheck = (Time.now - session[Roles::SESSION_ROLES_ROOT][Roles::SESSION_LAST_ROLE_CHECK]) > $PROPS['KOMET.roles_recheck_in_seconds'].to_i
     if (session[Roles::SESSION_ROLES_ROOT][Roles::SESSION_LAST_ROLE_CHECK].nil? || time_for_recheck)
       $log.debug("Refetching the roles")
-      if (!FileTest.exists?("#{Rails.root}/config/props/prisme.properties") || $PROPS['PRISME.prisme_roles_url'].nil?)
+      if (!ssoi? && (!FileTest.exists?("#{Rails.root}/config/props/prisme.properties") || $PROPS['PRISME.prisme_roles_url'].nil?))
         load './lib/roles_test/roles.rb'
         roles = RolesTest::user_roles(user: user, password: password)
         session[Roles::SESSION_ROLES_ROOT][Roles::SESSION_LAST_ROLE_CHECK] = Time.now
@@ -107,7 +107,10 @@ class ApplicationController < ActionController::Base
           user_params  = {} #id: user, password: password.to_s
           user_params[:id] = user
           user_params[:password] = password.to_s unless ssoi
-          response = JSON.parse conn.get(roles_url.path, user_params).body
+          user_params[:format] = 'json'
+          roles_body = conn.get(roles_url.path, user_params).body
+          $log.debug("Roles body from prisme is: #{roles_body}")
+          response = JSON.parse roles_body
         rescue => ex
           $log.error("Komet could not communicate with PRISME at URL #{roles_url}")
           $log.error("Error message is #{ex.message}")

@@ -27,11 +27,16 @@ class ExternalController < ApplicationController
 
   def login
     #render external#login
+    user_name = ssoi_headers
+    @ssoi = !user_name.to_s.strip.empty? #we are using ssoi
     if (ssoi?)
+      ensure_roles
       roles = session[Roles::SESSION_ROLES_ROOT][Roles::SESSION_USER_ROLES]
       $log.debug("SSOI has the following roles: #{roles}")
-      redirect_to komet_dashboard_dashboard_url unless (roles.nil? || roles.empty?)
-      return
+      unless (roles.nil? || roles.empty?)
+        redirect_to komet_dashboard_dashboard_url
+        return
+      end
     end
     $log.debug("Rendering the standard login page")
   end
