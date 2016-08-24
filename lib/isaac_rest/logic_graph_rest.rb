@@ -87,6 +87,9 @@ a = LogicGraphRest::get_graph(action: LogicGraphRestActions::ACTION_CHRONOLOGY,u
 b = LogicGraphRest::get_graph(action: LogicGraphRestActions::ACTION_VERSION,uuid_or_id: LogicGraphRest::TEST_UUID)
 s = LogicGraphRest.get_graph(action: ACTION_VERSION, uuid_or_id: "251be9d9-0193-3c98-9d11-317658983101", additional_req_params: {},raw_json: true)
 
+#no caching!!!!
+#just add the key as follows to your additional req params.  Its absence implies caching will occur, but you can be explicit and set it to true
+uncached = LogicGraphRest::get_graph(action: LogicGraphRestActions::ACTION_CHRONOLOGY,uuid_or_id: LogicGraphRest::TEST_UUID,  additional_req_params: {CommonRest::CacheRequest => false})
 
 =end
 

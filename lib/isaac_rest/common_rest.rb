@@ -7,6 +7,10 @@ module CommonRest
 
   UnexpectedResponse = Struct.new(:body, :status) do end
 
+  #used as your key in the req params to indicate if this request is cached
+  module CacheRequest
+  end
+
   CONNECTION = Faraday.new do |faraday|
     faraday.request :url_encoded # form-encode POST params
     faraday.use Faraday::Response::Logger, $log
@@ -24,18 +28,24 @@ module CommonRest
   end
 
   def rest_fetch(url_string:, params:, raw_url:)
-    cache_lookup = {url_string => params}
-    unless $rest_cache[cache_lookup].nil?
-      $log.info('Using a cached result!  No rest fetch will occur!')
-      $log.info("Cache key: #{cache_lookup}")
-      json = $rest_cache[cache_lookup]
-      json_to_yaml_file(json, url_to_path_string(raw_url))
-      return json.deep_dup
+    check_cache = params[CacheRequest]
+    check_cache = check_cache.nil? ? true : check_cache
+    sending_params = params.clone
+    sending_params.delete(CacheRequest)
+    $log.debug("should_cache #{check_cache}")
+    if check_cache
+      cache_lookup = {url_string => sending_params}
+      unless $rest_cache[cache_lookup].nil?
+        $log.info('Using a cached result!  No rest fetch will occur!')
+        $log.info("Cache key: #{cache_lookup}")
+        json = $rest_cache[cache_lookup]
+        json_to_yaml_file(json, url_to_path_string(raw_url))
+        return json.deep_dup
+      end
     end
-
     response = CONNECTION.get do |req|
       req.url url_string
-      req.params = params
+      req.params = sending_params
     end
     json = nil
     begin
