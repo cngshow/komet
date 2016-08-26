@@ -133,7 +133,8 @@ var UIHelper = (function () {
 
     function openAddEditConcept()
     {
-        //  callback: openConcept($triggerElement, uuid, null, WindowManager.NEW)
+
+         //  callback: openConcept($triggerElement, uuid, null, WindowManager.NEW)
          $.publish(KometChannels.Taxonomy.taxonomyAddEditConceptChannel, ['', WindowManager.getLinkedViewerID()]);
 
     }

@@ -27,7 +27,7 @@ var ConceptsModule = (function () {
         // listen for the onChange event broadcast by selecting a search result.
         $.subscribe(KometChannels.Taxonomy.taxonomySearchResultSelectedChannel, function (e, conceptID, viewerID, windowType) {
 
-            ConceptsModule.loadViewerData(conceptID, TaxonomyModule.defaultStatedView, viewerID, windowType);
+            ConceptsModule.loadViewerData(e,conceptID, viewerID, windowType);
         });
     }
 
@@ -118,80 +118,23 @@ var ConceptsModule = (function () {
     function setStatedView(viewerID, field) {
         loadViewerData(WindowManager.viewers[viewerID].currentConceptID, field.value, viewerID);
     }
-    function onLineageSuggestionSelection(event, ui){
 
-        $("#taxonomy_lineage_display").val(ui.item.label);
-        $("#taxonomy_lineage_id").val(ui.item.value);
-        return false;
-    }
-
-    function onLineageSuggestionChange(event, ui){
-
-        if (!ui.item){
-            event.target.value = "";
-            $("#taxonomy_lineage_id").val("");
-        }
-    }
     function init() {
 
         subscribeToTaxonomyTree();
         subscribeToSearch();
         subscribeToAddEditConcept();
 
-        $("#txtName").keyup(function(event) {
-            var stt = $(this).val();
-            $("taxonomy_pn_text").text(stt);
-            $("taxonomy_fsn_text").text(stt);
-        });
-
-        $("#taxonomy_lineage_display").keyup(function(event) {
-            var stt =  $("taxonomy_pn_text").text() + $(this).val();
-
-            $("taxonomy_fsn_text").text(stt);
-        });
-
-        // setup the assemblage field autocomplete functionality
-        $("#taxonomy_lineage_display").autocomplete({
-            source: gon.routes.search_get_assemblage_suggestions_path,
-            minLength: 3,
-            select: onLineageSuggestionSelection,
-            change: onLineageSuggestionChange
-        });
-
-        // load any previous assemblage queries into a menu for the user to select from
-       // loadLineageRecents();
     }
 
-    function loadLineageRecents() {
 
-        $.get(gon.routes.search_get_assemblage_recents_path, function (data) {
-
-            var options = "";
-
-            $.each(data, function (index, value) {
-
-                // use the html function to escape any html that may have been entered by the user
-                var valueText = $("<li>").text(value.text).html();
-                options += "<li><a href=\"#\" onclick=\"TaxonomySearchModule.useLineageRecent('" + value.id + "', '" + valueText + "')\">" + valueText + "</a></li>";
-            });
-
-            $("#taxonomy_lineage_recents").html(options);
-        });
-    }
-
-    function useLineageRecent(id, text){
-
-        $("#taxonomy_lineage_display").val(text);
-        $("#taxonomy_lineage_id").val(id);
-    }
     return {
         initialize: init,
         createViewer: createViewer,
         loadViewerData: loadViewerData,
         setStatedView: setStatedView,
         viewers: viewers,
-        loadConceptPanel:loadConceptPanel,
-        useLineageRecent: useLineageRecent
+        loadConceptPanel:loadConceptPanel
     };
 
 })();

@@ -310,6 +310,72 @@ var ConceptViewer = function(viewerID, currentConceptID) {
     ConceptViewer.prototype.exportCSV  = function(){
         this.refsetGridOptions.api.exportDataAsCsv({allColumns: true});
     };
+    ConceptViewer.prototype.createName = function(viewerID){
+
+        $("#txtName").keyup(function(event) {
+            var stt = $(this).val();
+            $("#taxonomy_pn_text").html(stt);
+
+        });
+
+        $("#taxonomy_lineage_display").keyup(function(event) {
+            var stt =  $("#taxonomy_pn_text").text() + ' (' + $(this).val() + ')';
+            $("#taxonomy_fsn_text").html(stt);
+        });
+
+
+        // setup the assemblage field autocomplete functionality
+        $("#taxonomy_lineage_display").autocomplete({
+            source: gon.routes.search_get_assemblage_suggestions_path,
+            minLength: 3,
+            select: onLineageSuggestionSelection,
+            change: onLineageSuggestionChange
+        });
+
+        // load any previous assemblage queries into a menu for the user to select from
+        loadLineageRecents();
+        return true;
+    };
+
+    function onLineageSuggestionSelection(event, ui){
+
+        $("#taxonomy_lineage_display").val(ui.item.label);
+        $("#taxonomy_lineage_id").val(ui.item.value);
+        var stt =  $("#taxonomy_pn_text").text() + ' (' + $("#taxonomy_lineage_display").val() + ')';
+        $("#taxonomy_fsn_text").html(stt);
+        return false;
+    }
+
+    function onLineageSuggestionChange(event, ui){
+
+        if (!ui.item){
+            event.target.value = "";
+            $("#taxonomy_lineage_id").val("");
+
+        }
+    }
+    function loadLineageRecents() {
+
+        $.get(gon.routes.search_get_assemblage_recents_path, function (data) {
+
+            var options = "";
+
+            $.each(data, function (index, value) {
+
+                // use the html function to escape any html that may have been entered by the user
+                var valueText = $("<li>").text(value.text).html();
+                options += "<li><a href=\"#\" onclick=\"TaxonomySearchModule.useLineageRecent('" + value.id + "', '" + valueText + "')\">" + valueText + "</a></li>";
+            });
+
+            $("#taxonomy_lineage_recents").html(options);
+        });
+    }
+
+    function useLineageRecent(id, text){
+
+        $("#taxonomy_lineage_display").val(text);
+        $("#taxonomy_lineage_id").val(id);
+    }
 
     // call our constructor function
     this.init(viewerID, currentConceptID)
