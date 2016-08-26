@@ -673,27 +673,6 @@ td.komet-concept-table-nested-indicator.komet-concept-table-nested-indicator-ope
 #komet_mapping_tree .komet-tree-node-icon{
     color: blue;
 }
-.komet-mapping-section-panel{
-    margin-bottom: 2px;
-}
-.komet-mapping-section-panel-header{
-    display: flex;
-    background-color: #4f80d9;
-    color: white;
-    font-weight: bold;
-    height: 26px;
-    padding: 0px 15px;
-}
-.komet-mapping-section-panel-header > div{
-    align-self: center;
-}
-.komet-mapping-viewer-body{
-    background-color: #eef1f3;
-    padding: 1px;
-}
-.komet-mapping-overview-sets-stamp-active{
-    color: blue;
-}
 .komet-mapping-viewer-body .komet-mapping-set-tabs{
     padding: 0px;
     background-color: #eef1f3;
@@ -710,5 +689,73 @@ td.komet-concept-table-nested-indicator.komet-concept-table-nested-indicator-ope
 .komet-mapping-set-definition-section > div{
     height: 70px;
 }
-
+.komet-mapping-section-panel{
+    margin-bottom: 2px;
+}
+.komet-mapping-section-panel-header{
+    display: flex;
+    background-color: #4f80d9;
+    color: white;
+    font-weight: bold;
+    height: 26px;
+    padding: 0px 15px;
+}
+.komet-mapping-section-panel-header > div{
+    align-self: center;
+}
+.komet-mapping-section-panel-header-shelf{
+    display: flex;
+    background-color: #4f80d9;
+    padding: 0px 15px;
+    height: 30px;
+}
+.komet-mapping-section-panel-header-shelf .form-control{
+    height: 28px;
+    font-size: small;
+    padding-bottom: 4px;
+    padding-top: 4px;
+}
+.komet-mapping-section-panel-header-shelf .input-group{
+    margin-right: 5px;
+    width: 340px;
+}
+.komet-mapping-section-panel-header-shelf .komet-mapping-item-filter-by{
+    width: 175px;
+    margin-right: 5px;
+}
+.komet-mapping-section-panel-header-shelf .komet-mapping-item-filter-button{
+    width: 60px;
+}
+.komet-mapping-section-panel-header-shelf .komet-flex-right{
+    color: white;
+    align-self: center;
+}
+.komet-mapping-section-panel-header-shelf .komet-flex-right > input{
+    margin-left: 5px;
+}
+.komet-mapping-viewer-body{
+    background-color: #eef1f3;
+    padding: 1px;
+}
+.komet-mapping-overview-sets-stamp-active{
+    color: blue;
+}
+.komet-mapping-item-tools{
+    font-size: small;
+    display: flex;
+    align-items: center;
+    height: 32px;
+}
+.komet-mapping-item-tools .komet-mapping-item-page-size{
+    width: 80px;
+    height: 28px;
+    padding-bottom: 4px;
+    padding-top: 4px;
+    margin-right: 10px;
+    margin-left: 5px;
+}
+.komet-mapping-item-tools .fa{
+    font-size: medium;
+    margin-right: 10px;
+}
 

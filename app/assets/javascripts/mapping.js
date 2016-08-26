@@ -4,6 +4,7 @@ var MappingModule = (function () {
     const SET_DETAILS = 'set_details';
     const SET_EDITOR = 'set_editor';
     const ITEM_EDITOR = 'item_editor';
+    const CREATE_SET = 'create_set';
 
     function init() {
 
@@ -42,32 +43,36 @@ var MappingModule = (function () {
                 action = SET_DETAILS;
             }
 
-            if (WindowManager.deferred && WindowManager.deferred.state() == "pending"){
-                WindowManager.deferred.done(function(){
-                    MappingModule.loadViewerData(setID, action, WindowManager.getLinkedViewerID(), windowType)
-                }.bind(this));
-            } else {
-                MappingModule.loadViewerData(setID, action, viewerID, windowType);
-            }
+            callLoadViewerData(setID, action, viewerID, windowType);
         });
     }
 
+    function callLoadViewerData(setID, mappingAction, viewerID, windowType) {
+
+        if (WindowManager.deferred && WindowManager.deferred.state() == "pending"){
+            WindowManager.deferred.done(function(){
+                loadViewerData(setID, mappingAction, WindowManager.getLinkedViewerID(), windowType)
+            }.bind(this));
+        } else {
+            loadViewerData(setID, mappingAction, viewerID, windowType);
+        }
+    }
+
     // the path to a javascript partial file that will re-render all the appropriate partials once the ajax call returns
-    function loadViewerData(set_id, mapping_action, viewerID, windowType) {
+    function loadViewerData(setID, mappingAction, viewerID, windowType) {
 
         WindowManager.deferred = $.Deferred();
 
-        var params = {partial: 'komet_dashboard/mapping/mapping_viewer', mapping_action: mapping_action, viewer_id: viewerID, set_id: set_id};
+        var params = {partial: 'komet_dashboard/mapping/mapping_viewer', mapping_action: mappingAction, viewer_id: viewerID, set_id: setID};
         var url = gon.routes.mapping_load_mapping_viewer_path;
 
-        if (mapping_action == "set_details"){
-
+        if (mappingAction == CREATE_SET && WindowManager.viewers.inlineViewers.length > 0 && WindowManager.viewers[viewerID].currentSetID != 0 && (windowType == null || windowType == WindowManager.INLINE)){
+            params.previous_set_id = WindowManager.viewers[viewerID].currentSetID;
         }
 
         if (WindowManager.viewers.inlineViewers.length == 0 || WindowManager.getLinkedViewerID() == WindowManager.NEW){
             windowType = WindowManager.NEW;
         }
-
 
         // make an ajax call to get the concept for the current concept and pass it the currently selected concept id and the name of a partial file to render
         $.get(url, params, function (data) {
@@ -89,9 +94,9 @@ var MappingModule = (function () {
         });
     }
 
-    function createViewer(viewerID, setID) {
+    function createViewer(viewerID, setID, mappingAction) {
 
-        WindowManager.createViewer(new MappingViewer(viewerID, setID));
+        WindowManager.createViewer(new MappingViewer(viewerID, setID, mappingAction));
         WindowManager.deferred.resolve();
     }
 
@@ -108,13 +113,14 @@ var MappingModule = (function () {
 
     return {
         initialize: init,
-        loadViewerData: loadViewerData,
+        callLoadViewerData: callLoadViewerData,
         createViewer: createViewer,
         openSetEditor: openSetEditor,
         SET_LIST: SET_LIST,
         SET_DETAILS: SET_DETAILS,
         SET_EDITOR: SET_EDITOR,
-        ITEM_EDITOR: ITEM_EDITOR
+        ITEM_EDITOR: ITEM_EDITOR,
+        CREATE_SET: CREATE_SET
     };
 
 })();

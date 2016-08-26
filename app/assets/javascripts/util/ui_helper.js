@@ -154,12 +154,69 @@ var UIHelper = (function () {
         }
     }
 
+    function hasFormChanged(formIdOrClass) {
+
+        var hasChanges = false;
+
+        $(formIdOrClass + " :input:not(:button):not([type=hidden])").each(function () {
+
+            if ((this.type == "text" || this.type == "textarea" || this.type == "hidden") && this.defaultValue != this.value) {
+
+                hasChanges = true;
+                return false;             }
+            else {
+
+                if ((this.type == "radio" || this.type == "checkbox") && this.defaultChecked != this.checked) {
+
+                    hasChanges = true;
+                    return false;                 }
+                else {
+
+                    if ((this.type == "select-one" || this.type == "select-multiple")) {
+
+                        for (var x = 0; x < this.length; x++) {
+
+                            if (this.options[x].selected != this.options[x].defaultSelected) {
+
+                                hasChanges = true;
+                                return false;
+                            }
+                        }
+                    }
+                }
+            }
+        });
+
+        return hasChanges;
+    }
+
+    function resetFormChanges(formIdOrClass) {
+
+        $(formIdOrClass + " :input:not(:button):not([type=hidden])").each(function () {
+
+            if (this.type == "text" || this.type == "textarea" || this.type == "hidden") {
+                 this.value = this.defaultValue;
+
+            } else if (this.type == "radio" || this.type == "checkbox") {
+                this.checked = this.defaultChecked;
+
+            } else if (this.type == "select-one" || this.type == "select-multiple") {
+
+                for (var x = 0; x < this.length; x++) {
+                    this.options[x].selected = this.options[x].defaultSelected;
+                }
+            }
+        });
+    }
+
     return {
         getActiveTabId: getActiveTabId,
         isTabActive: isTabActive,
         initializeContextMenus: initializeContextMenus,
         generateFormErrorMessage: generateFormErrorMessage,
         toggleFieldAvailability: toggleFieldAvailability,
+        hasFormChanged: hasFormChanged,
+        resetFormChanges: resetFormChanges,
         openAddEditConcept: openAddEditConcept
     };
 })();

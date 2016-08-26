@@ -18,12 +18,13 @@ Copyright Notice
 =end
 
 require './lib/rails_common/util/controller_helpers'
+require './lib/isaac_rest/id_apis_rest'
 
 ##
 # MappingController -
 # handles the concept mapping screens
 class MappingController < ApplicationController
-    include CommonController
+    include ApplicationHelper, CommonController
 
     before_filter :init_session
     skip_before_filter :set_render_menu, :only => [:map_set_editor]
@@ -36,8 +37,8 @@ class MappingController < ApplicationController
             session['map_tree_data'] = [{id: '1', set_id: '1', text: 'Set 1', icon: 'komet-tree-node-icon fa fa-folder', a_attr: {class: 'komet-context-menu', 'data-menu-type' => 'map_set', 'data-menu-uuid' => '1'}},
                                         {id: '2', set_id: '2', text: 'Set 2', icon: 'komet-tree-node-icon fa fa-folder', a_attr: {class: 'komet-context-menu', 'data-menu-type' => 'map_set', 'data-menu-uuid' => '2'}}]
 
-            session['map_set_data'] = [{id: '1', name: 'Set 1', purpose: 'Test 1', description: 'Set 1 Description', version: '11/11/2011', vuid: '1111', source: '1', source_display: 'Source 1', source_version: '10/10/2011', target: '1', target_display: 'Target 1', target_version: '11/11/2011', rules: 'Here are rules...', state: 'Pending', status: 'Active', time: '10/10/2016', module: 'Development', path: 'Path'},
-                                       {id: '2', name: 'Set 2', purpose: 'Test 2', description: 'Set 2 Description', version: '02/02/2022', vuid: '2222', source: '2', source_display: 'Source 2', source_version: '02/02/2022', target: '2', target_display: 'Target 2', target_version: '02/02/2022', rules: 'Here are rules...', state: 'Pending', status: 'Active', time: '02/02/2022', module: 'Development', path: 'Path'}]
+            session['map_set_data'] = [{id: '1', name: 'Set 1', purpose: 'Test 1', description: 'Set 1 Description', version: '111', vuid: '1111', source: '1', source_display: 'Source 1', source_version: '111', target: '1', target_display: 'Target 1', target_version: '111', rules: 'Here are rules...', state: 'Pending', status: 'Active', time: '10/10/2016', module: 'Development', path: 'Path'},
+                                       {id: '2', name: 'Set 2', purpose: 'Test 2', description: 'Set 2 Description', version: '222', vuid: '2222', source: '2', source_display: 'Source 2', source_version: '222', target: '2', target_display: 'Target 2', target_version: '222', rules: 'Here are rules...', state: 'Pending', status: 'Active', time: '02/02/2022', module: 'Development', path: 'Path'}]
 
             session['map_item_data'] = [{id: '1', set_id: '1', source: '11', source_display: 'Source 11', target: 'Target 11', target_display: 'Target 11', qualifier: 'No Qualifier', comments: 'This is a comment', review_state: 'Pending', status: 'Active', time: '10/10/2016', module: 'Development', path: 'Path'},
                                         {id: '2', set_id: '1', source: '12', source_display: 'Source 12', target: 'Target 12', target_display: 'Target 12', qualifier: 'No Qualifier', comments: 'This is a comment', review_state: 'Pending', status: 'Active', time: '10/10/2016', module: 'Development', path: 'Path'},
@@ -49,12 +50,25 @@ class MappingController < ApplicationController
 
     def load_tree_data
 
+        coordinates_token = session[:coordinatestoken].token
         text_filter = params[:text_filter]
         set_filter = params[:set_filter]
         mapping_tree = []
 
-        session['map_set_data'].each do |set|
-            mapping_tree << {id: get_next_id, set_id: set[:id], text: set[:name], icon: 'komet-tree-node-icon fa fa-folder', a_attr: {class: 'komet-context-menu', 'data-menu-type' => 'map_set', 'data-menu-uuid' => set[:id]}}
+        map_sets_results = MappingApis::get_mapping_api(action: MappingApiActions::ACTION_SETS,  additional_req_params: {coordToken: coordinates_token, CommonRest::CacheRequest => false} )
+
+        map_sets_results.mappingSetVersions.each do |set|
+
+            set_hash = {}
+
+            set_hash[:id] = get_next_id
+            set_hash[:set_id] = set.identifiers.uuids.first
+            set_hash[:text] = set.purpose
+            set_hash[:state] = set.mappingSetStamp.state
+            set_hash[:icon] = 'komet-tree-node-icon fa fa-folder'
+            set_hash[:a_attr] = {class: 'komet-context-menu', 'data-menu-type' => 'map_set', 'data-menu-uuid' => set_hash[:set_id]}
+
+            mapping_tree << set_hash
         end
 
         mapping_tree = [id: '0', set_id: '0', text: 'Mapping Sets', icon: 'komet-tree-node-icon fa fa-tree', children: mapping_tree, state: {opened: 'true'}]
@@ -70,12 +84,13 @@ class MappingController < ApplicationController
         @viewer_title = 'Mapping Sets'
         @mapping_action = params[:mapping_action]
         @viewer_id =  params[:viewer_id]
+        @previous_set_id = params[:previous_set_id]
 
         if @viewer_id == nil || @viewer_id == '' || @viewer_id == 'new'
             @viewer_id = get_next_id
         end
 
-        if @mapping_action == 'set_details'
+        if @mapping_action == 'set_details' || @mapping_action == 'create_set'
             map_set_editor
         end
 
@@ -92,37 +107,67 @@ class MappingController < ApplicationController
         page_size = 1000 #params[:overview_sets_page_size]
         page_number = 1 #params[:overview_sets_page_number]
 
-        results[:total_number] = 4
+        map_sets_results = MappingApis::get_mapping_api(action: MappingApiActions::ACTION_SETS,  additional_req_params: {coordToken: coordinates_token, CommonRest::CacheRequest => false} )
+
+        map_sets_results.mappingSetVersions.each do |set|
+
+            set_hash = {}
+
+            set_hash[:set_id] = set.identifiers.uuids.first
+            set_hash[:description] = set.purpose
+            set_hash[:state] = set.mappingSetStamp.state
+            set_hash[:time] = DateTime.strptime((set.mappingSetStamp.time / 1000).to_s, '%s').strftime('%m/%d/%Y')
+            set_hash[:author] = get_concept_metadata(set.mappingSetStamp.authorSequence)
+            set_hash[:module] = get_concept_metadata(set.mappingSetStamp.moduleSequence)
+            set_hash[:path] = get_concept_metadata(set.mappingSetStamp.pathSequence)
+
+            data << set_hash
+        end
+
+        results[:total_number] = data.length
         results[:page_number] = page_number
 
-        results[:data] = session['map_set_data']
+        results[:data] = data
         render json: results
     end
 
     def map_set_editor
 
-        if @set_id == nil
-            @set_id = params[:set_id]
-        end
+        coordinates_token = session[:coordinatestoken].token
+        @map_set = {}
+        @set_id = params[:set_id]
 
-        if @set_id
+        if @set_id &&  @set_id != ''
 
+            set = MappingApis::get_mapping_api(action: MappingApiActions::ACTION_SET, uuid_or_id: @set_id,  additional_req_params: {coordToken: coordinates_token, CommonRest::CacheRequest => false})
 
+            if set.is_a? CommonRest::UnexpectedResponse
+                return @map_set
+            end
 
-            @map_set = session['map_set_data'].select { |set|
-                set[:id] == @set_id
-            }.first
+            @map_set[:set_id] = set.identifiers.uuids.first
+            @map_set[:name] = set.name
+            @map_set[:description] = set.purpose
+            @map_set[:state] = set.mappingSetStamp.state
+            @map_set[:time] = DateTime.strptime((set.mappingSetStamp.time / 1000).to_s, '%s').strftime('%m/%d/%Y')
+            @map_set[:author] = get_concept_metadata(set.mappingSetStamp.authorSequence)
+            @map_set[:module] = get_concept_metadata(set.mappingSetStamp.moduleSequence)
+            @map_set[:path] = get_concept_metadata(set.mappingSetStamp.pathSequence)
 
-            @viewer_title = @map_set[:name]
+            @viewer_title = @map_set[:description]
         else
 
+            @mapping_action = 'create_set'
             @map_set = {id: nil, name: nil, purpose: nil, description: nil, version: nil, vuid: nil, source: nil, source_display: nil, source_version: nil, target: nil, target_display: nil, target_version: nil, rules: nil, state: nil, status: 'Active', time: nil, module: nil, path: nil}
 
-            @viewer_title = "Create New Map Set"
+            @viewer_title = 'Create New Map Set'
         end
     end
 
     def get_overview_items_results
+
+        # post_test = MappingApis::get_mapping_api(action: MappingApiActions::ACTION_CREATE_SET,  body_params: {name: "Map Set Test 1", description: "The first test of creating a mapset.", purpose: "The first test of creating a mapset using the rest APIs." } )
+        # put_test = MappingApis::get_mapping_api(uuid_or_id: '1ebfe2e3-4a9d-4cbe-ae21-0986e89ad9f1', action: MappingApiActions::ACTION_UPDATE_SET, additional_req_params: {state: "Active"},  body_params: {name: "Map Set Test 1.1", description: "The second test of updating a mapset.", purpose: "The second test of updating a mapset using the rest APIs." } )
 
         coordinates_token = session[:coordinatestoken].token
         results = {}
@@ -148,30 +193,31 @@ class MappingController < ApplicationController
 
         set_id = params[:komet_mapping_set_editor_set_id]
         set_name = params[:komet_mapping_set_editor_name]
-        purpose = params[:komet_mapping_set_editor_purpose]
         description = params[:komet_mapping_set_editor_description]
-        status = params[:komet_mapping_set_editor_status]
         state = params[:komet_mapping_set_editor_state]
 
-        set = {name: set_name, purpose: purpose, description: description, version: version, vuid: vuid, source: source, source_display: source_display, source_version: source_version, target: target, target_display: target_display, target_version: target_version, state: state, status: status, time: Time.now.strftime('%m/%d/%Y %H:%M'), module: 'Development', path: 'Path'}
+
+        # source: source, source_display: source_display, source_version: source_version, target: target, target_display: target_display, target_version: target_version
+        body_params = {name: set_name, description: description, purpose: description}
+        request_params = {state: state}
 
         if set_id && set_id != ''
-
-            array_id = session['map_set_data'].each_index.select { |index|
-                session['map_set_data'][index][:id] == set_id.to_s
-            }.first
-
-            set[:id] = set_id
-
-            session['map_set_data'][array_id] = set
+            MappingApis::get_mapping_api(uuid_or_id: set_id, action: MappingApiActions::ACTION_UPDATE_SET, additional_req_params: request_params, body_params: body_params)
         else
 
-            set[:id] = (session['map_set_data'].last[:id].to_i + 1).to_s
+            set_id = MappingApis::get_mapping_api(action: MappingApiActions::ACTION_CREATE_SET, additional_req_params: request_params, body_params: body_params )
 
-            session['map_set_data'] << set
+            if set_id.is_a? CommonRest::UnexpectedResponse
+
+                render json: {set_id: nil}
+                return
+            end
+
+            # get the uuid from the concept sequence
+            set_id = IdAPIsRest.get_id(uuid_or_id: set_id.value, action: IdAPIsRestActions::ACTION_TRANSLATE, additional_req_params: {inputType: 'conceptSequence', outputType: 'uuid'}).value
         end
 
-        head :ok, content_type: 'text/html'
+        render json: {set_id: set_id}
 
     end
 

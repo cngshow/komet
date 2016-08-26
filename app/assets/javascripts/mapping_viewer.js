@@ -17,9 +17,9 @@
  limitations under the License.
  */
     
-var MappingViewer = function(viewerID, currentSetID) {
+var MappingViewer = function(viewerID, currentSetID, mappingAction) {
 
-    MappingViewer.prototype.init = function(viewerID, currentSetID) {
+    MappingViewer.prototype.init = function(viewerID, currentSetID, mappingAction) {
 
         this.viewerID = viewerID;
         this.currentSetID = currentSetID;
@@ -28,9 +28,10 @@ var MappingViewer = function(viewerID, currentSetID) {
         this.overviewItemsGridOptions = null;
         this.targetCandidatesGridOptions = null;
         this.showOverviewInactiveConcepts = null;
-        this.showOverviewSTAMP = null;
-        this.setEditorWindow = null;
+        this.showSetsSTAMP = false;
+        this.showItemsSTAMP = false;
         this.itemEditorWindow = null;
+        this.mappingAction = mappingAction;
     };
 
     MappingViewer.prototype.togglePanelDetails = function(panelID, callback, preserveState) {
@@ -148,18 +149,16 @@ var MappingViewer = function(viewerID, currentSetID) {
             onGridReady: this.onGridReady,
             rowModelType: 'pagination',
             columnDefs: [
-                {field: "id", headerName: 'id', hide: 'true'},
+                {field: "set_id", headerName: 'ID', hide: 'true'},
                 {field: "name", headerName: 'Name'},
-                {field: "purpose", headerName: 'Purpose'},
                 {field: "description", headerName: "Description"},
-                {field: "review_state", headerName: "Review State"},
                 {
                     groupId: "stamp", headerName: "STAMP Fields", children: [
-                    {field: "status", headerName: "Status", hide: !this.showOverviewSTAMP},
-                    {field: "time", headerName: "Time", hide: !this.showOverviewSTAMP},
-                    {field: "author", headerName: "Author", hide: !this.showOverviewSTAMP},
-                    {field: "module", headerName: "Module", hide: !this.showOverviewSTAMP},
-                    {field: "path", headerName: "Path", hide: !this.showOverviewSTAMP}
+                    {field: "state", headerName: "State", hide: !this.showSetsSTAMP},
+                    {field: "time", headerName: "Time", hide: !this.showSetsSTAMP},
+                    {field: "author", headerName: "Author", hide: !this.showSetsSTAMP},
+                    {field: "module", headerName: "Module", hide: !this.showSetsSTAMP},
+                    {field: "path", headerName: "Path", hide: !this.showSetsSTAMP}
                 ]
                 }
             ]
@@ -223,7 +222,7 @@ var MappingViewer = function(viewerID, currentSetID) {
         var selectedRows = this.overviewSetsGridOptions.api.getSelectedRows();
 
         selectedRows.forEach(function (selectedRow, index) {
-            $.publish(KometChannels.Mapping.mappingTreeNodeSelectedChannel, [null, selectedRow.id, this.viewerID, WindowManager.INLINE]);
+            $.publish(KometChannels.Mapping.mappingTreeNodeSelectedChannel, [null, selectedRow.set_id, this.viewerID, WindowManager.INLINE]);
         });
     }.bind(this);
 
@@ -233,27 +232,16 @@ var MappingViewer = function(viewerID, currentSetID) {
 
     MappingViewer.prototype.toggleOverviewSTAMP = function(){
 
-        if (this.overviewItemsGridOptions) {
+        if (this.showSetsSTAMP) {
 
-            if (this.showOverviewSTAMP) {
-                this.overviewItemsGridOptions.columnApi.setColumnsVisible(["status", "time", "author", "module", "path"], false);
-            } else {
-                this.overviewItemsGridOptions.columnApi.setColumnsVisible(["status", "time", "author", "module", "path"], true);
-            }
-
-            this.overviewItemsGridOptions.api.sizeColumnsToFit();
-        }
-
-        if (this.showOverviewSTAMP) {
-
-            this.showOverviewSTAMP = false;
+            this.showSetsSTAMP = false;
             $("#komet_mapping_overview_sets_stamp_" + this.viewerID).removeClass("komet-active-control");
-            this.overviewSetsGridOptions.columnApi.setColumnsVisible(["status", "time", "author", "module", "path"], false);
+            this.overviewSetsGridOptions.columnApi.setColumnsVisible(["state", "time", "author", "module", "path"], false);
         } else {
 
-            this.showOverviewSTAMP = true;
+            this.showSetsSTAMP = true;
             $("#komet_mapping_overview_sets_stamp_" + this.viewerID).addClass("komet-active-control");
-            this.overviewSetsGridOptions.columnApi.setColumnsVisible(["status", "time", "author", "module", "path"], true);
+            this.overviewSetsGridOptions.columnApi.setColumnsVisible(["state", "time", "author", "module", "path"], true);
         }
 
         this.overviewSetsGridOptions.api.sizeColumnsToFit();
@@ -274,16 +262,25 @@ var MappingViewer = function(viewerID, currentSetID) {
         this.loadOverviewSetsGrid();
     };
 
-    MappingViewer.prototype.initializeSetEditor = function(){
+    MappingViewer.prototype.initializeSetEditor = function(mappingAction){
+
+        this.mappingAction = mappingAction;
+
+        if (mappingAction == MappingModule.SET_DETAILS){
+            $(".komet-mapping-set-editor-edit").hide();
+
+            if (this.currentSetID != null && this.currentSetID != ""){
+                this.loadOverviewItemsGrid();
+
+                UIHelper.toggleFieldAvailability("komet_mapping_overview_item_create_" + this.viewerID, true);
+            }
+        } else {
+            $(".komet-mapping-set-editor-display").hide();
+        }
 
         $("#komet_mapping_set_tabs_" + this.viewerID).tabs();
 
-        if (this.currentSetID != null && this.currentSetID != ""){
-            this.loadOverviewItemsGrid();
-
-            UIHelper.toggleFieldAvailability("komet_mapping_overview_item_create_" + this.viewerID, true);
-        }
-
+        var thisViewer = this;
 
         $("#komet_mapping_set_editor_form_" + this.viewerID).submit(function () {
 
@@ -291,9 +288,10 @@ var MappingViewer = function(viewerID, currentSetID) {
                 type: "POST",
                 url: $(this).attr("action"),
                 data: $(this).serialize(), //new FormData($(this)[0]),
-                success: function () {
+                success: function (data) {
 
-                    //window.opener.MappingModule.loadOverviewSetsGrid();
+                    MappingModule.tree.reloadTree();
+                    MappingModule.callLoadViewerData(data.set_id, MappingModule.SET_DETAILS, thisViewer.viewerID);
                 }
             });
 
@@ -431,11 +429,11 @@ var MappingViewer = function(viewerID, currentSetID) {
                 {field: "review_state", headerName: "Review State"},
                 {
                     groupId: "stamp", headerName: "STAMP Fields", children: [
-                    {field: "status", headerName: "Status", hide: !this.showOverviewSTAMP},
-                    {field: "time", headerName: "Time", hide: !this.showOverviewSTAMP},
-                    {field: "author", headerName: "Author", hide: !this.showOverviewSTAMP},
-                    {field: "module", headerName: "Module", hide: !this.showOverviewSTAMP},
-                    {field: "path", headerName: "Path", hide: !this.showOverviewSTAMP}
+                    {field: "status", headerName: "Status", hide: !this.showItemsSTAMP},
+                    {field: "time", headerName: "Time", hide: !this.showItemsSTAMP},
+                    {field: "author", headerName: "Author", hide: !this.showItemsSTAMP},
+                    {field: "module", headerName: "Module", hide: !this.showItemsSTAMP},
+                    {field: "path", headerName: "Path", hide: !this.showItemsSTAMP}
                 ]
                 }
             ]
@@ -449,13 +447,16 @@ var MappingViewer = function(viewerID, currentSetID) {
     MappingViewer.prototype.getOverviewItemsData = function(){
 
         // load the parameters from the form to add to the query string sent in the ajax data call
-        var page_size = $("#komet_mapping_overview_page_size_" + this.viewerID).val();
-        var filter = $("#komet_mapping_overview_items_filter_" + this.viewerID).val();
+        var page_size = $("#komet_mapping_item_page_size_" + this.viewerID).val();
+        var filter = $("#komet_mapping_item_filter_" + this.viewerID).val();
+        var filterBy = $("#komet_mapping_item_filter_by_" + this.viewerID).val();
+        var showActive = $("#komet_mapping_item_active_" + this.viewerID)[0].checked;
+        var showInactive = $("#komet_mapping_item_inactive_" + this.viewerID)[0].checked;
 
-        var searchParams = "?overview_set_id=" + this.currentSetID + "&overview_page_size=" + page_size + "&show_inactive=" + this.showOverviewInactiveConcepts;
+        var searchParams = "?overview_set_id=" + this.currentSetID + "&overview_page_size=" + page_size + "&show_active=" + showActive + "&show_inactive=" + showInactive;
 
-        if (filter != null) {
-            searchParams += "overview_items_filter=" + filter;
+        if (filter != "") {
+            searchParams += "&overview_items_filter=" + filter + "&filter_by=" + filterBy;
         }
 
         var pageSize = Number(page_size);
@@ -579,6 +580,48 @@ var MappingViewer = function(viewerID, currentSetID) {
         $("#komet_mapping_item_editor_target_display_" + this.viewerID).val(text);
         $("#komet_mapping_item_editor_target_" + this.viewerID).val(id);
     }.bind(this);
+
+    MappingViewer.prototype.toggleItemsSTAMP = function(){
+
+        if (this.showItemsSTAMP) {
+
+            this.showItemsSTAMP = false;
+            this.overviewItemsGridOptions.columnApi.setColumnsVisible(["status", "time", "author", "module", "path"], false);
+        } else {
+
+            this.showItemsSTAMP = true;
+            this.overviewItemsGridOptions.columnApi.setColumnsVisible(["status", "time", "author", "module", "path"], true);
+        }
+
+        this.overviewItemsGridOptions.api.sizeColumnsToFit();
+
+    };
+
+    MappingViewer.prototype.enterSetEditMode = function(){
+
+        $(".komet-mapping-set-editor-display").hide();
+        $(".komet-mapping-set-editor-edit").show();
+    };
+
+    MappingViewer.prototype.cancelSetEditMode = function(previousSetID){
+
+        if (this.mappingAction == MappingModule.CREATE_SET){
+
+            if (previousSetID != ""){
+                MappingModule.callLoadViewerData(previousSetID, MappingModule.SET_DETAILS, this.viewerID);
+            } else {
+                MappingModule.callLoadViewerData(null, MappingModule.SET_LIST, this.viewerID);
+            }
+
+            return;
+        }
+
+        $(".komet-mapping-set-editor-display").show();
+        $(".komet-mapping-set-editor-edit").hide();
+
+        console.log("Had Changes: " + UIHelper.hasFormChanged("#komet_mapping_set_editor_form_" + this.viewerID));
+        UIHelper.resetFormChanges("#komet_mapping_set_editor_form_" + this.viewerID);
+    };
 
     MappingViewer.prototype.openItemEditor = function(newItem) {
 
@@ -777,5 +820,5 @@ var MappingViewer = function(viewerID, currentSetID) {
     }.bind(this);
 
     // call our constructor function
-    this.init(viewerID, currentSetID)
+    this.init(viewerID, currentSetID, mappingAction)
 };
