@@ -11,6 +11,12 @@ class CachedHash
     #@mutex = Monitor.new #re-entrant
   end
 
+  def keys
+    @mutex.synchronize do
+      @backing_hash.keys
+    end
+  end
+
   def []=(key, value)
     save(key, value)
   end
@@ -23,6 +29,16 @@ class CachedHash
     @mutex.synchronize do
       @lease[key] = Time.now unless @backing_hash[key].nil?
       @backing_hash[key]
+    end
+  end
+
+  def clear_cache(key_starts_with:)
+    @mutex.synchronize do
+      @backing_hash.delete_if do
+        |key_hash|
+        url, params = key_hash.first
+        url.start_with? key_starts_with.to_s
+      end
     end
   end
 
@@ -60,7 +76,7 @@ class CachedHash
   def get_oldest
     oldest = [@lease.keys.first, @lease.values.first]
     @lease.each_pair do |k, v|
-      puts "key #{k}, value #{v}:"
+      #puts "key #{k}, value #{v}:"
       oldest = [k, v] if v <= oldest.last
     end
     oldest.first

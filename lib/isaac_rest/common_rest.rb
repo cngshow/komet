@@ -20,6 +20,21 @@ module CommonRest
     #faraday.request  :basic_auth, @urls[:user], @urls[:password]
   end
 
+  def self.clear_cache(rest_module:)
+    begin
+      if (rest_module.constants.include?(:ROOT_PATH))
+        $rest_cache.clear_cache(key_starts_with: rest_module::ROOT_PATH)
+        $log.info("Cache cleared for #{rest_module}")
+        true
+      end
+    rescue => ex
+      $log.warn("Did you call the clear cache method with a Rest module with constant ROOT_PATH?  Not doing anything...")
+      $log.warn(ex.message)
+      $log.warn(ex.backtrace.join("\n"))
+      false
+    end
+  end
+
   def uuid_check(uuid:)
     if uuid.nil?
       $log.error('The UUID cannot be nil!  Please ensure the caller provides a UUID.')
@@ -100,9 +115,7 @@ module CommonRestBase
       else
         clazz_array_parts = json['@class'].split('.')
         short_clazz = clazz_array_parts.pop
-        clazz_package = clazz_array_parts.map do |e|
-          e[0] = e.first.capitalize; e
-        end.join("::")
+        clazz_package = clazz_array_parts.map do |e| e[0] = e.first.capitalize; e  end.join("::")
         clazz = clazz_package + "::" + short_clazz
         clazz = Object.const_get clazz
         $log.debug("Using the class from the json it is " + clazz.to_s)
@@ -260,5 +273,24 @@ CommonRestBase::RestBase.invoke(url: "rest/1/logicGraph/version/406e872b-2e19-5f
 CommonRestBase::RestBase.invoke(url: "rest/1/logicGraph/chronology/406e872b-2e19-5f5e-a71d-e4e4b2c68fe5")
 CommonRestBase::RestBase.invoke(url: "rest/1/sememe/version/309/?expand=nestedSememes")
 CommonRestBase::RestBase.invoke(url: "rest/1/sememe/chronology/309")
+
+CommonRest.clear_cache(rest_module: :foo)
+CommonRest.clear_cache(rest_module: ConceptRest)
+CommonRest.clear_cache(rest_module: CoordinateRest)
+CommonRest.clear_cache(rest_module: IdAPIsRest)
+
+CommonRest.clear_cache(rest_module: LogicGraphRest)
+CommonRest.clear_cache(rest_module: SearchApiActions)
+CommonRest.clear_cache(rest_module: SememeRest)
+CommonRest.clear_cache(rest_module: SystemApis)
+CommonRest.clear_cache(rest_module: TaxonomyRest)
+
+a = LogicGraphRest::get_graph(action: LogicGraphRestActions::ACTION_CHRONOLOGY,uuid_or_id: LogicGraphRest::TEST_UUID)
+a = LogicGraphRest::get_graph(action: LogicGraphRestActions::ACTION_CHRONOLOGY,uuid_or_id: LogicGraphRest::TEST_UUID)
+CommonRest.clear_cache(rest_module: LogicGraphRest)
+a = LogicGraphRest::get_graph(action: LogicGraphRestActions::ACTION_CHRONOLOGY,uuid_or_id: LogicGraphRest::TEST_UUID)
+c = SystemApis::get_system_api(action: SystemApiActions::ACTION_SEMEME_TYPE)
+i = SystemApis::get_system_api(action: SystemApiActions::ACTION_SYSTEM_INFO)
+CommonRest.clear_cache(rest_module: SystemApis)
 
 =end

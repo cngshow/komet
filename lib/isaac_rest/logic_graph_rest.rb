@@ -28,9 +28,10 @@ module LogicGraphRest
   include CommonActionSyms
   extend self
 
-  LOGIC_GRAPH_PATH = ISAAC_ROOT + 'rest/1/logicGraph/'
-  CHRONOLOGY_PATH = LOGIC_GRAPH_PATH + 'chronology/{id}'
-  VERSION_PATH = LOGIC_GRAPH_PATH + 'version/{id}'
+  #always name the root_path ROOT_PATH!
+  ROOT_PATH = ISAAC_ROOT + 'rest/1/logicGraph/'
+  CHRONOLOGY_PATH = ROOT_PATH + 'chronology/{id}'
+  VERSION_PATH = ROOT_PATH + 'version/{id}'
 
   TEST_UUID = '406e872b-2e19-5f5e-a71d-e4e4b2c68fe5'
 
