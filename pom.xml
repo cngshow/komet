@@ -60,7 +60,7 @@
 		</dependency>
 		<dependency>
 			<groupId>gov.vha.isaac.ochre.modules</groupId>
-			<artifactId>metadata</artifactId>
+			<artifactId>ochre-metadata</artifactId>
 			<version>${isaac.version}</version>
 			<type>yaml.zip</type>
 			<optional>true</optional> <!-- Not needed at runtime / transitively -->
