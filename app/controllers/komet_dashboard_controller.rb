@@ -29,7 +29,7 @@ class KometDashboardController < ApplicationController
 
   before_action :setup_routes, :setup_constants, :only => [:dashboard]
   after_filter :byte_size unless Rails.env.production?
-
+  skip_before_action :ensure_roles, only: [:version]
   ##
   # load_tree_data - RESTful route for populating the taxonomy tree using an http :GET
   # The current tree node is identified in the request params with the key :concept_id
