@@ -30,11 +30,12 @@ module SearchApis
   include CommonActionSyms
   extend self
 
-  PATH_SEARCH_API = ISAAC_ROOT + 'rest/1/search/'
-  PATH_DESCRIPTIONS = PATH_SEARCH_API + 'descriptions'
-  PATH_PREFIX = PATH_SEARCH_API + 'prefix'
-  PATH_SEMEMES = PATH_SEARCH_API + 'sememes'
-  PATH_BY_REFERENCED_COMPONENT = PATH_SEARCH_API + 'byReferencedComponent'
+  #always name the root_path ROOT_PATH!
+  ROOT_PATH = ISAAC_ROOT + 'rest/1/search/'
+  PATH_DESCRIPTIONS = ROOT_PATH + 'descriptions'
+  PATH_PREFIX = ROOT_PATH + 'prefix'
+  PATH_SEMEMES = ROOT_PATH + 'sememes'
+  PATH_BY_REFERENCED_COMPONENT = ROOT_PATH + 'byReferencedComponent'
 
   # these are not used!!
   PARAMS_DESCRIPTIONS = {}

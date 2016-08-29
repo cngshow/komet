@@ -32,13 +32,14 @@ module CoordinateRest
   include CommonActionSyms
   extend self
 
-  COORDINATE_REST_PATH = ISAAC_ROOT + 'rest/1/coordinate/'
-  COORDINATES_TOKEN_PATH = COORDINATE_REST_PATH + 'coordinatesToken'
-  COORDINATES_PATH = COORDINATE_REST_PATH + 'coordinates'
-  LANGUAGE_COORDINATE_PATH = COORDINATE_REST_PATH + 'languageCoordinate'
-  LOGIC_COORDINATE_PATH = COORDINATE_REST_PATH + 'logicCoordinate'
-  STAMP_COORDINATE_PATH = COORDINATE_REST_PATH + 'stampCoordinate'
-  TAXONOMY_COORDINATE_PATH = COORDINATE_REST_PATH + 'taxonomyCoordinate'
+  #always name the root_path ROOT_PATH!
+  ROOT_PATH = ISAAC_ROOT + 'rest/1/coordinate/'
+  COORDINATES_TOKEN_PATH = ROOT_PATH + 'coordinatesToken'
+  COORDINATES_PATH = ROOT_PATH + 'coordinates'
+  LANGUAGE_COORDINATE_PATH = ROOT_PATH + 'languageCoordinate'
+  LOGIC_COORDINATE_PATH = ROOT_PATH + 'logicCoordinate'
+  STAMP_COORDINATE_PATH = ROOT_PATH + 'stampCoordinate'
+  TAXONOMY_COORDINATE_PATH = ROOT_PATH + 'taxonomyCoordinate'
 
   ACTION_CONSTANTS = {
       ACTION_COORDINATES_TOKEN => {PATH_SYM => COORDINATES_TOKEN_PATH, STARTING_PARAMS_SYM => {}, CLAZZ_SYM => Gov::Vha::Isaac::Rest::Api1::Data::RestCoordinatesToken},

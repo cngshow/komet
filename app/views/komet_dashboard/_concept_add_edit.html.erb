@@ -1,4 +1,4 @@
-<div class="panel panel-default komet-no-margins komet-panel" id="komet_viewer_<%= @viewer_id %>" data-komet-viewer-id="<%= @viewer_id %>">
+<div class="panel panel-default komet-no-margins komet-panel" data-komet-viewer-id="<%= @viewer_id %>" id="komet_viewer_<%= @viewer_id %>" >
     <div class="panel-heading">
      <span class="panel-title komet-section-title">Create Concept
       </span>
@@ -51,8 +51,8 @@
          <div>
 
          <div>
-           Preferred Name: <span   id="taxonomy_pn_text"></span><br><br>
-           Fully Specified Name: <span   id="taxonomy_fsn_text"></span><br>
+           Preferred Name: <div   id="taxonomy_pn_text"></div><br><br>
+           Fully Specified Name: <div   id="taxonomy_fsn_text"></div><br>
           </div><BR><BR>
 
         </div>
@@ -61,3 +61,9 @@
 </div>
 
 </div>
+
+<script>
+  WindowManager.viewers[<%= @viewer_id %>].setPanelState('komet_viewer_<%= @viewer_id %>', null, WindowManager.viewers[<%= @viewer_id %>].createName(WindowManager.viewers[<%= @viewer_id %>]));
+</script>
+
+

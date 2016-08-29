@@ -29,10 +29,11 @@ module ConceptRest
   include CommonActionSyms
   extend self
 
-  CONCEPT_PATH = ISAAC_ROOT + 'rest/1/concept/'
-  CHRONOLOGY_CONCEPT_PATH = CONCEPT_PATH + 'chronology/{id}'
-  VERSION_CONCEPT_PATH = CONCEPT_PATH + 'version/{id}'
-  DESCRIPTIONS_CONCEPT_PATH = CONCEPT_PATH + 'descriptions/{id}'
+  #always name the root_path ROOT_PATH!
+  ROOT_PATH = ISAAC_ROOT + 'rest/1/concept/'
+  CHRONOLOGY_CONCEPT_PATH = ROOT_PATH + 'chronology/{id}'
+  VERSION_CONCEPT_PATH = ROOT_PATH + 'version/{id}'
+  DESCRIPTIONS_CONCEPT_PATH = ROOT_PATH + 'descriptions/{id}'
   TEST_UUID = 'a60bd881-9010-3260-9653-0c85716b4391' #useful for testing
 
   CHRONOLOGY_CONCEPT_STARTING_PARAMS = {}

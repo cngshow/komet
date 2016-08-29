@@ -26,8 +26,10 @@ module TaxonomyRest
   include TaxonomyRestActions
   include CommonActionSyms
   extend self
-  TAXONOMY_PATH = ISAAC_ROOT + 'rest/1/taxonomy/'
-  VERSION_TAXONOMY_PATH = TAXONOMY_PATH + 'version'
+
+  #always name the root_path ROOT_PATH!
+  ROOT_PATH = ISAAC_ROOT + 'rest/1/taxonomy/'
+  VERSION_TAXONOMY_PATH = ROOT_PATH + 'version'
   ISAAC_UUID_PARAM = :id
   #ISAAC_ROOT_ID = 'cc0b2455-f546-48fa-90e8-e214cc8478d6'  #old databases
   ISAAC_ROOT_ID =  '7c21b6c5-cf11-5af9-893b-743f004c97f5'

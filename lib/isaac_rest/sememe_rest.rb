@@ -32,13 +32,14 @@ module SememeRest
   include CommonActionSyms
   extend self
 
-  SEMEME_PATH = ISAAC_ROOT + "rest/1/sememe/"
-  CHRONOLOGY_SEMEME_PATH = SEMEME_PATH + "chronology/{id}"
-  VERSION_SEMEME_PATH = SEMEME_PATH + "version/{id}"
-  BY_REFERENCED_COMPONENT_SEMEME_PATH = SEMEME_PATH + "byReferencedComponent/{id}"
-  BY_ASSEMBLAGE_SEMEME_PATH = SEMEME_PATH + "byAssemblage/{id}"
-  DEFINITION_SEMEME_PATH = SEMEME_PATH + "sememeDefinition/{id}"
-  TYPE_SEMEME_PATH = SEMEME_PATH + "sememeType/{id}"
+  #always name the root_path ROOT_PATH!
+  ROOT_PATH = ISAAC_ROOT + "rest/1/sememe/"
+  CHRONOLOGY_SEMEME_PATH = ROOT_PATH + "chronology/{id}"
+  VERSION_SEMEME_PATH = ROOT_PATH + "version/{id}"
+  BY_REFERENCED_COMPONENT_SEMEME_PATH = ROOT_PATH + "byReferencedComponent/{id}"
+  BY_ASSEMBLAGE_SEMEME_PATH = ROOT_PATH + "byAssemblage/{id}"
+  DEFINITION_SEMEME_PATH = ROOT_PATH + "sememeDefinition/{id}"
+  TYPE_SEMEME_PATH = ROOT_PATH + "sememeType/{id}"
   TEST_ID = "1f5bd727-27c5-59b9-bcc3-964d6155a010"#useful for testing the actions VERSION, CHRONOLOGY, BY_ASSEMBLAGE
   TEST_SEMEME_TYPE_ID = '3621bf47-a54c-5f6e-a68d-c4dcb7156815'
 
