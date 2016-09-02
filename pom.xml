@@ -8,8 +8,7 @@
 	<parent>
 		<groupId>gov.vha.isaac.ochre</groupId>
 		<artifactId>isaac-parent</artifactId>
-		<version>3.09</version>
-		<!--if releasing, from 3.10-SNAPSHOT move to 3.09 (example)-->
+		<version>3.10-SNAPSHOT</version>
 	</parent>
 
 	<groupId>gov.vha.isaac.gui.rails</groupId>
@@ -24,8 +23,7 @@
 	</description>
 
 	<properties>
-		<rails_common.version>1.18</rails_common.version>
-		<!--if releasing, from 3.10-SNAPSHOT move to 3.09 (example)-->
+		<rails_common.version>1.19-SNAPSHOT</rails_common.version>
 		<isaac.version>${project.parent.version}</isaac.version>
 		<!-- railsMode is automatically set to 'test' or 'production' - 'test' if the version number ends with '-SNAPSHOT'
 		or 'production' otherwise.  See ant execution below-->
