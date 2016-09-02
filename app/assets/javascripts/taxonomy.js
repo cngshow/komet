@@ -19,15 +19,11 @@ Copyright Notice
 
 var TaxonomyModule = (function () {
 
-    var linkedViewerID;
-    var nestedSplitters;
-    var hasNestedSplitters = false;
-
     function init() {
 
         this.defaultStatedView = $("#komet_taxonomy_stated_inferred")[0].value;
 
-        this.tree = new KometTaxonomyTree("taxonomy_tree", this.defaultStatedView, false, null, true, "new");
+        this.tree = new KometTaxonomyTree("taxonomy_tree", this.defaultStatedView, false, null, true, null);
     }
 
     // listen for the onChange event broadcast by the trees on the details panes. If they have items selected then reload this tree
@@ -43,39 +39,12 @@ var TaxonomyModule = (function () {
         reloadTree(TaxonomyModule[event.currentTarget.id].selectedConceptID);
     }
 
-    function setLinkedViewerID(viewerID){
-
-        linkedViewerID = viewerID;
-        this.tree.viewerID = viewerID;
-    }
-
-    function getLinkedViewerID(){
-        return linkedViewerID;
-    }
-
-    function nestedSplittersExist(){
-
-        nestedSplitters = $("#komet_east_pane_splitter_1");
-        hasNestedSplitters = nestedSplitters.find(".splitter_bar").length > 0;
-    }
-
-    function refreshSplitters(){
-
-        if (hasNestedSplitters){
-            nestedSplitters.enhsplitter('refresh');
-        }
-    }
-
     function getStatedView(){
         return $("#komet_taxonomy_stated_inferred")[0].value;
     };
 
     return {
         initialize: init,
-        setLinkedViewerID: setLinkedViewerID,
-        getLinkedViewerID: getLinkedViewerID,
-        nestedSplittersExist: nestedSplittersExist,
-        refreshSplitters: refreshSplitters,
         getStatedView: getStatedView
     };
 

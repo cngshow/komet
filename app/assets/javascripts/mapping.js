@@ -1,285 +1,98 @@
 var MappingModule = (function () {
 
-    var overviewSetsGridOptions;
-    var overviewItemsGridOptions;
-    var targetCandidatesGridOptions;
-    var showOverviewInactiveConcepts;
-    var showOverviewSTAMP;
-    var setEditorWindow;
-    var itemEditorWindow;
+    const SET_LIST = 'set_list';
+    const SET_DETAILS = 'set_details';
+    const SET_EDITOR = 'set_editor';
+    const ITEM_EDITOR = 'item_editor';
 
     function init() {
 
+        subscribeToMappingTree();
+
+        var windowType;
+
+        /*if (WindowManager.viewers.inlineViewers.length == 0){
+            windowType = WindowManager.NEW;
+        }*/
+
+        this.tree = new KometMappingTree("komet_mapping_tree", null);
+
+        /*
         showOverviewSTAMP = false;
         showOverviewInactiveConcepts = false;
 
         loadOverviewSetsGrid();
+
+        */
+
     }
 
-    function loadOverviewSetsGrid() {
+    function subscribeToMappingTree() {
 
-        // If a grid already exists destroy it or it will create a second grid
-        if (overviewSetsGridOptions) {
-            overviewSetsGridOptions.api.destroy();
-        }
+        // listen for the onChange event broadcast by any of the taxonomy this.trees.
+        $.subscribe(KometChannels.Mapping.mappingTreeNodeSelectedChannel, function (e, treeID, setID, viewerID, windowType) {
 
-        if (overviewItemsGridOptions) {
+            viewerID = WindowManager.getLinkedViewerID();
 
-            overviewItemsGridOptions.api.destroy();
-            overviewItemsGridOptions = undefined;
-        }
+            var action;
 
-        // disable map set and item specific actions
-        UIHelper.toggleFieldAvailability("komet_mapping_overview_set_delete", false);
-        UIHelper.toggleFieldAvailability("komet_mapping_overview_set_edit", false);
-        UIHelper.toggleFieldAvailability("komet_mapping_overview_item_create", false);
-        UIHelper.toggleFieldAvailability("komet_mapping_overview_item_delete", false);
-        UIHelper.toggleFieldAvailability("komet_mapping_overview_item_edit", false);
-        UIHelper.toggleFieldAvailability("komet_mapping_overview_item_comment", false);
-
-        // set the options for the result grid
-        overviewSetsGridOptions = {
-            enableColResize: true,
-            enableSorting: true,
-            suppressCellSelection: true,
-            rowSelection: "single",
-            onSelectionChanged: onOverviewSetsGridSelection,
-            onGridReady: onGridReady,
-            rowModelType: 'pagination',
-            columnDefs: [
-                {field: "id", headerName: 'id', hide: 'true'},
-                {field: "name", headerName: 'Name'},
-                {field: "purpose", headerName: 'Purpose'},
-                {field: "description", headerName: "Description"},
-                {field: "review_state", headerName: "Review State"},
-                {
-                    groupId: "stamp", headerName: "STAMP Fields", children: [
-                    {field: "status", headerName: "Status", hide: !showOverviewSTAMP},
-                    {field: "time", headerName: "Time", hide: !showOverviewSTAMP},
-                    {field: "author", headerName: "Author", hide: !showOverviewSTAMP},
-                    {field: "module", headerName: "Module", hide: !showOverviewSTAMP},
-                    {field: "path", headerName: "Path", hide: !showOverviewSTAMP}
-                ]
-                }
-            ]
-        };
-
-        new agGrid.Grid($("#komet_mapping_overview_sets").get(0), overviewSetsGridOptions);
-
-        loadOverviewItemsGrid();
-        getOverviewSetsData();
-    }
-
-    function getOverviewSetsData() {
-
-        // load the parameters from the form to add to the query string sent in the ajax data call
-        var page_size = $("#komet_mapping_overview_page_size").val();
-        var filter = $("#komet_mapping_overview_sets_filter").val();
-
-        var searchParams = "?overview_page_size=" + page_size;
-
-        if (filter != null) {
-            searchParams += "overview_sets_filter=" + filter;
-        }
-
-        var pageSize = Number(page_size);
-
-        // set the grid datasource options, including processing the data rows
-        var dataSource = {
-
-            pageSize: pageSize,
-            getRows: function (params) {
-
-                var pageNumber = params.endRow / pageSize;
-
-                searchParams += "&overview_sets_page_number=" + pageNumber + "&show_inactive=" + showOverviewInactiveConcepts;
-
-                // make an ajax call to get the data
-                $.get(gon.routes.mapping_get_overview_sets_results_path + searchParams, function (search_results) {
-
-                    if (search_results.data.length > 0) {
-                        $("#komet_mapping_overview_sets_export").show();
-                    } else {
-                        $("#komet_mapping_overview_sets_export").hide();
-                    }
-                    params.successCallback(search_results.data, search_results.total_number);
-                });
+            if (setID == null || setID == 0){
+                action = SET_LIST;
+            } else {
+                action = SET_DETAILS;
             }
-        };
 
-        overviewSetsGridOptions.api.setDatasource(dataSource);
-    }
-
-    function onOverviewSetsGridSelection() {
-
-        // enable map set specific actions
-        UIHelper.toggleFieldAvailability("komet_mapping_overview_set_delete", true);
-        UIHelper.toggleFieldAvailability("komet_mapping_overview_set_edit", true);
-        UIHelper.toggleFieldAvailability("komet_mapping_overview_item_create", true);
-
-        var selectedRows = overviewSetsGridOptions.api.getSelectedRows();
-
-        selectedRows.forEach(function (selectedRow, index) {
-
-            loadOverviewItemsGrid(selectedRow.id);
+            if (WindowManager.deferred && WindowManager.deferred.state() == "pending"){
+                WindowManager.deferred.done(function(){
+                    MappingModule.loadViewerData(setID, action, WindowManager.getLinkedViewerID(), windowType)
+                }.bind(this));
+            } else {
+                MappingModule.loadViewerData(setID, action, viewerID, windowType);
+            }
         });
     }
 
-    function onGridReady(event) {
-        event.api.sizeColumnsToFit();
-    }
+    // the path to a javascript partial file that will re-render all the appropriate partials once the ajax call returns
+    function loadViewerData(set_id, mapping_action, viewerID, windowType) {
 
-    function toggleOverviewSTAMP() {
+        WindowManager.deferred = $.Deferred();
 
-        if (overviewItemsGridOptions) {
+        var params = {partial: 'komet_dashboard/mapping/mapping_viewer', mapping_action: mapping_action, viewer_id: viewerID, set_id: set_id};
+        var url = gon.routes.mapping_load_mapping_viewer_path;
 
-            if (showOverviewSTAMP) {
-                overviewItemsGridOptions.columnApi.setColumnsVisible(["status", "time", "author", "module", "path"], false);
-            } else {
-                overviewItemsGridOptions.columnApi.setColumnsVisible(["status", "time", "author", "module", "path"], true);
-            }
+        if (mapping_action == "set_details"){
 
-            overviewItemsGridOptions.api.sizeColumnsToFit();
         }
 
-        if (showOverviewSTAMP) {
-
-            showOverviewSTAMP = false;
-            $("#komet_mapping_overview_sets_stamp").removeClass("komet-active-control");
-            overviewSetsGridOptions.columnApi.setColumnsVisible(["status", "time", "author", "module", "path"], false);
-        } else {
-
-            showOverviewSTAMP = true;
-            $("#komet_mapping_overview_sets_stamp").addClass("komet-active-control");
-            overviewSetsGridOptions.columnApi.setColumnsVisible(["status", "time", "author", "module", "path"], true);
+        if (WindowManager.viewers.inlineViewers.length == 0 || WindowManager.getLinkedViewerID() == WindowManager.NEW){
+            windowType = WindowManager.NEW;
         }
 
-        overviewSetsGridOptions.api.sizeColumnsToFit();
-    }
 
-    function toggleOverviewInactiveConcepts(){
+        // make an ajax call to get the concept for the current concept and pass it the currently selected concept id and the name of a partial file to render
+        $.get(url, params, function (data) {
 
-        if (showOverviewInactiveConcepts){
+            try {
 
-            showOverviewInactiveConcepts = false
-            $("#komet_mapping_overview_sets_inactive").removeClass("komet-active-control");
-        } else {
+                WindowManager.loadViewerData(data, viewerID, "mapping", windowType);
 
-            showOverviewInactiveConcepts = true
-            $("#komet_mapping_overview_sets_inactive").addClass("komet-active-control");
-        }
-
-        loadOverviewSetsGrid();
-    }
-
-    function exportOverviewSetsCSV() {
-        overviewSetsGridOptions.api.exportDataAsCsv({allColumns: true});
-    }
-
-    function loadOverviewItemsGrid(set_id) {
-
-        // If a grid already exists destroy it or it will create a second grid
-        if (overviewItemsGridOptions) {
-            overviewItemsGridOptions.api.destroy();
-        }
-
-        // disable item specific actions
-        UIHelper.toggleFieldAvailability("komet_mapping_overview_item_delete", false);
-        UIHelper.toggleFieldAvailability("komet_mapping_overview_item_edit", false);
-        UIHelper.toggleFieldAvailability("komet_mapping_overview_item_comment", false);
-
-        // set the options for the result grid
-        overviewItemsGridOptions = {
-            enableColResize: true,
-            enableSorting: true,
-            suppressCellSelection: true,
-            rowSelection: "single",
-            onSelectionChanged: onOverviewItemsGridSelection,
-            onGridReady: onGridReady,
-            rowModelType: 'pagination',
-            columnDefs: [
-                {field: "id", headerName: "id", hide: "true"},
-                {field: "source", headerName: 'Source ID', hide: "true"},
-                {field: "source_display", headerName: "Source Concept"},
-                {field: "target", headerName: "Target ID", hide: "true"},
-                {field: "target_display", headerName: "Target Concept"},
-                {field: "qualifier", headerName: "Qualifier"},
-                {field: "comments", headerName: "Comments"},
-                {field: "review_state", headerName: "Review State"},
-                {
-                    groupId: "stamp", headerName: "STAMP Fields", children: [
-                    {field: "status", headerName: "Status", hide: !showOverviewSTAMP},
-                    {field: "time", headerName: "Time", hide: !showOverviewSTAMP},
-                    {field: "author", headerName: "Author", hide: !showOverviewSTAMP},
-                    {field: "module", headerName: "Module", hide: !showOverviewSTAMP},
-                    {field: "path", headerName: "Path", hide: !showOverviewSTAMP}
-                ]
+                if (windowType != WindowManager.NEW && windowType != WindowManager.POPUP) {
+                    WindowManager.deferred.resolve();
                 }
-            ]
-        };
-
-        new agGrid.Grid($("#komet_mapping_overview_items").get(0), overviewItemsGridOptions);
-
-        if (set_id == undefined) {
-            overviewItemsGridOptions.api.showNoRowsOverlay()
-        } else {
-            getOverviewItemsData(set_id);
-        }
-    }
-
-    function getOverviewItemsData(set_id) {
-
-        // load the parameters from the form to add to the query string sent in the ajax data call
-        var page_size = $("#komet_mapping_overview_page_size").val();
-        var filter = $("#komet_mapping_overview_items_filter").val();
-
-        var searchParams = "?overview_set_id=" + set_id + "&overview_page_size=" + page_size + "&show_inactive=" + showOverviewInactiveConcepts;
-
-        if (filter != null) {
-            searchParams += "overview_items_filter=" + filter;
-        }
-
-        var pageSize = Number(page_size);
-
-        // set the grid datasource options, including processing the data rows
-        var dataSource = {
-
-            pageSize: pageSize,
-            getRows: function (params) {
-
-                var pageNumber = params.endRow / pageSize;
-
-                searchParams += "&overview_items_page_number=" + pageNumber;
-
-                // make an ajax call to get the data
-                $.get(gon.routes.mapping_get_overview_items_results_path + searchParams, function (search_results) {
-
-                    if (search_results.data.length > 0) {
-                        $("#komet_mapping_overview_items_export").show();
-                    } else {
-                        $("#komet_mapping_overview_items_export").hide();
-                    }
-                    params.successCallback(search_results.data, search_results.total_number);
-                });
             }
-        };
+            catch (err) {
+                console.log("*******  ERROR **********");
+                console.log(err.message);
+                throw err;
+            }
 
-        overviewItemsGridOptions.api.setDatasource(dataSource);
-
-        // reload the recents menu
-        //loadAssemblageRecents();
+        });
     }
 
-    function onOverviewItemsGridSelection() {
+    function createViewer(viewerID, setID) {
 
-        // enable item specific actions
-        UIHelper.toggleFieldAvailability("komet_mapping_overview_item_delete", true);
-        UIHelper.toggleFieldAvailability("komet_mapping_overview_item_edit", true);
-        UIHelper.toggleFieldAvailability("komet_mapping_overview_item_comment", true);
-
-        var selectedRows = overviewItemsGridOptions.api.getSelectedRows();
-
-        //selectedRows.forEach(function (selectedRow, index) {});
+        WindowManager.createViewer(new MappingViewer(viewerID, setID));
+        WindowManager.deferred.resolve();
     }
 
     function openSetEditor(newSet) {
@@ -291,26 +104,6 @@ var MappingModule = (function () {
         }
 
         setEditorWindow = window.open(url, "MapSetEditor", "width=600,height=330");
-    }
-
-    function initializeSetEditor() {
-
-        $("#komet_mapping_set_editor_form").submit(function () {
-
-            $.ajax({
-                type: "POST",
-                url: $(this).attr("action"),
-                data: $(this).serialize(), //new FormData($(this)[0]),
-                success: function () {
-
-                    window.opener.MappingModule.loadOverviewSetsGrid();
-                    window.close();
-                }
-            });
-
-            // have to return false to stop the form from posting twice.
-            return false;
-        });
     }
 
     function openItemEditor(newItem) {
@@ -583,19 +376,19 @@ var MappingModule = (function () {
 
     return {
         initialize: init,
-        loadOverviewSetsGrid: loadOverviewSetsGrid,
-        loadOverviewItemsGrid: loadOverviewItemsGrid,
-        toggleOverviewSTAMP: toggleOverviewSTAMP,
-        toggleOverviewInactiveConcepts: toggleOverviewInactiveConcepts,
-        exportOverviewSetsCSV: exportOverviewSetsCSV,
+        loadViewerData: loadViewerData,
+        createViewer: createViewer,
         openSetEditor: openSetEditor,
-        initializeSetEditor: initializeSetEditor,
         openItemEditor: openItemEditor,
         initializeItemEditor: initializeItemEditor,
         useItemSourceRecent: useItemSourceRecent,
         useItemTargetRecent: useItemTargetRecent,
         useItemKindOfRecent: useItemKindOfRecent,
         loadTargetCandidatesGrid: loadTargetCandidatesGrid,
+        SET_LIST: SET_LIST,
+        SET_DETAILS: SET_DETAILS,
+        SET_EDITOR: SET_EDITOR,
+        ITEM_EDITOR: ITEM_EDITOR
     };
 
 })();

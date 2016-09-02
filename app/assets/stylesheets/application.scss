@@ -230,7 +230,7 @@ html, body{
   flex: 1 1 auto;
   text-align: end;
   display: flex;
-  justify-content: flex-end
+  justify-content: flex-end;
 }
 .komet-panel .komet-panel-tools .glyphicon, .komet-panel .komet-panel-tools .fa {
   margin-left: 10px;
@@ -239,6 +239,18 @@ html, body{
 }
 .komet-panel .panel-title{
   color: white;
+}
+.komet-panel .komet-panel-filters{
+    flex: 1 1 auto;
+    display: flex;
+    justify-content: space-between;
+    color: white;
+}
+.komet-panel-filters .form-control{
+    height: 28px;
+    font-size: small;
+    padding-bottom: 4px;
+    padding-top: 4px;
 }
 .komet-panel .panel-body {
   background-color: #eef1f3;
@@ -366,7 +378,6 @@ html, body{
   margin: 2px;
   flex-wrap: wrap;
   min-width: 150px;
-
 }
 .komet-concept-section-panel-header{
   display: flex;
@@ -525,6 +536,33 @@ td.komet-concept-table-nested-indicator.komet-concept-table-nested-indicator-ope
   padding: 5px;
   overflow-x: auto;
 }
+.komet-concept-lineage-summary-container{
+  width: 100%;
+  padding-left: 7%;
+  padding-right: 7%;
+  margin-bottom: 10px;
+}
+.komet-concept-lineage-summary-details{
+  border: 2px solid #357ebd;
+  border-radius: 4px;
+  background-color: #357ebd;
+  color: white;
+  width: 100%;
+  display: inline-block;
+}
+.komet-concept-lineage-summary-text{
+  display: flex;
+  flex-direction: row;
+}
+.komet-concept-lineage-summary-attributes{
+  border: 2px solid #357ebd;
+  border-radius: 4px;
+  background-color: rgba(30, 144, 255, 0.17);
+  color: black;
+  width: 45%;
+  display: inline-block;
+  vertical-align: top;
+}
 
 // Concept Viewer Sememes Styles
 .komet-concept-sememes-panel{
@@ -576,7 +614,7 @@ td.komet-concept-table-nested-indicator.komet-concept-table-nested-indicator-ope
 }
 
 // Search Styles
-#tp-search{
+#komet_search_tab {
   padding: 2px;
 }
 .komet-search-combo-row{
@@ -612,6 +650,33 @@ td.komet-concept-table-nested-indicator.komet-concept-table-nested-indicator-ope
 }
 
 // Mapping Sets Styles
+#komet_mapping_tree_text_filter{
+    min-width: 125px;
+    max-width: 250px;
+    margin-right: 10px;
+}
+#komet_mapping_tree_set_filter{
+    min-width: 125px;
+    max-width: 250px;
+    margin-right: 10px;
+}
+#komet_mapping_tree_reload{
+    align-self: center;
+}
+#komet_mapping_tree_panel .panel-body{
+    background-color: white;
+}
+#komet_mapping_tree .komet-tree-node-icon{
+    color: blue;
+}
 .komet-mapping-overview-sets-stamp-active{
   color: blue;
 }
+
+.komet-concept-svg
+{
+  height: 250px;
+  overflow: scroll;
+
+}
+

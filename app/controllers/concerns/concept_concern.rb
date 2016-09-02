@@ -65,6 +65,23 @@ module ConceptConcern
     return_attributes << {label: 'Path', value: description_metadata(attributes.conVersion.pathSequence, stated)}
     return_attributes << {label: 'UUID', value: uuid}
 
+    # get the concept SCTID information if there is one and add it to the attributes array
+    coding_id = IdAPIsRest.get_id(uuid_or_id: uuid, action: IdAPIsRestActions::ACTION_TRANSLATE, additional_req_params: {outputType: 'sctid'})
+
+    if coding_id.respond_to?(:value)
+      return_attributes << {label: 'SCTID', value: coding_id.value}
+    else
+
+      # get the concept VUID information if there is one and add it to the attributes array
+      coding_id = IdAPIsRest.get_id(uuid_or_id: uuid, action: IdAPIsRestActions::ACTION_TRANSLATE, additional_req_params: {outputType: 'vuid'})
+
+      if coding_id.respond_to?(:value)
+        return_attributes << {label: 'VUID', value: coding_id.value}
+      end
+    end
+
+    return return_attributes
+
   end
 
   ##

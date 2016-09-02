@@ -27,10 +27,22 @@ class ExternalController < ApplicationController
 
   def login
     #render external#login
+    user_name = ssoi_headers
+    @ssoi = !user_name.to_s.strip.empty? #we are using ssoi
+    if (ssoi?)
+      ensure_roles
+      roles = session[Roles::SESSION_ROLES_ROOT][Roles::SESSION_USER_ROLES]
+      $log.debug("SSOI has the following roles: #{roles}")
+      unless (roles.nil? || roles.empty?)
+        redirect_to komet_dashboard_dashboard_url
+        return
+      end
+    end
+    $log.debug("Rendering the standard login page")
   end
 
   def authenticate
-    roles = session[Roles::SESSION_USER_ROLES]
+    roles = session[Roles::SESSION_ROLES_ROOT][Roles::SESSION_USER_ROLES]
     unless(roles.nil? || roles.empty?)
       redirect_to komet_dashboard_dashboard_url
     else
@@ -41,10 +53,8 @@ class ExternalController < ApplicationController
   end
 
   def logout
-    roles = session[Roles::SESSION_USER_ROLES]
-    session.delete(:current_user)
-    session.delete(:current_user_roles)
-    session.delete(:current_password)
+    roles = session[Roles::SESSION_ROLES_ROOT][Roles::SESSION_USER_ROLES]
+    session.delete(Roles::SESSION_ROLES_ROOT)
     flash[:notice] = "You have been logged out."
     redirect_to root_url
   end

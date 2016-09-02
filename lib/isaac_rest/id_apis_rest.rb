@@ -28,9 +28,10 @@ module IdAPIsRest
   include CommonActionSyms
   extend self
 
-  ID_APIS_PATH = ISAAC_ROOT + 'rest/1/id/'
-  TYPES_PATH = ID_APIS_PATH + 'types'
-  TYPES_TRANSLATE_PATH = ID_APIS_PATH + 'translate/{id}'
+  #always name the root_path ROOT_PATH!
+  ROOT_PATH = ISAAC_ROOT + 'rest/1/id/'
+  TYPES_PATH = ROOT_PATH + 'types'
+  TYPES_TRANSLATE_PATH = ROOT_PATH + 'translate/{id}'
 
   TEST_UUID = '406e872b-2e19-5f5e-a71d-e4e4b2c68fe5'
 

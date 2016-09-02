@@ -37,8 +37,9 @@ module SystemApis
 
   TEST_UUID = '406e872b-2e19-5f5e-a71d-e4e4b2c68fe5'
 
-  PATH_SYSTEM_API = ISAAC_ROOT + "rest/1/system/"
-  PATH_SYSTEM_API_ENUMERATION =PATH_SYSTEM_API + "enumeration/"
+  #always name the root_path ROOT_PATH!
+  ROOT_PATH = ISAAC_ROOT + "rest/1/system/"
+  PATH_SYSTEM_API_ENUMERATION =ROOT_PATH + "enumeration/"
   PATH_DYNAMIC_SEMEME_VALIDATOR_TYPE = PATH_SYSTEM_API_ENUMERATION + "restDynamicSememeValidatorType"
   PATH_OBJECT_CHRONOLOGY_TYPE = PATH_SYSTEM_API_ENUMERATION + "restObjectChronologyType"
   PATH_SEMEME_TYPE = PATH_SYSTEM_API_ENUMERATION + "restSememeType"
@@ -47,8 +48,8 @@ module SystemApis
   PATH_CONCRETE_DOMAIN_OPERATOR_TYPES = PATH_SYSTEM_API_ENUMERATION + "restConcreteDomainOperatorTypes"
   PATH_NODE_SEMANTIC_TYPE = PATH_SYSTEM_API_ENUMERATION + "restNodeSemanticType"
   PATH_SUPPORTED_ID_TYPES = PATH_SYSTEM_API_ENUMERATION + "restSupportedIdTypes"
-  PATH_OBJECT_CHRONOLOGY_TYPE_BY_ID = PATH_SYSTEM_API + "objectChronologyType/{id}"
-  PATH_SYSTEM_INFO = PATH_SYSTEM_API + "systemInfo"
+  PATH_OBJECT_CHRONOLOGY_TYPE_BY_ID = ROOT_PATH + "objectChronologyType/{id}"
+  PATH_SYSTEM_INFO = ROOT_PATH + "systemInfo"
 
   # these are not used!!
   PARAMS_DYNAMIC_SEMEME_VALIDATOR_TYPE = {}

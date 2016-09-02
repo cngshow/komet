@@ -29,9 +29,7 @@ var ConceptViewer = function(viewerID, currentConceptID) {
         this.CHILDREN_TREE = "concept_lineage_children_tree_" + viewerID;
         this.refsetGridOptions;
         this.REFSET_GRID = "refsets_grid_" + viewerID;
-        
-        //this.subscribeToTaxonomyTree();
-        //this.subscribeToSearch();
+
     };
 
     ConceptViewer.prototype.togglePanelDetails = function(panelID, callback, preserveState) {
@@ -40,6 +38,7 @@ var ConceptViewer = function(viewerID, currentConceptID) {
         var expander = $("#" + panelID + " .glyphicon-plus-sign, #" + panelID + " .glyphicon-minus-sign");
         var drawer = $("#" + panelID + " .komet-concept-section-panel-details");
         var topLevelExpander = expander.parent().hasClass('komet-concept-body-tools');
+        var open;
 
         // if the user clicked on the top level concept expander, change the associated text label
         if (topLevelExpander) {
@@ -148,7 +147,7 @@ var ConceptViewer = function(viewerID, currentConceptID) {
         }
 
         this.trees[this.PARENTS_TREE] = new KometTaxonomyTree(this.PARENTS_TREE, stated, true, this.currentConceptID, false, this.viewerID);
-        this.trees[this.CHILDREN_TREE] = new KometTaxonomyTree(this.CHILDREN_TREE, stated, false, this.currentConceptID, false, this.viewerID);
+        this.trees[this.CHILDREN_TREE] = new KometTaxonomyTree(this.CHILDREN_TREE, stated, false, this.currentConceptID, false, this.viewerID, false);
 
         this.trees[this.PARENTS_TREE].tree.bind('ready.jstree', function (event, data) {
 
@@ -169,38 +168,6 @@ var ConceptViewer = function(viewerID, currentConceptID) {
                 this.trees[this.CHILDREN_TREE].tree.html("No Children");
             }
         }.bind(this));
-    };
-
-    ConceptViewer.prototype.subscribeToTaxonomyTree = function() {
-
-        // listen for the onChange event broadcast by any of the taxonomy this.trees.
-        $.subscribe(KometChannels.Taxonomy.taxonomyTreeNodeSelectedChannel, function (e, treeID, conceptID) {
-
-            this.currentConceptID = conceptID;
-            ConceptsModule.loadViewerData();
-        });
-    };
-
-    ConceptViewer.prototype.subscribeToSearch = function() {
-
-        // listen for the onChange event broadcast by selecting a search result.
-        $.subscribe(KometChannels.Taxonomy.taxonomySearchResultSelectedChannel, function (e, conceptID) {
-
-            this.currentConceptID = conceptID;
-            this.trees[this.PARENTS_TREE].selectedConceptID = this.currentConceptID;
-            this.trees[this.CHILDREN_TREE].selectedConceptID = this.currentConceptID;
-            ConceptsModule.loadViewerData();
-        });
-    };
-
-    ConceptViewer.prototype.loadConceptTabs = function() {
-
-        // the path to a javascript partial file that will re-render all the appropriate partials once the ajax call returns
-        var partial = 'komet_dashboard/concept_detail/load_tabs';
-
-        // make an ajax call to get the concept for the current concept and pass it the currently selected concept id and the name of a partial file to render
-        $.get(gon.routes.taxonomy_get_concept_information_path, {concept_id: this.currentConceptID, partial: partial}, function (data) {
-        });
     };
 
     ConceptViewer.prototype.toggleNestedTableRows = function(image, id){
@@ -323,10 +290,6 @@ var ConceptViewer = function(viewerID, currentConceptID) {
         this.refsetGridOptions.api.setDatasource(dataSource);
     };
 
-    ConceptViewer.prototype.toggleLinkIcon = function(){
-        $('#komet_concept_panel_tree_link_' + this.viewerID).toggle();
-    };
-
     ConceptViewer.prototype.swapLinkIcon = function(linked){
 
         var linkIcon = $('#komet_concept_panel_tree_link_' + this.viewerID);
@@ -347,6 +310,72 @@ var ConceptViewer = function(viewerID, currentConceptID) {
     ConceptViewer.prototype.exportCSV  = function(){
         this.refsetGridOptions.api.exportDataAsCsv({allColumns: true});
     };
+    ConceptViewer.prototype.createName = function(viewerID){
+
+        $("#txtName").keyup(function(event) {
+            var stt = $(this).val();
+            $("#taxonomy_pn_text").html(stt);
+
+        });
+
+        $("#taxonomy_lineage_display").keyup(function(event) {
+            var stt =  $("#taxonomy_pn_text").text() + ' (' + $(this).val() + ')';
+            $("#taxonomy_fsn_text").html(stt);
+        });
+
+
+        // setup the assemblage field autocomplete functionality
+        $("#taxonomy_lineage_display").autocomplete({
+            source: gon.routes.search_get_assemblage_suggestions_path,
+            minLength: 3,
+            select: onLineageSuggestionSelection,
+            change: onLineageSuggestionChange
+        });
+
+        // load any previous assemblage queries into a menu for the user to select from
+        loadLineageRecents();
+        return true;
+    };
+
+    function onLineageSuggestionSelection(event, ui){
+
+        $("#taxonomy_lineage_display").val(ui.item.label);
+        $("#taxonomy_lineage_id").val(ui.item.value);
+        var stt =  $("#taxonomy_pn_text").text() + ' (' + $("#taxonomy_lineage_display").val() + ')';
+        $("#taxonomy_fsn_text").html(stt);
+        return false;
+    }
+
+    function onLineageSuggestionChange(event, ui){
+
+        if (!ui.item){
+            event.target.value = "";
+            $("#taxonomy_lineage_id").val("");
+
+        }
+    }
+    function loadLineageRecents() {
+
+        $.get(gon.routes.search_get_assemblage_recents_path, function (data) {
+
+            var options = "";
+
+            $.each(data, function (index, value) {
+
+                // use the html function to escape any html that may have been entered by the user
+                var valueText = $("<li>").text(value.text).html();
+                options += "<li><a href=\"#\" onclick=\"TaxonomySearchModule.useLineageRecent('" + value.id + "', '" + valueText + "')\">" + valueText + "</a></li>";
+            });
+
+            $("#taxonomy_lineage_recents").html(options);
+        });
+    }
+
+    function useLineageRecent(id, text){
+
+        $("#taxonomy_lineage_display").val(text);
+        $("#taxonomy_lineage_id").val(id);
+    }
 
     // call our constructor function
     this.init(viewerID, currentConceptID)

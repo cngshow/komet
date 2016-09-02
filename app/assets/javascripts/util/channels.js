@@ -31,10 +31,10 @@ var KometChannels = {
         taxonomyTreeNodeClosedChannel: "Taxonomy/TaxonomyTree/NodeClosed",
         taxonomyTreeNodeSelectedChannel: "Taxonomy/TaxonomyTree/NodeSelected",
         taxonomyDetailsTreeNodeSelectedChannel: "Taxonomy/TaxonomyDetailsTree/NodeSelected",
-        taxonomySearchResultSelectedChannel: "Taxonomy/Search/ResultSelected"
+        taxonomySearchResultSelectedChannel: "Taxonomy/Search/ResultSelected",
+        taxonomyAddEditConceptChannel: "Taxonomy/TaxonomyDetailsTree/NewConcept"
     },
-    //whoever adds in another real namespace can whack this silly example
-    SomethingElse: {
-        someOtherChannel: "foo/faa/fee"
+    Mapping: {
+        mappingTreeNodeSelectedChannel: "Mapping/MappingTree/NodeSelected"
     }
 };

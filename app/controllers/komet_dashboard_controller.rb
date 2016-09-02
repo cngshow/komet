@@ -29,7 +29,7 @@ class KometDashboardController < ApplicationController
 
   before_action :setup_routes, :setup_constants, :only => [:dashboard]
   after_filter :byte_size unless Rails.env.production?
-
+  skip_before_action :ensure_roles, only: [:version]
   ##
   # load_tree_data - RESTful route for populating the taxonomy tree using an http :GET
   # The current tree node is identified in the request params with the key :concept_id
@@ -38,18 +38,17 @@ class KometDashboardController < ApplicationController
   # Whether to display the stated (true) or inferred view of concepts with a request param of :stated (true/false)
   #@return [json] the tree nodes to insert into the tree at the parent node passed in the request
   def load_tree_data
-#    roles = session[Roles::SESSION_USER_ROLES]
+#    roles = session[Roles::SESSION_ROLES_ROOT][Roles::SESSION_USER_ROLES]
 #    if(roles.include?(Roles::DEV_SUPER_USER))
 #      #do something
 #    end
-    coordinates_token = session[:coordinatestoken].token
+
     selected_concept_id = params[:concept_id]
     parent_search = params[:parent_search]
     parent_reversed = params[:parent_reversed]
     stated = params[:stated]
     tree_walk_levels = params[:tree_walk_levels]
-    tree_nodes = []
-    root = selected_concept_id.eql?('#')
+    multi_path = params[:multi_path]
 
     # check to make sure the flag for stated or inferred view was passed in
     if stated != nil
@@ -63,42 +62,12 @@ class KometDashboardController < ApplicationController
       tree_walk_levels = tree_walk_levels.to_i
     end
 
-    additional_req_params = {coordToken: coordinates_token, stated: @stated, sememeMembership: true}
-
-    if boolean(parent_search)
-
-      additional_req_params[:childDepth] = 0
-      additional_req_params[:parentHeight] = tree_walk_levels
-    else
-
-      additional_req_params[:childDepth] = tree_walk_levels
-      additional_req_params[:parentHeight] = 1
+    # check to make sure the flag for exploring multiple parent paths was passed in
+    if multi_path == nil
+      multi_path = true
     end
 
-    if root
-
-      # load the ISAAC root node and children
-      isaac_concept = TaxonomyRest.get_isaac_root(additional_req_params: additional_req_params)
-
-      # load the root node into our return variable
-      root_anchor_attributes = { class: 'komet-context-menu', 'data-menu-type' => 'concept', 'data-menu-uuid' => isaac_concept.conChronology.identifiers.uuids.first}
-      tree_nodes << {id: 0, concept_id: isaac_concept.conChronology.identifiers.uuids.first, text: isaac_concept.conChronology.description, parent: '#', parent_reversed: false, parent_search: parent_search, icon: 'komet-tree-node-icon komet-tree-node-primitive', a_attr: root_anchor_attributes, state: {opened: 'true'}}
-
-      selected_concept_id = 0
-    else
-      isaac_concept = TaxonomyRest.get_isaac_concept(uuid: selected_concept_id, additional_req_params: additional_req_params)
-    end
-
-    if isaac_concept.is_a? CommonRest::UnexpectedResponse
-      render json: [] and return
-    end
-
-    raw_nodes = process_rest_concept(isaac_concept, tree_walk_levels, first_level: true, parent_search: parent_search)
-
-    if selected_concept_id == params[:starting_concept_id]
-      selected_concept_id = '#'
-    end
-    tree_nodes = process_tree_level(raw_nodes, tree_nodes, selected_concept_id, parent_search, parent_reversed, true)
+    tree_nodes = populate_tree(selected_concept_id, parent_search, parent_reversed, tree_walk_levels, multi_path)
 
     render json: tree_nodes
   end
@@ -115,13 +84,28 @@ class KometDashboardController < ApplicationController
     @stated = params[:stated]
     @viewer_id =  params[:viewer_id]
 
-    if @viewer_id == nil || @viewer_id == ''
+    if @viewer_id == nil || @viewer_id == '' || @viewer_id == 'new'
       @viewer_id = get_next_id
     end
 
     get_concept_attributes(@concept_id, @stated)
     get_concept_descriptions(@concept_id, @stated)
     get_concept_sememes(@concept_id, @stated)
+    render partial: params[:partial]
+
+  end
+
+  def get_concept_add_edit
+
+    @concept_id = params[:concept_id]
+    @stated = params[:stated]
+    @viewer_id =  params[:viewer_id]
+
+    if @viewer_id == nil || @viewer_id == '' || @viewer_id == 'new'
+      @viewer_id = get_next_id
+    end
+
+
     render partial: params[:partial]
 
   end
@@ -276,6 +260,50 @@ class KometDashboardController < ApplicationController
     render json: refsets
   end
 
+  def populate_tree(selected_concept_id, parent_search, parent_reversed, tree_walk_levels, multi_path)
+
+    coordinates_token = session[:coordinatestoken].token
+    root = selected_concept_id.eql?('#')
+
+    additional_req_params = {coordToken: coordinates_token, stated: @stated, sememeMembership: true}
+
+    if boolean(parent_search)
+      tree_walk_levels = 100
+      additional_req_params[:childDepth] = 0
+      additional_req_params[:parentHeight] = tree_walk_levels
+    else
+
+      additional_req_params[:childDepth] = tree_walk_levels
+      additional_req_params[:parentHeight] = 1
+    end
+
+    if root
+
+      # load the ISAAC root node and children
+      isaac_concept = TaxonomyRest.get_isaac_root(additional_req_params: additional_req_params)
+
+      # load the root node into our return variable
+      root_anchor_attributes = { class: 'komet-context-menu', 'data-menu-type' => 'concept', 'data-menu-uuid' => isaac_concept.conChronology.identifiers.uuids.first}
+      root_node = {id: 0, concept_id: isaac_concept.conChronology.identifiers.uuids.first, text: isaac_concept.conChronology.description, parent_reversed: false, parent_search: parent_search, icon: 'komet-tree-node-icon komet-tree-node-primitive', a_attr: root_anchor_attributes, state: {opened: 'true'}}
+    else
+      isaac_concept = TaxonomyRest.get_isaac_concept(uuid: selected_concept_id, additional_req_params: additional_req_params)
+    end
+
+    if isaac_concept.is_a? CommonRest::UnexpectedResponse
+      render json: [] and return
+    end
+
+    raw_nodes = process_rest_concept(isaac_concept, tree_walk_levels, first_level: true, parent_search: parent_search, multi_path: multi_path)
+    processed_nodes = process_tree_level(raw_nodes, [], parent_search, parent_reversed)
+
+    if root
+
+      root_node[:children] = processed_nodes
+      return [root_node]
+    else
+      return processed_nodes
+    end
+  end
 
   def process_rest_concept(concept, tree_walk_levels, first_level: false, parent_search: false, multi_path: true)
 
@@ -336,7 +364,7 @@ class KometDashboardController < ApplicationController
     node[:parents] = []
 
     # if this node has parents and we want to see all parent paths then get the details of each parent
-    if tree_walk_levels > 0  && !boolean(parent_search) && node[:parent_count] > 1 && multi_path
+    if tree_walk_levels > 0  && !boolean(parent_search) && node[:parent_count] > 1 && boolean(multi_path)
 
       has_many_parents = true
 
@@ -406,7 +434,7 @@ class KometDashboardController < ApplicationController
     concept_nodes
   end
 
-  def process_tree_level (raw_nodes, tree_nodes, current_node_id, parent_search_param, parent_reversed_param, first_level)
+  def process_tree_level (raw_nodes, tree_nodes, parent_search_param, parent_reversed_param)
 
     raw_nodes.each do |raw_node|
 
@@ -417,7 +445,7 @@ class KometDashboardController < ApplicationController
       relation = :children
       has_relation = :has_children
       flags = get_tree_node_flag('module', [raw_node[:module]])
-      flags << get_tree_node_flag('refsets', raw_node[:refsets])
+      flags << get_tree_node_flag('refsets', [raw_node[:refsets]])
       flags << get_tree_node_flag('path', [raw_node[:path]])
 
       if boolean(parent_search)
@@ -440,32 +468,7 @@ class KometDashboardController < ApplicationController
         node_text = 'Parents of ' + raw_node[:text] + raw_node[:badge] + flags
         icon_class << '-arrow'
 
-        parent_nodes = []
-        # loop though all parents besides the first one (the already open path)
-        raw_node[:parents].each do |parent|
-
-          if boolean(parent[:defined])
-            parent_icon_class = 'komet-tree-node-icon komet-tree-node-defined-arrow'
-          else
-            parent_icon_class = 'komet-tree-node-icon komet-tree-node-primitive-arrow'
-          end
-
-          # if the node has no parents identify it as a leaf, otherwise it is a branch
-          if parent[:parent_count] > 0
-            parent_has_parents = true
-          else
-            parent_has_parents = false
-          end
-
-          parent_flags = get_tree_node_flag('module', parent[:module])
-          parent_flags << get_tree_node_flag('refsets', parent[:refsets])
-          parent_flags << get_tree_node_flag('path', parent[:path])
-
-          parent_node_text = parent[:text] + parent[:badge] + parent_flags
-
-          # add the parent node above its child, making sure that it identified as a reverse search node
-          parent_nodes << {id: get_next_id, concept_id: parent[:id], text: parent_node_text, children: parent_has_parents, parent_reversed: true, parent_search: true, icon: parent_icon_class, a_attr: anchor_attributes}
-        end
+        parent_nodes = populate_tree(raw_node[:id], true, true, 100, true)
 
         tree_nodes << {id: parent_id, concept_id: raw_node[:id], text: node_text, children: parent_nodes, parent_reversed: true, parent_search: true, icon: icon_class, a_attr: anchor_attributes, li_attr: {class: 'komet-reverse-tree'}}
 
@@ -487,20 +490,17 @@ class KometDashboardController < ApplicationController
 
       node = {id: get_next_id, concept_id: raw_node[:id], text: node_text, parent_reversed: parent_reversed, parent_search: parent_search, icon: icon_class, a_attr: anchor_attributes}
 
-      # if the current ID is root, then add a 'parent' field to the node to satisfy the alternate JSON format of JSTree for this level of the tree
-      if current_node_id == 0 || current_node_id == '#' || !first_level
-        node[:parent] = current_node_id.to_s
-      end
-
       if raw_node[relation].length == 0
         node[:children] = show_expander
+      else
+        node[:state] = {opened: 'true'}
+      end
+
+      if raw_node[relation].length > 0
+        node[:children] = process_tree_level(raw_node[relation], [], parent_search_param, parent_reversed_param)
       end
 
       tree_nodes << node
-
-      if raw_node[relation].length > 0
-        process_tree_level(raw_node[relation], tree_nodes, node[:id], parent_search_param, parent_reversed_param, false)
-      end
 
     end
 
@@ -523,10 +523,6 @@ class KometDashboardController < ApplicationController
     end
 
     return flag
-  end
-
-  def get_next_id
-    return java.lang.System.nanoTime
   end
 
   def dashboard

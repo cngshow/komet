@@ -17,17 +17,52 @@
  limitations under the License.
  */
 
-var KometTaxonomyTree = function(treeID, stated, parentSearch, startingConceptID, selectItem, viewerID){
+var KometTaxonomyTree = function(treeID, stated, parentSearch, startingConceptID, selectItem, windowType, multiPath){
 
-    KometTaxonomyTree.prototype.init = function(treeID, stated, parentSearch, startingConceptID, selectItem, viewerID){
+    KometTaxonomyTree.prototype.init = function(treeID, stated, parentSearch, startingConceptID, selectItem, windowType, multiPath){
 
         this.treeID = treeID;
-        this.viewerID = viewerID;
+        this.windowType = windowType;
 
-        this.buildTaxonomyTree(stated, parentSearch, startingConceptID, selectItem);
+        this.buildTaxonomyTree(stated, parentSearch, startingConceptID, selectItem, multiPath);
     };
 
-    KometTaxonomyTree.prototype.buildTaxonomyTree = function(stated, parentSearch, startingConceptID, selectItem) {
+    KometTaxonomyTree.prototype.buildTaxonomyTree = function(stated, parentSearch, startingConceptID, selectItem, multiPath) {
+
+        //set ui to hour glass
+        Common.cursor_wait();
+
+        if (parentSearch === undefined || parentSearch === null) {
+            parentSearch = false;
+        }
+
+        if (stated === undefined || stated === null) {
+            stated = 'true';
+        }
+
+        // select_item tells the tree if it should select the first item when the data is loaded
+        if (selectItem === undefined || selectItem === null) {
+            selectItem = false;
+        }
+
+        // multi-path tells the tree if it should show multiple parent paths for a concept in the tree
+        if (multiPath === undefined || multiPath === null) {
+            multiPath = true;
+        }
+
+        var settings = {
+            "core": {
+                "animation": 0,
+                "check_callback": true,
+                "themes": {"stripes": true},
+                'data': {
+                    'url': gon.routes.taxonomy_load_tree_data_path,
+                    'data': function (node) {
+                        return getParameters(node);
+                    }
+                }
+            }
+        };
 
         var getParameters = function(node) {
 
@@ -50,7 +85,7 @@ var KometTaxonomyTree = function(treeID, stated, parentSearch, startingConceptID
                     'parent_search': parentSearch,
                     'parent_reversed': parentSearch,
                     'stated': stated,
-                    'starting_concept_id': startingConceptID
+                    'multi_path' : multiPath
                 };
             } else {
                 params = {
@@ -58,45 +93,14 @@ var KometTaxonomyTree = function(treeID, stated, parentSearch, startingConceptID
                     'parent_search': node.original.parent_search,
                     'parent_reversed': node.original.parent_reversed,
                     'stated': stated,
-                    'starting_concept_id': startingConceptID
+                    'multi_path' : multiPath
                 };
             }
 
-            params.starting_concept_id = startingConceptID;
             startingConceptID = null;
 
             return params;
-        };
-
-        //set ui to hour glass
-        Common.cursor_wait();
-
-        if (parentSearch === undefined || parentSearch === null) {
-            parentSearch = false;
-        }
-
-        if (stated === undefined || stated === null) {
-            stated = 'true';
-        }
-
-        // select_item tells the tree if it should select the first item when the data is loaded
-        if (selectItem === undefined || selectItem === null) {
-            selectItem = false;
-        }
-
-        var settings = {
-            "core": {
-                "animation": 0,
-                "check_callback": true,
-                "themes": {"stripes": true},
-                'data': {
-                    'url': gon.routes.taxonomy_load_tree_data_path,
-                    'data': function (node) {
-                        return getParameters(node);
-                    }
-                }
-            }
-        };
+        }.bind(this);
 
         // if this is a parent search make sure the loading text is oriented correctly.
         if (parentSearch) {
@@ -108,6 +112,7 @@ var KometTaxonomyTree = function(treeID, stated, parentSearch, startingConceptID
         this.startingConceptID = startingConceptID;
         this.selectItem = selectItem;
         this.stated = stated;
+        this.multiPath = multiPath;
         this.tree.on('after_open.jstree', onAfterOpen);
         this.tree.on('after_close.jstree', onAfterClose);
         this.tree.on('changed.jstree', onChanged.bind(this));
@@ -137,10 +142,16 @@ var KometTaxonomyTree = function(treeID, stated, parentSearch, startingConceptID
         function onChanged(event, selectedObject) {
 
             var conceptID = selectedObject.node.original.concept_id;
+            var viewerID = WindowManager.getLinkedViewerID();
+            var viewer = this.tree.parents("div[id^=komet_viewer_]");
+
+            if (viewer.length > 0){
+                viewerID = viewer.first().attr("data-komet-viewer-id");
+            }
 
             this.selectedConceptID = conceptID;
 
-            $.publish(KometChannels.Taxonomy.taxonomyTreeNodeSelectedChannel, [this.treeID, conceptID, this.stated, this.viewerID]);
+            $.publish(KometChannels.Taxonomy.taxonomyTreeNodeSelectedChannel, [this.treeID, conceptID, this.stated, viewerID, this.windowType]);
         }
     };
 
@@ -148,14 +159,14 @@ var KometTaxonomyTree = function(treeID, stated, parentSearch, startingConceptID
     KometTaxonomyTree.prototype.reloadTreeStatedView = function(stated) {
 
         this.tree.jstree(true).destroy();
-        this.buildTaxonomyTree(stated, this.parentSearch, this.startingConceptID, this.selectItem);
+        this.buildTaxonomyTree(stated, this.parentSearch, this.startingConceptID, this.selectItem, this.multiPath);
     };
 
     // destroy the current tree and reload it using the conceptID as a starting point
     KometTaxonomyTree.prototype.rebaseTreeAtConcept = function(conceptID, stated) {
 
         this.tree.jstree(true).destroy();
-        this.buildTaxonomyTree(stated, false, conceptID, true);
+        this.buildTaxonomyTree(stated, this.parentSearch, conceptID, this.selectItem, this.multiPath);
     };
 
     KometTaxonomyTree.prototype.getNodeIDByConceptID = function(conceptID){
@@ -215,38 +226,51 @@ var KometTaxonomyTree = function(treeID, stated, parentSearch, startingConceptID
 
                 if (data.length > 0){
 
+                    // function to dig through the returned parents node and create an array that starts at the root node and goes to the target concept's parent
+                    var generateParentArray = function (node){
+
+                        var parentArray = [];
+
+                        if (node.children && node.children.length > 0){
+
+                            parentArray = generateParentArray(node.children[0]);
+                            parentArray.push(node.concept_id)
+                        } else {
+                            parentArray.push(node.concept_id)
+                        }
+
+                        return parentArray;
+                    };
+
+                    var parentArray = generateParentArray(data[0]);
+
                     // this is a recursive function that will process each of the returned nodes, starting with the root, and walk down to the target node
-                    var reverseTreeWalk = function(node){
+                    var walkTree = function(index){
 
-                        // get find this node in the tree
-                        var nodeInTree = tree.get_node(this.getNodeIDByConceptID(node.concept_id));
+                        // find this node in the tree
+                        var nodeInTree = tree.get_node(this.getNodeIDByConceptID(parentArray[index]));
 
-                        if (nodeInTree){
+                        if (nodeInTree) {
 
                             // store the open/close state of the node in the tree
                             var isAlreadyOpen = tree.is_open(nodeInTree);
 
                             // add a function to our callback array to handle cleanup of this node once the target node is found
-                            cleanUpNodes.push(function(){
+                            cleanUpNodes.push(function () {
 
                                 // if the node was closed and we are not selecting the target node, re-close this node
-                                if (!selectTheNode && !isAlreadyOpen){
+                                if (!selectTheNode && !isAlreadyOpen) {
                                     tree.close_node(nodeInTree);
                                 }
                             });
 
                             var processNodeChildren = function(){
 
-                                // if the node has parents (which is actually a list of its children in the regular tree)
-                                if (typeof node.parent !== 'undefined'){
+                                // if we are not at the last element of the parent array
+                                if (index < parentArray.length - 1){
 
-                                    // look through the lineage nodes until you find the node referenced by this node's parent property (which is actually its child in the regular tree)
-                                    var nextNode = data.find(function(arrayNode){
-                                        return arrayNode.id == node.parent;
-                                    });
-
-                                    // call this function again using the child node
-                                    reverseTreeWalk(nextNode);
+                                    // call this the walkTree function again with the index for the next child node
+                                    walkTree(index + 1);
 
                                 } else{
 
@@ -269,8 +293,8 @@ var KometTaxonomyTree = function(treeID, stated, parentSearch, startingConceptID
                         }
                     }.bind(this);
 
-                    // call the recursive function with the root node
-                    reverseTreeWalk(data[data.length - 1]);
+                    // call the recursive function with the index for the root node
+                    walkTree(0);
                 }
             }.bind(this);
 
@@ -312,5 +336,5 @@ var KometTaxonomyTree = function(treeID, stated, parentSearch, startingConceptID
     };
 
     // call our constructor function
-    this.init(treeID, stated, parentSearch, startingConceptID, selectItem, viewerID);
+    this.init(treeID, stated, parentSearch, startingConceptID, selectItem, windowType, multiPath);
 };

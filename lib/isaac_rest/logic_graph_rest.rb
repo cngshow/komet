@@ -28,9 +28,10 @@ module LogicGraphRest
   include CommonActionSyms
   extend self
 
-  LOGIC_GRAPH_PATH = ISAAC_ROOT + 'rest/1/logicGraph/'
-  CHRONOLOGY_PATH = LOGIC_GRAPH_PATH + 'chronology/{id}'
-  VERSION_PATH = LOGIC_GRAPH_PATH + 'version/{id}'
+  #always name the root_path ROOT_PATH!
+  ROOT_PATH = ISAAC_ROOT + 'rest/1/logicGraph/'
+  CHRONOLOGY_PATH = ROOT_PATH + 'chronology/{id}'
+  VERSION_PATH = ROOT_PATH + 'version/{id}'
 
   TEST_UUID = '406e872b-2e19-5f5e-a71d-e4e4b2c68fe5'
 
@@ -87,6 +88,10 @@ a = LogicGraphRest::get_graph(action: LogicGraphRestActions::ACTION_CHRONOLOGY,u
 b = LogicGraphRest::get_graph(action: LogicGraphRestActions::ACTION_VERSION,uuid_or_id: LogicGraphRest::TEST_UUID)
 s = LogicGraphRest.get_graph(action: ACTION_VERSION, uuid_or_id: "251be9d9-0193-3c98-9d11-317658983101", additional_req_params: {},raw_json: true)
 
+#no caching!!!!
+#just add the key as follows to your additional req params.  Its absence implies caching will occur, but you can be explicit and set it to true
+#This key is never part of the request in the get, put or post.  We use an unmarshallable ruby object to ensure this.
+uncached = LogicGraphRest::get_graph(action: LogicGraphRestActions::ACTION_CHRONOLOGY,uuid_or_id: LogicGraphRest::TEST_UUID,  additional_req_params: {CommonRest::CacheRequest => false})
 
 =end
 

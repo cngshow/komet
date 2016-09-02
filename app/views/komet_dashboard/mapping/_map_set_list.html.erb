@@ -1,0 +1,39 @@
+<script>
+    //function mapping_viewer_<%= @viewer_id %>(){
+        //var viewer = WindowManager.viewers[<%= @viewer_id %>];
+</script>
+
+<div id="komet_mapping_section_<%= @viewer_id %>">
+
+  <div>
+    Mapping Sets
+    <%= label_tag "komet_mapping_overview_page_size_#{@viewer_id}", 'Page Size:' %>
+    <%= select_tag "komet_mapping_overview_page_size_#{@viewer_id}", options_for_select([['25'], ['50'], ['100'], ['250'], ['500'], ['1000']], '25')  %>
+    <div id="komet_mapping_overview_sets_refresh_<%= @viewer_id %>" title="Reload Mapping Set Grid" class="fa fa-refresh" onclick="WindowManager.viewers[<%= @viewer_id %>].loadOverviewSetsGrid();"></div>
+    <div id="komet_mapping_overview_sets_stamp_<%= @viewer_id %>" title="Toggle STAMP Fields" class="fa fa-user" onclick="WindowManager.viewers[<%= @viewer_id %>].toggleOverviewSTAMP();"></div>
+    <div id="komet_mapping_overview_sets_inactive_<%= @viewer_id %>" title="Toggle Inactive Concepts" class="fa-stack small" onclick="WindowManager.viewers[<%= @viewer_id %>].toggleOverviewInactiveConcepts();">
+      <div class="fa fa-square fa-stack-2x"></div>
+      <div class="fa fa-code-fork fa-stack-1x fa-inverse"></div>
+    </div>
+  </div>
+
+  <div id="komet_mapping_overview_sets_<%= @viewer_id %>" style="height: 450px;" class="ag-fresh"></div>
+
+  <div>
+    <div class="fa fa-plus" title="Create New Map Set" onclick="WindowManager.viewers[<%= @viewer_id %>].openSetEditor(true);"></div>
+    <div id="komet_mapping_overview_set_delete_<%= @viewer_id %>" class="fa fa-minus ui-state-disabled" title="Delete Selected Map Set"></div>
+    <div id="komet_mapping_overview_set_edit_<%= @viewer_id %>" class="fa fa-pencil ui-state-disabled" title="Edit Selected Map Set" onclick="WindowManager.viewers[<%= @viewer_id %>].openSetEditor(false);"></div>
+    <span>0 Mapping Items</span>
+  </div>
+
+</div>
+
+<script>
+    //}();
+    
+  $(document).ready(function () {
+
+      WindowManager.viewers[<%= @viewer_id %>].loadOverviewSetsGrid();
+  });
+
+</script>

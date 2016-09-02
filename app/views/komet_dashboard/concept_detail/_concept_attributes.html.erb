@@ -6,7 +6,7 @@
     <div class="komet-concept-section-panel-header">
 
       <!-- expand/collapse icon - controls details drawer -->
-      <div class="glyphicon glyphicon-plus-sign" onclick="ConceptsModule.viewers[<%= @viewer_id %>].togglePanelDetails('komet_concept_attributes_panel_<%= @viewer_id %>', null, true)"></div>
+      <div class="glyphicon glyphicon-plus-sign" onclick="WindowManager.viewers[<%= @viewer_id %>].togglePanelDetails('komet_concept_attributes_panel_<%= @viewer_id %>', null, true)"></div>
 
       <!-- Status -->
       <div class="komet-concept-attributes-status">
@@ -49,5 +49,5 @@
   </div>
 
 <script>
-  ConceptsModule.viewers[<%= @viewer_id %>].setPanelState('komet_concept_attributes_panel_<%= @viewer_id %>', null, null);
+  WindowManager.viewers[<%= @viewer_id %>].setPanelState('komet_concept_attributes_panel_<%= @viewer_id %>', null, null);
 </script>

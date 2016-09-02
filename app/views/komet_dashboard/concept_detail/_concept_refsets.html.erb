@@ -5,7 +5,7 @@
   <!-- main header block - always visible -->
   <div class="komet-concept-section-panel-header">
     <!-- expand/collapse icon - controls details drawer -->
-    <div class="glyphicon glyphicon-plus-sign" onclick="ConceptsModule.viewers[<%= @viewer_id %>].togglePanelDetails('komet_concept_refsets_panel_<%= @viewer_id %>', null, true)"></div>
+    <div class="glyphicon glyphicon-plus-sign" onclick="WindowManager.viewers[<%= @viewer_id %>].togglePanelDetails('komet_concept_refsets_panel_<%= @viewer_id %>', null, true)"></div>
     <!-- description type, refset -->
     <div>
       Click here to view refsets
@@ -17,13 +17,13 @@
   <div class="komet-concept-section-panel-details">
 
     <div id="refsets_grid_<%= @viewer_id %>" style="height: 350px;" class="ag-fresh"></div> <BR>
-    <button id="taxonomy_refset_export" onclick="ConceptsModule.viewers[<%= @viewer_id %>].exportCSV()">CSV Export</button>
+    <button id="taxonomy_refset_export" onclick="WindowManager.viewers[<%= @viewer_id %>].exportCSV()">CSV Export</button>
 
   </div>
 
 </div>
 
 <script>
-  ConceptsModule.viewers[<%= @viewer_id %>].setPanelState('komet_concept_refsets_panel_<%= @viewer_id %>', null, ConceptsModule.viewers[<%= @viewer_id %>].loadRefsetGrid.bind(ConceptsModule.viewers[<%= @viewer_id %>]));
+  WindowManager.viewers[<%= @viewer_id %>].setPanelState('komet_concept_refsets_panel_<%= @viewer_id %>', null, WindowManager.viewers[<%= @viewer_id %>].loadRefsetGrid.bind(WindowManager.viewers[<%= @viewer_id %>]));
 </script>
 

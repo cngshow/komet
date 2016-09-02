@@ -8,12 +8,13 @@
 	<parent>
 		<groupId>gov.vha.isaac.ochre</groupId>
 		<artifactId>isaac-parent</artifactId>
-		<version>3.08</version>
+		<version>3.09</version>
+		<!--if releasing, from 3.10-SNAPSHOT move to 3.09 (example)-->
 	</parent>
 
 	<groupId>gov.vha.isaac.gui.rails</groupId>
 	<artifactId>rails_komet</artifactId>
-	<version>1.15</version>
+	<version>1.17</version>
 	<packaging>pom</packaging>
 
 	<name>ISAAC Rails Komet Tooling</name>
@@ -23,7 +24,8 @@
 	</description>
 
 	<properties>
-		<rails_common.version>1.11</rails_common.version>
+		<rails_common.version>1.18</rails_common.version>
+		<!--if releasing, from 3.10-SNAPSHOT move to 3.09 (example)-->
 		<isaac.version>${project.parent.version}</isaac.version>
 		<!-- railsMode is automatically set to 'test' or 'production' - 'test' if the version number ends with '-SNAPSHOT'
 		or 'production' otherwise.  See ant execution below-->
@@ -117,7 +119,7 @@
 						</goals>
 						<configuration>
 							<jrubyVerbose>true</jrubyVerbose>
-							<jrubyJvmArgs>-Xmx4000m</jrubyJvmArgs>
+							<jrubyJvmArgs>-Xmx4000m -Djava.awt.headless=true</jrubyJvmArgs>
 							<command>bundle</command>
 							<args>install</args>
 						</configuration>
@@ -131,7 +133,7 @@
 						</goals>
 						<configuration>
 							<jrubyVerbose>true</jrubyVerbose>
-							<jrubyJvmArgs>-Xmx4000m</jrubyJvmArgs>
+							<jrubyJvmArgs>-Xmx4000m -Djava.awt.headless=true</jrubyJvmArgs>
 							<command>rake</command>
 							<args>devops:isaac_rest_test</args>
 						</configuration>
@@ -146,7 +148,7 @@
 						</goals>
 						<configuration>
 							<jrubyVerbose>true</jrubyVerbose>
-							<jrubyJvmArgs>-Xmx4000m</jrubyJvmArgs>
+							<jrubyJvmArgs>-Xmx4000m -Djava.awt.headless=true</jrubyJvmArgs>
 							<execArgs>RAILS_ENV=${railsMode} RAILS_RELATIVE_URL_ROOT=/rails_komet_a</execArgs>
 							<command>rake</command>
 							<args>devops:build_war</args>
@@ -160,7 +162,7 @@
 						</goals>
 						<configuration>
 							<jrubyVerbose>true</jrubyVerbose>
-							<jrubyJvmArgs>-Xmx4000m</jrubyJvmArgs>
+							<jrubyJvmArgs>-Xmx4000m -Djava.awt.headless=true</jrubyJvmArgs>
 							<execArgs>RAILS_ENV=${railsMode} RAILS_RELATIVE_URL_ROOT=/rails_komet_b</execArgs>
 							<command>rake</command>
 							<args>devops:build_war</args>

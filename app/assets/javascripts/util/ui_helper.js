@@ -56,11 +56,11 @@ var UIHelper = (function () {
 
                     items.openConcept = {name:"Open in Concept Pane", icon: "context-menu-icon glyphicon-list-alt", callback: openConcept($triggerElement, uuid)};
 
-                    if (ConceptsModule.viewers.inlineViewers.length < ConceptsModule.viewers.maxInlineViewers) {
+                    if (WindowManager.viewers.inlineViewers.length < WindowManager.viewers.maxInlineViewers) {
                         items.openNewConceptViwer = {
                             name: "Open in New Concept Viewer",
                             icon: "context-menu-icon glyphicon-list-alt",
-                            callback: openConcept($triggerElement, uuid, "new")
+                            callback: openConcept($triggerElement, uuid, null, WindowManager.NEW)
                         };
                     }
 
@@ -105,37 +105,39 @@ var UIHelper = (function () {
         };
     }
 
-    function openConcept(element, id, viewerID) {
+    function openConcept(element, id, viewerID, windowType) {
 
         return function () {
 
             var stated;
-            var conceptPanel = element.parents("div[id^=komet_concept_panel_]");
+            var conceptPanel = element.parents("div[id^=komet_viewer_]");
 
             if (viewerID === undefined){
 
                 if (conceptPanel.length > 0){
                     viewerID = conceptPanel.first().attr("data-komet-viewer-id");
                 } else{
-                    viewerID = TaxonomyModule.getLinkedViewerID();
+                    viewerID = WindowManager.getLinkedViewerID();
                 }
             }
 
             if (conceptPanel.length > 0){
-
-                if (viewerID == "new"){
-                    stated = ConceptsModule.viewers[conceptPanel.first().attr("data-komet-viewer-id")].getStatedView();
-                } else {
-                    stated = ConceptsModule.viewers[viewerID].getStatedView();
-                }
+                stated = WindowManager.viewers[viewerID].getStatedView();
             } else{
                 stated = TaxonomyModule.getStatedView();
             }
 
-            $.publish(KometChannels.Taxonomy.taxonomyTreeNodeSelectedChannel, ["", id, stated, viewerID]);
+            $.publish(KometChannels.Taxonomy.taxonomyTreeNodeSelectedChannel, ["", id, stated, viewerID, windowType]);
         };
     }
 
+    function openAddEditConcept()
+    {
+
+         //  callback: openConcept($triggerElement, uuid, null, WindowManager.NEW)
+         $.publish(KometChannels.Taxonomy.taxonomyAddEditConceptChannel, ['', WindowManager.getLinkedViewerID()]);
+
+    }
     // function to switch a field between enabled and disabled
     function toggleFieldAvailability(field_name, enable){
 
@@ -157,7 +159,8 @@ var UIHelper = (function () {
         isTabActive: isTabActive,
         initializeContextMenus: initializeContextMenus,
         generateFormErrorMessage: generateFormErrorMessage,
-        toggleFieldAvailability: toggleFieldAvailability
+        toggleFieldAvailability: toggleFieldAvailability,
+        openAddEditConcept: openAddEditConcept
     };
 })();
 

@@ -9,25 +9,29 @@ require './lib/rails_common/logging/open_logging'
 require './lib/rails_common/logging/logging'
 require './lib/utilities/cached_hash'
 require './lib/rails_common/util/helpers'
-final_root = nil
-#All the rest libs depend on ISAAC_ROOT.   The line below mus be above those requires.
-if ($PROPS['PRISME.isaac_root'])
-  ir = $PROPS['PRISME.isaac_root']
-  ir << '/' unless ir[-1].eql?('/')
-  ISAAC_ROOT = ir
-else
-  root_possibilites = eval $PROPS['ENDPOINT.isaac_root']
-  root_possibilites.each do |url|
-    if KOMETUtilities::isaac_rest_site_up?(uri: URI(url))
-      final_root = url
-      break
+
+Thread.new do
+  final_root = ''
+#All the rest libs depend on ISAAC_ROOT.   The line below must be above those requires.
+  if ($PROPS['PRISME.isaac_root'])
+    ir = $PROPS['PRISME.isaac_root']
+    ir << '/' unless ir[-1].eql?('/')
+    ISAAC_ROOT = ir
+  else
+    root_possibilites = eval $PROPS['ENDPOINT.isaac_root']
+    root_possibilites.each do |url|
+      if KOMETUtilities::isaac_rest_site_up?(uri: URI(url))
+        final_root = url
+        break
+      end
     end
+    ISAAC_ROOT = final_root
   end
-  ISAAC_ROOT = final_root
+  $log.always("I am pointed to #{ISAAC_ROOT}")
 end
-$log.always("I am pointed to #{ISAAC_ROOT}")
+
 #in developer mode it is nice to have the rest classes fully loaded so all the registration takes place, for example:
-# register_rest(rest_module: LogicGraphRest, rest_actions: LogicGraphRestActions)
+#register_rest(rest_module: LogicGraphRest, rest_actions: LogicGraphRestActions)
 #This ensures the rails console plays nice.
 require './lib/isaac_rest/logic_graph_rest'
 require './lib/isaac_rest/concept_rest'

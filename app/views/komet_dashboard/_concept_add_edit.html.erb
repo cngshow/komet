@@ -1,0 +1,69 @@
+<div class="panel panel-default komet-no-margins komet-panel" data-komet-viewer-id="<%= @viewer_id %>" id="komet_viewer_<%= @viewer_id %>" >
+    <div class="panel-heading">
+     <span class="panel-title komet-section-title">Create Concept
+      </span>
+    </div>
+    <div class="panel-body">
+
+        <div style="width: 750px ; float: right">
+          <button type="button" class="btn btn-primary" onclick="WindowManager.closeViewer(<%= @viewer_id %>)">Cancel</button>
+          <button type="button" class="btn btn-primary" onclick="TaxonomyModule.saveConcept()">Submit</button>
+        </div><BR><BR>
+      <div> <div >
+         &nbsp; &nbsp;Name: <input id="txtName" style="width:300px" type="text"><Br><br>
+        </div>
+      <div style="width:350px;">
+        <input id="taxonomy_lineage_id" class="hide" />
+         <div style="float: left"> Lineage:</div><div  id="taxonomy_search_assemblage_fields" class="input-group">
+
+          <input id="taxonomy_lineage_display" class="form-control"  />
+
+            <div class="input-group-btn komet-search-combo-field">
+
+              <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                <span class="caret"></span>
+              </button>
+
+              <ul id="taxonomy_lineage_recents" class="dropdown-menu dropdown-menu-right">
+              </ul>
+
+            </div><!-- /btn-group -->
+          </div><!-- /input-group --><br>
+       <div style="padding-left: 55px;"> <select id="komet_concept" >
+          <option>Primitive</option>
+          <option>Fully Defined</option>
+        </select>
+        <select id="komet_language" >
+          <option>enUS</option>
+          <option>enUK Defined</option>
+        </select>
+        <select id="komet_languageDialect" >
+          <option>enGB</option>
+          <option>enUS</option>
+        </select>
+       </div>
+      </div>
+
+
+        <div class="komet-concept-description-title"> <BR><BR>DESCRIPTIONS</div>
+         <div  class="komet-concept-section-panel komet-concept-description-panel">
+           <!-- main header block - always visible -->
+         <div>
+
+         <div>
+           Preferred Name: <div   id="taxonomy_pn_text"></div><br><br>
+           Fully Specified Name: <div   id="taxonomy_fsn_text"></div><br>
+          </div><BR><BR>
+
+        </div>
+       </div>
+    </div>
+</div>
+
+</div>
+
+<script>
+  WindowManager.viewers[<%= @viewer_id %>].setPanelState('komet_viewer_<%= @viewer_id %>', null, WindowManager.viewers[<%= @viewer_id %>].createName(WindowManager.viewers[<%= @viewer_id %>]));
+</script>
+
+

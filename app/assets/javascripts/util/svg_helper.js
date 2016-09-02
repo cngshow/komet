@@ -38,7 +38,8 @@ var SvgHelper = (function () {
               $(id).svg({
                    settings: {
                        width: '1000px',
-                       height: '520px'
+                       height: '520px',
+                       overflow:'scroll'
                    }
                });
            }
@@ -46,7 +47,8 @@ var SvgHelper = (function () {
                $(id).svg({
                    settings: {
                        width: '1000px',
-                       height: '200px'
+                       height: '520px',
+                       overflow:'scroll'
                    }
                });
            }
@@ -74,10 +76,14 @@ var SvgHelper = (function () {
            y = y + rect1.getBBox().height + 40;
            var circle1;
 
-           if (data.rootLogicNode.children[0].nodeSemantic.name == "SUFFICIENT_SET") {
-               circle1 = drawEquivalentNode(svg, x, y);
+         for (nodecount = 0; nodecount < data.rootLogicNode.children.length ; nodecount++)
+         {
+
+           if (data.rootLogicNode.children[nodecount].nodeSemantic.name == "SUFFICIENT_SET") {
+               circle1 = drawEquivalentNode(svg, 100, y);
            } else {
-               circle1 = drawSubsumedByNode(svg, x, y);
+                   circle1 = drawSubsumedByNode(svg, 100, y);
+
            }
 
            connectElements(svg, rect1, circle1, 'bottom-50', 'left');
@@ -92,11 +98,11 @@ var SvgHelper = (function () {
            var svgAttrModel = [];
            var getelements = [];
 
-           for (i = 0; i < data.rootLogicNode.children[0].children[0].children.length; i++) {
-               getelements.push(JSON.parse(buildArray(data.rootLogicNode.children[0].children[0].children[i], "yes")));
-               if (data.rootLogicNode.children[0].children[0].children[i].children.length > 0) {
-                   for (a = 0; a < data.rootLogicNode.children[0].children[0].children[i].children[0].children.length; a++) {
-                       getelements.push(JSON.parse(buildArray(data.rootLogicNode.children[0].children[0].children[i].children[0].children[a], "no")));
+           for (i = 0; i < data.rootLogicNode.children[nodecount].children[0].children.length; i++) {
+               getelements.push(JSON.parse(buildArray(data.rootLogicNode.children[nodecount].children[0].children[i], "yes")));
+               if (data.rootLogicNode.children[nodecount].children[0].children[i].children.length > 0) {
+                   for (a = 0; a < data.rootLogicNode.children[nodecount].children[0].children[i].children[0].children.length; a++) {
+                       getelements.push(JSON.parse(buildArray(data.rootLogicNode.children[nodecount].children[0].children[i].children[0].children[a], "no")));
                    }
                }
            }
@@ -114,7 +120,7 @@ var SvgHelper = (function () {
 
           // sctClass = "sct-defined-concept";
            $.each(svgIsaModel, function (i, relationship) {
-               if (relationship.isConceptDefined === true) {
+               if (relationship.isConceptDefined == "true") {
                    sctClass = "sct-defined-concept";
                } else {
                    sctClass = "sct-primitive-concept";
@@ -156,7 +162,7 @@ var SvgHelper = (function () {
                    connectElements(svg, groupNode, conjunctionNode, 'right', 'left');
                }
 
-               if (relationship.isConceptDefined === true) {
+               if (relationship.isConceptDefined == "true") {
                    sctClass = "sct-defined-concept";
                } else {
                    sctClass = "sct-primitive-concept";
@@ -172,9 +178,9 @@ var SvgHelper = (function () {
                }
 
            });
+           }
 
-           //currentConcept = concept;
-           //currentSvgId = svgId;
+
        }
         else
        {
@@ -520,7 +526,7 @@ var SvgHelper = (function () {
 
         // only draw the diagram if it doesn't exist and will be visible
         if($("#" + svg_id).svg('get') === undefined && open){
-            SvgHelper.startDiagram(svg_id, concept_id, ConceptsModule.viewers[panel_id.substring(panel_id.lastIndexOf("_") + 1)].getStatedView());
+            SvgHelper.startDiagram(svg_id, concept_id, WindowManager.viewers[panel_id.substring(panel_id.lastIndexOf("_") + 1)].getStatedView());
         }
     }
 

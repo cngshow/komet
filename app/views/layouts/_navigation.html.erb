@@ -6,11 +6,10 @@
   <div>
     <ul class="nav navbar-nav">
       <li><a href="javascript: location.replace('<%= komet_dashboard_dashboard_path %>')">Taxonomy Dashboard</a></li>
-      <li><a href="javascript: location.replace('<%= mapping_mapping_path %>')">Mapping</a></li>
       <li><a id="settings" href="#">Settings</a></li>
       <li><a id="logout" href="<%=logout_path%>">logout</a></li>
       <div id="dialog-form" title="User's Preference">
-        <div id="tabs">
+        <div id="komet_preferences_tabs">
           <ul>
             <li><a href='#useroptions'>Options</a></li>
             <li><a href='#color-module'>Color Module</a></li>
@@ -71,7 +70,7 @@
 <script>
 
   $(document).ready(function () {
-    $("#tabs").tabs();
+    $("#komet_preferences_tabs").tabs();
     PreferenceModule.initialize();
     });
 </script>

@@ -1,8 +1,9 @@
 #if prisme.properties is present prisme must be up!
 #edits here require a restart to your Komet instance
 #Edit prisme_root to use prisme for roles.
-#prisme_root=http://localhost:8080/rails_prisme/
-#prisme_roles_url=https://localhost:443/roles/get_roles
+#prisme_root=http://localhost:8080/rails_prisme
+prisme_roles_url=https://localhost:443/roles/get_roles
+prisme_roles_ssoi_url=https://localhost:443/roles/get_ssoi_roles.json
 #Edit this to true to default to the prisme instead of the test roles test harness.
 #war_group_id=gov.vha.isaac.gui.rails
 #war_artifact_id=rails_komet
@@ -10,4 +11,4 @@
 #war_repo=releases
 #war_classifier=a
 #war_package=war
-#isaac_root=http://localhost:8080/isaac-rest/
+isaac_root=https://vadev.mantech.com:4848/isaac-rest/

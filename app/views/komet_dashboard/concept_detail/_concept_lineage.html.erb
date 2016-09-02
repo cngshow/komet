@@ -6,7 +6,7 @@
     <div class="komet-concept-section-panel-header">
 
       <!-- expand/collapse icon - controls details drawer -->
-      <div class="glyphicon glyphicon-plus-sign" onclick="ConceptsModule.viewers[<%= @viewer_id %>].togglePanelDetails('komet_concept_lineage_panel_<%= @viewer_id %>', null, true)"></div>
+      <div class="glyphicon glyphicon-plus-sign" onclick="WindowManager.viewers[<%= @viewer_id %>].togglePanelDetails('komet_concept_lineage_panel_<%= @viewer_id %>', null, true)"></div>
 
       <!-- description type, refset -->
       <div>
@@ -24,535 +24,111 @@
         <div id="concept_lineage_parents_tree_<%= @viewer_id %>" class="komet-reverse-tree">No Parents</div>
       </div>
 
+      <div class="komet-concept-lineage-summary-container">
+        <div class="komet-concept-lineage-summary-details">
+
+          <div class="komet-concept-lineage-summary-text">
+
+            <!-- Defined -->
+            <% if @attributes[2][:value] == 'Primitive' %>
+                <div class="komet-tree-node-icon komet-tree-node-primitive" title="<%= @attributes[2][:value] %>"></div>
+            <% else %>
+                <div class="komet-tree-node-icon komet-tree-node-defined" title="<%= @attributes[2][:value] %>"></div>
+            <% end %>
+
+            &nbsp; <%= @attributes[0][:value] %>
+
+          </div>
+
+          <div>
+            <% if @attributes[8] %>
+                <%= @attributes[8][:label] %>: <%= @attributes[8][:value] %>
+            <% else %>
+                <%= @attributes[7][:label] %>: <%= @attributes[7][:value] %>
+            <% end %>
+          </div>
+
+          <hr class="komet-concept-details-hr">
+
+          <% @descriptions[:descriptions].each do |description| %>
+              <div><%= description[:text] %></div>
+          <% end %>
+
+        </div>
+
+        <!--<div class="komet-concept-lineage-summary-attributes">
+              No Attributes
+        </div>-->
+
+      </div>
+
       <div class="komet-concept-lineage-tree-container">
         <div>Children</div>
         <div id="concept_lineage_children_tree_<%= @viewer_id %>">No Children</div>
       </div>
-
 
     </div>
 
   </div>
 
 <script>
-  ConceptsModule.viewers[<%= @viewer_id %>].setPanelState('komet_concept_lineage_panel_<%= @viewer_id %>', null, null);
+  WindowManager.viewers[<%= @viewer_id %>].setPanelState('komet_concept_lineage_panel_<%= @viewer_id %>', null, null);
 
   var json = [{
-    "id": 873260856786581,
-    "concept_id": "1bcfd2dd-772a-3772-85bb-5a8bb3047f3d",
-    "text": "Record entry (record artifact)\u0026nbsp;\u0026nbsp;\u003cspan class=\"badge badge-success\" title=\"kma\"\u003e2\u003c/span\u003e",
-    "parent_reversed": "false",
-    "parent_search": "false",
-    "icon": "glyphicon glyphicon-book",
+    "id": 6589162692398264,
+    "concept_id": "eb30252e-8ae6-5e24-94f3-99748ee5dca4",
+    "text": "Specimen Physical properties, artifacts\u0026nbsp;\u0026nbsp;\u003cspan class=\"badge badge-success\" title=\"kma\"\u003e1\u003c/span\u003e",
+    "parent_reversed": "true",
+    "parent_search": "true",
+    "icon": "komet-tree-node-icon komet-tree-node-primitive-arrow",
     "a_attr": {
-      "class": "komet-context-menu",
+      "class": "komet-context-menu komet-reverse-tree-node",
       "data-menu-type": "concept",
-      "data-menu-uuid": "1bcfd2dd-772a-3772-85bb-5a8bb3047f3d"
+      "data-menu-uuid": "eb30252e-8ae6-5e24-94f3-99748ee5dca4"
     },
-    "parent": "#"
+    "parent": "#",
+    "state": {"opened": "true"}
   }, {
-    "id": 873260857617537,
-    "concept_id": "0591e0ff-4355-3502-9a45-67605942c7c2",
-    "text": "Clinical statement entry (record artifact)",
-    "parent_reversed": "false",
-    "parent_search": "false",
-    "icon": "glyphicon glyphicon-leaf",
+    "id": 6589162692746149,
+    "concept_id": "9ea706c0-a997-5686-bdfd-8d75f39e282f",
+    "text": "Chemistry\u0026nbsp;\u0026nbsp;\u003cspan class=\"badge badge-success\" title=\"kma\"\u003e1\u003c/span\u003e",
+    "parent_reversed": "true",
+    "parent_search": "true",
+    "icon": "komet-tree-node-icon komet-tree-node-primitive-arrow",
     "a_attr": {
-      "class": "komet-context-menu",
+      "class": "komet-context-menu komet-reverse-tree-node",
       "data-menu-type": "concept",
-      "data-menu-uuid": "0591e0ff-4355-3502-9a45-67605942c7c2"
+      "data-menu-uuid": "9ea706c0-a997-5686-bdfd-8d75f39e282f"
     },
-    "parent": "873260856786581"
+    "parent": "6589162692398264",
+    "state": {"opened": "true"}
   }, {
-    "id": 873260858456631,
-    "concept_id": "927058d8-00fa-3fe8-83d6-5550f6a0c01c",
-    "text": "Battery entry (record artifact)",
-    "parent_reversed": "false",
-    "parent_search": "false",
-    "icon": "glyphicon glyphicon-leaf",
+    "id": 6589162693094742,
+    "concept_id": "bf3e0380-14bf-5502-81b8-faff971f706d",
+    "text": "LOINC\u0026nbsp;\u0026nbsp;\u003cspan class=\"badge badge-success\" title=\"kma\"\u003e1\u003c/span\u003e",
+    "parent_reversed": "true",
+    "parent_search": "true",
+    "icon": "komet-tree-node-icon komet-tree-node-primitive-arrow",
     "a_attr": {
-      "class": "komet-context-menu",
+      "class": "komet-context-menu komet-reverse-tree-node",
       "data-menu-type": "concept",
-      "data-menu-uuid": "927058d8-00fa-3fe8-83d6-5550f6a0c01c"
+      "data-menu-uuid": "bf3e0380-14bf-5502-81b8-faff971f706d"
     },
-    "parent": "873260856786581"
+    "parent": "6589162692746149",
+    "state": {"opened": "true"}
   }, {
-    "id": 873260859358012,
-    "concept_id": "c9e485cc-b04b-3b65-b793-42ce81e91cd9",
-    "text": "Record organizer (record artifact)\u0026nbsp;\u0026nbsp;\u003cspan class=\"badge badge-success\" title=\"kma\"\u003e3\u003c/span\u003e",
-    "parent_reversed": "false",
-    "parent_search": "false",
-    "icon": "glyphicon glyphicon-book",
+    "id": 6589162693435196,
+    "concept_id": "7c21b6c5-cf11-5af9-893b-743f004c97f5",
+    "text": "ISAAC root (ISAAC)",
+    "parent_reversed": "true",
+    "parent_search": "true",
+    "icon": "komet-tree-node-icon komet-tree-node-primitive-arrow",
     "a_attr": {
-      "class": "komet-context-menu",
+      "class": "komet-context-menu komet-reverse-tree-node",
       "data-menu-type": "concept",
-      "data-menu-uuid": "c9e485cc-b04b-3b65-b793-42ce81e91cd9"
+      "data-menu-uuid": "7c21b6c5-cf11-5af9-893b-743f004c97f5"
     },
-    "parent": "#"
-  }, {
-    "id": 873260860184721,
-    "concept_id": "41c0408d-60b1-310b-8251-676271c4e8d5",
-    "text": "Record extract (record artifact)",
-    "parent_reversed": "false",
-    "parent_search": "false",
-    "icon": "glyphicon glyphicon-leaf",
-    "a_attr": {
-      "class": "komet-context-menu",
-      "data-menu-type": "concept",
-      "data-menu-uuid": "41c0408d-60b1-310b-8251-676271c4e8d5"
-    },
-    "parent": "873260859358012"
-  }, {
-    "id": 873260861258097,
-    "concept_id": "32cc73b4-60dd-3af1-a9e9-63fce269245c",
-    "text": "Record composition (record artifact)\u0026nbsp;\u0026nbsp;\u003cspan class=\"badge badge-success\" title=\"kma\"\u003e2\u003c/span\u003e",
-    "parent_reversed": "false",
-    "parent_search": "false",
-    "icon": "glyphicon glyphicon-book",
-    "a_attr": {
-      "class": "komet-context-menu",
-      "data-menu-type": "concept",
-      "data-menu-uuid": "32cc73b4-60dd-3af1-a9e9-63fce269245c"
-    },
-    "parent": "873260859358012"
-  }, {
-    "id": 873260862539212,
-    "concept_id": "451f654d-46a6-383d-b1c2-5a91c10e3a42",
-    "text": "Record document part (record artifact)",
-    "parent_reversed": "false",
-    "parent_search": "false",
-    "icon": "glyphicon glyphicon-leaf",
-    "a_attr": {
-      "class": "komet-context-menu",
-      "data-menu-type": "concept",
-      "data-menu-uuid": "451f654d-46a6-383d-b1c2-5a91c10e3a42"
-    },
-    "parent": "873260859358012"
-  }, {
-    "id": 873260864328526,
-    "concept_id": "cc56962a-eb04-34d9-b8dc-02950b267ad5",
-    "text": "Record types (administrative concept)\u0026nbsp;\u0026nbsp;\u003cspan class=\"badge badge-success\" title=\"kma\"\u003e3\u003c/span\u003e",
-    "parent_reversed": "false",
-    "parent_search": "false",
-    "icon": "glyphicon glyphicon-book",
-    "a_attr": {
-      "class": "komet-context-menu",
-      "data-menu-type": "concept",
-      "data-menu-uuid": "cc56962a-eb04-34d9-b8dc-02950b267ad5"
-    },
-    "parent": "#"
-  }, {
-    "id": 873260865417473,
-    "concept_id": "9c0ca1dc-9339-3bab-bba6-90801674887a",
-    "text": "Relief notes (administrative concept)",
-    "parent_reversed": "false",
-    "parent_search": "false",
-    "icon": "glyphicon glyphicon-leaf",
-    "a_attr": {
-      "class": "komet-context-menu",
-      "data-menu-type": "concept",
-      "data-menu-uuid": "9c0ca1dc-9339-3bab-bba6-90801674887a"
-    },
-    "parent": "873260864328526"
-  }, {
-    "id": 873260866414053,
-    "concept_id": "1cc1c1bd-1754-3767-9dea-e3d6d1172117",
-    "text": "Regulatory notes (procedure)\u0026nbsp;\u0026nbsp;\u003cspan class=\"badge badge-success\" title=\"kma\"\u003e1\u003c/span\u003e",
-    "parent_reversed": "false",
-    "parent_search": "false",
-    "icon": "glyphicon glyphicon-book",
-    "a_attr": {
-      "class": "komet-context-menu",
-      "data-menu-type": "concept",
-      "data-menu-uuid": "1cc1c1bd-1754-3767-9dea-e3d6d1172117"
-    },
-    "parent": "873260864328526"
-  }, {
-    "id": 873260867317557,
-    "concept_id": "9e3efc1f-dd6d-32eb-9c0b-9950f00f3d44",
-    "text": "Patient record types (administrative concept)\u0026nbsp;\u0026nbsp;\u003cspan class=\"badge badge-success\" title=\"kma\"\u003e9\u003c/span\u003e",
-    "parent_reversed": "false",
-    "parent_search": "false",
-    "icon": "glyphicon glyphicon-book",
-    "a_attr": {
-      "class": "komet-context-menu",
-      "data-menu-type": "concept",
-      "data-menu-uuid": "9e3efc1f-dd6d-32eb-9c0b-9950f00f3d44"
-    },
-    "parent": "873260864328526"
-  },{ // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-    "id": 883110720378997,
-    "concept_id": "2c0d264d-e6f7-333a-97ad-9b9a338f9d70",
-    "text": "Administrative documentation (administrative concept)\u0026nbsp;\u0026nbsp;\u003cspan class=\"badge badge-success\" title=\"kma\"\u003e1\u003c/span\u003e",
-    "parent_reversed": "false",
-    "parent_search": "false",
-    "icon": "glyphicon glyphicon-book",
-    "a_attr": {
-      "class": "komet-context-menu",
-      "data-menu-type": "concept",
-      "data-menu-uuid": "2c0d264d-e6f7-333a-97ad-9b9a338f9d70"
-    }
-  }, {
-    "id": 883110721207121,
-    "concept_id": "70ddc0f2-6759-328e-a840-2ed93639faeb",
-    "text": "Administrative forms (administrative concept)\u0026nbsp;\u0026nbsp;\u003cspan class=\"badge badge-success\" title=\"kma\"\u003e1\u003c/span\u003e",
-    "parent_reversed": "false",
-    "parent_search": "false",
-    "icon": "glyphicon glyphicon-book",
-    "a_attr": {
-      "class": "komet-context-menu",
-      "data-menu-type": "concept",
-      "data-menu-uuid": "70ddc0f2-6759-328e-a840-2ed93639faeb"
-    },
-    "parent": "883110720378997",
-    "children": true
-  }, {
-    "id": 883110722155925,
-    "concept_id": "98943ee9-cc68-3bd5-b6bd-a5bcfeca8210",
-    "text": "Reports (qualifier value)\u0026nbsp;\u0026nbsp;\u003cspan class=\"badge badge-success\" title=\"kma\"\u003e24\u003c/span\u003e",
-    "parent_reversed": "false",
-    "parent_search": "false",
-    "icon": "glyphicon glyphicon-book",
-    "a_attr": {
-      "class": "komet-context-menu",
-      "data-menu-type": "concept",
-      "data-menu-uuid": "98943ee9-cc68-3bd5-b6bd-a5bcfeca8210"
-    }
-  }, {
-    "id": 883110723376877,
-    "concept_id": "63c59d9d-0099-3497-999b-bd26cffea56d",
-    "text": "Statement of needs (qualifier value)",
-    "parent_reversed": "false",
-    "parent_search": "false",
-    "icon": "glyphicon glyphicon-leaf",
-    "a_attr": {
-      "class": "komet-context-menu",
-      "data-menu-type": "concept",
-      "data-menu-uuid": "63c59d9d-0099-3497-999b-bd26cffea56d"
-    },
-    "parent": "883110722155925",
-    "children": false
-  }, {
-    "id": 883110724243222,
-    "concept_id": "dc74da65-183e-3593-a5fd-a5a54cb1497c",
-    "text": "Clinical report (qualifier value)\u0026nbsp;\u0026nbsp;\u003cspan class=\"badge badge-success\" title=\"kma\"\u003e2\u003c/span\u003e",
-    "parent_reversed": "false",
-    "parent_search": "false",
-    "icon": "glyphicon glyphicon-book",
-    "a_attr": {
-      "class": "komet-context-menu",
-      "data-menu-type": "concept",
-      "data-menu-uuid": "dc74da65-183e-3593-a5fd-a5a54cb1497c"
-    },
-    "parent": "883110722155925",
-    "children": true
-  }, {
-    "id": 883110725086209,
-    "concept_id": "94052e61-1de0-3777-b996-151366849811",
-    "text": "Adoption - birth history report (qualifier value)\u0026nbsp;\u0026nbsp;\u003cspan class=\"badge badge-success\" title=\"kma\"\u003e1\u003c/span\u003e",
-    "parent_reversed": "false",
-    "parent_search": "false",
-    "icon": "glyphicon glyphicon-book",
-    "a_attr": {
-      "class": "komet-context-menu",
-      "data-menu-type": "concept",
-      "data-menu-uuid": "94052e61-1de0-3777-b996-151366849811"
-    },
-    "parent": "883110722155925",
-    "children": true
-  }, {
-    "id": 883110726279557,
-    "concept_id": "24387c10-560d-3f59-92b4-5baff2889629",
-    "text": "Housing report (qualifier value)",
-    "parent_reversed": "false",
-    "parent_search": "false",
-    "icon": "glyphicon glyphicon-leaf",
-    "a_attr": {
-      "class": "komet-context-menu",
-      "data-menu-type": "concept",
-      "data-menu-uuid": "24387c10-560d-3f59-92b4-5baff2889629"
-    },
-    "parent": "883110722155925",
-    "children": false
-  }, {
-    "id": 883110727121129,
-    "concept_id": "211864e2-8dc4-32e0-b256-fb3956e9c842",
-    "text": "Report to Drug Safety Research Unit (qualifier value)",
-    "parent_reversed": "false",
-    "parent_search": "false",
-    "icon": "glyphicon glyphicon-leaf",
-    "a_attr": {
-      "class": "komet-context-menu",
-      "data-menu-type": "concept",
-      "data-menu-uuid": "211864e2-8dc4-32e0-b256-fb3956e9c842"
-    },
-    "parent": "883110722155925",
-    "children": false
-  }, {
-    "id": 883110727981812,
-    "concept_id": "09630a76-d94e-35e9-a5cf-f763941bf1fd",
-    "text": "RM10-DHSS DMO report (qualifier value)",
-    "parent_reversed": "false",
-    "parent_search": "false",
-    "icon": "glyphicon glyphicon-leaf",
-    "a_attr": {
-      "class": "komet-context-menu",
-      "data-menu-type": "concept",
-      "data-menu-uuid": "09630a76-d94e-35e9-a5cf-f763941bf1fd"
-    },
-    "parent": "883110722155925",
-    "children": false
-  }, {
-    "id": 883110728905489,
-    "concept_id": "fdb1696f-2d29-3c57-8b85-a67a2e0f8df4",
-    "text": "War pensions report (qualifier value)",
-    "parent_reversed": "false",
-    "parent_search": "false",
-    "icon": "glyphicon glyphicon-leaf",
-    "a_attr": {
-      "class": "komet-context-menu",
-      "data-menu-type": "concept",
-      "data-menu-uuid": "fdb1696f-2d29-3c57-8b85-a67a2e0f8df4"
-    },
-    "parent": "883110722155925",
-    "children": false
-  }, {
-    "id": 883110729750954,
-    "concept_id": "b8bfca4e-33f5-3786-a279-b872c3a2f849",
-    "text": "Employment report (qualifier value)\u0026nbsp;\u0026nbsp;\u003cspan class=\"badge badge-success\" title=\"kma\"\u003e3\u003c/span\u003e",
-    "parent_reversed": "false",
-    "parent_search": "false",
-    "icon": "glyphicon glyphicon-book",
-    "a_attr": {
-      "class": "komet-context-menu",
-      "data-menu-type": "concept",
-      "data-menu-uuid": "b8bfca4e-33f5-3786-a279-b872c3a2f849"
-    },
-    "parent": "883110722155925",
-    "children": true
-  }, {
-    "id": 883110730586156,
-    "concept_id": "a8909aa8-9bef-31ea-b5b4-f372af648eac",
-    "text": "Report for Procurator-Fiscal (qualifier value)",
-    "parent_reversed": "false",
-    "parent_search": "false",
-    "icon": "glyphicon glyphicon-leaf",
-    "a_attr": {
-      "class": "komet-context-menu",
-      "data-menu-type": "concept",
-      "data-menu-uuid": "a8909aa8-9bef-31ea-b5b4-f372af648eac"
-    },
-    "parent": "883110722155925",
-    "children": false
-  }, {
-    "id": 883110731410033,
-    "concept_id": "bb6dea20-e375-3006-95d2-17c29a173670",
-    "text": "DSS RMO RM2 report (qualifier value)",
-    "parent_reversed": "false",
-    "parent_search": "false",
-    "icon": "glyphicon glyphicon-leaf",
-    "a_attr": {
-      "class": "komet-context-menu",
-      "data-menu-type": "concept",
-      "data-menu-uuid": "bb6dea20-e375-3006-95d2-17c29a173670"
-    },
-    "parent": "883110722155925",
-    "children": false
-  }, {
-    "id": 883110732248066,
-    "concept_id": "148312b5-291c-3295-a1a6-7abecc7fef3e",
-    "text": "Solicitors report (qualifier value)",
-    "parent_reversed": "false",
-    "parent_search": "false",
-    "icon": "glyphicon glyphicon-leaf",
-    "a_attr": {
-      "class": "komet-context-menu",
-      "data-menu-type": "concept",
-      "data-menu-uuid": "148312b5-291c-3295-a1a6-7abecc7fef3e"
-    },
-    "parent": "883110722155925",
-    "children": false
-  }, {
-    "id": 883110733069466,
-    "concept_id": "93f981ae-90d0-3a84-b313-b85c7cda1069",
-    "text": "Mobility allowance claim representative (qualifier value)",
-    "parent_reversed": "false",
-    "parent_search": "false",
-    "icon": "glyphicon glyphicon-leaf",
-    "a_attr": {
-      "class": "komet-context-menu",
-      "data-menu-type": "concept",
-      "data-menu-uuid": "93f981ae-90d0-3a84-b313-b85c7cda1069"
-    },
-    "parent": "883110722155925",
-    "children": false
-  }, {
-    "id": 883110733934395,
-    "concept_id": "7956e72c-6a81-30e1-a9a0-fdaf060616f2",
-    "text": "Disabled driver orange badge report (qualifier value)\u0026nbsp;\u0026nbsp;\u003cspan class=\"badge badge-success\" title=\"kma\"\u003e1\u003c/span\u003e",
-    "parent_reversed": "false",
-    "parent_search": "false",
-    "icon": "glyphicon glyphicon-book",
-    "a_attr": {
-      "class": "komet-context-menu",
-      "data-menu-type": "concept",
-      "data-menu-uuid": "7956e72c-6a81-30e1-a9a0-fdaf060616f2"
-    },
-    "parent": "883110722155925",
-    "children": true
-  }, {
-    "id": 883110734803571,
-    "concept_id": "1c34b29b-9af5-32c7-842f-3134f79e2c36",
-    "text": "Driving license fitness report (qualifier value)",
-    "parent_reversed": "false",
-    "parent_search": "false",
-    "icon": "glyphicon glyphicon-leaf",
-    "a_attr": {
-      "class": "komet-context-menu",
-      "data-menu-type": "concept",
-      "data-menu-uuid": "1c34b29b-9af5-32c7-842f-3134f79e2c36"
-    },
-    "parent": "883110722155925",
-    "children": false
-  }, {
-    "id": 883110735658946,
-    "concept_id": "922b51de-6020-3d10-8fc2-b56918831828",
-    "text": "Life assurance - preliminary report (qualifier value)",
-    "parent_reversed": "false",
-    "parent_search": "false",
-    "icon": "glyphicon glyphicon-leaf",
-    "a_attr": {
-      "class": "komet-context-menu",
-      "data-menu-type": "concept",
-      "data-menu-uuid": "922b51de-6020-3d10-8fc2-b56918831828"
-    },
-    "parent": "883110722155925",
-    "children": false
-  }, {
-    "id": 883110736523167,
-    "concept_id": "58c5ae0e-8e77-30be-bb37-9a37af8f7583",
-    "text": "Report for Coroner (qualifier value)",
-    "parent_reversed": "false",
-    "parent_search": "false",
-    "icon": "glyphicon glyphicon-leaf",
-    "a_attr": {
-      "class": "komet-context-menu",
-      "data-menu-type": "concept",
-      "data-menu-uuid": "58c5ae0e-8e77-30be-bb37-9a37af8f7583"
-    },
-    "parent": "883110722155925",
-    "children": false
-  }, {
-    "id": 883110737348814,
-    "concept_id": "ad8a7efc-875a-3a55-85c6-30bf81937f3f",
-    "text": "Power of attorney medical report (qualifier value)",
-    "parent_reversed": "false",
-    "parent_search": "false",
-    "icon": "glyphicon glyphicon-leaf",
-    "a_attr": {
-      "class": "komet-context-menu",
-      "data-menu-type": "concept",
-      "data-menu-uuid": "ad8a7efc-875a-3a55-85c6-30bf81937f3f"
-    },
-    "parent": "883110722155925",
-    "children": false
-  }, {
-    "id": 883110738372644,
-    "concept_id": "44267da0-ffd8-3423-9c35-a1517221f428",
-    "text": "BAAF C/D-adopt:child report (qualifier value)\u0026nbsp;\u0026nbsp;\u003cspan class=\"badge badge-success\" title=\"kma\"\u003e1\u003c/span\u003e",
-    "parent_reversed": "false",
-    "parent_search": "false",
-    "icon": "glyphicon glyphicon-book",
-    "a_attr": {
-      "class": "komet-context-menu",
-      "data-menu-type": "concept",
-      "data-menu-uuid": "44267da0-ffd8-3423-9c35-a1517221f428"
-    },
-    "parent": "883110722155925",
-    "children": true
-  }, {
-    "id": 883110739320386,
-    "concept_id": "c00cee5d-2ffe-3795-bf66-044296419e8a",
-    "text": "Report to benefits agency (qualifier value)",
-    "parent_reversed": "false",
-    "parent_search": "false",
-    "icon": "glyphicon glyphicon-leaf",
-    "a_attr": {
-      "class": "komet-context-menu",
-      "data-menu-type": "concept",
-      "data-menu-uuid": "c00cee5d-2ffe-3795-bf66-044296419e8a"
-    },
-    "parent": "883110722155925",
-    "children": false
-  }, {
-    "id": 883110740143909,
-    "concept_id": "cadfe65c-5e14-3d55-bb50-12a2ad5dbb21",
-    "text": "Report from Health Visitor (qualifier value)",
-    "parent_reversed": "false",
-    "parent_search": "false",
-    "icon": "glyphicon glyphicon-leaf",
-    "a_attr": {
-      "class": "komet-context-menu",
-      "data-menu-type": "concept",
-      "data-menu-uuid": "cadfe65c-5e14-3d55-bb50-12a2ad5dbb21"
-    },
-    "parent": "883110722155925",
-    "children": false
-  }, {
-    "id": 883110740981234,
-    "concept_id": "775c7d5d-e6ba-3709-8551-8e300b7909fb",
-    "text": "Social security claim report (qualifier value)\u0026nbsp;\u0026nbsp;\u003cspan class=\"badge badge-success\" title=\"kma\"\u003e1\u003c/span\u003e",
-    "parent_reversed": "false",
-    "parent_search": "false",
-    "icon": "glyphicon glyphicon-book",
-    "a_attr": {
-      "class": "komet-context-menu",
-      "data-menu-type": "concept",
-      "data-menu-uuid": "775c7d5d-e6ba-3709-8551-8e300b7909fb"
-    },
-    "parent": "883110722155925",
-    "children": true
-  }, {
-    "id": 883110741832716,
-    "concept_id": "bf6ca7f0-a358-3a53-b5e7-3fe1ee2915f8",
-    "text": "Insurance report - travel cancellation (qualifier value)",
-    "parent_reversed": "false",
-    "parent_search": "false",
-    "icon": "glyphicon glyphicon-leaf",
-    "a_attr": {
-      "class": "komet-context-menu",
-      "data-menu-type": "concept",
-      "data-menu-uuid": "bf6ca7f0-a358-3a53-b5e7-3fe1ee2915f8"
-    },
-    "parent": "883110722155925",
-    "children": false
-  }, {
-    "id": 883110742666502,
-    "concept_id": "33fd8e3f-9905-369a-8c65-01d4a1aef6bf",
-    "text": "Special activities med report (qualifier value)",
-    "parent_reversed": "false",
-    "parent_search": "false",
-    "icon": "glyphicon glyphicon-leaf",
-    "a_attr": {
-      "class": "komet-context-menu",
-      "data-menu-type": "concept",
-      "data-menu-uuid": "33fd8e3f-9905-369a-8c65-01d4a1aef6bf"
-    },
-    "parent": "883110722155925",
-    "children": false
-  }, {
-    "id": 883110743499581,
-    "concept_id": "1b23eb2f-371c-36fc-a278-7e66c5411652",
-    "text": "Statement of special educational needs (qualifier value)",
-    "parent_reversed": "false",
-    "parent_search": "false",
-    "icon": "glyphicon glyphicon-leaf",
-    "a_attr": {
-      "class": "komet-context-menu",
-      "data-menu-type": "concept",
-      "data-menu-uuid": "1b23eb2f-371c-36fc-a278-7e66c5411652"
-    },
-    "parent": "883110722155925",
+    "parent": "6589162693094742",
     "children": false
   }];
 
