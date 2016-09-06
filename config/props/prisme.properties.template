@@ -12,4 +12,4 @@
 #war_repo=releases
 #war_classifier=a
 #war_package=war
-isaac_root=https://vadev.mantech.com:4848/isaac-rest/
+#isaac_root=https://vadev.mantech.com:4848/isaac-rest/
