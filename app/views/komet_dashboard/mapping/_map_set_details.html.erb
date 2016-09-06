@@ -18,9 +18,122 @@
 
         </div>
 
+
         <%= form_tag('/mapping/process_map_set', method: 'post', id: "komet_mapping_set_editor_form_#{@viewer_id}", class: 'komet-mapping-set-details-form komet-mapping-section-panel-details') do %>
 
             <%= hidden_field_tag :komet_mapping_set_editor_set_id, @map_set[:set_id], id: "komet_mapping_set_editor_set_id_#{@viewer_id}" %>
+
+            <div id="komet_mapping_dialog_add_set_fields_<%= @viewer_id %>" class="komet-mapping-dialog hide">
+
+                <div class="komet-mapping-dialog-header">
+
+                    <div></div>
+                    <div class="komet-mapping-dialog-title">Add to Map Set</div>
+                    <div class="glyphicon glyphicon-remove" onclick="WindowManager.viewers[<%= @viewer_id %>].cancelIncludeSetFieldsDialog()"></div>
+                </div>
+
+                <div class="komet-mapping-dialog-body">
+
+                    <div class="komet-mapping-dialog-left-column">
+
+                        <div class="komet-mapping-dialog-body-header">Add from Template</div>
+
+                        <div><a class="komet-mapping-dialog-select-all" onclick="return false;">Select All</a></div>
+
+                        <div class="komet-indent-block">
+
+                            <div>
+                                <%= check_box_tag 'komet_mapping_set_editor_include_fields[]', :source_system, @map_set[:include_fields].include?('source_system'), id: "komet_mapping_set_editor_include_fields_source_system_#{@viewer_id}", class: 'form-control' %>
+                                <%= label_tag "komet_mapping_set_editor_include_fields_source_system_#{@viewer_id}", 'Source Code System' %>
+                            </div>
+
+                            <div>
+                                <%= check_box_tag 'komet_mapping_set_editor_include_fields[]', :source_version, @map_set[:include_fields].include?('source_version'), id: "komet_mapping_set_editor_include_fields_source_version_#{@viewer_id}", class: 'form-control' %>
+                                <%= label_tag "komet_mapping_set_editor_include_fields_source_version_#{@viewer_id}", 'Source Code Version' %>
+                            </div>
+
+                            <div>
+                                <%= check_box_tag 'komet_mapping_set_editor_include_fields[]', :target_system, @map_set[:include_fields].include?('target_system'), id: "komet_mapping_set_editor_include_fields_target_system_#{@viewer_id}", class: 'form-control' %>
+                                <%= label_tag "komet_mapping_set_editor_include_fields_target_system_#{@viewer_id}", 'Target Code System' %>
+                            </div>
+
+                            <div>
+                                <%= check_box_tag 'komet_mapping_set_editor_include_fields[]', :target_version, @map_set[:include_fields].include?('target_version'), id: "komet_mapping_set_editor_include_fields_target_version_#{@viewer_id}", class: 'form-control' %>
+                                <%= label_tag "komet_mapping_set_editor_include_fields_target_version_#{@viewer_id}", 'Target Code Version' %>
+                            </div>
+
+                            <div>
+                                <%= check_box_tag 'komet_mapping_set_editor_include_fields[]', :equivalence, @map_set[:include_fields].include?('equivalence'), id: "komet_mapping_set_editor_include_fields_equivalence_#{@viewer_id}", class: 'form-control' %>
+                                <%= label_tag "komet_mapping_set_editor_include_fields_equivalence_#{@viewer_id}", 'Equivalence Type' %>
+                            </div>
+
+                            <div>
+                                <%= check_box_tag 'komet_mapping_set_editor_include_fields[]', :comments, @map_set[:include_fields].include?('comments'), id: "komet_mapping_set_editor_include_fields_comments_#{@viewer_id}", class: 'form-control' %>
+                                <%= label_tag "komet_mapping_set_editor_include_fields_comments_#{@viewer_id}", 'Comments' %>
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <div class="komet-mapping-dialog-middle-column">
+
+                        <div class="komet-mapping-dialog-body-header">OR</div>
+                        <hr>
+                    </div>
+
+                    <div class="komet-mapping-dialog-right-column">
+
+                        <div class="komet-mapping-dialog-body-header">Add from Existing Code Sets</div>
+
+                        <div>
+                            <%= label_tag "komet_mapping_set_editor_add_fields_uuid_#{@viewer_id}", 'UUID' %>
+                            (Optional Shortcut)
+                            <div class="glyphicon glyphicon-info-sign" onclick=""></div>
+                        </div>
+
+                        <div>
+                            <%= text_field_tag :komet_mapping_set_editor_add_fields_uuid, nil, id: "komet_mapping_set_editor_add_fields_uuid_#{@viewer_id}", class: 'form-control komet-mapping-dialog-uuid' %>
+                            <button type="button" class="btn btn-default">Apply</button>
+                        </div>
+
+                        <div>
+                            <%= label_tag "komet_mapping_set_editor_add_fields_label_#{@viewer_id}", 'Label' %>
+                            <%= text_field_tag :komet_mapping_set_editor_add_fields_label, nil, id: "komet_mapping_set_editor_add_fields_label_#{@viewer_id}", class: 'form-control' %>
+                        </div>
+
+                        <div>
+                            <%= label_tag "komet_mapping_set_editor_add_fields_value_#{@viewer_id}", 'Value' %>
+                            <%= text_field_tag :komet_mapping_set_editor_add_fields_value, nil, id: "komet_mapping_set_editor_add_fields_value_#{@viewer_id}", class: 'form-control' %>
+                        </div>
+                    </div>
+
+                </div>
+
+                <div class="komet-mapping-dialog-footer">
+
+                    <button class="btn btn-default" type="button" onclick="WindowManager.viewers[<%= @viewer_id %>].cancelIncludeSetFieldsDialog()">Cancel</button>
+                    <button class="btn btn-primary" type="button" onclick="WindowManager.viewers[<%= @viewer_id %>].saveIncludeSetFieldsDialog()">Save</button>
+
+                </div>
+            </div>
+
+            <div class="komet-mapping-set-definition-row">
+
+                <div class="komet-mapping-set-definition-header">
+                    <%= label_tag nil, 'Version:' %> <%= @map_set[:version] %>
+                </div>
+
+                <div class="komet-mapping-set-definition-header">
+                    <%= label_tag nil, 'VUID:' %> <%= @map_set[:vuid] %>
+                </div>
+
+                <div class="komet-mapping-set-definition-controls">
+                    <button class="btn btn-primary komet-mapping-set-editor-display" type="button" onclick="WindowManager.viewers[<%= @viewer_id %>].enterSetEditMode()">Edit</button>
+                    <button class="btn btn-default komet-mapping-set-editor-edit" type="button" onclick="WindowManager.viewers[<%= @viewer_id %>].showIncludeSetFieldsDialog()">Add More Fields</button>
+                    <button class="btn btn-default komet-mapping-set-editor-edit" type="button" onclick="WindowManager.viewers[<%= @viewer_id %>].cancelSetEditMode('<%= @previous_set_id %>')">Cancel</button>
+                    <button class="btn btn-primary komet-mapping-set-editor-edit" id="komet_mapping_set_editor_save_<%= @viewer_id %>">Save</button>
+                </div>
+            </div>
 
             <div id="komet_mapping_set_tabs_<%= @viewer_id %>" class="komet-mapping-set-tabs">
 
@@ -31,122 +144,41 @@
 
                 <div id="komet_mapping_set_definition_tab_<%= @viewer_id %>" class="komet-mapping-set-tab-body">
 
-                    <div class="komet-mapping-set-definition-section">
+                    <div class="komet-mapping-set-definition-row">
 
-                        <div>
-                            <%= label_tag "komet_mapping_set_editor_name_#{@viewer_id}", 'Fully Specified Name:' %>
-                            <%= text_field_tag :komet_mapping_set_editor_name, @map_set[:name], id: "komet_mapping_set_editor_name_#{@viewer_id}", class: 'form-control komet-mapping-set-editor-edit' %>
-                            <div class="komet-mapping-set-editor-display"><%= @map_set[:name] %></div>
-                        </div>
+                            <div class="komet-mapping-set-definition-item">
+                                <%= label_tag "komet_mapping_set_editor_name_#{@viewer_id}", 'Fully Specified Name:' %>
+                                <%= text_field_tag :komet_mapping_set_editor_name, @map_set[:name], id: "komet_mapping_set_editor_name_#{@viewer_id}", class: 'form-control komet-mapping-set-editor-edit' %>
+                                <div class="komet-mapping-set-editor-display"><%= @map_set[:name] %></div>
+                            </div>
 
-                        <div>
-                            <%= label_tag "komet_mapping_set_editor_purpose_#{@viewer_id}", 'Purpose:' %>
-                            <%= text_field_tag :komet_mapping_set_editor_purpose, @map_set[:purpose], id: "komet_mapping_set_editor_purpose_#{@viewer_id}", class: 'form-control komet-mapping-set-editor-edit' %>
-                            <div class="komet-mapping-set-editor-display"><%= @map_set[:purpose] %></div>
-                        </div>
-
-                        <div>
-                            <%= label_tag "komet_mapping_set_editor_description_#{@viewer_id}", 'Description:' %>
-                            <%= text_field_tag :komet_mapping_set_editor_description, @map_set[:description], id: "komet_mapping_set_editor_description_#{@viewer_id}", class: 'form-control komet-mapping-set-editor-edit' %>
-                            <div class="komet-mapping-set-editor-display"><%= @map_set[:description] %></div>
-                        </div>
-
-                        <div>
-                            <%= label_tag "komet_mapping_set_editor_state_#{@viewer_id}", 'Status:' %>
-                            <%= select_tag :komet_mapping_set_editor_state, options_for_select([['Active'], ['Inactive']], @map_set[:state]), id: "komet_mapping_set_editor_state_#{@viewer_id}", class: 'form-control komet-mapping-set-editor-edit' %>
-                            <div class="komet-mapping-set-editor-display"><%= @map_set[:state] %></div>
-                        </div>
-
-                        <div>
-                            <%= label_tag "komet_mapping_set_editor_state_#{@viewer_id}", 'Workflow State:' %>
-                            <div><%= @map_set[:state] %></div>
-                        </div>
+                            <div class="komet-mapping-set-definition-item">
+                                <%= label_tag "komet_mapping_set_editor_description_#{@viewer_id}", 'Description:' %>
+                                <%= text_field_tag :komet_mapping_set_editor_description, @map_set[:description], id: "komet_mapping_set_editor_description_#{@viewer_id}", class: 'form-control komet-mapping-set-editor-edit' %>
+                                <div class="komet-mapping-set-editor-display"><%= @map_set[:description] %></div>
+                            </div>
 
                     </div>
 
-                    <div class="komet-mapping-set-definition-section">
+                    <div class="komet-mapping-set-definition-row">
 
-                        <div>
-                            <%= label_tag nil, 'Version:' %> <%= @map_set[:version] %>
-                            <br>
-                            <%= label_tag nil, 'VUID:' %> <%= @map_set[:vuid] %>
-                        </div>
+                            <div class="komet-mapping-set-definition-item">
+                                <%= label_tag "komet_mapping_set_editor_state_#{@viewer_id}", 'Status:' %>
+                                <%= select_tag :komet_mapping_set_editor_state, options_for_select([['Active'], ['Inactive']], @map_set[:state]), id: "komet_mapping_set_editor_state_#{@viewer_id}", class: 'form-control komet-mapping-set-editor-edit' %>
+                                <div class="komet-mapping-set-editor-display"><%= @map_set[:state] %></div>
+                            </div>
 
-                        <div>
-                            <%= label_tag "komet_mapping_set_editor_source_#{@viewer_id}", 'Source Concept:' %>
+                            <div class="komet-mapping-set-definition-item">
+                                <%= label_tag "komet_mapping_set_editor_state_#{@viewer_id}", 'Workflow State:' %>
+                                <div><%= @map_set[:state] %></div>
+                            </div>
 
-                            <input id="komet_mapping_set_editor_source_<%= @viewer_id %>" name="komet_mapping_set_editor_source" class="hide" value="<%= @map_set[:source] ? @map_set[:source] : '' %>">
-
-                            <div id="komet_mapping_set_editor_source_fields_<%= @viewer_id %>" class="input-group komet-mapping-set-editor-edit">
-
-                                <input id="komet_mapping_set_editor_source_display_<%= @viewer_id %>" name="komet_mapping_set_editor_source_display" class="form-control" value="<%= @map_set[:source_display] ? @map_set[:source_display] : '' %>">
-
-                                <div class="input-group-btn komet-search-combo-field">
-
-                                    <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                        <span class="caret"></span>
-                                    </button>
-
-                                    <ul id="komet_mapping_set_editor_source_recents_<%= @viewer_id %>" class="dropdown-menu dropdown-menu-right">
-                                    </ul>
-
-                                </div><!-- /btn-group -->
-
-                            </div><!-- /input-group -->
-
-                            <div class="komet-mapping-set-editor-display"><%= @map_set[:source_display] %></div>
-                        </div>
-
-                        <div>
-                            <%= label_tag "komet_mapping_set_editor_source_version_#{@viewer_id}", 'Source Version:' %>
-                            <%= select_tag :komet_mapping_set_editor_source_version, options_for_select([['111'], ['222']], @map_set[:source_version]), id: "komet_mapping_set_editor_source_version_#{@viewer_id}", class: 'form-control komet-mapping-set-editor-edit' %>
-                            <div class="komet-mapping-set-editor-display"><%= @map_set[:source_version] %></div>
-                        </div>
-
-                        <div>
-                            <%= label_tag "komet_mapping_set_editor_target_#{@viewer_id}", 'Target Concept:' %>
-
-                            <input id="komet_mapping_set_editor_target_<%= @viewer_id %>" name="komet_mapping_set_editor_target" class="hide" value="<%= @map_set[:target] ? @map_set[:target] : '' %>">
-
-                            <div id="komet_mapping_set_editor_target_fields_<%= @viewer_id %>" class="input-group komet-mapping-set-editor-edit">
-
-                                <input id="komet_mapping_set_editor_target_display_<%= @viewer_id %>" name="komet_mapping_set_editor_target_display" class="form-control" value="<%= @map_set[:target_display] ? @map_set[:target_display] : '' %>">
-
-                                <div class="input-group-btn komet-search-combo-field">
-
-                                    <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                        <span class="caret"></span>
-                                    </button>
-
-                                    <ul id="komet_mapping_set_editor_target_recents_<%= @viewer_id %>" class="dropdown-menu dropdown-menu-right">
-                                    </ul>
-
-                                </div><!-- /btn-group -->
-
-                            </div><!-- /input-group -->
-
-                            <div class="komet-mapping-set-editor-display"><%= @map_set[:target_display] %></div>
-                        </div>
-
-                        <div>
-                            <%= label_tag "komet_mapping_set_editor_target_version_#{@viewer_id}", 'Target Version:' %>
-                            <%= select_tag :komet_mapping_set_editor_target_version, options_for_select([['111'], ['222']], @map_set[:target_version]), id: "komet_mapping_set_editor_target_version_#{@viewer_id}", class: 'form-control komet-mapping-set-editor-edit' %>
-
-                            <div class="komet-mapping-set-editor-display"><%= @map_set[:target_version] %></div>
-                        </div>
-
-                    </div>
-
-                    <div>
-                        <button class="btn btn-primary komet-mapping-set-editor-display" type="button" onclick="WindowManager.viewers[<%= @viewer_id %>].enterSetEditMode()">Edit</button>
-                        <button class="btn btn-primary komet-mapping-set-editor-edit">Save</button>
-                        <button class="btn btn-default komet-mapping-set-editor-edit" type="button" onclick="WindowManager.viewers[<%= @viewer_id %>].cancelSetEditMode('<%= @previous_set_id %>')">Cancel</button>
                     </div>
 
                 </div>
 
                 <div id="komet_mapping_set_rules_tab_<%= @viewer_id %>" class="komet-mapping-set-tab-body">
-                    <%= text_area_tag :komet_mapping_set_editor_rules, @map_set[:rules], id: "komet_mapping_set_editor_rules_#{@viewer_id}", class: 'form-control' %>
+                    <%= text_area_tag :komet_mapping_set_editor_rules, @map_set[:rules], id: "komet_mapping_set_editor_rules_#{@viewer_id}", class: 'form-control komet-mapping-set-editor-edit' %>
                     <div class="komet-mapping-set-editor-display"><%= @map_set[:rules] %></div>
                 </div>
 
@@ -241,6 +273,7 @@
 
   $(document).ready(function () {
 
+      WindowManager.viewers[<%= @viewer_id %>].setEditorMapSet = <%= raw @map_set.to_json %>;
       WindowManager.viewers[<%= @viewer_id %>].initializeSetEditor("<%= @mapping_action %>");
   });
 

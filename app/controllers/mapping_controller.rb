@@ -63,7 +63,7 @@ class MappingController < ApplicationController
 
             set_hash[:id] = get_next_id
             set_hash[:set_id] = set.identifiers.uuids.first
-            set_hash[:text] = set.purpose
+            set_hash[:text] = set.name
             set_hash[:state] = set.mappingSetStamp.state
             set_hash[:icon] = 'komet-tree-node-icon fa fa-folder'
             set_hash[:a_attr] = {class: 'komet-context-menu', 'data-menu-type' => 'map_set', 'data-menu-uuid' => set_hash[:set_id]}
@@ -114,7 +114,8 @@ class MappingController < ApplicationController
             set_hash = {}
 
             set_hash[:set_id] = set.identifiers.uuids.first
-            set_hash[:description] = set.purpose
+            set_hash[:name] = set.name
+            set_hash[:description] = set.description
             set_hash[:state] = set.mappingSetStamp.state
             set_hash[:time] = DateTime.strptime((set.mappingSetStamp.time / 1000).to_s, '%s').strftime('%m/%d/%Y')
             set_hash[:author] = get_concept_metadata(set.mappingSetStamp.authorSequence)
@@ -134,7 +135,7 @@ class MappingController < ApplicationController
     def map_set_editor
 
         coordinates_token = session[:coordinatestoken].token
-        @map_set = {}
+        @map_set = {id: nil, name: nil, description: nil, version: nil, vuid: nil, source_system: nil, source_system_display: nil, source_version: nil, target_system: nil, target_system_display: nil, target_version: nil, rules: nil, include_fields: [], state: nil, status: 'Active', time: nil, module: nil, path: nil}
         @set_id = params[:set_id]
 
         if @set_id &&  @set_id != ''
@@ -147,19 +148,29 @@ class MappingController < ApplicationController
 
             @map_set[:set_id] = set.identifiers.uuids.first
             @map_set[:name] = set.name
-            @map_set[:description] = set.purpose
+            @map_set[:description] = set.description
             @map_set[:state] = set.mappingSetStamp.state
             @map_set[:time] = DateTime.strptime((set.mappingSetStamp.time / 1000).to_s, '%s').strftime('%m/%d/%Y')
             @map_set[:author] = get_concept_metadata(set.mappingSetStamp.authorSequence)
             @map_set[:module] = get_concept_metadata(set.mappingSetStamp.moduleSequence)
             @map_set[:path] = get_concept_metadata(set.mappingSetStamp.pathSequence)
+            @map_set[:rules] = 'Business rules test'
+            @map_set[:version] = '12.4'
+            @map_set[:vuid] = '4500635'
+            @map_set[:include_fields] = ['source_system', 'source_version', 'target_system', 'target_version', 'equivalence', 'comments']
+            @map_set[:source_system] = {name: 'source_system', type: 'concept', value:'Source Test', label: 'Source System'}
+            @map_set[:source_system_display] = 'Source Test'
+            @map_set[:source_version] = {name: 'source_version', type: 'text', value:'Source Version Test', label: 'Source Version'}
+            @map_set[:target_system] = {name: 'target_system', type: 'concept', value:'Target Test', label: 'Target System'}
+            @map_set[:target_system_display] = 'Target Test'
+            @map_set[:target_version] = {name: 'target_version', type: 'text', value:'Target Version Test', label: 'Target Version'}
+            @map_set[:equivalence] = {name: 'equivalence', type: 'select', value:'Exact', label: 'Equivalence Type', options: ['No Restrictions', 'Exact', 'Broader Than', 'Narrower Than']}
+            @map_set[:comments] = {name: 'comments', type: 'textarea', value:'Comments Test', label: 'Comments'}
 
             @viewer_title = @map_set[:description]
         else
 
             @mapping_action = 'create_set'
-            @map_set = {id: nil, name: nil, purpose: nil, description: nil, version: nil, vuid: nil, source: nil, source_display: nil, source_version: nil, target: nil, target_display: nil, target_version: nil, rules: nil, state: nil, status: 'Active', time: nil, module: nil, path: nil}
-
             @viewer_title = 'Create New Map Set'
         end
     end
@@ -197,8 +208,8 @@ class MappingController < ApplicationController
         state = params[:komet_mapping_set_editor_state]
 
 
-        # source: source, source_display: source_display, source_version: source_version, target: target, target_display: target_display, target_version: target_version
-        body_params = {name: set_name, description: description, purpose: description}
+        # source_system: source_system, source_system_display: source_system_display, source_version: source_version, target_system: target_system, target_system_display: target_system_display, target_version: target_version
+        body_params = {name: set_name, description: description}
         request_params = {state: state}
 
         if set_id && set_id != ''

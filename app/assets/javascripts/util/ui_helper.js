@@ -209,6 +209,120 @@ var UIHelper = (function () {
         });
     }
 
+    function acceptFormChanges(formIdOrClass) {
+
+        $(formIdOrClass + " :input:not(:button):not([type=hidden])").each(function () {
+
+            if (this.type == "text" || this.type == "textarea" || this.type == "hidden") {
+                this.defaultValue = this.value;
+            }
+            if (this.type == "radio" || this.type == "checkbox") {
+                this.defaultChecked = this.checked;
+            }
+            if (this.type == "select-one" || this.type == "select-multiple") {
+                for (var x = 0; x < this.length; x++) {
+                    this.options[x].defaultSelected = this.options[x].selected
+                }
+            }
+        });
+    }
+
+    var findInArray = function (arrayToSearch, itemsToFind) {
+        return itemsToFind.some(function (value) {
+            return arrayToSearch.indexOf(value) >= 0;
+        });
+    };
+
+    var createAutoSuggestField = function (fieldIDBase, fieldIDPostfix, label, fieldValue, fieldDisplayValue, fieldClasses) {
+
+        var fieldString = '<label for="' + fieldIDBase + fieldIDPostfix + '">' + label + '</label>'
+            + '<input id="' + fieldIDBase + fieldIDPostfix + '" name="' + fieldIDBase + '" class="hide" value="' + fieldValue + '">'
+            + '<div id="' + fieldIDBase + '_fields' + fieldIDPostfix + '" class="input-group ' + fieldClasses + '">'
+            + '<input id="' + fieldIDBase + '_display' + fieldIDPostfix + '" name="' + fieldIDBase + '_display" class="form-control" value="' + fieldDisplayValue + '">'
+            + '<div class="input-group-btn komet-search-combo-field">'
+            + '<button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><span class="caret"></span></button>'
+            + '<ul id="' + fieldIDBase + '_recents' + fieldIDPostfix + '" class="dropdown-menu dropdown-menu-right"></ul>'
+            + '</div><!-- /btn-group --></div><!-- /input-group -->';
+
+
+        // create and return a dom fragment from the field string
+        return document.createRange().createContextualFragment(fieldString);
+    };
+
+    var processAutoSuggestTags = function(containerClassOrID){
+
+        var tags = $(containerClassOrID).find("autosuggest");
+
+        tags.each(function(i, tag){
+
+            var fieldIDBase = tag.getAttribute("id-base");
+            var fieldIDPostfix = tag.getAttribute("id-postfix");
+            var label = tag.getAttribute("label");
+            var fieldValue = tag.getAttribute("value");
+            var fieldDisplayValue = tag.getAttribute("display-value");
+            var fieldClasses = tag.getAttribute("classes");
+            var suggestionRestVariable = tag.getAttribute("suggestion-rest-variable");
+            var recentsRestVariable = tag.getAttribute("recents-rest-variable");
+
+            var autoSuggest = UIHelper.createAutoSuggestField(fieldIDBase, fieldIDPostfix, label, fieldValue, fieldDisplayValue, fieldClasses);
+
+            $(tag).replaceWith(autoSuggest);
+
+            var displayField = $("#" + fieldIDBase + "_display" + fieldIDPostfix);
+
+            displayField.autocomplete({
+                source: gon.routes[suggestionRestVariable],
+                minLength: 3,
+                select: onAutoSuggestSelection,
+                change: onAutoSuggestChange
+            });
+
+            loadAutoSuggestRecents(recentsRestVariable, fieldIDBase + "_recents" + fieldIDPostfix);
+        });
+    };
+
+    var loadAutoSuggestRecents = function(restVariable, recentsID){
+
+        $.get(gon.routes[restVariable], function (data) {
+
+            var options = "";
+
+            $.each(data, function (index, value) {
+
+                var autoSuggestID = recentsID.replace("_recents", "_display");
+                var autoSuggestDisplayID = recentsID.replace("_recents", "");
+
+                // use the html function to escape any html that may have been entered by the user
+                var valueText = $("<li>").text(value.text).html();
+                options += "<li><a href=\"#\" onclick=\"UIHelper.useAutoSuggestRecent('" + autoSuggestID + "', '" + autoSuggestDisplayID + "', '" + value.id + "', '" + valueText + "')\">" + valueText + "</a></li>";
+            });
+
+            $("#" + recentsID).html(options);
+        });
+    };
+
+    var useAutoSuggestRecent = function(autoSuggestID, autoSuggestDisplayID, id, text){
+
+        $("#" + autoSuggestID).val(text);
+        $("#" + autoSuggestDisplayID).val(id);
+    };
+
+    var onAutoSuggestSelection = function(event, ui){
+
+        $(this).val(ui.item.label);
+        $("#" + this.id.replace("_display", "")).val(ui.item.value);
+        return false;
+    };
+
+    var onAutoSuggestChange = function(event, ui){
+
+        if (!ui.item) {
+            event.target.value = "";
+            $("#" + this.id.replace("_display", "")).val("");
+        }
+    };
+
+
     return {
         getActiveTabId: getActiveTabId,
         isTabActive: isTabActive,
@@ -217,6 +331,12 @@ var UIHelper = (function () {
         toggleFieldAvailability: toggleFieldAvailability,
         hasFormChanged: hasFormChanged,
         resetFormChanges: resetFormChanges,
+        acceptFormChanges: acceptFormChanges,
+        findInArray: findInArray,
+        createAutoSuggestField: createAutoSuggestField,
+        processAutoSuggestTags: processAutoSuggestTags,
+        loadAutoSuggestRecents: loadAutoSuggestRecents,
+        useAutoSuggestRecent: useAutoSuggestRecent,
         openAddEditConcept: openAddEditConcept
     };
 })();

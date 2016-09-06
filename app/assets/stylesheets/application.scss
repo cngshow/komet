@@ -197,6 +197,9 @@ html, body{
 .komet-active-control{
     color: blue;
 }
+.komet-indent-block{
+    margin-left: 10px;
+}
 
 // KOMET Navigation styles
 .komet_dashboard .navbar{
@@ -679,12 +682,26 @@ td.komet-concept-table-nested-indicator.komet-concept-table-nested-indicator-ope
 }
 .komet-mapping-set-tabs > div.komet-mapping-set-tab-body{
     display: flex;
+    flex-direction: column;
     padding: 2px;
     background-color: #eef1f3;
 }
-.komet-mapping-set-definition-section{
+.komet-mapping-set-definition-row{
+    display:flex;
+}
+.komet-mapping-set-definition-header{
+    margin: 4px;
+    flex: 1 1 auto;
+}
+.komet-mapping-set-definition-controls{
+    margin: 4px;
+    flex: 1 1 auto;
+    text-align: right;
+}
+.komet-mapping-set-definition-item{
     margin: 4px;
     flex: 1 1 50%;
+    height: 70px;
 }
 .komet-mapping-set-definition-section > div{
     height: 70px;
@@ -757,5 +774,86 @@ td.komet-concept-table-nested-indicator.komet-concept-table-nested-indicator-ope
 .komet-mapping-item-tools .fa{
     font-size: medium;
     margin-right: 10px;
+}
+.komet-mapping-dialog{
+    position: absolute;
+    display: flex;
+    flex-direction: column;
+    border: solid black 1px;
+    width: 550px;
+    font-size: small;
+    z-index: 1000;
+    background-color: white;
+}
+.komet-mapping-dialog input[type='checkbox']{
+    height: 14px;
+    width: auto;
+    display: inline;
+    margin: 0px;
+}
+.komet-mapping-dialog label{
+    font-size: smaller;
+    margin: 0px 0px 0px 5px
+}
+.komet-mapping-dialog button{
+    padding: 2px 8px;
+    height: 26px;
+}
+.komet-mapping-dialog-header{
+    display: flex;
+    justify-content: space-between;
+    background-color: #A7D4E2;
+}
+.komet-mapping-dialog-body{
+    display: flex;
+    justify-content: space-between;
+    padding: 4px;
+}
+.komet-mapping-dialog-body-header{
+    margin-bottom: 10px;
+}
+.komet-mapping-dialog-left-column{
+    display: flex;
+    flex-direction: column;
+}
+.komet-mapping-dialog-left-column .komet-indent-block div{
+    display: flex;
+    align-items: center;
+    margin-bottom: 4px;
+}
+.komet-mapping-dialog-middle-column{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+.komet-mapping-dialog-middle-column hr{
+    border: 1px solid black;
+    margin: 0px;
+    height: 95%;
+    width: 0px;
+}
+.komet-mapping-dialog-right-column{
+    display: flex;
+    flex-direction: column;
+}
+.komet-mapping-dialog-right-column .form-control{
+    font-size: small;
+    height: 26px;
+    padding: 3px 5px;
+}
+.komet-mapping-dialog-right-column .komet-mapping-dialog-uuid{
+    width: 260px;
+    display: inline;
+}
+.komet-mapping-dialog-right-column button{
+    margin-top: -1px;
+}
+.komet-mapping-dialog-footer{
+    display: flex;
+    justify-content: flex-end;
+    padding-bottom: 4px;
+}
+.komet-mapping-dialog-footer button{
+    margin-right: 5px;
 }
 
