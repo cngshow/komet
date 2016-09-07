@@ -21,6 +21,8 @@ require './lib/isaac_rest/concept_rest'
 require './lib/isaac_rest/sememe_rest'
 require './lib/isaac_rest/id_apis_rest'
 require './lib/rails_common/util/helpers'
+require './app/helpers/application_helper' #build broken w/o this
+
 include KOMETUtilities
 
 module ConceptConcern
