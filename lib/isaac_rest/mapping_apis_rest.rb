@@ -33,11 +33,11 @@ module MappingApis
     include CommonActionSyms
     extend self
 
-    PATH_MAPPING_API = ISAAC_ROOT + 'rest/1/mapping/'
+    ROOT_PATH = ISAAC_ROOT + 'rest/1/mapping/'
     PATH_MAPPING_WRITE_API = ISAAC_ROOT + 'rest/write/1/mapping/'
-    PATH_SETS = PATH_MAPPING_API + 'mappingSets'
-    PATH_ITEMS = PATH_MAPPING_API + 'mappingItems/{id}'
-    PATH_SET = PATH_MAPPING_API + 'mappingSet/{id}'
+    PATH_SETS = ROOT_PATH + 'mappingSets'
+    PATH_ITEMS = ROOT_PATH + 'mappingItems/{id}'
+    PATH_SET = ROOT_PATH + 'mappingSet/{id}'
     PATH_CREATE_SET = PATH_MAPPING_WRITE_API + 'mappingSet/create'
     PATH_CREATE_ITEM = PATH_MAPPING_WRITE_API + 'mappingItem/create'
     PATH_UPDATE_SET = PATH_MAPPING_WRITE_API + 'mappingSet/update/{id}'
