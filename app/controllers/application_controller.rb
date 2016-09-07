@@ -2,6 +2,7 @@ require './lib/rails_common/util/controller_helpers'
 require 'faraday'
 require 'openssl'
 require './lib/rails_common/roles/ssoi'
+require './lib/rails_common/util/servlet_support'
 
 OpenSSL::SSL::VERIFY_PEER = OpenSSL::SSL::VERIFY_NONE
 
@@ -9,6 +10,8 @@ class ApplicationController < ActionController::Base
   include CommonController
   include ApplicationHelper
   include SSOI
+  include ServletSupport
+
   # Prevent CSRF attacks by raising an exception.
   # For APIs, you may want to use :null_session instead.
   protect_from_forgery with: :exception
