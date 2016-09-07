@@ -1,17 +1,18 @@
-<%= form_tag('/mapping/process_map_item', method: 'post', id: 'komet_mapping_item_editor_form') do %>
+<%= form_tag('/mapping/process_map_item', method: 'post', id: "komet_mapping_item_editor_form_#{@viewer_id}") do %>
 
-    <%= hidden_field_tag :komet_mapping_item_editor_set_id, @map_item[:set_id] %>
+    <%= hidden_field_tag :komet_mapping_item_editor_set_id, @map_item[:set_id], id: "komet_mapping_item_editor_set_id_#{@viewer_id}" %>
 
     <div>
 
       <div>
 
-        <%= label_tag :komet_mapping_item_editor_source_display, 'Source Concept:' %>
-        <input id="komet_mapping_item_editor_source" name="komet_mapping_item_editor_source" class="hide" value="<%= @map_item[:source_display] ? @map_item[:source_display] : '' %>">
+        <%= label_tag "komet_mapping_item_editor_source_display_#{@viewer_id}", 'Source Concept:' %>
 
-        <div id="komet_mapping_item_editor_source_fields" class="input-group">
+        <input id="komet_mapping_item_editor_source_<%= @viewer_id %>" name="komet_mapping_item_editor_source" class="hide" value="<%= @map_item[:source_display] ? @map_item[:source_display] : '' %>">
 
-          <input id="komet_mapping_item_editor_source_display" name="komet_mapping_item_editor_source_display" class="form-control" value="<%= @map_item[:source_display] ? @map_item[:source_display] : '' %>">
+        <div id="komet_mapping_item_editor_source_fields_<%= @viewer_id %>" class="input-group">
+
+          <input id="komet_mapping_item_editor_source_display_<%= @viewer_id %>" name="komet_mapping_item_editor_source_display" class="form-control" value="<%= @map_item[:source_display] ? @map_item[:source_display] : '' %>">
 
           <div class="input-group-btn komet-search-combo-field">
 
@@ -19,7 +20,7 @@
               <span class="caret"></span>
             </button>
 
-            <ul id="komet_mapping_item_editor_source_recents" class="dropdown-menu dropdown-menu-right">
+            <ul id="komet_mapping_item_editor_source_recents_<%= @viewer_id %>" class="dropdown-menu dropdown-menu-right">
             </ul>
 
           </div><!-- /btn-group -->
@@ -28,51 +29,51 @@
 
       </div>
 
-      <div id="komet_mapping_item_editor_target_candidates_search_section">
+      <div id="komet_mapping_item_editor_target_candidates_search_section_<%= @viewer_id %>">
 
-        <%= label_tag :komet_mapping_item_editor_target_candidates_search, 'Candidate Criteria:' %>
-        <%= text_field_tag (:komet_mapping_item_editor_target_candidates_search) %>
+        <%= label_tag "komet_mapping_item_editor_target_candidates_search_#{@viewer_id}", 'Candidate Criteria:' %>
+        <%= text_field_tag :komet_mapping_item_editor_target_candidates_search, nil, id: "komet_mapping_item_editor_target_candidates_search_#{@viewer_id}" %>
 
         <div class="komet-flex-right">
-          <%= label_tag :komet_mapping_item_editor_target_candidates_page_size, 'Page Size:' %>
-          <%= select_tag :komet_mapping_item_editor_target_candidates_page_size, options_for_select([['25'], ['50'], ['100'], ['250'], ['500'], ['1000']], '25')  %>
+          <%= label_tag "komet_mapping_item_editor_target_candidates_page_size_#{@viewer_id}", 'Page Size:' %>
+          <%= select_tag :komet_mapping_item_editor_target_candidates_page_size, options_for_select([['25'], ['50'], ['100'], ['250'], ['500'], ['1000']], '25'), id: "komet_mapping_item_editor_target_candidates_page_size_#{@viewer_id}" %>
         </div>
 
         <div class="komet-flex-right">
-          <button type="button" class="btn btn-primary" onclick="MappingModule.loadTargetCandidatesGrid(true)">Search</button>
+          <button type="button" class="btn btn-primary" onclick="WindowManager.viewers[<%= @viewer_id %>].loadTargetCandidatesGrid(true)">Search</button>
         </div>
       </div>
 
       <div>
 
         <div>
-          <%= label_tag :komet_mapping_item_editor_advanced_description_type, 'Description Type:' %>
-          <%= select_tag :komet_mapping_item_editor_description_type, options_for_select([['No Restrictions', ''], ['Fully Specified Name'], ['Synonym'], ['Description']], '')  %>
+          <%= label_tag "komet_mapping_item_editor_advanced_description_type_#{@viewer_id}", 'Description Type:' %>
+          <%= select_tag :komet_mapping_item_editor_description_type=, options_for_select([['No Restrictions', ''], ['Fully Specified Name'], ['Synonym'], ['Description']], ''), id: "komet_mapping_item_editor_advanced_description_type_#{@viewer_id}" %>
         </div>
 
         <div>
-          <%= label_tag :komet_mapping_item_editor_advanced_description_type, 'Advanced Description Type:' %>
-          <%= select_tag :komet_mapping_item_editor_advanced_description_type, options_for_select(@advanced_descriptions, '')  %>
+          <%= label_tag "komet_mapping_item_editor_advanced_description_type_#{@viewer_id}", 'Advanced Description Type:' %>
+          <%= select_tag :komet_mapping_item_editor_advanced_description_type, options_for_select(@advanced_descriptions, ''), id: "komet_mapping_item_editor_advanced_description_type_#{@viewer_id}" %>
         </div>
 
         <div>
-          <%= label_tag :komet_mapping_item_editor_code_system, 'Target Code System:' %>
-          <%= select_tag :komet_mapping_item_editor_code_system, options_for_select(@code_systems, '')  %>
+          <%= label_tag "komet_mapping_item_editor_code_system_#{@viewer_id}", 'Target Code System:' %>
+          <%= select_tag :komet_mapping_item_editor_code_system, options_for_select(@code_systems, ''), id: "komet_mapping_item_editor_code_system_#{@viewer_id}" %>
         </div>
 
         <div>
-          <%= label_tag :komet_mapping_item_editor_assemblage, 'Target is a member of Assemblage:' %>
-          <%= select_tag :komet_mapping_item_editor_assemblage, options_for_select(@assemblages, '')  %>
+          <%= label_tag "komet_mapping_item_editor_assemblage_#{@viewer_id}", 'Target is a member of Assemblage:' %>
+          <%= select_tag :komet_mapping_item_editor_assemblage, options_for_select(@assemblages, ''), id: "komet_mapping_item_editor_assemblage_#{@viewer_id}" %>
         </div>
 
         <div>
 
-          <%= label_tag :komet_mapping_item_editor_kind_of_display, 'Target is Kind Of:' %>
-          <input id="komet_mapping_item_editor_kind_of" name="komet_mapping_item_editor_kind_of" class="hide">
+          <%= label_tag "komet_mapping_item_editor_kind_of_display_#{@viewer_id}", 'Target is Kind Of:' %>
+          <input id="komet_mapping_item_editor_kind_of_<%= @viewer_id %>" name="komet_mapping_item_editor_kind_of" class="hide">
 
-          <div id="komet_mapping_item_editor_kind_of_fields" class="input-group">
+          <div id="komet_mapping_item_editor_kind_of_fields_<%= @viewer_id %>" class="input-group">
 
-            <input id="komet_mapping_item_editor_kind_of_display" name="komet_mapping_item_editor_kind_of_display" class="form-control">
+            <input id="komet_mapping_item_editor_kind_of_display_<%= @viewer_id %>" name="komet_mapping_item_editor_kind_of_display" class="form-control">
 
             <div class="input-group-btn komet-search-combo-field">
 
@@ -80,7 +81,7 @@
                 <span class="caret"></span>
               </button>
 
-              <ul id="komet_mapping_item_editor_kind_of_recents" class="dropdown-menu dropdown-menu-right">
+              <ul id="komet_mapping_item_editor_kind_of_recents_<%= @viewer_id %>" class="dropdown-menu dropdown-menu-right">
               </ul>
 
             </div><!-- /btn-group -->
@@ -93,17 +94,17 @@
 
       <div>
         Mapping Candidates
-        <div id="komet_mapping_item_editor_target_candidates" style="height: 450px;" class="ag-fresh"></div>
+        <div id="komet_mapping_item_editor_target_candidates_<%= @viewer_id %>" style="height: 450px;" class="ag-fresh"></div>
       </div>
 
       <div>
 
-        <%= label_tag :komet_mapping_item_editor_target_display, 'Target Concept:' %>
-        <input id="komet_mapping_item_editor_target" name="komet_mapping_item_editor_target" class="hide" value="<%= @map_item[:target] ? @map_item[:target] : '' %>">
+        <%= label_tag "komet_mapping_item_editor_target_display_#{@viewer_id}", 'Target Concept:' %>
+        <input id="komet_mapping_item_editor_target_<%= @viewer_id %>" name="komet_mapping_item_editor_target" class="hide" value="<%= @map_item[:target] ? @map_item[:target] : '' %>">
 
-        <div id="komet_mapping_item_editor_target_fields" class="input-group">
+        <div id="komet_mapping_item_editor_target_fields_<%= @viewer_id %>" class="input-group">
 
-          <input id="komet_mapping_item_editor_target_display" name="komet_mapping_item_editor_target_display" class="form-control" value="<%= @map_item[:target_display] ? @map_item[:target_display] : '' %>">
+          <input id="komet_mapping_item_editor_target_display_<%= @viewer_id %>" name="komet_mapping_item_editor_target_display" class="form-control" value="<%= @map_item[:target_display] ? @map_item[:target_display] : '' %>">
 
           <div class="input-group-btn komet-search-combo-field">
 
@@ -111,7 +112,7 @@
               <span class="caret"></span>
             </button>
 
-            <ul id="komet_mapping_item_editor_target_recents" class="dropdown-menu dropdown-menu-right">
+            <ul id="komet_mapping_item_editor_target_recents_<%= @viewer_id %>" class="dropdown-menu dropdown-menu-right">
             </ul>
 
           </div><!-- /btn-group -->
@@ -121,13 +122,13 @@
       </div>
 
       <div>
-        <%= label_tag :komet_mapping_item_editor_qualifier, 'Qualifier:' %>
-        <%= select_tag :komet_mapping_item_editor_qualifier, options_for_select([['No Qualifier'], ['Broader Than'], ['Exact'], ['Narrower Than']], @map_item[:review_state]), class: 'form-control' %>
+        <%= label_tag "komet_mapping_item_editor_qualifier_#{@viewer_id}", 'Qualifier:' %>
+        <%= select_tag :komet_mapping_item_editor_qualifier, options_for_select([['No Qualifier'], ['Broader Than'], ['Exact'], ['Narrower Than']], @map_item[:review_state]), id: "komet_mapping_item_editor_qualifier_#{@viewer_id}", class: 'form-control' %>
       </div>
 
       <div>
-        <%= label_tag :komet_mapping_item_editor_review_state, 'Review State:' %>
-        <%= select_tag :komet_mapping_item_editor_review_state, options_for_select([['No Status'], ['Pending'], ['Reviewed']], @map_item[:review_state]), class: 'form-control' %>
+        <%= label_tag "komet_mapping_item_editor_review_state_#{@viewer_id}", 'Review State:' %>
+        <%= select_tag :komet_mapping_item_editor_review_state, options_for_select([['No Status'], ['Pending'], ['Reviewed']], @map_item[:review_state]), id: "komet_mapping_item_editor_review_state_#{@viewer_id}", class: 'form-control' %>
       </div>
 
       <div>
@@ -143,7 +144,8 @@
 
   $(document).ready(function () {
 
-    MappingModule.initializeItemEditor();
+      WindowManager.viewers[<%= @viewer_id %>] = new MappingViewer(<%= @viewer_id %>, <%= @map_item[:set_id] %>);
+      WindowManager.viewers[<%= @viewer_id %>].initializeItemEditor();
   });
 
 </script>
