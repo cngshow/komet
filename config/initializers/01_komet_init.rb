@@ -9,7 +9,7 @@ require './lib/rails_common/logging/open_logging'
 require './lib/rails_common/logging/logging'
 require './lib/utilities/cached_hash'
 require './lib/rails_common/util/helpers'
-ISAAC_ROOT = nil
+ISAAC_ROOT = ''
 
 Thread.new do
   v = $VERBOSE
