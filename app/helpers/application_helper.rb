@@ -23,11 +23,11 @@ module ApplicationHelper
 
   def get_concept_metadata(id)
 
-      coordinates_token = session[:coordinatestoken].token
-      additional_req_params = {coordToken: coordinates_token}
+    coordinates_token = session[:coordinatestoken].token
+    additional_req_params = {coordToken: coordinates_token}
 
-      ver = ConceptRest.get_concept(action: ConceptRestActions::ACTION_DESCRIPTIONS, uuid: id, additional_req_params: additional_req_params).first
-      ver.text
+    ver = ConceptRest.get_concept(action: ConceptRestActions::ACTION_DESCRIPTIONS, uuid: id, additional_req_params: additional_req_params).first
+    ver.text
   end
 
   def komet_user
