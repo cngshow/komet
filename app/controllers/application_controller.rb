@@ -7,6 +7,7 @@ OpenSSL::SSL::VERIFY_PEER = OpenSSL::SSL::VERIFY_NONE
 
 class ApplicationController < ActionController::Base
   include CommonController
+  include ApplicationHelper
   include SSOI
   # Prevent CSRF attacks by raising an exception.
   # For APIs, you may want to use :null_session instead.
@@ -59,10 +60,10 @@ class ApplicationController < ActionController::Base
     if (@@invalid_rest_server)
       versions = SystemApis::get_system_api(action: SystemApiActions::ACTION_SYSTEM_INFO).supportedAPIVersions
       render :file => (trinidad? ? 'public/invalid_issac_rest.html' : "#{Rails.root}/../invalid_issac_rest.html")
-      $log.fatal("The isaac rest server this instance of Komet is pointed to is invalid!")
+      $log.fatal('The isaac rest server this instance of Komet is pointed to is invalid!')
       $log.fatal("The isaac rest server version list is: #{versions}")
       $log.fatal("My supported version list is: #{REST_API_VERSIONS}")
-      $log.fatal("Komet will not function until this is resolved!")
+      $log.fatal('Komet will not function until this is resolved!')
       return
     end
   end
@@ -71,7 +72,7 @@ class ApplicationController < ActionController::Base
     $log.debug("Ensuring roles for #{request.fullpath}")
     user_name = ssoi_headers
     @ssoi = !user_name.to_s.strip.empty? #we are using ssoi
-    $log.debug("SSOI headers present? " + ssoi?.to_s + " ssoi user is #{user_name}")
+    $log.debug('SSOI headers present? ' + ssoi?.to_s + " ssoi user is #{user_name}")
     roles = session[Roles::SESSION_ROLES_ROOT][Roles::SESSION_USER_ROLES]
     user = session[Roles::SESSION_ROLES_ROOT][Roles::SESSION_USER]
     password = session[Roles::SESSION_ROLES_ROOT][Roles::SESSION_PASSWORD] unless ssoi
@@ -85,22 +86,22 @@ class ApplicationController < ActionController::Base
     session[Roles::SESSION_ROLES_ROOT][Roles::SESSION_LAST_ROLE_CHECK] =  100.years.ago if session[Roles::SESSION_ROLES_ROOT][Roles::SESSION_LAST_ROLE_CHECK].nil?
     time_for_recheck = (Time.now - session[Roles::SESSION_ROLES_ROOT][Roles::SESSION_LAST_ROLE_CHECK]) > $PROPS['KOMET.roles_recheck_in_seconds'].to_i
     if (session[Roles::SESSION_ROLES_ROOT][Roles::SESSION_LAST_ROLE_CHECK].nil? || time_for_recheck)
-      $log.debug("Refetching the roles")
+      $log.debug('Refetching the roles')
       if (!ssoi? && (!FileTest.exists?("#{Rails.root}/config/props/prisme.properties") || $PROPS['PRISME.prisme_roles_url'].nil?))
         load './lib/roles_test/roles.rb'
         roles = RolesTest::user_roles(user: user, password: password)
         session[Roles::SESSION_ROLES_ROOT][Roles::SESSION_LAST_ROLE_CHECK] = Time.now
       else
-        $log.debug("Getting the roles from PRISME")
+        $log.debug('Getting the roles from PRISME')
         #todo
         #nil check on prop below needed, error log will never be seen
         #wrap in begin end block
         begin
           roles_url = ssoi ? URI($PROPS['PRISME.prisme_roles_ssoi_url']) : URI($PROPS['PRISME.prisme_roles_url'])
         rescue
-          $log.error("The roles url is not set!  Was this instance of Komet deployed from Prisme?  If not you must manually set the property.  See ./config/props/prisme.properties")
+          $log.error('The roles url is not set!  Was this instance of Komet deployed from Prisme?  If not you must manually set the property.  See ./config/props/prisme.properties')
         end
-        conn = get_rest_connection(roles_url.base_url)
+        conn = CommonController.get_rest_connection(roles_url.base_url)
         response = nil
         error = false
         begin
@@ -155,23 +156,12 @@ class ApplicationController < ActionController::Base
   end
 
   private
-  def get_rest_connection(url, header = 'application/json')
-    conn = Faraday.new(url: url) do |faraday|
-      faraday.request :url_encoded # form-encode POST params
-      faraday.use Faraday::Response::Logger, $log
-      faraday.headers['Accept'] = header
-      faraday.adapter :net_http # make requests with Net::HTTP
-      #faraday.basic_auth(props[PrismeService::NEXUS_USER], props[PrismeService::NEXUS_PWD])
-    end
-    conn
-  end
-
   def add_translations(json)
     translated_hash = json.deep_dup
     json.keys.each do |k|
       translated_array = []
       json[k]['uuids'].each do |uuid|
-        translation = JSON.parse IdAPIsRest::get_id(action: IdAPIsRestActions::ACTION_TRANSLATE, uuid_or_id: uuid, additional_req_params: {"outputType" => "conceptSequence"}).to_json
+        translation = JSON.parse IdAPIsRest::get_id(action: IdAPIsRestActions::ACTION_TRANSLATE, uuid_or_id: uuid, additional_req_params: {'outputType' => 'conceptSequence'}).to_json
         translated_array << {uuid: uuid, translation: translation}
       end
       translated_hash[k]['uuids'] = translated_array

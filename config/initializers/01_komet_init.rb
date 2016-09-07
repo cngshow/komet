@@ -9,8 +9,12 @@ require './lib/rails_common/logging/open_logging'
 require './lib/rails_common/logging/logging'
 require './lib/utilities/cached_hash'
 require './lib/rails_common/util/helpers'
+ISAAC_ROOT = ''
 
 Thread.new do
+  v = $VERBOSE
+  $VERBOSE = nil
+
   final_root = ''
 #All the rest libs depend on ISAAC_ROOT.   The line below must be above those requires.
   if ($PROPS['PRISME.isaac_root'])
@@ -28,6 +32,7 @@ Thread.new do
     ISAAC_ROOT = final_root
   end
   $log.always("I am pointed to #{ISAAC_ROOT}")
+  $VERBOSE = v
 end
 
 #in developer mode it is nice to have the rest classes fully loaded so all the registration takes place, for example:
@@ -41,6 +46,8 @@ require './lib/isaac_rest/sememe_rest'
 require './lib/isaac_rest/system_apis_rest'
 require './lib/isaac_rest/taxonomy_rest'
 require './lib/isaac_rest/coordinate_rest'
+require './lib/isaac_rest/mapping_apis_rest'
+require './lib/isaac_rest/comment_apis_rest'
 require './lib/rails_common/roles/roles'
 
 $rest_cache = CachedHash.new($PROPS.fetch('KOMET.rest_cache_max').to_i)

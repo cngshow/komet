@@ -26,9 +26,8 @@ class ExternalController < ApplicationController
   skip_before_action :ensure_roles, only: [:logout, :login]
 
   def login
-    #render external#login
     user_name = ssoi_headers
-    @ssoi = !user_name.to_s.strip.empty? #we are using ssoi
+      @ssoi = !user_name.to_s.strip.empty? #we are using ssoi
     if (ssoi?)
       ensure_roles
       roles = session[Roles::SESSION_ROLES_ROOT][Roles::SESSION_USER_ROLES]
@@ -38,7 +37,7 @@ class ExternalController < ApplicationController
         return
       end
     end
-    $log.debug("Rendering the standard login page")
+    $log.debug('Rendering the standard login page')
   end
 
   def authenticate
@@ -47,18 +46,15 @@ class ExternalController < ApplicationController
       redirect_to komet_dashboard_dashboard_url
     else
       #not authenticated - redirect to the naughty page
-      flash[:error] = "Invalid username or password."
+      flash[:error] = 'Invalid username or password.'
       redirect_to root_url
     end
   end
 
   def logout
-    roles = session[Roles::SESSION_ROLES_ROOT][Roles::SESSION_USER_ROLES]
     session.delete(Roles::SESSION_ROLES_ROOT)
-    flash[:notice] = "You have been logged out."
-    redirect_to root_url
+    flash[:notice] = 'You have been logged out.'
+    logout_url = @ssoi ? PrismeConfigConcern.logout_link : root_url
+    redirect_to logout_url
   end
-
-
-
 end
