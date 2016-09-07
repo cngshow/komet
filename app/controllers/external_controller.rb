@@ -33,7 +33,7 @@ class ExternalController < ApplicationController
       roles = session[Roles::SESSION_ROLES_ROOT][Roles::SESSION_USER_ROLES]
       $log.debug("SSOI has the following roles: #{roles}")
       unless (roles.nil? || roles.empty?)
-        redirect_to komet_dashboard_dashboard_url
+        redirect_to proxify(komet_dashboard_dashboard_path)
         return
       end
     end
@@ -43,18 +43,18 @@ class ExternalController < ApplicationController
   def authenticate
     roles = session[Roles::SESSION_ROLES_ROOT][Roles::SESSION_USER_ROLES]
     unless(roles.nil? || roles.empty?)
-      redirect_to komet_dashboard_dashboard_url
+      redirect_to proxify(komet_dashboard_dashboard_path)
     else
       #not authenticated - redirect to the naughty page
       flash[:error] = 'Invalid username or password.'
-      redirect_to root_url
+      redirect_to proxify(root_path)
     end
   end
 
   def logout
     session.delete(Roles::SESSION_ROLES_ROOT)
     flash[:notice] = 'You have been logged out.'
-    logout_url = @ssoi ? PrismeConfigConcern.logout_link : root_url
-    redirect_to logout_url
+    logout_url_string = ssoi? ? PrismeConfigConcern.logout_link : proxify(logout_path)
+    redirect_to logout_url_string
   end
 end
