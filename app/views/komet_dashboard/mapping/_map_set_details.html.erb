@@ -40,37 +40,9 @@
 
                         <div><a class="komet-mapping-dialog-select-all" onclick="return false;">Select All</a></div>
 
-                        <div class="komet-indent-block">
+                        <div id="komet_mapping_dialog_include_fields_<%= @viewer_id %>" class="komet-indent-block">
 
-                            <div>
-                                <%= check_box_tag 'komet_mapping_set_editor_include_fields[]', :source_system, @map_set[:include_fields].include?('source_system'), id: "komet_mapping_set_editor_include_fields_source_system_#{@viewer_id}", class: 'form-control' %>
-                                <%= label_tag "komet_mapping_set_editor_include_fields_source_system_#{@viewer_id}", 'Source Code System' %>
-                            </div>
 
-                            <div>
-                                <%= check_box_tag 'komet_mapping_set_editor_include_fields[]', :source_version, @map_set[:include_fields].include?('source_version'), id: "komet_mapping_set_editor_include_fields_source_version_#{@viewer_id}", class: 'form-control' %>
-                                <%= label_tag "komet_mapping_set_editor_include_fields_source_version_#{@viewer_id}", 'Source Code Version' %>
-                            </div>
-
-                            <div>
-                                <%= check_box_tag 'komet_mapping_set_editor_include_fields[]', :target_system, @map_set[:include_fields].include?('target_system'), id: "komet_mapping_set_editor_include_fields_target_system_#{@viewer_id}", class: 'form-control' %>
-                                <%= label_tag "komet_mapping_set_editor_include_fields_target_system_#{@viewer_id}", 'Target Code System' %>
-                            </div>
-
-                            <div>
-                                <%= check_box_tag 'komet_mapping_set_editor_include_fields[]', :target_version, @map_set[:include_fields].include?('target_version'), id: "komet_mapping_set_editor_include_fields_target_version_#{@viewer_id}", class: 'form-control' %>
-                                <%= label_tag "komet_mapping_set_editor_include_fields_target_version_#{@viewer_id}", 'Target Code Version' %>
-                            </div>
-
-                            <div>
-                                <%= check_box_tag 'komet_mapping_set_editor_include_fields[]', :equivalence, @map_set[:include_fields].include?('equivalence'), id: "komet_mapping_set_editor_include_fields_equivalence_#{@viewer_id}", class: 'form-control' %>
-                                <%= label_tag "komet_mapping_set_editor_include_fields_equivalence_#{@viewer_id}", 'Equivalence Type' %>
-                            </div>
-
-                            <div>
-                                <%= check_box_tag 'komet_mapping_set_editor_include_fields[]', :comments, @map_set[:include_fields].include?('comments'), id: "komet_mapping_set_editor_include_fields_comments_#{@viewer_id}", class: 'form-control' %>
-                                <%= label_tag "komet_mapping_set_editor_include_fields_comments_#{@viewer_id}", 'Comments' %>
-                            </div>
                         </div>
 
                     </div>

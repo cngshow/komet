@@ -158,13 +158,13 @@ class MappingController < ApplicationController
             @map_set[:version] = '12.4'
             @map_set[:vuid] = '4500635'
             @map_set[:include_fields] = ['source_system', 'source_version', 'target_system', 'target_version', 'equivalence', 'comments']
-            @map_set[:source_system] = {name: 'source_system', type: 'concept', value:'Source Test', label: 'Source System'}
+            @map_set[:source_system] = {name: 'source_system', type: 'concept', value:'Source Test', label: 'Source System', display: true}
             @map_set[:source_system_display] = 'Source Test'
-            @map_set[:source_version] = {name: 'source_version', type: 'text', value:'Source Version Test', label: 'Source Version'}
-            @map_set[:target_system] = {name: 'target_system', type: 'concept', value:'Target Test', label: 'Target System'}
+            @map_set[:source_version] = {name: 'source_version', type: 'text', value:'Source Version Test', label: 'Source Version', display: true}
+            @map_set[:target_system] = {name: 'target_system', type: 'concept', value:'Target Test', label: 'Target System', display: true}
             @map_set[:target_system_display] = 'Target Test'
-            @map_set[:target_version] = {name: 'target_version', type: 'text', value:'Target Version Test', label: 'Target Version'}
-            @map_set[:equivalence] = {name: 'equivalence', type: 'select', value:'Exact', label: 'Equivalence Type', options: ['No Restrictions', 'Exact', 'Broader Than', 'Narrower Than']}
+            @map_set[:target_version] = {name: 'target_version', type: 'text', value:'Target Version Test', label: 'Target Version', display: false}
+            @map_set[:equivalence] = {name: 'equivalence', type: 'select', value:'Exact', label: 'Equivalence Type', display: true, options: ['No Restrictions', 'Exact', 'Broader Than', 'Narrower Than']}
             @map_set[:comments] = {name: 'comments', type: 'textarea', value:'Comments Test', label: 'Comments'}
 
             @viewer_title = @map_set[:description]
