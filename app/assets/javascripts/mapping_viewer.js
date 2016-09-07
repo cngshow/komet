@@ -402,7 +402,7 @@ var MappingViewer = function(viewerID, currentSetID, mappingAction) {
 
                     includedFields += '<option';
 
-                    if (options[i] == value){
+                    if (options[j] == value){
                         includedFields += ' selected';
                     }
 

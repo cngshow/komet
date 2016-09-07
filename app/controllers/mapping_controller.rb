@@ -149,7 +149,7 @@ class MappingController < ApplicationController
             @map_set[:set_id] = set.identifiers.uuids.first
             @map_set[:name] = set.name
             @map_set[:description] = set.description
-            @map_set[:state] = set.mappingSetStamp.state
+            @map_set[:state] = set.mappingSetStamp.state.name
             @map_set[:time] = DateTime.strptime((set.mappingSetStamp.time / 1000).to_s, '%s').strftime('%m/%d/%Y')
             @map_set[:author] = get_concept_metadata(set.mappingSetStamp.authorSequence)
             @map_set[:module] = get_concept_metadata(set.mappingSetStamp.moduleSequence)
