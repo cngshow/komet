@@ -23,7 +23,7 @@ Copyright Notice
 # handles the login and all resources outside of login
 class ExternalController < ApplicationController
 
-  skip_before_action :ensure_roles, only: [:logout, :login]
+  skip_before_action :ensure_roles, only: [:login]
 
   def login
     user_name = ssoi_headers
@@ -33,7 +33,7 @@ class ExternalController < ApplicationController
       roles = session[Roles::SESSION_ROLES_ROOT][Roles::SESSION_USER_ROLES]
       $log.debug("SSOI has the following roles: #{roles}")
       unless (roles.nil? || roles.empty?)
-        redirect_to proxify(komet_dashboard_dashboard_path)
+        redirect_to komet_dashboard_dashboard_url
         return
       end
     end
@@ -43,7 +43,7 @@ class ExternalController < ApplicationController
   def authenticate
     roles = session[Roles::SESSION_ROLES_ROOT][Roles::SESSION_USER_ROLES]
     unless(roles.nil? || roles.empty?)
-      redirect_to proxify(komet_dashboard_dashboard_path)
+      redirect_to komet_dashboard_dashboard_url
     else
       #not authenticated - redirect to the naughty page
       flash[:error] = 'Invalid username or password.'
@@ -54,7 +54,7 @@ class ExternalController < ApplicationController
   def logout
     session.delete(Roles::SESSION_ROLES_ROOT)
     flash[:notice] = 'You have been logged out.'
-    logout_url_string = ssoi? ? PrismeConfigConcern.logout_link : proxify(logout_path)
+    logout_url_string = ssoi? ? PrismeConfigConcern.logout_link : logout_url
     redirect_to logout_url_string
   end
 end
