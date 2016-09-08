@@ -135,7 +135,16 @@ class MappingController < ApplicationController
     def map_set_editor
 
         coordinates_token = session[:coordinatestoken].token
-        @map_set = {id: nil, name: nil, description: nil, version: nil, vuid: nil, source_system: nil, source_system_display: nil, source_version: nil, target_system: nil, target_system_display: nil, target_version: nil, rules: nil, include_fields: [], state: nil, status: 'Active', time: nil, module: nil, path: nil}
+        @map_set = {id: '', name: '', description: '', version: '', vuid: '', rules: '', include_fields: [], state: '', status: 'Active', time: '', module: '', path: ''}
+        @map_set[:include_fields] = ['source_system', 'source_version', 'target_system', 'target_version', 'equivalence', 'comments']
+        @map_set[:source_system] = {name: 'source_system', type: 'concept', value: '', label: 'Source System', display: false}
+        @map_set[:source_system_display] = ''
+        @map_set[:source_version] = {name: 'source_version', type: 'text', value: '', label: 'Source Version', display: false}
+        @map_set[:target_system] = {name: 'target_system', type: 'concept', value: '', label: 'Target System', display: false}
+        @map_set[:target_system_display] = ''
+        @map_set[:target_version] = {name: 'target_version', type: 'text', value: '', label: 'Target Version', display: false}
+        @map_set[:equivalence] = {name: 'equivalence', type: 'select', value: '', label: 'Equivalence Type', display: false, options: ['No Restrictions', 'Exact', 'Broader Than', 'Narrower Than']}
+        @map_set[:comments] = {name: 'comments', type: 'textarea', value: '', label: 'Comments', display: false}
         @set_id = params[:set_id]
 
         if @set_id &&  @set_id != ''
@@ -154,18 +163,24 @@ class MappingController < ApplicationController
             @map_set[:author] = get_concept_metadata(set.mappingSetStamp.authorSequence)
             @map_set[:module] = get_concept_metadata(set.mappingSetStamp.moduleSequence)
             @map_set[:path] = get_concept_metadata(set.mappingSetStamp.pathSequence)
+            @map_set[:source_system][:value] = '11'
+            @map_set[:source_system_display] = 'Source System Test'
+            @map_set[:source_system][:display] = true
+            @map_set[:source_version][:value] = 'Source Version Test'
+            @map_set[:source_version][:display] = true
+            @map_set[:target_system][:value] = '22'
+            @map_set[:target_system_display] = 'Target System Test'
+            @map_set[:target_system][:display] = true
+            @map_set[:target_version][:value] = 'Target Version Test'
+            @map_set[:target_version][:display] = true
+            @map_set[:equivalence][:value] = 'Exact'
+            @map_set[:equivalence][:display] = true
+            @map_set[:comments][:value] = 'Comments Test'
+            @map_set[:comments][:display] = true
             @map_set[:rules] = 'Business rules test'
             @map_set[:version] = '12.4'
             @map_set[:vuid] = '4500635'
-            @map_set[:include_fields] = ['source_system', 'source_version', 'target_system', 'target_version', 'equivalence', 'comments']
-            @map_set[:source_system] = {name: 'source_system', type: 'concept', value:'Source Test', label: 'Source System', display: true}
-            @map_set[:source_system_display] = 'Source Test'
-            @map_set[:source_version] = {name: 'source_version', type: 'text', value:'Source Version Test', label: 'Source Version', display: true}
-            @map_set[:target_system] = {name: 'target_system', type: 'concept', value:'Target Test', label: 'Target System', display: true}
-            @map_set[:target_system_display] = 'Target Test'
-            @map_set[:target_version] = {name: 'target_version', type: 'text', value:'Target Version Test', label: 'Target Version', display: false}
-            @map_set[:equivalence] = {name: 'equivalence', type: 'select', value:'Exact', label: 'Equivalence Type', display: true, options: ['No Restrictions', 'Exact', 'Broader Than', 'Narrower Than']}
-            @map_set[:comments] = {name: 'comments', type: 'textarea', value:'Comments Test', label: 'Comments'}
+
 
             @viewer_title = @map_set[:description]
         else

@@ -269,7 +269,7 @@ var MappingViewer = function(viewerID, currentSetID, mappingAction) {
         var form = $("#komet_mapping_set_editor_form_" + this.viewerID);
 
         this.mappingAction = mappingAction;
-        this.setEditorCreatedFields = [];
+        this.setEditorOriginalIncludedFields = null;
 
         var includeFields = "";
 
@@ -329,20 +329,32 @@ var MappingViewer = function(viewerID, currentSetID, mappingAction) {
 
     };
 
+    MappingViewer.prototype.getSetEditorIncludeFields = function(state){
+
+
+        var includeCheckboxes = $("#komet_mapping_dialog_add_set_fields_" + this.viewerID).find("[name='komet_mapping_set_editor_include_fields[]']");
+
+        if (state == "selected"){
+            includeCheckboxes = includeCheckboxes.filter(":checked");
+        } else if (state == "unselected"){
+            includeCheckboxes = includeCheckboxes.not(":checked");
+        }
+
+        return includeCheckboxes;
+    };
+
     MappingViewer.prototype.generateSetEditorAdditionalFields = function(){
 
         // remove all added fields from the form so we can start fresh
         var definitionTab = $("#komet_mapping_set_definition_tab_" + this.viewerID);
         definitionTab.find(".komet-mapping-set-added-row").remove();
 
-        var includeCheckboxes = $("#komet_mapping_dialog_add_set_fields_" + this.viewerID).find("[name='komet_mapping_set_editor_include_fields[]']")
-
-        var fieldsToInclude = $.map(includeCheckboxes.filter(":checked"), function(element) {
-                return element.value;
-        }.bind(this));
+        var fieldsToInclude = $.map(this.getSetEditorIncludeFields("selected"), function(element) {
+            return element.value;
+        });
 
         var includedFields = "";
-        var addedTag = "komet-mapping-set-added-"
+        var addedTag = "komet-mapping-set-added-";
 
         // build up the structure for displaying the included fields
         for (var i = 0; i < fieldsToInclude.length; i++){
@@ -386,14 +398,16 @@ var MappingViewer = function(viewerID, currentSetID, mappingAction) {
                     + 'classes="komet-mapping-set-editor-edit" '
                     + 'suggestion-rest-variable="mapping_get_item_target_suggestions_path" '
                     + 'recents-rest-variable="mapping_get_item_source_recents_path" '
-                    + '></autosuggest>'
+                    + '></autosuggest>';
+
+                value = displayValue;
                 
             } else if (fieldsToInclude[i] == "target_system"){
 
-                var display_value = "";
+                var displayValue = "";
 
                 if (this.setEditorMapSet[fieldsToInclude[i] + "_display"] != undefined){
-                    display_value = this.setEditorMapSet[fieldsToInclude[i] + "_display"];
+                    displayValue = this.setEditorMapSet[fieldsToInclude[i] + "_display"];
                 }
 
                 includedFields += '<autosuggest '
@@ -401,11 +415,13 @@ var MappingViewer = function(viewerID, currentSetID, mappingAction) {
                     + 'id-postfix="_' + this.viewerID + '" '
                     + 'label="Target Code System:" '
                     + 'value="' + value + '" '
-                    + 'display-value="' + display_value + '" '
+                    + 'display-value="' + displayValue + '" '
                     + 'classes="komet-mapping-set-editor-edit" '
                     + 'suggestion-rest-variable="mapping_get_item_target_suggestions_path" '
                     + 'recents-rest-variable="mapping_get_item_target_recents_path" '
-                    + '></autosuggest>'
+                    + '></autosuggest>';
+
+                value = displayValue;
 
             } else if (type == "text"){
                 includedFields += label + '<input ' + name + id + 'class="' + classes + '" value="' + value + '">';
@@ -439,7 +455,6 @@ var MappingViewer = function(viewerID, currentSetID, mappingAction) {
             if (!even){
                 includedFields += '</div>';
             }
-
         }
 
         // if the number of the included fields is odd, we need to close the last row started.
@@ -689,6 +704,14 @@ var MappingViewer = function(viewerID, currentSetID, mappingAction) {
 
         console.log("Had Changes: " + UIHelper.hasFormChanged("#komet_mapping_set_editor_form_" + this.viewerID));
         UIHelper.resetFormChanges("#komet_mapping_set_editor_form_" + this.viewerID);
+
+        if (this.setEditorOriginalIncludedFields != null){
+
+            $("#komet_mapping_dialog_include_fields_" + this.viewerID).html(document.createRange().createContextualFragment(this.setEditorOriginalIncludedFields));
+            this.generateSetEditorAdditionalFields();
+            $("#komet_mapping_set_definition_tab_" + this.viewerID).find(".komet-mapping-set-added-row .komet-mapping-set-editor-edit").hide();
+        }
+
     };
 
     MappingViewer.prototype.showIncludeSetFieldsDialog = function(){
@@ -696,6 +719,8 @@ var MappingViewer = function(viewerID, currentSetID, mappingAction) {
         var dialog = $('#komet_mapping_dialog_add_set_fields_' + this.viewerID);
         dialog.removeClass("hide");
         dialog.position({my: "right top", at: "right bottom", of: "#komet_mapping_set_editor_save_" + this.viewerID});
+
+        this.setEditorOriginalIncludedFields = $("#komet_mapping_dialog_include_fields_" + this.viewerID).html();
     };
 
     MappingViewer.prototype.cancelIncludeSetFieldsDialog = function(){
@@ -704,6 +729,8 @@ var MappingViewer = function(viewerID, currentSetID, mappingAction) {
         dialog.addClass("hide");
 
         UIHelper.resetFormChanges("#komet_mapping_dialog_add_set_fields_" + this.viewerID);
+
+        this.setEditorOriginalIncludedFields = null;
     };
 
     MappingViewer.prototype.saveIncludeSetFieldsDialog = function(){
@@ -712,8 +739,8 @@ var MappingViewer = function(viewerID, currentSetID, mappingAction) {
         dialog.addClass("hide");
 
         UIHelper.acceptFormChanges("#komet_mapping_dialog_add_set_fields_" + this.viewerID);
-        this.generateSetEditorAdditionalFields();
 
+        this.generateSetEditorAdditionalFields();
         $("#komet_mapping_set_editor_form_" + this.viewerID).find(".komet-mapping-set-editor-display").hide();
     };
 
