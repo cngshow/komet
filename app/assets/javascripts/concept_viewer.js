@@ -310,6 +310,191 @@ var ConceptViewer = function(viewerID, currentConceptID) {
     ConceptViewer.prototype.exportCSV  = function(){
         this.refsetGridOptions.api.exportDataAsCsv({allColumns: true});
     };
+
+    ConceptViewer.prototype.editConcept = function(viewerID,stated){
+
+        var divtext = "";
+        var rowCount = 0;
+        var partial = 'komet_dashboard/concept_edit';
+        var concept_id  = "?concept_id=" + this.currentConceptID + "&stated=stated&partial=" + partial + "&viewer_id=" + viewerID;
+        $.get( gon.routes.taxonomy_get_attributes_jsonreturntype_path  + concept_id     ,function( data ) {
+            selectItemByValue(document.getElementById('komet_concept_Status'),data[1].value);
+
+            if ( data[2].value == 'Primitive')
+            {
+                divtext = "<div class='komet-tree-node-icon komet-tree-node-primitive' title=''" + data[2].value + "'></div>"
+            }
+              else
+            {
+                divtext = "<div class='komet-tree-node-icon komet-tree-node-defined' title='" + data[2].value + "'></div>"
+            }
+            $("#definedDiv").html(divtext);
+
+            selectItemByValue(document.getElementById('komet_concept_defined'),data[2].value);
+
+        });
+        descriptiondropdown();
+        $.get( gon.routes.taxonomy_get_descriptions_jsonreturntype_path  + concept_id , function( descriptionData ) {
+
+            $.each(descriptionData, function (index, value) {
+                rowCount = rowCount + 1;
+                 addDescriptionData(index,value,rowCount)
+            });
+
+        });
+
+
+        // setup the assemblage field autocomplete functionality
+        $("#taxonomy_lineage_display").autocomplete({
+            source: gon.routes.search_get_assemblage_suggestions_path,
+            minLength: 3,
+            select: onLineageSuggestionSelection,
+            change: onLineageSuggestionChange
+        });
+
+        // load any previous assemblage queries into a menu for the user to select from
+        loadLineageRecents();
+
+    };
+    function selectItemByValue(elmnt, value){
+        for(var i=0; i < elmnt.options.length; i++)
+        {
+            if(elmnt.options[i].value.toUpperCase() == value)
+                elmnt.selectedIndex = i;
+        }
+    }
+    function descriptiondropdown()    {
+        var headingtr = document.createElement("TR");
+        headingtr.setAttribute("id", "descriptiondata");
+        headingtr.setAttribute("style", "background-color: #4f80d9;color:white;text-align: center")
+        document.getElementById('description_texttbl').appendChild(headingtr);
+
+        var headingtd0 = document.createElement("TD");
+        headingtd0.innerHTML ='Description Type';
+        document.getElementById("descriptiondata").appendChild(headingtd0);
+
+        var headingtd1 = document.createElement("TD");
+        headingtd1.innerHTML ='Description Text';
+        document.getElementById("descriptiondata").appendChild(headingtd1);
+
+        var headingtd2 = document.createElement("TD");
+        headingtd2.innerHTML ='Acceptability';
+        document.getElementById("descriptiondata").appendChild(headingtd2);
+
+        var headingtd3 = document.createElement("TD");
+        headingtd3.innerHTML ='State';
+        document.getElementById("descriptiondata").appendChild(headingtd3);
+
+        var headingtd4 = document.createElement("TD");
+        headingtd4.innerHTML ='Language';
+        document.getElementById("descriptiondata").appendChild(headingtd4);
+
+        var headingtd5 = document.createElement("TD");
+        headingtd5.innerHTML ='Case';
+        document.getElementById("descriptiondata").appendChild(headingtd5);
+
+        var headingtd6 = document.createElement("TD");
+        headingtd6.innerHTML ='Delete';
+        document.getElementById("descriptiondata").appendChild(headingtd6);
+
+
+    }
+
+    function addDescriptionData(index,data,rowCount)    {
+        if(index == "descriptions")
+        {
+            for (var i = 0, count = data.length; i < count; i++) {
+                rowCount = rowCount + 1;
+
+                var descriptionRow = document.createElement("tr");
+                descriptionRow.setAttribute("id", "descriptiondata" + rowCount);
+
+                var idCell = document.createElement("td");
+                var descriptiontypeCell = document.createElement("td");
+                var descriptiontextCell = document.createElement("td");
+                var acceptabilityCell = document.createElement("td");
+                var stateCell = document.createElement("td");
+                var languageCell = document.createElement("td");
+                var caseCell = document.createElement("td");
+                var DeleteCell = document.createElement("td");
+                descriptionRow.setAttribute("id", "tr" + rowCount);
+
+                idCell.innerHTML = rowCount;
+                descriptiontypeCell.innerHTML = decriptionType(rowCount,data[i].description_type_short);
+               // console.log('descriptiontypeDDL' + rowCount);
+                //selectItemByValue(document.getElementById('descriptiontypeDDL' + rowCount) ,data[i].description_type_short);
+                descriptiontextCell.innerHTML = '<input name="descriptionText"  type="text" id="' + "descriptionText" + '~' + rowCount + '" width="20px"  value=" ' + data[i].text + ' "  />';
+                acceptabilityCell.innerHTML = acceptabilityType(rowCount);
+                stateCell.innerHTML = stateType(rowCount);
+                languageCell.innerHTML = languagetype(rowCount);
+                caseCell.innerHTML = casetype(rowCount);
+                DeleteCell.innerHTML = '<a name="removeRow" onclick="PreferenceModule.deleteRefsetFieldRow(' + rowCount + ')">X</a>';
+
+                //  descriptionRow.appendChild(idCell);
+                descriptionRow.appendChild(descriptiontypeCell);
+                descriptionRow.appendChild(descriptiontextCell);
+                descriptionRow.appendChild(acceptabilityCell);
+                descriptionRow.appendChild(stateCell);
+                descriptionRow.appendChild(languageCell);
+                descriptionRow.appendChild(caseCell);
+                descriptionRow.appendChild(DeleteCell);
+
+                $("#description_texttbl").append(descriptionRow)
+            }
+        }
+
+    }
+
+    function decriptionType(rowCount,selecteditem)
+    {
+        var options = "";
+        var descriptionTypeSelect = '<select style="width:100px" id="descriptiontypeDDL' + rowCount + '">';
+        if(selecteditem == 'SYN') {
+            options += '<option SELECTED="SELECTED" value=SYN>SYN</option>';
+        }
+        if(selecteditem == 'FSN') {
+            options += '<option SELECTED="SELECTED" value=FSN>FSN</option>';
+        }
+        descriptionTypeSelect += options + '</select>';
+      return descriptionTypeSelect
+    }
+    function languagetype(rowCount)
+    {
+        var options = "";
+        var languagetypeSelect = '<select style="width:100px" id="languagetypeDDL">';
+        options += '<option value=US English>US English</option>';
+        options += '<option value=GB English>GB English</option>';
+        languagetypeSelect += options + '</select>';
+        return languagetypeSelect
+
+    }
+    function casetype()
+    {
+        var options = "";
+        var descriptionTypeSelect = '<select style="width:100px" id="descriptiontypeDDL">';
+        options += '<option value=true>Yes</option>';
+        options += '<option value=false>No</option>';
+        descriptionTypeSelect += options + '</select>';
+        return descriptionTypeSelect
+    }
+    function stateType()
+    {
+        var options = "";
+        var stateTypeSelect = '<select style="width:100px" id="descriptiontypeDDL">';
+        options += '<option value=ACTIVE>Active</option>';
+        options += '<option value=INACTIVE>InActive</option>';
+        stateTypeSelect += options + '</select>';
+        return stateTypeSelect
+    }
+    function acceptabilityType()
+    {
+        var options = "";
+        var acceptabilitySelect = '<select style="width:100px" id="acceptabilityDDL">';
+        options += '<option value=Acceptable>Acceptable</option>';
+        acceptabilitySelect += options + '</select>';
+        return acceptabilitySelect
+    }
+
     ConceptViewer.prototype.createName = function(viewerID){
 
         $("#txtName").keyup(function(event) {
