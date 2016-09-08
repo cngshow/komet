@@ -27,7 +27,11 @@ var KometMappingTree = function(treeID, windowType){
         this.buildMappingTree();
     };
 
-    KometMappingTree.prototype.buildMappingTree = function() {
+    KometMappingTree.prototype.buildMappingTree = function(selectItem) {
+
+        if (selectItem == null){
+            selectItem = true;
+        }
 
         //set ui to hour glass
         Common.cursor_wait();
@@ -65,10 +69,12 @@ var KometMappingTree = function(treeID, windowType){
         this.tree = $("#" + this.treeID).jstree(settings);
         this.tree.on('changed.jstree', onChanged.bind(this));
 
-        // set the tree to select the first node when it finishes loading
+        // set the tree to select the first node when it finishes loading based on the value of selectItem
         this.tree.bind('ready.jstree', function (event, data) {
 
-            data.instance.select_node('ul > li:first');
+            if (selectItem){
+                data.instance.select_node('ul > li:first');
+            }
 
             // set ui to regular cursor
             Common.cursor_auto();
@@ -92,10 +98,17 @@ var KometMappingTree = function(treeID, windowType){
     };
 
     // destroy the current tree and reload it
-    KometMappingTree.prototype.reloadTree = function() {
+    KometMappingTree.prototype.reloadTree = function(selectItem, setID) {
 
+        if (selectItem == null){
+            selectItem = false;
+        }
         this.tree.jstree(true).destroy();
-        this.buildMappingTree();
+        this.buildMappingTree(selectItem);
+
+        if (setID != null){
+            this.findNodeInTree(setID, true, false)
+        }
     };
 
     KometMappingTree.prototype.getNodeIDBySetID = function(setID){

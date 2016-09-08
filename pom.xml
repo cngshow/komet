@@ -13,7 +13,7 @@
 
 	<groupId>gov.vha.isaac.gui.rails</groupId>
 	<artifactId>rails_komet</artifactId>
-	<version>1.16-SNAPSHOT</version>
+	<version>1.21-SNAPSHOT</version>
 	<packaging>pom</packaging>
 
 	<name>ISAAC Rails Komet Tooling</name>
@@ -23,7 +23,7 @@
 	</description>
 
 	<properties>
-		<rails_common.version>1.16-SNAPSHOT</rails_common.version>
+		<rails_common.version>1.22-SNAPSHOT</rails_common.version>
 		<isaac.version>${project.parent.version}</isaac.version>
 		<!-- railsMode is automatically set to 'test' or 'production' - 'test' if the version number ends with '-SNAPSHOT'
 		or 'production' otherwise.  See ant execution below-->
@@ -60,7 +60,7 @@
 		</dependency>
 		<dependency>
 			<groupId>gov.vha.isaac.ochre.modules</groupId>
-			<artifactId>ochre-metadata</artifactId>
+			<artifactId>metadata</artifactId>
 			<version>${isaac.version}</version>
 			<type>yaml.zip</type>
 			<optional>true</optional> <!-- Not needed at runtime / transitively -->

@@ -40,205 +40,208 @@ Copyright Notice
 @import "font-awesome";
 
 html, body{
-  width: 100%;
-  height: 100%;
-  margin: 0;
-  padding: 0;
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    padding: 0;
 }
 
 // jQuery UI Overrides
 // need to reiterate this style for some reason - gets lost on the search page for advanced options
 .ui-accordion-content{
-  border: solid #aaaaaa 1px;
+    border: solid #aaaaaa 1px;
 }
 .ui-tabs{
-  padding:0px;
-  overflow: auto;
+    padding:0px;
+    overflow: auto;
 }
 .ui-tabs .ui-tabs-panel{
-  padding:0px;
+    padding:0px;
 }
 .ui-autocomplete {
-  max-height: 140px;
-  overflow-y: auto;
-  overflow-x: hidden;
+    max-height: 140px;
+    overflow-y: auto;
+    overflow-x: hidden;
 }
 
 // jQuery context-menu override to use glyphicons
 .context-menu-icon:before{
-  font-family: 'Glyphicons Halflings';
+    font-family: 'Glyphicons Halflings';
 }
 
 // enhsplitter Overrides
 // Need this so the splitter bar doesn't overlap dialog windows
 .splitter-vertical > .splitter_bar, .splitter-horizontal > .splitter_bar{
-  z-index: 10;
+    z-index: 10;
 }
 .splitter_container.splitter-active > .splitter_bar{
-  z-index: 11;
+    z-index: 11;
 }
 
 // KOMET Login styles
 .external.login{
-  background-color: #eef1f3;
+    background-color: #eef1f3;
 }
 .komet-external-header{
-  display: flex;
-  font-size: xx-large;
-  color: white;
-  width: 100%;
-  height: 5em;
-  background-color: #4f80d9;
-  justify-content: center;
-  align-items: center;
+    display: flex;
+    font-size: xx-large;
+    color: white;
+    width: 100%;
+    height: 5em;
+    background-color: #4f80d9;
+    justify-content: center;
+    align-items: center;
 }
 .komet-external-body{
-  background-color: #eef1f3;
-  display: flex;
-  height: 100%;
-  align-content: stretch;
-  align-items: stretch;
-  box-sizing: border-box;
-  padding: 10px;
-  width: 50%;
-  margin: auto;
+    background-color: #eef1f3;
+    display: flex;
+    height: 100%;
+    align-content: stretch;
+    align-items: stretch;
+    box-sizing: border-box;
+    padding: 10px;
+    width: 50%;
+    margin: auto;
 }
 .komet-external-left-column{
-  flex: 1 1 auto;
-  width: 55%;
-  font-weight: bold;
-  padding-top: 20px
+    flex: 1 1 auto;
+    width: 55%;
+    font-weight: bold;
+    padding-top: 20px
 }
 .komet-external-right-column{
-  flex: 1 1 auto;
-  width: 45%;
-  align-self: flex-start;
+    flex: 1 1 auto;
+    width: 45%;
+    align-self: flex-start;
 }
 .komet-external-login-form{
-  width: 94%;
-  height: 175px;
-  border: 2px solid black;
-  border-radius: 4px;
-  display: flex;
-  flex-direction: column;
-  align-items: flex-end;
-  margin-left: auto;
-  padding: 20px;
+    width: 94%;
+    height: 175px;
+    border: 2px solid black;
+    border-radius: 4px;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    margin-left: auto;
+    padding: 20px;
 }
 .komet-external-login-form .form-control{
-  display: inline-block;
-  width: 200px;
-  margin-top: 10px;
+    display: inline-block;
+    width: 200px;
+    margin-top: 10px;
 }
 .komet-external-login-form .btn{
-  margin-top: 10px;
+    margin-top: 10px;
 }
 
 // KOMET Common styles
 .komet-no-margins{
-  margin: 0px;
+    margin: 0px;
 }
 .komet-section-title{
-  display: inline-block;
-  font-size: larger;
+    display: inline-block;
+    font-size: larger;
 }
 .komet-flex-right{
-  flex: 1 1 auto;
-  text-align: right;
+    flex: 1 1 auto;
+    text-align: right;
 }
 .komet-accordion-panel {
-  overflow: visible !important;
+    overflow: visible !important;
 }
 .komet-floated-bar{
-  overflow: hidden;
-  margin: 2px;
+    overflow: hidden;
+    margin: 2px;
 }
 .komet-icon-stack {
-  display: inline-block;
-  line-height: 1em;
-  position: relative;
-  vertical-align: -15%;
+    display: inline-block;
+    line-height: 1em;
+    position: relative;
+    vertical-align: -15%;
 }
 .komet-icon-stack .komet-icon-stack-base {
-  font-size: 1em;
+    font-size: 1em;
 }
 .komet-icon-stack [class^="komet-icon-"], .komet-icon-stack [class*=" komet-icon-"] {
-  display: block;
-  font-size: 1em;
-  line-height: inherit;
-  position: absolute;
-  text-align: center;
+    display: block;
+    font-size: 1em;
+    line-height: inherit;
+    position: absolute;
+    text-align: center;
 }
 .komet-icon-stack .glyphicon {
-  font-size: 1em;
+    font-size: 1em;
 }
 .komet-stated-inferred{
-  width: 150px;
-  height: 25px;
-  display: inline-block;
-  font-size: smaller !important;
-  padding: 3px 12px;
-  flex: 0 0 auto;
+    width: 150px;
+    height: 25px;
+    display: inline-block;
+    font-size: smaller !important;
+    padding: 3px 12px;
+    flex: 0 0 auto;
 }
 .komet-form-error {
-  background-color: #ff5000;
-  border: solid #ff5000 1px;
-  color: white;
-  padding-left: 5px;
+    background-color: #ff5000;
+    border: solid #ff5000 1px;
+    color: white;
+    padding-left: 5px;
 }
 .komet-form-error .glyphicon, .komet-form-error .fa {
-  margin-right: 5px;
+    margin-right: 5px;
 }
 .komet-splitter{
-  height: 100%;
-  width: 100%;
-  position: absolute;
+    height: 100%;
+    width: 100%;
+    position: absolute;
 }
 .komet-active-control{
-  color: blue;
+    color: blue;
+}
+.komet-indent-block{
+    margin-left: 10px;
 }
 
 // KOMET Navigation styles
 .komet_dashboard .navbar{
-  margin-bottom: 0px;
+    margin-bottom: 0px;
 }
 
 // KOMET Dashboard Styles
 #komet_dashboard_splitter {
-  height: 91%;
-  width: 100%;
-  position: absolute;
+    height: 91%;
+    width: 100%;
+    position: absolute;
 }
 #komet_east_pane{
-  overflow: hidden;
+    overflow: hidden;
 }
 
 // KOMET Panel Styles
 .komet-panel .panel-heading {
-  background-color: #4f80d9;
-  display: flex;
-  flex-wrap: wrap;
-  overflow-x: auto;
+    background-color: #4f80d9;
+    display: flex;
+    flex-wrap: wrap;
+    overflow-x: auto;
 }
 .komet-panel .glyphicon, .komet-panel .fa {
-  cursor: pointer;
+    cursor: pointer;
 }
 .komet-panel .komet-section-title .glyphicon, .komet-panel .komet-section-title .fa{
-  margin-right: 4px;
+    margin-right: 4px;
 }
 .komet-panel .komet-panel-tools{
-  flex: 1 1 auto;
-  text-align: end;
-  display: flex;
-  justify-content: flex-end;
+    flex: 1 1 auto;
+    text-align: end;
+    display: flex;
+    justify-content: flex-end;
 }
 .komet-panel .komet-panel-tools .glyphicon, .komet-panel .komet-panel-tools .fa {
-  margin-left: 10px;
-  color: white;
-  vertical-align: middle;
+    margin-left: 10px;
+    color: white;
+    vertical-align: middle;
 }
 .komet-panel .panel-title{
-  color: white;
+    color: white;
 }
 .komet-panel .komet-panel-filters{
     flex: 1 1 auto;
@@ -253,400 +256,404 @@ html, body{
     padding-top: 4px;
 }
 .komet-panel .panel-body {
-  background-color: #eef1f3;
-  display: flex;
-  flex-direction: column;
+    background-color: #eef1f3;
+    display: flex;
+    flex-direction: column;
 }
 
 // Taxonomy Tree Styles
 .komet_dashboard .splitter_panel .komet-tree-node-icon{
-  width: 18px;
-  height: 18px;
-  margin-top: 2px;
+    width: 18px;
+    height: 18px;
+    margin-top: 2px;
 }
 .komet-tree-node-defined::before{
-  content: image-url("icon_defined.svg");
+    content: image-url("icon_defined.svg");
 }
 .komet-tree-node-primitive::before{
-  content: image-url("icon_primitive.svg");
+    content: image-url("icon_primitive.svg");
 }
 .komet-tree-node-defined-arrow::before{
-  content: image-url("icon_defined_arrow.svg");
+    content: image-url("icon_defined_arrow.svg");
 }
 .komet-tree-node-primitive-arrow::before{
-  content: image-url("icon_primitive_arrow.svg");
+    content: image-url("icon_primitive_arrow.svg");
 }
 .komet-reverse-tree{
-  transform: scaleX(-1);
-  transform: scaleY(-1);
+    transform: scaleX(-1);
+    transform: scaleY(-1);
 }
 .komet-reverse-tree-node{
-  transform: scaleY(-1);
+    transform: scaleY(-1);
 }
 .komet-node-module-flag {
-  position: relative;
-  display: inline-block;
+    position: relative;
+    display: inline-block;
 }
 .komet-node-module-flag:after{
-  margin-left: 2px;
-  width: 0;
-  height: 0;
-  border-width: 8px 4px;
-  border-style: solid;
-  border-color: inherit;
-  content: "";
-  display: block;
-  position: relative;
-  top: 3px;
+    margin-left: 2px;
+    width: 0;
+    height: 0;
+    border-width: 8px 4px;
+    border-style: solid;
+    border-color: inherit;
+    content: "";
+    display: block;
+    position: relative;
+    top: 3px;
 }
 .komet-node-path-flag {
-  position: relative;
-  display: inline-block;
+    position: relative;
+    display: inline-block;
 }
 .komet-node-path-flag:after{
-  margin-left: 2px;
-  width: 0;
-  height: 0;
-  border: 6px solid;
-  border-color: inherit;
-  border-radius: 50%;
-  content: "";
-  display: block;
-  position: relative;
-  top: 3px;
+    margin-left: 2px;
+    width: 0;
+    height: 0;
+    border: 6px solid;
+    border-color: inherit;
+    border-radius: 50%;
+    content: "";
+    display: block;
+    position: relative;
+    top: 3px;
 }
 .komet-node-refsets-flag {
-  position: relative;
-  display: inline-block;
+    position: relative;
+    display: inline-block;
 }
 .komet-node-refsets-flag:after{
-  margin-left: 2px;
-  width: 0;
-  height: 0;
-  border-left: 10px solid transparent;
-  border-right: 10px solid transparent;
-  border-bottom: 10px solid;
-  border-bottom-color: inherit;
-  content: "";
-  display: block;
-  position: relative;
-  top: 3px;
+    margin-left: 2px;
+    width: 0;
+    height: 0;
+    border-left: 10px solid transparent;
+    border-right: 10px solid transparent;
+    border-bottom: 10px solid;
+    border-bottom-color: inherit;
+    content: "";
+    display: block;
+    position: relative;
+    top: 3px;
 }
 
 // Concept Viewer Styles
 .komet-concept-panel .panel-heading {
-  background-color: #4f80d9;
-  display: flex;
+    background-color: #4f80d9;
+    display: flex;
 }
 .komet-concept-panel .panel-title{
-  color: white;
+    color: white;
 }
 .komet-concept-panel .komet-section-icons{
-  color: white;
-  flex: 1 1 auto;
-  text-align: end;
+    color: white;
+    flex: 1 1 auto;
+    text-align: end;
 }
 .komet-concept-panel .komet-section-icons img{
-  width: 17px;
-  height: 20px;
+    width: 17px;
+    height: 20px;
 }
 .komet-concept-panel .komet-section-icons .glyphicon, .komet-concept-panel .komet-section-icons .fa{
-  margin-left: 10px;
+    margin-left: 10px;
 }
 .komet-concept-panel .panel-body {
-  background-color: #eef1f3;
-  display: flex;
-  flex-direction: column;
+    background-color: #eef1f3;
+    display: flex;
+    flex-direction: column;
 }
 .komet-concept-body-tools{
-  display: flex;
-  flex-wrap: wrap;
-  align-items: baseline;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
 }
 .komet-concept-body-tools .glyphicon, .komet-concept-body-tools .fa{
-  width: 20px;
-  cursor: pointer;
+    width: 20px;
+    cursor: pointer;
 }
 .concept-section{
-  margin-top: 15px;
+    margin-top: 15px;
 }
 .komet-concept-section-panel{
-  display: flex;
-  flex-direction: column;
-  border: 1px solid #d1d1d1;
-  padding: 4px;
-  margin: 2px;
-  flex-wrap: wrap;
-  min-width: 150px;
+    display: flex;
+    flex-direction: column;
+    border: 1px solid #d1d1d1;
+    padding: 4px;
+    margin: 2px;
+    flex-wrap: wrap;
+    min-width: 150px;
 }
 .komet-concept-section-panel-header{
-  display: flex;
-  flex-wrap: wrap;
+    display: flex;
+    flex-wrap: wrap;
 }
 .komet-concept-section-panel-header .glyphicon-plus-sign, .komet-concept-section-panel-header .glyphicon-minus-sign{
-  margin-right: 10px;
-  margin-top: 2px;
-  cursor: pointer;
+    margin-right: 10px;
+    margin-top: 2px;
+    cursor: pointer;
 }
 .komet-concept-section-panel-details{
-  align-self: center;
-  width: 96%;
-  height: 80%;
-  border-top: 1px solid black;
-  padding: 10px;
-  margin-top: 10px;
-  display: none;
-  overflow: auto;
+    align-self: center;
+    width: 96%;
+    height: 80%;
+    border-top: 1px solid black;
+    padding: 10px;
+    margin-top: 10px;
+    display: none;
+    overflow: auto;
 }
 .concept-section-panel-spacer{
-  margin: 5px;
-  padding: 0px;
+    margin: 5px;
+    padding: 0px;
 }
 .komet-concept-details-hr{
-  width: 100%;
-  border: 1px solid #d1d1d1;
-  margin: 10px 0px;
+    width: 100%;
+    border: 1px solid #d1d1d1;
+    margin: 10px 0px;
 }
 
 // Concept Viewer Table Styles
 .komet-concept-table{
-  width: 100%;
-  overflow: auto;
-  text-align: center;
+    width: 100%;
+    overflow: auto;
+    text-align: center;
 }
 .komet-concept-table th{
-  border: 1px black solid;
-  padding: 2px 2px;
-  height: 1.8em;
-  text-align: center;
-  text-transform: capitalize;
+    border: 1px black solid;
+    padding: 2px 2px;
+    height: 1.8em;
+    text-align: center;
+    text-transform: capitalize;
 }
 .komet-concept-table td{
-  border: 1px black solid;
-  padding: 2px 2px;
-  height: 1.8em;
+    border: 1px black solid;
+    padding: 2px 2px;
+    height: 1.8em;
 }
 .komet-concept-table-cell-content{
-  display: flex;
-  height: 100%;
-  width: 100%;
-  justify-content: center;
-  align-items: center;
+    display: flex;
+    height: 100%;
+    width: 100%;
+    justify-content: center;
+    align-items: center;
 }
 .komet-concept-info-button{
-  display: block;
+    display: block;
 }
 .komet-concept-table-nested-row{
-  display: none;
+    display: none;
 }
 .komet-concept-table-nested-row .komet-concept-table-nested-indicator{
-  border-top: none;
-  border-bottom: none;
+    border-top: none;
+    border-bottom: none;
 }
 .komet-concept-table-nested-indicator .glyphicon, .komet-concept-table-nested-indicator .fa{
-  cursor: pointer;
+    cursor: pointer;
 }
 td.komet-concept-table-nested-indicator.komet-concept-table-nested-indicator-open{
-  border-bottom: none;
+    border-bottom: none;
 }
 
 // Concept Viewer Attribute Styles
 .komet-concept-attributes-panel{
-  border-left: 4px solid #5ec200;
+    border-left: 4px solid #5ec200;
 }
 .komet-concept-attributes-title{
-  color: #5ec200;
-  font-weight: bold;
+    color: #5ec200;
+    font-weight: bold;
 }
 .komet-concept-attributes-status{
-  margin-right: 5px;
+    margin-right: 5px;
 }
 .komet-concept-attributes-details-row{
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: space-between;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
 }
 .komet-concept-attributes-details-row div{
-  margin-right: 10px;
+    margin-right: 10px;
 }
 .komet-concept-attributes-details-name{
-  flex: 1 0 100px;
+    flex: 1 0 100px;
 }
 
 // Concept Viewer Description Styles
 .komet-concept-description-panel{
-  border-left: 4px solid #ff9100;
+    border-left: 4px solid #ff9100;
 }
 .komet-concept-description-title{
-  color: #ff9100;
-  font-weight: bold;
+    color: #ff9100;
+    font-weight: bold;
 }
 .komet-concept-description-panel-header{
-  flex-wrap: nowrap;
+    flex-wrap: nowrap;
 }
 .komet-concept-description-panel-header .glyphicon, .komet-concept-description-panel-header .fa{
-  margin-right: 5px;
+    margin-right: 5px;
 }
 .komet-concept-description-header-block{
-  display: flex;
-  flex-direction: column;
-  flex-wrap: wrap;
-  width: 100%
+    display: flex;
+    flex-direction: column;
+    flex-wrap: wrap;
+    width: 100%
 }
 .komet-concept-description-header-block span{
-  display: inline-block;
-  margin-right: 4px;
+    display: inline-block;
+    margin-right: 4px;
 }
 .komet-concept-description-info{
-  display: flex;
-  flex-wrap: wrap;
+    display: flex;
+    flex-wrap: wrap;
 }
 .komet-concept-description-text{
-  flex: 1 1 auto;
+    flex: 1 1 auto;
 }
 .komet-concept-description-details-row{
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: space-between;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
 }
 .komet-concept-description-details-row div{
-  margin-right: 10px;
+    margin-right: 10px;
 }
 .komet-concept-description-details-name{
-  flex: 1 0 100px;
+    flex: 1 0 100px;
 }
 .komet-concept-description-details-time{
-  margin-right: 20px;
+    margin-right: 20px;
 }
 
 // Concept Viewer Lineage Styles
 .komet-concept-lineage-panel{
-  border-left: 4px solid #009bff;
+    border-left: 4px solid #009bff;
 }
 .komet-concept-lineage-title{
-   color: #009bff;
-   font-weight: bold;
- }
+    color: #009bff;
+    font-weight: bold;
+}
 .komet-concept-lineage-tree-container{
-  margin-left: 0%;
-  margin-bottom: 10px;
-  width: 100%;
-  border: 2px solid #009bff;
-  border-radius: 4px;
-  padding: 5px;
-  overflow-x: auto;
+    margin-left: 0%;
+    margin-bottom: 10px;
+    width: 100%;
+    border: 2px solid #009bff;
+    border-radius: 4px;
+    padding: 5px;
+    overflow-x: auto;
 }
 .komet-concept-lineage-summary-container{
-  width: 100%;
-  padding-left: 7%;
-  padding-right: 7%;
-  margin-bottom: 10px;
+    width: 100%;
+    padding-left: 7%;
+    padding-right: 7%;
+    margin-bottom: 10px;
 }
 .komet-concept-lineage-summary-details{
-  border: 2px solid #357ebd;
-  border-radius: 4px;
-  background-color: #357ebd;
-  color: white;
-  width: 100%;
-  display: inline-block;
+    border: 2px solid #357ebd;
+    border-radius: 4px;
+    background-color: #357ebd;
+    color: white;
+    width: 100%;
+    display: inline-block;
 }
 .komet-concept-lineage-summary-text{
-  display: flex;
-  flex-direction: row;
+    display: flex;
+    flex-direction: row;
 }
 .komet-concept-lineage-summary-attributes{
-  border: 2px solid #357ebd;
-  border-radius: 4px;
-  background-color: rgba(30, 144, 255, 0.17);
-  color: black;
-  width: 45%;
-  display: inline-block;
-  vertical-align: top;
+    border: 2px solid #357ebd;
+    border-radius: 4px;
+    background-color: rgba(30, 144, 255, 0.17);
+    color: black;
+    width: 45%;
+    display: inline-block;
+    vertical-align: top;
 }
 
 // Concept Viewer Sememes Styles
 .komet-concept-sememes-panel{
-  border-left: 4px solid #b59d00;
+    border-left: 4px solid #b59d00;
 }
 .komet-concept-sememes-title{
-  color: #b59d00;
-  font-weight: bold;
+    color: #b59d00;
+    font-weight: bold;
 }
 
 // Concept Viewer Diagram Styles
+.komet-concept-svg{
+    height: 250px;
+    overflow: scroll;
+}
 .komet-concept-diagram-panel{
-  border-left: 4px solid #ab03fd;
+    border-left: 4px solid #ab03fd;
 }
 .komet-concept-diagram-title{
-  color: #ab03fd;
-  font-weight: bold;
+    color: #ab03fd;
+    font-weight: bold;
 }
 
 // details tab
 #concept_details_concept_text{
-  font-size: larger;
-  font-weight: bold;
+    font-size: larger;
+    font-weight: bold;
 }
 #concept_details_refset_title{
-  text-align: center;
-  width: 100%;
+    text-align: center;
+    width: 100%;
 }
 
 // Concept Expression Styles
 .concept-expression{
-  padding-top: 10px;
+    padding-top: 10px;
 }
 .concept-expression-symbol{
-  color: darkred;
+    color: darkred;
 }
 .concept-expression-description{
-  color: darkgreen;
+    color: darkgreen;
 }
 .concept-expression-level-2{
-  padding-left: 20px;
+    padding-left: 20px;
 }
 .concept-expression-level-3{
-  padding-left: 40px;
+    padding-left: 40px;
 }
 .concept-expression-footnote{
-  font-size: xx-small;
-  background-color: rgb(245, 245, 245);
+    font-size: xx-small;
+    background-color: rgb(245, 245, 245);
 }
 
 // Search Styles
 #komet_search_tab {
-  padding: 2px;
+    padding: 2px;
 }
 .komet-search-combo-row{
-  display: flex;
+    display: flex;
 }
 .komet-search-combo-column{
-  display: flex;
-  flex-direction: column;
+    display: flex;
+    flex-direction: column;
 }
 .komet-search-combo-field{
-  font-size:100%;
+    font-size:100%;
 }
 .komet-search-selected-result{
-  background-color: green;
-  border: solid green 1px;
+    background-color: green;
+    border: solid green 1px;
 }
 #taxonomy_search_sememe_fields{
-  display: none;
+    display: none;
 }
 #taxonomy_search_export{
-  height: 20px;
-  font-size: .75em;
-  display: none;
+    height: 20px;
+    font-size: .75em;
+    display: none;
 }
 .change-rank.up:after {
-  content: attr(data-icon);
+    content: attr(data-icon);
 }
 .change-rank.down:after {
-  content: attr(data-icon);
+    content: attr(data-icon);
 }
 .no-close .ui-dialog-titlebar-close {
-  display: none;
+    display: none;
 }
 
 // Mapping Sets Styles
@@ -669,14 +676,184 @@ td.komet-concept-table-nested-indicator.komet-concept-table-nested-indicator-ope
 #komet_mapping_tree .komet-tree-node-icon{
     color: blue;
 }
-.komet-mapping-overview-sets-stamp-active{
-  color: blue;
+.komet-mapping-viewer-body .komet-mapping-set-tabs{
+    padding: 0px;
+    background-color: #eef1f3;
 }
-
-.komet-concept-svg
-{
-  height: 250px;
-  overflow: scroll;
-
+.komet-mapping-set-tabs > div.komet-mapping-set-tab-body{
+    display: flex;
+    flex-direction: column;
+    padding: 2px;
+    background-color: #eef1f3;
+}
+.komet-mapping-set-definition-row{
+    display:flex;
+}
+.komet-mapping-set-definition-header{
+    margin: 4px;
+    flex: 1 1 auto;
+}
+.komet-mapping-set-definition-controls{
+    margin: 4px;
+    flex: 1 1 auto;
+    text-align: right;
+}
+.komet-mapping-set-definition-item{
+    margin: 4px;
+    flex: 1 1 50%;
+    height: 70px;
+}
+.komet-mapping-set-definition-section > div{
+    height: 70px;
+}
+.komet-mapping-section-panel{
+    margin-bottom: 2px;
+}
+.komet-mapping-section-panel-header{
+    display: flex;
+    background-color: #4f80d9;
+    color: white;
+    font-weight: bold;
+    height: 26px;
+    padding: 0px 15px;
+}
+.komet-mapping-section-panel-header > div{
+    align-self: center;
+}
+.komet-mapping-section-panel-header-shelf{
+    display: flex;
+    background-color: #4f80d9;
+    padding: 0px 15px;
+    height: 30px;
+}
+.komet-mapping-section-panel-header-shelf .form-control{
+    height: 28px;
+    font-size: small;
+    padding-bottom: 4px;
+    padding-top: 4px;
+}
+.komet-mapping-section-panel-header-shelf .input-group{
+    margin-right: 5px;
+    width: 340px;
+}
+.komet-mapping-section-panel-header-shelf .komet-mapping-item-filter-by{
+    width: 175px;
+    margin-right: 5px;
+}
+.komet-mapping-section-panel-header-shelf .komet-mapping-item-filter-button{
+    width: 60px;
+}
+.komet-mapping-section-panel-header-shelf .komet-flex-right{
+    color: white;
+    align-self: center;
+}
+.komet-mapping-section-panel-header-shelf .komet-flex-right > input{
+    margin-left: 5px;
+}
+.komet-mapping-viewer-body{
+    background-color: #eef1f3;
+    padding: 1px;
+}
+.komet-mapping-overview-sets-stamp-active{
+    color: blue;
+}
+.komet-mapping-item-tools{
+    font-size: small;
+    display: flex;
+    align-items: center;
+    height: 32px;
+}
+.komet-mapping-item-tools .komet-mapping-item-page-size{
+    width: 80px;
+    height: 28px;
+    padding-bottom: 4px;
+    padding-top: 4px;
+    margin-right: 10px;
+    margin-left: 5px;
+}
+.komet-mapping-item-tools .fa{
+    font-size: medium;
+    margin-right: 10px;
+}
+.komet-mapping-dialog{
+    position: absolute;
+    display: flex;
+    flex-direction: column;
+    border: solid black 1px;
+    width: 550px;
+    font-size: small;
+    z-index: 1000;
+    background-color: white;
+}
+.komet-mapping-dialog input[type='checkbox']{
+    height: 14px;
+    width: auto;
+    display: inline;
+    margin: 0px;
+}
+.komet-mapping-dialog label{
+    font-size: smaller;
+    margin: 0px 0px 0px 5px
+}
+.komet-mapping-dialog button{
+    padding: 2px 8px;
+    height: 26px;
+}
+.komet-mapping-dialog-header{
+    display: flex;
+    justify-content: space-between;
+    background-color: #A7D4E2;
+}
+.komet-mapping-dialog-body{
+    display: flex;
+    justify-content: space-between;
+    padding: 4px;
+}
+.komet-mapping-dialog-body-header{
+    margin-bottom: 10px;
+}
+.komet-mapping-dialog-left-column{
+    display: flex;
+    flex-direction: column;
+}
+.komet-mapping-dialog-left-column .komet-indent-block div{
+    display: flex;
+    align-items: center;
+    margin-bottom: 4px;
+}
+.komet-mapping-dialog-middle-column{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+.komet-mapping-dialog-middle-column hr{
+    border: 1px solid black;
+    margin: 0px;
+    height: 95%;
+    width: 0px;
+}
+.komet-mapping-dialog-right-column{
+    display: flex;
+    flex-direction: column;
+}
+.komet-mapping-dialog-right-column .form-control{
+    font-size: small;
+    height: 26px;
+    padding: 3px 5px;
+}
+.komet-mapping-dialog-right-column .komet-mapping-dialog-uuid{
+    width: 260px;
+    display: inline;
+}
+.komet-mapping-dialog-right-column button{
+    margin-top: -1px;
+}
+.komet-mapping-dialog-footer{
+    display: flex;
+    justify-content: flex-end;
+    padding-bottom: 4px;
+}
+.komet-mapping-dialog-footer button{
+    margin-right: 5px;
 }
 
