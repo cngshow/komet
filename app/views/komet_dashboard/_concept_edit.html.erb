@@ -1,0 +1,105 @@
+<div class="panel panel-default komet-no-margins komet-panel" data-komet-viewer-id="<%= @viewer_id %>" id="komet_viewer_<%= @viewer_id %>" >
+  <div class="panel-heading">
+     <span class="panel-title komet-section-title">Edit Concept
+      </span>
+  </div>
+  <div class="panel-body">
+  <input type="hidden" id="selectdivname">
+    <div style="width: 750px ; float: right">
+      <button type="button" class="btn btn-primary" onclick="WindowManager.closeViewer(<%= @viewer_id %>)">Cancel</button>
+      <button type="button" class="btn btn-primary" onclick="TaxonomyModule.saveConcept()">Submit</button>
+    </div><BR><BR>
+
+  </div>
+
+</div>
+
+<div id="mainblockattributes" >
+<div  class="komet-concept-attributes-title">ATTRIBUTES
+  <i  class="fa fa-pencil-square" style="color:green" aria-hidden="true"></i></div>
+<div id="komet_concept_attributes_panel_<%= @viewer_id %>" class="komet-concept-section-panel komet-concept-attributes-panel">
+
+  <!-- main header block - always visible -->
+  <div class="komet-concept-section-panel-header">
+
+     <!-- Status -->
+    <div class="komet-concept-attributes-status">
+      <select id="komet_concept_Status" >
+        <option value="Active">Active</option>
+        <option value="InActive">InActive</option>
+      </select>
+    </div>
+    <!-- Defined -->
+    <div id="definedDiv"> </div>
+    <div>
+      <select id="komet_concept_defined" >
+        <option value="Primitive">Primitive</option>
+        <option value="Fully Defined">Fully Defined</option>
+      </select>
+    </div>
+
+  </div>
+
+ </div>
+</div>
+
+<BR><BR>
+<div id="mainblockdescription" >
+<div class="komet-concept-description-title">DESCRIPTIONS&nbsp;&nbsp;<i class="fa fa-pencil-square" style="color:#000000" aria-hidden="true"></i></div>
+<div class="komet-concept-description-header-block">
+
+  <!-- description text -->
+  <div class="komet-concept-description-text">
+    <table id="description_texttbl"  width='80%'style="z-index:990" cellpadding='2' cellspacing='3'>
+    </table>
+  </div>
+
+</div></div>
+  <BR><BR>
+<div id="mainblocklineage">
+    <div class="komet-concept-lineage-title">LINEAGE&nbsp;&nbsp;<i  class="fa fa-pencil-square" style="color:green" aria-hidden="true"></i></div>
+
+    <div id="komet_concept_lineage_panel_<%= @viewer_id %>" class="komet-concept-section-panel komet-concept-lineage-panel">
+      <table style="width: 80%"><tr>
+
+     <td> <select id="komet_type" >
+             <option>Is a attribute</option>
+             <option>After</option>
+           </select>
+     </td>
+      <!-- main header block - always visible -->
+      <td><div class="komet-concept-section-panel-header">
+                 <input id="taxonomy_lineage_id" class="hide" />
+             <div style="float: left"> Parent:</div><div  id="taxonomy_search_assemblage_fields" class="input-group">
+                 <input id="taxonomy_lineage_display" class="form-control"  />
+                   <div class="input-group-btn komet-search-combo-field">
+                      <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        <span class="caret"></span>
+                      </button>
+                      <ul id="taxonomy_lineage_recents" class="dropdown-menu dropdown-menu-right"></ul>
+
+                   </div><!-- /btn-group -->
+             </div><!-- /input-group --><br>
+
+        </div>
+      </td>
+    <td><select id="komet_Status" >
+      <option>Active</option>
+      <option>InActive</option>
+    </select>
+    </td>
+    </tr></table>
+
+
+
+
+  </div>
+
+</div>
+
+<script>
+
+  WindowManager.viewers[<%= @viewer_id %>].setPanelState('komet_viewer_<%= @viewer_id %>', null, WindowManager.viewers[<%= @viewer_id %>].editConcept(WindowManager.viewers[<%= @viewer_id %>]));
+
+
+</script>
