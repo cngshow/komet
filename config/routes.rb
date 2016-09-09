@@ -18,7 +18,11 @@ Rails.application.routes.draw do
   get 'komet_dashboard/get_coordinates', :as => :taxonomy_get_coordinates
   get 'komet_dashboard/get_coordinatestoken', :as => :taxonomy_get_coordinatestoken
   get 'komet_dashboard/get_refset_list', :as => :taxonomy_get_refset_list
-  get 'komet_dashboard/get_concept_add_edit', :as => :taxonomy_get_concept_add_edit
+  get 'komet_dashboard/get_concept_add', :as => :taxonomy_get_concept_add
+  get 'komet_dashboard/get_concept_edit', :as => :taxonomy_get_concept_edit
+  get 'komet_dashboard/get_attributes_jsonreturntype', :as => :taxonomy_get_attributes_jsonreturntype
+  get 'komet_dashboard/get_descriptions_jsonreturntype', :as => :taxonomy_get_descriptions_jsonreturntype
+
 
   get 'search/get_assemblage_suggestions'
   get 'search/get_assemblage_recents'

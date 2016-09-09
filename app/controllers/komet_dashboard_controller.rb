@@ -95,7 +95,20 @@ class KometDashboardController < ApplicationController
 
   end
 
-  def get_concept_add_edit
+  def get_attributes_jsonreturntype
+    @concept_id = params[:concept_id]
+    @stated = params[:stated]
+    @viewer_id =  params[:viewer_id]
+
+    if @viewer_id == nil || @viewer_id == '' || @viewer_id == 'new'
+      @viewer_id = get_next_id
+    end
+    attributes =  get_concept_attributes(@concept_id, @stated)
+    render json: attributes
+
+  end
+
+  def get_concept_add
 
     @concept_id = params[:concept_id]
     @stated = params[:stated]
@@ -104,8 +117,19 @@ class KometDashboardController < ApplicationController
     if @viewer_id == nil || @viewer_id == '' || @viewer_id == 'new'
       @viewer_id = get_next_id
     end
+    render partial: params[:partial]
 
+  end
 
+  def get_concept_edit
+
+    @concept_id = params[:concept_id]
+    @stated = params[:stated]
+    @viewer_id =  params[:viewer_id]
+
+    if @viewer_id == nil || @viewer_id == '' || @viewer_id == 'new'
+      @viewer_id = get_next_id
+    end
     render partial: params[:partial]
 
   end
@@ -125,6 +149,19 @@ class KometDashboardController < ApplicationController
     end
 
     @attributes =  get_attributes(concept_id, stated)
+
+  end
+
+  def get_descriptions_jsonreturntype
+    @concept_id = params[:concept_id]
+    @stated = params[:stated]
+    @viewer_id =  params[:viewer_id]
+
+    if @viewer_id == nil || @viewer_id == '' || @viewer_id == 'new'
+      @viewer_id = get_next_id
+    end
+    descriptions =  get_descriptions(@concept_id, @stated)
+    render json: descriptions
 
   end
 

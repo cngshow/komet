@@ -11,29 +11,32 @@ require './lib/utilities/cached_hash'
 require './lib/rails_common/util/helpers'
 ISAAC_ROOT = ''
 
-Thread.new do
-  v = $VERBOSE
-  $VERBOSE = nil
+unless $rake
+  Thread.new do
+    v = $VERBOSE
+    $VERBOSE = nil
 
-  final_root = ''
+    final_root = ''
 #All the rest libs depend on ISAAC_ROOT.   The line below must be above those requires.
-  if ($PROPS['PRISME.isaac_root'])
-    ir = $PROPS['PRISME.isaac_root']
-    ir << '/' unless ir[-1].eql?('/')
-    ISAAC_ROOT = ir
-  else
-    root_possibilites = eval $PROPS['ENDPOINT.isaac_root']
-    root_possibilites.each do |url|
-      if KOMETUtilities::isaac_rest_site_up?(uri: URI(url))
-        final_root = url
-        break
+    if ($PROPS['PRISME.isaac_root'])
+      ir = $PROPS['PRISME.isaac_root']
+      ir << '/' unless ir[-1].eql?('/')
+      ISAAC_ROOT = ir
+    else
+      root_possibilites = eval $PROPS['ENDPOINT.isaac_root']
+      root_possibilites.each do |url|
+        if KOMETUtilities::isaac_rest_site_up?(uri: URI(url))
+          final_root = url
+          break
+        end
       end
+      ISAAC_ROOT = final_root
     end
-    ISAAC_ROOT = final_root
+    $log.always("I am pointed to #{ISAAC_ROOT}")
+    $VERBOSE = v
   end
-  $log.always("I am pointed to #{ISAAC_ROOT}")
-  $VERBOSE = v
 end
+
 
 #in developer mode it is nice to have the rest classes fully loaded so all the registration takes place, for example:
 #register_rest(rest_module: LogicGraphRest, rest_actions: LogicGraphRestActions)

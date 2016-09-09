@@ -32,7 +32,8 @@ var KometChannels = {
         taxonomyTreeNodeSelectedChannel: "Taxonomy/TaxonomyTree/NodeSelected",
         taxonomyDetailsTreeNodeSelectedChannel: "Taxonomy/TaxonomyDetailsTree/NodeSelected",
         taxonomySearchResultSelectedChannel: "Taxonomy/Search/ResultSelected",
-        taxonomyAddEditConceptChannel: "Taxonomy/TaxonomyDetailsTree/NewConcept"
+        taxonomyAddConceptChannel: "Taxonomy/TaxonomyDetailsTree/AddConcept",
+        taxonomyEditConceptChannel: "Taxonomy/TaxonomyDetailsTree/EditConcept"
     },
     Mapping: {
         mappingTreeNodeSelectedChannel: "Mapping/MappingTree/NodeSelected"

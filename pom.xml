@@ -8,12 +8,12 @@
 	<parent>
 		<groupId>gov.vha.isaac.ochre</groupId>
 		<artifactId>isaac-parent</artifactId>
-		<version>3.09</version>
+		<version>3.12-SNAPSHOT</version>
 	</parent>
 
 	<groupId>gov.vha.isaac.gui.rails</groupId>
 	<artifactId>rails_komet</artifactId>
-	<version>1.20</version>
+	<version>1.22-SNAPSHOT</version>
 	<packaging>pom</packaging>
 
 	<name>ISAAC Rails Komet Tooling</name>
@@ -23,7 +23,7 @@
 	</description>
 
 	<properties>
-		<rails_common.version>1.21</rails_common.version>
+		<rails_common.version>1.23-SNAPSHOT</rails_common.version>
 		<isaac.version>${project.parent.version}</isaac.version>
 		<!-- railsMode is automatically set to 'test' or 'production' - 'test' if the version number ends with '-SNAPSHOT'
 		or 'production' otherwise.  See ant execution below-->
@@ -60,7 +60,7 @@
 		</dependency>
 		<dependency>
 			<groupId>gov.vha.isaac.ochre.modules</groupId>
-			<artifactId>metadata</artifactId>
+			<artifactId>ochre-metadata</artifactId>
 			<version>${isaac.version}</version>
 			<type>yaml.zip</type>
 			<optional>true</optional> <!-- Not needed at runtime / transitively -->
@@ -95,7 +95,7 @@
 							<goal>unpack-dependencies</goal>
 						</goals>
 						<configuration>
-							<includeArtifactIds>metadata</includeArtifactIds>
+							<includeArtifactIds>ochre-metadata</includeArtifactIds>
 							<outputDirectory>${basedir}/config/generated/yaml</outputDirectory>
 							<overWriteReleases>true</overWriteReleases>
 							<overWriteSnapshots>true</overWriteSnapshots>

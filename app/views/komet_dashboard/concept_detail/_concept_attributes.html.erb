@@ -1,4 +1,6 @@
-<div class="komet-concept-attributes-title">ATTRIBUTES</div>
+<div  class="komet-concept-attributes-title">ATTRIBUTES
+  <i onclick="UIHelper.openEditConcept('attributes')"  id="attributesdiv"  class="fa fa-pencil-square" style="color:#000000" aria-hidden="true"></i></div>
+
 
   <div id="komet_concept_attributes_panel_<%= @viewer_id %>" class="komet-concept-section-panel komet-concept-attributes-panel">
 
@@ -49,5 +51,6 @@
   </div>
 
 <script>
+
   WindowManager.viewers[<%= @viewer_id %>].setPanelState('komet_concept_attributes_panel_<%= @viewer_id %>', null, null);
 </script>

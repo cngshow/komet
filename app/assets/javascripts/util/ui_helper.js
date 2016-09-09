@@ -131,12 +131,13 @@ var UIHelper = (function () {
         };
     }
 
-    function openAddEditConcept()
+    function openAddConcept()
     {
-
-         //  callback: openConcept($triggerElement, uuid, null, WindowManager.NEW)
-         $.publish(KometChannels.Taxonomy.taxonomyAddEditConceptChannel, ['', WindowManager.getLinkedViewerID()]);
-
+          $.publish(KometChannels.Taxonomy.taxonomyAddConceptChannel, ['', WindowManager.getLinkedViewerID()]);
+    }
+    function openEditConcept(v)
+    {
+        $.publish(KometChannels.Taxonomy.taxonomyEditConceptChannel, ['',WindowManager.getLinkedViewerID(),'attributes']);
     }
     // function to switch a field between enabled and disabled
     function toggleFieldAvailability(field_name, enable){
@@ -337,7 +338,8 @@ var UIHelper = (function () {
         processAutoSuggestTags: processAutoSuggestTags,
         loadAutoSuggestRecents: loadAutoSuggestRecents,
         useAutoSuggestRecent: useAutoSuggestRecent,
-        openAddEditConcept: openAddEditConcept
+        openAddConcept: openAddConcept,
+        openEditConcept:openEditConcept
     };
 })();
 

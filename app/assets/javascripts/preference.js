@@ -596,8 +596,7 @@ var PreferenceModule = (function () {
         });
     }
     function selectItemByValue(elmnt, value){
-     console.log(value);
-        for(var i=0; i < elmnt.options.length; i++)
+       for(var i=0; i < elmnt.options.length; i++)
         {
             if(elmnt.options[i].value == value)
                 elmnt.selectedIndex = i;
