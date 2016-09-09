@@ -64,7 +64,7 @@ class MappingController < ApplicationController
             set_hash[:id] = get_next_id
             set_hash[:set_id] = set.identifiers.uuids.first
             set_hash[:text] = set.name
-            set_hash[:state] = set.mappingSetStamp.state
+            set_hash[:state] = set.mappingSetStamp.state.name
             set_hash[:icon] = 'komet-tree-node-icon fa fa-folder'
             set_hash[:a_attr] = {class: 'komet-context-menu', 'data-menu-type' => 'map_set', 'data-menu-uuid' => set_hash[:set_id]}
 
@@ -116,7 +116,7 @@ class MappingController < ApplicationController
             set_hash[:set_id] = set.identifiers.uuids.first
             set_hash[:name] = set.name
             set_hash[:description] = set.description
-            set_hash[:state] = set.mappingSetStamp.state
+            set_hash[:state] = set.mappingSetStamp.state.name
             set_hash[:time] = DateTime.strptime((set.mappingSetStamp.time / 1000).to_s, '%s').strftime('%m/%d/%Y')
             set_hash[:author] = get_concept_metadata(set.mappingSetStamp.authorSequence)
             set_hash[:module] = get_concept_metadata(set.mappingSetStamp.moduleSequence)

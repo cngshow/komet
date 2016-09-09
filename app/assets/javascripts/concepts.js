@@ -27,7 +27,7 @@ var ConceptsModule = (function () {
         // listen for the onChange event broadcast by selecting a search result.
         $.subscribe(KometChannels.Taxonomy.taxonomySearchResultSelectedChannel, function (e, conceptID, viewerID, windowType) {
 
-            ConceptsModule.loadViewerData(e,conceptID, viewerID, windowType);
+            ConceptsModule.loadViewerData(conceptID, TaxonomyModule.defaultStatedView, viewerID, windowType);
         });
     }
 
