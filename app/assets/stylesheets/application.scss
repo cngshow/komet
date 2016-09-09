@@ -815,16 +815,22 @@ td.komet-concept-table-nested-indicator.komet-concept-table-nested-indicator-ope
 .komet-mapping-dialog-left-column{
     display: flex;
     flex-direction: column;
+    flex: 1 0 auto
 }
-.komet-mapping-dialog-left-column .komet-indent-block div{
+.komet-mapping-dialog-left-column .komet-indent-block > div{
     display: flex;
     align-items: center;
     margin-bottom: 4px;
+}
+.komet-mapping-dialog-left-column .glyphicon{
+    font-size: smaller;
+    color: red;
 }
 .komet-mapping-dialog-middle-column{
     display: flex;
     flex-direction: column;
     align-items: center;
+    width: 50px;
 }
 .komet-mapping-dialog-middle-column hr{
     border: 1px solid black;
@@ -835,6 +841,14 @@ td.komet-concept-table-nested-indicator.komet-concept-table-nested-indicator-ope
 .komet-mapping-dialog-right-column{
     display: flex;
     flex-direction: column;
+}
+.komet-mapping-dialog-right-column hr{
+    width: 100%;
+    margin: 10px 0px;
+    border-color: black;
+}
+.komet-mapping-dialog-right-column > div{
+    margin-bottom: 5px
 }
 .komet-mapping-dialog-right-column .form-control{
     font-size: small;

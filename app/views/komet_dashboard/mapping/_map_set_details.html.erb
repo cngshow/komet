@@ -40,7 +40,7 @@
 
                         <div><a class="komet-mapping-dialog-select-all" onclick="return false;">Select All</a></div>
 
-                        <div id="komet_mapping_dialog_include_fields_<%= @viewer_id %>" class="komet-indent-block">
+                        <div id="komet_mapping_dialog_set_include_fields_<%= @viewer_id %>" class="komet-indent-block">
 
 
                         </div>
@@ -68,14 +68,30 @@
                             <button type="button" class="btn btn-default">Apply</button>
                         </div>
 
+                        <hr>
+
                         <div>
-                            <%= label_tag "komet_mapping_set_editor_add_fields_label_#{@viewer_id}", 'Label' %>
-                            <%= text_field_tag :komet_mapping_set_editor_add_fields_label, nil, id: "komet_mapping_set_editor_add_fields_label_#{@viewer_id}", class: 'form-control' %>
+                            <label for="komet_mapping_set_editor_add_fields_type_<%= @viewer_id %>">Type</label>
+                            <select id="komet_mapping_set_editor_add_fields_type_<%= @viewer_id %>" onchange="WindowManager.viewers[<%= @viewer_id %>].changedSetAddFieldsType(value)" class="form-control">
+                                <option value="text">Text</option>
+                                <option value="textarea">Text Area</option>
+                                <option value="select">Select</option>
+                                <!--<option value="concept">Concept</option>-->
+                            </select>
                         </div>
 
                         <div>
-                            <%= label_tag "komet_mapping_set_editor_add_fields_value_#{@viewer_id}", 'Value' %>
-                            <%= text_field_tag :komet_mapping_set_editor_add_fields_value, nil, id: "komet_mapping_set_editor_add_fields_value_#{@viewer_id}", class: 'form-control' %>
+                            <label for="komet_mapping_set_editor_add_fields_label_<%= @viewer_id %>">Label (Alphanumeric, hypen, and dash)</label>
+                            <input type="text" id="komet_mapping_set_editor_add_fields_label_<%= @viewer_id %>" class="form-control" value="">
+                        </div>
+
+                        <div id="komet_mapping_set_editor_add_fields_options_section_<%= @viewer_id %>" class="hide">
+                            <label for="komet_mapping_set_editor_add_fields_options_<%= @viewer_id %>">Options (Comma separated list)</label>
+                            <input type="text" id="komet_mapping_set_editor_add_fields_options_<%= @viewer_id %>" class="form-control" value="">
+                        </div>
+
+                        <div>
+                            <button type="button" class="btn btn-default" onclick="WindowManager.viewers[<%= @viewer_id %>].addSetField()">Add Field</button>
                         </div>
                     </div>
 
