@@ -44,6 +44,10 @@ module ConceptConcern
 
         attributes = ConceptRest.get_concept(action: ConceptRestActions::ACTION_VERSION, uuid: uuid, additional_req_params: {coordToken: coordinates_token, expand: 'chronology', stated: stated})
 
+        if attributes.is_a? CommonRest::UnexpectedResponse
+            return [{value: ''}, {value: ''}, {value: ''}]
+        end
+
         return_attributes << {label: 'Text', value: attributes.conChronology.description}
         return_attributes << {label: 'State', value: attributes.conVersion.state.name}
 
