@@ -33,7 +33,7 @@ var MappingModule = (function () {
         // listen for the onChange event broadcast by any of the taxonomy this.trees.
         $.subscribe(KometChannels.Mapping.mappingTreeNodeSelectedChannel, function (e, treeID, setID, viewerID, windowType) {
 
-            viewerID = WindowManager.getLinkedViewerID();
+            //viewerID = WindowManager.getLinkedViewerID();
 
             var action;
 

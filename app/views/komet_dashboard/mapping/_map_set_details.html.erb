@@ -23,88 +23,6 @@
 
             <%= hidden_field_tag :komet_mapping_set_editor_set_id, @map_set[:set_id], id: "komet_mapping_set_editor_set_id_#{@viewer_id}" %>
 
-            <div id="komet_mapping_dialog_add_set_fields_<%= @viewer_id %>" class="komet-mapping-dialog hide">
-
-                <div class="komet-mapping-dialog-header">
-
-                    <div></div>
-                    <div class="komet-mapping-dialog-title">Add to Map Set</div>
-                    <div class="glyphicon glyphicon-remove" onclick="WindowManager.viewers[<%= @viewer_id %>].cancelIncludeSetFieldsDialog()"></div>
-                </div>
-
-                <div class="komet-mapping-dialog-body">
-
-                    <div class="komet-mapping-dialog-left-column">
-
-                        <div class="komet-mapping-dialog-body-header">Add from Template</div>
-
-                        <div><a class="komet-mapping-dialog-select-all" onclick="return false;">Select All</a></div>
-
-                        <div id="komet_mapping_dialog_set_include_fields_<%= @viewer_id %>" class="komet-indent-block">
-
-
-                        </div>
-
-                    </div>
-
-                    <div class="komet-mapping-dialog-middle-column">
-
-                        <div class="komet-mapping-dialog-body-header">OR</div>
-                        <hr>
-                    </div>
-
-                    <div class="komet-mapping-dialog-right-column">
-
-                        <div class="komet-mapping-dialog-body-header">Add from Existing Code Sets</div>
-
-                        <div>
-                            <%= label_tag "komet_mapping_set_editor_add_fields_uuid_#{@viewer_id}", 'UUID' %>
-                            (Optional Shortcut)
-                            <div class="glyphicon glyphicon-info-sign" onclick=""></div>
-                        </div>
-
-                        <div>
-                            <%= text_field_tag :komet_mapping_set_editor_add_fields_uuid, nil, id: "komet_mapping_set_editor_add_fields_uuid_#{@viewer_id}", class: 'form-control komet-mapping-dialog-uuid' %>
-                            <button type="button" class="btn btn-default">Apply</button>
-                        </div>
-
-                        <hr>
-
-                        <div>
-                            <label for="komet_mapping_set_editor_add_fields_type_<%= @viewer_id %>">Type</label>
-                            <select id="komet_mapping_set_editor_add_fields_type_<%= @viewer_id %>" onchange="WindowManager.viewers[<%= @viewer_id %>].changedSetAddFieldsType(value)" class="form-control">
-                                <option value="text">Text</option>
-                                <option value="textarea">Text Area</option>
-                                <option value="select">Select</option>
-                                <!--<option value="concept">Concept</option>-->
-                            </select>
-                        </div>
-
-                        <div>
-                            <label for="komet_mapping_set_editor_add_fields_label_<%= @viewer_id %>">Label (Alphanumeric, hypen, and dash)</label>
-                            <input type="text" id="komet_mapping_set_editor_add_fields_label_<%= @viewer_id %>" class="form-control" value="">
-                        </div>
-
-                        <div id="komet_mapping_set_editor_add_fields_options_section_<%= @viewer_id %>" class="hide">
-                            <label for="komet_mapping_set_editor_add_fields_options_<%= @viewer_id %>">Options (Comma separated list)</label>
-                            <input type="text" id="komet_mapping_set_editor_add_fields_options_<%= @viewer_id %>" class="form-control" value="">
-                        </div>
-
-                        <div>
-                            <button type="button" class="btn btn-default" onclick="WindowManager.viewers[<%= @viewer_id %>].addSetField()">Add Field</button>
-                        </div>
-                    </div>
-
-                </div>
-
-                <div class="komet-mapping-dialog-footer">
-
-                    <button class="btn btn-default" type="button" onclick="WindowManager.viewers[<%= @viewer_id %>].cancelIncludeSetFieldsDialog()">Cancel</button>
-                    <button class="btn btn-primary" type="button" onclick="WindowManager.viewers[<%= @viewer_id %>].saveIncludeSetFieldsDialog()">Save</button>
-
-                </div>
-            </div>
-
             <div class="komet-mapping-set-definition-row">
 
                 <div class="komet-mapping-set-definition-header">
@@ -117,7 +35,7 @@
 
                 <div class="komet-mapping-set-definition-controls">
                     <button class="btn btn-primary komet-mapping-set-editor-display" type="button" onclick="WindowManager.viewers[<%= @viewer_id %>].enterSetEditMode()">Edit</button>
-                    <button class="btn btn-default komet-mapping-set-editor-edit" type="button" onclick="WindowManager.viewers[<%= @viewer_id %>].showIncludeSetFieldsDialog()">Add More Fields</button>
+                    <button class="btn btn-default komet-mapping-set-editor-edit komet-mapping-set-editor-create-only" type="button" onclick="WindowManager.viewers[<%= @viewer_id %>].showIncludeSetFieldsDialog()">Add More Fields</button>
                     <button class="btn btn-default komet-mapping-set-editor-edit" type="button" onclick="WindowManager.viewers[<%= @viewer_id %>].cancelSetEditMode('<%= @previous_set_id %>')">Cancel</button>
                     <button class="btn btn-primary komet-mapping-set-editor-edit" id="komet_mapping_set_editor_save_<%= @viewer_id %>">Save</button>
                 </div>
@@ -127,10 +45,20 @@
 
                 <ul>
                     <li><a href='#komet_mapping_set_definition_tab_<%= @viewer_id %>'>Definition</a></li>
+                    <li><a href='#komet_mapping_set_items_tab_<%= @viewer_id %>'>Item Fields</a></li>
                     <li><a href='#komet_mapping_set_rules_tab_<%= @viewer_id %>'>Business Rules</a></li>
                 </ul>
 
                 <div id="komet_mapping_set_definition_tab_<%= @viewer_id %>" class="komet-mapping-set-tab-body">
+
+                    <!-- render the rows partial once for each row in the sememes array -->
+                    <%= render(partial: 'komet_dashboard/add_fields_dialog', locals: {
+                        dialog_title: 'Add Set Fields',
+                        id_prefix: 'komet_mapping_set_editor_',
+                        id_postfix: '_' + @viewer_id,
+                        javascript_object: 'WindowManager.viewers[' + @viewer_id + ']',
+                        javascript_function_qualifier: 'Set'
+                    }) %>
 
                     <div class="komet-mapping-set-definition-row">
 
@@ -162,6 +90,11 @@
                             </div>
 
                     </div>
+
+                </div>
+
+                <div id="komet_mapping_set_items_tab_<%= @viewer_id %>" class="komet-mapping-set-tab-body">
+
 
                 </div>
 

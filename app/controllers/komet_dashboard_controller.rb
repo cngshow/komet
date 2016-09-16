@@ -325,7 +325,8 @@ class KometDashboardController < ApplicationController
       end
 
       # load the root node into our return variable
-      root_anchor_attributes = { class: 'komet-context-menu', 'data-menu-type' => 'concept', 'data-menu-uuid' => isaac_concept.conChronology.identifiers.uuids.first, 'data-menu-state' => 'ACTIVE'}
+      root_anchor_attributes = { class: 'komet-context-menu', 'data-menu-type' => 'concept', 'data-menu-uuid' => isaac_concept.conChronology.identifiers.uuids.first,
+                                 'data-menu-state' => 'ACTIVE', 'data-menu-concept-text' => isaac_concept.conChronology.description}
       root_node = {id: 0, concept_id: isaac_concept.conChronology.identifiers.uuids.first, text: isaac_concept.conChronology.description, parent_reversed: false, parent_search: parent_search, icon: 'komet-tree-node-icon komet-tree-node-primitive', a_attr: root_anchor_attributes, state: {opened: 'true'}}
     else
       isaac_concept = TaxonomyRest.get_isaac_concept(uuid: selected_concept_id, additional_req_params: additional_req_params)
@@ -484,7 +485,7 @@ class KometDashboardController < ApplicationController
 
     raw_nodes.each do |raw_node|
 
-      anchor_attributes = { class: 'komet-context-menu', 'data-menu-type' => 'concept', 'data-menu-uuid' => raw_node[:id], 'data-menu-state' => raw_node[:state]}
+      anchor_attributes = { class: 'komet-context-menu', 'data-menu-type' => 'concept', 'data-menu-uuid' => raw_node[:id], 'data-menu-state' => raw_node[:state], 'data-menu-concept-text' => raw_node[:text]}
       parent_search = parent_search_param
       parent_reversed = parent_reversed_param
       show_expander = true

@@ -36,8 +36,9 @@ var MappingViewer = function(viewerID, currentSetID, mappingAction) {
         this.setEditorMapSet = {};
         this.SET_INCLUDE_FIELD_PREFIX = "komet_mapping_set_editor_include_fields_";
         this.INCLUDE_FIELD_CLASS_PREFIX = "komet-mapping-added-";
-        this.SET_INCLUDE_FIELD_CHECKBOX_SECTION = "komet_mapping_dialog_set_include_fields_";
-        this.SET_INCLUDE_FIELD_DIALOG = "komet_mapping_dialog_add_set_fields_" + viewerID;
+        this.SET_INCLUDE_FIELD_CHECKBOX_SECTION = "komet_mapping_set_editor_set_include_fields_";
+        this.SET_INCLUDE_FIELD_DIALOG = "komet_mapping_set_editor_add_set_fields_" + viewerID;
+        this.SET_EDITOR_FORM = "komet_mapping_set_editor_form_" + viewerID;
     };
 
     MappingViewer.prototype.togglePanelDetails = function(panelID, callback, preserveState) {
@@ -268,34 +269,6 @@ var MappingViewer = function(viewerID, currentSetID, mappingAction) {
         this.loadOverviewSetsGrid();
     };
 
-    MappingViewer.prototype.generateSetEditorDialogIncludeSection = function(fieldName, fieldInfo){
-
-        var sectionString = '<div class="' + this.INCLUDE_FIELD_CLASS_PREFIX + fieldName + '">'
-            + '<input type="checkbox" name="' + this.SET_INCLUDE_FIELD_PREFIX.slice(0, -1) + '[]" class="form-control" '
-            + 'id="' + this.SET_INCLUDE_FIELD_PREFIX + fieldName + '_' + this.viewerID + '" value="' + fieldName + '" ';
-
-        if (fieldInfo.display){
-            sectionString += 'checked="checked"';
-        }
-
-        sectionString += '><label for="' + this.SET_INCLUDE_FIELD_PREFIX + fieldName + '_' + this.viewerID + '">' + fieldInfo.label + '</label>';
-
-        if (fieldInfo.removable){
-            sectionString += '<div class="glyphicon glyphicon-remove komet-flex-right" title="Remove Field" onclick="WindowManager.viewers[' + this.viewerID + '].removeSetIncludedField(\'' + fieldName + '\');"></div>';
-        }
-
-        if (fieldInfo.type == "select"){
-            sectionString += '<input type="hidden" name="' + this.SET_INCLUDE_FIELD_PREFIX + fieldName + '_options" value="' + fieldInfo.options + '">';
-        }
-
-        sectionString += '<input type="hidden" name="' + this.SET_INCLUDE_FIELD_PREFIX + fieldName + '_label" value="' + fieldInfo.label + '">'
-            + '<input type="hidden" name="' + this.SET_INCLUDE_FIELD_PREFIX + fieldName + '_type" value="' + fieldInfo.type + '">'
-            + '<input type="hidden" name="' + this.SET_INCLUDE_FIELD_PREFIX + fieldName + '_removable" value="' + fieldInfo.removable + '">'
-            + '</div>';
-
-        return sectionString;
-    };
-
     MappingViewer.prototype.initializeSetEditor = function(mappingAction){
 
         var form = $("#komet_mapping_set_editor_form_" + this.viewerID);
@@ -315,14 +288,16 @@ var MappingViewer = function(viewerID, currentSetID, mappingAction) {
         this.generateSetEditorAdditionalFields();
 
         if (mappingAction == MappingModule.SET_DETAILS){
+
             form.find(".komet-mapping-set-editor-edit").hide();
 
             if (this.currentSetID != null && this.currentSetID != ""){
-                this.loadOverviewItemsGrid();
 
+                this.loadOverviewItemsGrid();
                 UIHelper.toggleFieldAvailability("komet_mapping_overview_item_create_" + this.viewerID, true);
             }
         } else {
+
             form.find(".komet-mapping-set-editor-display").hide();
         }
 
@@ -347,6 +322,34 @@ var MappingViewer = function(viewerID, currentSetID, mappingAction) {
             return false;
         });
 
+    };
+
+    MappingViewer.prototype.generateSetEditorDialogIncludeSection = function(fieldName, fieldInfo){
+
+        var sectionString = '<div class="' + this.INCLUDE_FIELD_CLASS_PREFIX + fieldName + '">'
+            + '<input type="checkbox" name="' + this.SET_INCLUDE_FIELD_PREFIX.slice(0, -1) + '[]" class="form-control" '
+            + 'id="' + this.SET_INCLUDE_FIELD_PREFIX + fieldName + '_' + this.viewerID + '" value="' + fieldName + '" ';
+
+        if (fieldInfo.display){
+            sectionString += 'checked="checked"';
+        }
+
+        sectionString += '><label for="' + this.SET_INCLUDE_FIELD_PREFIX + fieldName + '_' + this.viewerID + '">' + fieldInfo.label_display + '</label>';
+
+        if (fieldInfo.removable){
+            sectionString += '<div class="glyphicon glyphicon-remove komet-flex-right" title="Remove Field" onclick="WindowManager.viewers[' + this.viewerID + '].removeSetIncludedField(\'' + fieldName + '\');"></div>';
+        }
+
+        if (fieldInfo.type == "select"){
+            sectionString += '<input type="hidden" name="' + this.SET_INCLUDE_FIELD_PREFIX + fieldName + '_options" value="' + fieldInfo.options + '">';
+        }
+
+        sectionString += '<input type="hidden" name="' + this.SET_INCLUDE_FIELD_PREFIX + fieldName + '_label" value="' + fieldInfo.label + '">'
+            + '<input type="hidden" name="' + this.SET_INCLUDE_FIELD_PREFIX + fieldName + '_type" value="' + fieldInfo.type + '">'
+            + '<input type="hidden" name="' + this.SET_INCLUDE_FIELD_PREFIX + fieldName + '_removable" value="' + fieldInfo.removable + '">'
+            + '</div>';
+
+        return sectionString;
     };
 
     MappingViewer.prototype.getSetEditorIncludeFields = function(state){
@@ -387,21 +390,26 @@ var MappingViewer = function(viewerID, currentSetID, mappingAction) {
 
             includedFields += '<div class="komet-mapping-set-definition-item ' + addedTag + fieldsToInclude[i] + '">';
 
-            var name = 'name="komet_mapping_set_editor_' + fieldsToInclude[i]+ ' ';
-            var id = 'id="komet_mapping_set_editor_' + fieldsToInclude[i] + '_' + this.viewerID + ' ';
-            var classes = "form-control komet-mapping-set-editor-edit";
+            var idPrefix = "komet_mapping_set_editor_";
+            var name = 'name="' + idPrefix + fieldsToInclude[i]+ ' ';
+            var id = 'id="' + idPrefix + fieldsToInclude[i] + '_' + this.viewerID + ' ';
+            var classes = "form-control komet-mapping-set-editor-edit komet-mapping-set-editor-create-only";
             var value = "";
             var type = "text";
-            var label = '<label for="' + fieldsToInclude[i] + '_' + this.viewerID + '">' + fieldsToInclude[i] + '</label>';
+            var labelValue = fieldsToInclude[i];
+            var labelDisplayValue = fieldsToInclude[i];
 
             if (this.setEditorMapSet[fieldsToInclude[i]] != undefined){
 
                 value = this.setEditorMapSet[fieldsToInclude[i]].value;
                 type = this.setEditorMapSet[fieldsToInclude[i]].type;
-                label = '<label for="' + fieldsToInclude[i] + '_' + this.viewerID + '">' + this.setEditorMapSet[fieldsToInclude[i]].label + ':</label>';
+                labelValue = this.setEditorMapSet[fieldsToInclude[i]].label;
+                labelDisplayValue = this.setEditorMapSet[fieldsToInclude[i]].label_display;
             }
 
-            if (fieldsToInclude[i] == "source_system"){
+            var label = '<label for="' + fieldsToInclude[i] + '_' + this.viewerID + '">' + labelDisplayValue + ':</label>';
+
+            if (type == "concept"){
 
                 var displayValue = "";
 
@@ -410,35 +418,12 @@ var MappingViewer = function(viewerID, currentSetID, mappingAction) {
                 }
 
                 includedFields += '<autosuggest '
-                    + 'id-base="komet_mapping_set_editor_source_system" '
+                    + 'id-base="' + idPrefix + fieldsToInclude[i] + '" '
                     + 'id-postfix="_' + this.viewerID + '" '
-                    + 'label="Source Code System:" '
+                    + 'label="' + labelValue + ':" '
                     + 'value="' + value + '" '
                     + 'display-value="' + displayValue + '" '
-                    + 'classes="komet-mapping-set-editor-edit" '
-                    + 'suggestion-rest-variable="mapping_get_item_target_suggestions_path" '
-                    + 'recents-rest-variable="mapping_get_item_source_recents_path" '
-                    + '></autosuggest>';
-
-                value = displayValue;
-                
-            } else if (fieldsToInclude[i] == "target_system"){
-
-                var displayValue = "";
-
-                if (this.setEditorMapSet[fieldsToInclude[i] + "_display"] != undefined){
-                    displayValue = this.setEditorMapSet[fieldsToInclude[i] + "_display"];
-                }
-
-                includedFields += '<autosuggest '
-                    + 'id-base="komet_mapping_set_editor_target_system" '
-                    + 'id-postfix="_' + this.viewerID + '" '
-                    + 'label="Target Code System:" '
-                    + 'value="' + value + '" '
-                    + 'display-value="' + displayValue + '" '
-                    + 'classes="komet-mapping-set-editor-edit" '
-                    + 'suggestion-rest-variable="mapping_get_item_target_suggestions_path" '
-                    + 'recents-rest-variable="mapping_get_item_target_recents_path" '
+                    + 'classes="komet-mapping-set-editor-edit komet-mapping-set-editor-create-only" '
                     + '></autosuggest>';
 
                 value = displayValue;
@@ -469,7 +454,7 @@ var MappingViewer = function(viewerID, currentSetID, mappingAction) {
                 includedFields += '</select>';
             }
 
-            includedFields += '<div class="komet-mapping-set-editor-display">' + value + '</div>';
+            includedFields += '<div class="komet-mapping-set-editor-display komet-mapping-set-editor-create-only">' + value + '</div>';
             includedFields += '</div>';
 
             if (!even){
@@ -489,14 +474,6 @@ var MappingViewer = function(viewerID, currentSetID, mappingAction) {
         definitionTab.append(documentFragment);
 
         UIHelper.processAutoSuggestTags("#komet_mapping_set_editor_form_" + this.viewerID);
-
-        // append the field sections we stored earlier into the row item we created for it and add it to our list of created fields
-        //appendFields.forEach(function(fieldInfo){
-        //
-        //    definitionTab.find("." + addedTag + fieldInfo.tag_postfix).append(fieldInfo.field);
-        //    this.setEditorCreatedFields.push(fieldInfo.tag_postfix);
-        //}.bind(this));
-
     };
 
     MappingViewer.prototype.loadOverviewItemsGrid = function(){
@@ -532,12 +509,12 @@ var MappingViewer = function(viewerID, currentSetID, mappingAction) {
                 {field: "review_state", headerName: "Review State"},
                 {
                     groupId: "stamp", headerName: "STAMP Fields", children: [
-                    {field: "status", headerName: "Status", hide: !this.showItemsSTAMP},
-                    {field: "time", headerName: "Time", hide: !this.showItemsSTAMP},
-                    {field: "author", headerName: "Author", hide: !this.showItemsSTAMP},
-                    {field: "module", headerName: "Module", hide: !this.showItemsSTAMP},
-                    {field: "path", headerName: "Path", hide: !this.showItemsSTAMP}
-                ]
+                        {field: "status", headerName: "Status", hide: !this.showItemsSTAMP},
+                        {field: "time", headerName: "Time", hide: !this.showItemsSTAMP},
+                        {field: "author", headerName: "Author", hide: !this.showItemsSTAMP},
+                        {field: "module", headerName: "Module", hide: !this.showItemsSTAMP},
+                        {field: "path", headerName: "Path", hide: !this.showItemsSTAMP}
+                    ]
                 }
             ]
         };
@@ -702,7 +679,7 @@ var MappingViewer = function(viewerID, currentSetID, mappingAction) {
 
     MappingViewer.prototype.enterSetEditMode = function(){
 
-        $(".komet-mapping-set-editor-display").hide();
+        $(".komet-mapping-set-editor-display:not(.komet-mapping-set-editor-create-only)").hide();
         $(".komet-mapping-set-editor-edit:not(.komet-mapping-set-editor-create-only)").show();
     };
 
@@ -765,6 +742,7 @@ var MappingViewer = function(viewerID, currentSetID, mappingAction) {
         var prefix = "#komet_mapping_set_editor_add_fields_";
         $(prefix + "type_" + this.viewerID).val("text");
         $(prefix + "label_" + this.viewerID).val("");
+        $(prefix + "label_display_" + this.viewerID).val("");
         $(prefix + "options_" + this.viewerID).val("");
 
         this.changedSetAddFieldsType("text");
@@ -792,6 +770,7 @@ var MappingViewer = function(viewerID, currentSetID, mappingAction) {
         var prefix = "#komet_mapping_set_editor_add_fields_";
         var typeField = $(prefix + "type_" + this.viewerID);
         var labelField = $(prefix + "label_" + this.viewerID);
+        var labelDisplayField = $(prefix + "label_display_" + this.viewerID);
         var optionsField = $(prefix + "options_" + this.viewerID);
 
         if (typeField.val() == "" || labelField.val() == "" || (typeField.val() == "select" && typeField.val() == "")){
@@ -801,7 +780,8 @@ var MappingViewer = function(viewerID, currentSetID, mappingAction) {
         }
 
         // make sure there are no invalid characters in the name
-        var name = labelField.val().replace(/[^a-zA-Z0-9_\-]/g, '').toLowerCase();
+        // var name = labelDisplayField.val().replace(/[^a-zA-Z0-9_\-]/g, '').toLowerCase();
+        var name = labelField.val();
 
         if (this.setEditorMapSet.include_fields.indexOf(name) >= 0){
 
@@ -809,7 +789,14 @@ var MappingViewer = function(viewerID, currentSetID, mappingAction) {
             return;
         }
 
-        var fieldInfo = {"name": name, "type": typeField.val(), "label": labelField.val().replace(/[^a-zA-Z0-9_,\- ]+/g, ''), "value": "", "removable": true, display: true};
+        var fieldInfo = {"name": name,
+            "type": typeField.val(),
+            "label": labelField.val(),
+            "label_display": labelDisplayField.val().replace(/[^a-zA-Z0-9_,\- ]+/g, ''),
+            "value": "",
+            "removable": true,
+            display: true
+        };
 
         if (typeField.val() == "select"){
 
@@ -826,6 +813,7 @@ var MappingViewer = function(viewerID, currentSetID, mappingAction) {
 
         typeField.val("text");
         labelField.val("");
+        labelDisplayField.val("");
         optionsField.val("");
 
         this.changedSetAddFieldsType("text");

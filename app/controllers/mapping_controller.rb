@@ -29,6 +29,7 @@ class MappingController < ApplicationController
     before_filter :init_session
     skip_before_filter :set_render_menu, :only => [:map_set_editor]
 
+    DATA_TYPES_CLASS = Gov::Vha::Isaac::Rest::Api1::Data::Sememe::DataTypes
 
     def init_session
 
@@ -66,7 +67,7 @@ class MappingController < ApplicationController
             set_hash[:text] = set.name
             set_hash[:state] = set.mappingSetStamp.state.name
             set_hash[:icon] = 'komet-tree-node-icon fa fa-folder'
-            set_hash[:a_attr] = {class: 'komet-context-menu', 'data-menu-type' => 'map_set', 'data-menu-uuid' => set_hash[:set_id]}
+            set_hash[:a_attr] = {class: 'komet-context-menu', 'data-menu-type' => 'map_set', 'data-menu-uuid' => set_hash[:set_id], 'data-menu-concept-text' => set_hash[:text]}
 
             mapping_tree << set_hash
         end
@@ -87,7 +88,7 @@ class MappingController < ApplicationController
         @previous_set_id = params[:previous_set_id]
 
         if @viewer_id == nil || @viewer_id == '' || @viewer_id == 'new'
-            @viewer_id = get_next_id
+            @viewer_id = get_next_id.to_s
         end
 
         if @mapping_action == 'set_details' || @mapping_action == 'create_set'
@@ -136,24 +137,66 @@ class MappingController < ApplicationController
 
         coordinates_token = session[:coordinatestoken].token
         @map_set = {id: '', name: '', description: '', version: '', vuid: '', rules: '', include_fields: [], state: '', status: 'Active', time: '', module: '', path: ''}
-        @map_set[:include_fields] = ['source_system', 'source_version', 'target_system', 'target_version', 'equivalence', 'comments', 'sample_test']
-        @map_set[:source_system] = {name: 'source_system', type: 'concept', value: '', label: 'Source System', removable: false, display: false}
+        @map_set[:include_fields] = ['source_system', 'source_version', 'target_system', 'target_version', 'equivalence', 'comments']
+        @map_set[:source_system] = {name: 'source_system', type: 'concept', value: '', label: 'Source System', label_display: 'Source System', removable: false, display: false}
         @map_set[:source_system_display] = ''
-        @map_set[:source_version] = {name: 'source_version', type: 'text', value: '', label: 'Source Version', removable: false, display: false}
-        @map_set[:target_system] = {name: 'target_system', type: 'concept', value: '', label: 'Target System', removable: false, display: false}
+        @map_set[:source_version] = {name: 'source_version', type: 'text', value: '', label: 'Source Version', label_display: 'Source Version', removable: false, display: false}
+        @map_set[:target_system] = {name: 'target_system', type: 'concept', value: '', label: 'Target System', label_display: 'Target System', removable: false, display: false}
         @map_set[:target_system_display] = ''
-        @map_set[:target_version] = {name: 'target_version', type: 'text', value: '', label: 'Target Version', removable: false, display: false}
-        @map_set[:equivalence] = {name: 'equivalence', type: 'select', value: '', label: 'Equivalence Type', removable: false, display: false, options: ['No Restrictions', 'Exact', 'Broader Than', 'Narrower Than']}
-        @map_set[:comments] = {name: 'comments', type: 'textarea', value: '', label: 'Comments', removable: false, display: false}
-        @map_set[:sample_test] = {name: 'sample_test', type: 'text', value: 'This is a Test', label: 'Sample Test', removable: true, display: false}
+        @map_set[:target_version] = {name: 'target_version', type: 'text', value: '', label: 'Target Version', label_display: 'Target Version', removable: false, display: false}
+        @map_set[:equivalence] = {name: 'equivalence', type: 'select', value: '', label: 'Equivalence Type', label_display: 'Equivalence Type', removable: false, display: false, options: ['No Restrictions', 'Exact', 'Broader Than', 'Narrower Than']}
+        @map_set[:comments] = {name: 'comments', type: 'textarea', value: '', label: 'Comments', label_display: 'Comments', removable: false, display: false}
         @set_id = params[:set_id]
 
         if @set_id &&  @set_id != ''
 
             set = MappingApis::get_mapping_api(action: MappingApiActions::ACTION_SET, uuid_or_id: @set_id,  additional_req_params: {coordToken: coordinates_token, CommonRest::CacheRequest => false})
 
+            Gov::Vha::Isaac::Rest::Api1::Data::Sememe::RestDynamicSememeData
             if set.is_a? CommonRest::UnexpectedResponse
                 return @map_set
+            end
+
+            item = MappingApis::get_mapping_api(action: MappingApiActions::ACTION_ITEMS, uuid_or_id: @set_id,  additional_req_params: {coordToken: coordinates_token, CommonRest::CacheRequest => false})
+
+            if item.is_a? CommonRest::UnexpectedResponse
+
+            end
+
+            extended_fields = set.mapSetExtendedFields
+
+            extended_fields.each do |field|
+
+                name = field.extensionNameConcept
+                label = name
+                label_display = field.extensionNameConceptDescription
+                value = field.extensionValue2[0].data
+                removable = true
+                display = true
+
+                if value == nil && value == ''
+                    display = false
+                end
+
+                if field.extensionValue2[0].class == DATA_TYPES_CLASS::RestDynamicSememeString
+                    type = 'text'
+
+                elsif field.extensionValue2[0].class == DATA_TYPES_CLASS::RestDynamicSememeNid || field.extensionValue2[0].class == DATA_TYPES_CLASS::RestDynamicSememeUUID
+
+                    type = 'concept'
+                    @map_set[name + '_display'] = value
+
+                elsif name == '-2147483446'
+
+                    type = 'concept'
+                    value = '6e60d7fd-3729-5dd3-9ce7-6d97c8f75447'
+                    removable = false
+                    @map_set[name + '_display'] = 'VHAT'
+                end
+
+                @map_set[:include_fields] << name
+                @map_set[name] = {name: name, type: type, value: value, label: label, label_display: label_display, removable: removable, display: display}
+
             end
 
             @map_set[:set_id] = set.identifiers.uuids.first
@@ -166,23 +209,15 @@ class MappingController < ApplicationController
             @map_set[:path] = get_concept_metadata(set.mappingSetStamp.pathSequence)
             @map_set[:source_system][:value] = '11'
             @map_set[:source_system_display] = 'Source System Test'
-            @map_set[:source_system][:display] = true
             @map_set[:source_version][:value] = 'Source Version Test'
-            @map_set[:source_version][:display] = true
             @map_set[:target_system][:value] = '22'
             @map_set[:target_system_display] = 'Target System Test'
-            @map_set[:target_system][:display] = false
             @map_set[:target_version][:value] = 'Target Version Test'
-            @map_set[:target_version][:display] = false
             @map_set[:equivalence][:value] = 'Exact'
-            @map_set[:equivalence][:display] = false
             @map_set[:comments][:value] = 'Comments Test'
-            @map_set[:comments][:display] = false
-            @map_set[:sample_test][:display] = true
             @map_set[:rules] = 'Business rules test'
             @map_set[:version] = '12.4'
             @map_set[:vuid] = '4500635'
-
 
             @viewer_title = @map_set[:description]
         else
@@ -205,6 +240,8 @@ class MappingController < ApplicationController
         show_inactive = params[:show_inactive]
         page_size = 1000 #params[:overview_items_page_size]
         page_number = 1 #params[:overview_items_page_number]
+
+
 
         results[:total_number] = 2
         results[:page_number] = page_number

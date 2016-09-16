@@ -20,12 +20,13 @@ require './lib/isaac_rest/search_apis_rest'
 require './lib/isaac_rest/id_apis_rest'
 require './lib/isaac_rest/sememe_rest'
 require './lib/isaac_rest/taxonomy_rest'
+require './lib/rails_common/util/controller_helpers'
 
 ##
 # SearchController -
 # handles the taxonomy search functionality
 class SearchController < ApplicationController
-  include SearchApis, IdAPIsRest, SememeRest, ConceptConcern
+  include SearchApis, IdAPIsRest, SememeRest, ConceptConcern, CommonController
 
   ##
   # get_assemblage_suggestions - RESTful route for populating a list suggested list of assemblages as a user types into a field via http :GET or :POST
@@ -106,6 +107,10 @@ class SearchController < ApplicationController
       # perform a description search with the parameters we set
       results = SearchApis.get_search_api(action: ACTION_DESCRIPTIONS, additional_req_params: additional_params)
 
+      if results.is_a? CommonRest::UnexpectedResponse
+        render json: {total_number: 0, page_number: 0, data: []} and return
+      end
+
       search_results[:total_number] = results.paginationData.approximateTotal
       search_results[:page_number] = results.paginationData.pageNum
 
@@ -130,7 +135,7 @@ class SearchController < ApplicationController
       if assemblage != nil && assemblage != ''
 
         additional_params[:sememeAssemblageId] =  assemblage
-        add_to_recents(:search_assemblage_recents, assemblage, params[:taxonomy_search_assemblage_display])
+        add_to_recents(CONCEPT_RECENTS, assemblage, params[:taxonomy_search_assemblage_display])
 
       end
 

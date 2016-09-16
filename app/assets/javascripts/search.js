@@ -14,15 +14,16 @@ var TaxonomySearchModule = (function () {
         });
 
         // setup the assemblage field autocomplete functionality
-        $("#taxonomy_search_assemblage_display").autocomplete({
-            source: gon.routes.search_get_assemblage_suggestions_path,
-            minLength: 3,
-            select: onAssemblageSuggestionSelection,
-            change: onAssemblageSuggestionChange
-        });
+        //$("#taxonomy_search_assemblage_display").autocomplete({
+        //    source: gon.routes.search_get_assemblage_suggestions_path,
+        //    minLength: 3,
+        //    select: onAssemblageSuggestionSelection,
+        //    change: onAssemblageSuggestionChange
+        //});
 
         // load any previous assemblage queries into a menu for the user to select from
-        loadAssemblageRecents();
+        UIHelper.processAutoSuggestTags("#komet_taxonomy_search_form");
+        //loadAssemblageRecents();
     }
 
     function loadResultGrid() {
@@ -53,7 +54,10 @@ var TaxonomySearchModule = (function () {
             rowModelType: 'pagination',
             columnDefs:  [
                 {field: "id", headerName: 'ID', hide: 'true'},
-                {field: "matching_terms", headerName: "Matching Terms"},
+                {field: "matching_terms", headerName: "Matching Terms", cellRenderer: function(params) {
+                    return '<span class="komet-context-menu" data-menu-type="concept" data-menu-uuid="' + params.data.id + '" '
+                        + 'data-menu-state="' + params.data.concept_status + '" data-menu-concept-text="' + params.data.matching_terms + '">' + params.value + '</span>';
+                }},
                 {field: "concept_status", headerName: "Status"},
                 {field: "match_score", headerName: "Score", suppressSizeToFit: "false", hide: 'true'}
             ]
@@ -81,7 +85,7 @@ var TaxonomySearchModule = (function () {
             searchParams += "&taxonomy_search_description_type=" + $("#taxonomy_search_description_type").val();
         }
         else {
-            searchParams += "&taxonomy_search_treat_as_string=" + $("#taxonomy_search_treat_as_string").val() + "&taxonomy_search_assemblage_id=" + $("#taxonomy_search_assemblage_id").val()
+            searchParams += "&taxonomy_search_treat_as_string=" + $("#taxonomy_search_treat_as_string").val() + "&taxonomy_search_assemblage_id=" + $("#taxonomy_search_assemblage").val()
                 + "&taxonomy_search_assemblage_display=" + $("#taxonomy_search_assemblage_display").val();
         }
 
@@ -113,7 +117,8 @@ var TaxonomySearchModule = (function () {
         gridOptions.api.setDatasource(dataSource);
 
         // reload the recents menu
-        loadAssemblageRecents();
+        //loadAssemblageRecents();
+        UIHelper.loadAutoSuggestRecents("taxonomy_search_assemblage_recents", null);
     }
 
     function onGridSelection(){

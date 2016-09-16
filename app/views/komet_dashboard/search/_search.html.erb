@@ -2,73 +2,73 @@
 
     <div class="komet-search-combo-row">
 
-      <div class="komet-search-combo-column">
+        <div class="komet-search-combo-column">
 
-        <div id="taxonomy_search_combo_field">
-          <%= label_tag :search_text, 'Search Text:' %>
-          <%= text_field_tag (:taxonomy_search_text) %>
+            <div id="taxonomy_search_combo_field">
+                <%= label_tag :search_text, 'Search Text:' %>
+                <%= text_field_tag (:taxonomy_search_text) %>
+            </div>
+
+
         </div>
 
-
-      </div>
-
-      <div class="komet-flex-right">
-        <button type="button" class="btn btn-primary" onclick="TaxonomySearchModule.loadResultGrid()">Search</button>
-      </div>
+        <div class="komet-flex-right">
+            <button type="button" class="btn btn-primary" onclick="TaxonomySearchModule.loadResultGrid()">Search</button>
+        </div>
 
     </div>
 
     <div id="taxonomy_search_options_pane">
 
-      <h3>Advanced Options</h3>
+        <h3>Advanced Options</h3>
 
-      <div class="komet-accordion-panel">
+        <div class="komet-accordion-panel">
 
-        <div class="komet-floated-bar">
-          <%= label_tag :taxonomy_search_type, 'Search In:' %>
-          <%= select_tag :taxonomy_search_type, options_for_select([['Descriptions', 'descriptions'], ['Sememes', 'sememes']], 'descriptions'), :onchange => 'TaxonomySearchModule.changeSearchType(this)' %>
+            <div class="komet-floated-bar">
+                <%= label_tag :taxonomy_search_type, 'Search In:' %>
+                <%= select_tag :taxonomy_search_type, options_for_select([['Descriptions', 'descriptions'], ['Sememes', 'sememes']], 'descriptions'), :onchange => 'TaxonomySearchModule.changeSearchType(this)' %>
 
-          <div class="pull-right">
-            <%= label_tag :taxonomy_search_page_size, 'Page Size:' %>
-            <%= select_tag :taxonomy_search_page_size, options_for_select([['25'], ['50'], ['100'], ['250'], ['500'], ['1000']], '25')  %>
-          </div>
-        </div>
+                <div class="pull-right">
+                    <%= label_tag :taxonomy_search_page_size, 'Page Size:' %>
+                    <%= select_tag :taxonomy_search_page_size, options_for_select([['25'], ['50'], ['100'], ['250'], ['500'], ['1000']], '25') %>
+                </div>
+            </div>
 
-        <div id="taxonomy_search_option_description_type_fields">
-          <%= label_tag :taxonomy_search_description_type, 'Description Type:' %>
-          <%= select_tag :taxonomy_search_description_type, options_for_select([['Fully Specified Name', 'fsn'], ['Synonym', 'synonym'], ['Definition', 'definition']], 'fsn') %>
-        </div>
+            <div id="taxonomy_search_option_description_type_fields">
+                <%= label_tag :taxonomy_search_description_type, 'Description Type:' %>
+                <%= select_tag :taxonomy_search_description_type, options_for_select([['Fully Specified Name', 'fsn'], ['Synonym', 'synonym'], ['Definition', 'definition']], 'fsn') %>
+            </div>
 
         <span id="taxonomy_search_sememe_fields">
 
-          <div>
-            <%= label_tag :taxonomy_search_treat_as_string, 'Treat Search Text as String:' %>
-            <%= select_tag :taxonomy_search_treat_as_string, options_for_select([['True', 'true'], ['False','false']], 'false')  %>
-          </div>
+            <div>
+                <%= label_tag :taxonomy_search_treat_as_string, 'Treat Search Text as String:' %>
+                <%= select_tag :taxonomy_search_treat_as_string, options_for_select([['True', 'true'], ['False', 'false']], 'false') %>
+            </div>
 
-          <input id="taxonomy_search_assemblage_id" class="hide" />
+            <autosuggest id-base="taxonomy_search_assemblage" label="Search Assemblage:"></autosuggest>
 
-          <%= label_tag :taxonomy_search_assemblage, 'Search Assemblage:' %>
-          <div id="taxonomy_search_assemblage_fields" class="input-group">
-
-            <input id="taxonomy_search_assemblage_display" class="form-control" />
-
-            <div class="input-group-btn komet-search-combo-field">
-
-              <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                <span class="caret"></span>
-              </button>
-
-              <ul id="taxonomy_search_assemblage_recents" class="dropdown-menu dropdown-menu-right">
-              </ul>
-
-            </div><!-- /btn-group -->
-
-          </div><!-- /input-group -->
+            <!--<input id="taxonomy_search_assemblage_id" class="hide"/>-->
+            <!---->
+            <!--<div id="taxonomy_search_assemblage_fields" class="input-group">-->
+            <!---->
+                <!--<input id="taxonomy_search_assemblage_display" class="form-control"/>-->
+            <!---->
+                <!--<div class="input-group-btn komet-search-combo-field">-->
+            <!---->
+                    <!--<button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">-->
+                        <!--<span class="caret"></span>-->
+                    <!--</button>-->
+            <!---->
+                    <!--<ul id="taxonomy_search_assemblage_recents" class="dropdown-menu dropdown-menu-right"></ul>-->
+            <!---->
+                <!--</div>&lt;!&ndash; /btn-group &ndash;&gt;-->
+            <!---->
+            <!--</div>&lt;!&ndash; /input-group &ndash;&gt;-->
 
         </span>
 
-      </div>
+        </div>
 
     </div>
 
@@ -81,8 +81,8 @@
 
 <script>
 
-  $(document).ready(function () {
-    TaxonomySearchModule.initialize();
-  });
+    $(document).ready(function () {
+        TaxonomySearchModule.initialize();
+    });
 
 </script>
