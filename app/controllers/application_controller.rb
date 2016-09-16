@@ -9,6 +9,7 @@ OpenSSL::SSL::VERIFY_PEER = OpenSSL::SSL::VERIFY_NONE
 class ApplicationController < ActionController::Base
   include CommonController
   include ApplicationHelper
+  include Pundit
   include SSOI
   include ServletSupport
 
@@ -16,13 +17,18 @@ class ApplicationController < ActionController::Base
   # For APIs, you may want to use :null_session instead.
   protect_from_forgery with: :exception
 
+  prepend_before_action :add_pundit_methods
+  after_action :verify_authorized
   before_action :ensure_rest_version
   before_action :ensure_roles
+  before_action :read_only? #must be after ensure_roles
+
   before_action :set_render_menu, :setup_routes, :setup_constants
   attr_reader :ssoi # a boolean if we have ssoi headers
   alias ssoi? ssoi
 
   rescue_from Exception, :with => :internal_error
+  rescue_from Pundit::NotAuthorizedError, Pundit::AuthorizationNotPerformedError, :with => :pundit_error
 
   def set_render_menu
     @set_render_menu = true
@@ -156,6 +162,15 @@ class ApplicationController < ActionController::Base
     end
 
     gon.IsaacMetadataAuxiliary = $isaac_metadata_auxiliary
+  end
+
+  def pundit_user
+    {user: session[Roles::SESSION_ROLES_ROOT][Roles::SESSION_USER], roles: session[Roles::SESSION_ROLES_ROOT][Roles::SESSION_USER_ROLES]}
+  end
+
+  #dynamically add authorization methods
+  def add_pundit_methods
+    PunditDynamicRoles::add_controller_methods self
   end
 
   private

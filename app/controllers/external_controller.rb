@@ -24,6 +24,8 @@ Copyright Notice
 class ExternalController < ApplicationController
 
   skip_before_action :ensure_roles, only: [:login]
+  skip_after_action :verify_authorized
+  skip_before_action :read_only?
 
   def login
     user_name = ssoi_headers
@@ -54,7 +56,8 @@ class ExternalController < ApplicationController
   def logout
     session.delete(Roles::SESSION_ROLES_ROOT)
     flash[:notice] = 'You have been logged out.'
-    logout_url_string = ssoi? ? PrismeConfigConcern.logout_link : logout_url
+    logout_url_string = ssoi? ? PrismeConfigConcern.logout_link : root_url
+    $log.error("#{logout_url_string}")
     redirect_to logout_url_string
   end
 end
