@@ -112,7 +112,13 @@ class SearchController < ApplicationController
       results.results.each do |result|
 
         # add the information to the search array to be returned
-        search_data << {id: result.referencedConcept.identifiers.uuids.first, matching_terms: result.matchText, concept_status: result.referencedConcept.versions.first.conVersion.state, match_score: result.score}
+        result_data = {id: result.referencedConcept.identifiers.uuids.first, matching_terms: result.matchText, match_score: result.score}
+
+        if result.referencedConcept.versions.length > 0
+          result_data[:concept_status] = result.referencedConcept.versions.first.conVersion.state.name
+        end
+
+        search_data << result_data
       end
 
     elsif search_type == 'sememes'
@@ -137,7 +143,7 @@ class SearchController < ApplicationController
       results.results.each do |result|
 
         # add the information to the search array to be returned
-        search_data << {id: result.referencedConcept.identifiers.uuids.first, matching_terms: result.matchText, concept_status: result.referencedConcept.versions.first.conVersion.state, match_score: result.score}
+        search_data << {id: result.referencedConcept.identifiers.uuids.first, matching_terms: result.matchText, concept_status: result.referencedConcept.versions.first.conVersion.state.name, match_score: result.score}
       end
 
     end
