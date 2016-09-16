@@ -57,7 +57,6 @@ class ExternalController < ApplicationController
     session.delete(Roles::SESSION_ROLES_ROOT)
     flash[:notice] = 'You have been logged out.'
     logout_url_string = ssoi? ? PrismeConfigConcern.logout_link : root_url
-    $log.error("#{logout_url_string}")
     redirect_to logout_url_string
   end
 end
