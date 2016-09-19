@@ -29,12 +29,12 @@ class ExternalController < ApplicationController
 
   def login
     user_name = ssoi_headers
-      @ssoi = !user_name.to_s.strip.empty? #we are using ssoi
-    if (ssoi?)
+    @ssoi = !user_name.to_s.strip.empty? #we are using ssoi
+    if ssoi?
       ensure_roles
       roles = session[Roles::SESSION_ROLES_ROOT][Roles::SESSION_USER_ROLES]
       $log.debug("SSOI has the following roles: #{roles}")
-      unless (roles.nil? || roles.empty?)
+      unless roles.nil? || roles.empty?
         redirect_to komet_dashboard_dashboard_url
         return
       end
@@ -43,13 +43,18 @@ class ExternalController < ApplicationController
   end
 
   def authenticate
-    roles = session[Roles::SESSION_ROLES_ROOT][Roles::SESSION_USER_ROLES]
-    unless(roles.nil? || roles.empty?)
-      redirect_to komet_dashboard_dashboard_url
-    else
+    roles = nil
+
+    if session[Roles::SESSION_ROLES_ROOT]
+      roles = session[Roles::SESSION_ROLES_ROOT][Roles::SESSION_USER_ROLES]
+    end
+
+    if roles.nil? || roles.empty?
       #not authenticated - redirect to the naughty page
       flash[:error] = 'Invalid username or password.'
       redirect_to proxify(root_path)
+    else
+      redirect_to komet_dashboard_dashboard_url
     end
   end
 

@@ -495,7 +495,7 @@ class KometDashboardController < ApplicationController
       flags << get_tree_node_flag('refsets', [raw_node[:refsets]])
       flags << get_tree_node_flag('path', [raw_node[:path]])
 
-      if raw_node[:state].downcase == 'inactive'
+      if raw_node[:state] && raw_node[:state].downcase.eql?('inactive')
         anchor_attributes[:class] << ' komet-inactive-tree-node'
       end
 

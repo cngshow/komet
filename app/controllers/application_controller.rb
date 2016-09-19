@@ -150,7 +150,6 @@ class ApplicationController < ActionController::Base
   end
 
   def setup_constants
-
     if $isaac_metadata_auxiliary.nil?
 
       constants_file = './config/generated/yaml/IsaacMetadataAuxiliary.yaml'
@@ -165,7 +164,11 @@ class ApplicationController < ActionController::Base
   end
 
   def pundit_user
-    {user: session[Roles::SESSION_ROLES_ROOT][Roles::SESSION_USER], roles: session[Roles::SESSION_ROLES_ROOT][Roles::SESSION_USER_ROLES]}
+    if session[Roles::SESSION_ROLES_ROOT]
+      {user: session[Roles::SESSION_ROLES_ROOT][Roles::SESSION_USER], roles: session[Roles::SESSION_ROLES_ROOT][Roles::SESSION_USER_ROLES]}
+    else
+      {user: nil, roles: []}
+    end
   end
 
   #dynamically add authorization methods
