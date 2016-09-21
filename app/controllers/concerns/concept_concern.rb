@@ -93,6 +93,32 @@ module ConceptConcern
     end
 
     ##
+    # descriptions - takes a uuid and returns all of the description concepts attached to it.
+    # @param [String] uuid - The UUID to look up descriptions for
+    # @param [Boolean] stated - Whether to display the stated (true) or inferred view of concepts
+    # @return [object] an array of hashes that contains the attributes
+    def get_conceptData(uuid, stated)
+
+        coordinates_token = session[:coordinatestoken].token
+        return_attributes = []
+
+        attributes = ConceptRest.get_concept(action: ConceptRestActions::ACTION_VERSION, uuid: uuid, additional_req_params: {coordToken: coordinates_token, expand: 'chronology', stated: stated})
+
+        if attributes.is_a? CommonRest::UnexpectedResponse
+            return [{value: ''}, {value: ''}, {value: ''}]
+        end
+
+        return_attributes << {label: 'Text', value: attributes.conChronology.description}
+        return_attributes << {label: 'Module', value: get_concept_metadata(attributes.conVersion.moduleSequence)}
+        return_attributes << {label: 'UUID', value: uuid} #parent uuid
+
+
+        return return_attributes
+
+    end
+
+
+    ##
     # get_descriptions - takes a uuid and returns all of the description concepts attached to it.
     # @param [String] uuid - The UUID to look up descriptions for
     # @param [Boolean] stated - Whether to display the stated (true) or inferred view of concepts

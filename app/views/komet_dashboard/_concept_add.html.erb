@@ -5,16 +5,21 @@
     </div>
     <div class="panel-body">
 
-        <div style="width: 750px ; float: right">
+        <div id="savecancelDiv" style="width: 750px ; float: right">All fields required except where noted as Optional.
           <button type="button" class="btn btn-primary" onclick="WindowManager.closeViewer(<%= @viewer_id %>)">Cancel</button>
-          <button type="button" class="btn btn-primary" onclick="TaxonomyModule.saveConcept()">Submit</button>
-        </div><BR><BR>
-      <div> <div >
-         &nbsp; &nbsp;Name: <input id="txtName" style="width:300px" type="text"><Br><br>
+          <button type="button" class="btn btn-primary" onclick="ConceptViewer.prototype.showHideConceptBtn('yesnolDiv')">Save</button>
         </div>
-      <div style="width:350px;">
+      <div id="yesnolDiv" style="width: 750px ; float: right">Are you sure you want to commit changes?
+        <button type="button" class="btn btn-primary" onclick="ConceptViewer.prototype.showHideConceptBtn('savecancelDiv')">No</button>
+        <button type="button" class="btn btn-primary" onclick="ConceptViewer.prototype.saveConcept()">Yes</button>
+      </div>
+      <BR><BR>
+      <div>
+        <div id="komet_concept_lineage_panel_<%= @viewer_id %>" class="komet-concept-section-panel komet-concept-lineage-panel">
+
+        <div style="width:350px;">
         <input id="taxonomy_lineage_id" class="hide" />
-         <div style="float: left"> Lineage:</div><div  id="taxonomy_search_assemblage_fields" class="input-group">
+         <div style="float: left"> Parent</div><BR><div  id="taxonomy_search_assemblage_fields" class="input-group">
 
           <input id="taxonomy_lineage_display" class="form-control"  />
 
@@ -29,19 +34,7 @@
 
             </div><!-- /btn-group -->
           </div><!-- /input-group --><br>
-       <div style="padding-left: 55px;"> <select id="komet_concept" >
-          <option>Primitive</option>
-          <option>Fully Defined</option>
-        </select>
-        <select id="komet_language" >
-          <option>enUS</option>
-          <option>enUK Defined</option>
-        </select>
-        <select id="komet_languageDialect" >
-          <option>enGB</option>
-          <option>enUS</option>
-        </select>
-       </div>
+        </div>
       </div>
 
 
@@ -49,10 +42,15 @@
          <div  class="komet-concept-section-panel komet-concept-description-panel">
            <!-- main header block - always visible -->
          <div>
-
-         <div>
-           Preferred Name: <div   id="taxonomy_pn_text"></div><br><br>
+           <div >
+             Description Text<BR> <input id="txtDescription" style="width:300px" type="text"><Br><br>
+           </div>
+           <div>Description Type: (optional)<BR><select style="width:300px" id="ddlDescriptionT">
+             <option value="FSN">FSN</option>
+           </select></div>
+         <div><br><br>
            Fully Specified Name: <div   id="taxonomy_fsn_text"></div><br>
+           Preferred Name: <div   id="taxonomy_pn_text"></div><br><br>
           </div><BR><BR>
 
         </div>
@@ -63,7 +61,7 @@
 </div>
 
 <script>
-  WindowManager.viewers[<%= @viewer_id %>].setPanelState('komet_viewer_<%= @viewer_id %>', null, WindowManager.viewers[<%= @viewer_id %>].createName(WindowManager.viewers[<%= @viewer_id %>]));
+  WindowManager.viewers[<%= @viewer_id %>].setPanelState('komet_viewer_<%= @viewer_id %>', null, WindowManager.viewers[<%= @viewer_id %>].createConcept(WindowManager.viewers[<%= @viewer_id %>]));
 </script>
 
 
