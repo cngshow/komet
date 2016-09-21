@@ -385,7 +385,7 @@ var ConceptViewer = function(viewerID, currentConceptID) {
     ConceptViewer.prototype.createConcept = function(viewerID){
 
 
-        console.log($("#taxonomy_tree").selected.text());
+
         $("#yesnolDiv").hide();
         $("#txtDescription").keyup(function(event) {
             var stt = $(this).val();

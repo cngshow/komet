@@ -71,9 +71,9 @@ var ConceptsModule = (function () {
     }
     function subscribeToAddConcept()    {
         // listen for the onChange event broadcast by selecting a search result.
-        $.subscribe(KometChannels.Taxonomy.taxonomyAddConceptChannel, function (e,conceptID, viewerID, windowType) {
+        $.subscribe(KometChannels.Taxonomy.taxonomyAddConceptChannel, function (e,conceptID, viewerID, windowType,uuid,selectedTxt) {
 
-            ConceptsModule.loadConceptPanel(conceptID,TaxonomyModule.defaultStatedView, viewerID, windowType,'AddConcept');
+            ConceptsModule.loadConceptPanel(conceptID,TaxonomyModule.defaultStatedView, viewerID, windowType,'AddConcept',uuid,selectedTxt);
         });
     }
 
@@ -85,11 +85,13 @@ var ConceptsModule = (function () {
         });
     }
 
-    function loadConceptPanel(conceptID, stated, viewerID, windowType,action) {
+    function loadConceptPanel(conceptID, stated, viewerID, windowType,action,uuid,selectedTxt) {
 
         loading = true;
         deferred = $.Deferred();
-      var selectedDivname = windowType;
+        var selectedDivname = windowType;
+        var uuids = windowType;
+        console.log(windowType + '--' + action + ' ---' +uuid  + '---' + selectedTxt)
         // the path to a javascript partial file that will re-render all the appropriate partials once the ajax call returns
      if (action == 'AddConcept') {
          windowType = WindowManager.New;
@@ -105,7 +107,8 @@ var ConceptsModule = (function () {
              try {
 
                  WindowManager.loadViewerData(data, viewerID, "concept", windowType);
-
+                 $("#taxonomy_lineage_id").val(uuids);
+                 $("#taxonomy_lineage_display").val(uuid);
                  deferred.resolve();
 
              }

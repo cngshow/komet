@@ -142,13 +142,14 @@ var UIHelper = (function () {
 function createChildConcept(uuid,selectedTxt)
 {
     return function (){
-        openAddConcept();
-        // TODO create new concept need to be fixed for this funcationality to work
+
+        openAddConcept(uuid,selectedTxt);
+
     };
 }
     function cloneConcept(uuid)    {
         return function (){
-        // TODO create new concept need to be fixed for this funcationality to work
+        console.log("cloneConcept");
         };
     }
     function getOpenConceptIcon(opt, $itemElement, itemKey, item) {
@@ -235,8 +236,8 @@ function createChildConcept(uuid,selectedTxt)
         };
     }
 
-    function openAddConcept()    {
-          $.publish(KometChannels.Taxonomy.taxonomyAddConceptChannel, ['', WindowManager.getLinkedViewerID()]);
+    function openAddConcept(uuid,selectedTxt)    {
+          $.publish(KometChannels.Taxonomy.taxonomyAddConceptChannel, ['', WindowManager.getLinkedViewerID(),uuid,selectedTxt]);
 
 
     }
