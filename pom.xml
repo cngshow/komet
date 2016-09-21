@@ -24,6 +24,7 @@
 
 	<properties>
 		<rails_common.version>1.25-SNAPSHOT</rails_common.version>
+		<!--Open up the assembly.xml file in rails common if new directories are added. -->
 		<isaac.version>${project.parent.version}</isaac.version>
 		<!-- railsMode is automatically set to 'test' or 'production' - 'test' if the version number ends with '-SNAPSHOT'
 		or 'production' otherwise.  See ant execution below-->
