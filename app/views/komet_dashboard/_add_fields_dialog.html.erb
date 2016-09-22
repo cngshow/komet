@@ -9,12 +9,13 @@
     # javascript_function_qualifier - A string that will make the javascript function names unique in their containing object. (optional)
     #
     # Four javascript functions must be created to handle the events this template generates. The following names assume 'javascript_function_qualifier' is set to "Sample":
-    # cancelIncludeFieldsDialog()
-    # changedAddFieldsType(value)
-    # addField()
-    # saveIncludeFieldsDialog()
+    # cancelInclude_javascript_function_qualifier_FieldsDialog()    [cancelIncludeSampleFieldsDialog()]
+    # changed_javascript_function_qualifier_AddFieldsType(value)    [changedSampleAddFieldsType(value)]
+    # add_javascript_function_qualifier_Field()                     [addSampleField()]
+    # saveInclude_javascript_function_qualifier_FieldsDialog()      [saveIncludeSampleFieldsDialog()]
     #
     # This form is hidden (with the .hide class) and absolutely positioned by default. The form will need to be displayed and positioned in javascript
+    # A javascript function will also be needed that generates the list of checkboxes that represent the fields the user wants to add to the form in the select_included_fields section
 
     if !defined?(dialog_title)
         dialog_title = 'Add Fields'
@@ -46,10 +47,7 @@
 
             <div><a class="komet-add-fields-dialog-select-all" onclick="return false;">Select All</a></div>
 
-            <div id="<%= id_prefix %>set_include_fields<%= id_postfix %>" class="komet-indent-block">
-
-
-            </div>
+            <div id="<%= id_prefix %>select_included_fields<%= id_postfix %>" class="komet-indent-block"></div>
 
         </div>
 

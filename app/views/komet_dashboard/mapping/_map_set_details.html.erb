@@ -35,7 +35,6 @@
 
                 <div class="komet-mapping-set-definition-controls">
                     <button class="btn btn-primary komet-mapping-set-editor-display" type="button" onclick="WindowManager.viewers[<%= @viewer_id %>].enterSetEditMode()">Edit</button>
-                    <button class="btn btn-default komet-mapping-set-editor-edit komet-mapping-set-editor-create-only" type="button" onclick="WindowManager.viewers[<%= @viewer_id %>].showIncludeSetFieldsDialog()">Add More Fields</button>
                     <button class="btn btn-default komet-mapping-set-editor-edit" type="button" onclick="WindowManager.viewers[<%= @viewer_id %>].cancelSetEditMode('<%= @previous_set_id %>')">Cancel</button>
                     <button class="btn btn-primary komet-mapping-set-editor-edit" id="komet_mapping_set_editor_save_<%= @viewer_id %>">Save</button>
                 </div>
@@ -51,7 +50,7 @@
 
                 <div id="komet_mapping_set_definition_tab_<%= @viewer_id %>" class="komet-mapping-set-tab-body">
 
-                    <!-- render the rows partial once for each row in the sememes array -->
+                    <!-- add the dialog form for including new fields into a mapset -->
                     <%= render(partial: 'komet_dashboard/add_fields_dialog', locals: {
                         dialog_title: 'Add Set Fields',
                         id_prefix: 'komet_mapping_set_editor_',
@@ -59,6 +58,10 @@
                         javascript_object: 'WindowManager.viewers[' + @viewer_id + ']',
                         javascript_function_qualifier: 'Set'
                     }) %>
+
+                    <div class="komet-mapping-set-definition-controls">
+                        <button class="btn btn-default komet-mapping-set-editor-edit komet-mapping-set-editor-create-only" type="button" onclick="WindowManager.viewers[<%= @viewer_id %>].showIncludeSetFieldsDialog()">Add More Fields</button>
+                    </div>
 
                     <div class="komet-mapping-set-definition-row">
 
@@ -95,6 +98,18 @@
 
                 <div id="komet_mapping_set_items_tab_<%= @viewer_id %>" class="komet-mapping-set-tab-body">
 
+                    <!-- add the dialog form for including new fields into a mapset -->
+                    <%= render(partial: 'komet_dashboard/add_fields_dialog', locals: {
+                        dialog_title: 'Add Item Fields',
+                        id_prefix: 'komet_mapping_set_editor_items_',
+                        id_postfix: '_' + @viewer_id,
+                        javascript_object: 'WindowManager.viewers[' + @viewer_id + ']',
+                        javascript_function_qualifier: 'SetItems'
+                    }) %>
+
+                    <div class="komet-mapping-set-definition-controls">
+                        <button class="btn btn-default komet-mapping-set-editor-edit komet-mapping-set-editor-create-only" type="button" onclick="WindowManager.viewers[<%= @viewer_id %>].showIncludeSetItemsFieldsDialog()">Add More Fields to Map Items</button>
+                    </div>
 
                 </div>
 
@@ -176,7 +191,7 @@
 
                     <div id="komet_mapping_overview_item_create_<%= @viewer_id %>" class="fa fa-plus ui-state-disabled" title="Create New Map Item" onclick="WindowManager.viewers[<%= @viewer_id %>].openItemEditor(true);"></div>
                     <div id="komet_mapping_overview_item_delete_<%= @viewer_id %>" class="fa fa-minus ui-state-disabled" title="Delete Selected Map Item"></div>
-                    <div id="komet_mapping_overview_item_edit_<%= @viewer_id %>" class="fa fa-pencil ui-state-disabled" title="Edit Selected Map Item" onclick="WindowManager.viewers[<%= @viewer_id %>].openItemEditor(false);"></div>
+                    <div id="komet_mapping_overview_item_edit_<%= @viewer_id %>" class="fa fa-pencil ui-state-disabled" title="Edit Selected Map Item" onclick="WindowManager.viewers[<%= @viewer_id %>].enterItemEditMode();"></div>
                     <div id="komet_mapping_overview_item_comment_<%= @viewer_id %>" class="fa fa-comment ui-state-disabled" title="Edit Comments for Selected Map Item"></div>
                 </div>
 

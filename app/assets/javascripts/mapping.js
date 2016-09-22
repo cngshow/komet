@@ -111,11 +111,21 @@ var MappingModule = (function () {
         setEditorWindow = window.open(url, "MapSetEditor", "width=600,height=330");
     }
 
+    function createNewMapSet(selectMappingTab) {
+
+        if (selectMappingTab) {
+            $("#komet_dashboard_tabs").tabs({active:1});
+        }
+
+        callLoadViewerData(null, MappingModule.CREATE_SET, WindowManager.getLinkedViewerID());
+    }
+
     return {
         initialize: init,
         callLoadViewerData: callLoadViewerData,
         createViewer: createViewer,
         openSetEditor: openSetEditor,
+        createNewMapSet: createNewMapSet,
         SET_LIST: SET_LIST,
         SET_DETAILS: SET_DETAILS,
         SET_EDITOR: SET_EDITOR,
