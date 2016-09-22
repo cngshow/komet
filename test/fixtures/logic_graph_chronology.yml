@@ -1,19 +1,14 @@
-#Fixture created on 2016-04-29 16:52:56
+#Fixture created on 2016-09-22 13:37:32
 ---
 "@class": gov.vha.isaac.rest.api1.data.sememe.RestSememeChronology
 expandables:
-  items:
-  - name: versionsAll
-    url: rest/1/sememe/versions/306?expand=versionsAll
-  - name: versionsLatestOnly
-    url: rest/1/sememe/version/306?expand=versionsLatestOnly
-sememeSequence: 306
+sememeSequence: 329
 assemblageSequence: 1
-referencedComponentNid: -2147483632
+referencedComponentNid: -2147483628
 referencedComponentNidObjectType:
 referencedComponentNidDescription:
 identifiers:
   "@class": gov.vha.isaac.rest.api1.data.RestIdentifiedObject
   uuids:
-  - 8092df3b-27cc-4ca4-a590-1839d2e6c00e
+  - 52cde694-53eb-44bf-ab8d-a7f5ee511e0a
 versions:

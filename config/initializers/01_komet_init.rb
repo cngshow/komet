@@ -1,7 +1,6 @@
 ##
 # Do common initialization tasks in komet tooling
 #
-
 REST_API_VERSIONS = [:"1.4"].freeze
 
 require './lib/rails_common/props/prop_loader'
@@ -9,7 +8,7 @@ require './lib/rails_common/logging/open_logging'
 require './lib/rails_common/logging/logging'
 require './lib/utilities/cached_hash'
 require './lib/rails_common/util/helpers'
-ISAAC_ROOT = ''
+ISAAC_ROOT = ENV['ISAAC_ROOT'].nil? ? '' : ENV['ISAAC_ROOT']
 
 unless $rake
   Thread.new do
@@ -58,7 +57,47 @@ $rest_cache = CachedHash.new($PROPS.fetch('KOMET.rest_cache_max').to_i)
 
 # Thread.new do
 #   sleep 3
-#   concept = SememeRest::get_sememe(action: SememeRestActions::ACTION_CHRONOLOGY, uuid_or_id: '-2145065647', additional_req_params: {expand: 'versionsAll'})
-#c = CoordinateRest::get_coordinate(action: CoordinateRestActions::ACTION_LANGUAGE_COORDINATE)
- #end
+#   #concept = SememeRest::get_sememe(action: SememeRestActions::ACTION_CHRONOLOGY, uuid_or_id: '-2145065647', additional_req_params: {expand: 'versionsAll'})
+#   #c = CoordinateRest::get_coordinate(action: CoordinateRestActions::ACTION_LANGUAGE_COORDINATE)
+#   while true
+#     begin
+#       set_test = MappingApis::get_mapping_api(action: MappingApiActions::ACTION_SET, uuid_or_id: "a9262b1e-f650-5440-9d0d-edf75851ce91" ) # run this for testing
+#       a = set_test.mapSetExtendedFields[0].extensionValue #wrong class
+#     rescue => ex
+#       p ex
+#     end
+#     puts "yay!"
+#   end
+# end
+
+
+# Thread.new do
+#   sleep 3
+#   #concept = SememeRest::get_sememe(action: SememeRestActions::ACTION_CHRONOLOGY, uuid_or_id: '-2145065647', additional_req_params: {expand: 'versionsAll'})
+#   #c = CoordinateRest::get_coordinate(action: CoordinateRestActions::ACTION_LANGUAGE_COORDINATE)
+#   while true
+#     begin
+#       set_test = MappingApis::get_mapping_api(action: MappingApiActions::ACTION_SET, uuid_or_id: "a9262b1e-f650-5440-9d0d-edf75851ce91" ) # run this for testing
+#       a = set_test.mapSetExtendedFields[0].extensionValue #wrong class
+#     rescue => ex
+#       p ex
+#     end
+#     puts "yay!"
+#   end
+# end\
+#
+# Thread.new do
+#   sleep 3
+#   #concept = SememeRest::get_sememe(action: SememeRestActions::ACTION_CHRONOLOGY, uuid_or_id: '-2145065647', additional_req_params: {expand: 'versionsAll'})
+#   #c = CoordinateRest::get_coordinate(action: CoordinateRestActions::ACTION_LANGUAGE_COORDINATE)
+#   while true
+#     begin
+#       set_test = MappingApis::get_mapping_api(action: MappingApiActions::ACTION_SET, uuid_or_id: "a9262b1e-f650-5440-9d0d-edf75851ce91" ) # run this for testing
+#       a = set_test.mapSetExtendedFields[0].extensionValue #wrong class
+#     rescue => ex
+#       p ex
+#     end
+#     puts "yay!"
+#   end
+# end
 #Another check in test

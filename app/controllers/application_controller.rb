@@ -149,9 +149,8 @@ class ApplicationController < ActionController::Base
     roles
   end
 
-  def setup_constants
+  def self.parse_isaac_metadata_auxiliary
     if $isaac_metadata_auxiliary.nil?
-
       constants_file = './config/generated/yaml/IsaacMetadataAuxiliary.yaml'
       prefix = File.basename(constants_file).split('.').first.to_sym
       json = YAML.load_file constants_file
@@ -159,7 +158,10 @@ class ApplicationController < ActionController::Base
       $isaac_metadata_auxiliary = translated_hash
       $isaac_metadata_auxiliary.freeze
     end
+  end
 
+  def setup_constants
+    ApplicationController.parse_isaac_metadata_auxiliary
     gon.IsaacMetadataAuxiliary = $isaac_metadata_auxiliary
   end
 
@@ -177,7 +179,7 @@ class ApplicationController < ActionController::Base
   end
 
   private
-  def add_translations(json)
+  def self.add_translations(json)
     translated_hash = json.deep_dup
     json.keys.each do |k|
       translated_array = []

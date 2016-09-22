@@ -1,33 +1,18 @@
-#Fixture created on 2016-03-18 08:47:59
+#Fixture created on 2016-09-22 13:37:32
 ---
 "@class": gov.vha.isaac.rest.api1.data.sememe.RestDynamicSememeVersion
 expandables:
-  items:
-  - name: nestedSememes
-    url: rest/1/sememe/version/3569433/?expand=nestedSememes,chronology
 sememeChronology:
-  expandables:
-    items:
-    - name: versionsAll
-      url: rest/1/sememe/versions/3569433/
-    - name: versionsLatestOnly
-      url: rest/1/sememe/version/3569433/
-  sememeSequence: 3569433
-  assemblageSequence: 117788
-  referencedComponentNid: -2146851095
-  identifiers:
-    uuids:
-    - 840242ff-e691-367d-8b9a-c7d762ee7aeb
-  versions:
 sememeVersion:
-  stampSequence: 19
-  state: ACTIVE
-  time: 1107147600000
+  "@class": gov.vha.isaac.rest.api1.data.RestStampedVersion
+  stampSequence: 52
+  state:
+    "@class": gov.vha.isaac.rest.api1.data.enumerations.RestStateType
+    name: Active
+    enumId: 1
+  time: 1448946000000
   authorSequence: 5
-  moduleSequence: 0
+  moduleSequence: 66
   pathSequence: 7
-nestedSememes:
-dataColumns:
-- "@class": gov.vha.isaac.rest.api1.data.sememe.dataTypes.RestDynamicSememeUUID
-  columnNumber: 0
-  data: a2c430bb-5856-32a8-85e2-13cebfdff627
+nestedSememes: []
+dataColumns: []

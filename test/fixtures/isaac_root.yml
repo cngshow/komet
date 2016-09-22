@@ -1,1254 +1,147 @@
-#Fixture created on 2016-04-29 16:52:54
+#Fixture created on 2016-09-22 13:37:31
 ---
 "@class": gov.vha.isaac.rest.api1.data.concept.RestConceptVersion
 expandables:
-  items:
-  - name: parents
-    url: rest/1/concept/version/24?expand=parents&stated=true
-  - name: countParents
-    url: rest/1/concept/version/24?expand=countParents&stated=true
-  - name: countChildren
-    url: rest/1/concept/version/24?expand=countChildren&stated=true
 conChronology:
   "@class": gov.vha.isaac.rest.api1.data.concept.RestConceptChronology
-  conceptSequence: 24
+  conceptSequence: 13
   description: ISAAC root (ISAAC)
   expandables:
-    items:
-    - name: versionsAll
-      url: rest/1/concept/versions/24/
-    - name: versionsLatestOnly
-      url: rest/1/concept/version/24/
   identifiers:
     "@class": gov.vha.isaac.rest.api1.data.RestIdentifiedObject
     uuids:
     - 7c21b6c5-cf11-5af9-893b-743f004c97f5
-  versions:
+  versions: []
 conVersion:
   "@class": gov.vha.isaac.rest.api1.data.RestStampedVersion
   stampSequence: 1
-  state: ACTIVE
-  time: 1461176521811
+  state:
+    "@class": gov.vha.isaac.rest.api1.data.enumerations.RestStateType
+    name: Active
+    enumId: 1
+  time: 1473400931083
   authorSequence: 5
   moduleSequence: 6
   pathSequence: 7
-parents:
+isConceptDefined:
+parents: []
 children:
 - "@class": gov.vha.isaac.rest.api1.data.concept.RestConceptVersion
   expandables:
-    items:
-    - name: parents
-      url: rest/1/concept/version/152812?expand=parents&stated=true
-    - name: countParents
-      url: rest/1/concept/version/152812?expand=countParents&stated=true
-    - name: children
-      url: rest/1/concept/version/152812?expand=children&stated=true
-    - name: countChildren
-      url: rest/1/concept/version/152812?expand=countChildren&stated=true
   conChronology:
     "@class": gov.vha.isaac.rest.api1.data.concept.RestConceptChronology
-    conceptSequence: 152812
-    description: VHAT
-    expandables:
-      items:
-      - name: versionsAll
-        url: rest/1/concept/versions/152812/
-      - name: versionsLatestOnly
-        url: rest/1/concept/version/152812/
-    identifiers:
-      "@class": gov.vha.isaac.rest.api1.data.RestIdentifiedObject
-      uuids:
-      - 6e60d7fd-3729-5dd3-9ce7-6d97c8f75447
-    versions:
-  conVersion:
-    "@class": gov.vha.isaac.rest.api1.data.RestStampedVersion
-    stampSequence: 50
-    state: ACTIVE
-    time: 1452142800000
-    authorSequence: 5
-    moduleSequence: 86
-    pathSequence: 7
-  parents:
-  children:
-  childCount: 3
-  parentCount:
-- "@class": gov.vha.isaac.rest.api1.data.concept.RestConceptVersion
-  expandables:
-    items:
-    - name: parents
-      url: rest/1/concept/version/362?expand=parents&stated=true
-    - name: countParents
-      url: rest/1/concept/version/362?expand=countParents&stated=true
-    - name: children
-      url: rest/1/concept/version/362?expand=children&stated=true
-    - name: countChildren
-      url: rest/1/concept/version/362?expand=countChildren&stated=true
-  conChronology:
-    "@class": gov.vha.isaac.rest.api1.data.concept.RestConceptChronology
-    conceptSequence: 362
-    description: LOINC
-    expandables:
-      items:
-      - name: versionsAll
-        url: rest/1/concept/versions/362/
-      - name: versionsLatestOnly
-        url: rest/1/concept/version/362/
-    identifiers:
-      "@class": gov.vha.isaac.rest.api1.data.RestIdentifiedObject
-      uuids:
-      - bf3e0380-14bf-5502-81b8-faff971f706d
-    versions:
-  conVersion:
-    "@class": gov.vha.isaac.rest.api1.data.RestStampedVersion
-    stampSequence: 3
-    state: ACTIVE
-    time: 1448946000000
-    authorSequence: 5
-    moduleSequence: 64
-    pathSequence: 7
-  parents:
-  children:
-  childCount: 28
-  parentCount:
-- "@class": gov.vha.isaac.rest.api1.data.concept.RestConceptVersion
-  expandables:
-    items:
-    - name: parents
-      url: rest/1/concept/version/147?expand=parents&stated=true
-    - name: countParents
-      url: rest/1/concept/version/147?expand=countParents&stated=true
-    - name: children
-      url: rest/1/concept/version/147?expand=children&stated=true
-    - name: countChildren
-      url: rest/1/concept/version/147?expand=countChildren&stated=true
-  conChronology:
-    "@class": gov.vha.isaac.rest.api1.data.concept.RestConceptChronology
-    conceptSequence: 147
+    conceptSequence: 62
     description: health concept (ISAAC)
     expandables:
-      items:
-      - name: versionsAll
-        url: rest/1/concept/versions/147/
-      - name: versionsLatestOnly
-        url: rest/1/concept/version/147/
     identifiers:
       "@class": gov.vha.isaac.rest.api1.data.RestIdentifiedObject
       uuids:
       - ee9ac5d2-a07c-3981-a57a-f7f26baf38d8
-    versions:
+    versions: []
   conVersion:
     "@class": gov.vha.isaac.rest.api1.data.RestStampedVersion
     stampSequence: 1
-    state: ACTIVE
-    time: 1461176521811
+    state:
+      "@class": gov.vha.isaac.rest.api1.data.enumerations.RestStateType
+      name: Active
+      enumId: 1
+    time: 1473400931083
     authorSequence: 5
     moduleSequence: 6
     pathSequence: 7
-  parents:
-  children:
+  isConceptDefined: false
+  parents: []
+  children: []
   childCount: 19
-  parentCount:
+  parentCount: 1
+  sememeMembership:
 - "@class": gov.vha.isaac.rest.api1.data.concept.RestConceptVersion
   expandables:
-    items:
-    - name: parents
-      url: rest/1/concept/version/132?expand=parents&stated=true
-    - name: countParents
-      url: rest/1/concept/version/132?expand=countParents&stated=true
-    - name: children
-      url: rest/1/concept/version/132?expand=children&stated=true
-    - name: countChildren
-      url: rest/1/concept/version/132?expand=countChildren&stated=true
   conChronology:
     "@class": gov.vha.isaac.rest.api1.data.concept.RestConceptChronology
-    conceptSequence: 132
-    description: feature (ISAAC)
+    conceptSequence: 14
+    description: ISAAC metadata (ISAAC)
     expandables:
-      items:
-      - name: versionsAll
-        url: rest/1/concept/versions/132/
-      - name: versionsLatestOnly
-        url: rest/1/concept/version/132/
     identifiers:
       "@class": gov.vha.isaac.rest.api1.data.RestIdentifiedObject
       uuids:
-      - 60caa3f1-9b4d-5f70-82c7-b1bf179f6166
-    versions:
+      - 33c8e26f-39c9-5e5b-a6fa-9c6664bf63c9
+    versions: []
   conVersion:
     "@class": gov.vha.isaac.rest.api1.data.RestStampedVersion
     stampSequence: 1
-    state: ACTIVE
-    time: 1461176521811
+    state:
+      "@class": gov.vha.isaac.rest.api1.data.enumerations.RestStateType
+      name: Active
+      enumId: 1
+    time: 1473400931083
     authorSequence: 5
     moduleSequence: 6
     pathSequence: 7
-  parents:
-  children:
-  childCount: 0
-  parentCount:
+  isConceptDefined: false
+  parents: []
+  children: []
+  childCount: 28
+  parentCount: 1
+  sememeMembership:
 - "@class": gov.vha.isaac.rest.api1.data.concept.RestConceptVersion
   expandables:
-    items:
-    - name: parents
-      url: rest/1/concept/version/113?expand=parents&stated=true
-    - name: countParents
-      url: rest/1/concept/version/113?expand=countParents&stated=true
-    - name: children
-      url: rest/1/concept/version/113?expand=children&stated=true
-    - name: countChildren
-      url: rest/1/concept/version/113?expand=countChildren&stated=true
   conChronology:
     "@class": gov.vha.isaac.rest.api1.data.concept.RestConceptChronology
-    conceptSequence: 113
-    description: relationship type in source terminology (ISAAC)
+    conceptSequence: 231652
+    description: LOINC
     expandables:
-      items:
-      - name: versionsAll
-        url: rest/1/concept/versions/113/
-      - name: versionsLatestOnly
-        url: rest/1/concept/version/113/
     identifiers:
       "@class": gov.vha.isaac.rest.api1.data.RestIdentifiedObject
       uuids:
-      - 46bc0e6b-0e64-5aa6-af27-a823e9156dfc
-    versions:
+      - bf3e0380-14bf-5502-81b8-faff971f706d
+    versions: []
   conVersion:
     "@class": gov.vha.isaac.rest.api1.data.RestStampedVersion
-    stampSequence: 1
-    state: ACTIVE
-    time: 1461176521811
+    stampSequence: 52
+    state:
+      "@class": gov.vha.isaac.rest.api1.data.enumerations.RestStateType
+      name: Active
+      enumId: 1
+    time: 1448946000000
     authorSequence: 5
-    moduleSequence: 6
+    moduleSequence: 66
     pathSequence: 7
-  parents:
-  children:
-  childCount: 2
-  parentCount:
+  isConceptDefined: false
+  parents: []
+  children: []
+  childCount: 28
+  parentCount: 1
+  sememeMembership:
 - "@class": gov.vha.isaac.rest.api1.data.concept.RestConceptVersion
   expandables:
-    items:
-    - name: parents
-      url: rest/1/concept/version/111?expand=parents&stated=true
-    - name: countParents
-      url: rest/1/concept/version/111?expand=countParents&stated=true
-    - name: children
-      url: rest/1/concept/version/111?expand=children&stated=true
-    - name: countChildren
-      url: rest/1/concept/version/111?expand=countChildren&stated=true
   conChronology:
     "@class": gov.vha.isaac.rest.api1.data.concept.RestConceptChronology
-    conceptSequence: 111
-    description: description type in source terminology (ISAAC)
+    conceptSequence: 11528
+    description: VHAT
     expandables:
-      items:
-      - name: versionsAll
-        url: rest/1/concept/versions/111/
-      - name: versionsLatestOnly
-        url: rest/1/concept/version/111/
     identifiers:
       "@class": gov.vha.isaac.rest.api1.data.RestIdentifiedObject
       uuids:
-      - ef7d9808-a839-5119-a604-b777268eb719
-    versions:
+      - 6e60d7fd-3729-5dd3-9ce7-6d97c8f75447
+    versions: []
   conVersion:
     "@class": gov.vha.isaac.rest.api1.data.RestStampedVersion
-    stampSequence: 1
-    state: ACTIVE
-    time: 1461176521811
+    stampSequence: 49
+    state:
+      "@class": gov.vha.isaac.rest.api1.data.enumerations.RestStateType
+      name: Active
+      enumId: 1
+    time: 1471492800000
     authorSequence: 5
-    moduleSequence: 6
+    moduleSequence: 72
     pathSequence: 7
-  parents:
-  children:
-  childCount: 2
-  parentCount:
-- "@class": gov.vha.isaac.rest.api1.data.concept.RestConceptVersion
-  expandables:
-    items:
-    - name: parents
-      url: rest/1/concept/version/55?expand=parents&stated=true
-    - name: countParents
-      url: rest/1/concept/version/55?expand=countParents&stated=true
-    - name: children
-      url: rest/1/concept/version/55?expand=children&stated=true
-    - name: countChildren
-      url: rest/1/concept/version/55?expand=countChildren&stated=true
-  conChronology:
-    "@class": gov.vha.isaac.rest.api1.data.concept.RestConceptChronology
-    conceptSequence: 55
-    description: object properties (ISAAC)
-    expandables:
-      items:
-      - name: versionsAll
-        url: rest/1/concept/versions/55/
-      - name: versionsLatestOnly
-        url: rest/1/concept/version/55/
-    identifiers:
-      "@class": gov.vha.isaac.rest.api1.data.RestIdentifiedObject
-      uuids:
-      - f4301f17-fd68-51dc-89f0-2f2bc8bfc446
-    versions:
-  conVersion:
-    "@class": gov.vha.isaac.rest.api1.data.RestStampedVersion
-    stampSequence: 1
-    state: ACTIVE
-    time: 1461176521811
-    authorSequence: 5
-    moduleSequence: 6
-    pathSequence: 7
-  parents:
-  children:
-  childCount: 4
-  parentCount:
-- "@class": gov.vha.isaac.rest.api1.data.concept.RestConceptVersion
-  expandables:
-    items:
-    - name: parents
-      url: rest/1/concept/version/54?expand=parents&stated=true
-    - name: countParents
-      url: rest/1/concept/version/54?expand=countParents&stated=true
-    - name: children
-      url: rest/1/concept/version/54?expand=children&stated=true
-    - name: countChildren
-      url: rest/1/concept/version/54?expand=countChildren&stated=true
-  conChronology:
-    "@class": gov.vha.isaac.rest.api1.data.concept.RestConceptChronology
-    conceptSequence: 54
-    description: unmodeled concept (ISAAC)
-    expandables:
-      items:
-      - name: versionsAll
-        url: rest/1/concept/versions/54/
-      - name: versionsLatestOnly
-        url: rest/1/concept/version/54/
-    identifiers:
-      "@class": gov.vha.isaac.rest.api1.data.RestIdentifiedObject
-      uuids:
-      - fb65d3c3-19a9-5a91-b520-e89ac07154ef
-    versions:
-  conVersion:
-    "@class": gov.vha.isaac.rest.api1.data.RestStampedVersion
-    stampSequence: 1
-    state: ACTIVE
-    time: 1461176521811
-    authorSequence: 5
-    moduleSequence: 6
-    pathSequence: 7
-  parents:
-  children:
-  childCount: 4
-  parentCount:
-- "@class": gov.vha.isaac.rest.api1.data.concept.RestConceptVersion
-  expandables:
-    items:
-    - name: parents
-      url: rest/1/concept/version/51?expand=parents&stated=true
-    - name: countParents
-      url: rest/1/concept/version/51?expand=countParents&stated=true
-    - name: children
-      url: rest/1/concept/version/51?expand=children&stated=true
-    - name: countChildren
-      url: rest/1/concept/version/51?expand=countChildren&stated=true
-  conChronology:
-    "@class": gov.vha.isaac.rest.api1.data.concept.RestConceptChronology
-    conceptSequence: 51
-    description: dynamic sememe metadata (ISAAC)
-    expandables:
-      items:
-      - name: versionsAll
-        url: rest/1/concept/versions/51/
-      - name: versionsLatestOnly
-        url: rest/1/concept/version/51/
-    identifiers:
-      "@class": gov.vha.isaac.rest.api1.data.RestIdentifiedObject
-      uuids:
-      - 9769773c-7b70-523d-8fc5-b16621ffa57c
-    versions:
-  conVersion:
-    "@class": gov.vha.isaac.rest.api1.data.RestStampedVersion
-    stampSequence: 1
-    state: ACTIVE
-    time: 1461176521811
-    authorSequence: 5
-    moduleSequence: 6
-    pathSequence: 7
-  parents:
-  children:
-  childCount: 5
-  parentCount:
-- "@class": gov.vha.isaac.rest.api1.data.concept.RestConceptVersion
-  expandables:
-    items:
-    - name: parents
-      url: rest/1/concept/version/49?expand=parents&stated=true
-    - name: countParents
-      url: rest/1/concept/version/49?expand=countParents&stated=true
-    - name: children
-      url: rest/1/concept/version/49?expand=children&stated=true
-    - name: countChildren
-      url: rest/1/concept/version/49?expand=countChildren&stated=true
-  conChronology:
-    "@class": gov.vha.isaac.rest.api1.data.concept.RestConceptChronology
-    conceptSequence: 49
-    description: solor metadata (ISAAC)
-    expandables:
-      items:
-      - name: versionsAll
-        url: rest/1/concept/versions/49/
-      - name: versionsLatestOnly
-        url: rest/1/concept/version/49/
-    identifiers:
-      "@class": gov.vha.isaac.rest.api1.data.RestIdentifiedObject
-      uuids:
-      - 91c69f30-cf99-56d7-8461-8f30ae5dd0c6
-    versions:
-  conVersion:
-    "@class": gov.vha.isaac.rest.api1.data.RestStampedVersion
-    stampSequence: 1
-    state: ACTIVE
-    time: 1461176521811
-    authorSequence: 5
-    moduleSequence: 6
-    pathSequence: 7
-  parents:
-  children:
-  childCount: 8
-  parentCount:
-- "@class": gov.vha.isaac.rest.api1.data.concept.RestConceptVersion
-  expandables:
-    items:
-    - name: parents
-      url: rest/1/concept/version/45?expand=parents&stated=true
-    - name: countParents
-      url: rest/1/concept/version/45?expand=countParents&stated=true
-    - name: children
-      url: rest/1/concept/version/45?expand=children&stated=true
-    - name: countChildren
-      url: rest/1/concept/version/45?expand=countChildren&stated=true
-  conChronology:
-    "@class": gov.vha.isaac.rest.api1.data.concept.RestConceptChronology
-    conceptSequence: 45
-    description: description acceptability (ISAAC)
-    expandables:
-      items:
-      - name: versionsAll
-        url: rest/1/concept/versions/45/
-      - name: versionsLatestOnly
-        url: rest/1/concept/version/45/
-    identifiers:
-      "@class": gov.vha.isaac.rest.api1.data.RestIdentifiedObject
-      uuids:
-      - 04c36a32-5402-5324-bb6f-2d3f38a6e1a0
-    versions:
-  conVersion:
-    "@class": gov.vha.isaac.rest.api1.data.RestStampedVersion
-    stampSequence: 1
-    state: ACTIVE
-    time: 1461176521811
-    authorSequence: 5
-    moduleSequence: 6
-    pathSequence: 7
-  parents:
-  children:
-  childCount: 2
-  parentCount:
-- "@class": gov.vha.isaac.rest.api1.data.concept.RestConceptVersion
-  expandables:
-    items:
-    - name: parents
-      url: rest/1/concept/version/43?expand=parents&stated=true
-    - name: countParents
-      url: rest/1/concept/version/43?expand=countParents&stated=true
-    - name: children
-      url: rest/1/concept/version/43?expand=children&stated=true
-    - name: countChildren
-      url: rest/1/concept/version/43?expand=countChildren&stated=true
-  conChronology:
-    "@class": gov.vha.isaac.rest.api1.data.concept.RestConceptChronology
-    conceptSequence: 43
-    description: description case significance (ISAAC)
-    expandables:
-      items:
-      - name: versionsAll
-        url: rest/1/concept/versions/43/
-      - name: versionsLatestOnly
-        url: rest/1/concept/version/43/
-    identifiers:
-      "@class": gov.vha.isaac.rest.api1.data.RestIdentifiedObject
-      uuids:
-      - 7d98555f-d730-555d-857b-28814f60fb27
-    versions:
-  conVersion:
-    "@class": gov.vha.isaac.rest.api1.data.RestStampedVersion
-    stampSequence: 1
-    state: ACTIVE
-    time: 1461176521811
-    authorSequence: 5
-    moduleSequence: 6
-    pathSequence: 7
-  parents:
-  children:
+  isConceptDefined: false
+  parents: []
+  children: []
   childCount: 3
-  parentCount:
-- "@class": gov.vha.isaac.rest.api1.data.concept.RestConceptVersion
-  expandables:
-    items:
-    - name: parents
-      url: rest/1/concept/version/42?expand=parents&stated=true
-    - name: countParents
-      url: rest/1/concept/version/42?expand=countParents&stated=true
-    - name: children
-      url: rest/1/concept/version/42?expand=children&stated=true
-    - name: countChildren
-      url: rest/1/concept/version/42?expand=countChildren&stated=true
-  conChronology:
-    "@class": gov.vha.isaac.rest.api1.data.concept.RestConceptChronology
-    conceptSequence: 42
-    description: description type (ISAAC)
-    expandables:
-      items:
-      - name: versionsAll
-        url: rest/1/concept/versions/42/
-      - name: versionsLatestOnly
-        url: rest/1/concept/version/42/
-    identifiers:
-      "@class": gov.vha.isaac.rest.api1.data.RestIdentifiedObject
-      uuids:
-      - 013c1fc4-4886-5b26-88a8-cda2c9b20d1e
-    versions:
-  conVersion:
-    "@class": gov.vha.isaac.rest.api1.data.RestStampedVersion
-    stampSequence: 1
-    state: ACTIVE
-    time: 1461176521811
-    authorSequence: 5
-    moduleSequence: 6
-    pathSequence: 7
-  parents:
-  children:
-  childCount: 3
-  parentCount:
-- "@class": gov.vha.isaac.rest.api1.data.concept.RestConceptVersion
-  expandables:
-    items:
-    - name: parents
-      url: rest/1/concept/version/39?expand=parents&stated=true
-    - name: countParents
-      url: rest/1/concept/version/39?expand=countParents&stated=true
-    - name: children
-      url: rest/1/concept/version/39?expand=children&stated=true
-    - name: countChildren
-      url: rest/1/concept/version/39?expand=countChildren&stated=true
-  conChronology:
-    "@class": gov.vha.isaac.rest.api1.data.concept.RestConceptChronology
-    conceptSequence: 39
-    description: role (ISAAC)
-    expandables:
-      items:
-      - name: versionsAll
-        url: rest/1/concept/versions/39/
-      - name: versionsLatestOnly
-        url: rest/1/concept/version/39/
-    identifiers:
-      "@class": gov.vha.isaac.rest.api1.data.RestIdentifiedObject
-      uuids:
-      - 6155818b-09ed-388e-82ce-caa143423e99
-    versions:
-  conVersion:
-    "@class": gov.vha.isaac.rest.api1.data.RestStampedVersion
-    stampSequence: 1
-    state: ACTIVE
-    time: 1461176521811
-    authorSequence: 5
-    moduleSequence: 6
-    pathSequence: 7
-  parents:
-  children:
-  childCount: 67
-  parentCount:
-- "@class": gov.vha.isaac.rest.api1.data.concept.RestConceptVersion
-  expandables:
-    items:
-    - name: parents
-      url: rest/1/concept/version/38?expand=parents&stated=true
-    - name: countParents
-      url: rest/1/concept/version/38?expand=countParents&stated=true
-    - name: children
-      url: rest/1/concept/version/38?expand=children&stated=true
-    - name: countChildren
-      url: rest/1/concept/version/38?expand=countChildren&stated=true
-  conChronology:
-    "@class": gov.vha.isaac.rest.api1.data.concept.RestConceptChronology
-    conceptSequence: 38
-    description: description-logic classifier (ISAAC)
-    expandables:
-      items:
-      - name: versionsAll
-        url: rest/1/concept/versions/38/
-      - name: versionsLatestOnly
-        url: rest/1/concept/version/38/
-    identifiers:
-      "@class": gov.vha.isaac.rest.api1.data.RestIdentifiedObject
-      uuids:
-      - efb60c53-9bd6-5fd4-a41c-582fd7b8784d
-    versions:
-  conVersion:
-    "@class": gov.vha.isaac.rest.api1.data.RestStampedVersion
-    stampSequence: 1
-    state: ACTIVE
-    time: 1461176521811
-    authorSequence: 5
-    moduleSequence: 6
-    pathSequence: 7
-  parents:
-  children:
-  childCount: 3
-  parentCount:
-- "@class": gov.vha.isaac.rest.api1.data.concept.RestConceptVersion
-  expandables:
-    items:
-    - name: parents
-      url: rest/1/concept/version/37?expand=parents&stated=true
-    - name: countParents
-      url: rest/1/concept/version/37?expand=countParents&stated=true
-    - name: children
-      url: rest/1/concept/version/37?expand=children&stated=true
-    - name: countChildren
-      url: rest/1/concept/version/37?expand=countChildren&stated=true
-  conChronology:
-    "@class": gov.vha.isaac.rest.api1.data.concept.RestConceptChronology
-    conceptSequence: 37
-    description: description-logic profile (ISAAC)
-    expandables:
-      items:
-      - name: versionsAll
-        url: rest/1/concept/versions/37/
-      - name: versionsLatestOnly
-        url: rest/1/concept/version/37/
-    identifiers:
-      "@class": gov.vha.isaac.rest.api1.data.RestIdentifiedObject
-      uuids:
-      - a2befa28-c6d5-5f73-8a49-43639c1e0934
-    versions:
-  conVersion:
-    "@class": gov.vha.isaac.rest.api1.data.RestStampedVersion
-    stampSequence: 1
-    state: ACTIVE
-    time: 1461176521811
-    authorSequence: 5
-    moduleSequence: 6
-    pathSequence: 7
-  parents:
-  children:
-  childCount: 2
-  parentCount:
-- "@class": gov.vha.isaac.rest.api1.data.concept.RestConceptVersion
-  expandables:
-    items:
-    - name: parents
-      url: rest/1/concept/version/36?expand=parents&stated=true
-    - name: countParents
-      url: rest/1/concept/version/36?expand=countParents&stated=true
-    - name: children
-      url: rest/1/concept/version/36?expand=children&stated=true
-    - name: countChildren
-      url: rest/1/concept/version/36?expand=countChildren&stated=true
-  conChronology:
-    "@class": gov.vha.isaac.rest.api1.data.concept.RestConceptChronology
-    conceptSequence: 36
-    description: concrete domain operator (ISAAC)
-    expandables:
-      items:
-      - name: versionsAll
-        url: rest/1/concept/versions/36/
-      - name: versionsLatestOnly
-        url: rest/1/concept/version/36/
-    identifiers:
-      "@class": gov.vha.isaac.rest.api1.data.RestIdentifiedObject
-      uuids:
-      - 34de51b1-8ae8-5ff9-8248-f5b8ddc844ee
-    versions:
-  conVersion:
-    "@class": gov.vha.isaac.rest.api1.data.RestStampedVersion
-    stampSequence: 1
-    state: ACTIVE
-    time: 1461176521811
-    authorSequence: 5
-    moduleSequence: 6
-    pathSequence: 7
-  parents:
-  children:
-  childCount: 5
-  parentCount:
-- "@class": gov.vha.isaac.rest.api1.data.concept.RestConceptVersion
-  expandables:
-    items:
-    - name: parents
-      url: rest/1/concept/version/35?expand=parents&stated=true
-    - name: countParents
-      url: rest/1/concept/version/35?expand=countParents&stated=true
-    - name: children
-      url: rest/1/concept/version/35?expand=children&stated=true
-    - name: countChildren
-      url: rest/1/concept/version/35?expand=countChildren&stated=true
-  conChronology:
-    "@class": gov.vha.isaac.rest.api1.data.concept.RestConceptChronology
-    conceptSequence: 35
-    description: literal value (ISAAC)
-    expandables:
-      items:
-      - name: versionsAll
-        url: rest/1/concept/versions/35/
-      - name: versionsLatestOnly
-        url: rest/1/concept/version/35/
-    identifiers:
-      "@class": gov.vha.isaac.rest.api1.data.RestIdentifiedObject
-      uuids:
-      - dbc075d7-c44f-5998-9cb7-279a5b14e08c
-    versions:
-  conVersion:
-    "@class": gov.vha.isaac.rest.api1.data.RestStampedVersion
-    stampSequence: 1
-    state: ACTIVE
-    time: 1461176521811
-    authorSequence: 5
-    moduleSequence: 6
-    pathSequence: 7
-  parents:
-  children:
-  childCount: 5
-  parentCount:
-- "@class": gov.vha.isaac.rest.api1.data.concept.RestConceptVersion
-  expandables:
-    items:
-    - name: parents
-      url: rest/1/concept/version/34?expand=parents&stated=true
-    - name: countParents
-      url: rest/1/concept/version/34?expand=countParents&stated=true
-    - name: children
-      url: rest/1/concept/version/34?expand=children&stated=true
-    - name: countChildren
-      url: rest/1/concept/version/34?expand=countChildren&stated=true
-  conChronology:
-    "@class": gov.vha.isaac.rest.api1.data.concept.RestConceptChronology
-    conceptSequence: 34
-    description: role operator (ISAAC)
-    expandables:
-      items:
-      - name: versionsAll
-        url: rest/1/concept/versions/34/
-      - name: versionsLatestOnly
-        url: rest/1/concept/version/34/
-    identifiers:
-      "@class": gov.vha.isaac.rest.api1.data.RestIdentifiedObject
-      uuids:
-      - 258bf5cd-bf80-5261-bd0c-309eb30e1c85
-    versions:
-  conVersion:
-    "@class": gov.vha.isaac.rest.api1.data.RestStampedVersion
-    stampSequence: 1
-    state: ACTIVE
-    time: 1461176521811
-    authorSequence: 5
-    moduleSequence: 6
-    pathSequence: 7
-  parents:
-  children:
-  childCount: 2
-  parentCount:
-- "@class": gov.vha.isaac.rest.api1.data.concept.RestConceptVersion
-  expandables:
-    items:
-    - name: parents
-      url: rest/1/concept/version/33?expand=parents&stated=true
-    - name: countParents
-      url: rest/1/concept/version/33?expand=countParents&stated=true
-    - name: children
-      url: rest/1/concept/version/33?expand=children&stated=true
-    - name: countChildren
-      url: rest/1/concept/version/33?expand=countChildren&stated=true
-  conChronology:
-    "@class": gov.vha.isaac.rest.api1.data.concept.RestConceptChronology
-    conceptSequence: 33
-    description: template concept (ISAAC)
-    expandables:
-      items:
-      - name: versionsAll
-        url: rest/1/concept/versions/33/
-      - name: versionsLatestOnly
-        url: rest/1/concept/version/33/
-    identifiers:
-      "@class": gov.vha.isaac.rest.api1.data.RestIdentifiedObject
-      uuids:
-      - 66fba341-dc65-530d-a422-22427e7fc1eb
-    versions:
-  conVersion:
-    "@class": gov.vha.isaac.rest.api1.data.RestStampedVersion
-    stampSequence: 1
-    state: ACTIVE
-    time: 1461176521811
-    authorSequence: 5
-    moduleSequence: 6
-    pathSequence: 7
-  parents:
-  children:
-  childCount: 1
-  parentCount:
-- "@class": gov.vha.isaac.rest.api1.data.concept.RestConceptVersion
-  expandables:
-    items:
-    - name: parents
-      url: rest/1/concept/version/31?expand=parents&stated=true
-    - name: countParents
-      url: rest/1/concept/version/31?expand=countParents&stated=true
-    - name: children
-      url: rest/1/concept/version/31?expand=children&stated=true
-    - name: countChildren
-      url: rest/1/concept/version/31?expand=countChildren&stated=true
-  conChronology:
-    "@class": gov.vha.isaac.rest.api1.data.concept.RestConceptChronology
-    conceptSequence: 31
-    description: node operator (ISAAC)
-    expandables:
-      items:
-      - name: versionsAll
-        url: rest/1/concept/versions/31/
-      - name: versionsLatestOnly
-        url: rest/1/concept/version/31/
-    identifiers:
-      "@class": gov.vha.isaac.rest.api1.data.RestIdentifiedObject
-      uuids:
-      - 30b519f6-a072-5120-a337-6c1bff357180
-    versions:
-  conVersion:
-    "@class": gov.vha.isaac.rest.api1.data.RestStampedVersion
-    stampSequence: 1
-    state: ACTIVE
-    time: 1461176521811
-    authorSequence: 5
-    moduleSequence: 6
-    pathSequence: 7
-  parents:
-  children:
-  childCount: 3
-  parentCount:
-- "@class": gov.vha.isaac.rest.api1.data.concept.RestConceptVersion
-  expandables:
-    items:
-    - name: parents
-      url: rest/1/concept/version/30?expand=parents&stated=true
-    - name: countParents
-      url: rest/1/concept/version/30?expand=countParents&stated=true
-    - name: children
-      url: rest/1/concept/version/30?expand=children&stated=true
-    - name: countChildren
-      url: rest/1/concept/version/30?expand=countChildren&stated=true
-  conChronology:
-    "@class": gov.vha.isaac.rest.api1.data.concept.RestConceptChronology
-    conceptSequence: 30
-    description: connective operator (ISAAC)
-    expandables:
-      items:
-      - name: versionsAll
-        url: rest/1/concept/versions/30/
-      - name: versionsLatestOnly
-        url: rest/1/concept/version/30/
-    identifiers:
-      "@class": gov.vha.isaac.rest.api1.data.RestIdentifiedObject
-      uuids:
-      - 525e76a9-7550-5c86-9546-cf7996dc10f5
-    versions:
-  conVersion:
-    "@class": gov.vha.isaac.rest.api1.data.RestStampedVersion
-    stampSequence: 1
-    state: ACTIVE
-    time: 1461176521811
-    authorSequence: 5
-    moduleSequence: 6
-    pathSequence: 7
-  parents:
-  children:
-  childCount: 4
-  parentCount:
-- "@class": gov.vha.isaac.rest.api1.data.concept.RestConceptVersion
-  expandables:
-    items:
-    - name: parents
-      url: rest/1/concept/version/29?expand=parents&stated=true
-    - name: countParents
-      url: rest/1/concept/version/29?expand=countParents&stated=true
-    - name: children
-      url: rest/1/concept/version/29?expand=children&stated=true
-    - name: countChildren
-      url: rest/1/concept/version/29?expand=countChildren&stated=true
-  conChronology:
-    "@class": gov.vha.isaac.rest.api1.data.concept.RestConceptChronology
-    conceptSequence: 29
-    description: taxonomy operator (ISAAC)
-    expandables:
-      items:
-      - name: versionsAll
-        url: rest/1/concept/versions/29/
-      - name: versionsLatestOnly
-        url: rest/1/concept/version/29/
-    identifiers:
-      "@class": gov.vha.isaac.rest.api1.data.RestIdentifiedObject
-      uuids:
-      - 036560f2-8576-59f4-85ca-1d8e2785ce55
-    versions:
-  conVersion:
-    "@class": gov.vha.isaac.rest.api1.data.RestStampedVersion
-    stampSequence: 1
-    state: ACTIVE
-    time: 1461176521811
-    authorSequence: 5
-    moduleSequence: 6
-    pathSequence: 7
-  parents:
-  children:
-  childCount: 1
-  parentCount:
-- "@class": gov.vha.isaac.rest.api1.data.concept.RestConceptVersion
-  expandables:
-    items:
-    - name: parents
-      url: rest/1/concept/version/27?expand=parents&stated=true
-    - name: countParents
-      url: rest/1/concept/version/27?expand=countParents&stated=true
-    - name: children
-      url: rest/1/concept/version/27?expand=children&stated=true
-    - name: countChildren
-      url: rest/1/concept/version/27?expand=countChildren&stated=true
-  conChronology:
-    "@class": gov.vha.isaac.rest.api1.data.concept.RestConceptChronology
-    conceptSequence: 27
-    description: path (ISAAC)
-    expandables:
-      items:
-      - name: versionsAll
-        url: rest/1/concept/versions/27/
-      - name: versionsLatestOnly
-        url: rest/1/concept/version/27/
-    identifiers:
-      "@class": gov.vha.isaac.rest.api1.data.RestIdentifiedObject
-      uuids:
-      - 4459d8cf-5a6f-3952-9458-6d64324b27b7
-    versions:
-  conVersion:
-    "@class": gov.vha.isaac.rest.api1.data.RestStampedVersion
-    stampSequence: 1
-    state: ACTIVE
-    time: 1461176521811
-    authorSequence: 5
-    moduleSequence: 6
-    pathSequence: 7
-  parents:
-  children:
-  childCount: 2
-  parentCount:
-- "@class": gov.vha.isaac.rest.api1.data.concept.RestConceptVersion
-  expandables:
-    items:
-    - name: parents
-      url: rest/1/concept/version/26?expand=parents&stated=true
-    - name: countParents
-      url: rest/1/concept/version/26?expand=countParents&stated=true
-    - name: children
-      url: rest/1/concept/version/26?expand=children&stated=true
-    - name: countChildren
-      url: rest/1/concept/version/26?expand=countChildren&stated=true
-  conChronology:
-    "@class": gov.vha.isaac.rest.api1.data.concept.RestConceptChronology
-    conceptSequence: 26
-    description: axiom origin (ISAAC)
-    expandables:
-      items:
-      - name: versionsAll
-        url: rest/1/concept/versions/26/
-      - name: versionsLatestOnly
-        url: rest/1/concept/version/26/
-    identifiers:
-      "@class": gov.vha.isaac.rest.api1.data.RestIdentifiedObject
-      uuids:
-      - c142377c-02bf-5b68-b934-c52b1f780e21
-    versions:
-  conVersion:
-    "@class": gov.vha.isaac.rest.api1.data.RestStampedVersion
-    stampSequence: 1
-    state: ACTIVE
-    time: 1461176521811
-    authorSequence: 5
-    moduleSequence: 6
-    pathSequence: 7
-  parents:
-  children:
-  childCount: 2
-  parentCount:
-- "@class": gov.vha.isaac.rest.api1.data.concept.RestConceptVersion
-  expandables:
-    items:
-    - name: parents
-      url: rest/1/concept/version/25?expand=parents&stated=true
-    - name: countParents
-      url: rest/1/concept/version/25?expand=countParents&stated=true
-    - name: children
-      url: rest/1/concept/version/25?expand=children&stated=true
-    - name: countChildren
-      url: rest/1/concept/version/25?expand=countChildren&stated=true
-  conChronology:
-    "@class": gov.vha.isaac.rest.api1.data.concept.RestConceptChronology
-    conceptSequence: 25
-    description: module (ISAAC)
-    expandables:
-      items:
-      - name: versionsAll
-        url: rest/1/concept/versions/25/
-      - name: versionsLatestOnly
-        url: rest/1/concept/version/25/
-    identifiers:
-      "@class": gov.vha.isaac.rest.api1.data.RestIdentifiedObject
-      uuids:
-      - 1b55c4b6-5800-5424-93a2-5805e5b3b022
-    versions:
-  conVersion:
-    "@class": gov.vha.isaac.rest.api1.data.RestStampedVersion
-    stampSequence: 1
-    state: ACTIVE
-    time: 1461176521811
-    authorSequence: 5
-    moduleSequence: 6
-    pathSequence: 7
-  parents:
-  children:
-  childCount: 12
-  parentCount:
-- "@class": gov.vha.isaac.rest.api1.data.concept.RestConceptVersion
-  expandables:
-    items:
-    - name: parents
-      url: rest/1/concept/version/19?expand=parents&stated=true
-    - name: countParents
-      url: rest/1/concept/version/19?expand=countParents&stated=true
-    - name: children
-      url: rest/1/concept/version/19?expand=children&stated=true
-    - name: countChildren
-      url: rest/1/concept/version/19?expand=countChildren&stated=true
-  conChronology:
-    "@class": gov.vha.isaac.rest.api1.data.concept.RestConceptChronology
-    conceptSequence: 19
-    description: assemblage (ISAAC)
-    expandables:
-      items:
-      - name: versionsAll
-        url: rest/1/concept/versions/19/
-      - name: versionsLatestOnly
-        url: rest/1/concept/version/19/
-    identifiers:
-      "@class": gov.vha.isaac.rest.api1.data.RestIdentifiedObject
-      uuids:
-      - 3e0cd740-2cc6-3d68-ace7-bad2eb2621da
-    versions:
-  conVersion:
-    "@class": gov.vha.isaac.rest.api1.data.RestStampedVersion
-    stampSequence: 1
-    state: ACTIVE
-    time: 1461176521811
-    authorSequence: 5
-    moduleSequence: 6
-    pathSequence: 7
-  parents:
-  children:
-  childCount: 8
-  parentCount:
-- "@class": gov.vha.isaac.rest.api1.data.concept.RestConceptVersion
-  expandables:
-    items:
-    - name: parents
-      url: rest/1/concept/version/18?expand=parents&stated=true
-    - name: countParents
-      url: rest/1/concept/version/18?expand=countParents&stated=true
-    - name: children
-      url: rest/1/concept/version/18?expand=children&stated=true
-    - name: countChildren
-      url: rest/1/concept/version/18?expand=countChildren&stated=true
-  conChronology:
-    "@class": gov.vha.isaac.rest.api1.data.concept.RestConceptChronology
-    conceptSequence: 18
-    description: assemblage membership type (ISAAC)
-    expandables:
-      items:
-      - name: versionsAll
-        url: rest/1/concept/versions/18/
-      - name: versionsLatestOnly
-        url: rest/1/concept/version/18/
-    identifiers:
-      "@class": gov.vha.isaac.rest.api1.data.RestIdentifiedObject
-      uuids:
-      - e80d88e3-4b40-5ddc-aff0-227bbe2f1e36
-    versions:
-  conVersion:
-    "@class": gov.vha.isaac.rest.api1.data.RestStampedVersion
-    stampSequence: 1
-    state: ACTIVE
-    time: 1461176521811
-    authorSequence: 5
-    moduleSequence: 6
-    pathSequence: 7
-  parents:
-  children:
-  childCount: 2
-  parentCount:
-- "@class": gov.vha.isaac.rest.api1.data.concept.RestConceptVersion
-  expandables:
-    items:
-    - name: parents
-      url: rest/1/concept/version/17?expand=parents&stated=true
-    - name: countParents
-      url: rest/1/concept/version/17?expand=countParents&stated=true
-    - name: children
-      url: rest/1/concept/version/17?expand=children&stated=true
-    - name: countChildren
-      url: rest/1/concept/version/17?expand=countChildren&stated=true
-  conChronology:
-    "@class": gov.vha.isaac.rest.api1.data.concept.RestConceptChronology
-    conceptSequence: 17
-    description: language (ISAAC)
-    expandables:
-      items:
-      - name: versionsAll
-        url: rest/1/concept/versions/17/
-      - name: versionsLatestOnly
-        url: rest/1/concept/version/17/
-    identifiers:
-      "@class": gov.vha.isaac.rest.api1.data.RestIdentifiedObject
-      uuids:
-      - c71da370-a8cb-57ce-b2f9-85fed8ea2e79
-    versions:
-  conVersion:
-    "@class": gov.vha.isaac.rest.api1.data.RestStampedVersion
-    stampSequence: 1
-    state: ACTIVE
-    time: 1461176521811
-    authorSequence: 5
-    moduleSequence: 6
-    pathSequence: 7
-  parents:
-  children:
-  childCount: 10
-  parentCount:
-- "@class": gov.vha.isaac.rest.api1.data.concept.RestConceptVersion
-  expandables:
-    items:
-    - name: parents
-      url: rest/1/concept/version/13?expand=parents&stated=true
-    - name: countParents
-      url: rest/1/concept/version/13?expand=countParents&stated=true
-    - name: children
-      url: rest/1/concept/version/13?expand=children&stated=true
-    - name: countChildren
-      url: rest/1/concept/version/13?expand=countChildren&stated=true
-  conChronology:
-    "@class": gov.vha.isaac.rest.api1.data.concept.RestConceptChronology
-    conceptSequence: 13
-    description: identifier source (ISAAC)
-    expandables:
-      items:
-      - name: versionsAll
-        url: rest/1/concept/versions/13/
-      - name: versionsLatestOnly
-        url: rest/1/concept/version/13/
-    identifiers:
-      "@class": gov.vha.isaac.rest.api1.data.RestIdentifiedObject
-      uuids:
-      - 5a87935c-d654-548f-82a2-0c06e3801162
-    versions:
-  conVersion:
-    "@class": gov.vha.isaac.rest.api1.data.RestStampedVersion
-    stampSequence: 1
-    state: ACTIVE
-    time: 1461176521811
-    authorSequence: 5
-    moduleSequence: 6
-    pathSequence: 7
-  parents:
-  children:
-  childCount: 5
-  parentCount:
-- "@class": gov.vha.isaac.rest.api1.data.concept.RestConceptVersion
-  expandables:
-    items:
-    - name: parents
-      url: rest/1/concept/version/12?expand=parents&stated=true
-    - name: countParents
-      url: rest/1/concept/version/12?expand=countParents&stated=true
-    - name: children
-      url: rest/1/concept/version/12?expand=children&stated=true
-    - name: countChildren
-      url: rest/1/concept/version/12?expand=countChildren&stated=true
-  conChronology:
-    "@class": gov.vha.isaac.rest.api1.data.concept.RestConceptChronology
-    conceptSequence: 12
-    description: set operator (ISAAC)
-    expandables:
-      items:
-      - name: versionsAll
-        url: rest/1/concept/versions/12/
-      - name: versionsLatestOnly
-        url: rest/1/concept/version/12/
-    identifiers:
-      "@class": gov.vha.isaac.rest.api1.data.RestIdentifiedObject
-      uuids:
-      - e1a7fe31-d90d-5383-b9b7-364e8c02ca06
-    versions:
-  conVersion:
-    "@class": gov.vha.isaac.rest.api1.data.RestStampedVersion
-    stampSequence: 1
-    state: ACTIVE
-    time: 1461176521811
-    authorSequence: 5
-    moduleSequence: 6
-    pathSequence: 7
-  parents:
-  children:
-  childCount: 2
-  parentCount:
-- "@class": gov.vha.isaac.rest.api1.data.concept.RestConceptVersion
-  expandables:
-    items:
-    - name: parents
-      url: rest/1/concept/version/5?expand=parents&stated=true
-    - name: countParents
-      url: rest/1/concept/version/5?expand=countParents&stated=true
-    - name: children
-      url: rest/1/concept/version/5?expand=children&stated=true
-    - name: countChildren
-      url: rest/1/concept/version/5?expand=countChildren&stated=true
-  conChronology:
-    "@class": gov.vha.isaac.rest.api1.data.concept.RestConceptChronology
-    conceptSequence: 5
-    description: user (ISAAC)
-    expandables:
-      items:
-      - name: versionsAll
-        url: rest/1/concept/versions/5/
-      - name: versionsLatestOnly
-        url: rest/1/concept/version/5/
-    identifiers:
-      "@class": gov.vha.isaac.rest.api1.data.RestIdentifiedObject
-      uuids:
-      - f7495b58-6630-3499-a44e-2052b5fcf06c
-    versions:
-  conVersion:
-    "@class": gov.vha.isaac.rest.api1.data.RestStampedVersion
-    stampSequence: 1
-    state: ACTIVE
-    time: 1461176521811
-    authorSequence: 5
-    moduleSequence: 6
-    pathSequence: 7
-  parents:
-  children:
-  childCount: 18
-  parentCount:
+  parentCount: 1
+  sememeMembership:
 childCount:
 parentCount:
+sememeMembership:

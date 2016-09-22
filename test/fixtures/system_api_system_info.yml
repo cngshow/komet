@@ -1,5 +1,60 @@
-#Fixture created on 2016-04-29 16:52:56
+#Fixture created on 2016-09-22 13:37:32
 ---
-"@class": gov.vha.isaac.rest.api1.data.SystemInfo
+"@class": gov.vha.isaac.rest.api1.data.RestSystemInfo
 supportedAPIVersions:
-- '1.0'
+- 1.4.4
+apiImplementationVersion: 1.13-SNAPSHOT
+isaacDbDependency:
+  "@class": gov.vha.isaac.rest.api1.data.systeminfo.RestDependencyInfo
+  groupId: gov.vha.isaac.db
+  artifactId: vets
+  version: '1.4'
+  classifier: all
+  type: cradle.zip
+scmUrl: https://github.com/VA-CTT/ISAAC-rest.git
+isaacVersion: 3.12-SNAPSHOT
+appLicenses: []
+dbLicenses:
+- "@class": gov.vha.isaac.rest.api1.data.systeminfo.RestLicenseInfo
+  name: The Apache Software License, Version 2.0
+  url: http://www.apache.org/licenses/LICENSE-2.0.txt
+  comments: "Copyright Notice\n\t\t\t\tThis is a work of the U.S. Government and is\
+    \ not subject to copyright\n\t\t\t\tprotection in the United States. Foreign copyrights\
+    \ may apply.\n\t\t\t"
+dbDependencies:
+- "@class": gov.vha.isaac.rest.api1.data.systeminfo.RestDependencyInfo
+  groupId: gov.vha.isaac.ochre.modules
+  artifactId: ochre-metadata
+  version: '3.11'
+  classifier: all
+  type: ibdf.zip
+- "@class": gov.vha.isaac.rest.api1.data.systeminfo.RestDependencyInfo
+  groupId: gov.vha.isaac.terminology.converted
+  artifactId: vhat-ibdf
+  version: 2016.08.18-loader-4.3
+  classifier:
+  type: ibdf.zip
+- "@class": gov.vha.isaac.rest.api1.data.systeminfo.RestDependencyInfo
+  groupId: gov.vha.isaac.terminology.converted
+  artifactId: loinc-ibdf
+  version: 2.54-1-loader-5.4
+  classifier:
+  type: ibdf.zip
+- "@class": gov.vha.isaac.rest.api1.data.systeminfo.RestDependencyInfo
+  groupId: gov.vha.isaac.terminology.converted
+  artifactId: rxnorm-ibdf
+  version: 2016.05.02-loader-5.1
+  classifier:
+  type: ibdf.zip
+- "@class": gov.vha.isaac.rest.api1.data.systeminfo.RestDependencyInfo
+  groupId: gov.vha.isaac.terminology.converted
+  artifactId: rf2-ibdf-sct
+  version: 20160131-loader-3.3
+  classifier: Full
+  type: ibdf.zip
+- "@class": gov.vha.isaac.rest.api1.data.systeminfo.RestDependencyInfo
+  groupId: gov.vha.isaac.terminology.converted
+  artifactId: rf2-ibdf-us-extension
+  version: 20160301-loader-3.3
+  classifier: Full
+  type: ibdf.zip

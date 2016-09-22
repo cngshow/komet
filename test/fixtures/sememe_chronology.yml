@@ -1,52 +1,30 @@
-#Fixture created on 2016-03-09 10:54:29
+#Fixture created on 2016-09-22 13:37:32
 ---
+"@class": gov.vha.isaac.rest.api1.data.sememe.RestSememeChronology
 expandables:
-sememeSequence: 2076303
-assemblageSequence: 63
-referencedComponentNid: -2146958431
+sememeSequence: 4290074
+assemblageSequence: 231586
+referencedComponentNid: -2143087966
+referencedComponentNidObjectType:
+referencedComponentNidDescription:
 identifiers:
+  "@class": gov.vha.isaac.rest.api1.data.RestIdentifiedObject
   uuids:
-  - 421c4a1f-f42d-35b9-b9ad-5a8b43e35cc3
+  - 3621bf47-a54c-5f6e-a68d-c4dcb7156815
 versions:
-- "@class": gov.vha.isaac.rest.api1.data.sememe.RestSememeDescriptionVersion
+- "@class": gov.vha.isaac.rest.api1.data.sememe.RestDynamicSememeVersion
   expandables:
-    items:
-    - name: chronology
-      url: rest/1/sememe/chronology/2076303
-    - name: nestedSememes
-      url: rest/1/sememe/version/2076303/?expand=nestedSememes
   sememeChronology:
   sememeVersion:
-    stampSequence: 37
-    state: INACTIVE
-    time: 1217476800000
+    "@class": gov.vha.isaac.rest.api1.data.RestStampedVersion
+    stampSequence: 52
+    state:
+      "@class": gov.vha.isaac.rest.api1.data.enumerations.RestStateType
+      name: Active
+      enumId: 1
+    time: 1448946000000
     authorSequence: 5
-    moduleSequence: 0
+    moduleSequence: 66
     pathSequence: 7
-  nestedSememes:
-  caseSignificanceConceptSequence: 112
-  languageConceptSequence: 8
-  text: Large head
-  descriptionTypeConceptSequence: 11
-  dialects:
-- "@class": gov.vha.isaac.rest.api1.data.sememe.RestSememeDescriptionVersion
-  expandables:
-    items:
-    - name: chronology
-      url: rest/1/sememe/chronology/2076303
-    - name: nestedSememes
-      url: rest/1/sememe/version/2076303/?expand=nestedSememes
-  sememeChronology:
-  sememeVersion:
-    stampSequence: 5
-    state: ACTIVE
-    time: 1012453200000
-    authorSequence: 5
-    moduleSequence: 0
-    pathSequence: 7
-  nestedSememes:
-  caseSignificanceConceptSequence: 112
-  languageConceptSequence: 8
-  text: Large head
-  descriptionTypeConceptSequence: 11
-  dialects:
+  nestedSememes: []
+  dataColumns: []
