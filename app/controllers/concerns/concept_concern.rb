@@ -93,6 +93,32 @@ module ConceptConcern
     end
 
     ##
+    # descriptions - takes a uuid and returns all of the description concepts attached to it.
+    # @param [String] uuid - The UUID to look up descriptions for
+    # @param [Boolean] stated - Whether to display the stated (true) or inferred view of concepts
+    # @return [object] an array of hashes that contains the attributes
+    def get_conceptData(uuid)
+
+        coordinates_token = session[:coordinatestoken].token
+        returnConcept_attributes = []
+
+        isaac_concept = TaxonomyRest.get_isaac_concept(uuid: uuid)
+
+        if isaac_concept.is_a? CommonRest::UnexpectedResponse
+            return [{value: ''}, {value: ''}, {value: ''}]
+        end
+
+        returnConcept_attributes << {label: 'FSN', value: concept.conChronology.description}
+        returnConcept_attributes << {label: 'ParentID', value: parent.conChronology.identifiers.uuids.first}
+        descriptions = ConceptRest.get_concept(action: ConceptRestActions::ACTION_DESCRIPTIONS, uuid: uuid, additional_req_params: {coordToken: coordinates_token, stated: stated})
+        returnConcept_attributes << {label: 'PreferredTerm', value: description.text}
+
+        return returnConcept_attributes
+
+    end
+
+
+    ##
     # get_descriptions - takes a uuid and returns all of the description concepts attached to it.
     # @param [String] uuid - The UUID to look up descriptions for
     # @param [Boolean] stated - Whether to display the stated (true) or inferred view of concepts

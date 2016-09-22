@@ -153,6 +153,7 @@ class KometDashboardController < ApplicationController
 
   end
 
+
   def get_descriptions_jsonreturntype
     @concept_id = params[:concept_id]
     @stated = params[:stated]
@@ -609,7 +610,54 @@ class KometDashboardController < ApplicationController
 
     render json: concept_suggestions_data
   end
+  def process_concept_Create
 
+    fsn = params[:fsn]
+    preferredTerm = params[:preferredTerm]
+    parentConceptIds = params[:parentConceptIds]
+
+    body_params = {fsn: fsn, preferredTerm: preferredTerm,parentConceptIds:parentConceptIds}
+
+    set_id = ConceptRest::get_concept(action: ConceptRestActions::ACTION_CREATE, body_params:body_params )
+    if set_id.is_a? CommonRest::UnexpectedResponse
+
+      render json: {set_id: nil}
+      return
+    end
+
+  end
+
+  def process_concept_Clone
+    @concept_id = params[:concept_id]
+    getconceptDate = get_conceptData(uuid)
+
+    body_params = {fsn: getconceptDate[:FSN], preferredTerm: getconceptDate[:PreferredTerm],parentConceptIds:getconceptDate[:ParentID]}
+
+    set_id = ConceptRest::get_concept(action: ConceptRestActions::ACTION_CREATE, body_params:body_params )
+    if set_id.is_a? CommonRest::UnexpectedResponse
+
+      render json: {set_id: nil}
+      return
+    end
+  end
+
+
+  def process_concept_ActiveInactive
+    coordinates_token = session[:coordinatestoken].token
+    id = params[:id]
+    statusFlag = params[:statusFlag]
+
+    if statusFlag == 'ACTIVE'
+      deactivate = ConceptRest::get_concept(action: ConceptRestActions::ACTION_UPDATE_ACTIVATE, uuid: id)
+    else
+      deactivate = ConceptRest::get_concept(action: ConceptRestActions::ACTION_UPDATE_DEACTIVATE, uuid: id)
+    end
+    if deactivate.is_a? CommonRest::UnexpectedResponse
+
+      render json: {deactivate: nil}
+      return
+    end
+  end
   ##
   # get_concept_recents - RESTful route for populating a list of recent concept searches via http :GET
   # @return [json] an array of hashes {id:, text:}

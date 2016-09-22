@@ -28,20 +28,20 @@ var PreferenceModule = (function () {
         $.minicolors.defaults.position = 'bottom right';
         var dialog, form
 
-        dialog = $( "#dialog-form" ).dialog({
+        dialog = $("#komet_user_preference_form").dialog({
             autoOpen: false,
             closeOnEscape: false,
-            position: ["bottom",70],
+            position: { my: "right top", at: "left bottom", of: "#komet_user_preference_link" },
             height: 600,
             width: 650,
             dialogClass: "no-close",
             show: {
                 effect: "blind",
-                duration: 100
+                duration: 50
             },
             hide: {
                 effect: "blind",
-                duration: 100
+                duration: 50
             },
             modal: true,
             buttons: {
@@ -80,7 +80,7 @@ var PreferenceModule = (function () {
             applyChanges();
         });
 
-        $("#settings").on( "click", function() {
+        $("#komet_user_preference_link").on( "click", function() {
             dialog.dialog( "open" );
             //Get default goordinates
 

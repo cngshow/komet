@@ -52,6 +52,7 @@ var UIHelper = (function () {
 
                 var items = {};
                 var menuType = $triggerElement.attr("data-menu-type");
+                var menuState = $triggerElement.attr("data-menu-state");
 
                 if (menuType == "sememe" || menuType == "concept" || menuType == "map_set"){
 
@@ -87,6 +88,18 @@ var UIHelper = (function () {
                     if (conceptText != null || conceptText != undefined || conceptText != "") {
 
                         items.copyConcept = {name:"Copy Concept", icon: "context-menu-icon glyphicon-copy", callback: copyConcept(uuid, conceptText)};
+                        if (menuState == 'Active')
+                             {
+                                  items.activeInactiveUuid = {name:"InActive", icon: "context-menu-icon glyphicon-copy", callback: activeInactiveConcept(uuid,'InActive')};
+                             }
+                        else
+                            {
+                                items.activeInactiveUuid = {name:"Active", icon: "context-menu-icon glyphicon-copy", callback: activeInactiveConcept(uuid,'Active')};
+                            }
+
+                        items.cloneUuid = {name:"Clone", icon: "context-menu-icon glyphicon-copy", callback:  cloneConcept(uuid)};
+                        items.createChildUuid = {name:"Create Child", icon: "context-menu-icon glyphicon-copy", callback:  createChildConcept(uuid,conceptText)};
+
                     }
 
                     items.copyUuid = {name: "Copy UUID", icon: "context-menu-icon glyphicon-copy", callback: copyToClipboard(uuid)};
@@ -115,6 +128,31 @@ var UIHelper = (function () {
 
     // Context menu functions
 
+    function activeInactiveConcept(uuid,statusFlag)    {
+        return function (){
+        params = {id: uuid,statusFlag:statusFlag } ;
+
+                $.get( gon.routes.taxonomy_process_concept_ActiveInactive_path , params, function( results ) {
+                    console.log(results);
+                    TaxonomyModule.tree.reloadTreeStatedView($("#komet_taxonomy_stated_inferred")[0].value);
+             });
+        };
+    }
+    function createChildConcept(uuid,selectedTxt){
+    return function (){
+
+        openAddConcept(uuid,selectedTxt);
+
+    };
+}
+    function cloneConcept(uuid)    {
+        return function (){
+            params = {uuid: uuid} ;
+            $.get( gon.routes.taxonomy_process_concept_Clone_path , params, function( results ) {
+                console.log(results);
+            });
+        };
+    }
     function getOpenConceptIcon(opt, $itemElement, itemKey, item) {
         // Set the content to the menu trigger selector and add an bootstrap icon to the item.
         $itemElement.html('<span class="glyphicon glyphicon-star" aria-hidden="true"></span> ' + opt.selector);
@@ -199,12 +237,12 @@ var UIHelper = (function () {
         };
     }
 
-    function openAddConcept()
-    {
-          $.publish(KometChannels.Taxonomy.taxonomyAddConceptChannel, ['', WindowManager.getLinkedViewerID()]);
+    function openAddConcept(uuid,selectedTxt)    {
+          $.publish(KometChannels.Taxonomy.taxonomyAddConceptChannel, ['', WindowManager.getLinkedViewerID(),uuid,selectedTxt]);
+
+
     }
-    function openEditConcept(v)
-    {
+    function openEditConcept(v)    {
         $.publish(KometChannels.Taxonomy.taxonomyEditConceptChannel, ['',WindowManager.getLinkedViewerID(),'attributes']);
     }
     // function to switch a field between enabled and disabled
