@@ -97,23 +97,23 @@ module ConceptConcern
     # @param [String] uuid - The UUID to look up descriptions for
     # @param [Boolean] stated - Whether to display the stated (true) or inferred view of concepts
     # @return [object] an array of hashes that contains the attributes
-    def get_conceptData(uuid, stated)
+    def get_conceptData(uuid)
 
         coordinates_token = session[:coordinatestoken].token
-        return_attributes = []
+        returnConcept_attributes = []
 
-        attributes = ConceptRest.get_concept(action: ConceptRestActions::ACTION_VERSION, uuid: uuid, additional_req_params: {coordToken: coordinates_token, expand: 'chronology', stated: stated})
+        isaac_concept = TaxonomyRest.get_isaac_concept(uuid: uuid)
 
-        if attributes.is_a? CommonRest::UnexpectedResponse
+        if isaac_concept.is_a? CommonRest::UnexpectedResponse
             return [{value: ''}, {value: ''}, {value: ''}]
         end
 
-        return_attributes << {label: 'Text', value: attributes.conChronology.description}
-        return_attributes << {label: 'Module', value: get_concept_metadata(attributes.conVersion.moduleSequence)}
-        return_attributes << {label: 'UUID', value: uuid} #parent uuid
+        returnConcept_attributes << {label: 'FSN', value: concept.conChronology.description}
+        returnConcept_attributes << {label: 'ParentID', value: parent.conChronology.identifiers.uuids.first}
+        descriptions = ConceptRest.get_concept(action: ConceptRestActions::ACTION_DESCRIPTIONS, uuid: uuid, additional_req_params: {coordToken: coordinates_token, stated: stated})
+        returnConcept_attributes << {label: 'PreferredTerm', value: description.text}
 
-
-        return return_attributes
+        return returnConcept_attributes
 
     end
 

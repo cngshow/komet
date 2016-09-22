@@ -91,7 +91,7 @@ var ConceptsModule = (function () {
         deferred = $.Deferred();
         var selectedDivname = windowType;
         var uuids = windowType;
-        console.log(windowType + '--' + action + ' ---' +uuid  + '---' + selectedTxt)
+
         // the path to a javascript partial file that will re-render all the appropriate partials once the ajax call returns
      if (action == 'AddConcept') {
          windowType = WindowManager.New;

@@ -153,21 +153,6 @@ class KometDashboardController < ApplicationController
 
   end
 
-  def get_concept_data(concept_id = nil, stated = nil)
-
-    if concept_id == nil && params[:concept_id]
-      concept_id = params[:concept_id].to_i
-    end
-
-    if stated == nil && params[:stated]
-      stated = params[:stated]
-    end
-
-    @attributes =  get_conceptData(concept_id, stated)
-
-  end
-
-
 
   def get_descriptions_jsonreturntype
     @concept_id = params[:concept_id]
@@ -641,6 +626,21 @@ class KometDashboardController < ApplicationController
     end
 
   end
+
+  def process_concept_Clone
+    @concept_id = params[:concept_id]
+    getconceptDate = get_conceptData(uuid)
+
+    body_params = {fsn: getconceptDate[:FSN], preferredTerm: getconceptDate[:PreferredTerm],parentConceptIds:getconceptDate[:ParentID]}
+
+    set_id = ConceptRest::get_concept(action: ConceptRestActions::ACTION_CREATE, body_params:body_params )
+    if set_id.is_a? CommonRest::UnexpectedResponse
+
+      render json: {set_id: nil}
+      return
+    end
+  end
+
 
   def process_concept_ActiveInactive
     coordinates_token = session[:coordinatestoken].token

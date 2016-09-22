@@ -128,8 +128,7 @@ var UIHelper = (function () {
 
     // Context menu functions
 
-    function activeInactiveConcept(uuid,statusFlag)
-    {
+    function activeInactiveConcept(uuid,statusFlag)    {
         return function (){
         params = {id: uuid,statusFlag:statusFlag } ;
 
@@ -139,8 +138,7 @@ var UIHelper = (function () {
              });
         };
     }
-function createChildConcept(uuid,selectedTxt)
-{
+    function createChildConcept(uuid,selectedTxt){
     return function (){
 
         openAddConcept(uuid,selectedTxt);
@@ -149,7 +147,10 @@ function createChildConcept(uuid,selectedTxt)
 }
     function cloneConcept(uuid)    {
         return function (){
-        console.log("cloneConcept");
+            params = {uuid: uuid} ;
+            $.get( gon.routes.taxonomy_process_concept_Clone_path , params, function( results ) {
+                console.log(results);
+            });
         };
     }
     function getOpenConceptIcon(opt, $itemElement, itemKey, item) {

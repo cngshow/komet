@@ -383,9 +383,6 @@ var ConceptViewer = function(viewerID, currentConceptID) {
     }
 
     ConceptViewer.prototype.createConcept = function(viewerID){
-
-
-
         $("#yesnolDiv").hide();
         $("#txtDescription").keyup(function(event) {
             var stt = $(this).val();
