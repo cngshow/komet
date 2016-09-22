@@ -1,80 +1,108 @@
 <link rel="stylesheet" href="//code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css">
+
 <nav class="navbar navbar-default">
-  <div class="navbar-header">
-    <a class="navbar-brand" href="#">KOMET Tooling</a>
-  </div>
-  <div>
-    <ul class="nav navbar-nav">
-      <li><a href="javascript: location.replace('<%= komet_dashboard_dashboard_path %>')">Taxonomy Dashboard</a></li>
-      <li><a id="settings" href="#">Settings</a></li>
-      <li><a id="logout" href="<%= logout_path %>">Logout</a></li>
-      <div id="dialog-form" title="User's Preference">
-        <div id="komet_preferences_tabs">
-          <ul>
+
+    <div id="komet_navbar_logo" class="navbar-header">
+        <a class="navbar-brand" href="#">KOMET Tooling</a>
+    </div>
+
+    <div id="komet_navbar_navigation">
+
+        <ul class="nav navbar-nav">
+            <li><a href="javascript: location.replace('<%= komet_dashboard_dashboard_path %>')">Taxonomy Dashboard</a></li>
+            <li><a href="#">Workflows</a></li>
+            <li class="dropdown">
+                <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Actions <span class="caret"></span></a>
+                <ul class="dropdown-menu">
+                    <li><a onclick="UIHelper.openAddConcept(); return false;">Create New Concept</a></li>
+                    <li><a onclick="MappingModule.createNewMapSet(true); return false;">Create New Map</a></li>
+                    <li role="separator" class="divider"></li>
+                    <li><a href="#">View Workflows</a></li>
+                </ul>
+            </li>
+            <li></li>
+        </ul>
+
+        <div id="komet_navbar_tools">
+            <span class="glyphicon glyphicon-cog" id="komet_user_preference_link" title="Settings"></span>
+            <span><span class="glyphicon glyphicon-user"></span> <%= raw komet_user %></span>
+            <span><a id="logout" href="<%= logout_path %>"><span class="glyphicon glyphicon-log-out"></span> Logout</a></span>
+        </div>
+
+    </div>
+
+</nav>
+
+<div id="komet_user_preference_form" title="User's Preference">
+    <div id="komet_preferences_tabs">
+        <ul>
             <li><a href='#useroptions'>Options</a></li>
             <li><a href='#color-module'>Color Module</a></li>
             <li><a href='#colorpath-module'>Color Path</a></li>
-           <li><a href='#komet_preferences_refsets_colors'>Color Refsets</a></li>
-          </ul>
-          <div id="useroptions">
+            <li><a href='#komet_preferences_refsets_colors'>Color Refsets</a></li>
+        </ul>
+        <div id="useroptions">
             <form>
-              <div>
-                <table>
-                  <tr> <td>Select Language:&nbsp;&nbsp;</td><td><select id="komet_concept_language" >
-                  </select></td>
-                  </tr>
+                <div>
+                    <table>
+                        <tr>
+                            <td>Select Language:&nbsp;&nbsp;</td>
+                            <td><select id="komet_concept_language">
+                            </select></td>
+                        </tr>
+                    </table>
+                </div>
+                <br><br>
+
+                <table id="description_type" width='80%' style="z-index:990" cellpadding='2' cellspacing='3'>
                 </table>
-              </div><br><br>
+                <br><br>
 
-              <table id="description_type"  width='80%' style="z-index:990"  cellpadding='2' cellspacing='3'>
-              </table>
-              <br><br>
+                <table id="dialecttbl" width='80%' style="z-index:990" cellpadding='2' cellspacing='3'>
+                </table>
 
-              <table id="dialecttbl"  width='80%'style="z-index:990" cellpadding='2' cellspacing='3'>
-              </table>
+                <br><br>
 
-              <br><br>
-              <div>
-                <div  width='60%' style="background-color: #4f80d9;color:white;z-index:990">Status</div>
-                <input type="radio" name="status" value="Active">Active<br>
-                <input type="radio" name="status" value="Inactive">InActive<br>
-                <input type="radio" name="status" checked="checked" value="Active,Inactive">Both<br>
-              </div>
+                <div>
+                    <div width='60%' style="background-color: #4f80d9;color:white;z-index:990">Status</div>
+                    <input type="radio" name="status" value="Active">Active<br>
+                    <input type="radio" name="status" value="Inactive">InActive<br>
+                    <input type="radio" name="status" checked="checked" value="Active,Inactive">Both<br>
+                </div>
             </form>
-          </div>
-          <div id="color-module" style="height: 3500px;">
-            <table id="listofmodule"  width='90%'     cellpadding='2' cellspacing='3'>
+        </div>
+        <div id="color-module" style="height: 3500px;">
+            <table id="listofmodule" width='90%' cellpadding='2' cellspacing='3'>
             </table>
-
-          </div>
-         <div id="colorpath-module"  style="height: 450px;">
-            <table id="listofpath"  width='90%'    cellpadding='2' cellspacing='3'>
-            </table>
-          </div>
-
-         <div id="komet_preferences_refsets_colors" style="height: 450px;">
-           <table><tr><td><div id="getdd"></div></td><td>
-             &nbsp;&nbsp;<input name="color_id" class="demo" title="Click here to change color"  type="hidden" id="color_id" size="1" style="height:25px" data-control="hue" value="" />
-              </td>
-              <td>&nbsp;&nbsp;<input name="applybtn" id="applybtn" type="button" value="Apply"  /></td></tr>
-           </table>
-          <BR><BR>
-          <table  width="90%"  cellpadding="5" cellspacing="0" id="komet_preferences_refsets_table"> </table>
-         </div>
 
         </div>
-      </div>
-    </ul>
-    <div style="float:right; padding-top: 15px; padding-right: 15px">
-      <%= raw "<Strong>Current User:</strong>&nbsp;#{komet_user}" %>
-    </div>
+        <div id="colorpath-module" style="height: 450px;">
+            <table id="listofpath" width='90%' cellpadding='2' cellspacing='3'>
+            </table>
+        </div>
 
-  </div>
-</nav>
+        <div id="komet_preferences_refsets_colors" style="height: 450px;">
+            <table>
+                <tr>
+                    <td>
+                        <div id="getdd"></div>
+                    </td>
+                    <td>
+                        &nbsp;&nbsp;<input name="color_id" class="demo" title="Click here to change color" type="hidden" id="color_id" size="1" style="height:25px" data-control="hue" value=""/>
+                    </td>
+                    <td>&nbsp;&nbsp;<input name="applybtn" id="applybtn" type="button" value="Apply"/></td>
+                </tr>
+            </table>
+            <BR><BR>
+            <table width="90%" cellpadding="5" cellspacing="0" id="komet_preferences_refsets_table"></table>
+        </div>
+    </div>
+</div>
+
 <script>
 
-  $(document).ready(function () {
-    $("#komet_preferences_tabs").tabs();
-    PreferenceModule.initialize();
+    $(document).ready(function () {
+        $("#komet_preferences_tabs").tabs();
+        PreferenceModule.initialize();
     });
 </script>
