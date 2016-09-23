@@ -8,7 +8,7 @@
 	<parent>
 		<groupId>gov.vha.isaac.ochre</groupId>
 		<artifactId>isaac-parent</artifactId>
-		<version>3.11</version><!--TODO Eliminate Snapshot if present -->
+		<version>3.11</version><!--TODO Eliminate Snapshot (and 3.12-snapshot goes to 3.11 for example) if present -->
 	</parent>
 
 	<groupId>gov.vha.isaac.gui.rails</groupId>
