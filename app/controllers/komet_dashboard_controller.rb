@@ -19,12 +19,13 @@ Copyright Notice
 
 require './lib/isaac_rest/taxonomy_rest'
 require './lib/rails_common/util/controller_helpers'
+require './lib/isaac_rest/search_apis_rest'
 
 ##
 # KometDashboardController -
 # handles the loading of the taxonomy tree
 class KometDashboardController < ApplicationController
-  include TaxonomyConcern, ConceptConcern, InstrumentationConcern
+  include TaxonomyConcern, ConceptConcern, InstrumentationConcern, SearchApis
   include CommonController
 
   before_action :setup_routes, :setup_constants, :only => [:dashboard]
@@ -151,6 +152,7 @@ class KometDashboardController < ApplicationController
     @attributes =  get_attributes(concept_id, stated)
 
   end
+
 
   def get_descriptions_jsonreturntype
     @concept_id = params[:concept_id]
@@ -319,15 +321,20 @@ class KometDashboardController < ApplicationController
       # load the ISAAC root node and children
       isaac_concept = TaxonomyRest.get_isaac_root(additional_req_params: additional_req_params)
 
+      if isaac_concept.is_a? CommonRest::UnexpectedResponse
+        return []
+      end
+
       # load the root node into our return variable
-      root_anchor_attributes = { class: 'komet-context-menu', 'data-menu-type' => 'concept', 'data-menu-uuid' => isaac_concept.conChronology.identifiers.uuids.first}
+      root_anchor_attributes = { class: 'komet-context-menu', 'data-menu-type' => 'concept', 'data-menu-uuid' => isaac_concept.conChronology.identifiers.uuids.first,
+                                 'data-menu-state' => 'ACTIVE', 'data-menu-concept-text' => isaac_concept.conChronology.description}
       root_node = {id: 0, concept_id: isaac_concept.conChronology.identifiers.uuids.first, text: isaac_concept.conChronology.description, parent_reversed: false, parent_search: parent_search, icon: 'komet-tree-node-icon komet-tree-node-primitive', a_attr: root_anchor_attributes, state: {opened: 'true'}}
     else
       isaac_concept = TaxonomyRest.get_isaac_concept(uuid: selected_concept_id, additional_req_params: additional_req_params)
     end
 
     if isaac_concept.is_a? CommonRest::UnexpectedResponse
-      render json: [] and return
+      return []
     end
 
     raw_nodes = process_rest_concept(isaac_concept, tree_walk_levels, first_level: true, parent_search: parent_search, multi_path: multi_path)
@@ -352,11 +359,15 @@ class KometDashboardController < ApplicationController
     node[:text] = concept.conChronology.description
     node[:has_children] = !concept.children.nil?
     node[:defined] = concept.isConceptDefined
-    node[:state] = concept.conVersion.state
+    node[:state] = concept.conVersion.state.name
     node[:author] = concept.conVersion.authorSequence
     node[:module] = concept.conVersion.moduleSequence
     node[:path] = concept.conVersion.pathSequence
     node[:refsets] = concept.sememeMembership
+
+    if node[:text] == nil
+      node[:text] = '[No Description]'
+    end
 
     if node[:defined].nil?
       node[:defined] = false
@@ -416,7 +427,7 @@ class KometDashboardController < ApplicationController
         parent_node[:id] = parent.conChronology.identifiers.uuids.first
         parent_node[:text] = parent.conChronology.description
         parent_node[:defined] = parent.isConceptDefined
-        parent_node[:state] = parent.conVersion.state
+        parent_node[:state] = parent.conVersion.state.name
         parent_node[:author] = parent.conVersion.authorSequence
         parent_node[:module] = parent.conVersion.moduleSequence
         parent_node[:path] = parent.conVersion.pathSequence
@@ -463,7 +474,7 @@ class KometDashboardController < ApplicationController
 
       concept_nodes.concat(processed_related_concepts)
     else
-      $log.debug('*** data process: ' + node[:text])
+      $log.debug('*** data process: ' + node[:text].to_s)
       node[relation] = processed_related_concepts
       concept_nodes << node
     end
@@ -475,7 +486,7 @@ class KometDashboardController < ApplicationController
 
     raw_nodes.each do |raw_node|
 
-      anchor_attributes = { class: 'komet-context-menu', 'data-menu-type' => 'concept', 'data-menu-uuid' => raw_node[:id]}
+      anchor_attributes = { class: 'komet-context-menu', 'data-menu-type' => 'concept', 'data-menu-uuid' => raw_node[:id], 'data-menu-state' => raw_node[:state], 'data-menu-concept-text' => raw_node[:text]}
       parent_search = parent_search_param
       parent_reversed = parent_reversed_param
       show_expander = true
@@ -484,6 +495,10 @@ class KometDashboardController < ApplicationController
       flags = get_tree_node_flag('module', [raw_node[:module]])
       flags << get_tree_node_flag('refsets', [raw_node[:refsets]])
       flags << get_tree_node_flag('path', [raw_node[:path]])
+
+      if raw_node[:state] && raw_node[:state].downcase.eql?('inactive')
+        anchor_attributes[:class] << ' komet-inactive-tree-node'
+      end
 
       if boolean(parent_search)
 
@@ -525,7 +540,7 @@ class KometDashboardController < ApplicationController
 
       node_text = raw_node[:text] + raw_node[:badge] + flags
 
-      node = {id: get_next_id, concept_id: raw_node[:id], text: node_text, parent_reversed: parent_reversed, parent_search: parent_search, icon: icon_class, a_attr: anchor_attributes}
+      node = {id: get_next_id, concept_id: raw_node[:id], text: node_text, parent_reversed: parent_reversed, parent_search: parent_search, stamp_state: raw_node[:state], icon: icon_class, a_attr: anchor_attributes}
 
       if raw_node[relation].length == 0
         node[:children] = show_expander
@@ -567,11 +582,94 @@ class KometDashboardController < ApplicationController
     @stated = 'true'
 
     if !session[:coordinatestoken]
-      results =CoordinateRest.get_coordinate(action: CoordinateRestActions::ACTION_COORDINATES_TOKEN)
+      results = CoordinateRest.get_coordinate(action: CoordinateRestActions::ACTION_COORDINATES_TOKEN)
       session[:coordinatestoken] = results
     end
 
     $log.debug("token initial #{session[:coordinatestoken].token}" )
+  end
+
+  ##
+  # get_concept_suggestions - RESTful route for populating a suggested list of assemblages as a user types into a field via http :GET
+  # @param [String] params[:term] - The term entered by the user to prefix the concept search with
+  # @return [json] a list of matching concept text and ids - array of hashes {label:, value:}
+  def get_concept_suggestions
+
+    coordinates_token = session[:coordinatestoken].token
+    search_term = params[:term]
+    concept_suggestions_data = []
+
+    $log.debug(search_term)
+
+    results = SearchApis.get_search_api(action: ACTION_PREFIX, additional_req_params: {coordToken: coordinates_token, query: search_term, maxPageSize: 25, expand: 'referencedConcept'})
+
+    results.results.each do |result|
+
+      concept_suggestions_data << {label: result.matchText, value: result.referencedConcept.identifiers.uuids.first}
+    end
+
+    render json: concept_suggestions_data
+  end
+  def process_concept_Create
+
+    fsn = params[:fsn]
+    preferredTerm = params[:preferredTerm]
+    parentConceptIds = params[:parentConceptIds]
+
+    body_params = {fsn: fsn, preferredTerm: preferredTerm,parentConceptIds:parentConceptIds}
+
+    set_id = ConceptRest::get_concept(action: ConceptRestActions::ACTION_CREATE, body_params:body_params )
+    if set_id.is_a? CommonRest::UnexpectedResponse
+
+      render json: {set_id: nil}
+      return
+    end
+
+  end
+
+  def process_concept_Clone
+    @concept_id = params[:concept_id]
+    getconceptDate = get_conceptData(uuid)
+
+    body_params = {fsn: getconceptDate[:FSN], preferredTerm: getconceptDate[:PreferredTerm],parentConceptIds:getconceptDate[:ParentID]}
+
+    set_id = ConceptRest::get_concept(action: ConceptRestActions::ACTION_CREATE, body_params:body_params )
+    if set_id.is_a? CommonRest::UnexpectedResponse
+
+      render json: {set_id: nil}
+      return
+    end
+  end
+
+
+  def process_concept_ActiveInactive
+    coordinates_token = session[:coordinatestoken].token
+    id = params[:id]
+    statusFlag = params[:statusFlag]
+
+    if statusFlag == 'ACTIVE'
+      deactivate = ConceptRest::get_concept(action: ConceptRestActions::ACTION_UPDATE_ACTIVATE, uuid: id)
+    else
+      deactivate = ConceptRest::get_concept(action: ConceptRestActions::ACTION_UPDATE_DEACTIVATE, uuid: id)
+    end
+    if deactivate.is_a? CommonRest::UnexpectedResponse
+
+      render json: {deactivate: nil}
+      return
+    end
+  end
+  ##
+  # get_concept_recents - RESTful route for populating a list of recent concept searches via http :GET
+  # @return [json] an array of hashes {id:, text:}
+  def get_concept_recents
+
+    recents_array = []
+
+    if session[CONCEPT_RECENTS]
+      recents_array = session[CONCEPT_RECENTS]
+    end
+
+    render json: recents_array
   end
 
   def metadata

@@ -1,21 +1,13 @@
-#Fixture created on 2016-04-29 16:52:54
+#Fixture created on 2016-09-22 13:37:31
 ---
 - "@class": gov.vha.isaac.rest.api1.data.sememe.RestSememeDescriptionVersion
   expandables:
-    items:
-    - name: referencedDetails
-      url: ''
   sememeChronology:
     "@class": gov.vha.isaac.rest.api1.data.sememe.RestSememeChronology
     expandables:
-      items:
-      - name: versionsAll
-        url: rest/1/sememe/versions/8175972?expand=versionsAll
-      - name: versionsLatestOnly
-        url: rest/1/sememe/version/8175972?expand=versionsLatestOnly
-    sememeSequence: 8175972
+    sememeSequence: 17843645
     assemblageSequence: 65
-    referencedComponentNid: -2143652862
+    referencedComponentNid: -2133649959
     referencedComponentNidObjectType:
     referencedComponentNidDescription:
     identifiers:
@@ -25,29 +17,24 @@
     versions:
   sememeVersion:
     "@class": gov.vha.isaac.rest.api1.data.RestStampedVersion
-    stampSequence: 109
-    state: ACTIVE
+    stampSequence: 420
+    state:
+      "@class": gov.vha.isaac.rest.api1.data.enumerations.RestStateType
+      name: Active
+      enumId: 1
     time: 1012453200000
     authorSequence: 5
-    moduleSequence: 194063
+    moduleSequence: 591023
     pathSequence: 7
   nestedSememes:
   - "@class": gov.vha.isaac.rest.api1.data.sememe.RestDynamicSememeVersion
     expandables:
-      items:
-      - name: referencedDetails
-        url: ''
     sememeChronology:
       "@class": gov.vha.isaac.rest.api1.data.sememe.RestSememeChronology
       expandables:
-        items:
-        - name: versionsAll
-          url: rest/1/sememe/versions/8175973?expand=versionsAll
-        - name: versionsLatestOnly
-          url: rest/1/sememe/version/8175973?expand=versionsLatestOnly
-      sememeSequence: 8175973
-      assemblageSequence: 74
-      referencedComponentNid: -2138693117
+      sememeSequence: 17843646
+      assemblageSequence: 75
+      referencedComponentNid: -2128630847
       referencedComponentNidObjectType:
       referencedComponentNidDescription:
       identifiers:
@@ -57,38 +44,33 @@
       versions:
     sememeVersion:
       "@class": gov.vha.isaac.rest.api1.data.RestStampedVersion
-      stampSequence: 54
-      state: ACTIVE
+      stampSequence: 368
+      state:
+        "@class": gov.vha.isaac.rest.api1.data.enumerations.RestStateType
+        name: Active
+        enumId: 1
       time: 1012453200000
       authorSequence: 5
-      moduleSequence: 62
+      moduleSequence: 64
       pathSequence: 7
     nestedSememes: []
     dataColumns:
     - "@class": gov.vha.isaac.rest.api1.data.sememe.dataTypes.RestDynamicSememeString
       columnNumber: 0
       data: '900000000000951010'
-  caseSignificanceConceptSequence: 108
+  caseSignificanceConceptSequence: 112
   languageConceptSequence: 8
   text: SNOMED CT Model Component
-  descriptionTypeConceptSequence: 11
+  descriptionTypeConceptSequence: 12
   dialects:
   - "@class": gov.vha.isaac.rest.api1.data.sememe.RestDynamicSememeVersion
     expandables:
-      items:
-      - name: referencedDetails
-        url: ''
     sememeChronology:
       "@class": gov.vha.isaac.rest.api1.data.sememe.RestSememeChronology
       expandables:
-        items:
-        - name: versionsAll
-          url: rest/1/sememe/versions/8175974?expand=versionsAll
-        - name: versionsLatestOnly
-          url: rest/1/sememe/version/8175974?expand=versionsLatestOnly
-      sememeSequence: 8175974
+      sememeSequence: 17843647
       assemblageSequence: 10
-      referencedComponentNid: -2138693117
+      referencedComponentNid: -2128630847
       referencedComponentNidObjectType:
       referencedComponentNidDescription:
       identifiers:
@@ -98,17 +80,20 @@
       versions:
     sememeVersion:
       "@class": gov.vha.isaac.rest.api1.data.RestStampedVersion
-      stampSequence: 54
-      state: ACTIVE
+      stampSequence: 368
+      state:
+        "@class": gov.vha.isaac.rest.api1.data.enumerations.RestStateType
+        name: Active
+        enumId: 1
       time: 1012453200000
       authorSequence: 5
-      moduleSequence: 62
+      moduleSequence: 64
       pathSequence: 7
     nestedSememes: []
     dataColumns:
     - "@class": gov.vha.isaac.rest.api1.data.sememe.dataTypes.RestDynamicSememeNid
       columnNumber: 0
-      data: -2147483526
+      data: -2147483524
       dataObjectType:
         "@class": gov.vha.isaac.rest.api1.data.enumerations.RestObjectChronologyType
         name: Concept
@@ -116,20 +101,12 @@
       conceptDescription: preferred (ISAAC)
   - "@class": gov.vha.isaac.rest.api1.data.sememe.RestDynamicSememeVersion
     expandables:
-      items:
-      - name: referencedDetails
-        url: ''
     sememeChronology:
       "@class": gov.vha.isaac.rest.api1.data.sememe.RestSememeChronology
       expandables:
-        items:
-        - name: versionsAll
-          url: rest/1/sememe/versions/8175976?expand=versionsAll
-        - name: versionsLatestOnly
-          url: rest/1/sememe/version/8175976?expand=versionsLatestOnly
-      sememeSequence: 8175976
+      sememeSequence: 17843648
       assemblageSequence: 9
-      referencedComponentNid: -2138693117
+      referencedComponentNid: -2128630847
       referencedComponentNidObjectType:
       referencedComponentNidDescription:
       identifiers:
@@ -139,17 +116,20 @@
       versions:
     sememeVersion:
       "@class": gov.vha.isaac.rest.api1.data.RestStampedVersion
-      stampSequence: 54
-      state: ACTIVE
+      stampSequence: 368
+      state:
+        "@class": gov.vha.isaac.rest.api1.data.enumerations.RestStateType
+        name: Active
+        enumId: 1
       time: 1012453200000
       authorSequence: 5
-      moduleSequence: 62
+      moduleSequence: 64
       pathSequence: 7
     nestedSememes: []
     dataColumns:
     - "@class": gov.vha.isaac.rest.api1.data.sememe.dataTypes.RestDynamicSememeNid
       columnNumber: 0
-      data: -2147483526
+      data: -2147483524
       dataObjectType:
         "@class": gov.vha.isaac.rest.api1.data.enumerations.RestObjectChronologyType
         name: Concept
@@ -157,20 +137,12 @@
       conceptDescription: preferred (ISAAC)
 - "@class": gov.vha.isaac.rest.api1.data.sememe.RestSememeDescriptionVersion
   expandables:
-    items:
-    - name: referencedDetails
-      url: ''
   sememeChronology:
     "@class": gov.vha.isaac.rest.api1.data.sememe.RestSememeChronology
     expandables:
-      items:
-      - name: versionsAll
-        url: rest/1/sememe/versions/8175975?expand=versionsAll
-      - name: versionsLatestOnly
-        url: rest/1/sememe/version/8175975?expand=versionsLatestOnly
-    sememeSequence: 8175975
+    sememeSequence: 17843649
     assemblageSequence: 65
-    referencedComponentNid: -2143652862
+    referencedComponentNid: -2133649959
     referencedComponentNidObjectType:
     referencedComponentNidDescription:
     identifiers:
@@ -180,29 +152,24 @@
     versions:
   sememeVersion:
     "@class": gov.vha.isaac.rest.api1.data.RestStampedVersion
-    stampSequence: 109
-    state: ACTIVE
+    stampSequence: 420
+    state:
+      "@class": gov.vha.isaac.rest.api1.data.enumerations.RestStateType
+      name: Active
+      enumId: 1
     time: 1012453200000
     authorSequence: 5
-    moduleSequence: 194063
+    moduleSequence: 591023
     pathSequence: 7
   nestedSememes:
   - "@class": gov.vha.isaac.rest.api1.data.sememe.RestDynamicSememeVersion
     expandables:
-      items:
-      - name: referencedDetails
-        url: ''
     sememeChronology:
       "@class": gov.vha.isaac.rest.api1.data.sememe.RestSememeChronology
       expandables:
-        items:
-        - name: versionsAll
-          url: rest/1/sememe/versions/8175977?expand=versionsAll
-        - name: versionsLatestOnly
-          url: rest/1/sememe/version/8175977?expand=versionsLatestOnly
-      sememeSequence: 8175977
-      assemblageSequence: 74
-      referencedComponentNid: -2138693114
+      sememeSequence: 17843650
+      assemblageSequence: 75
+      referencedComponentNid: -2128630843
       referencedComponentNidObjectType:
       referencedComponentNidDescription:
       identifiers:
@@ -212,38 +179,33 @@
       versions:
     sememeVersion:
       "@class": gov.vha.isaac.rest.api1.data.RestStampedVersion
-      stampSequence: 54
-      state: ACTIVE
+      stampSequence: 368
+      state:
+        "@class": gov.vha.isaac.rest.api1.data.enumerations.RestStateType
+        name: Active
+        enumId: 1
       time: 1012453200000
       authorSequence: 5
-      moduleSequence: 62
+      moduleSequence: 64
       pathSequence: 7
     nestedSememes: []
     dataColumns:
     - "@class": gov.vha.isaac.rest.api1.data.sememe.dataTypes.RestDynamicSememeString
       columnNumber: 0
       data: '900000000000952015'
-  caseSignificanceConceptSequence: 108
+  caseSignificanceConceptSequence: 112
   languageConceptSequence: 8
   text: SNOMED CT Model Component (metadata)
-  descriptionTypeConceptSequence: 28
+  descriptionTypeConceptSequence: 11
   dialects:
   - "@class": gov.vha.isaac.rest.api1.data.sememe.RestDynamicSememeVersion
     expandables:
-      items:
-      - name: referencedDetails
-        url: ''
     sememeChronology:
       "@class": gov.vha.isaac.rest.api1.data.sememe.RestSememeChronology
       expandables:
-        items:
-        - name: versionsAll
-          url: rest/1/sememe/versions/8175978?expand=versionsAll
-        - name: versionsLatestOnly
-          url: rest/1/sememe/version/8175978?expand=versionsLatestOnly
-      sememeSequence: 8175978
+      sememeSequence: 17843651
       assemblageSequence: 10
-      referencedComponentNid: -2138693114
+      referencedComponentNid: -2128630843
       referencedComponentNidObjectType:
       referencedComponentNidDescription:
       identifiers:
@@ -253,17 +215,20 @@
       versions:
     sememeVersion:
       "@class": gov.vha.isaac.rest.api1.data.RestStampedVersion
-      stampSequence: 54
-      state: ACTIVE
+      stampSequence: 368
+      state:
+        "@class": gov.vha.isaac.rest.api1.data.enumerations.RestStateType
+        name: Active
+        enumId: 1
       time: 1012453200000
       authorSequence: 5
-      moduleSequence: 62
+      moduleSequence: 64
       pathSequence: 7
     nestedSememes: []
     dataColumns:
     - "@class": gov.vha.isaac.rest.api1.data.sememe.dataTypes.RestDynamicSememeNid
       columnNumber: 0
-      data: -2147483526
+      data: -2147483524
       dataObjectType:
         "@class": gov.vha.isaac.rest.api1.data.enumerations.RestObjectChronologyType
         name: Concept
@@ -271,20 +236,12 @@
       conceptDescription: preferred (ISAAC)
   - "@class": gov.vha.isaac.rest.api1.data.sememe.RestDynamicSememeVersion
     expandables:
-      items:
-      - name: referencedDetails
-        url: ''
     sememeChronology:
       "@class": gov.vha.isaac.rest.api1.data.sememe.RestSememeChronology
       expandables:
-        items:
-        - name: versionsAll
-          url: rest/1/sememe/versions/8175979?expand=versionsAll
-        - name: versionsLatestOnly
-          url: rest/1/sememe/version/8175979?expand=versionsLatestOnly
-      sememeSequence: 8175979
+      sememeSequence: 17843652
       assemblageSequence: 9
-      referencedComponentNid: -2138693114
+      referencedComponentNid: -2128630843
       referencedComponentNidObjectType:
       referencedComponentNidDescription:
       identifiers:
@@ -294,17 +251,20 @@
       versions:
     sememeVersion:
       "@class": gov.vha.isaac.rest.api1.data.RestStampedVersion
-      stampSequence: 54
-      state: ACTIVE
+      stampSequence: 368
+      state:
+        "@class": gov.vha.isaac.rest.api1.data.enumerations.RestStateType
+        name: Active
+        enumId: 1
       time: 1012453200000
       authorSequence: 5
-      moduleSequence: 62
+      moduleSequence: 64
       pathSequence: 7
     nestedSememes: []
     dataColumns:
     - "@class": gov.vha.isaac.rest.api1.data.sememe.dataTypes.RestDynamicSememeNid
       columnNumber: 0
-      data: -2147483526
+      data: -2147483524
       dataObjectType:
         "@class": gov.vha.isaac.rest.api1.data.enumerations.RestObjectChronologyType
         name: Concept

@@ -44,8 +44,12 @@ module ConceptConcern
 
         attributes = ConceptRest.get_concept(action: ConceptRestActions::ACTION_VERSION, uuid: uuid, additional_req_params: {coordToken: coordinates_token, expand: 'chronology', stated: stated})
 
+        if attributes.is_a? CommonRest::UnexpectedResponse
+            return [{value: ''}, {value: ''}, {value: ''}]
+        end
+
         return_attributes << {label: 'Text', value: attributes.conChronology.description}
-        return_attributes << {label: 'State', value: attributes.conVersion.state}
+        return_attributes << {label: 'State', value: attributes.conVersion.state.name}
 
         if attributes.isConceptDefined.nil? || !boolean(attributes.isConceptDefined)
             defined = 'Primitive'
@@ -89,6 +93,32 @@ module ConceptConcern
     end
 
     ##
+    # descriptions - takes a uuid and returns all of the description concepts attached to it.
+    # @param [String] uuid - The UUID to look up descriptions for
+    # @param [Boolean] stated - Whether to display the stated (true) or inferred view of concepts
+    # @return [object] an array of hashes that contains the attributes
+    def get_conceptData(uuid)
+
+        coordinates_token = session[:coordinatestoken].token
+        returnConcept_attributes = []
+
+        isaac_concept = TaxonomyRest.get_isaac_concept(uuid: uuid)
+
+        if isaac_concept.is_a? CommonRest::UnexpectedResponse
+            return [{value: ''}, {value: ''}, {value: ''}]
+        end
+
+        returnConcept_attributes << {label: 'FSN', value: concept.conChronology.description}
+        returnConcept_attributes << {label: 'ParentID', value: parent.conChronology.identifiers.uuids.first}
+        descriptions = ConceptRest.get_concept(action: ConceptRestActions::ACTION_DESCRIPTIONS, uuid: uuid, additional_req_params: {coordToken: coordinates_token, stated: stated})
+        returnConcept_attributes << {label: 'PreferredTerm', value: description.text}
+
+        return returnConcept_attributes
+
+    end
+
+
+    ##
     # get_descriptions - takes a uuid and returns all of the description concepts attached to it.
     # @param [String] uuid - The UUID to look up descriptions for
     # @param [Boolean] stated - Whether to display the stated (true) or inferred view of concepts
@@ -107,13 +137,13 @@ module ConceptConcern
         descriptions.each do |description|
 
             return_description = {text: description.text}
-            return_description[:state] =  description.sememeVersion.state
+            return_description[:state] =  description.sememeVersion.state.name
 
             attributes = []
 
             # get the description UUID information and add it to the attributes array
             description_uuid = description.sememeChronology.identifiers.uuids.first
-            description_state = description.sememeVersion.state
+            description_state = description.sememeVersion.state.name
             description_time = DateTime.strptime((description.sememeVersion.time / 1000).to_s, '%s').strftime('%m/%d/%Y')
             description_author = get_concept_metadata(description.sememeVersion.authorSequence)
             description_module = get_concept_metadata(description.sememeVersion.moduleSequence)
@@ -139,7 +169,7 @@ module ConceptConcern
             description.dialects.each do |dialect|
 
                 dialect_name = get_concept_metadata(dialect.sememeChronology.assemblageSequence)
-                dialect_state = dialect.sememeVersion.state
+                dialect_state = dialect.sememeVersion.state.name
                 dialect_time = DateTime.strptime((dialect.sememeVersion.time / 1000).to_s, '%s').strftime('%m/%d/%Y')
                 dialect_author = get_concept_metadata(dialect.sememeVersion.authorSequence)
                 dialect_module = get_concept_metadata(dialect.sememeVersion.moduleSequence)
@@ -332,7 +362,7 @@ module ConceptConcern
 
 
                 # start loading the row of sememe data with everything besides the data columns
-                data_row = {sememe_name: sememe_types[assemblage_sequence][:sememe_name], sememe_description: sememe_types[assemblage_sequence][:sememe_description], uuid: uuid, id: assemblage_sequence, state: {data:sememe.sememeVersion.state,display:''},referencedComponentNidDescription: {data:sememe.sememeChronology.referencedComponentNidDescription,display:''} ,columns: {}}
+                data_row = {sememe_name: sememe_types[assemblage_sequence][:sememe_name], sememe_description: sememe_types[assemblage_sequence][:sememe_description], uuid: uuid, id: assemblage_sequence, state: {data:sememe.sememeVersion.state.name,display:''},referencedComponentNidDescription: {data:sememe.sememeChronology.referencedComponentNidDescription,display:''} ,columns: {}}
 
                 # loop through all of the sememe's data columns
                 sememe.dataColumns.each{|row_column|
@@ -432,7 +462,7 @@ module ConceptConcern
                 end
 
                 # start loading the row of sememe data with everything besides the data columns
-                data_row = {sememe_name: sememe_types[assemblage_sequence][:sememe_name], sememe_description: sememe_types[assemblage_sequence][:sememe_description], uuid: uuid, id: assemblage_sequence, state: sememe.sememeVersion.state, level: level, has_nested: has_nested, columns: {}}
+                data_row = {sememe_name: sememe_types[assemblage_sequence][:sememe_name], sememe_description: sememe_types[assemblage_sequence][:sememe_description], uuid: uuid, id: assemblage_sequence, state: sememe.sememeVersion.state.name, level: level, has_nested: has_nested, columns: {}}
 
                 # loop through all of the sememe's data columns
                 sememe.dataColumns.each{|row_column|

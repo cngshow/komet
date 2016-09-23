@@ -18,7 +18,7 @@
         <div class="komet-concept-description-header-block">
 
           <!-- description text -->
-          <div class="komet-concept-description-text">
+          <div class="komet-concept-description-text komet-context-menu" data-menu-type="concept" data-menu-uuid="<%= description[:uuid] %>" data-menu-concept-text="<%= description[:text] %>">
            <b><%= description[:text] %></b>
           </div>
 
@@ -64,7 +64,15 @@
 
           <div class="komet-concept-description-details-row">
 
-            <div class="komet-concept-description-details-name">
+              <%
+                 if attribute[:label] == "UUID"
+                     tag_details = 'class="komet-concept-description-details-name komet-context-menu" data-menu-type="concept" data-menu-uuid="' + description[:uuid] + '" data-menu-concept-text="' + description[:text] + '"'
+                 else
+                     tag_details = 'class="komet-concept-description-details-name"'
+                 end
+              %>
+
+            <div <%= raw tag_details %>>
               <b><%= attribute[:label] %>:</b> <%= attribute[:text] %>
             </div>
 

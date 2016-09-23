@@ -30,7 +30,7 @@ var KometMappingTree = function(treeID, windowType){
     KometMappingTree.prototype.buildMappingTree = function(selectItem) {
 
         if (selectItem == null){
-            selectItem = true;
+            selectItem = false;
         }
 
         //set ui to hour glass

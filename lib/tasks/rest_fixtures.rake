@@ -73,15 +73,15 @@ namespace :rest_fixtures do
     CONCEPT_UUID = ConceptRest::TEST_UUID #What will I do for databases other than vhat?  Will cross that bridge...
     #Descriptions:
     ConceptRest::get_concept(action: ConceptRestActions::ACTION_DESCRIPTIONS, uuid: CONCEPT_UUID) #the simple fact that we fetch the rest data motivates a yaml file's generation in temp.
-    file_loc = KOMETUtilities::TMP_FILE_PREFIX + url_to_path_string(ConceptRest::DESCRIPTIONS_CONCEPT_PATH) + KOMETUtilities::YML_EXT
+    file_loc = KOMETUtilities::TMP_FILE_PREFIX + url_to_path_string(ConceptRest::PATH_DESCRIPTIONS_CONCEPT) + KOMETUtilities::YML_EXT
     FileUtils.cp(file_loc, FILES[CONCEPT_DESCRIPTIONS])
     #Version
     ConceptRest::get_concept(action: ConceptRestActions::ACTION_VERSION, uuid: CONCEPT_UUID) #the simple fact that we fetch the rest data motivates a yaml file's generation in temp.
-    file_loc = KOMETUtilities::TMP_FILE_PREFIX + url_to_path_string(ConceptRest::VERSION_CONCEPT_PATH) + KOMETUtilities::YML_EXT
+    file_loc = KOMETUtilities::TMP_FILE_PREFIX + url_to_path_string(ConceptRest::PATH_VERSION_CONCEPT) + KOMETUtilities::YML_EXT
     FileUtils.cp(file_loc, FILES[CONCEPT_VERSIONS])
     #chronology
     ConceptRest::get_concept(action: ConceptRestActions::ACTION_CHRONOLOGY, uuid: CONCEPT_UUID) #the simple fact that we fetch the rest data motivates a yaml file's generation in temp.
-    file_loc = KOMETUtilities::TMP_FILE_PREFIX + url_to_path_string(ConceptRest::CHRONOLOGY_CONCEPT_PATH) + KOMETUtilities::YML_EXT
+    file_loc = KOMETUtilities::TMP_FILE_PREFIX + url_to_path_string(ConceptRest::PATH_CHRONOLOGY_CONCEPT) + KOMETUtilities::YML_EXT
     FileUtils.cp(file_loc, FILES[CONCEPT_CHRONOLOGY])
   end
 
@@ -93,21 +93,21 @@ namespace :rest_fixtures do
     file_loc = KOMETUtilities::TMP_FILE_PREFIX + url_to_path_string(SememeRest::BY_REFERENCED_COMPONENT_SEMEME_PATH) + KOMETUtilities::YML_EXT
     FileUtils.cp(file_loc, FILES[SEMEME_BY_REFERENCED_COMPONENT])
 
-    SememeRest::get_sememe(action: SememeRestActions::ACTION_CHRONOLOGY, uuid_or_id: SememeRest::TEST_ID, additional_req_params: {expand: 'versionsAll'} ) #the simple fact that we fetch the rest data motivates a yaml file's generation in temp.
+    a = SememeRest::get_sememe(action: SememeRestActions::ACTION_CHRONOLOGY, uuid_or_id: SememeRest::TEST_ID, additional_req_params: {expand: 'versionsAll'} ) #the simple fact that we fetch the rest data motivates a yaml file's generation in temp.
     file_loc = KOMETUtilities::TMP_FILE_PREFIX + url_to_path_string(SememeRest::CHRONOLOGY_SEMEME_PATH) + KOMETUtilities::YML_EXT
     FileUtils.cp(file_loc, FILES[SEMEME_CHRONOLOGY])
 
-    SememeRest::get_sememe(action: SememeRestActions::ACTION_VERSION, uuid_or_id: SememeRest::TEST_ID) #the simple fact that we fetch the rest data motivates a yaml file's generation in temp.
+    SememeRest::get_sememe(action: SememeRestActions::ACTION_VERSION, uuid_or_id: SememeRest::TEST_SEMEME_TYPE_ID) #the simple fact that we fetch the rest data motivates a yaml file's generation in temp.
     file_loc = KOMETUtilities::TMP_FILE_PREFIX + url_to_path_string(SememeRest::VERSION_SEMEME_PATH) + KOMETUtilities::YML_EXT
     FileUtils.cp(file_loc, FILES[SEMEME_VERSIONS])
 
-    SememeRest::get_sememe(action: SememeRestActions::ACTION_BY_ASSEMBLAGE, uuid_or_id: SememeRest::TEST_ID) #the simple fact that we fetch the rest data motivates a yaml file's generation in temp.
+    SememeRest::get_sememe(action: SememeRestActions::ACTION_BY_ASSEMBLAGE, uuid_or_id: SememeRest::TEST_ASSEMBLAGE_ID) #the simple fact that we fetch the rest data motivates a yaml file's generation in temp.
     file_loc = KOMETUtilities::TMP_FILE_PREFIX + url_to_path_string(SememeRest::BY_ASSEMBLAGE_SEMEME_PATH) + KOMETUtilities::YML_EXT
     FileUtils.cp(file_loc, FILES[SEMEME_BY_ASSEMBLAGE])
 
-    SememeRest::get_sememe(action: SememeRestActions::ACTION_SEMEME_DEFINITION, uuid_or_id: SememeRest::TEST_UUID_SEMEME_DEF) #the simple fact that we fetch the rest data motivates a yaml file's generation in temp.
-    file_loc = KOMETUtilities::TMP_FILE_PREFIX + url_to_path_string(SememeRest::DEFINITION_SEMEME_PATH) + KOMETUtilities::YML_EXT
-    FileUtils.cp(file_loc, FILES[SEMEME_DEFINITION])
+    # SememeRest::get_sememe(action: SememeRestActions::ACTION_SEMEME_DEFINITION, uuid_or_id: '0418a591-f75b-39ad-be2c-3ab849326da9') #the simple fact that we fetch the rest data motivates a yaml file's generation in temp.
+    # file_loc = KOMETUtilities::TMP_FILE_PREFIX + url_to_path_string(SememeRest::DEFINITION_SEMEME_PATH) + KOMETUtilities::YML_EXT
+    # FileUtils.cp(file_loc, FILES[SEMEME_DEFINITION])
 
     SememeRest::get_sememe(action: SememeRestActions::ACTION_SEMEME_TYPE, uuid_or_id: SememeRest::TEST_SEMEME_TYPE_ID) #the simple fact that we fetch the rest data motivates a yaml file's generation in temp.
     file_loc = KOMETUtilities::TMP_FILE_PREFIX + url_to_path_string(SememeRest::TYPE_SEMEME_PATH) + KOMETUtilities::YML_EXT
@@ -197,5 +197,27 @@ namespace :rest_fixtures do
   end
 
 end
+
+def find_test_uuid
+  ApplicationController.parse_isaac_metadata_auxiliary
+  uuids = []#['b0372953-4f20-58b8-ad04-20c2239c7d4e']
+  $isaac_metadata_auxiliary.each do |e|  next unless e.last.has_key?('uuids'); uuids << e.last['uuids'].first[:uuid]   end
+  good_uuids = []
+  uuids.each do |uuid|
+    begin
+      puts "Trying uuid #{uuid}"
+      result = SystemApis::get_system_api(action: SystemApiActions::ACTION_OBJECT_CHRONOLOGY_TYPE_BY_ID, uuid_or_id: 'a63f4bf2-a040-11e5-8994-feff819cdc9f') #the simple fact that we fetch the rest data motivates a yaml file's generation in temp.
+      good_uuids << uuid unless result.is_a? CommonRest::UnexpectedResponse
+      p result
+    rescue => ex
+    end
+  end
+  p good_uuids
+end
 # bundle exec rake rest_fixtures:build
 # load ('./lib/tasks/rest_fixtures.rake')
+=begin
+ > ["0418a591-f75b-39ad-be2c-3ab849326da9", "ee58e573-f5f0-58ef-99ca-9240d25b3063", "f31f3d89-5a6f-5e1f-81d3-5b68344d96f9", "45021920-9567-11e5-8994-feff819cdc9f", "bca0a686-3516-3daf-8fcf-fe396d13cfad", "eb9a5e42-3cba-356d-b62
+3-3ed472e20b30", "1f201994-960e-11e5-8994-feff819cdc9f", "1f20182c-960e-11e5-8994-feff819cdc9f", "fd9d47b7-c0a4-3eea-b3ab-2b5a3f9e888f", "6d345372-d9d6-56c1-86c6-8d7b1ae4ce3f", "edf7b492-732d-5235-9df9-3407be8ac6f7", "f66bc690-
+1bcd-513a-8b42-350465c2bf47", "ff6b8bd3-b975-5b64-82b5-5723976d0289", "6423facc-b2c9-5922-9dff-f0abe3a19698"]
+=end

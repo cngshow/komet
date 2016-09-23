@@ -205,6 +205,52 @@ html, body{
 .komet_dashboard .navbar{
     margin-bottom: 0px;
 }
+#komet_navbar_logo a{
+    font-size: 24px;
+    font-weight: bold;
+    color: black;
+}
+#komet_navbar_navigation .nav{
+    margin-bottom: 0px;
+    border-left: 4px solid white;
+    font-size: 18px;
+    font-weight: bold;
+    color: black;
+}
+#komet_navbar_navigation .nav a {
+    border-right: 4px solid white;
+    border-bottom: 1px solid transparent;
+    color: black;
+}
+#komet_navbar_navigation .nav a:hover {
+    border-bottom: 1px solid black;
+}
+#komet_navbar_tools{
+    float:right;
+    padding-right: 15px;
+    height: 100%;
+}
+#komet_user_preference_link{
+    cursor: pointer;
+}
+#komet_navbar_tools > span {
+    margin-right: 4px;
+    border-right: 4px solid white;
+    height: 100%;
+    font-size: 18px;
+    font-weight: bold;
+    color: black;
+    display: inline-block;
+    padding: 15px;
+}
+#komet_navbar_tools a {
+    text-decoration: none;
+    color: black;
+}
+#komet_navbar_tools a:hover {
+    text-decoration: none;
+    color: black;
+}
 
 // KOMET Dashboard Styles
 #komet_dashboard_splitter {
@@ -334,6 +380,9 @@ html, body{
     display: block;
     position: relative;
     top: 3px;
+}
+.komet-inactive-tree-node{
+    font-style: italic;
 }
 
 // Concept Viewer Styles
@@ -679,6 +728,7 @@ td.komet-concept-table-nested-indicator.komet-concept-table-nested-indicator-ope
 .komet-mapping-viewer-body .komet-mapping-set-tabs{
     padding: 0px;
     background-color: #eef1f3;
+    overflow: visible;
 }
 .komet-mapping-set-tabs > div.komet-mapping-set-tab-body{
     display: flex;
@@ -775,85 +825,91 @@ td.komet-concept-table-nested-indicator.komet-concept-table-nested-indicator-ope
     font-size: medium;
     margin-right: 10px;
 }
-.komet-mapping-dialog{
+.komet-add-fields-dialog{
     position: absolute;
     display: flex;
     flex-direction: column;
     border: solid black 1px;
     width: 550px;
     font-size: small;
-    z-index: 1000;
+    z-index: 1;
     background-color: white;
 }
-.komet-mapping-dialog input[type='checkbox']{
+.komet-add-fields-dialog input[type='checkbox']{
     height: 14px;
     width: auto;
     display: inline;
     margin: 0px;
 }
-.komet-mapping-dialog label{
+.komet-add-fields-dialog label{
     font-size: smaller;
     margin: 0px 0px 0px 5px
 }
-.komet-mapping-dialog button{
+.komet-add-fields-dialog button{
     padding: 2px 8px;
     height: 26px;
 }
-.komet-mapping-dialog-header{
+.komet-add-fields-dialog-header{
     display: flex;
     justify-content: space-between;
     background-color: #A7D4E2;
 }
-.komet-mapping-dialog-body{
+.komet-add-fields-dialog-body{
     display: flex;
     justify-content: space-between;
     padding: 4px;
 }
-.komet-mapping-dialog-body-header{
+.komet-add-fields-dialog-body-header{
     margin-bottom: 10px;
 }
-.komet-mapping-dialog-left-column{
+.komet-add-fields-dialog-left-column{
     display: flex;
     flex-direction: column;
+    flex: 1 0 auto
 }
-.komet-mapping-dialog-left-column .komet-indent-block div{
+.komet-add-fields-dialog-left-column .komet-indent-block > div{
     display: flex;
     align-items: center;
     margin-bottom: 4px;
 }
-.komet-mapping-dialog-middle-column{
+.komet-add-fields-dialog-left-column .glyphicon{
+    font-size: smaller;
+    color: red;
+}
+.komet-add-fields-dialog-middle-column{
     display: flex;
     flex-direction: column;
+    flex: 1 0 auto;
     align-items: center;
+    width: 50px;
 }
-.komet-mapping-dialog-middle-column hr{
+.komet-add-fields-dialog-middle-column hr{
     border: 1px solid black;
     margin: 0px;
     height: 95%;
     width: 0px;
 }
-.komet-mapping-dialog-right-column{
+.komet-add-fields-dialog-right-column{
     display: flex;
     flex-direction: column;
 }
-.komet-mapping-dialog-right-column .form-control{
+.komet-add-fields-dialog-right-column > div{
+    margin-bottom: 5px
+}
+.komet-add-fields-dialog-right-column .form-control{
     font-size: small;
     height: 26px;
     padding: 3px 5px;
 }
-.komet-mapping-dialog-right-column .komet-mapping-dialog-uuid{
-    width: 260px;
-    display: inline;
-}
-.komet-mapping-dialog-right-column button{
+.komet-add-fields-dialog-right-column button{
     margin-top: -1px;
 }
-.komet-mapping-dialog-footer{
+.komet-add-fields-dialog-footer{
     display: flex;
     justify-content: flex-end;
     padding-bottom: 4px;
 }
-.komet-mapping-dialog-footer button{
+.komet-add-fields-dialog-footer button{
     margin-right: 5px;
 }
 

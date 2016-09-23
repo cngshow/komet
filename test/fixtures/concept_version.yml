@@ -1,24 +1,22 @@
-#Fixture created on 2016-04-29 16:52:54
+#Fixture created on 2016-09-22 13:37:31
 ---
 "@class": gov.vha.isaac.rest.api1.data.concept.RestConceptVersion
 expandables:
-  items:
-  - name: chronology
-    url: rest/1/concept/chronology/614445
-  - name: parents
-    url: rest/1/concept/version/614445?expand=parents&stated=true
-  - name: children
-    url: rest/1/concept/version/614445?expand=children&stated=true
 conChronology:
 conVersion:
   "@class": gov.vha.isaac.rest.api1.data.RestStampedVersion
-  stampSequence: 109
-  state: ACTIVE
+  stampSequence: 420
+  state:
+    "@class": gov.vha.isaac.rest.api1.data.enumerations.RestStateType
+    name: Active
+    enumId: 1
   time: 1012453200000
   authorSequence: 5
-  moduleSequence: 194063
+  moduleSequence: 591023
   pathSequence: 7
-parents:
-children:
+isConceptDefined: false
+parents: []
+children: []
 childCount:
 parentCount:
+sememeMembership:

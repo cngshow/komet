@@ -124,5 +124,9 @@ load('./lib/isaac_rest/mapping_apis_rest.rb')
 post_test = MappingApis::get_mapping_api(action: MappingApiActions::ACTION_CREATE_SET,  body_params: {name: "Map Set Test 1", description: "The first test of creating a mapset.", purpose: "The first test of creating a mapset using the rest APIs." } )
 put_test = MappingApis::get_mapping_api(uuid_or_id: '83d0b015-ba7e-4e52-8490-0c96ba32b19b', action: MappingApiActions::ACTION_UPDATE_SET, additional_req_params: {state: "Active"},  body_params: {name: "Map Set Test 1.1", description: "The first test of updating a mapset.", purpose: "The first test of updating a mapset using the rest APIs." } )
 get_test = MappingApis::get_mapping_api(action: MappingApiActions::ACTION_SETS,  additional_req_params: {} )
+#ISAAC-rest/target/isaac-rest-1.13-SNAPSHOT/json_RestMappingSetVersionBaseCreate.html
+set_test = MappingApis::get_mapping_api(action: MappingApiActions::ACTION_SET, uuid_or_id: "a9262b1e-f650-5440-9d0d-edf75851ce91" ) # run this for testing
+set_test.mapSetExtendedFields[0].extensionValue #wrong class
+set_test.mapSetExtendedFields[0].extensionValue2 # right class
 =end
 

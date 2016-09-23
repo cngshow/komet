@@ -1,24 +1,20 @@
-#Fixture created on 2016-04-29 16:52:55
+#Fixture created on 2016-09-22 13:37:32
 ---
 - "@class": gov.vha.isaac.rest.api1.data.sememe.RestDynamicSememeVersion
   expandables:
-    items:
-    - name: chronology
-      url: rest/1/sememe/chronology/3216341
-    - name: referencedDetails
-      url: ''
-    - name: nestedSememes
-      url: rest/1/sememe/version/3216341?expand=nestedSememes
   sememeChronology:
   sememeVersion:
     "@class": gov.vha.isaac.rest.api1.data.RestStampedVersion
-    stampSequence: 54
-    state: ACTIVE
+    stampSequence: 368
+    state:
+      "@class": gov.vha.isaac.rest.api1.data.enumerations.RestStateType
+      name: Active
+      enumId: 1
     time: 1012453200000
     authorSequence: 5
-    moduleSequence: 62
+    moduleSequence: 64
     pathSequence: 7
-  nestedSememes:
+  nestedSememes: []
   dataColumns:
   - "@class": gov.vha.isaac.rest.api1.data.sememe.dataTypes.RestDynamicSememeString
     columnNumber: 0

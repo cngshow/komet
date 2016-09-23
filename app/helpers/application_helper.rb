@@ -21,18 +21,23 @@ require './lib/isaac_rest/concept_rest'
 
 module ApplicationHelper
 
-  def get_concept_metadata(id)
+    def get_concept_metadata(id)
 
-    coordinates_token = session[:coordinatestoken].token
-    additional_req_params = {coordToken: coordinates_token}
+        coordinates_token = session[:coordinatestoken].token
+        additional_req_params = {coordToken: coordinates_token}
 
-    ver = ConceptRest.get_concept(action: ConceptRestActions::ACTION_DESCRIPTIONS, uuid: id, additional_req_params: additional_req_params).first
-    ver.text
-  end
+        version = ConceptRest.get_concept(action: ConceptRestActions::ACTION_DESCRIPTIONS, uuid: id, additional_req_params: additional_req_params).first
 
-  def komet_user
-    user = 'unknown'
-    user = session[Roles::SESSION_ROLES_ROOT][Roles::SESSION_USER] if session.has_key?(Roles::SESSION_ROLES_ROOT)
-    user
-  end
+        if version == nil
+            return ''
+        else
+            return version.text
+        end
+    end
+
+    def komet_user
+        user = 'unknown'
+        user = session[Roles::SESSION_ROLES_ROOT][Roles::SESSION_USER] if session.has_key?(Roles::SESSION_ROLES_ROOT)
+        user
+    end
 end

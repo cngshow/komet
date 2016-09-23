@@ -1,24 +1,20 @@
-#Fixture created on 2016-04-29 16:52:56
+#Fixture created on 2016-09-22 13:37:32
 ---
 "@class": gov.vha.isaac.rest.api1.data.sememe.RestSememeLogicGraphVersion
 expandables:
-  items:
-  - name: chronology
-    url: rest/1/sememe/chronology/306
-  - name: referencedDetails
-    url: ''
-  - name: logicNodeUuids
-    url: rest/1/logicGraph/version/306?expand=logicNodeUuids
 sememeChronology:
 sememeVersion:
   "@class": gov.vha.isaac.rest.api1.data.RestStampedVersion
   stampSequence: 1
-  state: ACTIVE
-  time: 1461176521811
+  state:
+    "@class": gov.vha.isaac.rest.api1.data.enumerations.RestStateType
+    name: Active
+    enumId: 1
+  time: 1473400931083
   authorSequence: 5
   moduleSequence: 6
   pathSequence: 7
-nestedSememes:
+nestedSememes: []
 referencedConceptDescription: dynamic sememe extension definition (ISAAC)
 isReferencedConceptDefined: false
 rootLogicNode:
@@ -50,7 +46,7 @@ rootLogicNode:
           enumId: 8
         nodeUuid:
         children: []
-        conceptSequence: 58
+        conceptSequence: 52
         conceptVersion:
         isConceptDefined: false
         conceptDescription: dynamic sememe assemblages (ISAAC)

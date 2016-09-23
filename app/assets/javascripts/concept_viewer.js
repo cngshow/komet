@@ -356,6 +356,60 @@ var ConceptViewer = function(viewerID, currentConceptID) {
         loadLineageRecents();
 
     };
+    ConceptViewer.prototype.showHideConceptBtn = function (divname)    {
+        if (divname == 'yesnolDiv')
+        {
+            $("#yesnolDiv").show();
+            $("#savecancelDiv").hide();
+        }
+        else
+        {
+            $("#yesnolDiv").hide();
+            $("#savecancelDiv").show();
+        }
+
+
+    }
+    ConceptViewer.prototype.saveConcept = function()    {
+        var preferredTerm = $("#taxonomy_pn_text").html();
+        var fsn = $("#taxonomy_fsn_text").html();
+        var parentConceptIds = $("#taxonomy_lineage_id").val();
+
+        params = {fsn: fsn , preferredTerm: preferredTerm ,parentConceptIds:parentConceptIds} ;
+
+        $.get( gon.routes.taxonomy_process_concept_Create_path , params, function( results ) {
+            console.log(results);
+        });
+    }
+
+    ConceptViewer.prototype.createConcept = function(viewerID){
+        $("#yesnolDiv").hide();
+        $("#txtDescription").keyup(function(event) {
+            var stt = $(this).val();
+            $("#taxonomy_pn_text").html(stt);
+
+        });
+
+        $("#taxonomy_lineage_display").keyup(function(event) {
+            var stt =  $("#taxonomy_pn_text").html() + ' (' + $(this).val() + ')';
+            $("#taxonomy_fsn_text").html(stt);
+        });
+
+
+        // setup the assemblage field autocomplete functionality
+        $("#taxonomy_lineage_display").autocomplete({
+            source: gon.routes.search_get_assemblage_suggestions_path,
+            minLength: 3,
+            select: onLineageSuggestionSelection,
+            change: onLineageSuggestionChange
+        });
+
+        // load any previous assemblage queries into a menu for the user to select from
+        loadLineageRecents();
+        return true;
+    };
+
+
     function selectItemByValue(elmnt, value){
         for(var i=0; i < elmnt.options.length; i++)
         {
@@ -445,8 +499,7 @@ var ConceptViewer = function(viewerID, currentConceptID) {
 
     }
 
-    function decriptionType(rowCount,selecteditem)
-    {
+    function decriptionType(rowCount,selecteditem)    {
         var options = "";
         var descriptionTypeSelect = '<select style="width:100px" id="descriptiontypeDDL' + rowCount + '">';
         if(selecteditem == 'SYN') {
@@ -458,8 +511,7 @@ var ConceptViewer = function(viewerID, currentConceptID) {
         descriptionTypeSelect += options + '</select>';
       return descriptionTypeSelect
     }
-    function languagetype(rowCount)
-    {
+    function languagetype(rowCount)    {
         var options = "";
         var languagetypeSelect = '<select style="width:100px" id="languagetypeDDL">';
         options += '<option value=US English>US English</option>';
@@ -468,8 +520,7 @@ var ConceptViewer = function(viewerID, currentConceptID) {
         return languagetypeSelect
 
     }
-    function casetype()
-    {
+    function casetype()    {
         var options = "";
         var descriptionTypeSelect = '<select style="width:100px" id="descriptiontypeDDL">';
         options += '<option value=true>Yes</option>';
@@ -477,8 +528,7 @@ var ConceptViewer = function(viewerID, currentConceptID) {
         descriptionTypeSelect += options + '</select>';
         return descriptionTypeSelect
     }
-    function stateType()
-    {
+    function stateType()    {
         var options = "";
         var stateTypeSelect = '<select style="width:100px" id="descriptiontypeDDL">';
         options += '<option value=ACTIVE>Active</option>';
@@ -486,41 +536,13 @@ var ConceptViewer = function(viewerID, currentConceptID) {
         stateTypeSelect += options + '</select>';
         return stateTypeSelect
     }
-    function acceptabilityType()
-    {
+    function acceptabilityType()    {
         var options = "";
         var acceptabilitySelect = '<select style="width:100px" id="acceptabilityDDL">';
         options += '<option value=Acceptable>Acceptable</option>';
         acceptabilitySelect += options + '</select>';
         return acceptabilitySelect
     }
-
-    ConceptViewer.prototype.createName = function(viewerID){
-
-        $("#txtName").keyup(function(event) {
-            var stt = $(this).val();
-            $("#taxonomy_pn_text").html(stt);
-
-        });
-
-        $("#taxonomy_lineage_display").keyup(function(event) {
-            var stt =  $("#taxonomy_pn_text").text() + ' (' + $(this).val() + ')';
-            $("#taxonomy_fsn_text").html(stt);
-        });
-
-
-        // setup the assemblage field autocomplete functionality
-        $("#taxonomy_lineage_display").autocomplete({
-            source: gon.routes.search_get_assemblage_suggestions_path,
-            minLength: 3,
-            select: onLineageSuggestionSelection,
-            change: onLineageSuggestionChange
-        });
-
-        // load any previous assemblage queries into a menu for the user to select from
-        loadLineageRecents();
-        return true;
-    };
 
     function onLineageSuggestionSelection(event, ui){
 

@@ -32,7 +32,7 @@
             <!-- Defined -->
             <% if @attributes[2][:value] == 'Primitive' %>
                 <div class="komet-tree-node-icon komet-tree-node-primitive" title="<%= @attributes[2][:value] %>"></div>
-            <% else %>
+            <% elsif @attributes[2][:value] == 'Defined' %>
                 <div class="komet-tree-node-icon komet-tree-node-defined" title="<%= @attributes[2][:value] %>"></div>
             <% end %>
 
@@ -43,7 +43,7 @@
           <div>
             <% if @attributes[8] %>
                 <%= @attributes[8][:label] %>: <%= @attributes[8][:value] %>
-            <% else %>
+            <% elsif @attributes[7] %>
                 <%= @attributes[7][:label] %>: <%= @attributes[7][:value] %>
             <% end %>
           </div>

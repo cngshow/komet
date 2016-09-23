@@ -1,16 +1,11 @@
-#Fixture created on 2016-04-29 16:52:54
+#Fixture created on 2016-09-22 13:37:32
 ---
 "@class": gov.vha.isaac.rest.api1.data.concept.RestConceptChronology
-conceptSequence: 614445
+conceptSequence: 1009044
 description: SNOMED CT Model Component (metadata)
 expandables:
-  items:
-  - name: versionsAll
-    url: rest/1/concept/versions/614445/
-  - name: versionsLatestOnly
-    url: rest/1/concept/version/614445/
 identifiers:
   "@class": gov.vha.isaac.rest.api1.data.RestIdentifiedObject
   uuids:
   - a60bd881-9010-3260-9653-0c85716b4391
-versions:
+versions: []

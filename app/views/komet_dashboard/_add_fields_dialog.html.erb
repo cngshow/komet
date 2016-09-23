@@ -1,0 +1,96 @@
+<%
+    # This is a partial template for producing a dialog to add user defined fields to any form.
+    #
+    # The following are the local variable this template expects to be set in order to function:
+    # dialog_title: The displayed title of the dialog (optional)
+    # id_prefix - A string that will be prepended to all ID attributes. Needs to be unique to the page
+    # id_postfix - A string that will appended to all ID attributes. Mainly needed if in a viewer panel, as there could be multiple of the same panels. (optional)
+    # javascript_object - The javascript object that will contain the functions to be run
+    # javascript_function_qualifier - A string that will make the javascript function names unique in their containing object. (optional)
+    #
+    # Four javascript functions must be created to handle the events this template generates. The following names assume 'javascript_function_qualifier' is set to "Sample":
+    # cancelInclude_javascript_function_qualifier_FieldsDialog()    [cancelIncludeSampleFieldsDialog()]
+    # changed_javascript_function_qualifier_AddFieldsType(value)    [changedSampleAddFieldsType(value)]
+    # add_javascript_function_qualifier_Field()                     [addSampleField()]
+    # saveInclude_javascript_function_qualifier_FieldsDialog()      [saveIncludeSampleFieldsDialog()]
+    #
+    # This form is hidden (with the .hide class) and absolutely positioned by default. The form will need to be displayed and positioned in javascript
+    # A javascript function will also be needed that generates the list of checkboxes that represent the fields the user wants to add to the form in the select_included_fields section
+
+    if !defined?(dialog_title)
+        dialog_title = 'Add Fields'
+    end
+
+    if !defined?(id_postfix)
+        id_postfix = ''
+    end
+
+    if !defined?(javascript_function_qualifier)
+        javascript_function_qualifier = ''
+    end
+%>
+
+<div id="<%= id_prefix %>add_set_fields<%= id_postfix %>" class="komet-add-fields-dialog hide">
+
+    <div class="komet-add-fields-dialog-header">
+
+        <div></div>
+        <div class="komet-add-fields-dialog-title"><%= dialog_title %></div>
+        <div class="glyphicon glyphicon-remove" onclick="<%= javascript_object + '.cancelInclude' + javascript_function_qualifier + 'FieldsDialog()' %>"></div>
+    </div>
+
+    <div class="komet-add-fields-dialog-body">
+
+        <div class="komet-add-fields-dialog-left-column">
+
+            <div class="komet-add-fields-dialog-body-header">Add from Template</div>
+
+            <div><a class="komet-add-fields-dialog-select-all" onclick="return false;">Select All</a></div>
+
+            <div id="<%= id_prefix %>select_included_fields<%= id_postfix %>" class="komet-indent-block"></div>
+
+        </div>
+
+        <div class="komet-add-fields-dialog-middle-column">
+
+            <div class="komet-add-fields-dialog-body-header">OR</div>
+            <hr>
+        </div>
+
+        <div class="komet-add-fields-dialog-right-column">
+
+            <div class="komet-add-fields-dialog-body-header">Add from Existing Code Sets</div>
+
+            <div>
+                <label for="<%= id_prefix %>add_fields_type<%= id_postfix %>">Type</label>
+                <select id="<%= id_prefix %>add_fields_type<%= id_postfix %>" onchange="<%= javascript_object + '.changed' + javascript_function_qualifier + 'AddFieldsType(value)' %>" class="form-control">
+                    <option value="text">Text</option>
+                    <option value="textarea">Text Area</option>
+                    <option value="select">Select</option>
+                    <!--<option value="concept">Concept</option>-->
+                </select>
+            </div>
+
+            <div>
+                <autosuggest id-base="<%= id_prefix %>add_fields_label" id-postfix="<%= id_postfix %>" label="Label (Alphanumeric, hypen, and dash)"></autosuggest>
+            </div>
+
+            <div id="<%= id_prefix %>add_fields_options_section<%= id_postfix %>" class="hide">
+                <label for="<%= id_prefix %>add_fields_options<%= id_postfix %>">Options (Comma separated list)</label>
+                <input type="text" id="<%= id_prefix %>add_fields_options<%= id_postfix %>" class="form-control" value="">
+            </div>
+
+            <div>
+                <button type="button" class="btn btn-default" onclick="<%= javascript_object + '.add' + javascript_function_qualifier + 'Field()' %>">Add Field</button>
+            </div>
+        </div>
+
+    </div>
+
+    <div class="komet-add-fields-dialog-footer">
+
+        <button class="btn btn-default" type="button" onclick="<%= javascript_object + '.cancelInclude' + javascript_function_qualifier + 'FieldsDialog()' %>">Cancel</button>
+        <button class="btn btn-primary" type="button" onclick="<%= javascript_object + '.saveInclude' + javascript_function_qualifier + 'FieldsDialog()' %>">Save</button>
+
+    </div>
+</div>

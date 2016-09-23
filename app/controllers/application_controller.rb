@@ -9,6 +9,7 @@ OpenSSL::SSL::VERIFY_PEER = OpenSSL::SSL::VERIFY_NONE
 class ApplicationController < ActionController::Base
   include CommonController
   include ApplicationHelper
+  include Pundit
   include SSOI
   include ServletSupport
 
@@ -16,13 +17,18 @@ class ApplicationController < ActionController::Base
   # For APIs, you may want to use :null_session instead.
   protect_from_forgery with: :exception
 
+  prepend_before_action :add_pundit_methods
+  after_action :verify_authorized
   before_action :ensure_rest_version
   before_action :ensure_roles
+  before_action :read_only? #must be after ensure_roles
+
   before_action :set_render_menu, :setup_routes, :setup_constants
   attr_reader :ssoi # a boolean if we have ssoi headers
   alias ssoi? ssoi
 
   rescue_from Exception, :with => :internal_error
+  rescue_from Pundit::NotAuthorizedError, Pundit::AuthorizationNotPerformedError, :with => :pundit_error
 
   def set_render_menu
     @set_render_menu = true
@@ -143,10 +149,8 @@ class ApplicationController < ActionController::Base
     roles
   end
 
-  def setup_constants
-
+  def self.parse_isaac_metadata_auxiliary
     if $isaac_metadata_auxiliary.nil?
-
       constants_file = './config/generated/yaml/IsaacMetadataAuxiliary.yaml'
       prefix = File.basename(constants_file).split('.').first.to_sym
       json = YAML.load_file constants_file
@@ -154,12 +158,28 @@ class ApplicationController < ActionController::Base
       $isaac_metadata_auxiliary = translated_hash
       $isaac_metadata_auxiliary.freeze
     end
+  end
 
+  def setup_constants
+    ApplicationController.parse_isaac_metadata_auxiliary
     gon.IsaacMetadataAuxiliary = $isaac_metadata_auxiliary
   end
 
+  def pundit_user
+    if session[Roles::SESSION_ROLES_ROOT]
+      {user: session[Roles::SESSION_ROLES_ROOT][Roles::SESSION_USER], roles: session[Roles::SESSION_ROLES_ROOT][Roles::SESSION_USER_ROLES]}
+    else
+      {user: nil, roles: []}
+    end
+  end
+
+  #dynamically add authorization methods
+  def add_pundit_methods
+    PunditDynamicRoles::add_controller_methods self
+  end
+
   private
-  def add_translations(json)
+  def self.add_translations(json)
     translated_hash = json.deep_dup
     json.keys.each do |k|
       translated_array = []

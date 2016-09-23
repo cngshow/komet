@@ -29,6 +29,7 @@ class MappingController < ApplicationController
     before_filter :init_session
     skip_before_filter :set_render_menu, :only => [:map_set_editor]
 
+    DATA_TYPES_CLASS = Gov::Vha::Isaac::Rest::Api1::Data::Sememe::DataTypes
 
     def init_session
 
@@ -64,9 +65,9 @@ class MappingController < ApplicationController
             set_hash[:id] = get_next_id
             set_hash[:set_id] = set.identifiers.uuids.first
             set_hash[:text] = set.name
-            set_hash[:state] = set.mappingSetStamp.state
+            set_hash[:state] = set.mappingSetStamp.state.name
             set_hash[:icon] = 'komet-tree-node-icon fa fa-folder'
-            set_hash[:a_attr] = {class: 'komet-context-menu', 'data-menu-type' => 'map_set', 'data-menu-uuid' => set_hash[:set_id]}
+            set_hash[:a_attr] = {class: 'komet-context-menu', 'data-menu-type' => 'map_set', 'data-menu-uuid' => set_hash[:set_id], 'data-menu-concept-text' => set_hash[:text]}
 
             mapping_tree << set_hash
         end
@@ -87,7 +88,7 @@ class MappingController < ApplicationController
         @previous_set_id = params[:previous_set_id]
 
         if @viewer_id == nil || @viewer_id == '' || @viewer_id == 'new'
-            @viewer_id = get_next_id
+            @viewer_id = get_next_id.to_s
         end
 
         if @mapping_action == 'set_details' || @mapping_action == 'create_set'
@@ -116,7 +117,7 @@ class MappingController < ApplicationController
             set_hash[:set_id] = set.identifiers.uuids.first
             set_hash[:name] = set.name
             set_hash[:description] = set.description
-            set_hash[:state] = set.mappingSetStamp.state
+            set_hash[:state] = set.mappingSetStamp.state.name
             set_hash[:time] = DateTime.strptime((set.mappingSetStamp.time / 1000).to_s, '%s').strftime('%m/%d/%Y')
             set_hash[:author] = get_concept_metadata(set.mappingSetStamp.authorSequence)
             set_hash[:module] = get_concept_metadata(set.mappingSetStamp.moduleSequence)
@@ -134,25 +135,121 @@ class MappingController < ApplicationController
 
     def map_set_editor
 
+        session[:mapset_item_definitions] = []
+
         coordinates_token = session[:coordinatestoken].token
         @map_set = {id: '', name: '', description: '', version: '', vuid: '', rules: '', include_fields: [], state: '', status: 'Active', time: '', module: '', path: ''}
         @map_set[:include_fields] = ['source_system', 'source_version', 'target_system', 'target_version', 'equivalence', 'comments']
-        @map_set[:source_system] = {name: 'source_system', type: 'concept', value: '', label: 'Source System', display: false}
+        @map_set[:item_fields] = []
+        @map_set[:source_system] = {name: 'source_system', type: 'concept', value: '', label: 'Source System', label_display: 'Source System', removable: false, display: false}
         @map_set[:source_system_display] = ''
-        @map_set[:source_version] = {name: 'source_version', type: 'text', value: '', label: 'Source Version', display: false}
-        @map_set[:target_system] = {name: 'target_system', type: 'concept', value: '', label: 'Target System', display: false}
+        @map_set[:source_version] = {name: 'source_version', type: 'text', value: '', label: 'Source Version', label_display: 'Source Version', removable: false, display: false}
+        @map_set[:target_system] = {name: 'target_system', type: 'concept', value: '', label: 'Target System', label_display: 'Target System', removable: false, display: false}
         @map_set[:target_system_display] = ''
-        @map_set[:target_version] = {name: 'target_version', type: 'text', value: '', label: 'Target Version', display: false}
-        @map_set[:equivalence] = {name: 'equivalence', type: 'select', value: '', label: 'Equivalence Type', display: false, options: ['No Restrictions', 'Exact', 'Broader Than', 'Narrower Than']}
-        @map_set[:comments] = {name: 'comments', type: 'textarea', value: '', label: 'Comments', display: false}
+        @map_set[:target_version] = {name: 'target_version', type: 'text', value: '', label: 'Target Version', label_display: 'Target Version', removable: false, display: false}
+        @map_set[:equivalence] = {name: 'equivalence', type: 'select', value: '', label: 'Equivalence Type', label_display: 'Equivalence Type', removable: false, display: false, options: ['No Restrictions', 'Exact', 'Broader Than', 'Narrower Than']}
+        @map_set[:comments] = {name: 'comments', type: 'textarea', value: '', label: 'Comments', label_display: 'Comments', removable: false, display: false}
         @set_id = params[:set_id]
 
         if @set_id &&  @set_id != ''
 
             set = MappingApis::get_mapping_api(action: MappingApiActions::ACTION_SET, uuid_or_id: @set_id,  additional_req_params: {coordToken: coordinates_token, CommonRest::CacheRequest => false})
 
+            Gov::Vha::Isaac::Rest::Api1::Data::Sememe::RestDynamicSememeData
             if set.is_a? CommonRest::UnexpectedResponse
                 return @map_set
+            end
+
+            extended_fields = set.mapSetExtendedFields
+
+            extended_fields.each do |field|
+
+                name = field.extensionNameConcept
+                label = name
+                label_display = field.extensionNameConceptDescription
+                value = field.extensionValue2[0].data
+                removable = true
+                display = true
+
+                if value == nil && value == ''
+                    display = false
+                end
+
+                if field.extensionValue2[0].class == DATA_TYPES_CLASS::RestDynamicSememeString
+                    type = 'text'
+
+                elsif field.extensionValue2[0].class == DATA_TYPES_CLASS::RestDynamicSememeNid || field.extensionValue2[0].class == DATA_TYPES_CLASS::RestDynamicSememeUUID
+
+                    type = 'concept'
+                    @map_set[name + '_display'] = value
+
+                elsif name == '-2147483446'
+
+                    type = 'concept'
+                    value = '6e60d7fd-3729-5dd3-9ce7-6d97c8f75447'
+                    removable = false
+                    @map_set[name + '_display'] = 'VHAT'
+                end
+
+                @map_set[:include_fields] << name
+                @map_set[name] = {name: name, type: type, value: value, label: label, label_display: label_display, removable: removable, display: display}
+
+            end
+
+            item_fields = set.mapItemFieldsDefinition
+
+            item_fields.each do |field|
+
+                name = field.columnConceptSequence.to_s
+                label = name
+                label_display = field.columnName
+                description = field.columnDescription
+                order = field.columnOrder.to_s
+                data_type = field.columnDataType.name
+                required = field.columnRequired
+                validator_types = field.columnValidatorTypes
+                validators = field.columnValidatorData
+                removable = true
+                display = true
+
+                @map_set[:item_fields] << name
+                @map_set['item_field_' + name] = {name: name, description: description, order: order, data_type: data_type, required: required, label: label, label_display: label_display, removable: removable, display: display}
+
+                field_type = 'text'
+
+                # if data_type == 'UUID'
+                #
+                #     field_type = 'concept'
+                #
+                #     validator_types.each_with_index do |validator_type, index|
+                #
+                #         if validators[index].class == DATA_TYPES_CLASS::RestDynamicSememeUUID && validator_type.name == 'Is Kind Of' && validators[index].dataObjectType.name == 'CONCEPT'
+                #
+                #             field_type = 'select'
+                #
+                #             option_concepts = TaxonomyRest.get_isaac_concept(uuid: validators[index].data, additional_req_params: {coordToken: coordinates_token})
+                #
+                #             if !option_concepts.is_a? CommonRest::UnexpectedResponse
+                #
+                #                 options = []
+                #
+                #                 option_concepts.children.each do |option_concept|
+                #
+                #                     options << option_concept.conChronology.description
+                #                 end
+                #
+                #                 @map_set['item_field_' + name][:options] = options
+                #             end
+                #         end
+                #     end
+                # else
+                #     field_type = 'text'
+                # end
+
+                @map_set['item_field_' + name][:type] = field_type
+
+                session[:mapset_item_definitions] << @map_set['item_field_' + name]
+
             end
 
             @map_set[:set_id] = set.identifiers.uuids.first
@@ -165,22 +262,15 @@ class MappingController < ApplicationController
             @map_set[:path] = get_concept_metadata(set.mappingSetStamp.pathSequence)
             @map_set[:source_system][:value] = '11'
             @map_set[:source_system_display] = 'Source System Test'
-            @map_set[:source_system][:display] = true
             @map_set[:source_version][:value] = 'Source Version Test'
-            @map_set[:source_version][:display] = true
             @map_set[:target_system][:value] = '22'
             @map_set[:target_system_display] = 'Target System Test'
-            @map_set[:target_system][:display] = true
             @map_set[:target_version][:value] = 'Target Version Test'
-            @map_set[:target_version][:display] = true
             @map_set[:equivalence][:value] = 'Exact'
-            @map_set[:equivalence][:display] = true
             @map_set[:comments][:value] = 'Comments Test'
-            @map_set[:comments][:display] = true
             @map_set[:rules] = 'Business rules test'
             @map_set[:version] = '12.4'
             @map_set[:vuid] = '4500635'
-
 
             @viewer_title = @map_set[:description]
         else
@@ -192,30 +282,84 @@ class MappingController < ApplicationController
 
     def get_overview_items_results
 
-        # post_test = MappingApis::get_mapping_api(action: MappingApiActions::ACTION_CREATE_SET,  body_params: {name: "Map Set Test 1", description: "The first test of creating a mapset.", purpose: "The first test of creating a mapset using the rest APIs." } )
-        # put_test = MappingApis::get_mapping_api(uuid_or_id: '1ebfe2e3-4a9d-4cbe-ae21-0986e89ad9f1', action: MappingApiActions::ACTION_UPDATE_SET, additional_req_params: {state: "Active"},  body_params: {name: "Map Set Test 1.1", description: "The second test of updating a mapset.", purpose: "The second test of updating a mapset using the rest APIs." } )
-
         coordinates_token = session[:coordinatestoken].token
-        results = {}
-        data = []
+        column_definitions = {}
+
+        session[:mapset_item_definitions].each do |definition|
+            column_definitions[definition[:name]] = definition
+        end
+
         set_id = params[:overview_set_id]
         filter = params[:overview_sets_filter]
         show_inactive = params[:show_inactive]
         page_size = 1000 #params[:overview_items_page_size]
         page_number = 1 #params[:overview_items_page_number]
+        results = {column_definitions: column_definitions, page_number: page_number}
+        item_data = []
+        extended_columns = []
 
-        results[:total_number] = 2
-        results[:page_number] = page_number
+        items = MappingApis::get_mapping_api(action: MappingApiActions::ACTION_ITEMS, uuid_or_id: set_id,  additional_req_params: {coordToken: coordinates_token, expand: 'referencedDetails,comments '}) # CommonRest::CacheRequest => false
+
+        if items.is_a? CommonRest::UnexpectedResponse
+            return {total_number: 0, page_number: 1, data: []}
+        end
+
+        #{id: '1', set_id: '1', source: '11', source_display: 'Source 11', target: 'Target 11', target_display: 'Target 11', qualifier: 'No Qualifier', comments: 'This is a comment', review_state: 'Pending', status: 'Active', time: '10/10/2016', module: 'Development', path: 'Path'},
+
+        items.mappingItemVersions.each do |item|
+
+            item_hash = {}
+
+            item_hash[:item_id] = item.identifiers.uuids.first
+            item_hash[:source_concept] = item.sourceConcept
+            item_hash[:source_concept_display] = item.sourceDescription
+            item_hash[:target_concept] = item.targetConcept
+            item_hash[:target_concept_display] = item.targetDescription
+            item_hash[:qualifier] = item.qualifierConcept
+            item_hash[:qualifier_display] = item.qualifierDescription
+            item_hash[:comments] = ''
+            item_hash[:state] = item.mappingItemStamp.state.name
+            item_hash[:time] = DateTime.strptime((item.mappingItemStamp.time / 1000).to_s, '%s').strftime('%m/%d/%Y')
+            item_hash[:author] = get_concept_metadata(item.mappingItemStamp.authorSequence)
+            item_hash[:module] = get_concept_metadata(item.mappingItemStamp.moduleSequence)
+            item_hash[:path] = get_concept_metadata(item.mappingItemStamp.pathSequence)
+
+            # session[:mapset_item_definitions].each do |column|
+            #
+            #     if column.name == '231'
+            #
+            #
+            #     elsif column.name == '231'
+            #
+            #     elsif column.name == '231'
+            #
+            #     end
+            # end
+
+            item.mapItemExtendedFields.each do |field|
+
+                if field != nil
+                    item_hash[session[:mapset_item_definitions][field.columnNumber][:name]] = field.data
+                end
+            end
+
+            item_data << item_hash
+        end
+
+        results[:total_number] = items.mappingItemVersions.length
 
         matching_items = session['map_item_data'].select { |item|
             item[:set_id] == set_id.to_s
         }
 
-        results[:data] = matching_items
+        results[:data] = item_data
         render json: results
     end
 
     def process_map_set
+
+        # post_test = MappingApis::get_mapping_api(action: MappingApiActions::ACTION_CREATE_SET,  body_params: {name: "Map Set Test 1", description: "The first test of creating a mapset.", purpose: "The first test of creating a mapset using the rest APIs." } )
+        # put_test = MappingApis::get_mapping_api(uuid_or_id: '1ebfe2e3-4a9d-4cbe-ae21-0986e89ad9f1', action: MappingApiActions::ACTION_UPDATE_SET, additional_req_params: {state: "Active"},  body_params: {name: "Map Set Test 1.1", description: "The second test of updating a mapset.", purpose: "The second test of updating a mapset using the rest APIs." } )
 
         set_id = params[:komet_mapping_set_editor_set_id]
         set_name = params[:komet_mapping_set_editor_name]

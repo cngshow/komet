@@ -1,4 +1,4 @@
-#Fixture created on 2016-04-29 16:52:56
+#Fixture created on 2016-09-22 13:37:32
 ---
 - "@class": gov.vha.isaac.rest.api1.data.enumerations.RestNodeSemanticType
   name: NECESSARY_SET
