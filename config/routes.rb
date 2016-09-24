@@ -24,7 +24,7 @@ Rails.application.routes.draw do
   get 'komet_dashboard/get_concept_edit', :as => :taxonomy_get_concept_edit
   get 'komet_dashboard/get_attributes_jsonreturntype', :as => :taxonomy_get_attributes_jsonreturntype
   get 'komet_dashboard/get_descriptions_jsonreturntype', :as => :taxonomy_get_descriptions_jsonreturntype
-  get 'komet_dashboard/process_concept_Create', :as => :taxonomy_process_concept_Create
+  post 'komet_dashboard/process_concept_Create', :as => :taxonomy_process_concept_Create
   get 'komet_dashboard/process_concept_ActiveInactive', :as => :taxonomy_process_concept_ActiveInactive
   get 'komet_dashboard/process_concept_Clone', :as => :taxonomy_process_concept_Clone_path
 

@@ -66,7 +66,7 @@ var UIHelper = (function () {
                         items.openNewConceptViwer = {
                             name: "Open in New Concept Viewer",
                             icon: "context-menu-icon glyphicon-list-alt",
-                            callback: openConcept($triggerElement, uuid, null, WindowManager.NEW)
+                            callback: openConcept($triggerElement, uuid, WindowManager.NEW)
                         };
                     }
 
@@ -79,27 +79,27 @@ var UIHelper = (function () {
                             items.openNewMappingViwer = {
                                 name: "Open in New Mapping Viewer",
                                 icon: "context-menu-icon glyphicon-list-alt",
-                                callback: openMapSet($triggerElement, uuid, null, WindowManager.NEW)
+                                callback: openMapSet($triggerElement, uuid, WindowManager.NEW)
                             };
                         }
                     }
+
                     //items.openConceptNewWindow = {name:"Open in New Window", icon: "context-menu-icon glyphicon-list-alt", callback: openConcept($triggerElement, uuid, "popup")};
+
+                    if (menuState == 'Active') {
+                        items.activeInactiveUuid = {name:"InActive", icon: "context-menu-icon glyphicon-ok-circle", callback: activeInactiveConcept(uuid,'InActive')};
+                    }
+                    else {
+                        items.activeInactiveUuid = {name:"Active", icon: "context-menu-icon glyphicon-ban-circle", callback: activeInactiveConcept(uuid,'Active')};
+                    }
+
+                    items.editConcept = {name:"Edit Concept", icon: "context-menu-icon glyphicon-plus", callback:  openConceptEditor($triggerElement, uuid, WindowManager.INLINE)};
+                    items.cloneConcept = {name:"Clone Concept", icon: "context-menu-icon glyphicon-share", callback:  cloneConcept(uuid)};
 
                     if (conceptText != null || conceptText != undefined || conceptText != "") {
 
+                        items.createChildConcept = {name:"Create Child", icon: "context-menu-icon glyphicon-plus", callback:  openConceptEditor($triggerElement, null, WindowManager.INLINE, uuid, conceptText)};
                         items.copyConcept = {name:"Copy Concept", icon: "context-menu-icon glyphicon-copy", callback: copyConcept(uuid, conceptText)};
-                        if (menuState == 'Active')
-                             {
-                                  items.activeInactiveUuid = {name:"InActive", icon: "context-menu-icon glyphicon-copy", callback: activeInactiveConcept(uuid,'InActive')};
-                             }
-                        else
-                            {
-                                items.activeInactiveUuid = {name:"Active", icon: "context-menu-icon glyphicon-copy", callback: activeInactiveConcept(uuid,'Active')};
-                            }
-
-                        items.cloneUuid = {name:"Clone", icon: "context-menu-icon glyphicon-copy", callback:  cloneConcept(uuid)};
-                        items.createChildUuid = {name:"Create Child", icon: "context-menu-icon glyphicon-copy", callback:  createChildConcept(uuid,conceptText)};
-
                     }
 
                     items.copyUuid = {name: "Copy UUID", icon: "context-menu-icon glyphicon-copy", callback: copyToClipboard(uuid)};
@@ -128,7 +128,7 @@ var UIHelper = (function () {
 
     // Context menu functions
 
-    function activeInactiveConcept(uuid,statusFlag)    {
+    function activeInactiveConcept(uuid,statusFlag) {
         return function (){
         params = {id: uuid,statusFlag:statusFlag } ;
 
@@ -138,27 +138,17 @@ var UIHelper = (function () {
              });
         };
     }
-    function createChildConcept(uuid,selectedTxt){
-    return function (){
 
-        openAddConcept(uuid,selectedTxt);
+    function cloneConcept(uuid) {
 
-    };
-}
-    function cloneConcept(uuid)    {
         return function (){
+
             params = {uuid: uuid} ;
+
             $.get( gon.routes.taxonomy_process_concept_Clone_path , params, function( results ) {
-                console.log(results);
+                console.log("Clone Concept " + uuid);
             });
         };
-    }
-    function getOpenConceptIcon(opt, $itemElement, itemKey, item) {
-        // Set the content to the menu trigger selector and add an bootstrap icon to the item.
-        $itemElement.html('<span class="glyphicon glyphicon-star" aria-hidden="true"></span> ' + opt.selector);
-
-        // Add the context-menu-icon-updated class to the item
-        return 'context-menu-icon-updated';
     }
 
     function copyConcept(id, conceptText){
@@ -188,27 +178,24 @@ var UIHelper = (function () {
             textArea.select();
             document.execCommand('copy');
             document.body.removeChild(textArea);
-
         };
     }
 
-    function openConcept(element, id, viewerID, windowType) {
+    function openConcept(element, id, windowType) {
 
         return function () {
 
             var stated;
-            var conceptPanel = element.parents("div[id^=komet_viewer_]");
+            var viewerPanel = element.parents("div[id^=komet_viewer_]");
+            var viewerID;
 
-            if (viewerID === undefined){
-
-                if (conceptPanel.length > 0){
-                    viewerID = conceptPanel.first().attr("data-komet-viewer-id");
-                } else{
-                    viewerID = WindowManager.getLinkedViewerID();
-                }
+            if (viewerPanel.length > 0){
+                viewerID = viewerPanel.first().attr("data-komet-viewer-id");
+            } else{
+                viewerID = WindowManager.getLinkedViewerID();
             }
 
-            if (conceptPanel.length > 0){
+            if (viewerPanel.length > 0){
                 stated = WindowManager.viewers[viewerID].getStatedView();
             } else{
                 stated = TaxonomyModule.getStatedView();
@@ -218,33 +205,40 @@ var UIHelper = (function () {
         };
     }
 
-    function openMapSet(element, id, viewerID, windowType) {
+    function openConceptEditor(element, id, windowType, parentID, parentText) {
 
         return function () {
 
             var viewerPanel = element.parents("div[id^=komet_viewer_]");
+            var viewerID;
 
-            if (viewerID === undefined){
+            if (viewerPanel.length > 0) {
+                viewerID = viewerPanel.first().attr("data-komet-viewer-id");
+            } else {
+                viewerID = WindowManager.getLinkedViewerID();
+            }
 
-                if (viewerPanel.length > 0){
-                    viewerID = viewerPanel.first().attr("data-komet-viewer-id");
-                } else{
-                    viewerID = WindowManager.getLinkedViewerID();
-                }
+            $.publish(KometChannels.Taxonomy.taxonomyConceptEditorChannel, [id, viewerID, windowType, {parentID: parentID, parentText: parentText}]);
+        };
+    }
+
+    function openMapSet(element, id, windowType) {
+
+        return function () {
+
+            var viewerPanel = element.parents("div[id^=komet_viewer_]");
+            var viewerID;
+
+            if (viewerPanel.length > 0){
+                viewerID = viewerPanel.first().attr("data-komet-viewer-id");
+            } else{
+                viewerID = WindowManager.getLinkedViewerID();
             }
 
             $.publish(KometChannels.Mapping.mappingTreeNodeSelectedChannel, ["", id, viewerID, windowType]);
         };
     }
 
-    function openAddConcept(uuid,selectedTxt)    {
-          $.publish(KometChannels.Taxonomy.taxonomyAddConceptChannel, ['', WindowManager.getLinkedViewerID(),uuid,selectedTxt]);
-
-
-    }
-    function openEditConcept(v)    {
-        $.publish(KometChannels.Taxonomy.taxonomyEditConceptChannel, ['',WindowManager.getLinkedViewerID(),'attributes']);
-    }
     // function to switch a field between enabled and disabled
     function toggleFieldAvailability(field_name, enable){
 
@@ -450,25 +444,41 @@ var UIHelper = (function () {
 
     var useAutoSuggestRecent = function(autoSuggestID, autoSuggestDisplayID, id, text){
 
-        $("#" + autoSuggestID).val(text);
-        $("#" + autoSuggestDisplayID).val(id);
+        var labelField = $("#" + autoSuggestID);
+        labelField.val(text);
+        labelField.change();
+
+        var idField = $("#" + autoSuggestDisplayID)
+        idField.val(id);
+        idField.change();
     };
 
     var onAutoSuggestSelection = function(event, ui){
 
-        $(this).val(ui.item.label);
-        $("#" + this.id.replace("_display", "")).val(ui.item.value);
+        var labelField = $(this);
+        labelField.val(ui.item.label);
+        labelField.change();
+
+        var idField = $("#" + this.id.replace("_display", ""))
+        idField.val(ui.item.value);
+        idField.change();
+
         return false;
     };
 
     var onAutoSuggestChange = function(event, ui){
 
         if (!ui.item) {
-            event.target.value = "";
-            $("#" + this.id.replace("_display", "")).val("");
+
+            var labelField = $(this);
+            labelField.val("");
+            labelField.change();
+
+            var idField = $("#" + this.id.replace("_display", ""))
+            idField.val("");
+            idField.change();
         }
     };
-
 
     return {
         getActiveTabId: getActiveTabId,
@@ -483,9 +493,7 @@ var UIHelper = (function () {
         createAutoSuggestField: createAutoSuggestField,
         processAutoSuggestTags: processAutoSuggestTags,
         loadAutoSuggestRecents: loadAutoSuggestRecents,
-        useAutoSuggestRecent: useAutoSuggestRecent,
-        openAddConcept: openAddConcept,
-        openEditConcept:openEditConcept
+        useAutoSuggestRecent: useAutoSuggestRecent
     };
 })();
 

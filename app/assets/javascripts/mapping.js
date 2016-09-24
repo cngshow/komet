@@ -81,6 +81,7 @@ var MappingModule = (function () {
 
                 WindowManager.loadViewerData(data, viewerID, "mapping", windowType);
 
+                // only resolve waiting requests if this is an inline viewer. New and popup viewers still have more processing.
                 if (windowType != WindowManager.NEW && windowType != WindowManager.POPUP) {
                     WindowManager.deferred.resolve();
                 }
@@ -97,6 +98,8 @@ var MappingModule = (function () {
     function createViewer(viewerID, setID, mappingAction) {
 
         WindowManager.createViewer(new MappingViewer(viewerID, setID, mappingAction));
+
+        // resolve waiting requests now that processing is done.
         WindowManager.deferred.resolve();
     }
 

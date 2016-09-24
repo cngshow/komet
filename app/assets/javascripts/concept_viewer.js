@@ -16,7 +16,7 @@
  See the License for the specific language governing permissions and
  limitations under the License.
  */
-    
+
 var ConceptViewer = function(viewerID, currentConceptID) {
 
     ConceptViewer.prototype.init = function(viewerID, currentConceptID) {
@@ -311,113 +311,122 @@ var ConceptViewer = function(viewerID, currentConceptID) {
         this.refsetGridOptions.api.exportDataAsCsv({allColumns: true});
     };
 
+    ConceptViewer.prototype.createConcept = function() {
+
+        UIHelper.processAutoSuggestTags("#komet_concept_lineage_panel_" + this.viewerID);
+
+        $("#komet_create_concept_confirm_section_" + this.viewerID).hide();
+
+        // when the parent field changes, update the name display fields
+        $("#komet_create_concept_parent_display_" + this.viewerID).change(function(event) {
+
+            // set the FSN display text [Description (Parent Text)]
+            var preferred_name =  $("#komet_create_concept_description_" + this.viewerID).val();
+            $("#komet_create_concept_fsn_" + this.viewerID).html(preferred_name + ' (' + event.currentTarget.value + ')');
+
+            // set the Preferred Name display text [Description]
+            $("#komet_create_concept_preferred_name_" + this.viewerID).html(preferred_name);
+        }.bind(this));
+
+        // when the description field changes, update the name display fields
+        $("#komet_create_concept_description_" + this.viewerID).change(function(event) {
+
+            // set the FSN display text [Description (Parent Text)]
+            var fsn = event.currentTarget.value + " (" + $("#komet_create_concept_parent_display_" + this.viewerID).val() + ")";
+            $("#komet_create_concept_fsn_" + this.viewerID).html(fsn);
+
+            // set the Preferred Name display text [Description]
+            $("#komet_create_concept_preferred_name_" + this.viewerID).html(event.currentTarget.value);
+        }.bind(this));
+
+        var thisViewer = this;
+
+        $("#komet_create_concept_form_" + this.viewerID).submit(function () {
+
+            $.ajax({
+                type: "POST",
+                url: $(this).attr("action"),
+                data: $(this).serialize(), //new FormData($(this)[0]),
+                success: function (data) {
+
+                    $("#komet_create_concept_form_" + thisViewer.viewerID).find(".komet-form-error").remove();
+
+                    console.log(data);
+
+                    if (data.concept_id == null){
+                        $("#komet_create_concept_section_").prepend(UIHelper.generateFormErrorMessage("An error has occurred. The concept was not created."));
+                    } else {
+                        $.publish(KometChannels.Taxonomy.taxonomyConceptEditorChannel, [data.concept_id, thisViewer.viewerID, WindowManager.INLINE]);
+                    }
+                }
+            });
+
+            // have to return false to stop the form from posting twice.
+            return false;
+        });
+
+        return true;
+    };
+
+    ConceptViewer.prototype.showSaveSection = function (sectionName) {
+
+        if (sectionName == 'confirm')
+        {
+            $("#komet_create_concept_confirm_section_" + this.viewerID).show();
+            $("#komet_create_concept_save_section_" + this.viewerID).hide();
+        }
+        else
+        {
+            $("#komet_create_concept_confirm_section_" + this.viewerID).hide();
+            $("#komet_create_concept_save_section_" + this.viewerID).show();
+        }
+    };
+
     ConceptViewer.prototype.editConcept = function(viewerID,stated){
 
         var divtext = "";
         var rowCount = 0;
         var partial = 'komet_dashboard/concept_edit';
         var concept_id  = "?concept_id=" + this.currentConceptID + "&stated=stated&partial=" + partial + "&viewer_id=" + viewerID;
-        $.get( gon.routes.taxonomy_get_attributes_jsonreturntype_path  + concept_id     ,function( data ) {
+
+        $.get(gon.routes.taxonomy_get_attributes_jsonreturntype_path  + concept_id     ,function( data ) {
+
             selectItemByValue(document.getElementById('komet_concept_Status'),data[1].value);
 
-            if ( data[2].value == 'Primitive')
-            {
+            if ( data[2].value == 'Primitive') {
                 divtext = "<div class='komet-tree-node-icon komet-tree-node-primitive' title=''" + data[2].value + "'></div>"
-            }
-              else
-            {
+            } else {
                 divtext = "<div class='komet-tree-node-icon komet-tree-node-defined' title='" + data[2].value + "'></div>"
             }
+
             $("#definedDiv").html(divtext);
 
             selectItemByValue(document.getElementById('komet_concept_defined'),data[2].value);
-
         });
+
         descriptiondropdown();
-        $.get( gon.routes.taxonomy_get_descriptions_jsonreturntype_path  + concept_id , function( descriptionData ) {
+
+        $.get(gon.routes.taxonomy_get_descriptions_jsonreturntype_path  + concept_id , function( descriptionData ) {
 
             $.each(descriptionData, function (index, value) {
+
                 rowCount = rowCount + 1;
-                 addDescriptionData(index,value,rowCount)
+                addDescriptionData(index,value,rowCount)
             });
-
         });
-
-
-        // setup the assemblage field autocomplete functionality
-        $("#taxonomy_lineage_display").autocomplete({
-            source: gon.routes.search_get_assemblage_suggestions_path,
-            minLength: 3,
-            select: onLineageSuggestionSelection,
-            change: onLineageSuggestionChange
-        });
-
-        // load any previous assemblage queries into a menu for the user to select from
-        loadLineageRecents();
-
-    };
-    ConceptViewer.prototype.showHideConceptBtn = function (divname)    {
-        if (divname == 'yesnolDiv')
-        {
-            $("#yesnolDiv").show();
-            $("#savecancelDiv").hide();
-        }
-        else
-        {
-            $("#yesnolDiv").hide();
-            $("#savecancelDiv").show();
-        }
-
-
-    }
-    ConceptViewer.prototype.saveConcept = function()    {
-        var preferredTerm = $("#taxonomy_pn_text").html();
-        var fsn = $("#taxonomy_fsn_text").html();
-        var parentConceptIds = $("#taxonomy_lineage_id").val();
-
-        params = {fsn: fsn , preferredTerm: preferredTerm ,parentConceptIds:parentConceptIds} ;
-
-        $.get( gon.routes.taxonomy_process_concept_Create_path , params, function( results ) {
-            console.log(results);
-        });
-    }
-
-    ConceptViewer.prototype.createConcept = function(viewerID){
-        $("#yesnolDiv").hide();
-        $("#txtDescription").keyup(function(event) {
-            var stt = $(this).val();
-            $("#taxonomy_pn_text").html(stt);
-
-        });
-
-        $("#taxonomy_lineage_display").keyup(function(event) {
-            var stt =  $("#taxonomy_pn_text").html() + ' (' + $(this).val() + ')';
-            $("#taxonomy_fsn_text").html(stt);
-        });
-
-
-        // setup the assemblage field autocomplete functionality
-        $("#taxonomy_lineage_display").autocomplete({
-            source: gon.routes.search_get_assemblage_suggestions_path,
-            minLength: 3,
-            select: onLineageSuggestionSelection,
-            change: onLineageSuggestionChange
-        });
-
-        // load any previous assemblage queries into a menu for the user to select from
-        loadLineageRecents();
-        return true;
     };
 
+    function selectItemByValue(elmnt, value) {
 
-    function selectItemByValue(elmnt, value){
-        for(var i=0; i < elmnt.options.length; i++)
+        for (var i=0; i < elmnt.options.length; i++)
         {
-            if(elmnt.options[i].value.toUpperCase() == value)
+            if (elmnt.options[i].value.toUpperCase() == value)
                 elmnt.selectedIndex = i;
         }
     }
-    function descriptiondropdown()    {
+
+    function descriptiondropdown() {
+
         var headingtr = document.createElement("TR");
         headingtr.setAttribute("id", "descriptiondata");
         headingtr.setAttribute("style", "background-color: #4f80d9;color:white;text-align: center")
@@ -450,11 +459,10 @@ var ConceptViewer = function(viewerID, currentConceptID) {
         var headingtd6 = document.createElement("TD");
         headingtd6.innerHTML ='Delete';
         document.getElementById("descriptiondata").appendChild(headingtd6);
-
-
     }
 
-    function addDescriptionData(index,data,rowCount)    {
+    function addDescriptionData(index,data,rowCount) {
+
         if(index == "descriptions")
         {
             for (var i = 0, count = data.length; i < count; i++) {
@@ -474,8 +482,8 @@ var ConceptViewer = function(viewerID, currentConceptID) {
                 descriptionRow.setAttribute("id", "tr" + rowCount);
 
                 idCell.innerHTML = rowCount;
-                descriptiontypeCell.innerHTML = decriptionType(rowCount,data[i].description_type_short);
-               // console.log('descriptiontypeDDL' + rowCount);
+                descriptiontypeCell.innerHTML = descriptionType(rowCount,data[i].description_type_short);
+                // console.log('descriptiontypeDDL' + rowCount);
                 //selectItemByValue(document.getElementById('descriptiontypeDDL' + rowCount) ,data[i].description_type_short);
                 descriptiontextCell.innerHTML = '<input name="descriptionText"  type="text" id="' + "descriptionText" + '~' + rowCount + '" width="20px"  value=" ' + data[i].text + ' "  />';
                 acceptabilityCell.innerHTML = acceptabilityType(rowCount);
@@ -496,10 +504,9 @@ var ConceptViewer = function(viewerID, currentConceptID) {
                 $("#description_texttbl").append(descriptionRow)
             }
         }
-
     }
 
-    function decriptionType(rowCount,selecteditem)    {
+    function descriptionType(rowCount,selecteditem) {
         var options = "";
         var descriptionTypeSelect = '<select style="width:100px" id="descriptiontypeDDL' + rowCount + '">';
         if(selecteditem == 'SYN') {
@@ -509,9 +516,10 @@ var ConceptViewer = function(viewerID, currentConceptID) {
             options += '<option SELECTED="SELECTED" value=FSN>FSN</option>';
         }
         descriptionTypeSelect += options + '</select>';
-      return descriptionTypeSelect
+        return descriptionTypeSelect
     }
-    function languagetype(rowCount)    {
+
+    function languagetype(rowCount) {
         var options = "";
         var languagetypeSelect = '<select style="width:100px" id="languagetypeDDL">';
         options += '<option value=US English>US English</option>';
@@ -520,7 +528,8 @@ var ConceptViewer = function(viewerID, currentConceptID) {
         return languagetypeSelect
 
     }
-    function casetype()    {
+
+    function casetype() {
         var options = "";
         var descriptionTypeSelect = '<select style="width:100px" id="descriptiontypeDDL">';
         options += '<option value=true>Yes</option>';
@@ -528,7 +537,8 @@ var ConceptViewer = function(viewerID, currentConceptID) {
         descriptionTypeSelect += options + '</select>';
         return descriptionTypeSelect
     }
-    function stateType()    {
+
+    function stateType() {
         var options = "";
         var stateTypeSelect = '<select style="width:100px" id="descriptiontypeDDL">';
         options += '<option value=ACTIVE>Active</option>';
@@ -536,52 +546,13 @@ var ConceptViewer = function(viewerID, currentConceptID) {
         stateTypeSelect += options + '</select>';
         return stateTypeSelect
     }
-    function acceptabilityType()    {
+
+    function acceptabilityType() {
         var options = "";
         var acceptabilitySelect = '<select style="width:100px" id="acceptabilityDDL">';
         options += '<option value=Acceptable>Acceptable</option>';
         acceptabilitySelect += options + '</select>';
         return acceptabilitySelect
-    }
-
-    function onLineageSuggestionSelection(event, ui){
-
-        $("#taxonomy_lineage_display").val(ui.item.label);
-        $("#taxonomy_lineage_id").val(ui.item.value);
-        var stt =  $("#taxonomy_pn_text").text() + ' (' + $("#taxonomy_lineage_display").val() + ')';
-        $("#taxonomy_fsn_text").html(stt);
-        return false;
-    }
-
-    function onLineageSuggestionChange(event, ui){
-
-        if (!ui.item){
-            event.target.value = "";
-            $("#taxonomy_lineage_id").val("");
-
-        }
-    }
-    function loadLineageRecents() {
-
-        $.get(gon.routes.search_get_assemblage_recents_path, function (data) {
-
-            var options = "";
-
-            $.each(data, function (index, value) {
-
-                // use the html function to escape any html that may have been entered by the user
-                var valueText = $("<li>").text(value.text).html();
-                options += "<li><a href=\"#\" onclick=\"TaxonomySearchModule.useLineageRecent('" + value.id + "', '" + valueText + "')\">" + valueText + "</a></li>";
-            });
-
-            $("#taxonomy_lineage_recents").html(options);
-        });
-    }
-
-    function useLineageRecent(id, text){
-
-        $("#taxonomy_lineage_display").val(text);
-        $("#taxonomy_lineage_id").val(id);
     }
 
     // call our constructor function

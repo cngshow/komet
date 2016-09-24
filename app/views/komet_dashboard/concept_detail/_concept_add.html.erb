@@ -1,0 +1,75 @@
+<div class="panel panel-default komet-no-margins komet-panel" data-komet-viewer-id="<%= @viewer_id %>" id="komet_viewer_<%= @viewer_id %>">
+
+    <div class="panel-heading">
+        <span class="panel-title komet-section-title">Create Concept</span>
+    </div>
+
+    <div class="panel-body" id="komet_create_concept_section_<%= @viewer_id %>">
+
+        <%= form_tag(taxonomy_process_concept_Create_path, method: 'post', id: "komet_create_concept_form_#{@viewer_id}") do %>
+
+            <div id="komet_create_concept_save_section_<%= @viewer_id %>" style="width: 750px ; float: right">All fields required except where noted as Optional.
+                <button type="button" class="btn btn-default" onclick="WindowManager.closeViewer(<%= @viewer_id %>)">Cancel</button>
+                <button type="button" class="btn btn-primary" id="komet_create_concept_save_<%= @viewer_id %>" onclick="WindowManager.viewers[<%= @viewer_id %>].showSaveSection('confirm')">Save</button>
+            </div>
+
+            <div id="komet_create_concept_confirm_section_<%= @viewer_id %>" style="width: 750px ; float: right">Are you sure you want to commit changes?
+                <button type="button" class="btn btn-default" onclick="WindowManager.viewers[<%= @viewer_id %>].showSaveSection('save')">No</button>
+                <button class="btn btn-primary">Yes</button>
+            </div>
+
+            <br><br>
+
+            <div>
+
+                <div id="komet_concept_lineage_panel_<%= @viewer_id %>" class="komet-concept-section-panel komet-concept-lineage-panel">
+
+                    <div style="width:350px;">
+                        <autosuggest id-base="komet_create_concept_parent" id-postfix="_<%= @viewer_id %>" label="Parent" value="<%= @parent_id %>" display-value="<%= @parent_text %>"></autosuggest>
+                        <br>
+                    </div>
+                </div>
+
+                <div class="komet-concept-description-title"><br><br>DESCRIPTIONS</div>
+
+                <div class="komet-concept-section-panel komet-concept-description-panel">
+                    <!-- main header block - always visible -->
+                    <div>
+                        <div>
+                            Description Text<br> <input name="komet_create_concept_description" id="komet_create_concept_description_<%= @viewer_id %>" style="width:300px" type="text"><br><br>
+                        </div>
+                        <div>
+                            Extended Description Type: (optional)<br>
+                            <select name="komet_create_concept_description_type" id="komet_create_concept_description_type_<%= @viewer_id %>"  style="width:300px">
+
+                                <option value=""></option>
+
+                                <% @description_types.each do |type| %>
+
+                                    <option value="<%= type[:concept_id] %>"><%= type[:description] %></option>
+                                <% end %>
+
+                            </select>
+                        </div>
+                        <div>
+                            <br><br>
+                            Fully Specified Name:
+                            <div id="komet_create_concept_fsn_<%= @viewer_id %>"></div>
+                            <br>
+                            Preferred Name:
+                            <div id="komet_create_concept_preferred_name_<%= @viewer_id %>"></div>
+                            <br><br>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        <% end # end form %>
+    </div>
+
+</div>
+
+<script>
+    WindowManager.viewers[<%= @viewer_id %>].createConcept();
+</script>
+
+
