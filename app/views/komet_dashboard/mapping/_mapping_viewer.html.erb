@@ -1,7 +1,8 @@
+<!-- DO NOT PUT ANYTHING ABOVE THE KOMET VIEWER DIV - IT WILL BREAK WINDOWING WHEN CLOSING VIEWERS-->
 <div class="panel panel-default komet-no-margins komet-panel" id="komet_viewer_<%= @viewer_id %>" data-komet-viewer-id="<%= @viewer_id %>">
     <div class="panel-heading">
     <span class="panel-title komet-section-title">
-        <span id="komet_mapping_panel_tree_link_<%= @viewer_id %>" class="fa fa-chain-broken" onclick="WindowManager.toggleViewerLinkage(<%= @viewer_id %>, WindowManager.getLinkedViewerID() != '<%= @viewer_id %>');" title="Make Active Panel"></span>
+        <span id="komet_mapping_panel_tree_link_<%= @viewer_id %>" class="fa fa-chain-broken" onclick="WindowManager.toggleViewerLinkage('<%= @viewer_id %>', WindowManager.getLinkedViewerID() != '<%= @viewer_id %>');" title="Viewer linked to Mapping Tree. Click to unlink."></span>
         <span id="komet_mapping_panel_tree_show_<%= @viewer_id %>" class="fa fa-tree" onclick="WindowManager.viewers[<%= @viewer_id %>].showInMappingTree();" title="Show in Mapping Tree"></span>
         <%= @viewer_title %>
     </span>
@@ -9,7 +10,7 @@
         <div class="komet-panel-tools">
             <!--<div class="glyphicon glyphicon-new-window"></div>
             <div class="glyphicon glyphicon-resize-full"></div>-->
-            <div class="glyphicon glyphicon-remove" onclick="WindowManager.closeViewer(<%= @viewer_id %>)"></div>
+            <div class="glyphicon glyphicon-remove" onclick="WindowManager.closeViewer('<%= @viewer_id %>')"></div>
         </div>
     </div>
 
@@ -28,7 +29,7 @@
             }
         }
 
-        if (WindowManager.getLinkedViewerID() == <%= @viewer_id %> && MappingModule.tree.selectedSetID != WindowManager.viewers[<%= @viewer_id %>].currentSetID) {
+        if (WindowManager.getLinkedViewerID() == "<%= @viewer_id %>" && MappingModule.tree.selectedSetID != WindowManager.viewers[<%= @viewer_id %>].currentSetID) {
             WindowManager.viewers[<%= @viewer_id %>].showInMappingTree();
         }
 

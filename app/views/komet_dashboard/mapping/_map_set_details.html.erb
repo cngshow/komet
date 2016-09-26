@@ -19,7 +19,7 @@
         </div>
 
 
-        <%= form_tag('/mapping/process_map_set', method: 'post', id: "komet_mapping_set_editor_form_#{@viewer_id}", class: 'komet-mapping-set-details-form komet-mapping-section-panel-details') do %>
+        <%= form_tag(mapping_process_map_set_path, method: 'post', id: "komet_mapping_set_editor_form_#{@viewer_id}", class: 'komet-mapping-set-details-form komet-mapping-section-panel-details') do %>
 
             <%= hidden_field_tag :komet_mapping_set_editor_set_id, @map_set[:set_id], id: "komet_mapping_set_editor_set_id_#{@viewer_id}" %>
 

@@ -99,7 +99,20 @@
 
 <script>
 
-  WindowManager.viewers[<%= @viewer_id %>].setPanelState('komet_viewer_<%= @viewer_id %>', null, WindowManager.viewers[<%= @viewer_id %>].editConcept(WindowManager.viewers[<%= @viewer_id %>]));
+    if (!WindowManager.viewers.hasOwnProperty('<%= @viewer_id %>') || !(WindowManager.viewers[<%= @viewer_id %>] instanceof ConceptViewer)) {
+        ConceptsModule.createViewer("<%= @viewer_id %>", <%= @concept_id %>);
+    } else {
 
+        WindowManager.viewers[<%= @viewer_id %>].currentConceptID = <%= @concept_id %>;
 
+        if (WindowManager.getLinkedViewerID() == "<%= @viewer_id %>") {
+            WindowManager.viewers["<%= @viewer_id %>"].swapLinkIcon(true);
+        }
+    }
+
+    $(document).ready(function () {
+
+        WindowManager.viewers[<%= @viewer_id %>].editConcept();
+        UIHelper.initializeContextMenus();
+    });
 </script>
