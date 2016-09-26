@@ -636,6 +636,9 @@ class KometDashboardController < ApplicationController
             render json: {concept_id: nil} and return
         end
 
+        # add the parent concept to the concept recents array in the session
+        add_to_recents(CONCEPT_RECENTS, parent_concept_id, parent_concept_text)
+
         # clear taxonomy caches after writing data
         clear_rest_caches
 
@@ -715,7 +718,8 @@ class KometDashboardController < ApplicationController
         if session[CONCEPT_RECENTS]
             recents_array = session[CONCEPT_RECENTS]
         end
-
+        $log.debug('%%%%%%%%%%% Concept Recents: ' + CONCEPT_RECENTS.to_s);
+        $log.debug('%%%%%%%%%%% recents array: ' + recents_array.to_s);
         render json: recents_array
     end
 

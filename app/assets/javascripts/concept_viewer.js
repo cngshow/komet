@@ -29,7 +29,8 @@ var ConceptViewer = function(viewerID, currentConceptID) {
         this.CHILDREN_TREE = "concept_lineage_children_tree_" + viewerID;
         this.refsetGridOptions;
         this.REFSET_GRID = "refsets_grid_" + viewerID;
-
+        this.LINKED_TEXT = "Viewer linked to Taxonomy Tree. Click to unlink.";
+        this.UNLINKED_TEXT = "Viewer not linked to Taxonomy Tree. Click to link.";
     };
 
     ConceptViewer.prototype.togglePanelDetails = function(panelID, callback, preserveState) {
@@ -296,6 +297,13 @@ var ConceptViewer = function(viewerID, currentConceptID) {
 
         linkIcon.toggleClass("fa-chain", linked);
         linkIcon.toggleClass("fa-chain-broken", !linked);
+
+        if (linked){
+            linkIcon.attr("title", this.LINKED_TEXT);
+        } else {
+            linkIcon.attr("title", this.UNLINKED_TEXT);
+        }
+
         this.toggleTreeIcon();
     };
 
@@ -370,24 +378,29 @@ var ConceptViewer = function(viewerID, currentConceptID) {
 
     ConceptViewer.prototype.showSaveSection = function (sectionName) {
 
-        if (sectionName == 'confirm')
-        {
-            $("#komet_create_concept_confirm_section_" + this.viewerID).show();
-            $("#komet_create_concept_save_section_" + this.viewerID).hide();
-        }
-        else
-        {
-            $("#komet_create_concept_confirm_section_" + this.viewerID).hide();
-            $("#komet_create_concept_save_section_" + this.viewerID).show();
+        var saveSection = $("#komet_create_concept_save_section_" + this.viewerID);
+        var confirmSection = $("#komet_create_concept_confirm_section_" + this.viewerID);
+        var createSection = $("#komet_create_concept_section_" + this.viewerID);
+
+        if (sectionName == 'confirm'){
+
+            console.log(UIHelper.hasFormChanged(createSection, true, true));
+            saveSection.hide();
+            confirmSection.show();
+
+        } else {
+
+            saveSection.show();
+            confirmSection.hide();
+            UIHelper.toggleChangeHighlights(createSection, false);
         }
     };
 
-    ConceptViewer.prototype.editConcept = function(viewerID,stated){
+    ConceptViewer.prototype.editConcept = function(){
 
         var divtext = "";
         var rowCount = 0;
-        var partial = 'komet_dashboard/concept_edit';
-        var concept_id  = "?concept_id=" + this.currentConceptID + "&stated=stated&partial=" + partial + "&viewer_id=" + viewerID;
+        var concept_id  = "?concept_id=" + this.currentConceptID + "&stated=stated&viewer_id=" + viewerID;
 
         $.get(gon.routes.taxonomy_get_attributes_jsonreturntype_path  + concept_id     ,function( data ) {
 

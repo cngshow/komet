@@ -1,75 +1,103 @@
-<div class="panel panel-default komet-no-margins komet-panel" data-komet-viewer-id="<%= @viewer_id %>" id="komet_viewer_<%= @viewer_id %>">
+<!-- DO NOT PUT ANYTHING ABOVE THE KOMET VIEWER DIV - IT WILL BREAK WINDOWING WHEN CLOSING VIEWERS-->
+<div class="panel panel-default komet-no-margins komet-panel komet-concept-create" id="komet_viewer_<%= @viewer_id %>" data-komet-viewer-id="<%= @viewer_id %>">
 
-    <div class="panel-heading">
-        <span class="panel-title komet-section-title">Create Concept</span>
-    </div>
+    <%= form_tag(taxonomy_process_concept_Create_path, method: 'post', id: "komet_create_concept_form_#{@viewer_id}") do %>
 
-    <div class="panel-body" id="komet_create_concept_section_<%= @viewer_id %>">
+        <div class="panel-heading">
+            <span class="panel-title komet-section-title">
+              <span id="komet_concept_panel_tree_link_<%= @viewer_id %>" class="fa fa-chain-broken" onclick="WindowManager.toggleViewerLinkage('<%= @viewer_id %>', WindowManager.getLinkedViewerID() != '<%= @viewer_id %>');" title="Viewer linked to Taxonomy Tree. Click to unlink."></span>
+                New Concept
+            </span>
 
-        <%= form_tag(taxonomy_process_concept_Create_path, method: 'post', id: "komet_create_concept_form_#{@viewer_id}") do %>
+            <div class="komet-panel-tools">
+                <!--<div class="glyphicon glyphicon-new-window"></div>
+                <div class="glyphicon glyphicon-resize-full"></div>-->
+                <div class="glyphicon glyphicon-remove" onclick="WindowManager.closeViewer('<%= @viewer_id %>')"></div>
+            </div>
+        </div>
 
-            <div id="komet_create_concept_save_section_<%= @viewer_id %>" style="width: 750px ; float: right">All fields required except where noted as Optional.
-                <button type="button" class="btn btn-default" onclick="WindowManager.closeViewer(<%= @viewer_id %>)">Cancel</button>
+        <div class="panel-body" id="komet_create_concept_section_<%= @viewer_id %>">
+
+            <div id="komet_create_concept_save_section_<%= @viewer_id %>">
+                All fields required except where noted as Optional.
+                <button type="button" class="btn btn-default" onclick="WindowManager.closeViewer('<%= @viewer_id %>')">Cancel</button>
                 <button type="button" class="btn btn-primary" id="komet_create_concept_save_<%= @viewer_id %>" onclick="WindowManager.viewers[<%= @viewer_id %>].showSaveSection('confirm')">Save</button>
             </div>
 
-            <div id="komet_create_concept_confirm_section_<%= @viewer_id %>" style="width: 750px ; float: right">Are you sure you want to commit changes?
+            <div id="komet_create_concept_confirm_section_<%= @viewer_id %>" class="komet-highlight-changes">
+                Are you sure you want to commit changes?
                 <button type="button" class="btn btn-default" onclick="WindowManager.viewers[<%= @viewer_id %>].showSaveSection('save')">No</button>
                 <button class="btn btn-primary">Yes</button>
             </div>
 
-            <br><br>
+            <div class="komet-concept-lineage-title">LINEAGE</div>
 
-            <div>
-
-                <div id="komet_concept_lineage_panel_<%= @viewer_id %>" class="komet-concept-section-panel komet-concept-lineage-panel">
-
-                    <div style="width:350px;">
-                        <autosuggest id-base="komet_create_concept_parent" id-postfix="_<%= @viewer_id %>" label="Parent" value="<%= @parent_id %>" display-value="<%= @parent_text %>"></autosuggest>
-                        <br>
-                    </div>
-                </div>
-
-                <div class="komet-concept-description-title"><br><br>DESCRIPTIONS</div>
-
-                <div class="komet-concept-section-panel komet-concept-description-panel">
-                    <!-- main header block - always visible -->
-                    <div>
-                        <div>
-                            Description Text<br> <input name="komet_create_concept_description" id="komet_create_concept_description_<%= @viewer_id %>" style="width:300px" type="text"><br><br>
-                        </div>
-                        <div>
-                            Extended Description Type: (optional)<br>
-                            <select name="komet_create_concept_description_type" id="komet_create_concept_description_type_<%= @viewer_id %>"  style="width:300px">
-
-                                <option value=""></option>
-
-                                <% @description_types.each do |type| %>
-
-                                    <option value="<%= type[:concept_id] %>"><%= type[:description] %></option>
-                                <% end %>
-
-                            </select>
-                        </div>
-                        <div>
-                            <br><br>
-                            Fully Specified Name:
-                            <div id="komet_create_concept_fsn_<%= @viewer_id %>"></div>
-                            <br>
-                            Preferred Name:
-                            <div id="komet_create_concept_preferred_name_<%= @viewer_id %>"></div>
-                            <br><br>
-                        </div>
-                    </div>
+            <div id="komet_concept_lineage_panel_<%= @viewer_id %>" class="komet-concept-section-panel komet-concept-lineage-panel">
+                <div class="komet-concept-section-panel-details komet-changeable">
+                    <autosuggest id-base="komet_create_concept_parent" id-postfix="_<%= @viewer_id %>" label="Parent" value="<%= @parent_id %>" display-value="<%= @parent_text %>"></autosuggest>
                 </div>
             </div>
-        <% end # end form %>
-    </div>
 
+            <div class="komet-concept-description-title">DESCRIPTIONS</div>
+
+            <div id="komet_concept_description_panel_<%= @viewer_id %>" class="komet-concept-section-panel komet-concept-description-panel">
+
+                <div class="komet-concept-section-panel-details">
+
+                    <div class="komet-changeable">
+                        <div><b>Description Text</b></div>
+                        <input name="komet_create_concept_description" id="komet_create_concept_description_<%= @viewer_id %>" class="form-control">
+                    </div>
+
+                    <div class="komet-changeable">
+                        <div><b>Extended Description Type: (optional)</b></div>
+
+                        <select name="komet_create_concept_description_type" id="komet_create_concept_description_type_<%= @viewer_id %>" class="form-control">
+
+                            <option selected value=""></option>
+
+                            <% @description_types.each do |type| %>
+
+                                <option value="<%= type[:concept_id] %>"><%= type[:description] %></option>
+                            <% end %>
+
+                        </select>
+                    </div>
+
+                    <div>
+                        <div><b>Fully Specified Name:</b></div>
+                        <div id="komet_create_concept_fsn_<%= @viewer_id %>"></div>
+
+                        <div><b>Preferred Name:</b></div>
+                        <div id="komet_create_concept_preferred_name_<%= @viewer_id %>"></div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    <% end # end form %>
 </div>
 
+
+
 <script>
-    WindowManager.viewers[<%= @viewer_id %>].createConcept();
+
+    if (!WindowManager.viewers.hasOwnProperty('<%= @viewer_id %>') || !(WindowManager.viewers[<%= @viewer_id %>] instanceof ConceptViewer)) {
+        ConceptsModule.createViewer("<%= @viewer_id %>", null);
+    } else {
+
+        WindowManager.viewers[<%= @viewer_id %>].currentConceptID = null;
+
+        if (WindowManager.getLinkedViewerID() == "<%= @viewer_id %>") {
+            WindowManager.viewers["<%= @viewer_id %>"].swapLinkIcon(true);
+        }
+    }
+
+    $(document).ready(function () {
+
+        WindowManager.viewers[<%= @viewer_id %>].createConcept();
+        UIHelper.initializeContextMenus();
+    });
 </script>
 
 

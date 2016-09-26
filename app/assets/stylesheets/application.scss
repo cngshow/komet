@@ -180,6 +180,9 @@ html, body{
     padding: 3px 12px;
     flex: 0 0 auto;
 }
+.komet-highlight-changes{
+    background-color: rgba(255, 239, 0, 1);
+}
 .komet-form-error {
     background-color: #ff5000;
     border: solid #ff5000 1px;
@@ -303,8 +306,8 @@ html, body{
 }
 .komet-panel .panel-body {
     background-color: #eef1f3;
-    display: flex;
-    flex-direction: column;
+    //display: flex;
+    //flex-direction: column;
 }
 
 // Taxonomy Tree Styles
@@ -458,6 +461,19 @@ html, body{
     width: 100%;
     border: 1px solid #d1d1d1;
     margin: 10px 0px;
+}
+
+// Concept Editor Viewer Styles
+.komet-concept-create .komet-concept-section-panel-details{
+    display: block;
+    border: none;
+}
+.komet-concept-create .komet-concept-section-panel-details > div{
+    margin-bottom: 15px;
+}
+.komet-concept-create input.form-control:not(.ui-autocomplete-input), .komet-concept-create select.form-control, .komet-concept-create .komet-autosuggest{
+    min-width: 200px;
+    max-width: 450px;
 }
 
 // Concept Viewer Table Styles

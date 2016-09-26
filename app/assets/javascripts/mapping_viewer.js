@@ -42,6 +42,8 @@ var MappingViewer = function(viewerID, currentSetID, mappingAction) {
         this.ITEMS_INCLUDE_FIELD_CHECKBOX_SECTION = "komet_mapping_set_editor_items_select_included_fields_" + viewerID;
         this.ITEMS_INCLUDE_FIELD_DIALOG = "komet_mapping_set_editor_items_add_set_fields_" + viewerID;
         this.SET_EDITOR_FORM = "komet_mapping_set_editor_form_" + viewerID;
+        this.LINKED_TEXT = "Viewer linked to Mapping Tree. Click to unlink.";
+        this.UNLINKED_TEXT = "Viewer not linked to Mapping Tree. Click to link.";
     };
 
     MappingViewer.prototype.togglePanelDetails = function(panelID, callback, preserveState) {
@@ -130,6 +132,13 @@ var MappingViewer = function(viewerID, currentSetID, mappingAction) {
 
         linkIcon.toggleClass("fa-chain", linked);
         linkIcon.toggleClass("fa-chain-broken", !linked);
+
+        if (linked){
+            linkIcon.attr("title", this.LINKED_TEXT);
+        } else {
+            linkIcon.attr("title", this.UNLINKED_TEXT);
+        }
+
         this.toggleTreeIcon();
     };
 
