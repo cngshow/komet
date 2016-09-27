@@ -44,9 +44,11 @@ bundle install
 We have moved the prop loader and logging code into a git repository at https://github.com/VA-CTT/rails_common.git so that the code can
 be shared with rails_komet and the PRISME project
 
+
+
 To pull the latest code do the following (replace my username with yours where appropriate.):
 <ol>
-<li>VCS -> Update Project - from within RubyMine</li>
+<li>VCS -> Update Project - from within RubyMine (https://www.jetbrains.com/help/ruby/2016.1/installing-and-launching.html)</li>
 <li>open .gitignore and comment out /lib/rails__common with a #</li>
 <li>open a terminal and navigate to rails_komet/lib</li>
 <li>git submodule add https://cshupp@vadev.mantech.com:4848/git/r/rails_common.git
