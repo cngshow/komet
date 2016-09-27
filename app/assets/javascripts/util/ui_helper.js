@@ -44,207 +44,26 @@ var UIHelper = (function () {
         return '<div class="komet-form-error"><div class="glyphicon glyphicon-alert"></div>' + message + '</div>';
     }
 
-    function initializeContextMenus() {
+    function toggleChangeHighlights(containerElementOrSelector, showChanges){
 
-        $.contextMenu({
-            selector: '.komet-context-menu',
-            build: function($triggerElement, e){
+        var element;
 
-                var items = {};
-                var menuType = $triggerElement.attr("data-menu-type");
-                var menuState = $triggerElement.attr("data-menu-state");
+        // If the type of the first parameter is a string, then use it as a jquery selector, otherwise use as is
+        if (typeof containerElementOrSelector === "string"){
+            element = $(containerElementOrSelector);
+        } else {
+            element = containerElementOrSelector;
+        }
 
-                if (menuType == "sememe" || menuType == "concept" || menuType == "map_set"){
+        var tags = element.find(".komet-changeable");
 
-                    var uuid = $triggerElement.attr("data-menu-uuid");
-                    var conceptText = $triggerElement.attr("data-menu-concept-text");
-
-                    items.openConcept = {name:"Open in Concept Pane", icon: "context-menu-icon glyphicon-list-alt", callback: openConcept($triggerElement, uuid)};
-
-                    if (WindowManager.viewers.inlineViewers.length < WindowManager.viewers.maxInlineViewers) {
-
-                        items.openNewConceptViwer = {
-                            name: "Open in New Concept Viewer",
-                            icon: "context-menu-icon glyphicon-list-alt",
-                            callback: openConcept($triggerElement, uuid, null, WindowManager.NEW)
-                        };
-                    }
-
-                    if (menuType == "map_set"){
-
-                        items.openMapSet = {name:"Open in Mapping Pane", icon: "context-menu-icon glyphicon-list-alt", callback: openMapSet($triggerElement, uuid)};
-
-                        if (WindowManager.viewers.inlineViewers.length < WindowManager.viewers.maxInlineViewers) {
-
-                            items.openNewMappingViwer = {
-                                name: "Open in New Mapping Viewer",
-                                icon: "context-menu-icon glyphicon-list-alt",
-                                callback: openMapSet($triggerElement, uuid, null, WindowManager.NEW)
-                            };
-                        }
-                    }
-                    //items.openConceptNewWindow = {name:"Open in New Window", icon: "context-menu-icon glyphicon-list-alt", callback: openConcept($triggerElement, uuid, "popup")};
-
-                    if (conceptText != null || conceptText != undefined || conceptText != "") {
-
-                        items.copyConcept = {name:"Copy Concept", icon: "context-menu-icon glyphicon-copy", callback: copyConcept(uuid, conceptText)};
-                        if (menuState == 'Active')
-                             {
-                                  items.activeInactiveUuid = {name:"InActive", icon: "context-menu-icon glyphicon-copy", callback: activeInactiveConcept(uuid,'InActive')};
-                             }
-                        else
-                            {
-                                items.activeInactiveUuid = {name:"Active", icon: "context-menu-icon glyphicon-copy", callback: activeInactiveConcept(uuid,'Active')};
-                            }
-
-                        items.cloneUuid = {name:"Clone", icon: "context-menu-icon glyphicon-copy", callback:  cloneConcept(uuid)};
-                        items.createChildUuid = {name:"Create Child", icon: "context-menu-icon glyphicon-copy", callback:  createChildConcept(uuid,conceptText)};
-
-                    }
-
-                    items.copyUuid = {name: "Copy UUID", icon: "context-menu-icon glyphicon-copy", callback: copyToClipboard(uuid)};
-
-                } else if (menuType == "paste_target"){
-
-                    var idField = $triggerElement.attr("data-menu-id-field");
-                    var displayField = $triggerElement.attr("data-menu-display-field");
-
-                    if (conceptClipboard.id != undefined){
-                        items.pasteConcept = {name: "Paste Concept: " + conceptClipboard.conceptText, isHtmlName: true, icon: "context-menu-icon glyphicon-paste", callback: pasteConcept(idField, displayField)}
-                    }
-
-                } else {
-                    items.copy = {name:"Copy", icon: "context-menu-icon glyphicon-copy", callback: copyToClipboard($triggerElement.attr("data-menu-copy-value"))};
-                }
-
-
-                return {
-                    callback: function(){},
-                    items: items
-                };
-            },
-        });
+        if (showChanges){
+            tags.addClass("komet-highlight-changes");
+        } else {
+            tags.removeClass("komet-highlight-changes");
+        }
     }
 
-    // Context menu functions
-
-    function activeInactiveConcept(uuid,statusFlag)    {
-        return function (){
-        params = {id: uuid,statusFlag:statusFlag } ;
-
-                $.get( gon.routes.taxonomy_process_concept_ActiveInactive_path , params, function( results ) {
-                    console.log(results);
-                    TaxonomyModule.tree.reloadTreeStatedView($("#komet_taxonomy_stated_inferred")[0].value);
-             });
-        };
-    }
-    function createChildConcept(uuid,selectedTxt){
-    return function (){
-
-        openAddConcept(uuid,selectedTxt);
-
-    };
-}
-    function cloneConcept(uuid)    {
-        return function (){
-            params = {uuid: uuid} ;
-            $.get( gon.routes.taxonomy_process_concept_Clone_path , params, function( results ) {
-                console.log(results);
-            });
-        };
-    }
-    function getOpenConceptIcon(opt, $itemElement, itemKey, item) {
-        // Set the content to the menu trigger selector and add an bootstrap icon to the item.
-        $itemElement.html('<span class="glyphicon glyphicon-star" aria-hidden="true"></span> ' + opt.selector);
-
-        // Add the context-menu-icon-updated class to the item
-        return 'context-menu-icon-updated';
-    }
-
-    function copyConcept(id, conceptText){
-
-        return function(){
-            conceptClipboard = {id: id, conceptText: conceptText};
-        };
-    }
-
-    function pasteConcept(idField, displayField){
-
-        return function(){
-
-            $("#" + idField).val(conceptClipboard.id);
-            $("#" + displayField).val(conceptClipboard.conceptText);
-        };
-    }
-
-    function copyToClipboard(text) {
-
-        return function () {
-            // have to create a fake element with the value on the page to get copy to work
-            var textArea = document.createElement('textarea');
-            textArea.setAttribute('style','width:1px;border:0;opacity:0;');
-            document.body.appendChild(textArea);
-            textArea.value = text;
-            textArea.select();
-            document.execCommand('copy');
-            document.body.removeChild(textArea);
-
-        };
-    }
-
-    function openConcept(element, id, viewerID, windowType) {
-
-        return function () {
-
-            var stated;
-            var conceptPanel = element.parents("div[id^=komet_viewer_]");
-
-            if (viewerID === undefined){
-
-                if (conceptPanel.length > 0){
-                    viewerID = conceptPanel.first().attr("data-komet-viewer-id");
-                } else{
-                    viewerID = WindowManager.getLinkedViewerID();
-                }
-            }
-
-            if (conceptPanel.length > 0){
-                stated = WindowManager.viewers[viewerID].getStatedView();
-            } else{
-                stated = TaxonomyModule.getStatedView();
-            }
-
-            $.publish(KometChannels.Taxonomy.taxonomyTreeNodeSelectedChannel, ["", id, stated, viewerID, windowType]);
-        };
-    }
-
-    function openMapSet(element, id, viewerID, windowType) {
-
-        return function () {
-
-            var viewerPanel = element.parents("div[id^=komet_viewer_]");
-
-            if (viewerID === undefined){
-
-                if (viewerPanel.length > 0){
-                    viewerID = viewerPanel.first().attr("data-komet-viewer-id");
-                } else{
-                    viewerID = WindowManager.getLinkedViewerID();
-                }
-            }
-
-            $.publish(KometChannels.Mapping.mappingTreeNodeSelectedChannel, ["", id, viewerID, windowType]);
-        };
-    }
-
-    function openAddConcept(uuid,selectedTxt)    {
-          $.publish(KometChannels.Taxonomy.taxonomyAddConceptChannel, ['', WindowManager.getLinkedViewerID(),uuid,selectedTxt]);
-
-
-    }
-    function openEditConcept(v)    {
-        $.publish(KometChannels.Taxonomy.taxonomyEditConceptChannel, ['',WindowManager.getLinkedViewerID(),'attributes']);
-    }
     // function to switch a field between enabled and disabled
     function toggleFieldAvailability(field_name, enable){
 
@@ -261,40 +80,122 @@ var UIHelper = (function () {
         }
     }
 
-    function hasFormChanged(formIdOrClass) {
+    /*
+     * hasFormChanged - Check to see if there were changes in a form, optionally returning the change details and highlighting them.
+     * @param [object or string] formElementOrSelector - Either a jquery object or the class or ID selector (including the "#" or "." prefix) that respresents the form to search for changes.
+     * @param [boolean] returnChanges - Should an array of changes be returned (true), or simply true/false (false). If this and highlightChanges
+     *                                  are false then the function will only loop until it finds the first change. (Optional: default = false)
+     * @param [boolean] highlightChanges - Should changes be highlighted. Requires the "komet-highlight-changes" class on the elements you want highlighted. (Optional: default = false)
+     * @return [array or boolean] - If returnChanges is true, returns an array containing a hash of each fields changes ({field, oldValue, newValue}), otherwise returns true or false.
+     */
+    function hasFormChanged(formElementOrSelector, returnChanges, highlightChanges) {
 
-        var hasChanges = false;
+        var changes = [];
+        var element;
 
-        $(formIdOrClass + " :input:not(:button):not([type=hidden])").each(function () {
+        // set the default value if this optional parameter wasn't passed in
+        if (returnChanges == undefined){
+            returnChanges = false;
+        }
 
-            if ((this.type == "text" || this.type == "textarea" || this.type == "hidden") && this.defaultValue != this.value) {
+        // set the default value if this optional parameter wasn't passed in
+        if (highlightChanges == undefined){
+            highlightChanges = false;
+        }
 
-                hasChanges = true;
-                return false;             }
-            else {
+        // If the type of the first parameter is a string, then use it as a jquery selector, otherwise use as is
+        if (typeof formElementOrSelector === "string"){
+            element = $(formElementOrSelector);
+        } else {
+            element = formElementOrSelector;
+        }
 
-                if ((this.type == "radio" || this.type == "checkbox") && this.defaultChecked != this.checked) {
+        // find all non-hidden form fields and loop through them
+        element.find(":input:not(:button):not([type=hidden])").each(function () {
 
-                    hasChanges = true;
-                    return false;                 }
-                else {
+            // store the name of the field, and two empty arrays we can easily check later to see if changes were found
+            // doing it this way allows for less code in the select box section
+            var field = {field: this.name, oldValue: [], newValue: []};
 
-                    if ((this.type == "select-one" || this.type == "select-multiple")) {
+            // if the field is a text field and the old value and new value dont match store the changes
+            if ((this.type == "text" || this.type == "textarea") && this.defaultValue != this.value) {
 
-                        for (var x = 0; x < this.length; x++) {
+                field = {field: this.name, oldValue: this.defaultValue, newValue: this.value};
 
-                            if (this.options[x].selected != this.options[x].defaultSelected) {
+            // if the field is a radio or checkbox and the old value and new value dont match store the changes, including the type because it could be part of a field group
+            } else if ((this.type == "radio" || this.type == "checkbox") && this.defaultChecked != this.checked) {
 
-                                hasChanges = true;
-                                return false;
+                field = {field: this.name, oldValue: this.defaultChecked, newValue: this.checked, type: this.type};
+
+            // if the field is a select box
+            } else if ((this.type == "select-one" || this.type == "select-multiple")) {
+
+                // loop through the select's options
+                for (var i = 0; i < this.length; i++) {
+
+                    // if the option's old selected value and new selected value dont match store the changes
+                    if (this.options[i].selected != this.options[i].defaultSelected) {
+
+                        // if this is a single selection select box
+                        if (this.type == "select-one"){
+
+                            // if the old selected value was true then this is the old value, otherwise it's the new value
+                            if (this.options[i].defaultSelected){
+                                field.oldValue = this.options[i].value;
+                            } else {
+
+                                field.newValue = this.options[i].value;
+
+                                // if the old value is still an empty array, set it to an empty string, because it may have never had a value selected
+                                if (typeof field.oldValue == "object"){
+                                    field.oldValue = "";
+                                }
+                            }
+
+                        } else {
+
+                            // if this is a multi selection select box then we need to store values as an array
+                            // if the old selected value was true then this is the old value, otherwise it's the new value
+                            if (this.options[i].defaultSelected){
+                                field.oldValue.push(this.options[i].value);
+                            } else {
+                                field.newValue.push(this.options[i].value);
                             }
                         }
                     }
                 }
             }
+
+            // check to see if field's new value is an empty array. If it isn't then the field changed
+            if (!(typeof field.oldValue == "object" && field.oldValue.length === 0 && typeof field.newValue == "object" && field.newValue.length === 0)) {
+
+                // if we are not returning the array of changes or highlighting them, then we can stop looping and return true
+                if (!returnChanges && !highlightChanges){
+                    return true;
+                }
+
+                // add the field to the changes array
+                changes.push(field);
+
+                // if we are highlighting changes then find the nearest element with the changeable class, and add the hightlight class
+                if (highlightChanges){
+                    $(this).closest(".komet-changeable").addClass("komet-highlight-changes");
+                }
+            }
         });
 
-        return hasChanges;
+        // if we are not returning the array of changes then check to see if there were changes
+        if (!returnChanges){
+
+            if (changes.length > 0){
+                return true;
+            } else {
+                return false;
+            }
+        }
+
+        // return the array of changes
+        return changes;
     }
 
     function resetFormChanges(formIdOrClass) {
@@ -316,9 +217,18 @@ var UIHelper = (function () {
         });
     }
 
-    function acceptFormChanges(formIdOrClass) {
+    function acceptFormChanges(formElementOrSelector) {
 
-        $(formIdOrClass + " :input:not(:button):not([type=hidden])").each(function () {
+        var element;
+
+        // If the type of the first parameter is a string, then use it as a jquery selector, otherwise use as is
+        if (typeof formElementOrSelector === "string"){
+            element = $(formElementOrSelector);
+        } else {
+            element = formElementOrSelector;
+        }
+
+        element.find(":input:not(:button):not([type=hidden])").each(function () {
 
             if (this.type == "text" || this.type == "textarea" || this.type == "hidden") {
                 this.defaultValue = this.value;
@@ -369,11 +279,11 @@ var UIHelper = (function () {
 
         var fieldString = '<label for="' + fieldIDBase + fieldIDPostfix + '">' + label + '</label>'
             + '<input id="' + fieldIDBase + fieldIDPostfix + '" name="' + fieldIDBase + '" class="hide" value="' + fieldValue + '">'
-            + '<div id="' + fieldIDBase + '_fields' + fieldIDPostfix + '" class="input-group ' + fieldClasses + '">'
+            + '<div id="' + fieldIDBase + '_fields' + fieldIDPostfix + '" class="komet-autosuggest input-group ' + fieldClasses + '">'
             + '<input id="' + fieldIDBase + '_display' + fieldIDPostfix + '" name="' + fieldIDBase + '_display" class="form-control komet-context-menu" '
             + 'data-menu-type="paste_target" data-menu-id-field="' + fieldIDBase + fieldIDPostfix + '" data-menu-display-field="' + fieldIDBase + '_display' + fieldIDPostfix + '" '
             + 'value="' + fieldDisplayValue + '"' + fieldTabIndex + '>'
-            + '<div class="input-group-btn komet-search-combo-field">'
+            + '<div id="' + fieldIDBase + '_recents_button' + fieldIDPostfix + '"  class="input-group-btn komet-search-combo-field">'
             + '<button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><span class="caret"></span></button>'
             + '<ul id="' + fieldIDBase + '_recents' + fieldIDPostfix + '" class="dropdown-menu dropdown-menu-right"' + recentsTabIndex + '></ul>'
             + '</div></div>';
@@ -383,9 +293,18 @@ var UIHelper = (function () {
         return document.createRange().createContextualFragment(fieldString);
     };
 
-    var processAutoSuggestTags = function(containerClassOrID){
+    var processAutoSuggestTags = function(containerElementOrSelector){
 
-        var tags = $(containerClassOrID).find("autosuggest");
+        var element;
+
+        // If the type of the first parameter is a string, then use it as a jquery selector, otherwise use as is
+        if (typeof containerElementOrSelector === "string"){
+            element = $(containerElementOrSelector);
+        } else {
+            element = containerElementOrSelector;
+        }
+
+        var tags = $(element).find("autosuggest");
 
         tags.each(function(i, tag){
 
@@ -420,6 +339,16 @@ var UIHelper = (function () {
                 change: onAutoSuggestChange
             });
 
+            var recentsButton = $("#" + fieldIDBase + "_recents_button" + fieldIDPostfix);
+
+            recentsButton.on('show.bs.dropdown', function () {
+
+                var menu = $("#" + fieldIDBase + "_recents" + fieldIDPostfix);
+                menu.css("position", "fixed");
+                menu.css("top", recentsButton.offset().top + recentsButton.height());
+                menu.css("right", getElementRightFromWindow(recentsButton));
+            }.bind(this));
+
             loadAutoSuggestRecents(fieldIDBase + "_recents" + fieldIDPostfix, recentsRestVariable);
         });
     };
@@ -450,31 +379,341 @@ var UIHelper = (function () {
 
     var useAutoSuggestRecent = function(autoSuggestID, autoSuggestDisplayID, id, text){
 
-        $("#" + autoSuggestID).val(text);
-        $("#" + autoSuggestDisplayID).val(id);
+        var labelField = $("#" + autoSuggestID);
+        labelField.val(text);
+        labelField.change();
+
+        var idField = $("#" + autoSuggestDisplayID)
+        idField.val(id);
+        idField.change();
     };
 
     var onAutoSuggestSelection = function(event, ui){
 
-        $(this).val(ui.item.label);
-        $("#" + this.id.replace("_display", "")).val(ui.item.value);
+        var labelField = $(this);
+        labelField.val(ui.item.label);
+        labelField.change();
+
+        var idField = $("#" + this.id.replace("_display", ""))
+        idField.val(ui.item.value);
+        idField.change();
+
         return false;
     };
 
     var onAutoSuggestChange = function(event, ui){
 
         if (!ui.item) {
-            event.target.value = "";
-            $("#" + this.id.replace("_display", "")).val("");
+
+            var labelField = $(this);
+            labelField.val("");
+            labelField.change();
+
+            var idField = $("#" + this.id.replace("_display", ""))
+            idField.val("");
+            idField.change();
         }
     };
 
+    var getElementRightFromWindow = function(elementOrSelector){
+
+        var element;
+
+        // If the type of the first parameter is a string, then use it as a jquery selector, otherwise use as is
+        if (typeof elementOrSelector === "string"){
+            element = $(elementOrSelector);
+        } else {
+            element = elementOrSelector;
+        }
+
+        if (element.length > 0){
+            return($(window).width() - (element.offset().left + element.outerWidth()));
+        } else {
+            return null;
+        }
+    };
+
+    function initializeContextMenus() {
+
+        $.contextMenu({
+            selector: '.komet-context-menu',
+            build: function($triggerElement, e){
+
+                var items = {};
+                var menuType = $triggerElement.attr("data-menu-type");
+
+                if (menuType == "sememe" || menuType == "concept" || menuType == "map_set"){
+
+                    var uuid = $triggerElement.attr("data-menu-uuid");
+                    var conceptText = $triggerElement.attr("data-menu-concept-text");
+                    var conceptState = $triggerElement.attr("data-menu-state");
+                    var unlinkedViewerID = WindowManager.getUnlinkedViewerID();
+
+                    items.openConcept = {name:"Open Concept", icon: "context-menu-icon glyphicon-list-alt", callback: openConcept($triggerElement, uuid)};
+
+                    if (WindowManager.viewers.inlineViewers.length < WindowManager.viewers.maxInlineViewers) {
+
+                        items.openNewConceptViwer = {
+                            name: "Open in New Concept Viewer",
+                            icon: "context-menu-icon glyphicon-list-alt",
+                            callback: openConcept($triggerElement, uuid, WindowManager.NEW, WindowManager.NEW)
+                        };
+                    }
+
+                    if (WindowManager.viewers.inlineViewers.length > 1) {
+
+                        items.openUnlinkedConceptViwer = {
+                            name: "Open in Unlinked Concept Viewer",
+                            icon: "context-menu-icon glyphicon-list-alt",
+                            callback: openConcept($triggerElement, uuid, unlinkedViewerID)
+                        };
+                    }
+
+                    //items.openConceptNewWindow = {name:"Open in New Window", icon: "context-menu-icon glyphicon-list-alt", callback: openConcept($triggerElement, uuid, "popup")};
+
+                    if (menuType == "map_set"){
+
+                        items.separatorMapping = {type: "cm_separator"};
+
+                        items.openMapSet = {name:"Open Mapping", icon: "context-menu-icon glyphicon-list-alt", callback: openMapSet($triggerElement, uuid)};
+
+                        if (WindowManager.viewers.inlineViewers.length < WindowManager.viewers.maxInlineViewers) {
+
+                            items.openNewMappingViwer = {
+                                name: "Open in New Mapping Viewer",
+                                icon: "context-menu-icon glyphicon-list-alt",
+                                callback: openMapSet($triggerElement, uuid, WindowManager.NEW, WindowManager.NEW)
+                            };
+                        }
+
+                        if (WindowManager.viewers.inlineViewers.length > 1) {
+
+                            items.openUnlinkedMappingViwer = {
+                                name: "Open in Unlinked Mapping Viewer",
+                                icon: "context-menu-icon glyphicon-list-alt",
+                                callback: openMapSet($triggerElement, uuid, unlinkedViewerID)
+                            };
+                        }
+                    }
+
+                    items.separatorCopy = {type: "cm_separator"};
+
+                    if (conceptText != null || conceptText != undefined || conceptText != "") {
+                        items.copyConcept = {name:"Copy Concept", icon: "context-menu-icon glyphicon-copy", callback: copyConcept(uuid, conceptText)};
+                    }
+
+                    items.copyUuid = {name: "Copy UUID", icon: "context-menu-icon glyphicon-copy", callback: copyToClipboard(uuid)};
+
+                    items.separatorConceptEditor = {type: "cm_separator"};
+
+                    items.editConcept = {name:"Edit Concept", icon: "context-menu-icon glyphicon-pencil", callback:  openConceptEditor($triggerElement, uuid)};
+
+                    if (WindowManager.viewers.inlineViewers.length < WindowManager.viewers.maxInlineViewers) {
+
+                        items.editConceptNewViewer = {
+                            name:"Edit Concept in New Viewer",
+                            icon: "context-menu-icon glyphicon-pencil",
+                            callback:  openConceptEditor($triggerElement, uuid, WindowManager.NEW, WindowManager.NEW)
+                        };
+                    }
+
+                    if (WindowManager.viewers.inlineViewers.length > 1) {
+
+                        items.editConceptUnlinkedViewer = {
+                            name:"Edit Concept in Unlinked Viewer",
+                            icon: "context-menu-icon glyphicon-pencil",
+                            callback:  openConceptEditor($triggerElement, uuid, unlinkedViewerID)
+                        };
+                    }
+
+                    items.cloneConcept = {name:"Clone Concept", icon: "context-menu-icon glyphicon-share", callback:  cloneConcept(uuid)};
+
+                    if (conceptText != null || conceptText != undefined || conceptText != "") {
+
+                        items.createChildConcept = {
+                            name:"Create Child Concept",
+                            icon: "context-menu-icon glyphicon-plus",
+                            callback:  openConceptEditor($triggerElement, null, WindowManager.getLinkedViewerID(), WindowManager.INLINE, uuid, conceptText)
+                        };
+
+                        if (WindowManager.viewers.inlineViewers.length < WindowManager.viewers.maxInlineViewers) {
+
+                            items.createChildConceptNewViewer = {
+                                name:"Create Child Concept in New Viewer",
+                                icon: "context-menu-icon glyphicon-plus",
+                                callback:  openConceptEditor($triggerElement, null, WindowManager.NEW, WindowManager.NEW, uuid, conceptText)
+                            };
+                        }
+
+                        if (WindowManager.viewers.inlineViewers.length > 1) {
+
+                            items.createChildConceptUnlinkedViewer = {
+                                name:"Create Child Concept in Unlinked Viewer",
+                                icon: "context-menu-icon glyphicon-plus",
+                                callback:  openConceptEditor($triggerElement, null, unlinkedViewerID, WindowManager.INLINE, uuid, conceptText)
+                            };
+                        }
+                    }
+
+                    items.separatorState = {type: "cm_separator"};
+
+                    if (conceptState == 'Active') {
+                        items.activeInactiveUuid = {name:"Inactivate Concept", icon: "context-menu-icon glyphicon-ban-circle", callback: activeInactiveConcept(uuid,'InActive')};
+                    }
+                    else {
+                        items.activeInactiveUuid = {name:"Activate Concept", icon: "context-menu-icon glyphicon-ok-circle", callback: activeInactiveConcept(uuid,'Active')};
+                    }
+
+                } else if (menuType == "paste_target"){
+
+                    var idField = $triggerElement.attr("data-menu-id-field");
+                    var displayField = $triggerElement.attr("data-menu-display-field");
+
+                    if (conceptClipboard.id != undefined){
+                        items.pasteConcept = {name: "Paste Concept: " + conceptClipboard.conceptText, isHtmlName: true, icon: "context-menu-icon glyphicon-paste", callback: pasteConcept(idField, displayField)}
+                    }
+
+                } else {
+                    items.copy = {name:"Copy", icon: "context-menu-icon glyphicon-copy", callback: copyToClipboard($triggerElement.attr("data-menu-copy-value"))};
+                }
+
+
+                return {
+                    callback: function(){},
+                    items: items
+                };
+            },
+        });
+    }
+
+    // Context menu functions
+
+    function openConcept(element, id, viewerID, windowType) {
+
+        return function () {
+
+            var stated;
+            var viewerPanel = element.parents("div[id^=komet_viewer_]");
+
+            // if the viewerID was not passed it (but not if it is null), look up what it should be
+            if (viewerID === undefined) {
+
+                if (viewerPanel.length > 0) {
+                    viewerID = viewerPanel.first().attr("data-komet-viewer-id");
+                } else {
+                    viewerID = WindowManager.getLinkedViewerID();
+                }
+            }
+
+            if (viewerPanel.length > 0){
+                stated = WindowManager.viewers[viewerID].getStatedView();
+            } else{
+                stated = TaxonomyModule.getStatedView();
+            }
+
+            $.publish(KometChannels.Taxonomy.taxonomyTreeNodeSelectedChannel, ["", id, stated, viewerID, windowType]);
+        };
+    }
+
+    function openMapSet(element, id, viewerID, windowType) {
+
+        return function () {
+
+            var viewerPanel = element.parents("div[id^=komet_viewer_]");
+
+            // if the viewerID was not passed it (but not if it is null), look up what it should be
+            if (viewerID === undefined) {
+
+                if (viewerPanel.length > 0) {
+                    viewerID = viewerPanel.first().attr("data-komet-viewer-id");
+                } else {
+                    viewerID = WindowManager.getLinkedViewerID();
+                }
+            }
+
+            $.publish(KometChannels.Mapping.mappingTreeNodeSelectedChannel, ["", id, viewerID, windowType]);
+        };
+    }
+
+    function copyConcept(id, conceptText){
+
+        return function(){
+            conceptClipboard = {id: id, conceptText: conceptText};
+        };
+    }
+
+    function copyToClipboard(text) {
+
+        return function () {
+            // have to create a fake element with the value on the page to get copy to work
+            var textArea = document.createElement('textarea');
+            textArea.setAttribute('style','width:1px;border:0;opacity:0;');
+            document.body.appendChild(textArea);
+            textArea.value = text;
+            textArea.select();
+            document.execCommand('copy');
+            document.body.removeChild(textArea);
+        };
+    }
+
+    function openConceptEditor(element, id, viewerID, windowType, parentID, parentText) {
+
+        return function () {
+
+            var viewerPanel = element.parents("div[id^=komet_viewer_]");
+
+            // if the viewerID was not passed it (but not if it is null), look up what it should be
+            if (viewerID === undefined) {
+
+                if (viewerPanel.length > 0) {
+                    viewerID = viewerPanel.first().attr("data-komet-viewer-id");
+                } else {
+                    viewerID = WindowManager.getLinkedViewerID();
+                }
+            }
+
+            $.publish(KometChannels.Taxonomy.taxonomyConceptEditorChannel, [id, viewerID, windowType, {parentID: parentID, parentText: parentText}]);
+        };
+    }
+
+    function cloneConcept(uuid) {
+
+        return function (){
+
+            params = {uuid: uuid} ;
+
+            $.get( gon.routes.taxonomy_process_concept_Clone_path , params, function( results ) {
+                console.log("Clone Concept " + uuid);
+            });
+        };
+    }
+
+    function activeInactiveConcept(uuid,statusFlag) {
+        return function (){
+            params = {id: uuid,statusFlag:statusFlag } ;
+
+            $.get( gon.routes.taxonomy_process_concept_ActiveInactive_path , params, function( results ) {
+                console.log(results);
+                TaxonomyModule.tree.reloadTreeStatedView($("#komet_taxonomy_stated_inferred")[0].value);
+            });
+        };
+    }
+
+    function pasteConcept(idField, displayField){
+
+        return function(){
+
+            $("#" + idField).val(conceptClipboard.id);
+            $("#" + displayField).val(conceptClipboard.conceptText);
+        };
+    }
 
     return {
         getActiveTabId: getActiveTabId,
         isTabActive: isTabActive,
         initializeContextMenus: initializeContextMenus,
         generateFormErrorMessage: generateFormErrorMessage,
+        toggleChangeHighlights: toggleChangeHighlights,
         toggleFieldAvailability: toggleFieldAvailability,
         hasFormChanged: hasFormChanged,
         resetFormChanges: resetFormChanges,
@@ -484,8 +723,7 @@ var UIHelper = (function () {
         processAutoSuggestTags: processAutoSuggestTags,
         loadAutoSuggestRecents: loadAutoSuggestRecents,
         useAutoSuggestRecent: useAutoSuggestRecent,
-        openAddConcept: openAddConcept,
-        openEditConcept:openEditConcept
+        getElementRightFromWindow: getElementRightFromWindow
     };
 })();
 

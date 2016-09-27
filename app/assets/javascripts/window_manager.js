@@ -104,11 +104,11 @@ var WindowManager = (function () {
         }
     }
 
-    function toggleViewerLinkage(viewerID, makeActive) {
+    function toggleViewerLinkage(viewerID, makeLinked) {
 
         var otherViewerID;
 
-        if (makeActive) {
+        if (makeLinked) {
 
             otherViewerID = linkedViewerID;
 
@@ -122,12 +122,7 @@ var WindowManager = (function () {
 
             if (viewers.inlineViewers.length > 1){
 
-                var viewerIndex = viewers.inlineViewers.findIndex(findOtherViewer);
-                otherViewerID = viewers.inlineViewers[viewerIndex];
-
-                function findOtherViewer(value){
-                    return value != viewerID;
-                }
+                otherViewerID = getUnlinkedViewerID();
 
                 setLinkedViewerID(otherViewerID);
                 viewers[otherViewerID].swapLinkIcon(true);
@@ -137,7 +132,7 @@ var WindowManager = (function () {
             }
         }
 
-        viewers[viewerID].swapLinkIcon(makeActive);
+        viewers[viewerID].swapLinkIcon(makeLinked);
     }
 
     function setLinkedViewerID(viewerID, windowType){
@@ -156,6 +151,23 @@ var WindowManager = (function () {
 
     function getLinkedViewerID(){
         return linkedViewerID;
+    }
+
+    function getUnlinkedViewerID(){
+
+        var otherViewerID = null;
+
+        if (viewers.inlineViewers.length > 1) {
+
+            function findOtherViewer(value) {
+                return value != getLinkedViewerID();
+            }
+
+            var viewerIndex = viewers.inlineViewers.findIndex(findOtherViewer);
+            otherViewerID = viewers.inlineViewers[viewerIndex];
+        }
+
+        return otherViewerID;
     }
 
     function nestedSplittersExist(){
@@ -183,6 +195,7 @@ var WindowManager = (function () {
         toggleViewerLinkage: toggleViewerLinkage,
         setLinkedViewerID: setLinkedViewerID,
         getLinkedViewerID: getLinkedViewerID,
+        getUnlinkedViewerID: getUnlinkedViewerID,
         nestedSplittersExist: nestedSplittersExist,
         refreshSplitters: refreshSplitters,
         deferred: deferred,

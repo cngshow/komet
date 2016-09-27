@@ -167,7 +167,7 @@ class MappingController < ApplicationController
                 name = field.extensionNameConcept
                 label = name
                 label_display = field.extensionNameConceptDescription
-                value = field.extensionValue2[0].data
+                value = field.extensionValue.data
                 removable = true
                 display = true
 
@@ -175,10 +175,10 @@ class MappingController < ApplicationController
                     display = false
                 end
 
-                if field.extensionValue2[0].class == DATA_TYPES_CLASS::RestDynamicSememeString
+                if field.extensionValue.class == DATA_TYPES_CLASS::RestDynamicSememeString
                     type = 'text'
 
-                elsif field.extensionValue2[0].class == DATA_TYPES_CLASS::RestDynamicSememeNid || field.extensionValue2[0].class == DATA_TYPES_CLASS::RestDynamicSememeUUID
+                elsif field.extensionValue.class == DATA_TYPES_CLASS::RestDynamicSememeNid || field.extensionValue.class == DATA_TYPES_CLASS::RestDynamicSememeUUID
 
                     type = 'concept'
                     @map_set[name + '_display'] = value
@@ -387,6 +387,9 @@ class MappingController < ApplicationController
             set_id = IdAPIsRest.get_id(uuid_or_id: set_id.value, action: IdAPIsRestActions::ACTION_TRANSLATE, additional_req_params: {inputType: 'conceptSequence', outputType: 'uuid'}).value
         end
 
+        # clear taxonomy caches after writing data
+        clear_rest_caches
+
         render json: {set_id: set_id}
 
     end
@@ -456,6 +459,9 @@ class MappingController < ApplicationController
         if target && target != ''
             add_to_recents(:mapping_item_target_recents, target, target_display)
         end
+
+        # clear taxonomy caches after writing data
+        clear_rest_caches
 
         head :ok, content_type: 'text/html'
 
