@@ -134,8 +134,8 @@ class SearchController < ApplicationController
       # if there is an assemblage ID in params add it to the params being passed to the search
       if assemblage != nil && assemblage != ''
 
-        additional_params[:sememeAssemblageId] =  assemblage
-        add_to_recents(CONCEPT_RECENTS, assemblage, params[:taxonomy_search_assemblage_display])
+        additional_params[:sememeAssemblageId] = assemblage
+        add_to_recents(CONCEPT_RECENTS, assemblage, params[:taxonomy_search_assemblage_display], params[:taxonomy_search_assemblage_type])
 
       end
 

@@ -8,103 +8,109 @@
 
     <div id="komet_concept_description_panel_<%= @viewer_id %>_<%= description[:uuid] %>" class="komet-concept-section-panel komet-concept-description-panel">
 
-      <!-- main header block - always visible -->
-      <div class="komet-concept-section-panel-header komet-concept-description-panel-header">
+        <!-- main header block - always visible -->
+        <div class="komet-concept-section-panel-header komet-concept-description-panel-header">
 
-        <!-- expand/collapse icon - controls details drawer -->
-        <div class="glyphicon glyphicon-plus-sign" onclick="WindowManager.viewers[<%= @viewer_id %>].togglePanelDetails('komet_concept_description_panel_<%= @viewer_id %>_<%= description[:uuid] %>')"></div>
+            <!-- expand/collapse icon - controls details drawer -->
+            <div class="glyphicon glyphicon-plus-sign" onclick="WindowManager.viewers[<%= @viewer_id %>].togglePanelDetails('komet_concept_description_panel_<%= @viewer_id %>_<%= description[:uuid] %>')"></div>
 
 
-        <div class="komet-concept-description-header-block">
+            <div class="komet-concept-description-header-block">
 
-          <!-- description text -->
-          <div class="komet-concept-description-text komet-context-menu" data-menu-type="concept" data-menu-uuid="<%= description[:uuid] %>" data-menu-concept-text="<%= description[:text] %>">
-           <b><%= description[:text] %></b>
-          </div>
+                <!-- description text -->
+                <div class="komet-concept-description-text komet-context-menu"
+                     data-menu-type="concept"
+                     data-menu-uuid="<%= description[:uuid] %>"
+                     data-menu-concept-text="<%= description[:text] %>"
+                     data-menu-concept-terminology-type="<%= description[:terminology_type] %>"
+                     data-menu-state="<%= description[:state] %>"
+                >
+                    <b><%= description[:text] %></b>
+                </div>
 
-          <!-- description type, refset, case sensitive, state -->
-          <div class="komet-concept-description-info">
+                <!-- description type, refset, case sensitive, state -->
+                <div class="komet-concept-description-info">
 
-            <span class="komet-concept-description-title" title="<%= description[:description_type] %>">
-              <%= description[:description_type_short] %>
-            </span>
+                    <span class="komet-concept-description-title" title="<%= description[:description_type] %>">
+                        <%= description[:description_type_short] %>
+                    </span>
 
-            <!-- get the case significance and display an appropriate icon -->
-            <% if description[:case_significance_short] == 'true' %>
+                    <!-- get the case significance and display an appropriate icon -->
+                    <% if description[:case_significance_short] == 'true' %>
 
-                <span class="glyphicon glyphicon-text-size" title="<%= description[:case_significance] %>"></span>
+                        <span class="glyphicon glyphicon-text-size" title="<%= description[:case_significance] %>"></span>
 
-            <% else %>
+                    <% else %>
 
-                <span class="komet-icon-stack" title="<%= description[:case_significance] %>">
-                  <span class="glyphicon glyphicon-text-size komet-icon-stack-base"></span>
-                  <span class="glyphicon glyphicon-ban-circle"></span>
-                </span>
+                        <span class="komet-icon-stack" title="<%= description[:case_significance] %>">
+                          <span class="glyphicon glyphicon-text-size komet-icon-stack-base"></span>
+                          <span class="glyphicon glyphicon-ban-circle"></span>
+                        </span>
 
-            <% end %>
+                    <% end %>
 
-            <span><%= description[:state] %></span>
-            <span title="<%= description[:language] %>"><%= description[:language_short] %></span>
-            <span><%= description[:header_dialects] %></span>
+                    <span><%= description[:state] %></span>
+                    <span title="<%= description[:language] %>"><%= description[:language_short] %></span>
+                    <span><%= description[:header_dialects] %></span>
 
-          </div>
+                    </div>
 
-        </div>
-      </div>
-
-      <!-- details drawer - can be collapsed -->
-      <div class="komet-concept-section-panel-details">
-
-        <!-- loop through the description attributes -->
-        <% description[:attributes].each_with_index do |attribute, attribute_index| %>
-
-            <% if attribute_index > 0 %>
-                <hr class="komet-concept-details-hr" />
-            <% end %>
-
-          <div class="komet-concept-description-details-row">
-
-              <%
-                 if attribute[:label] == "UUID"
-                     tag_details = 'class="komet-concept-description-details-name komet-context-menu" data-menu-type="concept" data-menu-uuid="' + description[:uuid] + '" data-menu-concept-text="' + description[:text] + '"'
-                 else
-                     tag_details = 'class="komet-concept-description-details-name"'
-                 end
-              %>
-
-            <div <%= raw tag_details %>>
-              <b><%= attribute[:label] %>:</b> <%= attribute[:text] %>
             </div>
+        </div>
 
-            <% if attribute[:label] == 'Refset' %>
+        <!-- details drawer - can be collapsed -->
+        <div class="komet-concept-section-panel-details">
 
-                <div class="komet-concept-description-details-acceptability">
-                  <b>Acceptability:</b> <%= attribute[:acceptability] %>
+            <!-- loop through the description attributes -->
+            <% description[:attributes].each_with_index do |attribute, attribute_index| %>
+
+                <% if attribute_index > 0 %>
+                    <hr class="komet-concept-details-hr" />
+                <% end %>
+
+                <div class="komet-concept-description-details-row">
+
+                    <%
+                       if attribute[:label] == "UUID"
+                           tag_details = 'class="komet-concept-description-details-name komet-context-menu" data-menu-type="concept" data-menu-uuid="' + description[:uuid] + '"'
+                       else
+                           tag_details = 'class="komet-concept-description-details-name"'
+                       end
+                    %>
+
+                    <div <%= raw tag_details %>>
+                        <b><%= attribute[:label] %>:</b> <%= attribute[:text] %>
+                    </div>
+
+                    <% if attribute[:label] == 'Refset' %>
+
+                        <div class="komet-concept-description-details-acceptability">
+                            <b>Acceptability:</b> <%= attribute[:acceptability] %>
+                        </div>
+
+                    <% end %>
+
+                    <div class="komet-concept-description-details-state">
+                        <b>State:</b> <%= attribute[:state] %>
+                    </div>
+
+                    <div class="komet-concept-description-details-time">
+                        <b>Time:</b> <%= attribute[:time] %>
+                    </div>
+
+                    <div class="komet-concept-description-details-author">
+                        <b>Author:</b> <%= attribute[:author] %>
+                    </div>
+
+                    <div class="komet-concept-description-details-path">
+                        <b>Path:</b> <%= attribute[:path] %>
+                    </div>
+
                 </div>
 
             <% end %>
 
-            <div class="komet-concept-description-details-state">
-              <b>State:</b> <%= attribute[:state] %>
-            </div>
-
-            <div class="komet-concept-description-details-time">
-              <b>Time:</b> <%= attribute[:time] %>
-            </div>
-
-            <div class="komet-concept-description-details-author">
-              <b>Author:</b> <%= attribute[:author] %>
-            </div>
-
-            <div class="komet-concept-description-details-path">
-              <b>Path:</b> <%= attribute[:path] %>
-            </div>
-
-          </div>
-
-        <% end %>
-
-      </div>
+        </div>
 
     </div>
 

@@ -1,7 +1,7 @@
 <!-- DO NOT PUT ANYTHING ABOVE THE KOMET VIEWER DIV - IT WILL BREAK WINDOWING WHEN CLOSING VIEWERS-->
 <div class="panel panel-default komet-no-margins komet-panel komet-concept-create" id="komet_viewer_<%= @viewer_id %>" data-komet-viewer-id="<%= @viewer_id %>">
 
-    <%= form_tag(taxonomy_process_concept_Create_path, method: 'post', id: "komet_create_concept_form_#{@viewer_id}") do %>
+    <%= form_tag(taxonomy_create_concept_path, method: 'post', id: "komet_create_concept_form_#{@viewer_id}") do %>
 
         <div class="panel-heading">
             <span class="panel-title komet-section-title">
@@ -34,7 +34,14 @@
 
             <div id="komet_concept_lineage_panel_<%= @viewer_id %>" class="komet-concept-section-panel komet-concept-lineage-panel">
                 <div class="komet-concept-section-panel-details komet-changeable">
-                    <autosuggest id-base="komet_create_concept_parent" id-postfix="_<%= @viewer_id %>" label="Parent" value="<%= @parent_id %>" display-value="<%= @parent_text %>"></autosuggest>
+                    <autosuggest
+                        id-base="komet_create_concept_parent"
+                        id-postfix="_<%= @viewer_id %>"
+                        label="Parent"
+                        value="<%= @parent_id %>"
+                        display-value="<%= @parent_text %>"
+                        type-value="<%= @parent_type %>"
+                    ></autosuggest>
                 </div>
             </div>
 

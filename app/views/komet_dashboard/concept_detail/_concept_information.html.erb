@@ -1,9 +1,15 @@
 <!-- DO NOT PUT ANYTHING ABOVE THE KOMET VIEWER DIV - IT WILL BREAK WINDOWING WHEN CLOSING VIEWERS-->
 <div class="panel panel-default komet-no-margins komet-panel" id="komet_viewer_<%= @viewer_id %>" data-komet-viewer-id="<%= @viewer_id %>">
     <div class="panel-heading">
-    <span class="panel-title komet-section-title komet-context-menu" data-menu-type="concept" data-menu-uuid="<%= @concept_id %>" data-menu-concept-text="<%= @attributes[0][:value] %>">
-      <span id="komet_concept_panel_tree_link_<%= @viewer_id %>" class="fa fa-chain-broken" onclick="WindowManager.toggleViewerLinkage('<%= @viewer_id %>', WindowManager.getLinkedViewerID() != '<%= @viewer_id %>');" title="Viewer linked to Taxonomy Tree. Click to unlink."></span>
-      <span id="komet_concept_panel_tree_show_<%= @viewer_id %>" class="fa fa-tree" onclick="WindowManager.viewers[<%= @viewer_id %>].showInTaxonomyTree();" title="Show in Taxonomy Tree"></span>
+    <span class="panel-title komet-section-title komet-context-menu"
+          data-menu-type="concept"
+          data-menu-uuid="<%= @concept_id %>"
+          data-menu-concept-text="<%= @attributes[0][:value] %>"
+          data-menu-concept-terminology-type="<%= @concept_terminology_type %>"
+          data-menu-state="<%= @concept_state %>"
+    >
+        <span id="komet_concept_panel_tree_link_<%= @viewer_id %>" class="fa fa-chain-broken" onclick="WindowManager.toggleViewerLinkage('<%= @viewer_id %>', WindowManager.getLinkedViewerID() != '<%= @viewer_id %>');" title="Viewer linked to Taxonomy Tree. Click to unlink."></span>
+        <span id="komet_concept_panel_tree_show_<%= @viewer_id %>" class="fa fa-tree" onclick="WindowManager.viewers[<%= @viewer_id %>].showInTaxonomyTree();" title="Show in Taxonomy Tree"></span>
         <%= @attributes[0][:value] %>
     </span>
 

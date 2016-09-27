@@ -328,9 +328,19 @@ var ConceptViewer = function(viewerID, currentConceptID) {
         // when the parent field changes, update the name display fields
         $("#komet_create_concept_parent_display_" + this.viewerID).change(function(event) {
 
+            // get the semantic tag from the parent text - the value in parentheses
+            var semanticTag = event.currentTarget.value.match(/\(([^)]+)\)/);
+
+            // if there was a match use that as the semantic tag, otherwise use the parent text
+            if (semanticTag){
+                semanticTag = " " + semanticTag[0];
+            } else {
+                semanticTag = " (" + event.currentTarget.value + ")";
+            }
+
             // set the FSN display text [Description (Parent Text)]
             var preferred_name =  $("#komet_create_concept_description_" + this.viewerID).val();
-            $("#komet_create_concept_fsn_" + this.viewerID).html(preferred_name + ' (' + event.currentTarget.value + ')');
+            $("#komet_create_concept_fsn_" + this.viewerID).html(preferred_name + semanticTag);
 
             // set the Preferred Name display text [Description]
             $("#komet_create_concept_preferred_name_" + this.viewerID).html(preferred_name);
@@ -339,8 +349,20 @@ var ConceptViewer = function(viewerID, currentConceptID) {
         // when the description field changes, update the name display fields
         $("#komet_create_concept_description_" + this.viewerID).change(function(event) {
 
-            // set the FSN display text [Description (Parent Text)]
-            var fsn = event.currentTarget.value + " (" + $("#komet_create_concept_parent_display_" + this.viewerID).val() + ")";
+            var parent = $("#komet_create_concept_parent_display_" + this.viewerID).val();
+
+            // get the semantic tag from the parent text - the value in parentheses
+            var semanticTag = parent.match(/\(([^)]+)\)/);
+
+            // if there was a match use that as the semantic tag, otherwise use the parent text
+            if (semanticTag){
+                semanticTag = " " + semanticTag[0];
+            } else {
+                semanticTag = " (" + parent + ")";
+            }
+
+            // set the FSN display text [Description (Semantic Tag)]
+            var fsn = event.currentTarget.value + semanticTag;
             $("#komet_create_concept_fsn_" + this.viewerID).html(fsn);
 
             // set the Preferred Name display text [Description]

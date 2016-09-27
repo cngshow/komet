@@ -114,7 +114,7 @@ class KometDashboardController < ApplicationController
 
     end
 
-    def get_attributes_jsonreturntype
+    def get_concept_edit_attributes
         @concept_id = params[:concept_id]
         @stated = params[:stated]
         @viewer_id =  params[:viewer_id]
@@ -145,7 +145,7 @@ class KometDashboardController < ApplicationController
 
     end
 
-    def get_descriptions_jsonreturntype
+    def get_concept_edit_descriptions
         @concept_id = params[:concept_id]
         @stated = params[:stated]
         @viewer_id =  params[:viewer_id]
@@ -299,8 +299,10 @@ class KometDashboardController < ApplicationController
             end
 
             # load the root node into our return variable
+            # TODO - remove the hard-coding of type to 'vhat' when the type flags are implemented in the REST APIs
             root_anchor_attributes = { class: 'komet-context-menu', 'data-menu-type' => 'concept', 'data-menu-uuid' => isaac_concept.conChronology.identifiers.uuids.first,
-                                       'data-menu-state' => 'ACTIVE', 'data-menu-concept-text' => isaac_concept.conChronology.description}
+                                       'data-menu-state' => 'ACTIVE', 'data-menu-concept-text' => isaac_concept.conChronology.description,
+                                        'data-menu-concept-terminology-type' => 'vhat'}
             root_node = {id: 0, concept_id: isaac_concept.conChronology.identifiers.uuids.first, text: isaac_concept.conChronology.description, parent_reversed: false, parent_search: parent_search, icon: 'komet-tree-node-icon komet-tree-node-primitive', a_attr: root_anchor_attributes, state: {opened: 'true'}}
         else
             isaac_concept = TaxonomyRest.get_isaac_concept(uuid: selected_concept_id, additional_req_params: additional_req_params)
@@ -337,6 +339,8 @@ class KometDashboardController < ApplicationController
         node[:module] = concept.conVersion.moduleSequence
         node[:path] = concept.conVersion.pathSequence
         node[:refsets] = concept.sememeMembership
+        # TODO - remove the hard-coding of type to 'vhat' when the type flags are implemented in the REST APIs
+        node[:terminology_type] = 'vhat'
 
         if node[:text] == nil
             node[:text] = '[No Description]'
@@ -406,6 +410,8 @@ class KometDashboardController < ApplicationController
                 parent_node[:path] = parent.conVersion.pathSequence
                 parent_node[:has_parents] = parent.parentCount.to_i > 0
                 parent_node[:parent_count] = parent.parentCount
+                # TODO - remove the hard-coding of type to 'vhat' when the type flags are implemented in the REST APIs
+                node[:terminology_type] = 'vhat'
 
                 if node[:parent_count] != 0
                     parent_node[:badge] = "&nbsp;&nbsp;<span class=\"badge badge-success\" title=\"kma\">#{parent_node[:parent_count]}</span>"
@@ -459,7 +465,13 @@ class KometDashboardController < ApplicationController
 
         raw_nodes.each do |raw_node|
 
-            anchor_attributes = { class: 'komet-context-menu', 'data-menu-type' => 'concept', 'data-menu-uuid' => raw_node[:id], 'data-menu-state' => raw_node[:state], 'data-menu-concept-text' => raw_node[:text]}
+            anchor_attributes = { class: 'komet-context-menu',
+                                  'data-menu-type' => 'concept',
+                                  'data-menu-uuid' => raw_node[:id],
+                                  'data-menu-state' => raw_node[:state],
+                                  'data-menu-concept-text' => raw_node[:text],
+                                  'data-menu-concept-terminology-type' => raw_node[:terminology_type]
+            }
             parent_search = parent_search_param
             parent_reversed = parent_reversed_param
             show_expander = true
@@ -568,7 +580,7 @@ class KometDashboardController < ApplicationController
         end
     end
 
-    def get_concept_add
+    def get_concept_create_info
 
         $isaac_metadata_auxiliary
 
@@ -577,12 +589,14 @@ class KometDashboardController < ApplicationController
         @viewer_id = params[:viewer_id]
         @parent_id = params[:parent_id]
         @parent_text = params[:parent_text]
+        @parent_type = params[:parent_type]
         @description_types = get_concept_description_types
 
         if @parent_id == nil
 
             @parent_id = ''
             @parent_text = ''
+            @parent_type = ''
         end
 
         if @viewer_id == nil || @viewer_id == '' || @viewer_id == 'new'
@@ -593,7 +607,7 @@ class KometDashboardController < ApplicationController
 
     end
 
-    def get_concept_edit
+    def get_concept_edit_info
 
         @concept_id = params[:concept_id]
         @stated = params[:stated]
@@ -606,12 +620,13 @@ class KometDashboardController < ApplicationController
 
     end
 
-    def process_concept_Create
+    def create_concept
 
         description_type = params[:komet_create_concept_description_type]
         preferred_term = params[:komet_create_concept_description]
         parent_concept_id = params[:komet_create_concept_parent]
         parent_concept_text = params[:komet_create_concept_parent_display]
+        parent_concept_type = params[:komet_create_concept_parent_type]
 
         # get the parent concept sequence from the uuid
         parent_concept_id = IdAPIsRest.get_id(uuid_or_id: parent_concept_id, action: IdAPIsRestActions::ACTION_TRANSLATE, additional_req_params: {inputType: 'uuid', outputType: 'conceptSequence'}).value
@@ -637,7 +652,7 @@ class KometDashboardController < ApplicationController
         end
 
         # add the parent concept to the concept recents array in the session
-        add_to_recents(CONCEPT_RECENTS, parent_concept_id, parent_concept_text)
+        add_to_recents(CONCEPT_RECENTS, parent_concept_id, parent_concept_text, parent_concept_type)
 
         # clear taxonomy caches after writing data
         clear_rest_caches
@@ -649,41 +664,48 @@ class KometDashboardController < ApplicationController
 
     end
 
-    def process_concept_Clone
-        @concept_id = params[:concept_id]
-        getconceptDate = get_conceptData(uuid)
+    def edit_concept
 
-        body_params = {fsn: getconceptDate[:FSN], preferredTerm: getconceptDate[:PreferredTerm], parentConceptIds:getconceptDate[:ParentID]}
-
-        set_id = ConceptRest::get_concept(action: ConceptRestActions::ACTION_CREATE, body_params:body_params )
-
-        if set_id.is_a? CommonRest::UnexpectedResponse
-            render json: {set_id: nil}
-            return
-        end
-
-        # clear taxonomy caches after writing data
-        clear_rest_caches
     end
 
-    def process_concept_ActiveInactive
-        coordinates_token = session[:coordinatestoken].token
-        id = params[:id]
-        statusFlag = params[:statusFlag]
+    def clone_concept
 
-        if statusFlag == 'ACTIVE'
-            deactivate = ConceptRest::get_concept(action: ConceptRestActions::ACTION_UPDATE_ACTIVATE, uuid: id)
-        else
-            deactivate = ConceptRest::get_concept(action: ConceptRestActions::ACTION_UPDATE_DEACTIVATE, uuid: id)
-        end
-        if deactivate.is_a? CommonRest::UnexpectedResponse
+        @concept_id = params[:concept_id]
+        concept_data = get_conceptData(@concept_id)
 
-            render json: {deactivate: nil}
-            return
+        body_params = {fsn: concept_data[:FSN], preferredTerm: concept_data[:PreferredTerm], parentConceptIds:concept_data[:ParentID]}
+
+        new_concept_id = ConceptRest::get_concept(action: ConceptRestActions::ACTION_CREATE, body_params: body_params )
+
+        if new_concept_id.is_a? CommonRest::UnexpectedResponse
+            render json: {concept_id: nil} and return
         end
 
         # clear taxonomy caches after writing data
         clear_rest_caches
+
+        render json: {concept_id: new_concept_id}
+    end
+
+    def change_concept_state
+
+        concept_id = params[:concept_id]
+        newState = params[:newState]
+
+        if newState == 'active'
+            results = ConceptRest::get_concept(action: ConceptRestActions::ACTION_UPDATE_ACTIVATE, uuid: concept_id)
+        else
+            results = ConceptRest::get_concept(action: ConceptRestActions::ACTION_UPDATE_DEACTIVATE, uuid: concept_id)
+        end
+
+        if results.is_a? CommonRest::UnexpectedResponse
+            render json: {state: nil} and return
+        end
+
+        # clear taxonomy caches after writing data
+        clear_rest_caches
+
+        render json: {state: state}
     end
 
     ##
@@ -702,7 +724,8 @@ class KometDashboardController < ApplicationController
 
         results.results.each do |result|
 
-            concept_suggestions_data << {label: result.matchText, value: result.referencedConcept.identifiers.uuids.first}
+            # TODO - remove the hard-coding of type to 'vhat' when the type flags are implemented in the REST APIs
+            concept_suggestions_data << {label: result.matchText, value: result.referencedConcept.identifiers.uuids.first, type: 'vhat'}
         end
 
         render json: concept_suggestions_data
@@ -718,8 +741,7 @@ class KometDashboardController < ApplicationController
         if session[CONCEPT_RECENTS]
             recents_array = session[CONCEPT_RECENTS]
         end
-        $log.debug('%%%%%%%%%%% Concept Recents: ' + CONCEPT_RECENTS.to_s);
-        $log.debug('%%%%%%%%%%% recents array: ' + recents_array.to_s);
+
         render json: recents_array
     end
 

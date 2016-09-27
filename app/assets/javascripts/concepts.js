@@ -74,18 +74,19 @@ var ConceptsModule = (function () {
         }
         else if (action == CREATE) {
 
-            restPath = gon.routes.taxonomy_get_concept_add_path;
+            restPath = gon.routes.taxonomy_get_concept_create_info_path;
             restParameters.partial = 'komet_dashboard/concept_detail/concept_add';
 
             if (params !== undefined && params !== null){
 
                 restParameters.parent_id = params.parentID;
                 restParameters.parent_text = params.parentText;
+                restParameters.parent_type = params.parentType;
             }
         }
         else if (action == EDIT) {
 
-            restPath = gon.routes.taxonomy_get_concept_edit_path;
+            restPath = gon.routes.taxonomy_get_concept_edit_info_path;
             restParameters.partial = 'komet_dashboard/concept_detail/concept_edit';
         }
 
