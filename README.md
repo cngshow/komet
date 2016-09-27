@@ -15,11 +15,14 @@ git clone https://cshupp@vadev.mantech.com:4848/git/r/ISAAC-rest.git
 
 In rails root you will find a file called setup.bat.template.
 Move this file to setup.bat, then you will need to modify the following environment variables:
+Download jdk if you don't already have it for line 4 http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html
 
 GEM_HOME : (this is in line 2, make sure you create the directory you reference)<br>
 JAVA_HOME : (Line 4)<br>
 JRUBY_JAR: (This references JRuby's complete jar file.  Line 8)<br>
 ISAAC_PATH: (Line 6, the path to the folder where your Isaac Rest project is installed)
+
+
 
 From a dos shell make sure you are in rails root (you can see the app directory right?), and run:
 ```
