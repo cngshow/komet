@@ -20,9 +20,12 @@ In rails root you will find a file called setup.bat.template.
 Move this file to setup.bat, then you will need to modify the following environment variables:<br>
 Download jdk if you don't already have it for line 5 http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html
 
-GEM_HOME : (this is in line 2, make sure you create the directory you reference)<br>
-JAVA_HOME : (Line 4)<br>
-JRUBY_JAR: (This references JRuby's complete jar file.  Line 8)<br>
+GEM_HOME : (this is in line 2, make sure you create the directory you reference)
+
+JAVA_HOME : (Line 4)
+
+JRUBY_JAR: (This references JRuby's complete jar file.  Line 8)
+
 ISAAC_PATH: (Line 6, the path to the folder where your Isaac Rest project is installed)
 
 
@@ -49,15 +52,14 @@ be shared with rails_komet and the PRISME project
 
 
 To pull the latest code do the following (replace my username with yours where appropriate.):
-<ol>
-<li>VCS -> Update Project - from within RubyMine (https://www.jetbrains.com/help/ruby/2016.1/installing-and-launching.html)</li>
-<li>open .gitignore and comment out /lib/rails__common with a #</li>
-<li>open a terminal and navigate to rails_komet/lib</li>
-<li>git submodule add https://cshupp@vadev.mantech.com:4848/git/r/rails_common.git
-<li>open .gitignore and uncomment /lib/rails__common</li>
-<li>run git reset from within the lib/rails_common directory</li>
-<li>run git  rm -f --cached rails_common from within the lib/rails_common directory if the line above fails</li>
-</ol>
+* VCS -> Update Project - from within RubyMine (https://www.jetbrains.com/help/ruby/2016.1/installing-and-launching.html)
+* open .gitignore and comment out /lib/rails__common with a #
+* open a terminal and navigate to rails_komet/lib
+* git submodule add https://cshupp@vadev.mantech.com:4848/git/r/rails_common.git
+* open .gitignore and uncomment /lib/rails__common
+* run git reset from within the lib/rails_common directory
+* run git  rm -f --cached rails_common from within the lib/rails_common directory if the line above fails
+
 
 ```
 git reset .
