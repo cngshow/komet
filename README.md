@@ -69,18 +69,16 @@ You should now see an rails_common directory under the lib directory.
 
 In RubyMine you may see a message concerning rails_common being under source control. If/when you do, click the add root button. This will allow you to make changes within the rails_komet project to the code in rails_common and commit those changes as well.
 
-<br>
-<hr>
 
-Open a terminal and navigate to rails root and run the command:<br>
-mvn clean initialize  <br>
-This will create the file:<br>
-./config/generated/yaml/IsaacMetadataAuxiliary.yaml<br>
-Now run the following command to build the Isaac Rest project<br>
-bundle exec rake isaac:build_isaac_rest
+Open a terminal and navigate to rails root and run the command:
+* mvn clean initialize  
+* This will create the file:
+* ./config/generated/yaml/IsaacMetadataAuxiliary.yaml
+* Now run the following command to build the Isaac Rest project
+* bundle exec rake isaac:build_isaac_rest
 
-<br>
-<hr>
+
+
 You can now bring up the server:
 ```
 startup.bat
