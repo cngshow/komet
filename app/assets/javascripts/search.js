@@ -28,7 +28,7 @@ var TaxonomySearchModule = (function () {
 
     function loadResultGrid() {
 
-        $("#komet_taxonomy_search_form").find(".komet-form-error").remove();
+        $("#komet_taxonomy_search_form").find(".komet-form-error, .komet-form-field-error").remove();
 
         if ($("#taxonomy_search_text").val() === ""){
 
@@ -54,6 +54,7 @@ var TaxonomySearchModule = (function () {
             rowModelType: 'pagination',
             columnDefs:  [
                 {field: "id", headerName: 'ID', hide: 'true'},
+                // # TODO - does this context menu make sense here - what are we doing with the matching text
                 {field: "matching_terms", headerName: "Matching Terms", cellRenderer: function(params) {
                     return '<span class="komet-context-menu" data-menu-type="concept" data-menu-uuid="' + params.data.id + '" '
                         + 'data-menu-state="' + params.data.concept_status + '" data-menu-concept-text="' + params.data.matching_terms + '">' + params.value + '</span>';

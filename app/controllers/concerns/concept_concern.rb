@@ -48,6 +48,13 @@ module ConceptConcern
             return [{value: ''}, {value: ''}, {value: ''}]
         end
 
+        # TODO - switch to using this style for values that need to be specifically referenced in multiple places
+        @concept_text = attributes.conChronology.description
+        @concept_state = attributes.conVersion.state.name
+
+        # TODO - remove the hard-coding of type to 'vhat' when the type flags are implemented in the REST APIs
+        @concept_terminology_type =  'vhat'
+
         return_attributes << {label: 'Text', value: attributes.conChronology.description}
         return_attributes << {label: 'State', value: attributes.conVersion.state.name}
 
@@ -138,6 +145,9 @@ module ConceptConcern
 
             return_description = {text: description.text}
             return_description[:state] =  description.sememeVersion.state.name
+
+            # TODO - remove the hard-coding of type to 'vhat' when the type flags are implemented in the REST APIs
+            return_description = {terminology_type: 'vhat'}
 
             attributes = []
 
