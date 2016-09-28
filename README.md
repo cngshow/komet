@@ -11,6 +11,9 @@ https://s3.amazonaws.com/jruby.org/downloads/9.0.4.0/jruby-complete-9.0.4.0.jar
 
 You also need Maven: https://maven.apache.org/download.cgi
 Place where you would like
+Add the bin directory of the created directory [apache dir] to the PATH environment variable
+
+Confirm with mvn -v in a new shell. 
 
 You need to make sure you have the source code for the ISAAC-rest project on your system.
 
@@ -29,6 +32,7 @@ JRUBY_JAR: (This references JRuby's complete jar file.  Line 8)
 ISAAC_PATH: (Line 6, the path to the folder where your Isaac Rest project is installed)
 
 
+
 From a dos shell make sure you are in rails root (you can see the app directory right?), and run:
 ```
 setup.bat
@@ -44,11 +48,9 @@ Install your bundle!
 bundle install
 ```
 
-<hr>
-<h1>RAILS_COMMON - git submodule</h1>
+**RAILS_COMMON - git submodule**
 We have moved the prop loader and logging code into a git repository at https://github.com/VA-CTT/rails_common.git so that the code can
 be shared with rails_komet and the PRISME project
-
 
 
 To pull the latest code do the following (replace my username with yours where appropriate.):
