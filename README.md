@@ -9,6 +9,9 @@ I put it in the directory where JRuby is installed.
 
 https://s3.amazonaws.com/jruby.org/downloads/9.0.4.0/jruby-complete-9.0.4.0.jar
 
+You also need Maven: https://maven.apache.org/download.cgi
+Place where you would like
+
 You need to make sure you have the source code for the ISAAC-rest project on your system.
 
 git clone https://cshupp@vadev.mantech.com:4848/git/r/ISAAC-rest.git
@@ -21,7 +24,6 @@ GEM_HOME : (this is in line 2, make sure you create the directory you reference)
 JAVA_HOME : (Line 4)<br>
 JRUBY_JAR: (This references JRuby's complete jar file.  Line 8)<br>
 ISAAC_PATH: (Line 6, the path to the folder where your Isaac Rest project is installed)
-
 
 
 From a dos shell make sure you are in rails root (you can see the app directory right?), and run:
@@ -69,7 +71,7 @@ In RubyMine you may see a message concerning rails_common being under source con
 <hr>
 
 Open a terminal and navigate to rails root and run the command:<br>
-mvn clean initialize<br>
+mvn clean initialize  <br>
 This will create the file:<br>
 ./config/generated/yaml/IsaacMetadataAuxiliary.yaml<br>
 Now run the following command to build the Isaac Rest project<br>
