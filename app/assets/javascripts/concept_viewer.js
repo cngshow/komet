@@ -359,19 +359,24 @@ var ConceptViewer = function(viewerID, currentConceptID, viewerAction) {
 
         // set the Preferred Name display text [Description]
         // $("#komet_create_concept_preferred_name_" + this.viewerID).html(preferred_name);
-    };
+    }.bind(this);
 
     ConceptViewer.prototype.createConcept = function() {
 
         UIHelper.processAutoSuggestTags("#komet_concept_lineage_panel_" + this.viewerID);
 
         $("#komet_create_concept_confirm_section_" + this.viewerID).hide();
+        var parentField = $("#komet_create_concept_parent_display_" + this.viewerID);
+
+        // TODO - clean up the calling of onchange function to autosuggest field. Do not need to pass function name into tag, remove code from UIHelper and HTML. convert this to anonymous function inside timeout.
+        parentField.change(function(){
+            setTimeout("WindowManager.viewers[" + this.viewerID + "].conceptEditorParentOnChange()", 0);
+        }.bind(this));
 
         // when the description field changes, update the name display fields
         // a similar function exists for the Parent field (conceptEditorParentOnChange) but is passed into the autosuggest tag
         $("#komet_create_concept_description_" + this.viewerID).change(function(event) {
 
-            var parentField = $("#komet_create_concept_parent_display_" + this.viewerID);
             var taxonomyType = $("#komet_create_concept_parent_type_" + this.viewerID).val();
             var semanticTag = "";
 
@@ -413,6 +418,10 @@ var ConceptViewer = function(viewerID, currentConceptID, viewerAction) {
             // have to return false to stop the form from posting twice.
             return false;
         });
+
+        if (parentField.val() != ""){
+            parentField.change();
+        }
 
         return true;
     };

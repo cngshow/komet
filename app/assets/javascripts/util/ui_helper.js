@@ -363,11 +363,20 @@ var UIHelper = (function () {
 
             var displayField = $("#" + fieldIDBase + "_display" + fieldIDPostfix);
 
+            var asOnChange = function (suggestionOnChangeFunction) {
+
+                return function(){
+                    setTimeout(suggestionOnChangeFunction, 0);
+                };
+            };
+
+            //displayField.change(asOnChange(suggestionOnChangeFunction));
+
             displayField.autocomplete({
                 source: gon.routes[suggestionRestVariable],
                 minLength: 3,
-                select: onAutoSuggestSelection,
-                change: onAutoSuggestChange(suggestionOnChangeFunction)
+                select: onAutoSuggestSelection
+                ,change: onAutoSuggestChange(suggestionOnChangeFunction)
             });
 
             var recentsButton = $("#" + fieldIDBase + "_recents_button" + fieldIDPostfix);
@@ -423,7 +432,7 @@ var UIHelper = (function () {
             }
 
             // run the user supplied onchange function if there is one
-            setTimeout(suggestionOnChangeFunction, 0);
+            //setTimeout(suggestionOnChangeFunction, 0);
         };
     };
 
@@ -474,7 +483,7 @@ var UIHelper = (function () {
         displayField.change();
 
         // run the user supplied onchange function if there is one
-        setTimeout(suggestionOnChangeFunction, 0);
+        //setTimeout(suggestionOnChangeFunction, 0);
     };
 
     var getElementRightFromWindow = function(elementOrSelector){
