@@ -25,7 +25,7 @@
         <div class="komet-concept-body-tools">
             <div class="glyphicon glyphicon-plus-sign" onclick="WindowManager.viewers[<%= @viewer_id %>].togglePanelDetails('komet_concept_panel_<%= @viewer_id %>')"></div>
             <span>Expand All</span>
-            <div class="fa fa-pencil-square" onclick="$.publish(KometChannels.Taxonomy.taxonomyConceptEditorChannel, [<%= @concept_id %>, <%= @viewer_id %>, WindowManager.INLINE]);"></div>
+            <div class="fa fa-pencil-square" onclick="$.publish(KometChannels.Taxonomy.taxonomyConceptEditorChannel, ['<%= @concept_id %>', '<%= @viewer_id %>', WindowManager.INLINE]);"></div>
 
             <div class="komet-flex-right">
                 <select id="komet_concept_stated_inferred_<%= @viewer_id %>" class="form-control komet-stated-inferred" onchange="ConceptsModule.setStatedView(<%= @viewer_id %>, this)">

@@ -512,7 +512,7 @@ var ConceptViewer = function(viewerID, currentConceptID, viewerAction) {
         var rowCount = 0;
         var concept_id  = "?concept_id=" + this.currentConceptID + "&stated=stated&viewer_id=" + viewerID;
 
-        $.get(gon.routes.taxonomy_get_attributes_jsonreturntype_path  + concept_id     ,function( data ) {
+        $.get(gon.routes.taxonomy_get_concept_edit_attributes_path  + concept_id     ,function( data ) {
 
             selectItemByValue(document.getElementById('komet_concept_Status'),data[1].value);
 
@@ -529,7 +529,7 @@ var ConceptViewer = function(viewerID, currentConceptID, viewerAction) {
 
         descriptiondropdown();
 
-        $.get(gon.routes.taxonomy_get_descriptions_jsonreturntype_path  + concept_id , function( descriptionData ) {
+        $.get(gon.routes.taxonomy_get_concept_edit_descriptions_path  + concept_id , function( descriptionData ) {
 
             $.each(descriptionData, function (index, value) {
 
@@ -537,6 +537,8 @@ var ConceptViewer = function(viewerID, currentConceptID, viewerAction) {
                 addDescriptionData(index,value,rowCount)
             });
         });
+
+        UIHelper.processAutoSuggestTags("#komet_edit_concept_form_" + this.viewerID);
     };
 
     ConceptViewer.prototype.cancelAction = function(previous_type, previous_id){

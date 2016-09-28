@@ -432,6 +432,9 @@ html, body{
     flex-wrap: wrap;
     align-items: baseline;
 }
+.komet-concept-body-tools > span{
+    margin-right: 10px;
+}
 .komet-concept-body-tools .glyphicon, .komet-concept-body-tools .fa{
     width: 20px;
     cursor: pointer;
