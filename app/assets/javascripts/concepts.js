@@ -21,30 +21,30 @@ var ConceptsModule = (function () {
         // listen for the onChange event broadcast for creating or editing a concept.
         $.subscribe(KometChannels.Taxonomy.taxonomyConceptEditorChannel, function (e, conceptID, viewerID, windowType, params) {
 
-            var action = EDIT;
+            var viewerAction = EDIT;
 
             if (conceptID === null || conceptID === ""){
-                action = CREATE;
+                viewerAction = CREATE;
             }
 
-            callLoadViewerData(conceptID, TaxonomyModule.defaultStatedView, action, viewerID, windowType, params);
+            callLoadViewerData(conceptID, TaxonomyModule.defaultStatedView, viewerAction, viewerID, windowType, params);
         });
     }
 
-    function callLoadViewerData(conceptID, stated, action, viewerID, windowType, params) {
+    function callLoadViewerData(conceptID, stated, viewerAction, viewerID, windowType, params) {
 
         if (WindowManager.deferred && WindowManager.deferred.state() == "pending"){
 
             WindowManager.deferred.done(function(){
-                loadViewerData(conceptID, stated, action, WindowManager.getLinkedViewerID(), windowType, params)
+                loadViewerData(conceptID, stated, viewerAction, WindowManager.getLinkedViewerID(), windowType, params)
             }.bind(this));
 
         } else {
-            loadViewerData(conceptID, stated, action, viewerID, windowType, params);
+            loadViewerData(conceptID, stated, viewerAction, viewerID, windowType, params);
         }
     }
 
-    function loadViewerData(conceptID, stated, action, viewerID, windowType, params) {
+    function loadViewerData(conceptID, stated, viewerAction, viewerID, windowType, params) {
 
         WindowManager.deferred = $.Deferred();
 
@@ -52,17 +52,17 @@ var ConceptsModule = (function () {
             windowType = WindowManager.NEW;
         }
 
-        if (action == undefined || action == null){
-            action = VIEW;
+        if (viewerAction == undefined || viewerAction == null){
+            viewerAction = VIEW;
         }
 
         // the path to a javascript partial file that will re-render all the appropriate partials once the ajax call returns
         var restPath = gon.routes.taxonomy_get_concept_information_path;
         var partial = "komet_dashboard/concept_detail/concept_information";
-        var restParameters = {concept_id: conceptID, stated: stated, partial: partial, viewer_id: viewerID};
+        var restParameters = {concept_id: conceptID, stated: stated, partial: partial, viewer_id: viewerID, viewer_action: viewerAction};
         var onSuccess = function() {};
 
-        if (action == VIEW) {
+        if (viewerAction == VIEW) {
 
             onSuccess = function() {
 
@@ -72,7 +72,7 @@ var ConceptsModule = (function () {
                 }
             };
         }
-        else if (action == CREATE) {
+        else if (viewerAction == CREATE) {
 
             restPath = gon.routes.taxonomy_get_concept_create_info_path;
             restParameters.partial = 'komet_dashboard/concept_detail/concept_add';
@@ -84,10 +84,25 @@ var ConceptsModule = (function () {
                 restParameters.parent_type = params.parentType;
             }
         }
-        else if (action == EDIT) {
+        else if (viewerAction == EDIT) {
 
             restPath = gon.routes.taxonomy_get_concept_edit_info_path;
             restParameters.partial = 'komet_dashboard/concept_detail/concept_edit';
+        }
+
+        if ((viewerAction == EDIT || viewerAction == CREATE) && WindowManager.viewers.inlineViewers.length > 0  && (windowType == null || windowType == WindowManager.INLINE)){
+
+            if (WindowManager.viewers[viewerID].constructor.name = "ConceptViewer" && WindowManager.viewers[viewerID].viewerAction == VIEW){
+
+                restParameters.viewer_previous_content_id = WindowManager.viewers[viewerID].currentConceptID;
+
+            } else if (WindowManager.viewers[viewerID].constructor.name = "MappingViewer" && (WindowManager.viewers[viewerID].viewerAction == MappingModule.SET_LIST || WindowManager.viewers[viewerID].viewerAction == MappingModule.SET_DETAILS)){
+
+                restParameters.viewer_previous_content_id = WindowManager.viewers[viewerID].currentSetID;
+            }
+
+            restParameters.viewer_previous_content_type = WindowManager.viewers[viewerID].constructor.name
+
         }
 
         // make an ajax call to get the concept for the current concept and pass it the currently selected concept id and the name of a partial file to render
@@ -113,9 +128,9 @@ var ConceptsModule = (function () {
         });
     }
 
-    function createViewer(viewerID, conceptID) {
+    function createViewer(viewerID, conceptID, viewerAction) {
 
-        WindowManager.createViewer(new ConceptViewer(viewerID, conceptID));
+        WindowManager.createViewer(new ConceptViewer(viewerID, conceptID, viewerAction));
 
         // resolve waiting requests now that processing is done.
         WindowManager.deferred.resolve();
@@ -129,7 +144,10 @@ var ConceptsModule = (function () {
         initialize: init,
         createViewer: createViewer,
         loadViewerData: loadViewerData,
-        setStatedView: setStatedView
+        setStatedView: setStatedView,
+        VIEW: VIEW,
+        EDIT: EDIT,
+        CREATE: CREATE
     };
 
 })();

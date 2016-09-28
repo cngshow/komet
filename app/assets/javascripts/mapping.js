@@ -47,26 +47,26 @@ var MappingModule = (function () {
         });
     }
 
-    function callLoadViewerData(setID, mappingAction, viewerID, windowType) {
+    function callLoadViewerData(setID, viewerAction, viewerID, windowType) {
 
         if (WindowManager.deferred && WindowManager.deferred.state() == "pending"){
             WindowManager.deferred.done(function(){
-                loadViewerData(setID, mappingAction, WindowManager.getLinkedViewerID(), windowType)
+                loadViewerData(setID, viewerAction, WindowManager.getLinkedViewerID(), windowType)
             }.bind(this));
         } else {
-            loadViewerData(setID, mappingAction, viewerID, windowType);
+            loadViewerData(setID, viewerAction, viewerID, windowType);
         }
     }
 
     // the path to a javascript partial file that will re-render all the appropriate partials once the ajax call returns
-    function loadViewerData(setID, mappingAction, viewerID, windowType) {
+    function loadViewerData(setID, viewerAction, viewerID, windowType) {
 
         WindowManager.deferred = $.Deferred();
 
-        var params = {partial: 'komet_dashboard/mapping/mapping_viewer', mapping_action: mappingAction, viewer_id: viewerID, set_id: setID};
+        var params = {partial: 'komet_dashboard/mapping/mapping_viewer', mapping_action: viewerAction, viewer_id: viewerID, set_id: setID};
         var url = gon.routes.mapping_load_mapping_viewer_path;
 
-        if (mappingAction == CREATE_SET && WindowManager.viewers.inlineViewers.length > 0 && WindowManager.viewers[viewerID].currentSetID != 0 && (windowType == null || windowType == WindowManager.INLINE)){
+        if (viewerAction == CREATE_SET && WindowManager.viewers.inlineViewers.length > 0 && WindowManager.viewers[viewerID].currentSetID != 0 && (windowType == null || windowType == WindowManager.INLINE)){
             params.previous_set_id = WindowManager.viewers[viewerID].currentSetID;
         }
 
@@ -95,9 +95,9 @@ var MappingModule = (function () {
         });
     }
 
-    function createViewer(viewerID, setID, mappingAction) {
+    function createViewer(viewerID, setID, viewerAction) {
 
-        WindowManager.createViewer(new MappingViewer(viewerID, setID, mappingAction));
+        WindowManager.createViewer(new MappingViewer(viewerID, setID, viewerAction));
 
         // resolve waiting requests now that processing is done.
         WindowManager.deferred.resolve();

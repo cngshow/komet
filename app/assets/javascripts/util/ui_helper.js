@@ -46,8 +46,15 @@ var UIHelper = (function () {
         return (tabpage !== undefined ? (tabpage === tabpageId) : false);
     }
 
-    function generateFormErrorMessage(message){
-        return '<div class="komet-form-error"><div class="glyphicon glyphicon-alert"></div>' + message + '</div>';
+    function generateFormErrorMessage(message, formLevelError){
+
+        var classLevel = "komet-form-field-error";
+
+        if (formLevelError != undefined && formLevelError){
+            classLevel = "komet-form-error";
+        }
+
+        return '<div class="' + classLevel + '"><div class="glyphicon glyphicon-alert"></div>' + message + '</div>';
     }
 
     function toggleChangeHighlights(containerElementOrSelector, showChanges){
@@ -71,18 +78,25 @@ var UIHelper = (function () {
     }
 
     // function to switch a field between enabled and disabled
-    function toggleFieldAvailability(field_name, enable){
+    function toggleFieldAvailability(elementOrSelector, enable){
 
-        var field = $("#" + field_name);
+        var element;
+
+        // If the type of the first parameter is a string, then use it as a jquery selector, otherwise use as is
+        if (typeof elementOrSelector === "string"){
+            element = $(elementOrSelector);
+        } else {
+            element = elementOrSelector;
+        }
 
         if (enable){
 
-            field.removeClass("ui-state-disabled");
-            field.addClass("ui-state-enabled");
+            element.removeClass("ui-state-disabled");
+            element.addClass("ui-state-enabled");
         } else {
 
-            field.removeClass("ui-state-enabled");
-            field.addClass("ui-state-disabled");
+            element.removeClass("ui-state-enabled");
+            element.addClass("ui-state-disabled");
         }
     }
 
@@ -327,6 +341,7 @@ var UIHelper = (function () {
             var typeValue = tag.getAttribute("type-value");
             var fieldClasses = tag.getAttribute("classes");
             var tabIndex = tag.getAttribute("tab-index");
+            var suggestionOnChangeFunction = tag.getAttribute("suggestion-onchange-function");
             var suggestionRestVariable = tag.getAttribute("suggestion-rest-variable");
             var recentsRestVariable = tag.getAttribute("recents-rest-variable");
 
@@ -336,6 +351,10 @@ var UIHelper = (function () {
 
             if (suggestionRestVariable == null){
                 suggestionRestVariable = "komet_dashboard_get_concept_suggestions_path";
+            }
+
+            if (suggestionOnChangeFunction == null){
+                suggestionOnChangeFunction = "";
             }
 
             var autoSuggest = UIHelper.createAutoSuggestField(fieldIDBase, fieldIDPostfix, label, idValue, displayValue, typeValue, fieldClasses, tabIndex);
@@ -348,7 +367,7 @@ var UIHelper = (function () {
                 source: gon.routes[suggestionRestVariable],
                 minLength: 3,
                 select: onAutoSuggestSelection,
-                change: onAutoSuggestChange
+                change: onAutoSuggestChange(suggestionOnChangeFunction)
             });
 
             var recentsButton = $("#" + fieldIDBase + "_recents_button" + fieldIDPostfix);
@@ -361,7 +380,7 @@ var UIHelper = (function () {
                 menu.css("right", getElementRightFromWindow(recentsButton));
             }.bind(this));
 
-            loadAutoSuggestRecents(fieldIDBase + "_recents" + fieldIDPostfix, recentsRestVariable);
+            loadAutoSuggestRecents(fieldIDBase + "_recents" + fieldIDPostfix, recentsRestVariable, suggestionOnChangeFunction);
         });
     };
 
@@ -382,25 +401,33 @@ var UIHelper = (function () {
         return false;
     };
 
-    var onAutoSuggestChange = function(event, ui){
+    var onAutoSuggestChange = function(suggestionOnChangeFunction){
 
-        if (!ui.item) {
+        return function(event, ui) {
 
-            var labelField = $(this);
-            labelField.val("");
-            labelField.change();
+            if (!ui.item) {
 
-            var idField = $("#" + this.id.replace("_display", ""));
-            idField.val("");
-            idField.change();
+                var idField = $("#" + this.id.replace("_display", ""));
+                idField.val("");
+                idField.change();
 
-            var typeField = $("#" + this.id.replace("_display", "_type"));
-            typeField.val("");
-            typeField.change();
-        }
+                var typeField = $("#" + this.id.replace("_display", "_type"));
+                typeField.val("");
+                typeField.change();
+
+                // make sure this is last, as there may be an onchange event on the display field that requires the other fields to be set.
+                // though since onchange events for this field run before the autosuggest finishes updating all fields, also run the user supplied change function
+                var labelField = $(this);
+                labelField.val("");
+                labelField.change();
+            }
+
+            // run the user supplied onchange function if there is one
+            setTimeout(suggestionOnChangeFunction, 0);
+        };
     };
 
-    var loadAutoSuggestRecents = function(recentsID, restVariable){
+    var loadAutoSuggestRecents = function(recentsID, restVariable, suggestionOnChangeFunction){
 
         if (restVariable == null){
             restVariable = "komet_dashboard_get_concept_recents_path";
@@ -422,26 +449,32 @@ var UIHelper = (function () {
                 // TODO - remove this reassignment when the type flags are implemented in the REST APIs
                 value.type = UIHelper.VHAT;
 
-                options += "<li><a href=\"#\" onclick=\"UIHelper.useAutoSuggestRecent('" + autoSuggestIDField + "', '" + autoSuggestDisplayField + "', '" + autoSuggestTypeField + "', '" + value.id + "', '" + valueText + "', '" + value.type + "')\">" + valueText + "</a></li>";
+                options += '<li><a href="#" onclick=\'UIHelper.useAutoSuggestRecent("' + autoSuggestIDField + '", "' + autoSuggestDisplayField + '", "' + autoSuggestTypeField + '"'
+                    + ', "' + value.id + '", "' + valueText + '", "' + value.type + '", "' + suggestionOnChangeFunction + '")\'>' + valueText + '</a></li>';
             });
 
             $("#" + recentsID).html(options);
         });
     };
 
-    var useAutoSuggestRecent = function(autoSuggestID, autoSuggestDisplayID, autoSuggestTypeField, id, text, type){
+    var useAutoSuggestRecent = function(autoSuggestID, autoSuggestDisplayField, autoSuggestTypeField, id, text, type, suggestionOnChangeFunction){
 
         var idField = $("#" + autoSuggestID);
         idField.val(id);
         idField.change();
 
-        var displayField = $("#" + autoSuggestDisplayID)
+        var typeField = $("#" + autoSuggestTypeField);
+        typeField.val(type);
+        typeField.change();
+
+        // make sure this is last, as there may be an onchange event on the display field that requires the other fields to be set.
+        // though since onchange events for this field run before the autosuggest finishes updating all fields, also run the user supplied change function
+        var displayField = $("#" + autoSuggestDisplayField);
         displayField.val(text);
         displayField.change();
 
-        var typeField = $("#" + autoSuggestTypeField)
-        typeField.val(type);
-        typeField.change();
+        // run the user supplied onchange function if there is one
+        setTimeout(suggestionOnChangeFunction, 0);
     };
 
     var getElementRightFromWindow = function(elementOrSelector){

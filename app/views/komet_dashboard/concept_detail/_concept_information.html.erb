@@ -48,10 +48,11 @@
 <script>
 
     if (!WindowManager.viewers.hasOwnProperty('<%= @viewer_id %>') || !(WindowManager.viewers[<%= @viewer_id %>] instanceof ConceptViewer)) {
-        ConceptsModule.createViewer("<%= @viewer_id %>", "<%= @concept_id %>");
+        ConceptsModule.createViewer("<%= @viewer_id %>", "<%= @concept_id %>", "<%= @viewer_action %>");
     } else {
 
         WindowManager.viewers[<%= @viewer_id %>].currentConceptID = "<%= @concept_id %>";
+        WindowManager.viewers[<%= @viewer_id %>].viewerAction = "<%= @viewer_action %>";
 
         if (WindowManager.getLinkedViewerID() == "<%= @viewer_id %>") {
             WindowManager.viewers["<%= @viewer_id %>"].swapLinkIcon(true);

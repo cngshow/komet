@@ -20,11 +20,11 @@
 
             <div id="komet_create_concept_save_section_<%= @viewer_id %>">
                 All fields required except where noted as Optional.
-                <button type="button" class="btn btn-default" onclick="WindowManager.closeViewer('<%= @viewer_id %>')">Cancel</button>
-                <button type="button" class="btn btn-primary" id="komet_create_concept_save_<%= @viewer_id %>" onclick="WindowManager.viewers[<%= @viewer_id %>].showSaveSection('confirm')">Save</button>
+                <button type="button" class="btn btn-default" onclick="WindowManager.viewers[<%= @viewer_id %>].cancelAction('<%= @viewer_previous_content_type %>', '<%= @viewer_previous_content_id %>')">Cancel</button>
+                <button type="button" class="btn btn-primary ui-state-disabled" id="komet_create_concept_save_<%= @viewer_id %>" onclick="WindowManager.viewers[<%= @viewer_id %>].showSaveSection('confirm')">Save</button>
             </div>
 
-            <div id="komet_create_concept_confirm_section_<%= @viewer_id %>" class="komet-highlight-changes">
+            <div id="komet_create_concept_confirm_section_<%= @viewer_id %>" class="komet-form-warning">
                 Are you sure you want to commit changes?
                 <button type="button" class="btn btn-default" onclick="WindowManager.viewers[<%= @viewer_id %>].showSaveSection('save')">No</button>
                 <button class="btn btn-primary">Yes</button>
@@ -41,6 +41,7 @@
                         value="<%= @parent_id %>"
                         display-value="<%= @parent_text %>"
                         type-value="<%= @parent_type %>"
+                        suggestion-onchange-function="WindowManager.viewers[<%= @viewer_id %>].conceptEditorParentOnChange()"
                     ></autosuggest>
                 </div>
             </div>
@@ -52,11 +53,14 @@
                 <div class="komet-concept-section-panel-details">
 
                     <div class="komet-changeable">
-                        <div><b>Description Text</b></div>
+                        <div>
+                            <b>Preferred Name</b>
+                            <span id="komet_create_concept_fsn_note_<%= @viewer_id %>"> (also used as FSN)</span>
+                        </div>
                         <input name="komet_create_concept_description" id="komet_create_concept_description_<%= @viewer_id %>" class="form-control">
                     </div>
 
-                    <div class="komet-changeable">
+                    <div id="komet_create_concept_description_type_section_<%= @viewer_id %>" class="komet-changeable hide">
                         <div><b>Extended Description Type: (optional)</b></div>
 
                         <select name="komet_create_concept_description_type" id="komet_create_concept_description_type_<%= @viewer_id %>" class="form-control">
@@ -71,12 +75,9 @@
                         </select>
                     </div>
 
-                    <div>
+                    <div id="komet_create_concept_description_display_<%= @viewer_id %>" class="hide">
                         <div><b>Fully Specified Name:</b></div>
                         <div id="komet_create_concept_fsn_<%= @viewer_id %>"></div>
-
-                        <div><b>Preferred Name:</b></div>
-                        <div id="komet_create_concept_preferred_name_<%= @viewer_id %>"></div>
                     </div>
 
                 </div>
@@ -90,10 +91,11 @@
 <script>
 
     if (!WindowManager.viewers.hasOwnProperty('<%= @viewer_id %>') || !(WindowManager.viewers[<%= @viewer_id %>] instanceof ConceptViewer)) {
-        ConceptsModule.createViewer("<%= @viewer_id %>", null);
+        ConceptsModule.createViewer("<%= @viewer_id %>", null, "<%= @viewer_action %>");
     } else {
 
         WindowManager.viewers[<%= @viewer_id %>].currentConceptID = null;
+        WindowManager.viewers[<%= @viewer_id %>].viewerAction = "<%= @viewer_action %>";
 
         if (WindowManager.getLinkedViewerID() == "<%= @viewer_id %>") {
             WindowManager.viewers["<%= @viewer_id %>"].swapLinkIcon(true);

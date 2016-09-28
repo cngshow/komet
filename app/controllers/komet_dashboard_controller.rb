@@ -73,205 +73,6 @@ class KometDashboardController < ApplicationController
         render json: tree_nodes
     end
 
-    ##
-    # get_concept_information - RESTful route for populating concept details pane using an http :GET
-    # The current tree node representing the concept is identified in the request params with the key :concept_id
-    # Whether to display the stated (true) or inferred view of concepts with a request param of :stated (true/false)
-    # The javascript partial to render is identified in the request params with the key :partial
-    # @return [javascript] render a javascript partial that re-renders all needed partials
-    def get_concept_information
-
-        @concept_id = params[:concept_id]
-        @stated = params[:stated]
-        @viewer_id =  params[:viewer_id]
-
-        if @viewer_id == nil || @viewer_id == '' || @viewer_id == 'new'
-            @viewer_id = get_next_id
-        end
-
-        get_concept_attributes(@concept_id, @stated)
-        get_concept_descriptions(@concept_id, @stated)
-        get_concept_sememes(@concept_id, @stated)
-        render partial: params[:partial]
-
-    end
-
-    ##
-    # get_concept_attributes - RESTful route for populating concept attribute tab using an http :GET
-    # The current tree node representing the concept is identified in the request params with the key :concept_id
-    # @return none - setting the @attributes variable
-    def get_concept_attributes(concept_id = nil, stated = nil)
-
-        if concept_id == nil && params[:concept_id]
-            concept_id = params[:concept_id].to_i
-        end
-
-        if stated == nil && params[:stated]
-            stated = params[:stated]
-        end
-
-        @attributes =  get_attributes(concept_id, stated)
-
-    end
-
-    def get_concept_edit_attributes
-        @concept_id = params[:concept_id]
-        @stated = params[:stated]
-        @viewer_id =  params[:viewer_id]
-
-        if @viewer_id == nil || @viewer_id == '' || @viewer_id == 'new'
-            @viewer_id = get_next_id
-        end
-        attributes =  get_concept_attributes(@concept_id, @stated)
-        render json: attributes
-
-    end
-
-    ##
-    # get_concept_descriptions - RESTful route for populating concept summary tab using an http :GET
-    # The current tree node representing the concept is identified in the request params with the key :concept_id
-    # @return none - setting the @descriptions variable
-    def get_concept_descriptions(concept_id = nil, stated = nil)
-
-        if concept_id == nil && params[:concept_id]
-            concept_id = params[:concept_id].to_i
-        end
-
-        if stated == nil && params[:stated]
-            stated = params[:stated]
-        end
-
-        @descriptions =  get_descriptions(concept_id, stated)
-
-    end
-
-    def get_concept_edit_descriptions
-        @concept_id = params[:concept_id]
-        @stated = params[:stated]
-        @viewer_id =  params[:viewer_id]
-
-        if @viewer_id == nil || @viewer_id == '' || @viewer_id == 'new'
-            @viewer_id = get_next_id
-        end
-        descriptions =  get_descriptions(@concept_id, @stated)
-        render json: descriptions
-
-    end
-
-    ##
-    # get_concept_sememes - RESTful route for populating concept sememes section using an http :GET
-    # The current tree node representing the concept is identified in the request params with the key :concept_id
-    # @return none - setting the @concept_sememes variable
-    def get_concept_sememes(concept_id = nil, stated = nil)
-
-        if concept_id == nil && params[:concept_id]
-            concept_id = params[:concept_id].to_i
-        end
-
-        if stated == nil && params[:stated]
-            stated = params[:stated]
-        end
-
-        @concept_sememes = get_attached_sememes(concept_id, stated) # descriptions(concept_id)
-
-    end
-
-    def get_concept_languages_dialect()
-        uuid = params[:uuid]
-        languages = get_languages_dialect(uuid)
-        render json: languages
-    end
-
-    # gets default/ users preference coordinates
-    def get_coordinates
-        getcoordinates_results = {}
-        token = session[:coordinatestoken].token
-        additional_req_params = {coordToken: token}
-        $log.debug("token get_coordinates #{token}" )
-        getcoordinates_results = CoordinateRest.get_coordinate(action: CoordinateRestActions::ACTION_COORDINATES,additional_req_params: additional_req_params)
-        value = getcoordinates_results.languageCoordinate.to_json
-        getcoordinates_results = JSON.parse(getcoordinates_results.to_json)
-        getcoordinates_results[:colormodule]= session[:colormodule]
-        getcoordinates_results[:colorpath]= session[:colorpath]
-        getcoordinates_results[:colorrefsets]= session[:colorrefsets]
-        render json:  getcoordinates_results.to_json
-    end
-
-    def get_coordinatestoken
-        hash = { }
-        hash[:language] = params[:language]
-        hash[:dialectPrefs] = params[:dialectPrefs]
-        hash[:descriptionTypePrefs] = params[:descriptionTypePrefs]
-        hash[:allowedStates]= params[:allowedStates]
-        session[:colormodule] =params[:colormodule]
-        session[:colorpath] =params[:colorpath]
-        session[:colorrefsets] =params[:colorrefsets]
-        results =  CoordinateRest.get_coordinate(action: CoordinateRestActions::ACTION_COORDINATES_TOKEN,  additional_req_params: hash)
-        session[:coordinatestoken] = results
-        $log.debug("token get_coordinatestoken #{results.token}" )
-        render json:  results.to_json
-
-    end
-
-    def get_refset_list
-
-        coordinates_token = session[:coordinatestoken].token
-        stated = params[:stated]
-
-        # check to make sure the flag for stated or inferred view was passed in
-        if stated != nil
-            @stated = stated
-        end
-
-        additional_req_params = {coordToken: coordinates_token, stated: @stated, childDepth: 50}
-
-        refsets = TaxonomyRest.get_isaac_concept(uuid: $PROPS['KOMET.assemblage_concept_id'], additional_req_params: additional_req_params)
-
-        if refsets.is_a? CommonRest::UnexpectedResponse
-            render json: [] and return
-        end
-
-        processed_refsets = process_refset_list(refsets)
-
-        render json: processed_refsets.to_json
-
-    end
-
-    def process_refset_list(concept)
-
-        refset_nodes = {}
-
-        node = {}
-        node[concept.conChronology.conceptSequence] = concept.conChronology.description
-        has_children = !concept.children.nil?
-
-        # get the children
-        if has_children
-            children = concept.children
-        else
-
-            children = []
-            refset_nodes.merge!(node)
-        end
-
-        children.each do |child|
-            refset_nodes.merge!(process_refset_list(child))
-        end
-
-        refset_nodes
-    end
-
-    ##
-    # get_concept_refsets - RESTful route for populating concept refsets section using an http :GET
-    # The current tree node representing the concept is identified in the request params with the key :concept_id
-    # @return none - setting the refsets variable
-    def get_concept_refsets()
-        concept_id = params[:concept_id]
-        stated = params[:stated]
-        refsets = get_refsets(concept_id, stated) # descriptions(concept_id)
-        render json: refsets
-    end
-
     def populate_tree(selected_concept_id, parent_search, parent_reversed, tree_walk_levels, multi_path)
 
         coordinates_token = session[:coordinatestoken].token
@@ -302,7 +103,7 @@ class KometDashboardController < ApplicationController
             # TODO - remove the hard-coding of type to 'vhat' when the type flags are implemented in the REST APIs
             root_anchor_attributes = { class: 'komet-context-menu', 'data-menu-type' => 'concept', 'data-menu-uuid' => isaac_concept.conChronology.identifiers.uuids.first,
                                        'data-menu-state' => 'ACTIVE', 'data-menu-concept-text' => isaac_concept.conChronology.description,
-                                        'data-menu-concept-terminology-type' => 'vhat'}
+                                       'data-menu-concept-terminology-type' => 'vhat'}
             root_node = {id: 0, concept_id: isaac_concept.conChronology.identifiers.uuids.first, text: isaac_concept.conChronology.description, parent_reversed: false, parent_search: parent_search, icon: 'komet-tree-node-icon komet-tree-node-primitive', a_attr: root_anchor_attributes, state: {opened: 'true'}}
         else
             isaac_concept = TaxonomyRest.get_isaac_concept(uuid: selected_concept_id, additional_req_params: additional_req_params)
@@ -562,6 +363,208 @@ class KometDashboardController < ApplicationController
         return flag
     end
 
+    ##
+    # get_concept_information - RESTful route for populating concept details pane using an http :GET
+    # The current tree node representing the concept is identified in the request params with the key :concept_id
+    # Whether to display the stated (true) or inferred view of concepts with a request param of :stated (true/false)
+    # The javascript partial to render is identified in the request params with the key :partial
+    # @return [javascript] render a javascript partial that re-renders all needed partials
+    def get_concept_information
+
+        @concept_id = params[:concept_id]
+        @stated = params[:stated]
+        @viewer_id =  params[:viewer_id]
+        @viewer_action = params[:viewer_action]
+        @viewer_previous_content_id = params[:viewer_previous_content_id]
+        @viewer_previous_content_type = params[:viewer_previous_content_type]
+
+        if @viewer_id == nil || @viewer_id == '' || @viewer_id == 'new'
+            @viewer_id = get_next_id
+        end
+
+        get_concept_attributes(@concept_id, @stated)
+        get_concept_descriptions(@concept_id, @stated)
+        get_concept_sememes(@concept_id, @stated)
+        render partial: params[:partial]
+
+    end
+
+    ##
+    # get_concept_attributes - RESTful route for populating concept attribute tab using an http :GET
+    # The current tree node representing the concept is identified in the request params with the key :concept_id
+    # @return none - setting the @attributes variable
+    def get_concept_attributes(concept_id = nil, stated = nil)
+
+        if concept_id == nil && params[:concept_id]
+            concept_id = params[:concept_id].to_i
+        end
+
+        if stated == nil && params[:stated]
+            stated = params[:stated]
+        end
+
+        @attributes =  get_attributes(concept_id, stated)
+
+    end
+
+    def get_concept_edit_attributes
+        @concept_id = params[:concept_id]
+        @stated = params[:stated]
+        @viewer_id =  params[:viewer_id]
+
+        if @viewer_id == nil || @viewer_id == '' || @viewer_id == 'new'
+            @viewer_id = get_next_id
+        end
+        attributes =  get_concept_attributes(@concept_id, @stated)
+        render json: attributes
+
+    end
+
+    ##
+    # get_concept_descriptions - RESTful route for populating concept summary tab using an http :GET
+    # The current tree node representing the concept is identified in the request params with the key :concept_id
+    # @return none - setting the @descriptions variable
+    def get_concept_descriptions(concept_id = nil, stated = nil)
+
+        if concept_id == nil && params[:concept_id]
+            concept_id = params[:concept_id].to_i
+        end
+
+        if stated == nil && params[:stated]
+            stated = params[:stated]
+        end
+
+        @descriptions =  get_descriptions(concept_id, stated)
+
+    end
+
+    def get_concept_edit_descriptions
+        @concept_id = params[:concept_id]
+        @stated = params[:stated]
+        @viewer_id =  params[:viewer_id]
+
+        if @viewer_id == nil || @viewer_id == '' || @viewer_id == 'new'
+            @viewer_id = get_next_id
+        end
+        descriptions =  get_descriptions(@concept_id, @stated)
+        render json: descriptions
+
+    end
+
+    ##
+    # get_concept_sememes - RESTful route for populating concept sememes section using an http :GET
+    # The current tree node representing the concept is identified in the request params with the key :concept_id
+    # @return none - setting the @concept_sememes variable
+    def get_concept_sememes(concept_id = nil, stated = nil)
+
+        if concept_id == nil && params[:concept_id]
+            concept_id = params[:concept_id].to_i
+        end
+
+        if stated == nil && params[:stated]
+            stated = params[:stated]
+        end
+
+        @concept_sememes = get_attached_sememes(concept_id, stated) # descriptions(concept_id)
+
+    end
+
+    def get_concept_languages_dialect()
+        uuid = params[:uuid]
+        languages = get_languages_dialect(uuid)
+        render json: languages
+    end
+
+    # gets default/ users preference coordinates
+    def get_coordinates
+        getcoordinates_results = {}
+        token = session[:coordinatestoken].token
+        additional_req_params = {coordToken: token}
+        $log.debug("token get_coordinates #{token}" )
+        getcoordinates_results = CoordinateRest.get_coordinate(action: CoordinateRestActions::ACTION_COORDINATES,additional_req_params: additional_req_params)
+        value = getcoordinates_results.languageCoordinate.to_json
+        getcoordinates_results = JSON.parse(getcoordinates_results.to_json)
+        getcoordinates_results[:colormodule]= session[:colormodule]
+        getcoordinates_results[:colorpath]= session[:colorpath]
+        getcoordinates_results[:colorrefsets]= session[:colorrefsets]
+        render json:  getcoordinates_results.to_json
+    end
+
+    def get_coordinatestoken
+        hash = { }
+        hash[:language] = params[:language]
+        hash[:dialectPrefs] = params[:dialectPrefs]
+        hash[:descriptionTypePrefs] = params[:descriptionTypePrefs]
+        hash[:allowedStates]= params[:allowedStates]
+        session[:colormodule] =params[:colormodule]
+        session[:colorpath] =params[:colorpath]
+        session[:colorrefsets] =params[:colorrefsets]
+        results =  CoordinateRest.get_coordinate(action: CoordinateRestActions::ACTION_COORDINATES_TOKEN,  additional_req_params: hash)
+        session[:coordinatestoken] = results
+        $log.debug("token get_coordinatestoken #{results.token}" )
+        render json:  results.to_json
+
+    end
+
+    def get_refset_list
+
+        coordinates_token = session[:coordinatestoken].token
+        stated = params[:stated]
+
+        # check to make sure the flag for stated or inferred view was passed in
+        if stated != nil
+            @stated = stated
+        end
+
+        additional_req_params = {coordToken: coordinates_token, stated: @stated, childDepth: 50}
+
+        refsets = TaxonomyRest.get_isaac_concept(uuid: $PROPS['KOMET.assemblage_concept_id'], additional_req_params: additional_req_params)
+
+        if refsets.is_a? CommonRest::UnexpectedResponse
+            render json: [] and return
+        end
+
+        processed_refsets = process_refset_list(refsets)
+
+        render json: processed_refsets.to_json
+
+    end
+
+    def process_refset_list(concept)
+
+        refset_nodes = {}
+
+        node = {}
+        node[concept.conChronology.conceptSequence] = concept.conChronology.description
+        has_children = !concept.children.nil?
+
+        # get the children
+        if has_children
+            children = concept.children
+        else
+
+            children = []
+            refset_nodes.merge!(node)
+        end
+
+        children.each do |child|
+            refset_nodes.merge!(process_refset_list(child))
+        end
+
+        refset_nodes
+    end
+
+    ##
+    # get_concept_refsets - RESTful route for populating concept refsets section using an http :GET
+    # The current tree node representing the concept is identified in the request params with the key :concept_id
+    # @return none - setting the refsets variable
+    def get_concept_refsets()
+        concept_id = params[:concept_id]
+        stated = params[:stated]
+        refsets = get_refsets(concept_id, stated) # descriptions(concept_id)
+        render json: refsets
+    end
+
     def get_concept_description_types
 
         coordinates_token = session[:coordinatestoken].token
@@ -591,6 +594,9 @@ class KometDashboardController < ApplicationController
         @parent_text = params[:parent_text]
         @parent_type = params[:parent_type]
         @description_types = get_concept_description_types
+        @viewer_action = params[:viewer_action]
+        @viewer_previous_content_id = params[:viewer_previous_content_id]
+        @viewer_previous_content_type = params[:viewer_previous_content_type]
 
         if @parent_id == nil
 
@@ -612,6 +618,9 @@ class KometDashboardController < ApplicationController
         @concept_id = params[:concept_id]
         @stated = params[:stated]
         @viewer_id =  params[:viewer_id]
+        @viewer_action = params[:viewer_action]
+        @viewer_previous_content_id = params[:viewer_previous_content_id]
+        @viewer_previous_content_type = params[:viewer_previous_content_type]
 
         if @viewer_id == nil || @viewer_id == '' || @viewer_id == 'new'
             @viewer_id = get_next_id

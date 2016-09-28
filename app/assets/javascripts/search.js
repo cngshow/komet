@@ -28,7 +28,7 @@ var TaxonomySearchModule = (function () {
 
     function loadResultGrid() {
 
-        $("#komet_taxonomy_search_form").find(".komet-form-error").remove();
+        $("#komet_taxonomy_search_form").find(".komet-form-error, .komet-form-field-error").remove();
 
         if ($("#taxonomy_search_text").val() === ""){
 
