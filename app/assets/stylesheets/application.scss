@@ -183,13 +183,27 @@ html, body{
 .komet-highlight-changes{
     background-color: rgba(255, 239, 0, 1);
 }
-.komet-form-error {
+.komet-form-warning{
+    background-color: rgba(255, 239, 0, 1);
+}
+.komet-form-error{
     background-color: #ff5000;
-    border: solid #ff5000 1px;
+    color: white;
+}
+.komet-form-warning, .komet-form-error{
+    margin-bottom: 5px;
+    line-height: 200%;
+    width: 100%;
+    padding: 5px;
+    border: solid lightgrey 1px;
+}
+.komet-form-field-error {
+    background-color: #ff5000;
+    border: solid lightgrey 1px;
     color: white;
     padding-left: 5px;
 }
-.komet-form-error .glyphicon, .komet-form-error .fa {
+.komet-form-field-error .glyphicon, .komet-form-field-error .fa, .komet-form-error .glyphicon, .komet-form-error .fa, .komet-form-warning .glyphicon, .komet-form-warning .fa  {
     margin-right: 5px;
 }
 .komet-splitter{
@@ -418,6 +432,9 @@ html, body{
     flex-wrap: wrap;
     align-items: baseline;
 }
+.komet-concept-body-tools > span{
+    margin-right: 10px;
+}
 .komet-concept-body-tools .glyphicon, .komet-concept-body-tools .fa{
     width: 20px;
     cursor: pointer;
@@ -461,19 +478,6 @@ html, body{
     width: 100%;
     border: 1px solid #d1d1d1;
     margin: 10px 0px;
-}
-
-// Concept Editor Viewer Styles
-.komet-concept-create .komet-concept-section-panel-details{
-    display: block;
-    border: none;
-}
-.komet-concept-create .komet-concept-section-panel-details > div{
-    margin-bottom: 15px;
-}
-.komet-concept-create input.form-control:not(.ui-autocomplete-input), .komet-concept-create select.form-control, .komet-concept-create .komet-autosuggest{
-    min-width: 200px;
-    max-width: 450px;
 }
 
 // Concept Viewer Table Styles
@@ -683,6 +687,19 @@ td.komet-concept-table-nested-indicator.komet-concept-table-nested-indicator-ope
 .concept-expression-footnote{
     font-size: xx-small;
     background-color: rgb(245, 245, 245);
+}
+
+// Concept Editor Viewer Styles
+.komet-concept-create .komet-concept-section-panel-details{
+    display: block;
+    border: none;
+}
+.komet-concept-create .komet-concept-section-panel-details > div:not(.komet-autosuggest){
+    margin-bottom: 15px;
+}
+.komet-concept-create input.form-control:not(.ui-autocomplete-input), .komet-concept-create select.form-control, .komet-concept-create .komet-autosuggest{
+    min-width: 200px;
+    max-width: 450px;
 }
 
 // Search Styles

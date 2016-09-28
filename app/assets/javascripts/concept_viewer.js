@@ -17,11 +17,12 @@
  limitations under the License.
  */
 
-var ConceptViewer = function(viewerID, currentConceptID) {
+var ConceptViewer = function(viewerID, currentConceptID, viewerAction) {
 
-    ConceptViewer.prototype.init = function(viewerID, currentConceptID) {
+    ConceptViewer.prototype.init = function(viewerID, currentConceptID, viewerAction) {
 
         this.viewerID = viewerID;
+        this.viewerAction = viewerAction;
         this.currentConceptID = currentConceptID;
         this.panelStates = {};
         this.trees = {};
@@ -319,37 +320,86 @@ var ConceptViewer = function(viewerID, currentConceptID) {
         this.refsetGridOptions.api.exportDataAsCsv({allColumns: true});
     };
 
+    // This function is passed in to the Parent autosuggest tag as a string and is run when the parent field changes, after all other code executes
+    ConceptViewer.prototype.conceptEditorParentOnChange = function(){
+
+        var taxonomyType = $("#komet_create_concept_parent_type_" + this.viewerID).val();
+        var fsnNoteSection = $("#komet_create_concept_fsn_note_" + this.viewerID);
+        var descriptionTypeSection = $("#komet_create_concept_description_type_section_" + this.viewerID);
+        var displaySection = $("#komet_create_concept_description_display_" + this.viewerID);
+        var parentField = $("#komet_create_concept_parent_display_" + this.viewerID);
+        var preferred_name =  $("#komet_create_concept_description_" + this.viewerID).val();
+        var semanticTag = "";
+
+        // depending on the taxonomy type of the parent concept, show or hide certain portions of the form
+        if (taxonomyType == UIHelper.SNOMED){
+
+            fsnNoteSection.addClass("hide");
+            descriptionTypeSection.addClass("hide");
+            displaySection.removeClass("hide");
+
+            semanticTag = this.getSemanticTag(parentField);
+
+            // set the FSN display text [Description (Parent Text)]
+            $("#komet_create_concept_fsn_" + this.viewerID).html(preferred_name + semanticTag);
+
+        } else if (taxonomyType == UIHelper.VHAT){
+
+            fsnNoteSection.removeClass("hide");
+            descriptionTypeSection.removeClass("hide");
+            displaySection.addClass("hide");
+        } else {
+
+            fsnNoteSection.removeClass("hide");
+            descriptionTypeSection.addClass("hide");
+            displaySection.addClass("hide");
+        }
+
+        this.setSaveButtonState(parentField.val(), preferred_name);
+
+        // set the Preferred Name display text [Description]
+        // $("#komet_create_concept_preferred_name_" + this.viewerID).html(preferred_name);
+    }.bind(this);
+
     ConceptViewer.prototype.createConcept = function() {
 
         UIHelper.processAutoSuggestTags("#komet_concept_lineage_panel_" + this.viewerID);
 
         $("#komet_create_concept_confirm_section_" + this.viewerID).hide();
+        var parentField = $("#komet_create_concept_parent_display_" + this.viewerID);
 
-        // when the parent field changes, update the name display fields
-        $("#komet_create_concept_parent_display_" + this.viewerID).change(function(event) {
-
-            // set the FSN display text [Description (Parent Text)]
-            var preferred_name =  $("#komet_create_concept_description_" + this.viewerID).val();
-            $("#komet_create_concept_fsn_" + this.viewerID).html(preferred_name + ' (' + event.currentTarget.value + ')');
-
-            // set the Preferred Name display text [Description]
-            $("#komet_create_concept_preferred_name_" + this.viewerID).html(preferred_name);
+        // TODO - clean up the calling of onchange function to autosuggest field. Do not need to pass function name into tag, remove code from UIHelper and HTML. convert this to anonymous function inside timeout.
+        parentField.change(function(){
+            setTimeout("WindowManager.viewers[" + this.viewerID + "].conceptEditorParentOnChange()", 0);
         }.bind(this));
 
         // when the description field changes, update the name display fields
+        // a similar function exists for the Parent field (conceptEditorParentOnChange) but is passed into the autosuggest tag
         $("#komet_create_concept_description_" + this.viewerID).change(function(event) {
 
-            // set the FSN display text [Description (Parent Text)]
-            var fsn = event.currentTarget.value + " (" + $("#komet_create_concept_parent_display_" + this.viewerID).val() + ")";
-            $("#komet_create_concept_fsn_" + this.viewerID).html(fsn);
+            var taxonomyType = $("#komet_create_concept_parent_type_" + this.viewerID).val();
+            var semanticTag = "";
+
+            // if the taxonomy type of the parent concept is SNOMED, calculate the semantic tag to use for the FSN
+            if (taxonomyType == UIHelper.SNOMED){
+                semanticTag = this.getSemanticTag(parentField);
+
+                // set the FSN display text [Description (Semantic Tag)]
+                var fsn = event.currentTarget.value + semanticTag;
+                $("#komet_create_concept_fsn_" + this.viewerID).html(fsn);
+            }
+
+            this.setSaveButtonState(parentField.val(), event.currentTarget.value);
 
             // set the Preferred Name display text [Description]
-            $("#komet_create_concept_preferred_name_" + this.viewerID).html(event.currentTarget.value);
+            // $("#komet_create_concept_preferred_name_" + this.viewerID).html(event.currentTarget.value);
         }.bind(this));
 
         var thisViewer = this;
 
         $("#komet_create_concept_form_" + this.viewerID).submit(function () {
+
+            $("#komet_create_concept_form_" + this.viewerID).find(".komet-form-error, .komet-form-field-error").remove();
 
             $.ajax({
                 type: "POST",
@@ -357,13 +407,13 @@ var ConceptViewer = function(viewerID, currentConceptID) {
                 data: $(this).serialize(), //new FormData($(this)[0]),
                 success: function (data) {
 
-                    $("#komet_create_concept_form_" + thisViewer.viewerID).find(".komet-form-error").remove();
-
                     console.log(data);
 
                     if (data.concept_id == null){
-                        $("#komet_create_concept_section_").prepend(UIHelper.generateFormErrorMessage("An error has occurred. The concept was not created."));
+                        $("#komet_create_concept_section_" + thisViewer.viewerID).prepend(UIHelper.generateFormErrorMessage("An error has occurred. The concept was not created."));
                     } else {
+
+                        TaxonomyModule.tree.reloadTreeStatedView(TaxonomyModule.getStatedView());
                         $.publish(KometChannels.Taxonomy.taxonomyConceptEditorChannel, [data.concept_id, thisViewer.viewerID, WindowManager.INLINE]);
                     }
                 }
@@ -373,7 +423,47 @@ var ConceptViewer = function(viewerID, currentConceptID) {
             return false;
         });
 
+        if (parentField.val() != ""){
+            parentField.change();
+        }
+
         return true;
+    };
+
+    ConceptViewer.prototype.getSemanticTag = function(parentElementOrSelector){
+
+        var element;
+
+        // If the type of the first parameter is a string, then use it as a jquery selector, otherwise use as is
+        if (typeof parentElementOrSelector === "string"){
+            element = $(parentElementOrSelector).val();
+        } else {
+            element = parentElementOrSelector.val();
+        }
+
+        // get the semantic tag from the parent text - the value in parentheses
+        var semanticTag = element.match(/\(([^)]+)\)/);
+
+        // if there was a match use that as the semantic tag, otherwise use the parent text
+        if (semanticTag){
+            semanticTag = " " + semanticTag[0];
+        } else {
+            semanticTag = " (" + element + ")";
+        }
+
+        return semanticTag;
+    };
+
+    ConceptViewer.prototype.setSaveButtonState = function(parentValue, descriptionValue){
+
+        var saveButton = $("#komet_create_concept_save_" + this.viewerID);
+
+        // If the type of the first parameter is a string, then use it as a jquery selector, otherwise use as is
+        if (parentValue == "" || descriptionValue == ""){
+            UIHelper.toggleFieldAvailability(saveButton, false);
+        } else {
+            UIHelper.toggleFieldAvailability(saveButton, true);
+        }
     };
 
     ConceptViewer.prototype.showSaveSection = function (sectionName) {
@@ -382,7 +472,31 @@ var ConceptViewer = function(viewerID, currentConceptID) {
         var confirmSection = $("#komet_create_concept_confirm_section_" + this.viewerID);
         var createSection = $("#komet_create_concept_section_" + this.viewerID);
 
+        $("#komet_create_concept_form_" + this.viewerID).find(".komet-form-error, .komet-form-field-error").remove();
+
         if (sectionName == 'confirm'){
+
+            var parent = $("#komet_create_concept_parent_display_" + this.viewerID);
+            var description = $("#komet_create_concept_description_" + this.viewerID);
+            var hasErrors = false;
+
+            if (parent.val() == undefined || parent.val() == ""){
+
+                $("#komet_create_concept_parent_fields_" + this.viewerID).after(UIHelper.generateFormErrorMessage("The Parent field must be filled in."));
+                hasErrors = true;
+            }
+
+            if (description.val() == undefined || description.val() == ""){
+
+                description.after(UIHelper.generateFormErrorMessage("The Description field must be filled in."));
+                hasErrors = true;
+            }
+
+            if (hasErrors){
+
+                createSection.prepend(UIHelper.generateFormErrorMessage("Please fix the errors below."));
+                return false;
+            }
 
             console.log(UIHelper.hasFormChanged(createSection, true, true));
             saveSection.hide();
@@ -402,7 +516,7 @@ var ConceptViewer = function(viewerID, currentConceptID) {
         var rowCount = 0;
         var concept_id  = "?concept_id=" + this.currentConceptID + "&stated=stated&viewer_id=" + viewerID;
 
-        $.get(gon.routes.taxonomy_get_attributes_jsonreturntype_path  + concept_id     ,function( data ) {
+        $.get(gon.routes.taxonomy_get_concept_edit_attributes_path  + concept_id     ,function( data ) {
 
             selectItemByValue(document.getElementById('komet_concept_Status'),data[1].value);
 
@@ -419,7 +533,7 @@ var ConceptViewer = function(viewerID, currentConceptID) {
 
         descriptiondropdown();
 
-        $.get(gon.routes.taxonomy_get_descriptions_jsonreturntype_path  + concept_id , function( descriptionData ) {
+        $.get(gon.routes.taxonomy_get_concept_edit_descriptions_path  + concept_id , function( descriptionData ) {
 
             $.each(descriptionData, function (index, value) {
 
@@ -427,6 +541,26 @@ var ConceptViewer = function(viewerID, currentConceptID) {
                 addDescriptionData(index,value,rowCount)
             });
         });
+
+        UIHelper.processAutoSuggestTags("#komet_edit_concept_form_" + this.viewerID);
+    };
+
+    ConceptViewer.prototype.cancelAction = function(previous_type, previous_id){
+
+
+        if (previous_type && previous_id){
+
+            if (previous_type == "ConceptViewer"){
+                $.publish(KometChannels.Taxonomy.taxonomyTreeNodeSelectedChannel, ["", previous_id, TaxonomyModule.getStatedView(), this.viewerID, WindowManager.INLINE]);
+
+            } else if (previous_type == "MappingViewer"){
+                $.publish(KometChannels.Mapping.mappingTreeNodeSelectedChannel, ["", previous_id, this.viewerID, WindowManager.INLINE]);
+            }
+
+            return false;
+        }
+
+        WindowManager.closeViewer(this.viewerID);
     };
 
     function selectItemByValue(elmnt, value) {
@@ -569,5 +703,5 @@ var ConceptViewer = function(viewerID, currentConceptID) {
     }
 
     // call our constructor function
-    this.init(viewerID, currentConceptID)
+    this.init(viewerID, currentConceptID, viewerAction)
 };

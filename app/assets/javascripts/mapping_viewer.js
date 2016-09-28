@@ -17,9 +17,9 @@
  limitations under the License.
  */
     
-var MappingViewer = function(viewerID, currentSetID, mappingAction) {
+var MappingViewer = function(viewerID, currentSetID, viewerAction) {
 
-    MappingViewer.prototype.init = function(viewerID, currentSetID, mappingAction) {
+    MappingViewer.prototype.init = function(viewerID, currentSetID, viewerAction) {
 
         this.viewerID = viewerID;
         this.currentSetID = currentSetID;
@@ -31,7 +31,7 @@ var MappingViewer = function(viewerID, currentSetID, mappingAction) {
         this.showSetsSTAMP = false;
         this.showItemsSTAMP = false;
         this.itemEditorWindow = null;
-        this.mappingAction = mappingAction;
+        this.viewerAction = viewerAction;
         this.setEditorCreatedFields = [];
         this.setEditorMapSet = {};
         this.INCLUDE_FIELD_CLASS_PREFIX = "komet-mapping-added-";
@@ -154,8 +154,8 @@ var MappingViewer = function(viewerID, currentSetID, mappingAction) {
         }
 
         // disable map set and item specific actions
-        UIHelper.toggleFieldAvailability("komet_mapping_overview_set_delete_" + this.viewerID, false);
-        UIHelper.toggleFieldAvailability("komet_mapping_overview_set_edit_" + this.viewerID, false);
+        UIHelper.toggleFieldAvailability("#komet_mapping_overview_set_delete_" + this.viewerID, false);
+        UIHelper.toggleFieldAvailability("#komet_mapping_overview_set_edit_" + this.viewerID, false);
 
         // set the options for the result grid
         this.overviewSetsGridOptions = {
@@ -225,8 +225,8 @@ var MappingViewer = function(viewerID, currentSetID, mappingAction) {
     MappingViewer.prototype.onOverviewSetsGridSelection = function(){
 
         // enable map set specific actions
-        UIHelper.toggleFieldAvailability("komet_mapping_overview_set_delete_" + this.viewerID, true);
-        UIHelper.toggleFieldAvailability("komet_mapping_overview_set_edit_" + this.viewerID, true);
+        UIHelper.toggleFieldAvailability("#komet_mapping_overview_set_delete_" + this.viewerID, true);
+        UIHelper.toggleFieldAvailability("#komet_mapping_overview_set_edit_" + this.viewerID, true);
 
         var selectedRows = this.overviewSetsGridOptions.api.getSelectedRows();
 
@@ -281,11 +281,11 @@ var MappingViewer = function(viewerID, currentSetID, mappingAction) {
         this.loadOverviewSetsGrid();
     };
 
-    MappingViewer.prototype.initializeSetEditor = function(mappingAction){
+    MappingViewer.prototype.initializeSetEditor = function(viewerAction){
 
         var form = $("#komet_mapping_set_editor_form_" + this.viewerID);
 
-        this.mappingAction = mappingAction;
+        this.viewerAction = viewerAction;
         this.setEditorOriginalIncludedFields = null;
         this.setEditorOriginalItemsIncludedFields = null;
 
@@ -311,14 +311,14 @@ var MappingViewer = function(viewerID, currentSetID, mappingAction) {
 
         this.generateSetEditorItemsAdditionalFields();
 
-        if (mappingAction == MappingModule.SET_DETAILS){
+        if (viewerAction == MappingModule.SET_DETAILS){
 
             form.find(".komet-mapping-set-editor-edit").hide();
 
             if (this.currentSetID != null && this.currentSetID != ""){
 
                 this.loadOverviewItemsGrid();
-                UIHelper.toggleFieldAvailability("komet_mapping_overview_item_create_" + this.viewerID, true);
+                UIHelper.toggleFieldAvailability("#komet_mapping_overview_item_create_" + this.viewerID, true);
             }
         } else {
 
@@ -553,7 +553,7 @@ var MappingViewer = function(viewerID, currentSetID, mappingAction) {
 
     MappingViewer.prototype.addSetField = function(){
 
-        $("#" + this.SET_INCLUDE_FIELD_DIALOG).find(".komet-form-error").remove();
+        $("#" + this.SET_INCLUDE_FIELD_DIALOG).find(".komet-form-error, .komet-form-field-error").remove();
 
         var prefix = "#komet_mapping_set_editor_add_fields_";
         var typeField = $(prefix + "type_" + this.viewerID);
@@ -778,7 +778,7 @@ var MappingViewer = function(viewerID, currentSetID, mappingAction) {
 
     MappingViewer.prototype.addSetItemsField = function(){
 
-        $("#" + this.ITEMS_INCLUDE_FIELD_DIALOG).find(".komet-form-error").remove();
+        $("#" + this.ITEMS_INCLUDE_FIELD_DIALOG).find(".komet-form-error, .komet-form-field-error").remove();
 
         var prefix = "#komet_mapping_set_editor_items_add_fields_";
         var typeField = $(prefix + "type_" + this.viewerID);
@@ -916,9 +916,9 @@ var MappingViewer = function(viewerID, currentSetID, mappingAction) {
         }
 
         // disable item specific actions
-        UIHelper.toggleFieldAvailability("komet_mapping_overview_item_delete_" + this.viewerID, false);
-        UIHelper.toggleFieldAvailability("komet_mapping_overview_item_edit_" + this.viewerID, false);
-        UIHelper.toggleFieldAvailability("komet_mapping_overview_item_comment_" + this.viewerID, false);
+        UIHelper.toggleFieldAvailability("#komet_mapping_overview_item_delete_" + this.viewerID, false);
+        UIHelper.toggleFieldAvailability("#komet_mapping_overview_item_edit_" + this.viewerID, false);
+        UIHelper.toggleFieldAvailability("#komet_mapping_overview_item_comment_" + this.viewerID, false);
 
         // set the options for the result grid
         this.overviewItemsGridOptions = {
@@ -1009,9 +1009,9 @@ var MappingViewer = function(viewerID, currentSetID, mappingAction) {
     MappingViewer.prototype.onOverviewItemsGridSelection = function(){
 
         // enable item specific actions
-        UIHelper.toggleFieldAvailability("komet_mapping_overview_item_delete_" + this.viewerID, true);
-        UIHelper.toggleFieldAvailability("komet_mapping_overview_item_edit_" + this.viewerID, true);
-        UIHelper.toggleFieldAvailability("komet_mapping_overview_item_comment_" + this.viewerID, true);
+        UIHelper.toggleFieldAvailability("#komet_mapping_overview_item_delete_" + this.viewerID, true);
+        UIHelper.toggleFieldAvailability("#komet_mapping_overview_item_edit_" + this.viewerID, true);
+        UIHelper.toggleFieldAvailability("#komet_mapping_overview_item_comment_" + this.viewerID, true);
 
         var selectedRows = this.overviewItemsGridOptions.api.getSelectedRows();
 
@@ -1129,7 +1129,7 @@ var MappingViewer = function(viewerID, currentSetID, mappingAction) {
 
     MappingViewer.prototype.cancelSetEditMode = function(previousSetID){
 
-        if (this.mappingAction == MappingModule.CREATE_SET){
+        if (this.viewerAction == MappingModule.CREATE_SET){
 
             if (previousSetID != ""){
                 MappingModule.callLoadViewerData(previousSetID, MappingModule.SET_DETAILS, this.viewerID);
@@ -1243,5 +1243,5 @@ var MappingViewer = function(viewerID, currentSetID, mappingAction) {
 
 
     // call our constructor function
-    this.init(viewerID, currentSetID, mappingAction)
+    this.init(viewerID, currentSetID, viewerAction)
 };

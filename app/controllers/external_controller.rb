@@ -23,7 +23,7 @@ Copyright Notice
 # handles the login and all resources outside of login
 class ExternalController < ApplicationController
 
-  skip_before_action :ensure_roles, only: [:login]
+  skip_before_action :ensure_roles, only: [:login, :logout]
   skip_after_action :verify_authorized
   skip_before_action :read_only?
 
@@ -52,7 +52,7 @@ class ExternalController < ApplicationController
     if roles.nil? || roles.empty?
       #not authenticated - redirect to the naughty page
       flash[:error] = 'Invalid username or password.'
-      redirect_to proxify(root_path)
+      redirect_to root_url
     else
       redirect_to komet_dashboard_dashboard_url
     end
