@@ -46,7 +46,6 @@ class MappingController < ApplicationController
                                         {id: '3', set_id: '2', source: '21', source_display: 'Source 21', target: 'Target 21', target_display: 'Target 21', qualifier: 'No Qualifier', comments: 'This is a comment', review_state: 'Pending', status: 'Active', time: '10/10/2016', module: 'Development', path: 'Path'},
                                         {id: '4', set_id: '2', source: '22', source_display: 'Source 22', target: 'Target 22', target_display: 'Target 22', qualifier: 'No Qualifier', comments: 'This is a comment', review_state: 'Pending', status: 'Active', time: '10/10/2016', module: 'Development', path: 'Path'}]
         end
-
     end
 
     def load_tree_data
@@ -66,8 +65,16 @@ class MappingController < ApplicationController
             set_hash[:set_id] = set.identifiers.uuids.first
             set_hash[:text] = set.name
             set_hash[:state] = set.mappingSetStamp.state.name
+            # TODO - remove the hard-coding of type to 'vhat' when the type flags are implemented in the REST APIs
+            set_hash[:terminology_type] = 'vhat'
             set_hash[:icon] = 'komet-tree-node-icon fa fa-folder'
-            set_hash[:a_attr] = {class: 'komet-context-menu', 'data-menu-type' => 'map_set', 'data-menu-uuid' => set_hash[:set_id], 'data-menu-concept-text' => set_hash[:text]}
+            set_hash[:a_attr] = {class: 'komet-context-menu',
+                                 'data-menu-type' => 'map_set',
+                                 'data-menu-uuid' => set_hash[:set_id],
+                                 'data-menu-concept-text' => set_hash[:text],
+                                 'data-menu-state' => set_hash[:state],
+                                 'data-menu-concept-terminology-type' => set_hash[:terminology_type]
+            }
 
             mapping_tree << set_hash
         end
@@ -75,7 +82,6 @@ class MappingController < ApplicationController
         mapping_tree = [id: '0', set_id: '0', text: 'Mapping Sets', icon: 'komet-tree-node-icon fa fa-tree', children: mapping_tree, state: {opened: 'true'}]
 
         render json: mapping_tree
-
     end
 
     def load_mapping_viewer
@@ -391,7 +397,6 @@ class MappingController < ApplicationController
         clear_rest_caches
 
         render json: {set_id: set_id}
-
     end
 
     def map_item_editor
@@ -419,7 +424,6 @@ class MappingController < ApplicationController
         @assemblages = [['No Restrictions', ''], ['SNOMED CT']]
 
         render 'komet_dashboard/mapping/map_item_editor'
-
     end
 
     def process_map_item
@@ -453,145 +457,16 @@ class MappingController < ApplicationController
         end
 
         if source && source != ''
-            add_to_recents(:mapping_item_source_recents, source, source_display)
+            #add_to_recents(:mapping_item_source_recents, source, source_display)
         end
 
         if target && target != ''
-            add_to_recents(:mapping_item_target_recents, target, target_display)
+            #add_to_recents(:mapping_item_target_recents, target, target_display)
         end
 
         # clear taxonomy caches after writing data
         clear_rest_caches
 
         head :ok, content_type: 'text/html'
-
     end
-
-    ##
-    # get_item_source_suggestions - RESTful route for populating a list suggested list of concepts as a user types into a field via http :GET or :POST
-    # The term entered by the user to search for source concepts with a request param of :term
-    #@return [json] a list of matching concept text and ids - array of hashes {label:, value:}
-    def get_item_source_suggestions
-
-        coordinates_token = session[:coordinatestoken].token
-        search_term = params[:term]
-        suggestions_data = [{label: 'Concept 1', value: '123'}, {label: 'Concept 2', value: '456'}, {label: 'Concept 3', value: '789'}]
-
-        #results = SearchApis.get_search_api(action: ACTION_PREFIX, additional_req_params: {coordToken: coordinates_token, query: search_term, maxPageSize: 25, expand: 'referencedConcept'})
-
-        #results.results.each do |result|
-
-        #assemblage_suggestions_data << {label: result.matchText, value: result.referencedConcept.identifiers.uuids.first}
-
-        #end
-
-        render json: suggestions_data
-    end
-
-    ##
-    # get_item_source_recents - RESTful route for populating a list of recent source concepts searches via http :GET
-    #@return [json] an array of hashes {id:, text:}
-    def get_item_source_recents
-
-        recents_array = []
-
-        if session[:mapping_item_source_recents]
-            recents_array = session[:mapping_item_source_recents]
-        end
-
-        render json: recents_array
-    end
-
-    ##
-    # get_item_target_suggestions - RESTful route for populating a list suggested list of concepts as a user types into a field via http :GET or :POST
-    # The term entered by the user to search for target concepts with a request param of :term
-    #@return [json] a list of matching concept text and ids - array of hashes {label:, value:}
-    def get_item_target_suggestions
-
-        coordinates_token = session[:coordinatestoken].token
-        search_term = params[:term]
-        suggestions_data = [{label: 'Concept 1', value: '123'}, {label: 'Concept 2', value: '456'}, {label: 'Concept 3', value: '789'}]
-
-        #results = SearchApis.get_search_api(action: ACTION_PREFIX, additional_req_params: {coordToken: coordinates_token, query: search_term, maxPageSize: 25, expand: 'referencedConcept'})
-
-        #results.results.each do |result|
-
-        #assemblage_suggestions_data << {label: result.matchText, value: result.referencedConcept.identifiers.uuids.first}
-
-        #end
-
-        render json: suggestions_data
-    end
-
-    ##
-    # get_item_target_recents - RESTful route for populating a list of recent target concepts searches via http :GET
-    #@return [json] an array of hashes {id:, text:}
-    def get_item_target_recents
-
-        recents_array = []
-
-        if session[:mapping_item_target_recents]
-            recents_array = session[:mapping_item_target_recents]
-        end
-
-        render json: recents_array
-    end
-
-    ##
-    # get_item_kind_of_suggestions - RESTful route for populating a list suggested list of concepts as a user types into a field via http :GET or :POST
-    # The term entered by the user to search for 'kind of' concepts with a request param of :term
-    #@return [json] a list of matching concept text and ids - array of hashes {label:, value:}
-    def get_item_kind_of_suggestions
-
-        coordinates_token = session[:coordinatestoken].token
-        search_term = params[:term]
-        suggestions_data = [{label: 'Concept 1', value: '123'}, {label: 'Concept 2', value: '456'}, {label: 'Concept 3', value: '789'}]
-
-        #results = SearchApis.get_search_api(action: ACTION_PREFIX, additional_req_params: {coordToken: coordinates_token, query: search_term, maxPageSize: 25, expand: 'referencedConcept'})
-
-        #results.results.each do |result|
-
-        #assemblage_suggestions_data << {label: result.matchText, value: result.referencedConcept.identifiers.uuids.first}
-
-        #end
-
-        render json: suggestions_data
-    end
-
-    ##
-    # get_item_kind_of_recents - RESTful route for populating a list of recent 'kind of' concepts searches via http :GET
-    #@return [json] an array of hashes {id:, text:}
-    def get_item_kind_of_recents
-
-        recents_array = []
-
-        if session[:mapping_item_kind_of_recents]
-            recents_array = session[:mapping_item_kind_of_recents]
-        end
-
-        render json: recents_array
-    end
-
-    def get_target_candidates_results
-
-        coordinates_token = session[:coordinatestoken].token
-        results = {}
-        data = [{id: '1', concept: 'Test 1', code_system: 'SNOMED CT', status: 'Active'},
-                {id: '2', concept: 'Test 2', code_system: 'LOINC', status: 'Active'}]
-        search_text = params[:search_text]
-        description_type = params[:description_type]
-        advanced_description_type = params[:advanced_description_type]
-        code_system = params[:code_system]
-        assemblage = params[:assemblage]
-        kind_of = params[:kind_of]
-        page_size = 1000 #params[:page_size ]
-        page_number = 1 #params[:page_number]
-
-        results[:total_number] = 2
-        results[:page_number] = page_number
-
-        results[:data] = data
-        render json: results
-    end
-
 end

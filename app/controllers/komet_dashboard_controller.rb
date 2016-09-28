@@ -73,6 +73,296 @@ class KometDashboardController < ApplicationController
         render json: tree_nodes
     end
 
+    def populate_tree(selected_concept_id, parent_search, parent_reversed, tree_walk_levels, multi_path)
+
+        coordinates_token = session[:coordinatestoken].token
+        root = selected_concept_id.eql?('#')
+
+        additional_req_params = {coordToken: coordinates_token, stated: @stated, sememeMembership: true}
+
+        if boolean(parent_search)
+            tree_walk_levels = 100
+            additional_req_params[:childDepth] = 0
+            additional_req_params[:parentHeight] = tree_walk_levels
+        else
+
+            additional_req_params[:childDepth] = tree_walk_levels
+            additional_req_params[:parentHeight] = 1
+        end
+
+        if root
+
+            # load the ISAAC root node and children
+            isaac_concept = TaxonomyRest.get_isaac_root(additional_req_params: additional_req_params)
+
+            if isaac_concept.is_a? CommonRest::UnexpectedResponse
+                return []
+            end
+
+            # load the root node into our return variable
+            # TODO - remove the hard-coding of type to 'vhat' when the type flags are implemented in the REST APIs
+            root_anchor_attributes = { class: 'komet-context-menu', 'data-menu-type' => 'concept', 'data-menu-uuid' => isaac_concept.conChronology.identifiers.uuids.first,
+                                       'data-menu-state' => 'ACTIVE', 'data-menu-concept-text' => isaac_concept.conChronology.description,
+                                       'data-menu-concept-terminology-type' => 'vhat'}
+            root_node = {id: 0, concept_id: isaac_concept.conChronology.identifiers.uuids.first, text: isaac_concept.conChronology.description, parent_reversed: false, parent_search: parent_search, icon: 'komet-tree-node-icon komet-tree-node-primitive', a_attr: root_anchor_attributes, state: {opened: 'true'}}
+        else
+            isaac_concept = TaxonomyRest.get_isaac_concept(uuid: selected_concept_id, additional_req_params: additional_req_params)
+        end
+
+        if isaac_concept.is_a? CommonRest::UnexpectedResponse
+            return []
+        end
+
+        raw_nodes = process_rest_concept(isaac_concept, tree_walk_levels, first_level: true, parent_search: parent_search, multi_path: multi_path)
+        processed_nodes = process_tree_level(raw_nodes, [], parent_search, parent_reversed)
+
+        if root
+
+            root_node[:children] = processed_nodes
+            return [root_node]
+        else
+            return processed_nodes
+        end
+    end
+
+    def process_rest_concept(concept, tree_walk_levels, first_level: false, parent_search: false, multi_path: true)
+
+        concept_nodes = []
+        has_many_parents = false
+
+        node = {}
+        node[:id] = concept.conChronology.identifiers.uuids.first
+        node[:text] = concept.conChronology.description
+        node[:has_children] = !concept.children.nil?
+        node[:defined] = concept.isConceptDefined
+        node[:state] = concept.conVersion.state.name
+        node[:author] = concept.conVersion.authorSequence
+        node[:module] = concept.conVersion.moduleSequence
+        node[:path] = concept.conVersion.pathSequence
+        node[:refsets] = concept.sememeMembership
+        # TODO - remove the hard-coding of type to 'vhat' when the type flags are implemented in the REST APIs
+        node[:terminology_type] = 'vhat'
+
+        if node[:text] == nil
+            node[:text] = '[No Description]'
+        end
+
+        if node[:defined].nil?
+            node[:defined] = false
+        end
+
+        if node[:has_children]
+            node[:child_count] = concept.children.length
+
+        elsif tree_walk_levels == 0 && concept.childCount != 0
+
+            node[:child_count] = concept.childCount
+            node[:has_children] = true
+            node[:has_children] = true
+
+        else
+            node[:child_count] = 0
+        end
+
+        node[:has_parents] = !concept.parents.nil?
+
+        if node[:has_parents]
+            node[:parent_count] = concept.parents.length
+
+        elsif tree_walk_levels == 0 && concept.parentCount != 0 && boolean(parent_search)
+
+            node[:parent_count] = concept.parentCount
+            node[:has_parents] = true
+
+        else
+            node[:parent_count] = 0
+        end
+
+        if !boolean(parent_search) && node[:child_count] != 0
+            node[:badge] = "&nbsp;&nbsp;<span class=\"badge badge-success\" title=\"kma\">#{node[:child_count]}</span>"
+
+        elsif boolean(parent_search) && node[:parent_count] != 0
+            node[:badge] = "&nbsp;&nbsp;<span class=\"badge badge-success\" title=\"kma\">#{node[:parent_count]}</span>"
+        else
+            node[:badge] = ''
+        end
+
+        node[:parents] = []
+
+        # if this node has parents and we want to see all parent paths then get the details of each parent
+        if tree_walk_levels > 0  && !boolean(parent_search) && node[:parent_count] > 1 && boolean(multi_path)
+
+            has_many_parents = true
+
+            if first_level
+                node[:badge] = "&nbsp;&nbsp;<span class=\"badge badge-success\" title=\"kma\">#{node[:parent_count]}</span>"
+            end
+
+            concept.parents.each do |parent|
+
+                parent_node = {}
+
+                parent_node[:id] = parent.conChronology.identifiers.uuids.first
+                parent_node[:text] = parent.conChronology.description
+                parent_node[:defined] = parent.isConceptDefined
+                parent_node[:state] = parent.conVersion.state.name
+                parent_node[:author] = parent.conVersion.authorSequence
+                parent_node[:module] = parent.conVersion.moduleSequence
+                parent_node[:path] = parent.conVersion.pathSequence
+                parent_node[:has_parents] = parent.parentCount.to_i > 0
+                parent_node[:parent_count] = parent.parentCount
+                # TODO - remove the hard-coding of type to 'vhat' when the type flags are implemented in the REST APIs
+                node[:terminology_type] = 'vhat'
+
+                if node[:parent_count] != 0
+                    parent_node[:badge] = "&nbsp;&nbsp;<span class=\"badge badge-success\" title=\"kma\">#{parent_node[:parent_count]}</span>"
+                end
+
+                if parent_node[:defined].nil?
+                    parent_node[:defined] = false
+                end
+
+                node[:parents] << parent_node
+            end
+        end
+
+        relation = :children
+
+        # if we are walking up the tree toward the root node get the parents of the current node, otherwise get the children
+        if tree_walk_levels > 0 && boolean(parent_search) && !concept.parents.nil?
+
+            relation = :parents
+            related_concepts = concept.parents
+
+        elsif tree_walk_levels > 0 && !boolean(parent_search) && !concept.children.nil?
+            related_concepts = concept.children
+        else
+            related_concepts = []
+        end
+
+        processed_related_concepts = []
+
+        related_concepts.each do |related_concept|
+            processed_related_concepts.concat(process_rest_concept(related_concept, tree_walk_levels - 1, parent_search: parent_search, multi_path: multi_path))
+        end
+
+        if first_level
+
+            if has_many_parents
+                concept_nodes << node
+            end
+
+            concept_nodes.concat(processed_related_concepts)
+        else
+            $log.debug('*** data process: ' + node[:text].to_s)
+            node[relation] = processed_related_concepts
+            concept_nodes << node
+        end
+
+        concept_nodes
+    end
+
+    def process_tree_level (raw_nodes, tree_nodes, parent_search_param, parent_reversed_param)
+
+        raw_nodes.each do |raw_node|
+
+            anchor_attributes = { class: 'komet-context-menu',
+                                  'data-menu-type' => 'concept',
+                                  'data-menu-uuid' => raw_node[:id],
+                                  'data-menu-state' => raw_node[:state],
+                                  'data-menu-concept-text' => raw_node[:text],
+                                  'data-menu-concept-terminology-type' => raw_node[:terminology_type]
+            }
+            parent_search = parent_search_param
+            parent_reversed = parent_reversed_param
+            show_expander = true
+            relation = :children
+            has_relation = :has_children
+            flags = get_tree_node_flag('module', [raw_node[:module]])
+            flags << get_tree_node_flag('refsets', [raw_node[:refsets]])
+            flags << get_tree_node_flag('path', [raw_node[:path]])
+
+            if raw_node[:state] && raw_node[:state].downcase.eql?('inactive')
+                anchor_attributes[:class] << ' komet-inactive-tree-node'
+            end
+
+            if boolean(parent_search)
+
+                relation = :parents
+                has_relation = :has_parents
+            end
+
+            if boolean(raw_node[:defined])
+                icon_class = 'komet-tree-node-icon komet-tree-node-defined'
+            else
+                icon_class = 'komet-tree-node-icon komet-tree-node-primitive'
+            end
+
+            # should this child node be reversed and is it the first node to be reversed - comes from node data
+            if !boolean(parent_reversed) && raw_node[:parent_count] > 1
+
+                anchor_attributes[:class] << ' komet-reverse-tree-node'
+                parent_id = get_next_id
+                node_text = 'Parents of ' + raw_node[:text] + raw_node[:badge] + flags
+                icon_class << '-arrow'
+
+                parent_nodes = populate_tree(raw_node[:id], true, true, 100, true)
+
+                tree_nodes << {id: parent_id, concept_id: raw_node[:id], text: node_text, children: parent_nodes, parent_reversed: true, parent_search: true, icon: icon_class, a_attr: anchor_attributes, li_attr: {class: 'komet-reverse-tree'}}
+
+                # jump to the next node in raw_nodes
+                next
+
+            elsif boolean(parent_search)
+
+                icon_class << '-arrow'
+                anchor_attributes[:class] << ' komet-reverse-tree-node'
+            end
+
+            # if the node has no children (or no parents if doing a parent search) identify it as a leaf, otherwise it is a branch
+            if !raw_node[has_relation]
+                show_expander = false
+            end
+
+            node_text = raw_node[:text] + raw_node[:badge] + flags
+
+            node = {id: get_next_id, concept_id: raw_node[:id], text: node_text, parent_reversed: parent_reversed, parent_search: parent_search, stamp_state: raw_node[:state], icon: icon_class, a_attr: anchor_attributes}
+
+            if raw_node[relation].length == 0
+                node[:children] = show_expander
+            else
+                node[:state] = {opened: 'true'}
+            end
+
+            if raw_node[relation].length > 0
+                node[:children] = process_tree_level(raw_node[relation], [], parent_search_param, parent_reversed_param)
+            end
+
+            tree_nodes << node
+
+        end
+
+        return tree_nodes
+    end
+
+    def get_tree_node_flag(flag_name, ids_to_match)
+
+        flag = '';
+
+        if session['color' + flag_name]
+
+            colors = session['color' + flag_name].find_all{|key, hash|
+                hash[flag_name + 'id'].to_i.in?(ids_to_match) && hash['colorid'] != ''
+            }
+
+            colors.each do |color|
+                flag = ' <span class="komet-node-' + flag_name + '-flag" style="border-color: ' + color[1]['colorid'] + ';"></span>'
+            end
+        end
+
+        return flag
+    end
+
     ##
     # get_concept_information - RESTful route for populating concept details pane using an http :GET
     # The current tree node representing the concept is identified in the request params with the key :concept_id
@@ -84,6 +374,9 @@ class KometDashboardController < ApplicationController
         @concept_id = params[:concept_id]
         @stated = params[:stated]
         @viewer_id =  params[:viewer_id]
+        @viewer_action = params[:viewer_action]
+        @viewer_previous_content_id = params[:viewer_previous_content_id]
+        @viewer_previous_content_type = params[:viewer_previous_content_type]
 
         if @viewer_id == nil || @viewer_id == '' || @viewer_id == 'new'
             @viewer_id = get_next_id
@@ -114,7 +407,7 @@ class KometDashboardController < ApplicationController
 
     end
 
-    def get_attributes_jsonreturntype
+    def get_concept_edit_attributes
         @concept_id = params[:concept_id]
         @stated = params[:stated]
         @viewer_id =  params[:viewer_id]
@@ -145,7 +438,7 @@ class KometDashboardController < ApplicationController
 
     end
 
-    def get_descriptions_jsonreturntype
+    def get_concept_edit_descriptions
         @concept_id = params[:concept_id]
         @stated = params[:stated]
         @viewer_id =  params[:viewer_id]
@@ -272,284 +565,6 @@ class KometDashboardController < ApplicationController
         render json: refsets
     end
 
-    def populate_tree(selected_concept_id, parent_search, parent_reversed, tree_walk_levels, multi_path)
-
-        coordinates_token = session[:coordinatestoken].token
-        root = selected_concept_id.eql?('#')
-
-        additional_req_params = {coordToken: coordinates_token, stated: @stated, sememeMembership: true}
-
-        if boolean(parent_search)
-            tree_walk_levels = 100
-            additional_req_params[:childDepth] = 0
-            additional_req_params[:parentHeight] = tree_walk_levels
-        else
-
-            additional_req_params[:childDepth] = tree_walk_levels
-            additional_req_params[:parentHeight] = 1
-        end
-
-        if root
-
-            # load the ISAAC root node and children
-            isaac_concept = TaxonomyRest.get_isaac_root(additional_req_params: additional_req_params)
-
-            if isaac_concept.is_a? CommonRest::UnexpectedResponse
-                return []
-            end
-
-            # load the root node into our return variable
-            root_anchor_attributes = { class: 'komet-context-menu', 'data-menu-type' => 'concept', 'data-menu-uuid' => isaac_concept.conChronology.identifiers.uuids.first,
-                                       'data-menu-state' => 'ACTIVE', 'data-menu-concept-text' => isaac_concept.conChronology.description}
-            root_node = {id: 0, concept_id: isaac_concept.conChronology.identifiers.uuids.first, text: isaac_concept.conChronology.description, parent_reversed: false, parent_search: parent_search, icon: 'komet-tree-node-icon komet-tree-node-primitive', a_attr: root_anchor_attributes, state: {opened: 'true'}}
-        else
-            isaac_concept = TaxonomyRest.get_isaac_concept(uuid: selected_concept_id, additional_req_params: additional_req_params)
-        end
-
-        if isaac_concept.is_a? CommonRest::UnexpectedResponse
-            return []
-        end
-
-        raw_nodes = process_rest_concept(isaac_concept, tree_walk_levels, first_level: true, parent_search: parent_search, multi_path: multi_path)
-        processed_nodes = process_tree_level(raw_nodes, [], parent_search, parent_reversed)
-
-        if root
-
-            root_node[:children] = processed_nodes
-            return [root_node]
-        else
-            return processed_nodes
-        end
-    end
-
-    def process_rest_concept(concept, tree_walk_levels, first_level: false, parent_search: false, multi_path: true)
-
-        concept_nodes = []
-        has_many_parents = false
-
-        node = {}
-        node[:id] = concept.conChronology.identifiers.uuids.first
-        node[:text] = concept.conChronology.description
-        node[:has_children] = !concept.children.nil?
-        node[:defined] = concept.isConceptDefined
-        node[:state] = concept.conVersion.state.name
-        node[:author] = concept.conVersion.authorSequence
-        node[:module] = concept.conVersion.moduleSequence
-        node[:path] = concept.conVersion.pathSequence
-        node[:refsets] = concept.sememeMembership
-
-        if node[:text] == nil
-            node[:text] = '[No Description]'
-        end
-
-        if node[:defined].nil?
-            node[:defined] = false
-        end
-
-        if node[:has_children]
-            node[:child_count] = concept.children.length
-
-        elsif tree_walk_levels == 0 && concept.childCount != 0
-
-            node[:child_count] = concept.childCount
-            node[:has_children] = true
-            node[:has_children] = true
-
-        else
-            node[:child_count] = 0
-        end
-
-        node[:has_parents] = !concept.parents.nil?
-
-        if node[:has_parents]
-            node[:parent_count] = concept.parents.length
-
-        elsif tree_walk_levels == 0 && concept.parentCount != 0 && boolean(parent_search)
-
-            node[:parent_count] = concept.parentCount
-            node[:has_parents] = true
-
-        else
-            node[:parent_count] = 0
-        end
-
-        if !boolean(parent_search) && node[:child_count] != 0
-            node[:badge] = "&nbsp;&nbsp;<span class=\"badge badge-success\" title=\"kma\">#{node[:child_count]}</span>"
-
-        elsif boolean(parent_search) && node[:parent_count] != 0
-            node[:badge] = "&nbsp;&nbsp;<span class=\"badge badge-success\" title=\"kma\">#{node[:parent_count]}</span>"
-        else
-            node[:badge] = ''
-        end
-
-        node[:parents] = []
-
-        # if this node has parents and we want to see all parent paths then get the details of each parent
-        if tree_walk_levels > 0  && !boolean(parent_search) && node[:parent_count] > 1 && boolean(multi_path)
-
-            has_many_parents = true
-
-            if first_level
-                node[:badge] = "&nbsp;&nbsp;<span class=\"badge badge-success\" title=\"kma\">#{node[:parent_count]}</span>"
-            end
-
-            concept.parents.each do |parent|
-
-                parent_node = {}
-
-                parent_node[:id] = parent.conChronology.identifiers.uuids.first
-                parent_node[:text] = parent.conChronology.description
-                parent_node[:defined] = parent.isConceptDefined
-                parent_node[:state] = parent.conVersion.state.name
-                parent_node[:author] = parent.conVersion.authorSequence
-                parent_node[:module] = parent.conVersion.moduleSequence
-                parent_node[:path] = parent.conVersion.pathSequence
-                parent_node[:has_parents] = parent.parentCount.to_i > 0
-                parent_node[:parent_count] = parent.parentCount
-
-                if node[:parent_count] != 0
-                    parent_node[:badge] = "&nbsp;&nbsp;<span class=\"badge badge-success\" title=\"kma\">#{parent_node[:parent_count]}</span>"
-                end
-
-                if parent_node[:defined].nil?
-                    parent_node[:defined] = false
-                end
-
-                node[:parents] << parent_node
-            end
-        end
-
-        relation = :children
-
-        # if we are walking up the tree toward the root node get the parents of the current node, otherwise get the children
-        if tree_walk_levels > 0 && boolean(parent_search) && !concept.parents.nil?
-
-            relation = :parents
-            related_concepts = concept.parents
-
-        elsif tree_walk_levels > 0 && !boolean(parent_search) && !concept.children.nil?
-            related_concepts = concept.children
-        else
-            related_concepts = []
-        end
-
-        processed_related_concepts = []
-
-        related_concepts.each do |related_concept|
-            processed_related_concepts.concat(process_rest_concept(related_concept, tree_walk_levels - 1, parent_search: parent_search, multi_path: multi_path))
-        end
-
-        if first_level
-
-            if has_many_parents
-                concept_nodes << node
-            end
-
-            concept_nodes.concat(processed_related_concepts)
-        else
-            $log.debug('*** data process: ' + node[:text].to_s)
-            node[relation] = processed_related_concepts
-            concept_nodes << node
-        end
-
-        concept_nodes
-    end
-
-    def process_tree_level (raw_nodes, tree_nodes, parent_search_param, parent_reversed_param)
-
-        raw_nodes.each do |raw_node|
-
-            anchor_attributes = { class: 'komet-context-menu', 'data-menu-type' => 'concept', 'data-menu-uuid' => raw_node[:id], 'data-menu-state' => raw_node[:state], 'data-menu-concept-text' => raw_node[:text]}
-            parent_search = parent_search_param
-            parent_reversed = parent_reversed_param
-            show_expander = true
-            relation = :children
-            has_relation = :has_children
-            flags = get_tree_node_flag('module', [raw_node[:module]])
-            flags << get_tree_node_flag('refsets', [raw_node[:refsets]])
-            flags << get_tree_node_flag('path', [raw_node[:path]])
-
-            if raw_node[:state] && raw_node[:state].downcase.eql?('inactive')
-                anchor_attributes[:class] << ' komet-inactive-tree-node'
-            end
-
-            if boolean(parent_search)
-
-                relation = :parents
-                has_relation = :has_parents
-            end
-
-            if boolean(raw_node[:defined])
-                icon_class = 'komet-tree-node-icon komet-tree-node-defined'
-            else
-                icon_class = 'komet-tree-node-icon komet-tree-node-primitive'
-            end
-
-            # should this child node be reversed and is it the first node to be reversed - comes from node data
-            if !boolean(parent_reversed) && raw_node[:parent_count] > 1
-
-                anchor_attributes[:class] << ' komet-reverse-tree-node'
-                parent_id = get_next_id
-                node_text = 'Parents of ' + raw_node[:text] + raw_node[:badge] + flags
-                icon_class << '-arrow'
-
-                parent_nodes = populate_tree(raw_node[:id], true, true, 100, true)
-
-                tree_nodes << {id: parent_id, concept_id: raw_node[:id], text: node_text, children: parent_nodes, parent_reversed: true, parent_search: true, icon: icon_class, a_attr: anchor_attributes, li_attr: {class: 'komet-reverse-tree'}}
-
-                # jump to the next node in raw_nodes
-                next
-
-            elsif boolean(parent_search)
-
-                icon_class << '-arrow'
-                anchor_attributes[:class] << ' komet-reverse-tree-node'
-            end
-
-            # if the node has no children (or no parents if doing a parent search) identify it as a leaf, otherwise it is a branch
-            if !raw_node[has_relation]
-                show_expander = false
-            end
-
-            node_text = raw_node[:text] + raw_node[:badge] + flags
-
-            node = {id: get_next_id, concept_id: raw_node[:id], text: node_text, parent_reversed: parent_reversed, parent_search: parent_search, stamp_state: raw_node[:state], icon: icon_class, a_attr: anchor_attributes}
-
-            if raw_node[relation].length == 0
-                node[:children] = show_expander
-            else
-                node[:state] = {opened: 'true'}
-            end
-
-            if raw_node[relation].length > 0
-                node[:children] = process_tree_level(raw_node[relation], [], parent_search_param, parent_reversed_param)
-            end
-
-            tree_nodes << node
-
-        end
-
-        return tree_nodes
-    end
-
-    def get_tree_node_flag(flag_name, ids_to_match)
-
-        flag = '';
-
-        if session['color' + flag_name]
-
-            colors = session['color' + flag_name].find_all{|key, hash|
-                hash[flag_name + 'id'].to_i.in?(ids_to_match) && hash['colorid'] != ''
-            }
-
-            colors.each do |color|
-                flag = ' <span class="komet-node-' + flag_name + '-flag" style="border-color: ' + color[1]['colorid'] + ';"></span>'
-            end
-        end
-
-        return flag
-    end
-
     def get_concept_description_types
 
         coordinates_token = session[:coordinatestoken].token
@@ -568,7 +583,7 @@ class KometDashboardController < ApplicationController
         end
     end
 
-    def get_concept_add
+    def get_concept_create_info
 
         $isaac_metadata_auxiliary
 
@@ -577,12 +592,17 @@ class KometDashboardController < ApplicationController
         @viewer_id = params[:viewer_id]
         @parent_id = params[:parent_id]
         @parent_text = params[:parent_text]
+        @parent_type = params[:parent_type]
         @description_types = get_concept_description_types
+        @viewer_action = params[:viewer_action]
+        @viewer_previous_content_id = params[:viewer_previous_content_id]
+        @viewer_previous_content_type = params[:viewer_previous_content_type]
 
         if @parent_id == nil
 
             @parent_id = ''
             @parent_text = ''
+            @parent_type = ''
         end
 
         if @viewer_id == nil || @viewer_id == '' || @viewer_id == 'new'
@@ -593,11 +613,14 @@ class KometDashboardController < ApplicationController
 
     end
 
-    def get_concept_edit
+    def get_concept_edit_info
 
         @concept_id = params[:concept_id]
         @stated = params[:stated]
         @viewer_id =  params[:viewer_id]
+        @viewer_action = params[:viewer_action]
+        @viewer_previous_content_id = params[:viewer_previous_content_id]
+        @viewer_previous_content_type = params[:viewer_previous_content_type]
 
         if @viewer_id == nil || @viewer_id == '' || @viewer_id == 'new'
             @viewer_id = get_next_id
@@ -606,21 +629,22 @@ class KometDashboardController < ApplicationController
 
     end
 
-    def process_concept_Create
+    def create_concept
 
         description_type = params[:komet_create_concept_description_type]
         preferred_term = params[:komet_create_concept_description]
         parent_concept_id = params[:komet_create_concept_parent]
         parent_concept_text = params[:komet_create_concept_parent_display]
+        parent_concept_type = params[:komet_create_concept_parent_type]
 
         # get the parent concept sequence from the uuid
         parent_concept_id = IdAPIsRest.get_id(uuid_or_id: parent_concept_id, action: IdAPIsRestActions::ACTION_TRANSLATE, additional_req_params: {inputType: 'uuid', outputType: 'conceptSequence'}).value
 
         body_params = {
             fsn: preferred_term + ' (' + parent_concept_text + ')',
-            preferredTerm: preferred_term,
+            #preferredTerm: preferred_term,
             parentConceptIds: [parent_concept_id.to_i],
-            requiredDescriptionsLanguageConceptId: 8
+            descriptionLanguageConceptId: 8
         }
 
         # if it is present get the description type concept sequence from the uuid
@@ -637,7 +661,7 @@ class KometDashboardController < ApplicationController
         end
 
         # add the parent concept to the concept recents array in the session
-        add_to_recents(CONCEPT_RECENTS, parent_concept_id, parent_concept_text)
+        add_to_recents(CONCEPT_RECENTS, parent_concept_id, parent_concept_text, parent_concept_type)
 
         # clear taxonomy caches after writing data
         clear_rest_caches
@@ -649,41 +673,48 @@ class KometDashboardController < ApplicationController
 
     end
 
-    def process_concept_Clone
-        @concept_id = params[:concept_id]
-        getconceptDate = get_conceptData(uuid)
+    def edit_concept
 
-        body_params = {fsn: getconceptDate[:FSN], preferredTerm: getconceptDate[:PreferredTerm], parentConceptIds:getconceptDate[:ParentID]}
-
-        set_id = ConceptRest::get_concept(action: ConceptRestActions::ACTION_CREATE, body_params:body_params )
-
-        if set_id.is_a? CommonRest::UnexpectedResponse
-            render json: {set_id: nil}
-            return
-        end
-
-        # clear taxonomy caches after writing data
-        clear_rest_caches
     end
 
-    def process_concept_ActiveInactive
-        coordinates_token = session[:coordinatestoken].token
-        id = params[:id]
-        statusFlag = params[:statusFlag]
+    def clone_concept
 
-        if statusFlag == 'ACTIVE'
-            deactivate = ConceptRest::get_concept(action: ConceptRestActions::ACTION_UPDATE_ACTIVATE, uuid: id)
-        else
-            deactivate = ConceptRest::get_concept(action: ConceptRestActions::ACTION_UPDATE_DEACTIVATE, uuid: id)
-        end
-        if deactivate.is_a? CommonRest::UnexpectedResponse
+        @concept_id = params[:concept_id]
+        concept_data = get_conceptData(@concept_id)
 
-            render json: {deactivate: nil}
-            return
+        body_params = {fsn: concept_data[:FSN], preferredTerm: concept_data[:PreferredTerm], parentConceptIds:concept_data[:ParentID]}
+
+        new_concept_id = ConceptRest::get_concept(action: ConceptRestActions::ACTION_CREATE, body_params: body_params )
+
+        if new_concept_id.is_a? CommonRest::UnexpectedResponse
+            render json: {concept_id: nil} and return
         end
 
         # clear taxonomy caches after writing data
         clear_rest_caches
+
+        render json: {concept_id: new_concept_id}
+    end
+
+    def change_concept_state
+
+        concept_id = params[:concept_id]
+        newState = params[:newState]
+
+        if newState == 'active'
+            results = ConceptRest::get_concept(action: ConceptRestActions::ACTION_UPDATE_ACTIVATE, uuid: concept_id)
+        else
+            results = ConceptRest::get_concept(action: ConceptRestActions::ACTION_UPDATE_DEACTIVATE, uuid: concept_id)
+        end
+
+        if results.is_a? CommonRest::UnexpectedResponse
+            render json: {state: nil} and return
+        end
+
+        # clear taxonomy caches after writing data
+        clear_rest_caches
+
+        render json: {state: state}
     end
 
     ##
@@ -702,7 +733,8 @@ class KometDashboardController < ApplicationController
 
         results.results.each do |result|
 
-            concept_suggestions_data << {label: result.matchText, value: result.referencedConcept.identifiers.uuids.first}
+            # TODO - remove the hard-coding of type to 'vhat' when the type flags are implemented in the REST APIs
+            concept_suggestions_data << {label: result.matchText, value: result.referencedConcept.identifiers.uuids.first, type: 'vhat'}
         end
 
         render json: concept_suggestions_data
@@ -718,8 +750,7 @@ class KometDashboardController < ApplicationController
         if session[CONCEPT_RECENTS]
             recents_array = session[CONCEPT_RECENTS]
         end
-        $log.debug('%%%%%%%%%%% Concept Recents: ' + CONCEPT_RECENTS.to_s);
-        $log.debug('%%%%%%%%%%% recents array: ' + recents_array.to_s);
+
         render json: recents_array
     end
 
