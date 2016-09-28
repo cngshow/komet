@@ -399,6 +399,8 @@ var ConceptViewer = function(viewerID, currentConceptID, viewerAction) {
 
         $("#komet_create_concept_form_" + this.viewerID).submit(function () {
 
+            $("#komet_create_concept_form_" + this.viewerID).find(".komet-form-error, .komet-form-field-error").remove();
+
             $.ajax({
                 type: "POST",
                 url: $(this).attr("action"),
@@ -408,8 +410,10 @@ var ConceptViewer = function(viewerID, currentConceptID, viewerAction) {
                     console.log(data);
 
                     if (data.concept_id == null){
-                        $("#komet_create_concept_section_").prepend(UIHelper.generateFormErrorMessage("An error has occurred. The concept was not created."));
+                        $("#komet_create_concept_section_" + thisViewer.viewerID).prepend(UIHelper.generateFormErrorMessage("An error has occurred. The concept was not created."));
                     } else {
+
+                        TaxonomyModule.tree.reloadTreeStatedView(TaxonomyModule.getStatedView());
                         $.publish(KometChannels.Taxonomy.taxonomyConceptEditorChannel, [data.concept_id, thisViewer.viewerID, WindowManager.INLINE]);
                     }
                 }

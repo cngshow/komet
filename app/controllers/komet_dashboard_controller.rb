@@ -642,9 +642,9 @@ class KometDashboardController < ApplicationController
 
         body_params = {
             fsn: preferred_term + ' (' + parent_concept_text + ')',
-            preferredTerm: preferred_term,
+            #preferredTerm: preferred_term,
             parentConceptIds: [parent_concept_id.to_i],
-            requiredDescriptionsLanguageConceptId: 8
+            descriptionLanguageConceptId: 8
         }
 
         # if it is present get the description type concept sequence from the uuid
