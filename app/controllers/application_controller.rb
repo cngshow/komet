@@ -124,7 +124,7 @@ class ApplicationController < ActionController::Base
                     user_params[:format] = 'json'
                     roles_body = conn.get(roles_url.path, user_params).body
                     $log.debug("Roles body from prisme is: #{roles_body}")
-                    response = JSON.parse roles_body
+                    response = (JSON.parse roles_body)['roles']
                 rescue => ex
                     $log.error("Komet could not communicate with PRISME at URL #{roles_url}")
                     $log.error("Error message is #{ex.message}")
@@ -135,7 +135,7 @@ class ApplicationController < ActionController::Base
                     session[Roles::SESSION_ROLES_ROOT][Roles::SESSION_LAST_ROLE_CHECK] = Time.now
                     roles = []
                     response.each do |r|
-                        roles << r['name']
+                        roles << r['name'].to_sym
                     end
                 end
             end
