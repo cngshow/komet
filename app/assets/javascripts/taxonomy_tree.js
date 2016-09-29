@@ -156,10 +156,14 @@ var KometTaxonomyTree = function(treeID, stated, parentSearch, startingConceptID
     };
 
     // destroy the current tree and reload it using the specified stated view
-    KometTaxonomyTree.prototype.reloadTreeStatedView = function(stated) {
+    KometTaxonomyTree.prototype.reloadTreeStatedView = function(stated, selectItem) {
+
+        if (selectItem == undefined || selectItem == null) {
+            selectItem = this.selectItem;
+        }
 
         this.tree.jstree(true).destroy();
-        this.buildTaxonomyTree(stated, this.parentSearch, this.startingConceptID, this.selectItem, this.multiPath);
+        this.buildTaxonomyTree(stated, this.parentSearch, this.startingConceptID, selectItem, this.multiPath);
     };
 
     // destroy the current tree and reload it using the conceptID as a starting point
