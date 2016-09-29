@@ -413,7 +413,7 @@ var ConceptViewer = function(viewerID, currentConceptID, viewerAction) {
                         $("#komet_create_concept_section_" + thisViewer.viewerID).prepend(UIHelper.generateFormErrorMessage("An error has occurred. The concept was not created."));
                     } else {
 
-                        TaxonomyModule.tree.reloadTreeStatedView(TaxonomyModule.getStatedView());
+                        TaxonomyModule.tree.reloadTreeStatedView(TaxonomyModule.getStatedView(), false);
                         $.publish(KometChannels.Taxonomy.taxonomyConceptEditorChannel, [data.concept_id, thisViewer.viewerID, WindowManager.INLINE]);
                     }
                 }
@@ -510,36 +510,31 @@ var ConceptViewer = function(viewerID, currentConceptID, viewerAction) {
         }
     };
 
-    ConceptViewer.prototype.editConcept = function(){
+    ConceptViewer.prototype.editConcept = function(attributes, descriptions){
 
         var divtext = "";
         var rowCount = 0;
         var concept_id  = "?concept_id=" + this.currentConceptID + "&stated=stated&viewer_id=" + viewerID;
 
-        $.get(gon.routes.taxonomy_get_concept_edit_attributes_path  + concept_id     ,function( data ) {
 
-            selectItemByValue(document.getElementById('komet_concept_Status'),data[1].value);
+        selectItemByValue(document.getElementById('komet_concept_Status'),attributes[1].value);
 
-            if ( data[2].value == 'Primitive') {
-                divtext = "<div class='komet-tree-node-icon komet-tree-node-primitive' title=''" + data[2].value + "'></div>"
-            } else {
-                divtext = "<div class='komet-tree-node-icon komet-tree-node-defined' title='" + data[2].value + "'></div>"
-            }
+        if ( attributes[2].value == 'Primitive') {
+            divtext = "<div class='komet-tree-node-icon komet-tree-node-primitive' title=''" + attributes[2].value + "'></div>"
+        } else {
+            divtext = "<div class='komet-tree-node-icon komet-tree-node-defined' title='" + attributes[2].value + "'></div>"
+        }
 
-            $("#definedDiv").html(divtext);
+        $("#definedDiv").html(divtext);
 
-            selectItemByValue(document.getElementById('komet_concept_defined'),data[2].value);
-        });
+        selectItemByValue(document.getElementById('komet_concept_defined'),attributes[2].value);
 
         descriptiondropdown();
 
-        $.get(gon.routes.taxonomy_get_concept_edit_descriptions_path  + concept_id , function( descriptionData ) {
+        $.each(descriptions, function (index, value) {
 
-            $.each(descriptionData, function (index, value) {
-
-                rowCount = rowCount + 1;
-                addDescriptionData(index,value,rowCount)
-            });
+            rowCount = rowCount + 1;
+            addDescriptionData(index,value,rowCount)
         });
 
         UIHelper.processAutoSuggestTags("#komet_edit_concept_form_" + this.viewerID);

@@ -22,8 +22,6 @@ Rails.application.routes.draw do
     get 'komet_dashboard/get_refset_list', :as => :taxonomy_get_refset_list
     get 'komet_dashboard/get_concept_create_info', :as => :taxonomy_get_concept_create_info
     get 'komet_dashboard/get_concept_edit_info', :as => :taxonomy_get_concept_edit_info
-    get 'komet_dashboard/get_concept_edit_attributes', :as => :taxonomy_get_concept_edit_attributes
-    get 'komet_dashboard/get_concept_edit_descriptions', :as => :taxonomy_get_concept_edit_descriptions
     post 'komet_dashboard/create_concept', :as => :taxonomy_create_concept
     post 'komet_dashboard/edit_concept', :as => :taxonomy_edit_concept
     get 'komet_dashboard/change_concept_state', :as => :taxonomy_change_concept_state

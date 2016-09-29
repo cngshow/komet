@@ -417,19 +417,6 @@ class KometDashboardController < ApplicationController
 
     end
 
-    def get_concept_edit_attributes
-        @concept_id = params[:concept_id]
-        @stated = params[:stated]
-        @viewer_id =  params[:viewer_id]
-
-        if @viewer_id == nil || @viewer_id == '' || @viewer_id == 'new'
-            @viewer_id = get_next_id
-        end
-        attributes =  get_concept_attributes(@concept_id, @stated)
-        render json: attributes
-
-    end
-
     ##
     # get_concept_descriptions - RESTful route for populating concept summary tab using an http :GET
     # The current tree node representing the concept is identified in the request params with the key :concept_id
@@ -445,19 +432,6 @@ class KometDashboardController < ApplicationController
         end
 
         @descriptions =  get_descriptions(concept_id, stated)
-
-    end
-
-    def get_concept_edit_descriptions
-        @concept_id = params[:concept_id]
-        @stated = params[:stated]
-        @viewer_id =  params[:viewer_id]
-
-        if @viewer_id == nil || @viewer_id == '' || @viewer_id == 'new'
-            @viewer_id = get_next_id
-        end
-        descriptions =  get_descriptions(@concept_id, @stated)
-        render json: descriptions
 
     end
 
@@ -598,7 +572,6 @@ class KometDashboardController < ApplicationController
         $isaac_metadata_auxiliary
 
         @concept_id = params[:concept_id]
-        @stated = params[:stated]
         @viewer_id = params[:viewer_id]
         @parent_id = params[:parent_id]
         @parent_text = params[:parent_text]
@@ -626,7 +599,6 @@ class KometDashboardController < ApplicationController
     def get_concept_edit_info
 
         @concept_id = params[:concept_id]
-        @stated = params[:stated]
         @viewer_id =  params[:viewer_id]
         @viewer_action = params[:viewer_action]
         @viewer_previous_content_id = params[:viewer_previous_content_id]
@@ -635,6 +607,10 @@ class KometDashboardController < ApplicationController
         if @viewer_id == nil || @viewer_id == '' || @viewer_id == 'new'
             @viewer_id = get_next_id
         end
+
+        get_concept_attributes(@concept_id, true)
+        get_concept_descriptions(@concept_id, true)
+
         render partial: params[:partial]
 
     end
@@ -661,7 +637,7 @@ class KometDashboardController < ApplicationController
         if description_type != ''
 
             description_type = IdAPIsRest.get_id(uuid_or_id: description_type, action: IdAPIsRestActions::ACTION_TRANSLATE, additional_req_params: {inputType: 'uuid', outputType: 'conceptSequence'}).value
-            body_params[:requiredDescriptionsExtendedTypeConceptId] = description_type.to_i
+            body_params[:descriptionExtendedTypeConceptId] = description_type.to_i
         end
 
         new_concept_id = ConceptRest::get_concept(action: ConceptRestActions::ACTION_CREATE, body_params: body_params )
