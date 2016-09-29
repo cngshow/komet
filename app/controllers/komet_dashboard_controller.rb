@@ -31,6 +31,8 @@ class KometDashboardController < ApplicationController
     before_action :setup_routes, :setup_constants, :only => [:dashboard]
     after_filter :byte_size unless Rails.env.production?
     skip_before_action :ensure_roles, only: [:version]
+    skip_after_action :verify_authorized, only: [:version]
+    skip_before_action :read_only?, only: [:version]
     ##
     # load_tree_data - RESTful route for populating the taxonomy tree using an http :GET
     # The current tree node is identified in the request params with the key :concept_id
@@ -388,6 +390,16 @@ class KometDashboardController < ApplicationController
         render partial: params[:partial]
 
     end
+    def create_workflow
+        hash = { }
+        hash[:definitionId] = params[:definitionId]
+        hash[:creatorNid] = params[:creatorNid]
+        hash[:name] = params[:name]
+        hash[:description] = params[:description]
+        results =  CoordinateRest.get_workflow(action: WorkflowRestActions::ACTION_CREATEWORKFLOWPROCESS,  additional_req_params: hash)
+        session[:workflow] = results
+        render json:  results.to_json
+    end
 
     ##
     # get_concept_attributes - RESTful route for populating concept attribute tab using an http :GET
@@ -407,19 +419,6 @@ class KometDashboardController < ApplicationController
 
     end
 
-    def get_concept_edit_attributes
-        @concept_id = params[:concept_id]
-        @stated = params[:stated]
-        @viewer_id =  params[:viewer_id]
-
-        if @viewer_id == nil || @viewer_id == '' || @viewer_id == 'new'
-            @viewer_id = get_next_id
-        end
-        attributes =  get_concept_attributes(@concept_id, @stated)
-        render json: attributes
-
-    end
-
     ##
     # get_concept_descriptions - RESTful route for populating concept summary tab using an http :GET
     # The current tree node representing the concept is identified in the request params with the key :concept_id
@@ -435,19 +434,6 @@ class KometDashboardController < ApplicationController
         end
 
         @descriptions =  get_descriptions(concept_id, stated)
-
-    end
-
-    def get_concept_edit_descriptions
-        @concept_id = params[:concept_id]
-        @stated = params[:stated]
-        @viewer_id =  params[:viewer_id]
-
-        if @viewer_id == nil || @viewer_id == '' || @viewer_id == 'new'
-            @viewer_id = get_next_id
-        end
-        descriptions =  get_descriptions(@concept_id, @stated)
-        render json: descriptions
 
     end
 
@@ -588,7 +574,6 @@ class KometDashboardController < ApplicationController
         $isaac_metadata_auxiliary
 
         @concept_id = params[:concept_id]
-        @stated = params[:stated]
         @viewer_id = params[:viewer_id]
         @parent_id = params[:parent_id]
         @parent_text = params[:parent_text]
@@ -616,7 +601,6 @@ class KometDashboardController < ApplicationController
     def get_concept_edit_info
 
         @concept_id = params[:concept_id]
-        @stated = params[:stated]
         @viewer_id =  params[:viewer_id]
         @viewer_action = params[:viewer_action]
         @viewer_previous_content_id = params[:viewer_previous_content_id]
@@ -625,6 +609,10 @@ class KometDashboardController < ApplicationController
         if @viewer_id == nil || @viewer_id == '' || @viewer_id == 'new'
             @viewer_id = get_next_id
         end
+
+        get_concept_attributes(@concept_id, true)
+        get_concept_descriptions(@concept_id, true)
+
         render partial: params[:partial]
 
     end
@@ -651,7 +639,7 @@ class KometDashboardController < ApplicationController
         if description_type != ''
 
             description_type = IdAPIsRest.get_id(uuid_or_id: description_type, action: IdAPIsRestActions::ACTION_TRANSLATE, additional_req_params: {inputType: 'uuid', outputType: 'conceptSequence'}).value
-            body_params[:requiredDescriptionsExtendedTypeConceptId] = description_type.to_i
+            body_params[:descriptionExtendedTypeConceptId] = description_type.to_i
         end
 
         new_concept_id = ConceptRest::get_concept(action: ConceptRestActions::ACTION_CREATE, body_params: body_params )

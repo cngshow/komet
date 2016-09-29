@@ -1,12 +1,12 @@
 <!-- DO NOT PUT ANYTHING ABOVE THE KOMET VIEWER DIV - IT WILL BREAK WINDOWING WHEN CLOSING VIEWERS-->
-<div class="panel panel-default komet-no-margins komet-panel komet-concept-create" id="komet_viewer_<%= @viewer_id %>" data-komet-viewer-id="<%= @viewer_id %>">
+<div class="panel panel-default komet-no-margins komet-panel komet-concept-edit" id="komet_viewer_<%= @viewer_id %>" data-komet-viewer-id="<%= @viewer_id %>">
 
     <%= form_tag(taxonomy_create_concept_path, method: 'post', id: "komet_edit_concept_form_#{@viewer_id}") do %>
 
         <div class="panel-heading">
             <span class="panel-title komet-section-title">
               <span id="komet_concept_panel_tree_link_<%= @viewer_id %>" class="fa fa-chain-broken" onclick="WindowManager.toggleViewerLinkage('<%= @viewer_id %>', WindowManager.getLinkedViewerID() != '<%= @viewer_id %>');" title="Viewer linked to Taxonomy Tree. Click to unlink."></span>
-                Edit Concept
+                Edit: <%= @concept_text %>
             </span>
 
             <div class="komet-panel-tools">
@@ -135,7 +135,7 @@
 
     $(document).ready(function () {
 
-        WindowManager.viewers[<%= @viewer_id %>].editConcept();
+        WindowManager.viewers[<%= @viewer_id %>].editConcept(<%= raw @attributes.to_json %>, <%= raw @descriptions.to_json %>);
         UIHelper.initializeContextMenus();
     });
 </script>

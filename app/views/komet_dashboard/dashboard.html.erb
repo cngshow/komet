@@ -62,7 +62,10 @@
                 WindowManager.nestedSplittersExist()
             },
             onDragEnd: function (e) {
-                WindowManager.refreshSplitters()
+
+                // run this with a small delay because of the way the splitter processes refreshes - it will lose it's reference to the splitter in the refresh and the built in onmouseup handler will error.
+                // TODO - See if this is known issue and if not inform splitter developer
+                setTimeout(WindowManager.refreshSplitters, 1);
             }
         });
     });

@@ -10,7 +10,7 @@
     >
         <span id="komet_concept_panel_tree_link_<%= @viewer_id %>" class="fa fa-chain-broken" onclick="WindowManager.toggleViewerLinkage('<%= @viewer_id %>', WindowManager.getLinkedViewerID() != '<%= @viewer_id %>');" title="Viewer linked to Taxonomy Tree. Click to unlink."></span>
         <span id="komet_concept_panel_tree_show_<%= @viewer_id %>" class="fa fa-tree" onclick="WindowManager.viewers[<%= @viewer_id %>].showInTaxonomyTree();" title="Show in Taxonomy Tree"></span>
-        <%= @attributes[0][:value] %>
+        <%= @concept_text %>
     </span>
 
         <div class="komet-panel-tools">
