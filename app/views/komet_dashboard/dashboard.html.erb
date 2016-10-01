@@ -3,7 +3,7 @@
     KOMET Dashboard
 <% end %>
 
-<div id="komet_dashboard_splitter" class="row">
+<div id="komet_dashboard_splitter">
     <div id="komet_west_pane">
         <div id="komet_dashboard_tabs">
             <ul>
@@ -52,15 +52,12 @@
             }
         });
 
-        $("#komet_dashboard_tabs").tabs({active:0});
+        //$("#komet_dashboard_tabs").tabs({active:0});
 
-        $('#komet_dashboard_splitter').enhsplitter({
-            height: "91%",
+        // see positioning fix in application.html.erb
+        $("#komet_dashboard_splitter").enhsplitter({
             width: "100%",
             position: "41%",
-            onDragStart: function (e) {
-                WindowManager.nestedSplittersExist()
-            },
             onDragEnd: function (e) {
 
                 // run this with a small delay because of the way the splitter processes refreshes - it will lose it's reference to the splitter in the refresh and the built in onmouseup handler will error.

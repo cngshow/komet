@@ -39,6 +39,8 @@ var WindowManager = (function () {
                 splitter.enhsplitter({height: "100%", width: "100%"});
             }
 
+            nestedSplittersExist();
+
         } else if (windowType == POPUP){
 
             var newWindow = window.open("#");
@@ -102,6 +104,8 @@ var WindowManager = (function () {
                 splitter.remove();
             }
         }
+
+        nestedSplittersExist();
     }
 
     function toggleViewerLinkage(viewerID, makeLinked) {
