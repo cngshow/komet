@@ -18,6 +18,7 @@ Copyright Notice
 =end
 
 require './lib/isaac_rest/concept_rest'
+require './lib/rails_common/roles/user_session'
 
 module ApplicationHelper
     include UserSession
