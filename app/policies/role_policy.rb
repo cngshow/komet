@@ -1,7 +1,7 @@
 class RolePolicy < Struct.new(:user_and_roles, :role)
 
   def initialize(user_and_roles, role)
-    PunditDynamicRoles::add_policy_methods(self,user_and_roles)
+    PunditDynamicRoles::add_policy_methods(self, user_and_roles)
   end
 
 end

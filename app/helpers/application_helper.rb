@@ -18,8 +18,14 @@ Copyright Notice
 =end
 
 require './lib/isaac_rest/concept_rest'
+require './lib/rails_common/roles/user_session'
 
 module ApplicationHelper
+    include UserSession
+
+    def get_user_token
+        user_session(UserSession::TOKEN)
+    end
 
     def get_concept_metadata(id)
 
@@ -27,17 +33,10 @@ module ApplicationHelper
         additional_req_params = {coordToken: coordinates_token}
 
         version = ConceptRest.get_concept(action: ConceptRestActions::ACTION_DESCRIPTIONS, uuid: id, additional_req_params: additional_req_params).first
-
-        if version == nil
-            return ''
-        else
-            return version.text
-        end
+        version ? version.text : ''
     end
 
     def komet_user
-        user = 'unknown'
-        user = session[Roles::SESSION_ROLES_ROOT][Roles::SESSION_USER] if session.has_key?(Roles::SESSION_ROLES_ROOT)
-        user
+        user_session_defined? ? user_session(UserSession::LOGIN) : 'unknown'
     end
 end

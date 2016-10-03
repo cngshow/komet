@@ -9,17 +9,29 @@ I put it in the directory where JRuby is installed.
 
 https://s3.amazonaws.com/jruby.org/downloads/9.0.4.0/jruby-complete-9.0.4.0.jar
 
+You also need Maven: https://maven.apache.org/download.cgi
+Place where you would like
+Add the bin directory of the created directory [apache dir] to the PATH environment variable
+
+Confirm with mvn -v in a new shell. 
+
 You need to make sure you have the source code for the ISAAC-rest project on your system.
 
 git clone https://cshupp@vadev.mantech.com:4848/git/r/ISAAC-rest.git
 
 In rails root you will find a file called setup.bat.template.
-Move this file to setup.bat, then you will need to modify the following environment variables:
+Move this file to setup.bat, then you will need to modify the following environment variables:<br>
+Download jdk if you don't already have it for line 5 http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html
 
-GEM_HOME : (this is in line 2, make sure you create the directory you reference)<br>
-JAVA_HOME : (Line 4)<br>
-JRUBY_JAR: (This references JRuby's complete jar file.  Line 8)<br>
+GEM_HOME : (this is in line 2, make sure you create the directory you reference)
+
+JAVA_HOME : (Line 4)
+
+JRUBY_JAR: (This references JRuby's complete jar file.  Line 8)
+
 ISAAC_PATH: (Line 6, the path to the folder where your Isaac Rest project is installed)
+
+
 
 From a dos shell make sure you are in rails root (you can see the app directory right?), and run:
 ```
@@ -36,21 +48,20 @@ Install your bundle!
 bundle install
 ```
 
-<hr>
-<h1>RAILS_COMMON - git submodule</h1>
+**RAILS_COMMON - git submodule**
 We have moved the prop loader and logging code into a git repository at https://github.com/VA-CTT/rails_common.git so that the code can
 be shared with rails_komet and the PRISME project
 
+
 To pull the latest code do the following (replace my username with yours where appropriate.):
-<ol>
-<li>VCS -> Update Project - from within RubyMine</li>
-<li>open .gitignore and comment out /lib/rails__common with a #</li>
-<li>open a terminal and navigate to rails_komet/lib</li>
-<li>git submodule add https://cshupp@vadev.mantech.com:4848/git/r/rails_common.git
-<li>open .gitignore and uncomment /lib/rails__common</li>
-<li>run git reset from within the lib/rails_common directory</li>
-<li>run git  rm -f --cached rails_common from within the lib/rails_common directory if the line above fails</li>
-</ol>
+* VCS -> Update Project - from within RubyMine (https://www.jetbrains.com/help/ruby/2016.1/installing-and-launching.html)
+* open .gitignore and comment out /lib/rails__common with a #
+* open a terminal and navigate to rails_komet/lib
+* git submodule add https://cshupp@vadev.mantech.com:4848/git/r/rails_common.git
+* open .gitignore and uncomment /lib/rails__common
+* run git reset from within the lib/rails_common directory
+* run git  rm -f --cached rails_common from within the lib/rails_common directory if the line above fails
+
 
 ```
 git reset .
@@ -60,18 +71,16 @@ You should now see an rails_common directory under the lib directory.
 
 In RubyMine you may see a message concerning rails_common being under source control. If/when you do, click the add root button. This will allow you to make changes within the rails_komet project to the code in rails_common and commit those changes as well.
 
-<br>
-<hr>
 
-Open a terminal and navigate to rails root and run the command:<br>
-mvn clean initialize<br>
-This will create the file:<br>
-./config/generated/yaml/IsaacMetadataAuxiliary.yaml<br>
-Now run the following command to build the Isaac Rest project<br>
-bundle exec rake isaac:build_isaac_rest
+Open a terminal and navigate to rails root and run the command:
+* mvn clean initialize  
+* This will create the file:
+* ./config/generated/yaml/IsaacMetadataAuxiliary.yaml
+* Now run the following command to build the Isaac Rest project
+* bundle exec rake isaac:build_isaac_rest
 
-<br>
-<hr>
+
+
 You can now bring up the server:
 ```
 startup.bat

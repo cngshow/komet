@@ -2,6 +2,7 @@ require './lib/rails_common/util/controller_helpers'
 require 'faraday'
 require 'openssl'
 require './lib/rails_common/roles/ssoi'
+require './lib/rails_common/roles/user_session'
 require './lib/rails_common/util/servlet_support'
 
 OpenSSL::SSL::VERIFY_PEER = OpenSSL::SSL::VERIFY_NONE
@@ -11,6 +12,7 @@ class ApplicationController < ActionController::Base
     include ApplicationHelper
     include Pundit
     include SSOI
+    include UserSession
     include ServletSupport
 
     CACHE_TYPE_ALL = :all_caches
@@ -25,7 +27,8 @@ class ApplicationController < ActionController::Base
     after_action :verify_authorized
     before_action :ensure_rest_version
     before_action :ensure_roles
-    before_action :read_only? #must be after ensure_roles
+    before_action :read_only? # must be after ensure_roles
+    # todo tried testing with reviewer? and could not get to the login page
 
     before_action :set_render_menu, :setup_routes, :setup_constants
     attr_reader :ssoi # a boolean if we have ssoi headers
@@ -77,80 +80,77 @@ class ApplicationController < ActionController::Base
             $log.fatal("The isaac rest server version list is: #{versions}")
             $log.fatal("My supported version list is: #{REST_API_VERSIONS}")
             $log.fatal('Komet will not function until this is resolved!')
-            return
         end
     end
 
     def ensure_roles
+        # read the request headers to see if we are SSOI
         $log.debug("Ensuring roles for #{request.fullpath}")
         user_name = ssoi_headers
         @ssoi = !user_name.to_s.strip.empty? #we are using ssoi
-        $log.debug('SSOI headers present? ' + ssoi?.to_s + " ssoi user is #{user_name}")
-        roles = session[Roles::SESSION_ROLES_ROOT][Roles::SESSION_USER_ROLES]
-        user = session[Roles::SESSION_ROLES_ROOT][Roles::SESSION_USER]
-        password = session[Roles::SESSION_ROLES_ROOT][Roles::SESSION_PASSWORD] unless ssoi
-        #overwrite session values if this data comes from login form
-        if(params['komet_username'] && params['komet_password'] && !ssoi)
-            #we are coming from the login page
-            user = params['komet_username']
-            password = params['komet_password']
-            session[Roles::SESSION_ROLES_ROOT][Roles::SESSION_LAST_ROLE_CHECK] = nil
+
+        # pull the current login creds from the session
+        user_login = user_session(UserSession::LOGIN)
+        user_pwd = ssoi? ? nil : user_session(UserSession::PWD)
+
+        #overwrite session values if this data comes from login form and we are not SSOI
+        if params['komet_username'] && params['komet_password'] && !ssoi?
+          user_login = params['komet_username']
+          user_pwd = params['komet_password']
+
+          # null out the last role check so we will refresh the roles with this login
+          user_session(UserSession::LAST_ROLE_CHECK, nil)
         end
-        session[Roles::SESSION_ROLES_ROOT][Roles::SESSION_LAST_ROLE_CHECK] =  100.years.ago if session[Roles::SESSION_ROLES_ROOT][Roles::SESSION_LAST_ROLE_CHECK].nil?
-        time_for_recheck = (Time.now - session[Roles::SESSION_ROLES_ROOT][Roles::SESSION_LAST_ROLE_CHECK]) > $PROPS['KOMET.roles_recheck_in_seconds'].to_i
-        if (session[Roles::SESSION_ROLES_ROOT][Roles::SESSION_LAST_ROLE_CHECK].nil? || time_for_recheck)
-            $log.debug('Refetching the roles')
-            if (!ssoi? && (!FileTest.exists?("#{Rails.root}/config/props/prisme.properties") || $PROPS['PRISME.prisme_roles_url'].nil?))
+
+        # determine if we need to refresh the user's roles
+        user_session(UserSession::LAST_ROLE_CHECK, 1.year.ago) if user_session(UserSession::LAST_ROLE_CHECK).nil?
+        refresh_roles = (Time.now - user_session(UserSession::LAST_ROLE_CHECK)) > $PROPS['KOMET.roles_recheck_in_seconds'].to_i
+
+        if refresh_roles
+            user_info = nil
+            $log.debug('Refreshing the roles')
+
+            if !ssoi? && (!FileTest.exists?("#{Rails.root}/config/props/prisme.properties") || $PROPS['PRISME.prisme_roles_url'].nil?)
                 load './lib/roles_test/roles.rb'
-                roles = RolesTest::user_roles(user: user, password: password)
-                session[Roles::SESSION_ROLES_ROOT][Roles::SESSION_LAST_ROLE_CHECK] = Time.now
+                user_info = RolesTest::user_roles(user: user_login, password: user_pwd)
             else
-                $log.debug('Getting the roles from PRISME')
-                #todo
-                #nil check on prop below needed, error log will never be seen
-                #wrap in begin end block
                 begin
-                    roles_url = ssoi ? URI($PROPS['PRISME.prisme_roles_ssoi_url']) : URI($PROPS['PRISME.prisme_roles_url'])
-                rescue
-                    $log.error('The roles url is not set!  Was this instance of Komet deployed from Prisme?  If not you must manually set the property.  See ./config/props/prisme.properties')
-                end
-                conn = CommonController.get_rest_connection(roles_url.base_url)
-                response = nil
-                error = false
-                begin
-                    user_params  = {} #id: user, password: password.to_s
-                    user_params[:id] = user
-                    user_params[:password] = password.to_s unless ssoi
-                    user_params[:format] = 'json'
-                    roles_body = conn.get(roles_url.path, user_params).body
-                    $log.debug("Roles body from prisme is: #{roles_body}")
-                    response = (JSON.parse roles_body)['roles']
-                rescue => ex
-                    $log.error("Komet could not communicate with PRISME at URL #{roles_url}")
-                    $log.error("Error message is #{ex.message}")
-                    error = true
-                    roles = nil
-                end
-                unless error
-                    session[Roles::SESSION_ROLES_ROOT][Roles::SESSION_LAST_ROLE_CHECK] = Time.now
-                    roles = []
-                    response.each do |r|
-                        roles << r['name'].to_sym
+                    # pull the prisme roles url from the properties file
+                    roles_url = ssoi? ? $PROPS['PRISME.prisme_roles_ssoi_url'] : $PROPS['PRISME.prisme_roles_url']
+
+                    if roles_url && URI.valid_url?(url_string: roles_url)
+                        roles_url = URI(roles_url)
+                        conn = CommonController.get_rest_connection(roles_url.base_url)
+                        user_params  = {} #id: user, password: password.to_s
+                        user_params[:id] = user_login
+                        user_params[:password] = user_pwd.to_s unless ssoi
+                        user_params[:format] = 'json'
+                        roles_body = conn.get(roles_url.path, user_params).body
+                        user_info = JSON.parse(roles_body)
+                    else
+                      $log.error('The roles url is not set!  Was this instance of Komet deployed from Prisme?  If not you must manually set the property.  See ./config/props/prisme.properties')
                     end
+                rescue => ex
+                    $log.error("KOMET could not communicate with PRISME at URL #{roles_url}")
+                    $log.error("Error message is #{ex.message}")
                 end
             end
-            if (roles)
-                session[Roles::SESSION_ROLES_ROOT][Roles::SESSION_USER] = user
-                session[Roles::SESSION_ROLES_ROOT][Roles::SESSION_USER_ROLES] = roles
-                session[Roles::SESSION_ROLES_ROOT][Roles::SESSION_PASSWORD] = password unless ssoi
+            if user_info
+              user_session(UserSession::LAST_ROLE_CHECK, Time.now)
+              user_session(UserSession::LOGIN, user_login)
+              user_session(UserSession::ROLES, user_info['roles'])
+              user_session(UserSession::TOKEN, user_info['token'])
+              user_session(UserSession::PWD, ssoi ? nil : user_pwd)
             else
-                session[Roles::SESSION_ROLES_ROOT][Roles::SESSION_USER] = user
-                session[Roles::SESSION_ROLES_ROOT][Roles::SESSION_USER_ROLES] = nil
-                session[Roles::SESSION_ROLES_ROOT][Roles::SESSION_PASSWORD] = nil unless ssoi
+              user_session(UserSession::LOGIN, user_login)
+              user_session(UserSession::ROLES, nil)
+              user_session(UserSession::TOKEN, nil)
+              user_session(UserSession::PWD, ssoi? ? nil : user_pwd)
+              user_session(UserSession::LAST_ROLE_CHECK, nil)
             end
         end
-        $log.debug("The roles for user #{session[Roles::SESSION_ROLES_ROOT][Roles::SESSION_USER]} are #{roles}")
-        roles
+        $log.debug("The roles for user #{user_session(UserSession::LOGIN)} are #{user_session(UserSession::ROLES)}")
+        user_session(UserSession::ROLES)
     end
 
     def self.parse_isaac_metadata_auxiliary
@@ -170,11 +170,13 @@ class ApplicationController < ActionController::Base
     end
 
     def pundit_user
-        if session[Roles::SESSION_ROLES_ROOT]
-            {user: session[Roles::SESSION_ROLES_ROOT][Roles::SESSION_USER], roles: session[Roles::SESSION_ROLES_ROOT][Roles::SESSION_USER_ROLES]}
-        else
-            {user: nil, roles: []}
-        end
+      if user_session_defined?
+        {user: user_session(UserSession::LOGIN),
+         roles: user_session(UserSession::ROLES),
+         token: user_session(UserSession::TOKEN)}
+      else
+        {user: nil, roles: [], token: 'Not Authorized'}
+      end
     end
 
     #dynamically add authorization methods

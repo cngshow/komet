@@ -44,6 +44,8 @@ html, body{
     height: 100%;
     margin: 0;
     padding: 0;
+    display: flex;
+    flex-direction: column;
 }
 
 // jQuery UI Overrides
@@ -135,6 +137,14 @@ html, body{
 }
 
 // KOMET Common styles
+body > header, body > footer{
+    flex: 0 0 auto;
+}
+.komet-main{
+    // give it one percent so the panels will display, but wont generate a viewport scrollbar (only panel scrollbars)
+    height: 1%;
+    flex: 1 1 auto;
+}
 .komet-no-margins{
     margin: 0px;
 }
@@ -145,6 +155,7 @@ html, body{
 .komet-flex-right{
     flex: 1 1 auto;
     text-align: right;
+    justify-content: flex-end;
 }
 .komet-accordion-panel {
     overflow: visible !important;
@@ -219,61 +230,88 @@ html, body{
 }
 
 // KOMET Navigation styles
-.komet_dashboard .navbar{
-    margin-bottom: 0px;
-}
-#komet_navbar_logo a{
-    font-size: 24px;
+.komet-navbar{
+    display: flex;
+    height: 40px;
+    align-items: stretch;
+    background-color: #f8f8f8;
+    font-size: 18px;
     font-weight: bold;
     color: black;
 }
-#komet_navbar_navigation .nav{
+.komet-navbar .glyphicon{
+    top: initial;
+    padding-top: 2px;
+}
+.komet-navbar a{
+    text-decoration: none;
+    color: black
+}
+.komet-navbar-header{
+    font-size: 24px;
+    flex: 0 0 auto;
+    align-items: center;
+    padding: 0px 10px;
+    display: flex;
+}
+.komet-logo-komet{
+    color:#009BFF;
+    margin-right: 4px;
+}
+.komet-logo-tooling{
+    color:rgba(0, 155, 255, 0.4);
+}
+.komet-navbar-navigation{
     margin-bottom: 0px;
     border-left: 4px solid white;
-    font-size: 18px;
-    font-weight: bold;
     color: black;
+    display: flex;
+    flex: 0 0 auto;
+    align-items: stretch;
 }
-#komet_navbar_navigation .nav a {
+.komet-navbar-navigation > div{
     border-right: 4px solid white;
     border-bottom: 1px solid transparent;
-    color: black;
-}
-#komet_navbar_navigation .nav a:hover {
-    border-bottom: 1px solid black;
-}
-#komet_navbar_tools{
-    float:right;
-    padding-right: 15px;
-    height: 100%;
-}
-#komet_user_preference_link{
+    padding: 0px 10px;
+    display: flex;
+    flex: 0 0 auto;
+    align-items: center;
     cursor: pointer;
 }
-#komet_navbar_tools > span {
-    margin-right: 4px;
+.komet-navbar-navigation > div:hover{
+    border-bottom: 1px solid black;
+}
+.komet-navbar-tools{
+    display: flex;
+    flex: 1 1 auto;
+    justify-content: flex-end;
+}
+.komet-navbar-tools > :first-child{
+    border-left: 4px solid white;
+}
+.komet-navbar-tools > div{
+    display: flex;
+    flex: 0 0 auto;
+    align-items: center;
+    padding: 0px 10px;
     border-right: 4px solid white;
-    height: 100%;
-    font-size: 18px;
-    font-weight: bold;
-    color: black;
-    display: inline-block;
-    padding: 15px;
+    border-bottom: 1px solid transparent;
+    cursor: pointer;
 }
-#komet_navbar_tools a {
-    text-decoration: none;
-    color: black;
+.komet-navbar-tools > div:hover{
+    border-bottom: 1px solid black;
 }
-#komet_navbar_tools a:hover {
-    text-decoration: none;
-    color: black;
+#komet_user_preference_link{
+    margin-right: 0px;
+}
+.komet-navbar-tools .glyphicon, .komet-navbar-tools .fa{
+    margin-right: 5px;
+    padding-bottom: 4px;
 }
 
 // KOMET Dashboard Styles
 #komet_dashboard_splitter {
-    height: 91%;
     width: 100%;
-    position: absolute;
 }
 #komet_east_pane{
     overflow: hidden;
@@ -439,7 +477,11 @@ html, body{
     width: 20px;
     cursor: pointer;
 }
-.concept-section{
+.komet-concept-section-title{
+    font-weight: bold;
+    display: flex;
+}
+.komet-concept-section {
     margin-top: 15px;
 }
 .komet-concept-section-panel{
@@ -528,7 +570,6 @@ td.komet-concept-table-nested-indicator.komet-concept-table-nested-indicator-ope
 }
 .komet-concept-attributes-title{
     color: #5ec200;
-    font-weight: bold;
 }
 .komet-concept-attributes-status{
     margin-right: 5px;
@@ -551,7 +592,6 @@ td.komet-concept-table-nested-indicator.komet-concept-table-nested-indicator-ope
 }
 .komet-concept-description-title{
     color: #ff9100;
-    font-weight: bold;
 }
 .komet-concept-description-panel-header{
     flex-wrap: nowrap;
@@ -597,7 +637,6 @@ td.komet-concept-table-nested-indicator.komet-concept-table-nested-indicator-ope
 }
 .komet-concept-lineage-title{
     color: #009bff;
-    font-weight: bold;
 }
 .komet-concept-lineage-tree-container{
     margin-left: 0%;
@@ -636,13 +675,20 @@ td.komet-concept-table-nested-indicator.komet-concept-table-nested-indicator-ope
     vertical-align: top;
 }
 
+// Concept Viewer Associations Styles
+.komet-concept-associations-panel{
+    border-left: 4px solid rgb(255, 80, 77);
+}
+.komet-concept-associations-title{
+    color: rgb(255, 80, 77);
+}
+
 // Concept Viewer Sememes Styles
 .komet-concept-sememes-panel{
     border-left: 4px solid #b59d00;
 }
 .komet-concept-sememes-title{
     color: #b59d00;
-    font-weight: bold;
 }
 
 // Concept Viewer Diagram Styles
@@ -655,7 +701,6 @@ td.komet-concept-table-nested-indicator.komet-concept-table-nested-indicator-ope
 }
 .komet-concept-diagram-title{
     color: #ab03fd;
-    font-weight: bold;
 }
 
 // details tab
@@ -690,7 +735,11 @@ td.komet-concept-table-nested-indicator.komet-concept-table-nested-indicator-ope
 }
 
 // Concept Editor Viewer Styles
-.komet-concept-create .komet-concept-section-panel-details{
+.komet-concept-create .komet-concept-section-title .komet-flex-right, .komet-concept-edit .komet-concept-section-title .komet-flex-right{
+    color: green;
+    cursor: pointer;
+}
+.komet-concept-create .komet-concept-section-panel-details, .komet-concept-edit .komet-concept-section-panel-details{
     display: block;
     border: none;
 }
@@ -701,8 +750,47 @@ td.komet-concept-table-nested-indicator.komet-concept-table-nested-indicator-ope
     min-width: 200px;
     max-width: 450px;
 }
+.komet-concept-edit-row{
+    display: flex;
+    width: 100%;
+    flex-wrap: wrap;
+}
+.komet-concept-edit-row > div{
+    display: flex;
+    flex: 0 0 auto;
+    margin-right: 10px;
+}
+.komet-concept-edit-row .komet-concept-edit-row-tools{
+    flex: 1 1 auto;
+    align-items: center;
+    justify-content: flex-end;
+    margin-right: 0px;
+}
+.komet-concept-edit-row .glyphicon-remove{
+    color: red;
+    cursor: pointer;
+}
+.komet-concept-edit input.form-control, .komet-concept-edit select.form-control {
+    height: 26px;
+    font-size: small;
+    padding: 3px 2px;
+}
+.komet-concept-edit button {
+    height: 26px;
+    font-size: small;
+    padding: 2px 8px;
+}
+.komet-concept-edit-association-target{
+    width: 140px;
+}
+.komet-concept-edit-association-target{
+    width: 300px;
+}
+.komet-concept-edit-association-state{
+    width: 100px;
+}
 
-// Search Styles
+    // Search Styles
 #komet_search_tab {
     padding: 2px;
 }
@@ -946,3 +1034,63 @@ td.komet-concept-table-nested-indicator.komet-concept-table-nested-indicator-ope
     margin-right: 5px;
 }
 
+// Workflow Styles
+.komet-workflow-action-bar{
+    height: 40px;
+    background-color: black;
+    border: 1px solid rgba(0, 155, 255, 1);
+}
+.komet-workflow-action-bar .navbar{
+    min-height: 0px;
+    border: 0px;
+}
+
+
+// TODO - OLD STYLES THAT SHOULD BE DELETED (Make sure not being used)
+.komet_dashboard .navbar{
+    margin-bottom: 0px;
+}
+#komet_navbar_logo a{
+    font-size: 24px;
+    font-weight: bold;
+    color: black;
+}
+#komet_navbar_navigation .nav{
+    margin-bottom: 0px;
+    border-left: 4px solid white;
+    font-size: 18px;
+    font-weight: bold;
+    color: black;
+}
+#komet_navbar_navigation .nav a {
+    border-right: 4px solid white;
+    border-bottom: 1px solid transparent;
+    color: black;
+}
+#komet_navbar_navigation .nav a:hover {
+    border-bottom: 1px solid black;
+}
+#komet_navbar_tools{
+    float:right;
+    padding-right: 15px;
+    height: 100%;
+}
+#komet_navbar_tools > span {
+    margin-right: 4px;
+    border-right: 4px solid white;
+    height: 100%;
+    font-size: 18px;
+    font-weight: bold;
+    color: black;
+    display: inline-block;
+    padding: 15px;
+}
+#komet_navbar_tools a {
+    text-decoration: none;
+    color: black;
+}
+#komet_navbar_tools a:hover {
+    text-decoration: none;
+    color: black;
+}
+// End OLD STYLES THAT SHOULD BE DELETED (Make sure not being used)

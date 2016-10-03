@@ -20,19 +20,17 @@ require './lib/isaac_rest/common_rest'
 
 module WorkflowRestActions
 
-  ACTION_ACTIONSFORPROCESSANDUSER = :actionsForProcessAndUser
-  ACTION_ADVANCEABLEPROCESSINFORMATION= :advanceableProcessInformation
-  ACTION_DEFINITION = :definition
-  ACTION_HISTORIESFORPROCESS = :historiesForProcess
-  ACTION_ISCOMPONENTINACTIVEWORKFLOW = :isComponentInActiveWorkflow
-  ACTION_PERMISSIONSFORDEFINITIONANDUSER = :permissionsForDefinitionAndUser
-  ACTION_PROCESS = :process
+  ACTION_ACTIONS_FOR_PROCESS_AND_USER = :actionsForProcessAndUser
+  ACTION_ADVANCEABLE_PROCESS_INFORMATION= :advanceableProcessInformation
+ # ACTION_DEFAULT_DEFINITION = :defaultDefinition
+  #ACTION_AVAILABLE_DEFINITION = :availableDefinitions
+  ACTION_HISTORIES_FOR_PROCESS = :historiesForProcess
 
-  ACTION_CREATEWORKFLOWPROCESS = :createWorkflowProcess
-  ACTION_ADDCOMPONENTTOWORKFLOW = :addComponentToWorkflow
-  ACTION_ADDWORKFLOWUSERROLE = :addWorkflowUserRole
-  ACTION_ADVANCEWORKFLOWPROCESS = :advanceWorkflowProcess
-  ACTION_REMOVECOMPONENTFROMWORKFLOW = :removeComponentFromWorkflow
+  ACTION_PERMISSIONS_FOR_DEFINITION_AND_USER = :permissionsForDefinitionAndUser
+  ACTION_PROCESS = :process
+  ACTION_CREATE_WORKFLOW_PROCESS = :createWorkflowProcess
+  ACTION_ADVANCE_WORKFLOW_PROCESS = :advanceWorkflowProcess
+  ACTION_REMOVE_COMPONENT_FROM_WORKFLOW = :removeComponentFromWorkflow
 
 end
 
@@ -41,89 +39,61 @@ module WorkflowRest
   include CommonActionSyms
   extend self
 
-
   #always name the root_path ROOT_PATH!
   ROOT_PATH = ISAAC_ROOT + 'rest/1/workflow/'
   PATH_WORKFLOW_WRITE = ISAAC_ROOT + 'rest/write/1/workflow/1/workflow/'
-  PATH_ACTIONSFORPROCESSANDUSER_WORKFLOW = ROOT_PATH + 'actionsForProcessAndUser'
-  PATH_ADVANCEABLEPROCESSINFORMATION_WORKFLOW =  ROOT_PATH + 'advanceableProcessInformation'
-  PATH_DEFINITION_WORKFLOW =  ROOT_PATH + 'definition'
-  PATH_HISTORIESFORPROCESS_WORKFLOW =  ROOT_PATH + 'historiesForProcess'
-  PATH_ISCOMPONENTINACTIVEWORKFLOW_WORKFLOW =  ROOT_PATH + 'isComponentInActiveWorkflow'
-  PATH_PERMISSIONSFORDEFINITIONANDUSER_WORKFLOW =  ROOT_PATH + 'permissionsForDefinitionAndUser'
-  PATH_PROCESS_WORKFLOW =  ROOT_PATH + 'process'
+  PATH_ACTION_ACTIONS_FOR_PROCESS_AND_USER_WORKFLOW = ROOT_PATH + 'actionsForProcessAndUser'
+  PATH_ADVANCEABLE_PROCESS_INFORMATION_WORKFLOW =  ROOT_PATH + 'advanceableProcessInformation'
+ # PATH_DEFAULT_DEFINITION_WORKFLOW = ROOT_PATH + 'defaultDefinition'
+  #PATH_AVAILABLE_DEFINITION_WORKFLOW = ROOT_PATH + 'availableDefinitions'
+  PATH_HISTORIES_FOR_PROCESS_WORKFLOW =  ROOT_PATH + 'historiesForProcess'
 
-  PATH_CREATEWORKFLOWPROCESS_WORKFLOW = PATH_WORKFLOW_WRITE + 'create/createWorkflowProcess'
-  PATH_ADDCOMPONENTTOWORKFLOW_WORKFLOW = PATH_WORKFLOW_WRITE + 'update/addComponentToWorkflow'
-  PATH_ADDWORKFLOWUSERROLE_WORKFLOW = PATH_WORKFLOW_WRITE + 'update/addWorkflowUserRole'
-  PATH_ADVANCEWORKFLOWPROCESS_WORKFLOW = PATH_WORKFLOW_WRITE + 'update/advanceWorkflowProcess'
-  PATH_REMOVECOMPONENTFROMWORKFLOW_WORKFLOW = PATH_WORKFLOW_WRITE + 'update/removeComponentFromWorkflow'
+  PATH_PERMISSIONS_FOR_DEFINITION_AND_USER_WORKFLOW =  ROOT_PATH + 'permissionsForDefinitionAndUser'
+  PATH_PROCESS_WORKFLOW =  ROOT_PATH + 'process'
+  PATH_CREATE_WORKFLOW_PROCESS_WORKFLOW = PATH_WORKFLOW_WRITE + 'create/createWorkflowProcess'
+  PATH_ADVANCE_WORKFLOW_PROCESS_WORKFLOW = PATH_WORKFLOW_WRITE + 'update/advanceWorkflowProcess'
+  PATH_REMOVE_COMPONENT_FROM_WORKFLOW = PATH_WORKFLOW_WRITE + 'update/removeComponentFromWorkflow'
 
   PARAMS_EMPTY = {}
 
   ACTION_CONSTANTS = {
-      ACTION_ACTIONSFORPROCESSANDUSER => {
-          PATH_SYM => PATH_ACTIONSFORPROCESSANDUSER_WORKFLOW,
+      ACTION_ACTIONS_FOR_PROCESS_AND_USER => {
+          PATH_SYM => PATH_ACTION_ACTIONS_FOR_PROCESS_AND_USER_WORKFLOW,
           STARTING_PARAMS_SYM => PARAMS_EMPTY,
           CLAZZ_SYM => Gov::Vha::Isaac::Rest::Api1::Data::Workflow::RestWorkflowAvailableActions },
-      ACTION_ADVANCEABLEPROCESSINFORMATION  => {
-          PATH_SYM => PATH_ADVANCEABLEPROCESSINFORMATION_WORKFLOW,
+      ACTION_ADVANCEABLE_PROCESS_INFORMATION  => {
+          PATH_SYM => PATH_ADVANCEABLE_PROCESS_INFORMATION_WORKFLOW,
           STARTING_PARAMS_SYM => PARAMS_EMPTY,
           CLAZZ_SYM => Gov::Vha::Isaac::Rest::Api1::Data::Workflow::RestWorkflowProcessHistoriesMap
       },
-      ACTION_DEFINITION => {
-          PATH_SYM => PATH_DEFINITION_WORKFLOW,
-          STARTING_PARAMS_SYM => PARAMS_EMPTY,
-          CLAZZ_SYM => Gov::Vha::Isaac::Rest::Api1::Data::Workflow::RestWorkflowDefinitionDetail
-      },
-      ACTION_HISTORIESFORPROCESS  => {
-          PATH_SYM => PATH_HISTORIESFORPROCESS_WORKFLOW,
+
+      ACTION_HISTORIES_FOR_PROCESS  => {
+          PATH_SYM => PATH_HISTORIES_FOR_PROCESS_WORKFLOW,
           STARTING_PARAMS_SYM => PARAMS_EMPTY,
           CLAZZ_SYM => Gov::Vha::Isaac::Rest::Api1::Data::Workflow::RestWorkflowProcessHistories
       },
-      ACTION_ISCOMPONENTINACTIVEWORKFLOW  => {
-          PATH_SYM => PATH_ISCOMPONENTINACTIVEWORKFLOW_WORKFLOW,
-          STARTING_PARAMS_SYM => PARAMS_EMPTY,
-          CLAZZ_SYM => Gov::Vha::Isaac::Rest::Api1::Data::Workflow::RestBoolean
-      },
-      ACTION_PERMISSIONSFORDEFINITIONANDUSER => {
-          PATH_SYM => PATH_PERMISSIONSFORDEFINITIONANDUSER_WORKFLOW,
-          STARTING_PARAMS_SYM => PARAMS_EMPTY,
-          CLAZZ_SYM => Gov::Vha::Isaac::Rest::Api1::Data::Workflow::RestWorkflowUserPermissions
-      },
+
       ACTION_PROCESS  => {
           PATH_SYM => PATH_PROCESS_WORKFLOW,
           STARTING_PARAMS_SYM => PARAMS_EMPTY,
-          CLAZZ_SYM => Gov::Vha::Isaac::Rest::Api1::Data::Workflow::RestWorkflowProcessDetail
+          CLAZZ_SYM => Gov::Vha::Isaac::Rest::Api1::Data::Workflow::RestWorkflowProcess
       },
 
-      ACTION_CREATEWORKFLOWPROCESS   => {
-          PATH_SYM => PATH_CREATEWORKFLOWPROCESS_WORKFLOW,
+      ACTION_CREATE_WORKFLOW_PROCESS   => {
+          PATH_SYM => PATH_CREATE_WORKFLOW_PROCESS_WORKFLOW,
           STARTING_PARAMS_SYM => PARAMS_EMPTY,
           CLAZZ_SYM => Gov::Vha::Isaac::Rest::Api::Data::Wrappers::RestInteger,
           HTTP_METHOD_KEY => HTTP_METHOD_POST,
-          BODY_CLASS => Gov::Vha::Isaac::Rest::Api1::Data::Concept::RestWorkflowProcessBaseCreate
+          BODY_CLASS => Gov::Vha::Isaac::Rest::Api1::Data::Workflow::RestWorkflowProcessBaseCreate
       },
-      ACTION_ADDCOMPONENTTOWORKFLOW  => {
-          PATH_SYM => PATH_ADDCOMPONENTTOWORKFLOW_WORKFLOW,
+      ACTION_ADVANCE_WORKFLOW_PROCESS  => {
+          PATH_SYM => PATH_ADVANCE_WORKFLOW_PROCESS_WORKFLOW,
           STARTING_PARAMS_SYM => PARAMS_EMPTY,
           CLAZZ_SYM => Gov::Vha::Isaac::Rest::Api::Data::Wrappers::RestInteger,
           HTTP_METHOD_KEY => HTTP_METHOD_PUT
       },
-      ACTION_ADDWORKFLOWUSERROLE   => {
-          PATH_SYM => PATH_ADDWORKFLOWUSERROLE_WORKFLOW,
-          STARTING_PARAMS_SYM => PARAMS_EMPTY,
-          CLAZZ_SYM => Gov::Vha::Isaac::Rest::Api::Data::Wrappers::RestInteger,
-          HTTP_METHOD_KEY => HTTP_METHOD_PUT
-      },
-      ACTION_ADVANCEWORKFLOWPROCESS  => {
-          PATH_SYM => PATH_ADVANCEWORKFLOWPROCESS_WORKFLOW,
-          STARTING_PARAMS_SYM => PARAMS_EMPTY,
-          CLAZZ_SYM => Gov::Vha::Isaac::Rest::Api::Data::Wrappers::RestInteger,
-          HTTP_METHOD_KEY => HTTP_METHOD_PUT
-      },
-      ACTION_REMOVECOMPONENTFROMWORKFLOW => {
-          PATH_SYM => PATH_REMOVECOMPONENTFROMWORKFLOW_WORKFLOW,
+      ACTION_REMOVE_COMPONENT_FROM_WORKFLOW => {
+          PATH_SYM => PATH_REMOVE_COMPONENT_FROM_WORKFLOW,
           STARTING_PARAMS_SYM => PARAMS_EMPTY,
           CLAZZ_SYM => Gov::Vha::Isaac::Rest::Api::Data::Wrappers::RestInteger,
           HTTP_METHOD_KEY => HTTP_METHOD_PUT

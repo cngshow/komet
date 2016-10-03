@@ -50,6 +50,7 @@ require './lib/isaac_rest/taxonomy_rest'
 require './lib/isaac_rest/coordinate_rest'
 require './lib/isaac_rest/mapping_apis_rest'
 require './lib/isaac_rest/comment_apis_rest'
+#require './lib/isaac_rest/workflow_rest'
 require './lib/rails_common/roles/roles'
 
 $rest_cache = CachedHash.new($PROPS.fetch('KOMET.rest_cache_max').to_i)
