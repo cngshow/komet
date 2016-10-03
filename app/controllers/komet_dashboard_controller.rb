@@ -33,6 +33,7 @@ class KometDashboardController < ApplicationController
     skip_before_action :ensure_roles, only: [:version]
     skip_after_action :verify_authorized, only: [:version]
     skip_before_action :read_only?, only: [:version]
+
     ##
     # load_tree_data - RESTful route for populating the taxonomy tree using an http :GET
     # The current tree node is identified in the request params with the key :concept_id

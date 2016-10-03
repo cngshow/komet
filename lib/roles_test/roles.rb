@@ -1,12 +1,16 @@
 #these are the the users in test
 module RolesTest
   def self.user_roles(user:, password:)
-    users_development = [['devtest', 'devtest',[::Roles::ADMINISTRATOR, ::Roles::EDITOR, ::Roles::READ_ONLY]], ['cris', 'cris', [::Roles::APPROVER, ::Roles::REVIEWER]], ['greg', 'greg', [::Roles::SUPER_USER, ::Roles::EDITOR]]]
-    users_development.each do |user_role|
-      if user_role.first.eql? user
-        return user_role.last if user_role[1].eql? password
+    users_development = [{'user' => 'devtest', 'pwd' => 'devtest', 'token' => 'whatever1', 'roles' => [::Roles::ADMINISTRATOR.to_s, ::Roles::EDITOR.to_s, ::Roles::READ_ONLY.to_s]},
+                         {'user' => 'cris', 'pwd' => 'cris', 'token' => 'whatever2', 'roles' => [::Roles::APPROVER.to_s, ::Roles::REVIEWER.to_s]},
+                         {'user' => 'greg', 'pwd' => 'greg', 'token' => 'whatever3', 'roles' => [::Roles::SUPER_USER.to_s, ::Roles::EDITOR.to_s]}]
+    users_development.each do |user_info|
+      if user_info['user'].eql? user
+        if user_info['pwd'].eql? password
+          return user_info
+        end
       end
     end
-    nil
+    {}
   end
 end
