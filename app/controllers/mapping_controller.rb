@@ -57,7 +57,7 @@ class MappingController < ApplicationController
 
         map_sets_results = MappingApis::get_mapping_api(action: MappingApiActions::ACTION_SETS,  additional_req_params: {coordToken: coordinates_token, CommonRest::CacheRequest => false} )
 
-        map_sets_results.mappingSetVersions.each do |set|
+        map_sets_results.each do |set|
 
             set_hash = {}
 
@@ -116,7 +116,7 @@ class MappingController < ApplicationController
 
         map_sets_results = MappingApis::get_mapping_api(action: MappingApiActions::ACTION_SETS,  additional_req_params: {coordToken: coordinates_token, CommonRest::CacheRequest => false} )
 
-        map_sets_results.mappingSetVersions.each do |set|
+        map_sets_results.each do |set|
 
             set_hash = {}
 
@@ -312,7 +312,7 @@ class MappingController < ApplicationController
 
         #{id: '1', set_id: '1', source: '11', source_display: 'Source 11', target: 'Target 11', target_display: 'Target 11', qualifier: 'No Qualifier', comments: 'This is a comment', review_state: 'Pending', status: 'Active', time: '10/10/2016', module: 'Development', path: 'Path'},
 
-        items.mappingItemVersions.each do |item|
+        items.each do |item|
 
             item_hash = {}
 
@@ -352,7 +352,7 @@ class MappingController < ApplicationController
             item_data << item_hash
         end
 
-        results[:total_number] = items.mappingItemVersions.length
+        results[:total_number] = items.length
 
         matching_items = session['map_item_data'].select { |item|
             item[:set_id] == set_id.to_s

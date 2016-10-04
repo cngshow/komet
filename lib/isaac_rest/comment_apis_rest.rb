@@ -48,7 +48,7 @@ module CommentApis
         ACTION_BY_REFERENCED_COMPONENT => {
             PATH_SYM => PATH_BY_REFERENCED_COMPONENT,
             STARTING_PARAMS_SYM => PARAMS_EMPTY,
-            CLAZZ_SYM => Gov::Vha::Isaac::Rest::Api1::Data::Comment::RestCommentVersions},
+            CLAZZ_SYM => Gov::Vha::Isaac::Rest::Api1::Data::Comment::RestCommentVersion},
         ACTION_CREATE => {
             PATH_SYM => PATH_CREATE,
             STARTING_PARAMS_SYM => PARAMS_EMPTY,
