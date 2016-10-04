@@ -1,7 +1,7 @@
 <!-- DO NOT PUT ANYTHING ABOVE THE KOMET VIEWER DIV - IT WILL BREAK WINDOWING WHEN CLOSING VIEWERS-->
 <div class="panel panel-default komet-no-margins komet-panel komet-concept-edit" id="komet_viewer_<%= @viewer_id %>" data-komet-viewer-id="<%= @viewer_id %>">
 
-    <%= form_tag(taxonomy_create_concept_path, method: 'post', id: "komet_edit_concept_form_#{@viewer_id}") do %>
+    <%= form_tag(taxonomy_edit_concept_path, method: 'post', id: "komet_concept_edit_form_#{@viewer_id}") do %>
 
         <div class="panel-heading">
             <span class="panel-title komet-section-title">
@@ -16,19 +16,22 @@
             </div>
         </div>
 
-        <div class="panel-body" id="komet_create_concept_section_<%= @viewer_id %>">
+        <div class="panel-body" id="komet_concept_editor_section_<%= @viewer_id %>">
 
-            <input type="hidden" id="selectdivname">
-
-            <div style="width: 750px ; float: right">
-                <button type="button" class="btn btn-primary" onclick="WindowManager.closeViewer(<%= @viewer_id %>)">Cancel</button>
-                <button type="button" class="btn btn-primary" onclick="TaxonomyModule.saveConcept()">Submit</button>
+            <div id="komet_concept_save_section_<%= @viewer_id %>">
+                All fields required except where noted as Optional.
+                <button type="button" class="btn btn-default" onclick="WindowManager.viewers[<%= @viewer_id %>].cancelAction('<%= @viewer_previous_content_type %>', '<%= @viewer_previous_content_id %>')">Cancel</button>
+                <button type="button" class="btn btn-primary ui-state-disabled" id="komet_concept_save_<%= @viewer_id %>" onclick="WindowManager.viewers[<%= @viewer_id %>].showSaveSection('confirm')">Save</button>
             </div>
-            <BR><BR>
 
+            <div id="komet_concept_confirm_section_<%= @viewer_id %>" class="komet-form-warning hide">
+                Are you sure you want to commit changes?
+                <button type="button" class="btn btn-default" onclick="WindowManager.viewers[<%= @viewer_id %>].showSaveSection('save')">No</button>
+                <button class="btn btn-primary">Yes</button>
+            </div>
 
             <div id="mainblockattributes">
-                <div class="komet-concept-attributes-title">ATTRIBUTES
+                <div class="komet-concept-section-title komet-concept-attributes-title">ATTRIBUTES
                     <i class="fa fa-pencil-square" style="color:green" aria-hidden="true"></i></div>
                 <div id="komet_concept_attributes_panel_<%= @viewer_id %>" class="komet-concept-section-panel komet-concept-attributes-panel">
 
@@ -56,63 +59,55 @@
                 </div>
             </div>
 
-            <BR><BR>
-
-            <div id="mainblockdescription">
-                <div class="komet-concept-description-title">DESCRIPTIONS&nbsp;&nbsp;<i class="fa fa-pencil-square" style="color:#000000" aria-hidden="true"></i>
-                </div>
-                <div class="komet-concept-description-header-block">
-
-                    <!-- description text -->
-                    <div class="komet-concept-description-text">
-                        <table id="description_texttbl" width='80%' style="z-index:990" cellpadding='2' cellspacing='3'>
-                        </table>
-                    </div>
-
+            <div class="komet-concept-section-title komet-concept-description-title">
+                DESCRIPTIONS
+                <div class="komet-flex-right">
+                    Add Description
+                    <div class="glyphicon glyphicon-plus-sign" onclick=""></div>
                 </div>
             </div>
-            <BR><BR>
 
-            <div id="mainblocklineage">
-                <div class="komet-concept-lineage-title">LINEAGE&nbsp;&nbsp;<i class="fa fa-pencil-square" style="color:green" aria-hidden="true"></i>
-                </div>
+            <div class="komet-concept-section-title komet-concept-associations-title">ASSOCIATIONS</div>
 
-                <div id="komet_concept_lineage_panel_<%= @viewer_id %>" class="komet-concept-section-panel komet-concept-lineage-panel">
-                    <table style="width: 80%">
-                        <tr>
+            <div id="komet_concept_associations_panel_<%= @viewer_id %>" class="komet-concept-section-panel komet-concept-associations-panel">
+                <div class="komet-concept-section-panel-details komet-changeable">
 
-                            <td><select id="komet_type">
+                    <div id="komet_concept_edit_association_row_<%= @viewer_id %>" class="komet-concept-edit-row">
+
+                        <div>
+                            <select id="komet_concept_edit_association_type_0_<%= @viewer_id %>" name="associations[0][type]" class="form-control komet-concept-edit-association-type">
                                 <option>Is a attribute</option>
                                 <option>After</option>
                             </select>
-                            </td>
-                            <!-- main header block - always visible -->
-                            <td>
-                                <div class="komet-concept-section-panel-header">
+                        </div>
 
-                                    <autosuggest
-                                    id-base="taxonomy_lineage"
-                                    id-postfix="_<%= @viewer_id %>"
-                                    label="Parent"
-                                    value=""
-                                    display-value=""
-                                    type-value=""
-                                    ></autosuggest>
+                        <div>
+                            <autosuggest
+                                id-base="komet_concept_edit_association_target_0"
+                                id-postfix="_<%= @viewer_id %>"
+                                name="associations[0][target"
+                                nameFormat="array"
+                                value=""
+                                display-value=""
+                                type-value=""
+                                classes="komet-concept-edit-association-target">
+                            </autosuggest>
+                        </div>
 
-
-                                </div>
-                            </td>
-                            <td><select id="komet_Status">
+                        <div>
+                            <select id="komet_concept_edit_association_state_0_<%= @viewer_id %>" name="associations[0][state]" class="form-control komet-concept-edit-association-state">
                                 <option>Active</option>
-                                <option>InActive</option>
+                                <option>Inactive</option>
                             </select>
-                            </td>
-                        </tr>
-                    </table>
+                        </div>
 
+                        <div class="komet-concept-edit-row-tools">
+                            <div class="glyphicon glyphicon-remove" onclick=""></div>
+                        </div>
+
+                    </div>
 
                 </div>
-
             </div>
 
         </div>
@@ -135,7 +130,15 @@
 
     $(document).ready(function () {
 
-        WindowManager.viewers[<%= @viewer_id %>].editConcept(<%= raw @attributes.to_json %>, <%= raw @descriptions.to_json %>);
+        var selectOptions = {
+            language: <%= raw @language_options.to_json %>,
+            dialect: <%= raw @dialect_options.to_json %>,
+            case: <%= raw @case_options.to_json %>,
+            acceptability: <%= raw @acceptability_options.to_json %>,
+            descriptionType: <%= raw @description_type_options.to_json %>
+        };
+
+        WindowManager.viewers[<%= @viewer_id %>].editConcept(<%= raw @attributes.to_json %>, <%= raw @descriptions.to_json %>, selectOptions);
         UIHelper.initializeContextMenus();
     });
 </script>

@@ -32,8 +32,13 @@ module ApplicationHelper
         coordinates_token = session[:coordinatestoken].token
         additional_req_params = {coordToken: coordinates_token}
 
-        version = ConceptRest.get_concept(action: ConceptRestActions::ACTION_DESCRIPTIONS, uuid: id, additional_req_params: additional_req_params).first
-        version ? version.text : ''
+        version = ConceptRest.get_concept(action: ConceptRestActions::ACTION_DESCRIPTIONS, uuid: id, additional_req_params: additional_req_params)
+
+        if version.is_a? CommonRest::UnexpectedResponse
+            return ''
+        else
+            return version.first.text
+        end
     end
 
     def komet_user

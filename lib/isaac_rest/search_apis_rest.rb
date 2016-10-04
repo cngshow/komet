@@ -47,19 +47,19 @@ module SearchApis
       ACTION_DESCRIPTIONS => {
           PATH_SYM => PATH_DESCRIPTIONS,
           STARTING_PARAMS_SYM => PARAMS_DESCRIPTIONS,
-          CLAZZ_SYM => Gov::Vha::Isaac::Rest::Api1::Data::Search::RestSearchResults},
+          CLAZZ_SYM => Gov::Vha::Isaac::Rest::Api1::Data::Search::RestSearchResultPage},
       ACTION_PREFIX => {
           PATH_SYM => PATH_PREFIX,
           STARTING_PARAMS_SYM => PARAMS_PREFIX,
-          CLAZZ_SYM => Gov::Vha::Isaac::Rest::Api1::Data::Search::RestSearchResults},
+          CLAZZ_SYM => Gov::Vha::Isaac::Rest::Api1::Data::Search::RestSearchResultPage},
       ACTION_SEMEMES => {
           PATH_SYM => PATH_SEMEMES,
           STARTING_PARAMS_SYM => PARAMS_SEMEMES,
-          CLAZZ_SYM => Gov::Vha::Isaac::Rest::Api1::Data::Search::RestSearchResults},
+          CLAZZ_SYM => Gov::Vha::Isaac::Rest::Api1::Data::Search::RestSearchResultPage},
       ACTION_BY_REFERENCED_COMPONENT => {
           PATH_SYM => PATH_BY_REFERENCED_COMPONENT,
           STARTING_PARAMS_SYM => PARAMS_BY_REFERENCED_COMPONENT,
-          CLAZZ_SYM => Gov::Vha::Isaac::Rest::Api1::Data::Search::RestSearchResults}
+          CLAZZ_SYM => Gov::Vha::Isaac::Rest::Api1::Data::Search::RestSearchResultPage}
   }
 
   class << self
@@ -95,8 +95,8 @@ load('./lib/isaac_rest/search_apis_rest.rb')
 heart = SearchApis::get_search_api(action: SearchApiActions::ACTION_DESCRIPTIONS,  additional_req_params: {descriptionType: 'fsn', query: 'heart'} )
 heart_expanded = SearchApis::get_search_api(action: SearchApiActions::ACTION_DESCRIPTIONS,  additional_req_params: {descriptionType: 'fsn', query: 'heart',expand: 'uuid,referencedConcept'} )
 snomed = SearchApis::get_search_api(action: SearchApiActions::ACTION_DESCRIPTIONS,  additional_req_params: {descriptionType: 'fsn', query: 'snomed'} )
-failure = SearchApis::get_search_api(action: SearchApiActions::ACTION_DESCRIPTIONS,  additional_req_params: {descriptionType: 'fsn', query: 'failure', limit: 20} )
-prefix = SearchApis::get_search_api(action: SearchApiActions::ACTION_PREFIX,  additional_req_params: {query: 'failure', limit: 20} )
+failure = SearchApis::get_search_api(action: SearchApiActions::ACTION_DESCRIPTIONS,  additional_req_params: {descriptionType: 'fsn', query: 'failure'} )
+prefix = SearchApis::get_search_api(action: SearchApiActions::ACTION_PREFIX,  additional_req_params: {query: 'failure'} )
 
 # THESE ARE MEANT FOR VHAT BUT FIRST 2 WORK ON SNOMED
 s1 = SearchApis::get_search_api(action: SearchApiActions::ACTION_SEMEMES, additional_req_params: {query: '1'} )

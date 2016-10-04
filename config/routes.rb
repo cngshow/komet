@@ -17,7 +17,7 @@ Rails.application.routes.draw do
     get 'komet_dashboard/get_concept_summary', :as => :taxonomy_get_concept_summary
     get 'komet_dashboard/get_concept_sememes', :as => :taxonomy_get_concept_sememes
     get 'komet_dashboard/get_concept_refsets', :as => :taxonomy_get_concept_refsets
-    get 'komet_dashboard/get_concept_languages_dialect', :as => :taxonomy_get_concept_languages_dialect
+    get 'komet_dashboard/get_concept_children', :as => :taxonomy_get_concept_children
     get 'komet_dashboard/get_coordinates', :as => :taxonomy_get_coordinates
     get 'komet_dashboard/get_coordinatestoken', :as => :taxonomy_get_coordinatestoken
     get 'komet_dashboard/get_refset_list', :as => :taxonomy_get_refset_list

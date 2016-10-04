@@ -58,11 +58,11 @@ module WorkflowRest
       ACTION_ACTIONS_FOR_PROCESS_AND_USER => {
           PATH_SYM => PATH_ACTION_ACTIONS_FOR_PROCESS_AND_USER_WORKFLOW,
           STARTING_PARAMS_SYM => PARAMS_EMPTY,
-          CLAZZ_SYM => Gov::Vha::Isaac::Rest::Api1::Data::Workflow::RestWorkflowAvailableActions },
+          CLAZZ_SYM => Gov::Vha::Isaac::Rest::Api1::Data::Workflow::RestWorkflowAvailableAction },
       ACTION_ADVANCEABLE_PROCESS_INFORMATION  => {
           PATH_SYM => PATH_ADVANCEABLE_PROCESS_INFORMATION_WORKFLOW,
           STARTING_PARAMS_SYM => PARAMS_EMPTY,
-          CLAZZ_SYM => Gov::Vha::Isaac::Rest::Api1::Data::Workflow::RestWorkflowProcessHistoriesMap
+          CLAZZ_SYM => Gov::Vha::Isaac::Rest::Api1::Data::Workflow::RestWorkflowProcessHistoriesMapEntry
       },
       ACTION_DEFAULT_DEFINITION  => {
           PATH_SYM => PATH_DEFAULT_DEFINITION_WORKFLOW ,
@@ -72,7 +72,7 @@ module WorkflowRest
       ACTION_HISTORIES_FOR_PROCESS  => {
           PATH_SYM => PATH_HISTORIES_FOR_PROCESS_WORKFLOW,
           STARTING_PARAMS_SYM => PARAMS_EMPTY,
-          CLAZZ_SYM => Gov::Vha::Isaac::Rest::Api1::Data::Workflow::RestWorkflowProcessHistories
+          CLAZZ_SYM => Gov::Vha::Isaac::Rest::Api1::Data::Workflow::RestWorkflowProcessHistory
       },
 
       ACTION_PROCESS  => {

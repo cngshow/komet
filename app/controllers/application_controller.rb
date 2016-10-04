@@ -110,13 +110,13 @@ class ApplicationController < ActionController::Base
       user_info = nil
       $log.debug('Refreshing the roles')
 
-      if !ssoi? && (!FileTest.exists?("#{Rails.root}/config/props/prisme.properties") || $PROPS['PRISME.prisme_roles_url'].nil?)
+      if !ssoi? && (!FileTest.exists?("#{Rails.root}/config/props/prisme.properties") || $PROPS['PRISME.prisme_roles_user_url'].nil?)
         load './lib/roles_test/roles.rb'
         user_info = RolesTest::user_roles(user: user_login, password: user_pwd)
       else
         begin
           # pull the prisme roles url from the properties file
-          roles_url = ssoi? ? $PROPS['PRISME.prisme_roles_ssoi_url'] : $PROPS['PRISME.prisme_roles_url']
+          roles_url = ssoi? ? $PROPS['PRISME.prisme_roles_ssoi_url'] : $PROPS['PRISME.prisme_roles_user_url']
 
           if roles_url && URI.valid_url?(url_string: roles_url)
             roles_url = URI(roles_url)
