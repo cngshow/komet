@@ -456,10 +456,35 @@ class KometDashboardController < ApplicationController
 
     end
 
-    def get_concept_languages_dialect()
-        uuid = params[:uuid]
-        languages = get_languages_dialect(uuid)
-        render json: languages
+    def get_concept_children(concept_id: nil, returnJSON: true, removeSemanticTag: false)
+
+        if concept_id == nil
+            concept_id = params[:uuid]
+        end
+
+        children = get_direct_children(concept_id)
+
+        if (returnJSON)
+            render json: children
+        else
+
+            child_array = []
+
+            children.each do |child|
+
+                text = child.conChronology.description
+
+                # TODO - replace with regex that handles any semantic tag: start with /\s\(([^)]+)\)/ (regex101.com)
+                if removeSemanticTag
+                    text.slice!(' (ISAAC)')
+                end
+
+                child_array << {concept_id: child.conChronology.identifiers.uuids.first, concept_sequence: child.conChronology.conceptSequence, text: text}
+            end
+
+            return child_array
+        end
+
     end
 
     # gets default/ users preference coordinates
@@ -614,6 +639,16 @@ class KometDashboardController < ApplicationController
         get_concept_attributes(@concept_id, true)
         get_concept_descriptions(@concept_id, true)
 
+        @language_options = get_concept_children(concept_id: $isaac_metadata_auxiliary['LANGUAGE']['uuids'].first[:uuid], returnJSON: false, removeSemanticTag: true)
+        @dialect_options = get_concept_children(concept_id: $isaac_metadata_auxiliary['DIALECT_ASSEMBLAGE']['uuids'].first[:uuid], returnJSON: false, removeSemanticTag: true)
+        @case_options = get_concept_children(concept_id: $isaac_metadata_auxiliary['DESCRIPTION_CASE_SIGNIFICANCE']['uuids'].first[:uuid], returnJSON: false, removeSemanticTag: true)
+        @acceptability_options = [
+            {concept_id: $isaac_metadata_auxiliary['ACCEPTABLE']['uuids'].first[:uuid], text: $isaac_metadata_auxiliary['ACCEPTABLE']['fsn']},
+            {concept_id: $isaac_metadata_auxiliary['PREFERRED']['uuids'].first[:uuid], text: $isaac_metadata_auxiliary['PREFERRED']['fsn']}
+        ]
+        @description_type_options = get_concept_children(concept_id: '09c43aa9-eaed-5217-bc5f-23cacca4df38', returnJSON: false, removeSemanticTag: true)
+
+
         render partial: params[:partial]
 
     end
@@ -627,12 +662,12 @@ class KometDashboardController < ApplicationController
         parent_concept_type = params[:komet_create_concept_parent_type]
 
         # get the parent concept sequence from the uuid
-        parent_concept_id = IdAPIsRest.get_id(uuid_or_id: parent_concept_id, action: IdAPIsRestActions::ACTION_TRANSLATE, additional_req_params: {inputType: 'uuid', outputType: 'conceptSequence'}).value
+        parent_concept_sequence = IdAPIsRest.get_id(uuid_or_id: parent_concept_id, action: IdAPIsRestActions::ACTION_TRANSLATE, additional_req_params: {inputType: 'uuid', outputType: 'conceptSequence'}).value
 
         body_params = {
             fsn: preferred_term + ' (' + parent_concept_text + ')',
             #preferredTerm: preferred_term,
-            parentConceptIds: [parent_concept_id.to_i],
+            parentConceptIds: [parent_concept_sequence.to_i],
             descriptionLanguageConceptId: 8
         }
 
