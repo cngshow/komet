@@ -50,11 +50,11 @@ module MappingApis
         ACTION_SETS => {
             PATH_SYM => PATH_SETS,
             STARTING_PARAMS_SYM => PARAMS_EMPTY,
-            CLAZZ_SYM => Gov::Vha::Isaac::Rest::Api1::Data::Mapping::RestMappingSetVersions},
+            CLAZZ_SYM => Gov::Vha::Isaac::Rest::Api1::Data::Mapping::RestMappingSetVersion},
         ACTION_ITEMS => {
             PATH_SYM => PATH_ITEMS,
             STARTING_PARAMS_SYM => PARAMS_EMPTY,
-            CLAZZ_SYM => Gov::Vha::Isaac::Rest::Api1::Data::Mapping::RestMappingItemVersions},
+            CLAZZ_SYM => Gov::Vha::Isaac::Rest::Api1::Data::Mapping::RestMappingItemVersion},
         ACTION_SET => {
             PATH_SYM => PATH_SET,
             STARTING_PARAMS_SYM => PARAMS_EMPTY,

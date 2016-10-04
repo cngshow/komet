@@ -59,8 +59,8 @@ var PreferenceModule = (function () {
         // Gets list of all the languages based on constant uuid value
         var uuidParams =  "?uuid=" +  gon.IsaacMetadataAuxiliary.LANGUAGE.uuids[0].uuid;
         // make an ajax call to get the data for language on option tab
-        $.get(gon.routes.taxonomy_get_concept_languages_dialect_path + uuidParams, function( results ) {
-            $.each(results.children,function(index,value) {
+        $.get(gon.routes.taxonomy_get_concept_children_path + uuidParams, function( results ) {
+            $.each(results,function(index,value) {
                 $("#komet_concept_language").append($("<option />").val(value.conChronology.conceptSequence).text(value.conChronology.description));
             });
         });
@@ -404,7 +404,7 @@ var PreferenceModule = (function () {
         {
             // make an ajax call to get the data for path color list
             var   uuidParams =  "?uuid=" +  gon.IsaacMetadataAuxiliary.PATH.uuids[0].uuid;
-            $.get(gon.routes.taxonomy_get_concept_languages_dialect_path + uuidParams, function( results ) {
+            $.get(gon.routes.taxonomy_get_concept_children_path + uuidParams, function( results ) {
                 document.getElementById('listofpath').innerHTML ="";
                 var colorpathheadingtr = document.createElement("TR");
                 colorpathheadingtr.setAttribute("id", "colorpathheading");
@@ -418,7 +418,7 @@ var PreferenceModule = (function () {
                 var colorpathheadingtd2 = document.createElement("TD");
                 colorpathheadingtd2.innerHTML = 'Color';
                 document.getElementById("colorpathheading").appendChild(colorpathheadingtd2);
-                $.each(results.children,function(index,value) {
+                $.each(results,function(index,value) {
                     var tr = document.createElement("TR");
                     tr.setAttribute("id", "colorpathtr" + value.conChronology.conceptSequence);
                     document.getElementById('listofpath').appendChild(tr);
@@ -491,8 +491,8 @@ var PreferenceModule = (function () {
             //Gets list of all the module.creating color module table from rest api call by passing constant uuid
             var uuidParams =  "?uuid=" +  gon.IsaacMetadataAuxiliary.MODULE.uuids[0].uuid;
             // make an ajax call to get the data for module color list
-            $.get(gon.routes.taxonomy_get_concept_languages_dialect_path + uuidParams, function( results ) {
-                $.each(results.children,function(index,value) {
+            $.get(gon.routes.taxonomy_get_concept_children_path + uuidParams, function( results ) {
+                $.each(results,function(index,value) {
                     var tr = document.createElement("TR");
                     tr.setAttribute("id", "colorTr" + value.conChronology.conceptSequence);
                     document.getElementById('listofmodule').appendChild(tr);
@@ -555,8 +555,8 @@ var PreferenceModule = (function () {
         { counter =10;
         }
         uuidParams =  "?uuid=" + uuid;
-        $.get( gon.routes.taxonomy_get_concept_languages_dialect_path + uuidParams, function( results ) {
-            $.each(results.children,function(index,value) {
+        $.get( gon.routes.taxonomy_get_concept_children_path + uuidParams, function( results ) {
+            $.each(results,function(index,value) {
                 get_default_ids.push(value.conChronology.conceptSequence);
                 get_default_values_id.push({id:value.conChronology.conceptSequence,description:value.conChronology.description})
             });

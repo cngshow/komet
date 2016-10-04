@@ -234,7 +234,7 @@ body > header, body > footer{
     display: flex;
     height: 40px;
     align-items: stretch;
-    background-color: #f8f8f8;
+    background-color: rgb(228, 228, 228);
     font-size: 18px;
     font-weight: bold;
     color: black;
@@ -754,6 +754,7 @@ td.komet-concept-table-nested-indicator.komet-concept-table-nested-indicator-ope
     display: flex;
     width: 100%;
     flex-wrap: wrap;
+    margin-bottom: 5px;
 }
 .komet-concept-edit-row > div{
     display: flex;
@@ -779,6 +780,23 @@ td.komet-concept-table-nested-indicator.komet-concept-table-nested-indicator-ope
     height: 26px;
     font-size: small;
     padding: 2px 8px;
+}
+.komet-concept-edit .komet-concept-section-panel-details .komet-indent-block{
+    background-color: #e6e6e6;
+}
+.komet-concept-edit-row .komet-indent-block .komet-concept-section-title{
+    margin-bottom: 5px;
+}
+.komet-concept-edit-description-properties-row label{
+    width: 50px;
+    padding: 6px 0px;
+    height: 26px;
+    font-size: smaller;
+    background-color: rgba(66, 139, 202, 1);
+    color: white;
+}
+.komet-concept-edit-description-properties-sememe{
+    width: 250px;
 }
 .komet-concept-edit-association-target{
     width: 140px;

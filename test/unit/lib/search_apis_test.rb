@@ -19,7 +19,7 @@ class SearchTest < Test::Unit::TestCase
       results = SearchApi.new(params: nil, action: ACTION_DESCRIPTIONS, action_constants: ACTION_CONSTANTS).get_rest_class(json).send(:from_json, json)
 
       assert(! results.results.first.nil? , 'The Search result should not be empty!')
-      assert(results.class.eql?(Gov::Vha::Isaac::Rest::Api1::Data::Search::RestSearchResults), 'The search matches should be of type Gov::Vha::Isaac::Rest::Api1::Data::Search::RestSearchResults.') unless  results.nil?
+      assert(results.class.eql?(Gov::Vha::Isaac::Rest::Api1::Data::Search::RestSearchResultPage), 'The search matches should be of type Gov::Vha::Isaac::Rest::Api1::Data::Search::RestSearchResultPage.') unless  results.nil?
     rescue => ex
       fail(FAIL_MESSAGE + ex.to_s)
     end
