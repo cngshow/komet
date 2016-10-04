@@ -1,6 +1,6 @@
-#Fixture created on 2016-09-22 13:37:32
+#Fixture created on 2016-10-04 10:29:30
 ---
-"@class": gov.vha.isaac.rest.api1.data.search.RestSearchResults
+"@class": gov.vha.isaac.rest.api1.data.search.RestSearchResultPage
 paginationData:
   "@class": gov.vha.isaac.rest.api.data.Pagination
   previousUrl: rest/1/search/descriptions/?query=heart&pageNum=1&maxPageSize=0
