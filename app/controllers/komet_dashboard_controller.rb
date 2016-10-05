@@ -391,17 +391,6 @@ class KometDashboardController < ApplicationController
         render partial: params[:partial]
 
     end
-    def create_workflow
-        hash = { }
-        hash[:definitionId] = params[:definitionId]
-        hash[:creatorNid] = params[:creatorNid]
-        hash[:name] = params[:name]
-        hash[:description] = params[:description]
-        results =  CoordinateRest.get_workflow(action: WorkflowRestActions::ACTION_CREATEWORKFLOWPROCESS,  additional_req_params: hash)
-        session[:workflow] = results
-        render json:  results.to_json
-    end
-
     ##
     # get_concept_attributes - RESTful route for populating concept attribute tab using an http :GET
     # The current tree node representing the concept is identified in the request params with the key :concept_id

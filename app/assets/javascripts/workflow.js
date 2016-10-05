@@ -26,7 +26,7 @@ var WorkflowModule = (function () {
             autoOpen: false,
             closeOnEscape: false,
             position: { my: "right top", at: "left bottom", of: "#komet_user_preference_link" },
-            height: 500,
+            height: 300,
             width: 550,
             dialogClass: "no-close",
             show: {
@@ -70,17 +70,16 @@ var WorkflowModule = (function () {
 
     function saveworkflow()
     {
-        var definitionId = 'definitionId';
-        var creatorNid= 12345;
+
         var name= $( "#txtWorkflow_Name" ).val();
         var description = $( "#txtWorkflow_Description" ).val();
-        params = {definitionId:definitionId,creatorNid:creatorNid,name:name,description:description}
+        params = {name:name,description:description}
 
         $.post( gon.routes.taxonomy_create_workflow_path , params, function( results ) {
             console.log(results);
         });
 
-        dialog.dialog( "close" );
+      //  dialog.dialog( "close" );
         location.replace(gon.routes.komet_dashboard_dashboard_path);
 
     }

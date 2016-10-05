@@ -20,17 +20,8 @@
   <%= render 'layouts/messages' %>
   <%= yield %>
 </main>
-<footer class="komet-workflow-action-bar">
-<%= render '/workflow/create_workflow'%>
-</footer>
+
 </body>
-    <script>
-        $(document).ready(function () {
-            var splitter = $("#komet_dashboard_splitter");
-            // reset the height and refresh the splitter after load to get rid of the strange margin that appears on the right panel (Firefox, Chrome)
-            splitter.css("height", "100%");
-            splitter.enhsplitter('refresh');
-        });
-    </script>
+
 </html>
 
