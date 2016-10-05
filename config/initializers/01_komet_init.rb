@@ -48,7 +48,7 @@ unless $rake
       require './lib/isaac_rest/coordinate_rest'
       require './lib/isaac_rest/mapping_apis_rest'
       require './lib/isaac_rest/comment_apis_rest'
-      #require './lib/isaac_rest/workflow_rest'
+      require './lib/isaac_rest/workflow_rest'
       ######### COMMON REST IMPORTS GO HERE!!!!!!
       #####################################################
     end
