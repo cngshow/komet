@@ -93,7 +93,7 @@ namespace :rest_fixtures do
     file_loc = KOMETUtilities::TMP_FILE_PREFIX + url_to_path_string(SememeRest::BY_REFERENCED_COMPONENT_SEMEME_PATH) + KOMETUtilities::YML_EXT
     FileUtils.cp(file_loc, FILES[SEMEME_BY_REFERENCED_COMPONENT])
 
-    a = SememeRest::get_sememe(action: SememeRestActions::ACTION_CHRONOLOGY, uuid_or_id: SememeRest::TEST_ID, additional_req_params: {expand: 'versionsAll'} ) #the simple fact that we fetch the rest data motivates a yaml file's generation in temp.
+    a = SememeRest::get_sememe(action: SememeRestActions::ACTION_CHRONOLOGY, uuid_or_id: SememeRest::TEST_ID, additional_req_params: {expand: 'versionsAll'}) #the simple fact that we fetch the rest data motivates a yaml file's generation in temp.
     file_loc = KOMETUtilities::TMP_FILE_PREFIX + url_to_path_string(SememeRest::CHRONOLOGY_SEMEME_PATH) + KOMETUtilities::YML_EXT
     FileUtils.cp(file_loc, FILES[SEMEME_CHRONOLOGY])
 
@@ -118,11 +118,11 @@ namespace :rest_fixtures do
     include Fixtures
     require './lib/isaac_rest/logic_graph_rest.rb'
 
-    LogicGraphRest::get_graph(action: LogicGraphRestActions::ACTION_CHRONOLOGY,uuid_or_id: LogicGraphRest::TEST_UUID)
+    LogicGraphRest::get_graph(action: LogicGraphRestActions::ACTION_CHRONOLOGY, uuid_or_id: LogicGraphRest::TEST_UUID)
     file_loc = KOMETUtilities::TMP_FILE_PREFIX + url_to_path_string(LogicGraphRest::CHRONOLOGY_PATH) + KOMETUtilities::YML_EXT
     FileUtils.cp(file_loc, FILES[LOGIC_GRAPH_CHRONOLOGY])
 
-    LogicGraphRest::get_graph(action: LogicGraphRestActions::ACTION_VERSION,uuid_or_id: LogicGraphRest::TEST_UUID)
+    LogicGraphRest::get_graph(action: LogicGraphRestActions::ACTION_VERSION, uuid_or_id: LogicGraphRest::TEST_UUID)
     file_loc = KOMETUtilities::TMP_FILE_PREFIX + url_to_path_string(LogicGraphRest::VERSION_PATH) + KOMETUtilities::YML_EXT
     FileUtils.cp(file_loc, FILES[LOGIC_GRAPH_VERSION])
   end
@@ -193,18 +193,18 @@ namespace :rest_fixtures do
 
   desc 'This task hits the isaac rest server. Builds all fixtures.'
   task :build => :environment do
-    $isaac_hunter_mutex.synchronize do
-      raise "Issac root is not defined.  You can set the environment variable ISAAC_ROOT=http://my.isaac.instance.com" if ISAAC_ROOT.empty?
-      [TAXONOMY_LAMBDA, CONCEPT_LAMBDA, ID_APIS_LAMBDA, SEMEME_LAMBDA, SEARCH_API_LAMBDA, SYSTEM_API_LAMBDA, LOGIC_GRAPHS_LAMBDA].each(&:call)
-    end
+    raise "Issac root is not defined.  You can set the environment variable ISAAC_ROOT=http://my.isaac.instance.com" if ISAAC_ROOT.empty?
+    [TAXONOMY_LAMBDA, CONCEPT_LAMBDA, ID_APIS_LAMBDA, SEMEME_LAMBDA, SEARCH_API_LAMBDA, SYSTEM_API_LAMBDA, LOGIC_GRAPHS_LAMBDA].each(&:call)
   end
 
 end
 
 def find_test_uuid
   ApplicationController.parse_isaac_metadata_auxiliary
-  uuids = []#['b0372953-4f20-58b8-ad04-20c2239c7d4e']
-  $isaac_metadata_auxiliary.each do |e|  next unless e.last.has_key?('uuids'); uuids << e.last['uuids'].first[:uuid]   end
+  uuids = [] #['b0372953-4f20-58b8-ad04-20c2239c7d4e']
+  $isaac_metadata_auxiliary.each do |e|
+    next unless e.last.has_key?('uuids'); uuids << e.last['uuids'].first[:uuid]
+  end
   good_uuids = []
   uuids.each do |uuid|
     begin
