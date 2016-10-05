@@ -51,9 +51,14 @@ class ApplicationController < ActionController::Base
   #REST_API_VERSIONS
   def ensure_rest_version
     if ISAAC_ROOT.empty?
-      $log.warn('The isaac rest service is not available. All attempts to connect to possible ISAAC Rest Services Failed in the application initializer code (01_komet_init.rb)')
-      render 'errors/isaac_rest_init_error'
-      return
+      $isaac_hunter_mutex.synchronize do
+        if ISAAC_ROOT.empty?
+          $log.warn('The isaac rest service is not available. All attempts to connect to possible ISAAC Rest Services Failed in the application initializer code (01_komet_init.rb)')
+          render 'errors/isaac_rest_init_error'
+          return
+        end
+      end
+
     end
 
     begin

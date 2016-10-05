@@ -193,7 +193,10 @@ namespace :rest_fixtures do
 
   desc 'This task hits the isaac rest server. Builds all fixtures.'
   task :build => :environment do
-    [TAXONOMY_LAMBDA, CONCEPT_LAMBDA, ID_APIS_LAMBDA, SEMEME_LAMBDA, SEARCH_API_LAMBDA, SYSTEM_API_LAMBDA, LOGIC_GRAPHS_LAMBDA].each(&:call)
+    $isaac_hunter_mutex.synchronize do
+      raise "Issac root is not defined.  You can set the environment variable ISAAC_ROOT=http://my.isaac.instance.com" if ISAAC_ROOT.empty?
+      [TAXONOMY_LAMBDA, CONCEPT_LAMBDA, ID_APIS_LAMBDA, SEMEME_LAMBDA, SEARCH_API_LAMBDA, SYSTEM_API_LAMBDA, LOGIC_GRAPHS_LAMBDA].each(&:call)
+    end
   end
 
 end
