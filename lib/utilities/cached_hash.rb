@@ -36,6 +36,7 @@ class CachedHash
     @mutex.synchronize do
       @backing_hash.delete_if do
         |key_hash|
+        next if key_hash.nil?
         url, params = key_hash.first
         url.start_with? key_starts_with.to_s
       end

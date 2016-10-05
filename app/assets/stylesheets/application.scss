@@ -217,6 +217,16 @@ body > header, body > footer{
 .komet-form-field-error .glyphicon, .komet-form-field-error .fa, .komet-form-error .glyphicon, .komet-form-error .fa, .komet-form-warning .glyphicon, .komet-form-warning .fa  {
     margin-right: 5px;
 }
+.komet-confirmation-dialog .ui-dialog-titlebar{
+    background: #4f80d9;
+    color: white
+}
+.komet-confirmation-dialog div.ui-dialog-buttonpane{
+    padding: 0px 4px;
+}
+.komet-dialog-no-close-button .ui-dialog-titlebar-close{
+    display: none;
+}
 .komet-splitter{
     height: 100%;
     width: 100%;

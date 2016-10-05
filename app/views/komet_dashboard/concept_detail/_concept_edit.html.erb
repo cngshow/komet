@@ -128,6 +128,10 @@
         }
     }
 
+    if (WindowManager.getLinkedViewerID() == "<%= @viewer_id %>" && TaxonomyModule.tree.selectedConceptID != WindowManager.viewers[<%= @viewer_id %>].currentConceptID) {
+        WindowManager.viewers[<%= @viewer_id %>].showInTaxonomyTree();
+    }
+
     $(document).ready(function () {
 
         var selectOptions = {
