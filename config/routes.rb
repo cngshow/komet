@@ -7,6 +7,7 @@ Rails.application.routes.draw do
     get  'external/logout', :as => :logout
 
     get 'komet_dashboard/dashboard'
+    get 'workflow/dashboard_workflow', :as => :workflow_dashboard
     get 'komet_dashboard/metadata'
     get 'komet_dashboard/version'
     get 'komet_dashboard/get_concept_suggestions'
@@ -16,7 +17,7 @@ Rails.application.routes.draw do
     get 'komet_dashboard/get_concept_summary', :as => :taxonomy_get_concept_summary
     get 'komet_dashboard/get_concept_sememes', :as => :taxonomy_get_concept_sememes
     get 'komet_dashboard/get_concept_refsets', :as => :taxonomy_get_concept_refsets
-    get 'komet_dashboard/get_concept_languages_dialect', :as => :taxonomy_get_concept_languages_dialect
+    get 'komet_dashboard/get_concept_children', :as => :taxonomy_get_concept_children
     get 'komet_dashboard/get_coordinates', :as => :taxonomy_get_coordinates
     get 'komet_dashboard/get_coordinatestoken', :as => :taxonomy_get_coordinatestoken
     get 'komet_dashboard/get_refset_list', :as => :taxonomy_get_refset_list
@@ -26,7 +27,7 @@ Rails.application.routes.draw do
     post 'komet_dashboard/edit_concept', :as => :taxonomy_edit_concept
     get 'komet_dashboard/change_concept_state', :as => :taxonomy_change_concept_state
     get 'komet_dashboard/clone_concept', :as => :taxonomy_clone_concept
-    post 'komet_dashboard/create_workflow', :as => :taxonomy_create_workflow
+    post 'workflow/create_workflow', :as => :taxonomy_create_workflow
 
     get 'search/get_assemblage_suggestions'
     get 'search/get_assemblage_recents'

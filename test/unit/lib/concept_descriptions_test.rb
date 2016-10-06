@@ -34,7 +34,7 @@ class ConceptDescriptionsTest < Test::Unit::TestCase
     assert(!desc_hash.nil? , 'The concept was not properly converted from json to a RestSememeDescriptionVersion!')
 
     if desc_hash.has_key?(:descriptions)
-      assert(desc_hash.fetch(:descriptions).length == 2, 'The test UUID should contain two RestSememeDescriptionVersions!')
+      assert(desc_hash.fetch(:descriptions).length == 2, 'The test UUID should contain two RestSememeDescriptionVersion!')
 
       first_desc = desc_hash.fetch(:descriptions).first
       assert_match(/^(?:fully specified name|preferred)$/, first_desc.fetch(:description_type), 'The :description_type is not FSN or preferred!')

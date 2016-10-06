@@ -173,7 +173,7 @@ var ConceptViewer = function(viewerID, currentConceptID, viewerAction) {
     };
 
     ConceptViewer.prototype.toggleNestedTableRows = function(image, id){
-
+        // TODO - Look into what happens when two rows have the same name (ex: Pediatex CT)
         // get reference to the block of nested rows
         var nestedRows = $("#komet_concept_table_nested_row_" + this.viewerID + "_" + id);
 
@@ -355,7 +355,7 @@ var ConceptViewer = function(viewerID, currentConceptID, viewerAction) {
             displaySection.addClass("hide");
         }
 
-        this.setSaveButtonState(parentField.val(), preferred_name);
+        this.setCreateSaveButtonState(parentField.val(), preferred_name);
 
         // set the Preferred Name display text [Description]
         // $("#komet_create_concept_preferred_name_" + this.viewerID).html(preferred_name);
@@ -363,9 +363,10 @@ var ConceptViewer = function(viewerID, currentConceptID, viewerAction) {
 
     ConceptViewer.prototype.createConcept = function() {
 
-        UIHelper.processAutoSuggestTags("#komet_concept_lineage_panel_" + this.viewerID);
+        $("#komet_create_concept_form_" + this.viewerID).un
 
-        $("#komet_create_concept_confirm_section_" + this.viewerID).hide();
+        UIHelper.processAutoSuggestTags("#komet_concept_associations_panel_" + this.viewerID);
+
         var parentField = $("#komet_create_concept_parent_display_" + this.viewerID);
 
         // TODO - clean up the calling of onchange function to autosuggest field. Do not need to pass function name into tag, remove code from UIHelper and HTML. convert this to anonymous function inside timeout.
@@ -389,7 +390,7 @@ var ConceptViewer = function(viewerID, currentConceptID, viewerAction) {
                 $("#komet_create_concept_fsn_" + this.viewerID).html(fsn);
             }
 
-            this.setSaveButtonState(parentField.val(), event.currentTarget.value);
+            this.setCreateSaveButtonState(parentField.val(), event.currentTarget.value);
 
             // set the Preferred Name display text [Description]
             // $("#komet_create_concept_preferred_name_" + this.viewerID).html(event.currentTarget.value);
@@ -410,7 +411,7 @@ var ConceptViewer = function(viewerID, currentConceptID, viewerAction) {
                     console.log(data);
 
                     if (data.concept_id == null){
-                        $("#komet_create_concept_section_" + thisViewer.viewerID).prepend(UIHelper.generateFormErrorMessage("An error has occurred. The concept was not created."));
+                        $("#komet_concept_editor_section_" + thisViewer.viewerID).prepend(UIHelper.generateFormErrorMessage("An error has occurred. The concept was not created."));
                     } else {
 
                         TaxonomyModule.tree.reloadTreeStatedView(TaxonomyModule.getStatedView(), false);
@@ -454,9 +455,9 @@ var ConceptViewer = function(viewerID, currentConceptID, viewerAction) {
         return semanticTag;
     };
 
-    ConceptViewer.prototype.setSaveButtonState = function(parentValue, descriptionValue){
+    ConceptViewer.prototype.setCreateSaveButtonState = function(parentValue, descriptionValue){
 
-        var saveButton = $("#komet_create_concept_save_" + this.viewerID);
+        var saveButton = $("#komet_concept_save_" + this.viewerID);
 
         // If the type of the first parameter is a string, then use it as a jquery selector, otherwise use as is
         if (parentValue == "" || descriptionValue == ""){
@@ -466,58 +467,35 @@ var ConceptViewer = function(viewerID, currentConceptID, viewerAction) {
         }
     };
 
-    ConceptViewer.prototype.showSaveSection = function (sectionName) {
+    ConceptViewer.prototype.validateCreateForm = function () {
 
-        var saveSection = $("#komet_create_concept_save_section_" + this.viewerID);
-        var confirmSection = $("#komet_create_concept_confirm_section_" + this.viewerID);
-        var createSection = $("#komet_create_concept_section_" + this.viewerID);
+        var parent = $("#komet_create_concept_parent_display_" + this.viewerID);
+        var description = $("#komet_create_concept_description_" + this.viewerID);
+        var hasErrors = false;
 
-        $("#komet_create_concept_form_" + this.viewerID).find(".komet-form-error, .komet-form-field-error").remove();
+        if (parent.val() == undefined || parent.val() == ""){
 
-        if (sectionName == 'confirm'){
-
-            var parent = $("#komet_create_concept_parent_display_" + this.viewerID);
-            var description = $("#komet_create_concept_description_" + this.viewerID);
-            var hasErrors = false;
-
-            if (parent.val() == undefined || parent.val() == ""){
-
-                $("#komet_create_concept_parent_fields_" + this.viewerID).after(UIHelper.generateFormErrorMessage("The Parent field must be filled in."));
-                hasErrors = true;
-            }
-
-            if (description.val() == undefined || description.val() == ""){
-
-                description.after(UIHelper.generateFormErrorMessage("The Description field must be filled in."));
-                hasErrors = true;
-            }
-
-            if (hasErrors){
-
-                createSection.prepend(UIHelper.generateFormErrorMessage("Please fix the errors below."));
-                return false;
-            }
-
-            console.log(UIHelper.hasFormChanged(createSection, true, true));
-            saveSection.hide();
-            confirmSection.show();
-
-        } else {
-
-            saveSection.show();
-            confirmSection.hide();
-            UIHelper.toggleChangeHighlights(createSection, false);
+            $("#komet_create_concept_parent_fields_" + this.viewerID).after(UIHelper.generateFormErrorMessage("The Parent field must be filled in."));
+            hasErrors = true;
         }
+
+        if (description.val() == undefined || description.val() == ""){
+
+            description.after(UIHelper.generateFormErrorMessage("The Description field must be filled in."));
+            hasErrors = true;
+        }
+
+        return hasErrors;
     };
 
-    ConceptViewer.prototype.editConcept = function(attributes, descriptions){
+    ConceptViewer.prototype.editConcept = function(attributes, descriptions, selectOptions){
 
         var divtext = "";
-        var rowCount = 0;
-        var concept_id  = "?concept_id=" + this.currentConceptID + "&stated=stated&viewer_id=" + viewerID;
+        var editSection = $("#komet_concept_editor_section_" + this.viewerID);
 
+        this.loadSelectFieldOptions(selectOptions);
 
-        selectItemByValue(document.getElementById('komet_concept_Status'),attributes[1].value);
+        this.selectItemByValue(document.getElementById('komet_concept_Status'),attributes[1].value);
 
         if ( attributes[2].value == 'Primitive') {
             divtext = "<div class='komet-tree-node-icon komet-tree-node-primitive' title=''" + attributes[2].value + "'></div>"
@@ -527,17 +505,262 @@ var ConceptViewer = function(viewerID, currentConceptID, viewerAction) {
 
         $("#definedDiv").html(divtext);
 
-        selectItemByValue(document.getElementById('komet_concept_defined'),attributes[2].value);
+        this.selectItemByValue(document.getElementById('komet_concept_defined'),attributes[2].value);
 
-        descriptiondropdown();
+        var descriptionSectionsString = "";
+        var firstSection = true;
 
-        $.each(descriptions, function (index, value) {
+        for (var i = 0; i < descriptions.length; i++){
 
-            rowCount = rowCount + 1;
-            addDescriptionData(index,value,rowCount)
-        });
+            descriptionSectionsString += this.createDescriptionRowString(firstSection, descriptions[i]);
+            firstSection = false;
+        }
 
-        UIHelper.processAutoSuggestTags("#komet_edit_concept_form_" + this.viewerID);
+        // create a dom fragment from our included fields structure
+        var descriptionSections = document.createRange().createContextualFragment(descriptionSectionsString);
+        editSection.find(".komet-concept-description-title").after(descriptionSections);
+
+        UIHelper.processAutoSuggestTags("#komet_concept_edit_form_" + this.viewerID);
+    };
+
+    ConceptViewer.prototype.selectItemByValue = function(elmnt, value) {
+
+        for (var i=0; i < elmnt.options.length; i++)
+        {
+            if (elmnt.options[i].value.toUpperCase() == value)
+                elmnt.selectedIndex = i;
+        }
+    };
+
+    ConceptViewer.prototype.createDescriptionRowString = function (firstSection, rowData) {
+
+        var descriptionRow = "";
+        var uuid = "";
+        var type = "";
+        var text = "";
+        var state = "";
+        var acceptability = "";
+        var language = "";
+        var caseSignificance = "";
+
+        if (rowData != null){
+
+            uuid = rowData.uuid;
+            type = rowData.description_type_short;
+            text = rowData.text;
+            state = rowData.attributes[0].state;
+            language = rowData.language_id;
+            caseSignificance = rowData.case_significance;
+        }
+
+        if (!firstSection){
+            descriptionRow = '<div class="concept-section-panel-spacer"></div>';
+        }
+
+        descriptionRow += '<div id="komet_concept_description_panel_' + this.viewerID + '_' + uuid + '" class="komet-concept-section-panel komet-concept-description-panel">'
+            + '<div class="komet-concept-section-panel-details">'
+            + '<div class="komet-concept-edit-row komet-concept-edit-description-row">'
+            + '<div>' + this.createSelectField("description_type", uuid, this.selectFieldOptions.descriptionType, type) + '</div>'
+            + '<div><input type="text" id="komet_concept_edit_description_type_' + uuid + '_' + this.viewerID + '" name="descriptions[' + uuid + '][type]" value="' + text + '" class="form-control komet_concept_edit_description_type"></div>'
+            + '<div>' + this.createSelectField("description_acceptability", uuid, this.selectFieldOptions.acceptability, acceptability) + '</div>'
+            + '<div>' + this.createSelectField("description_state", uuid, this.selectFieldOptions.state, state) + '</div>'
+            + '<div>' + this.createSelectField("description_language", uuid, this.selectFieldOptions.language, language) + '</div>'
+            + '<div>' + this.createSelectField("description_case_significance", uuid, this.selectFieldOptions.caseSignificance, caseSignificance) + '</div>'
+            + '<div class="komet-concept-edit-row-tools"><div class="glyphicon glyphicon-remove" onclick=""></div></div>'
+            + '</div>'
+            + '<div class="komet-indent-block"><div class="komet-concept-section-title komet-concept-description-title">Properties'
+            + '<div class="komet-flex-right">Add Property <div class="glyphicon glyphicon-plus-sign" onclick=""></div></div></div>';
+
+        if (rowData.nested_properties) {
+
+            $.each(rowData.nested_properties.data, function (index, property) {
+                descriptionRow += this.createDescriptionPropertyRowString(uuid, property, rowData.nested_properties.field_info);
+            }.bind(this));
+        }
+
+        descriptionRow += '<!-- end komet-indent-block --></div><!-- end komet-concept-section-panel-details --></div><!-- end komet_concept_description_panel --></div>';
+
+        return descriptionRow;
+    }.bind(this);
+
+    ConceptViewer.prototype.createDescriptionPropertyRowString = function (descriptionID, property, fieldInfo) {
+
+        var propertyID = descriptionID + '_' + property.id;
+        var viewerPropertyID = propertyID + '_' + this.viewerID;
+        var rowID = 'komet_concept_edit_description_properties_row_' + viewerPropertyID;
+
+        var propertyString = '<div id="' + rowID + '" class="komet-concept-edit-row komet-concept-edit-description-properties-row"><div>'
+            + '<input type="hidden" name="descriptions[' + descriptionID + '][' + property.id + '][sememe]" value="' + property.uuid + '"> '
+            + '<span class="form-field komet-concept-edit-description-properties-sememe"><b>' + property.sememe_name + '</b></span></div>';
+
+        $.each(property.columns, function (fieldID, field) {
+
+            var viewerFieldID = fieldID + '_' + viewerPropertyID;
+            var fieldLabel = fieldInfo[fieldID].name;
+
+            propertyString += '<div class="input-group"><label for="komet_concept_edit_description_properties_' + viewerFieldID + '" class="input-group-addon">' + fieldLabel + '</label>'
+                + '<input type="text" id="komet_concept_edit_description_properties_' + viewerFieldID + '" name="descriptions[' + descriptionID + '][' + property.id + '][' + fieldID + ']" value="' + field.data + '" class="form-control komet_concept_edit_description_properties_field">'
+                + '</div>';
+
+        }.bind(this));
+
+        propertyString += '<div class="komet-concept-edit-row-tools"><div class="glyphicon glyphicon-remove" onclick="WindowManager.viewers[' + this.viewerID + '].removeRow(\'' + property.id + '\', \'' + rowID + '\', \'property\', ' + property.new + ', this)"></div></div><!-- end komet-concept-edit-description-properties-row --></div>';
+
+        return propertyString;
+    };
+
+    ConceptViewer.prototype.addPropertyRow = function (conceptID, descriptionID, addElement) {
+
+        var addPropertyString = '<form action="" class="komet-concept-add-property-form">'
+            + '<autosuggest id-base="komet_concept_add_property_sememe" '
+            + 'id-postfix="_' + this.viewerID + '" '
+            + 'name="sememe" '
+            + 'label: "Search for a concept to use as a property" '
+            + 'classes="komet-concept-add-property-sememe">'
+            + '</autosuggest></form>';
+
+        var confirmCallback = function(buttonClicked){
+
+            if (buttonClicked != 'cancel') {
+
+
+
+                var row = $("#" + rowID);
+
+                row.addClass("hide");
+                row.html('<input type="hidden" name="remove[' + type + ']" value="' + conceptID + '">');
+            }
+
+        }.bind(this);
+
+        UIHelper.generateConfirmationDialog("Add a Property", addPropertyString, confirmCallback, "Add", addElement);
+
+    };
+
+    ConceptViewer.prototype.removeRow = function (conceptID, rowID, type, isNew, closeElement) {
+
+        var confirmCallback = function(buttonClicked){
+
+            if (buttonClicked != 'cancel') {
+
+                var row = $("#" + rowID);
+
+                row.addClass("hide");
+                row.html('<input type="hidden" name="remove[' + type + ']" value="' + conceptID + '">');
+            }
+
+        }.bind(this);
+
+        UIHelper.generateConfirmationDialog("Delete " + type + "?", "Are you sure you want to remove this " + type + "?", confirmCallback, "Yes", closeElement);
+
+    };
+
+    ConceptViewer.prototype.createSelectField = function (fieldName, fieldID, options, selectedItem) {
+
+        var fieldString = '<select id="komet_concept_edit_' + fieldName + '_' + fieldID + '_' + this.viewerID + '" name="descriptions[' + fieldID + '][' + fieldName + ']" class="form-control komet_concept_edit_' + fieldName + '">';
+
+        for (var i = 0; i < options.length; i++) {
+
+            fieldString += '<option ';
+
+            if (selectedItem === options[i].value) {
+                fieldString += 'selected="selected" ';
+            }
+
+            fieldString += 'value="' + options[i].value + '">' + options[i].label + '</option>';
+        }
+
+        fieldString += '</select>';
+
+        return fieldString;
+    }.bind(this);
+
+    ConceptViewer.prototype.loadSelectFieldOptions = function (selectOptions) {
+
+        function createOptions(options){
+
+            var optionArray = [];
+
+            for (var i = 0; i < options.length; i++){
+                optionArray.push({value: options[i].concept_id, label: options[i].text});
+            }
+
+            return optionArray;
+        }
+
+        this.selectFieldOptions = {};
+
+        this.selectFieldOptions.descriptionType = createOptions(selectOptions.descriptionType);
+
+        this.selectFieldOptions.language = createOptions(selectOptions.language);
+
+        this.selectFieldOptions.dialect = createOptions(selectOptions.dialect);
+
+        this.selectFieldOptions.caseSignificance = createOptions(selectOptions.case);
+
+        this.selectFieldOptions.acceptability = createOptions(selectOptions.acceptability);
+
+        this.selectFieldOptions.state = [
+            {value: "Active", label: "Active"},
+            {value: "Inactive", label: "Inactive"}
+        ];
+    };
+
+    ConceptViewer.prototype.validateEditForm = function () {
+
+        //var parent = $("#komet_create_concept_parent_display_" + this.viewerID);
+        //var description = $("#komet_create_concept_description_" + this.viewerID);
+        var hasErrors = false;
+
+        //if (parent.val() == undefined || parent.val() == ""){
+        //
+        //    $("#komet_create_concept_parent_fields_" + this.viewerID).after(UIHelper.generateFormErrorMessage("The Parent field must be filled in."));
+        //    hasErrors = true;
+        //}
+        //
+        //if (description.val() == undefined || description.val() == ""){
+        //
+        //    description.after(UIHelper.generateFormErrorMessage("The Description field must be filled in."));
+        //    hasErrors = true;
+        //}
+
+        return hasErrors;
+    }
+
+    ConceptViewer.prototype.showSaveSection = function (sectionName) {
+
+        var saveSection = $("#komet_concept_save_section_" + this.viewerID);
+        var confirmSection = $("#komet_concept_confirm_section_" + this.viewerID);
+        var createSection = $("#komet_concept_editor_section_" + this.viewerID);
+
+        $("#komet_create_concept_form_" + this.viewerID).find(".komet-form-error, .komet-form-field-error").remove();
+
+        if (sectionName == 'confirm'){
+
+            var hasErrors = false;
+
+            if (this.viewerAction == ConceptsModule.CREATE){
+                hasErrors = this.validateCreateForm();
+            } else {
+                hasErrors = this.validateEditForm();
+            }
+
+            if (hasErrors){
+
+                createSection.prepend(UIHelper.generateFormErrorMessage("Please fix the errors below."));
+                return false;
+            }
+
+            console.log(UIHelper.hasFormChanged(createSection, true, true));
+            saveSection.toggleClass("hide");
+            confirmSection.toggleClass("hide");
+
+        } else {
+
+            saveSection.toggleClass("hide");
+            confirmSection.toggleClass("hide");
+            UIHelper.toggleChangeHighlights(createSection, false);
+        }
     };
 
     ConceptViewer.prototype.cancelAction = function(previous_type, previous_id){
@@ -557,145 +780,6 @@ var ConceptViewer = function(viewerID, currentConceptID, viewerAction) {
 
         WindowManager.closeViewer(this.viewerID);
     };
-
-    function selectItemByValue(elmnt, value) {
-
-        for (var i=0; i < elmnt.options.length; i++)
-        {
-            if (elmnt.options[i].value.toUpperCase() == value)
-                elmnt.selectedIndex = i;
-        }
-    }
-
-    function descriptiondropdown() {
-
-        var headingtr = document.createElement("TR");
-        headingtr.setAttribute("id", "descriptiondata");
-        headingtr.setAttribute("style", "background-color: #4f80d9;color:white;text-align: center")
-        document.getElementById('description_texttbl').appendChild(headingtr);
-
-        var headingtd0 = document.createElement("TD");
-        headingtd0.innerHTML ='Description Type';
-        document.getElementById("descriptiondata").appendChild(headingtd0);
-
-        var headingtd1 = document.createElement("TD");
-        headingtd1.innerHTML ='Description Text';
-        document.getElementById("descriptiondata").appendChild(headingtd1);
-
-        var headingtd2 = document.createElement("TD");
-        headingtd2.innerHTML ='Acceptability';
-        document.getElementById("descriptiondata").appendChild(headingtd2);
-
-        var headingtd3 = document.createElement("TD");
-        headingtd3.innerHTML ='State';
-        document.getElementById("descriptiondata").appendChild(headingtd3);
-
-        var headingtd4 = document.createElement("TD");
-        headingtd4.innerHTML ='Language';
-        document.getElementById("descriptiondata").appendChild(headingtd4);
-
-        var headingtd5 = document.createElement("TD");
-        headingtd5.innerHTML ='Case';
-        document.getElementById("descriptiondata").appendChild(headingtd5);
-
-        var headingtd6 = document.createElement("TD");
-        headingtd6.innerHTML ='Delete';
-        document.getElementById("descriptiondata").appendChild(headingtd6);
-    }
-
-    function addDescriptionData(index,data,rowCount) {
-
-        if(index == "descriptions")
-        {
-            for (var i = 0, count = data.length; i < count; i++) {
-                rowCount = rowCount + 1;
-
-                var descriptionRow = document.createElement("tr");
-                descriptionRow.setAttribute("id", "descriptiondata" + rowCount);
-
-                var idCell = document.createElement("td");
-                var descriptiontypeCell = document.createElement("td");
-                var descriptiontextCell = document.createElement("td");
-                var acceptabilityCell = document.createElement("td");
-                var stateCell = document.createElement("td");
-                var languageCell = document.createElement("td");
-                var caseCell = document.createElement("td");
-                var DeleteCell = document.createElement("td");
-                descriptionRow.setAttribute("id", "tr" + rowCount);
-
-                idCell.innerHTML = rowCount;
-                descriptiontypeCell.innerHTML = descriptionType(rowCount,data[i].description_type_short);
-                // console.log('descriptiontypeDDL' + rowCount);
-                //selectItemByValue(document.getElementById('descriptiontypeDDL' + rowCount) ,data[i].description_type_short);
-                descriptiontextCell.innerHTML = '<input name="descriptionText"  type="text" id="' + "descriptionText" + '~' + rowCount + '" width="20px"  value=" ' + data[i].text + ' "  />';
-                acceptabilityCell.innerHTML = acceptabilityType(rowCount);
-                stateCell.innerHTML = stateType(rowCount);
-                languageCell.innerHTML = languagetype(rowCount);
-                caseCell.innerHTML = casetype(rowCount);
-                DeleteCell.innerHTML = '<a name="removeRow" onclick="PreferenceModule.deleteRefsetFieldRow(' + rowCount + ')">X</a>';
-
-                //  descriptionRow.appendChild(idCell);
-                descriptionRow.appendChild(descriptiontypeCell);
-                descriptionRow.appendChild(descriptiontextCell);
-                descriptionRow.appendChild(acceptabilityCell);
-                descriptionRow.appendChild(stateCell);
-                descriptionRow.appendChild(languageCell);
-                descriptionRow.appendChild(caseCell);
-                descriptionRow.appendChild(DeleteCell);
-
-                $("#description_texttbl").append(descriptionRow)
-            }
-        }
-    }
-
-    function descriptionType(rowCount,selecteditem) {
-        var options = "";
-        var descriptionTypeSelect = '<select style="width:100px" id="descriptiontypeDDL' + rowCount + '">';
-        if(selecteditem == 'SYN') {
-            options += '<option SELECTED="SELECTED" value=SYN>SYN</option>';
-        }
-        if(selecteditem == 'FSN') {
-            options += '<option SELECTED="SELECTED" value=FSN>FSN</option>';
-        }
-        descriptionTypeSelect += options + '</select>';
-        return descriptionTypeSelect
-    }
-
-    function languagetype(rowCount) {
-        var options = "";
-        var languagetypeSelect = '<select style="width:100px" id="languagetypeDDL">';
-        options += '<option value=US English>US English</option>';
-        options += '<option value=GB English>GB English</option>';
-        languagetypeSelect += options + '</select>';
-        return languagetypeSelect
-
-    }
-
-    function casetype() {
-        var options = "";
-        var descriptionTypeSelect = '<select style="width:100px" id="descriptiontypeDDL">';
-        options += '<option value=true>Yes</option>';
-        options += '<option value=false>No</option>';
-        descriptionTypeSelect += options + '</select>';
-        return descriptionTypeSelect
-    }
-
-    function stateType() {
-        var options = "";
-        var stateTypeSelect = '<select style="width:100px" id="descriptiontypeDDL">';
-        options += '<option value=ACTIVE>Active</option>';
-        options += '<option value=INACTIVE>InActive</option>';
-        stateTypeSelect += options + '</select>';
-        return stateTypeSelect
-    }
-
-    function acceptabilityType() {
-        var options = "";
-        var acceptabilitySelect = '<select style="width:100px" id="acceptabilityDDL">';
-        options += '<option value=Acceptable>Acceptable</option>';
-        acceptabilitySelect += options + '</select>';
-        return acceptabilitySelect
-    }
 
     // call our constructor function
     this.init(viewerID, currentConceptID, viewerAction)

@@ -1,6 +1,6 @@
-#Fixture created on 2016-09-22 13:37:32
+#Fixture created on 2016-10-04 10:29:29
 ---
-"@class": gov.vha.isaac.rest.api1.data.sememe.RestSememeVersions
+"@class": gov.vha.isaac.rest.api1.data.sememe.RestSememeVersionPage
 paginationData:
   "@class": gov.vha.isaac.rest.api.data.Pagination
   previousUrl: rest/1/sememe/byAssemblage/3e0cd740-2cc6-3d68-ace7-bad2eb2621da?pageNum=1&maxPageSize=0

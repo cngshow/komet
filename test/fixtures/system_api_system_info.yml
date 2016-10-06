@@ -1,9 +1,9 @@
-#Fixture created on 2016-09-22 13:37:32
+#Fixture created on 2016-10-04 10:29:30
 ---
 "@class": gov.vha.isaac.rest.api1.data.RestSystemInfo
 supportedAPIVersions:
-- 1.4.4
-apiImplementationVersion: 1.13-SNAPSHOT
+- 1.5.0
+apiImplementationVersion: 1.15-SNAPSHOT
 isaacDbDependency:
   "@class": gov.vha.isaac.rest.api1.data.systeminfo.RestDependencyInfo
   groupId: gov.vha.isaac.db
@@ -12,7 +12,7 @@ isaacDbDependency:
   classifier: all
   type: cradle.zip
 scmUrl: https://github.com/VA-CTT/ISAAC-rest.git
-isaacVersion: 3.12-SNAPSHOT
+isaacVersion: 3.13-SNAPSHOT
 appLicenses: []
 dbLicenses:
 - "@class": gov.vha.isaac.rest.api1.data.systeminfo.RestLicenseInfo

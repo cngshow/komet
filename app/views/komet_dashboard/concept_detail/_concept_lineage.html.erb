@@ -1,4 +1,4 @@
-<div class="komet-concept-lineage-title">LINEAGE</div>
+<div class="komet-concept-section-title komet-concept-lineage-title">LINEAGE</div>
 
 <div id="komet_concept_lineage_panel_<%= @viewer_id %>" class="komet-concept-section-panel komet-concept-lineage-panel">
 
@@ -50,7 +50,7 @@
 
                 <hr class="komet-concept-details-hr">
 
-                <% @descriptions[:descriptions].each do |description| %>
+                <% @descriptions.each do |description| %>
                     <div><%= description[:text] %></div>
                 <% end %>
 

@@ -1,4 +1,4 @@
-#Fixture created on 2016-09-22 13:37:31
+#Fixture created on 2016-10-04 10:29:29
 ---
 - "@class": gov.vha.isaac.rest.api1.data.sememe.RestSememeDescriptionVersion
   expandables:
@@ -62,6 +62,7 @@
   languageConceptSequence: 8
   text: SNOMED CT Model Component
   descriptionTypeConceptSequence: 12
+  descriptionExtendedTypeConceptSequence:
   dialects:
   - "@class": gov.vha.isaac.rest.api1.data.sememe.RestDynamicSememeVersion
     expandables:
@@ -197,6 +198,7 @@
   languageConceptSequence: 8
   text: SNOMED CT Model Component (metadata)
   descriptionTypeConceptSequence: 11
+  descriptionExtendedTypeConceptSequence:
   dialects:
   - "@class": gov.vha.isaac.rest.api1.data.sememe.RestDynamicSememeVersion
     expandables:

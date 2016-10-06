@@ -1,4 +1,4 @@
-<div class="komet-concept-attributes-title">CONCEPT</div>
+<div class="komet-concept-section-title komet-concept-attributes-title">CONCEPT</div>
 
 <div id="komet_concept_attributes_panel_<%= @viewer_id %>" class="komet-concept-section-panel komet-concept-attributes-panel">
 
@@ -19,7 +19,7 @@
         <div>
             <% if @attributes[2][:value] == 'Primitive' %>
                 <div class="komet-tree-node-icon komet-tree-node-primitive" title="<%= @attributes[2][:value] %>"></div>
-            <% elsif @attributes[2][:value] == 'Defined' %>
+            <% elsif @attributes[2][:value] == 'Fully Defined' || @attributes[2][:value] == 'Defined' %>
                 <div class="komet-tree-node-icon komet-tree-node-defined" title="<%= @attributes[2][:value] %>"></div>
             <% end %>
         </div>

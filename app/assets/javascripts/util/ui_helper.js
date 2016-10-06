@@ -57,7 +57,69 @@ var UIHelper = (function () {
         return '<div class="' + classLevel + '"><div class="glyphicon glyphicon-alert"></div>' + message + '</div>';
     }
 
-    function toggleChangeHighlights(containerElementOrSelector, showChanges){
+    function generateConfirmationDialog(title, message, closeCallback, buttonText, positioningElementOrSelector) {
+
+        var dialogID = "komet_generated_confirm_dialog";
+        var body = $("body");
+
+        if (buttonText == undefined || buttonText == null) {
+            buttonText = "Yes";
+        }
+
+        var dialogString = '<div id="' + dialogID + '"><div class="komet-confimation-dialog-message">' + message + '</div></div>';
+        body.prepend(dialogString);
+
+        var position = {my: "center", at: "center", of: body};
+
+        if (positioningElementOrSelector != undefined && positioningElementOrSelector != null) {
+
+            var element;
+
+            // If the type of the second parameter is a string, then use it as a jquery selector, otherwise use as is
+            if (typeof positioningElementOrSelector === "string") {
+                element = $(positioningElementOrSelector);
+            } else {
+                element = positioningElementOrSelector;
+            }
+
+            position = {my: "right bottom", at: "left bottom", of: element};
+        }
+
+        var dialog = $("#" + dialogID);
+        var buttonClicked = "cancel";
+
+        dialog.dialog({
+            close: function(e) { closeCallback(buttonClicked); dialog.remove();},
+            title: title,
+            resizable: false,
+            height: "auto",
+            width: 400,
+            modal: true,
+            position: position,
+            dialogClass: "komet-confirmation-dialog komet-dialog-no-close-button",
+            buttons:{
+                Cancel: {
+                    "class": "btn btn-default",
+                    text: "Cancel",
+                    click: function () {
+                        $(this).dialog("close");
+                    }
+                },
+                OK: {
+                    "autofocus": "true",
+                    text: buttonText,
+                    "class": "btn btn-primary",
+                    click: function () {
+
+                        buttonClicked = buttonText;
+                        $(this).dialog("close");
+                    }
+                }
+            }
+        });
+    }
+
+    function toggleChangeHighlights(containerElementOrSelector, showChanges) {
 
         var element;
 
@@ -270,10 +332,36 @@ var UIHelper = (function () {
         });
     };
 
-    var createAutoSuggestField = function (fieldIDBase, fieldIDPostfix, label, idValue, displayValue, typeValue, fieldClasses, tabIndex) {
+    var createAutoSuggestField = function (fieldIDBase, fieldIDPostfix, label, name, nameFormat, idValue, displayValue, typeValue, fieldClasses, tabIndex) {
 
         if (fieldIDPostfix == null){
             fieldIDPostfix = "";
+        }
+
+        if (label == null){
+            label = "";
+        } else {
+            label = '<label for="' + fieldIDBase + fieldIDPostfix + '">' + label + '</label>';
+        }
+
+        var idName = fieldIDBase;
+        var typeName = fieldIDBase + "_type";
+        var displayName = fieldIDBase + "_display";
+
+        if (name != null){
+
+            if (nameFormat == "array"){
+
+                idName = name + "]";
+                typeName = name + "_type]";
+                displayName = name + "_display]";
+
+            } else {
+
+                idName = name;
+                typeName = name + "_type";
+                displayName = name + "_display";
+            }
         }
 
         if (idValue == null){
@@ -302,13 +390,12 @@ var UIHelper = (function () {
         }
 
         // use the hide class to hide the ID and Type fields so that the hasFormChanged() function can pick up the changed values.
-        var fieldString = '<label for="' + fieldIDBase + fieldIDPostfix + '">' + label + '</label>'
-            + '<input id="' + fieldIDBase + fieldIDPostfix + '" name="' + fieldIDBase + '" class="hide" value="' + idValue + '">'
-            + '<input id="' + fieldIDBase + '_type' + fieldIDPostfix + '" name="' + fieldIDBase + '_type" class="hide" value="' + typeValue + '">'
+        var fieldString = label + '<input id="' + fieldIDBase + fieldIDPostfix + '" name="' + idName + '" class="hide" value="' + idValue + '">'
+            + '<input id="' + fieldIDBase + '_type' + fieldIDPostfix + '" name="' + typeName + '" class="hide" value="' + typeValue + '">'
             + '<div id="' + fieldIDBase + '_fields' + fieldIDPostfix + '" class="komet-autosuggest input-group ' + fieldClasses + '">'
-            + '<input id="' + fieldIDBase + '_display' + fieldIDPostfix + '" name="' + fieldIDBase + '_display" class="form-control komet-context-menu" '
+            + '<input id="' + fieldIDBase + '_display' + fieldIDPostfix + '" name="' + displayName + '" class="form-control komet-context-menu" '
             + 'data-menu-type="paste_target" data-menu-id-field="' + fieldIDBase + fieldIDPostfix + '" data-menu-display-field="' + fieldIDBase + '_display' + fieldIDPostfix + '" '
-            + ' data-menu-taxonomy-type-field="' + fieldIDBase + '_type' + fieldIDPostfix + '" value="' + displayValue + '"' + fieldTabIndex + '>'
+            + 'data-menu-taxonomy-type-field="' + fieldIDBase + '_type' + fieldIDPostfix + '" value="' + displayValue + '"' + fieldTabIndex + '>'
             + '<div id="' + fieldIDBase + '_recents_button' + fieldIDPostfix + '"  class="input-group-btn komet-search-combo-field">'
             + '<button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><span class="caret"></span></button>'
             + '<ul id="' + fieldIDBase + '_recents' + fieldIDPostfix + '" class="dropdown-menu dropdown-menu-right"' + recentsTabIndex + '></ul>'
@@ -336,6 +423,8 @@ var UIHelper = (function () {
             var fieldIDBase = tag.getAttribute("id-base");
             var fieldIDPostfix = tag.getAttribute("id-postfix");
             var label = tag.getAttribute("label");
+            var name = tag.getAttribute("name");
+            var nameFormat = tag.getAttribute("name-format");
             var idValue = tag.getAttribute("value");
             var displayValue = tag.getAttribute("display-value");
             var typeValue = tag.getAttribute("type-value");
@@ -357,7 +446,7 @@ var UIHelper = (function () {
                 suggestionOnChangeFunction = "";
             }
 
-            var autoSuggest = UIHelper.createAutoSuggestField(fieldIDBase, fieldIDPostfix, label, idValue, displayValue, typeValue, fieldClasses, tabIndex);
+            var autoSuggest = UIHelper.createAutoSuggestField(fieldIDBase, fieldIDPostfix, label, name, nameFormat, idValue, displayValue, typeValue, fieldClasses, tabIndex);
 
             $(tag).replaceWith(autoSuggest);
 
@@ -504,6 +593,7 @@ var UIHelper = (function () {
         }
     };
 
+    // TODO - Fix z-index of menus in IE - splitter bars cutting through it
     function initializeContextMenus() {
 
         $.contextMenu({
@@ -809,6 +899,7 @@ var UIHelper = (function () {
         isTabActive: isTabActive,
         initializeContextMenus: initializeContextMenus,
         generateFormErrorMessage: generateFormErrorMessage,
+        generateConfirmationDialog: generateConfirmationDialog,
         toggleChangeHighlights: toggleChangeHighlights,
         toggleFieldAvailability: toggleFieldAvailability,
         hasFormChanged: hasFormChanged,

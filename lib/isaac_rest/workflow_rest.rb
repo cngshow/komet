@@ -22,11 +22,11 @@ module WorkflowRestActions
 
   ACTION_ACTIONS_FOR_PROCESS_AND_USER = :actionsForProcessAndUser
   ACTION_ADVANCEABLE_PROCESS_INFORMATION= :advanceableProcessInformation
- # ACTION_DEFAULT_DEFINITION = :defaultDefinition
+  ACTION_DEFAULT_DEFINITION = :defaultDefinition
   #ACTION_AVAILABLE_DEFINITION = :availableDefinitions
   ACTION_HISTORIES_FOR_PROCESS = :historiesForProcess
 
-  ACTION_PERMISSIONS_FOR_DEFINITION_AND_USER = :permissionsForDefinitionAndUser
+  #ACTION_PERMISSIONS_FOR_DEFINITION_AND_USER = :permissionsForDefinitionAndUser
   ACTION_PROCESS = :process
   ACTION_CREATE_WORKFLOW_PROCESS = :createWorkflowProcess
   ACTION_ADVANCE_WORKFLOW_PROCESS = :advanceWorkflowProcess
@@ -41,14 +41,12 @@ module WorkflowRest
 
   #always name the root_path ROOT_PATH!
   ROOT_PATH = ISAAC_ROOT + 'rest/1/workflow/'
-  PATH_WORKFLOW_WRITE = ISAAC_ROOT + 'rest/write/1/workflow/1/workflow/'
+  PATH_WORKFLOW_WRITE = ISAAC_ROOT + 'rest/write/1/workflow/'
   PATH_ACTION_ACTIONS_FOR_PROCESS_AND_USER_WORKFLOW = ROOT_PATH + 'actionsForProcessAndUser'
   PATH_ADVANCEABLE_PROCESS_INFORMATION_WORKFLOW =  ROOT_PATH + 'advanceableProcessInformation'
- # PATH_DEFAULT_DEFINITION_WORKFLOW = ROOT_PATH + 'defaultDefinition'
+  PATH_DEFAULT_DEFINITION_WORKFLOW = ROOT_PATH + 'defaultDefinition'
   #PATH_AVAILABLE_DEFINITION_WORKFLOW = ROOT_PATH + 'availableDefinitions'
   PATH_HISTORIES_FOR_PROCESS_WORKFLOW =  ROOT_PATH + 'historiesForProcess'
-
-  PATH_PERMISSIONS_FOR_DEFINITION_AND_USER_WORKFLOW =  ROOT_PATH + 'permissionsForDefinitionAndUser'
   PATH_PROCESS_WORKFLOW =  ROOT_PATH + 'process'
   PATH_CREATE_WORKFLOW_PROCESS_WORKFLOW = PATH_WORKFLOW_WRITE + 'create/createWorkflowProcess'
   PATH_ADVANCE_WORKFLOW_PROCESS_WORKFLOW = PATH_WORKFLOW_WRITE + 'update/advanceWorkflowProcess'
@@ -60,17 +58,21 @@ module WorkflowRest
       ACTION_ACTIONS_FOR_PROCESS_AND_USER => {
           PATH_SYM => PATH_ACTION_ACTIONS_FOR_PROCESS_AND_USER_WORKFLOW,
           STARTING_PARAMS_SYM => PARAMS_EMPTY,
-          CLAZZ_SYM => Gov::Vha::Isaac::Rest::Api1::Data::Workflow::RestWorkflowAvailableActions },
+          CLAZZ_SYM => Gov::Vha::Isaac::Rest::Api1::Data::Workflow::RestWorkflowAvailableAction },
       ACTION_ADVANCEABLE_PROCESS_INFORMATION  => {
           PATH_SYM => PATH_ADVANCEABLE_PROCESS_INFORMATION_WORKFLOW,
           STARTING_PARAMS_SYM => PARAMS_EMPTY,
-          CLAZZ_SYM => Gov::Vha::Isaac::Rest::Api1::Data::Workflow::RestWorkflowProcessHistoriesMap
+          CLAZZ_SYM => Gov::Vha::Isaac::Rest::Api1::Data::Workflow::RestWorkflowProcessHistoriesMapEntry
       },
-
+      ACTION_DEFAULT_DEFINITION  => {
+          PATH_SYM => PATH_DEFAULT_DEFINITION_WORKFLOW ,
+          STARTING_PARAMS_SYM => PARAMS_EMPTY,
+          CLAZZ_SYM => Gov::Vha::Isaac::Rest::Api::Data::Wrappers::RestUUID
+      },
       ACTION_HISTORIES_FOR_PROCESS  => {
           PATH_SYM => PATH_HISTORIES_FOR_PROCESS_WORKFLOW,
           STARTING_PARAMS_SYM => PARAMS_EMPTY,
-          CLAZZ_SYM => Gov::Vha::Isaac::Rest::Api1::Data::Workflow::RestWorkflowProcessHistories
+          CLAZZ_SYM => Gov::Vha::Isaac::Rest::Api1::Data::Workflow::RestWorkflowProcessHistory
       },
 
       ACTION_PROCESS  => {
@@ -110,15 +112,11 @@ module WorkflowRest
     attr_accessor :uuid
 
     def initialize(uuid:, params:, body_params:, action:, action_constants:)
-      @uuid = uuid.to_s unless uuid.nil?
-      uuid_check uuid: uuid unless [WorkflowRestActions::ACTION_CREATE].include?(action)
-      super(params: params, body_params: body_params, action: action, action_constants: action_constants)
+       super(params: params, body_params: body_params, action: action, action_constants: action_constants)
     end
 
     def rest_call
-      url = get_url
-      url_string = uuid.nil? ? url : url.gsub('{id}', uuid)
-      json = rest_fetch(url_string: url_string, params: get_params, body_params: body_params, raw_url: url)
+      json = rest_fetch(url_string: get_url, params: get_params,body_params: body_params, raw_url: get_url)
       enunciate_json(json)
     end
   end
@@ -133,6 +131,7 @@ module WorkflowRest
 end
 
 =begin
+TODO: once all the api starts working correctly i will update this sections. Reema
 load('./lib/isaac_rest/workflow_rest.rb')
 a = WorkflowRest::get_workflow(action: WorkflowRestActions::ACTION_ACTIONSFORPROCESSANDUSER ,  additional_req_params: {descriptionType: 'fsn', query: 'heart'} )
 b = WorkflowRest::get_workflow(action: WorkflowRestActions::ACTION_ADVANCEABLEPROCESSINFORMATION,uuid: 'cc0b2455-f546-48fa-90e8-e214cc8478d6')

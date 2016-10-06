@@ -50,7 +50,12 @@ Copyright Notice
 // require_tree ./util
 //= require_tree .
 
-// javascript polyfills to make sure code works in all browsers, regardless of current support level
+//** javascript plugin overrides
+
+// turn off the autofocus feature of Jquery UI dialogs
+//$.ui.dialog.prototype._focusTabbable = $.noop;
+
+//** javascript polyfills to make sure code works in all browsers, regardless of current support level
 
 // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/findIndex
 if (!Array.prototype.findIndex) {

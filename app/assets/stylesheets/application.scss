@@ -217,6 +217,16 @@ body > header, body > footer{
 .komet-form-field-error .glyphicon, .komet-form-field-error .fa, .komet-form-error .glyphicon, .komet-form-error .fa, .komet-form-warning .glyphicon, .komet-form-warning .fa  {
     margin-right: 5px;
 }
+.komet-confirmation-dialog .ui-dialog-titlebar{
+    background: #4f80d9;
+    color: white
+}
+.komet-confirmation-dialog div.ui-dialog-buttonpane{
+    padding: 0px 4px;
+}
+.komet-dialog-no-close-button .ui-dialog-titlebar-close{
+    display: none;
+}
 .komet-splitter{
     height: 100%;
     width: 100%;
@@ -234,7 +244,7 @@ body > header, body > footer{
     display: flex;
     height: 40px;
     align-items: stretch;
-    background-color: #f8f8f8;
+    background-color: rgb(228, 228, 228);
     font-size: 18px;
     font-weight: bold;
     color: black;
@@ -754,6 +764,7 @@ td.komet-concept-table-nested-indicator.komet-concept-table-nested-indicator-ope
     display: flex;
     width: 100%;
     flex-wrap: wrap;
+    margin-bottom: 5px;
 }
 .komet-concept-edit-row > div{
     display: flex;
@@ -779,6 +790,23 @@ td.komet-concept-table-nested-indicator.komet-concept-table-nested-indicator-ope
     height: 26px;
     font-size: small;
     padding: 2px 8px;
+}
+.komet-concept-edit .komet-concept-section-panel-details .komet-indent-block{
+    background-color: #e6e6e6;
+}
+.komet-concept-edit-row .komet-indent-block .komet-concept-section-title{
+    margin-bottom: 5px;
+}
+.komet-concept-edit-description-properties-row label{
+    width: 50px;
+    padding: 6px 0px;
+    height: 26px;
+    font-size: smaller;
+    background-color: rgba(66, 139, 202, 1);
+    color: white;
+}
+.komet-concept-edit-description-properties-sememe{
+    width: 250px;
 }
 .komet-concept-edit-association-target{
     width: 140px;
