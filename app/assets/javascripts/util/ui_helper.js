@@ -57,19 +57,18 @@ var UIHelper = (function () {
         return '<div class="' + classLevel + '"><div class="glyphicon glyphicon-alert"></div>' + message + '</div>';
     }
 
-    function generateConfirmationDialog(title, message, closeCallback, buttonText, positioningElementOrSelector) {
+    function generateConfirmationDialog(title, message, closeCallback, buttonText, positioningElementOrSelector, formID) {
 
         var dialogID = "komet_generated_confirm_dialog";
         var body = $("body");
+        var position = {my: "center", at: "center", of: body};
+        var buttonClicked = "cancel";
+        var buttonType = "button";
+        var dialogString = '<div id="' + dialogID + '"><div class="komet-confimation-dialog-message">' + message + '</div></div>';
 
         if (buttonText == undefined || buttonText == null) {
             buttonText = "Yes";
         }
-
-        var dialogString = '<div id="' + dialogID + '"><div class="komet-confimation-dialog-message">' + message + '</div></div>';
-        body.prepend(dialogString);
-
-        var position = {my: "center", at: "center", of: body};
 
         if (positioningElementOrSelector != undefined && positioningElementOrSelector != null) {
 
@@ -85,11 +84,18 @@ var UIHelper = (function () {
             position = {my: "right bottom", at: "left bottom", of: element};
         }
 
+        if (formID == undefined){
+            formID = null;
+        } else {
+            buttonType = "submit";
+        }
+
+        body.prepend(dialogString);
+
         var dialog = $("#" + dialogID);
-        var buttonClicked = "cancel";
 
         dialog.dialog({
-            close: function(e) { closeCallback(buttonClicked); dialog.remove();},
+            beforeClose: function(e) { closeCallback(buttonClicked); dialog.remove();},
             title: title,
             resizable: false,
             height: "auto",
@@ -113,7 +119,9 @@ var UIHelper = (function () {
 
                         buttonClicked = buttonText;
                         $(this).dialog("close");
-                    }
+                    }//,
+                    //type: buttonType,
+                    //form: formID
                 }
             }
         });
