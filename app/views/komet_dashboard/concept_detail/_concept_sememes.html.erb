@@ -1,62 +1,68 @@
 <div class="komet-concept-section-title komet-concept-sememes-title">Attached Sememes</div>
 
-  <div id="komet_concept_sememes_panel_<%= @viewer_id %>" class="komet-concept-section-panel komet-concept-sememes-panel">
+<div id="komet_concept_sememes_panel_<%= @viewer_id %>" class="komet-concept-section-panel komet-concept-sememes-panel">
 
     <!-- main header block - always visible -->
     <div class="komet-concept-section-panel-header">
 
-      <!-- expand/collapse icon - controls details drawer -->
-      <div class="glyphicon glyphicon-plus-sign" onclick="WindowManager.viewers[<%= @viewer_id %>].togglePanelDetails('komet_concept_sememes_panel_<%= @viewer_id %>', null, true)"></div>
+        <!-- expand/collapse icon - controls details drawer -->
+        <div class="glyphicon glyphicon-plus-sign" onclick="WindowManager.viewers[<%= @viewer_id %>].togglePanelDetails('komet_concept_sememes_panel_<%= @viewer_id %>', null, true)"></div>
 
-      <!-- description type, refset -->
-      <div>
-        View all sememes attached to this concept:
+        <!-- description type, refset -->
+        <div>
+            View all sememes attached to this concept:
 
-        <% if @concept_sememes[:rows].length == 0 %>
-           No Sememes
-        <% end %>
-      </div>
+            <% if @concept_sememes[:rows].length == 0 %>
+                No Sememes
+            <% end %>
+        </div>
 
     </div>
 
     <!-- details drawer - can be collapsed -->
     <div class="komet-concept-section-panel-details">
 
-      <% if @concept_sememes[:rows].length == 0 %>
-          <div class="komet-no-data-message">No Sememes.</div>
-      <% else %>
+        <% if @concept_sememes[:rows].length == 0 %>
+            <div class="komet-no-data-message">No Sememes.</div>
+        <% else %>
 
-          <table class="komet-concept-table">
-            <thead>
-              <tr>
+            <table class="komet-concept-table">
+                <thead>
+                    <tr>
 
-                <th></th>
-                <th title="Status Markers - for Active/Inactive and Current/Historical and Uncommitted">Status</th>
-                <th title="The assemblage concept that defines this sememe.">Assemblage</th>
+                        <th></th>
+                        <th title="Status Markers - for Active/Inactive and Current/Historical and Uncommitted">Status</th>
+                        <th title="The assemblage concept that defines this sememe.">Assemblage</th>
 
-                <!-- loop through and print out all the column headers -->
-                <% @concept_sememes[:columns].each do |column| %>
-                  <th title="<%= column[:description] %>"><%= column[:name] %></th>
-                <% end %>
+                        <!-- loop through and print out all the column headers -->
+                        <% @concept_sememes[:columns].each do |column|
 
-              </tr>
-            </thead>
+                            # if the column is never used in any row then don't show it
+                            if !column[:column_used]
+                                next
+                            end
+                        %>
+                            <th title="<%= column[:description] %>"><%= column[:name] %></th>
+                        <% end %>
 
-            <tbody>
+                    </tr>
+                </thead>
 
-              <!-- render the rows partial once for each row in the sememes array -->
-              <%= render(partial: 'komet_dashboard/concept_detail/concept_sememe_rows', collection: @concept_sememes[:rows], as: :row, locals: { depth: 1 }) %>
+                <tbody>
 
-            </tbody>
+                    <!-- render the rows partial once for each row in the sememes array -->
+                    <%= render(partial: 'komet_dashboard/concept_detail/concept_sememe_rows', collection: @concept_sememes[:rows], as: :row, locals: { depth: 1 }) %>
 
-          </table>
+                </tbody>
 
-      <% end %>
+            </table>
+
+        <% end %>
 
     </div>
 
-  </div>
+</div>
 
 <script>
-  
+
 </script>

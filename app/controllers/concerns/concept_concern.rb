@@ -104,16 +104,6 @@ module ConceptConcern
     # @param [String] uuid - The UUID to look up descriptions for
     # @param [Boolean] stated - Whether to display the stated (true) or inferred view of concepts
     # @return [object] a hash that contains an array of all the descriptions
-    def get_referenced_sememe_details(uuid, stated)
-
-    end
-
-
-    ##
-    # get_descriptions - takes a uuid and returns all of the description concepts attached to it.
-    # @param [String] uuid - The UUID to look up descriptions for
-    # @param [Boolean] stated - Whether to display the stated (true) or inferred view of concepts
-    # @return [object] a hash that contains an array of all the descriptions
     def get_descriptions(uuid, stated)
 
         coordinates_token = session[:coordinatestoken].token
@@ -319,7 +309,7 @@ module ConceptConcern
 
         display_data = process_attached_sememes(stated, sememes, [], {}, 1)
 
-        return {columns: display_data[:used_column_list], rows: display_data[:data_rows]}
+        return {columns: display_data[:used_column_list], rows: display_data[:data_rows], field_info: display_data[:used_column_hash]}
 
     end
 
@@ -352,6 +342,64 @@ module ConceptConcern
     end
 
     private
+
+    ##
+    # get_sememe_details - takes a uuid and returns all of the description concepts attached to it.
+    # @param [String] uuid - The UUID to look up descriptions for
+    # @param [Boolean] stated - Whether to display the stated (true) or inferred view of concepts
+    # @return [object] a RestSememeVersion object
+    def get_sememe_version_details(uuid, stated)
+
+        coordinates_token = session[:coordinatestoken].token
+        sememe = SememeRest.get_sememe(action: SememeRestActions::ACTION_VERSION, uuid_or_id: uuid, additional_req_params: {coordToken: coordinates_token, expand: 'chronology,nestedSememes', stated: stated})
+
+        if sememe.is_a? CommonRest::UnexpectedResponse
+            return nil
+        end
+
+        return sememe
+    end
+
+    ##
+    # get_sememe_definition_details - takes a uuid and returns all of the description concepts attached to it.
+    # @param [String] uuid - The UUID to look up descriptions for
+    # @return [object] a RestSememeVersion object
+    def get_sememe_definition_details(uuid)
+
+        coordinates_token = session[:coordinatestoken].token
+        additional_req_params = {coordToken: coordinates_token}
+        data_row = {}
+        field_info = {}
+
+        # do a sememe_sememeDefinition call to get the columns that sememe has.
+
+        sememe_definition = SememeRest.get_sememe(action: SememeRestActions::ACTION_SEMEME_DEFINITION, uuid_or_id: uuid, additional_req_params: additional_req_params)
+
+        # process dynamic sememe definition types
+        if sememe_definition.class == Gov::Vha::Isaac::Rest::Api1::Data::Sememe::RestDynamicSememeDefinition
+
+            assemblage_sequence = sememe_definition.assemblageConceptId
+
+            # use the assemblage sequence to do a concept_description call to get sememe name
+            sememe_name = ConceptRest.get_concept(action: ConceptRestActions::ACTION_DESCRIPTIONS, uuid: assemblage_sequence, additional_req_params: additional_req_params).first.text
+
+            # start loading the row of sememe data with everything besides the columns
+            data_row = {sememe_name: sememe_name, sememe_description: sememe_definition.sememeUsageDescription, uuid: uuid, id: assemblage_sequence, state: 'Active', level: 1, has_nested: false, columns: {}}
+
+            # loop through all of the sememe's columns
+            sememe_definition.columnInfo.each{ |row_column|
+
+                # If not added to our hash of columns then add it
+                if row_column && ! field_info[row_column.columnConceptSequence]
+
+                    field_info[row_column.columnConceptSequence] = {name: row_column.columnName, description: row_column.columnDescription, data_type: row_column.columnDataType.name, required: row_column.columnRequired, column_used: false}
+                    data_row[:columns][row_column.columnConceptSequence] = {}
+                end
+            }
+        end
+
+        return {data: data_row, field_info: field_info}
+    end
 
     ##
     # process_attached_sememes - recursively loops through an array of sememes and processes them for display.
@@ -390,42 +438,49 @@ module ConceptConcern
                 data_row = {sememe_name: sememe_info[:sememe_name], sememe_description: sememe_definition.sememeUsageDescription, uuid: uuid, id: assemblage_sequence, state: sememe.sememeVersion.state.name, level: level, has_nested: has_nested, columns: {}}
 
                 # loop through all of the sememe's data columns
-                sememe.dataColumns.each{|row_column|
+                sememe_definition.columnInfo.each{ |row_column|
 
-                    # make sure the column is not empty
-                    if row_column != nil && sememe_definition.columnInfo[row_column.columnNumber] != nil
+                    # search to see if we have already added this column to our list of used columns.
+                    list_index = used_column_list.find_index {|list_column|
+                        list_column[:id] == row_column.columnConceptSequence
+                    }
 
-                        sememe_column = sememe_definition.columnInfo[row_column.columnNumber]
+                    # If not added to our list of used columns add it to the end of the list
+                    if row_column && !list_index
 
-                        # search to see if we have already added this column to our list of used columns.
-                        is_column_used = used_column_list.find_index {|list_column|
-                            list_column[:id] == sememe_column.columnConceptSequence
-                        }
+                        used_column_list << {id: row_column.columnConceptSequence, name: row_column.columnName, description: row_column.columnDescription, data_type: row_column.columnDataType.name, required: row_column.columnRequired, column_used: false}
+                        list_index = (used_column_list.length) - 1
+                        used_column_hash[row_column.columnConceptSequence] = {name: row_column.columnName, description: row_column.columnDescription, data_type: row_column.columnDataType.name, required: row_column.columnRequired, column_used: false}
+                    end
 
-                        # If not added to our list of used columns add it to the end of the list
-                        if sememe_column && !is_column_used
-                            used_column_list << {id: sememe_column.columnConceptSequence, name: sememe_column.columnName, description: sememe_column.columnDescription, data_type: sememe_column.columnDataType.name}
-                            used_column_hash[sememe_column.columnConceptSequence] = {name: sememe_column.columnName, description: sememe_column.columnDescription, data_type: sememe_column.columnDataType.name}
-                        end
+                    data_column = sememe.dataColumns[row_column.columnOrder]
+                    column_data = {}
 
-                        data = row_column.data
+                    # if the column data is not empty process the data
+                    if data_column != nil
+
+                        # mark in our column lists that this column has data in at least one row
+                        used_column_list[list_index][:column_used] = true
+                        used_column_hash[row_column.columnConceptSequence][:column_used] = true
+
+                        data = data_column.data
                         converted_value = ''
 
                         # if the column is one of a specific set, make sure it has string data and see if it contains IDs. If it does look up their description
-                        if (['column name', 'target'].include?(sememe_column.columnName)) && (row_column.data.kind_of? String) && find_ids(row_column.data)
+                        if (['column name', 'target'].include?(row_column.columnName)) && (data_column.data.kind_of? String) && find_ids(data_column.data)
 
                             # the description should be included, but if not look it up
-                            if row_column.respond_to?('conceptDescription')
-                                converted_value = row_column.conceptDescription
+                            if data_column.respond_to?('conceptDescription')
+                                converted_value = data_column.conceptDescription
                             else
-                                converted_value = ConceptRest.get_concept(action: ConceptRestActions::ACTION_DESCRIPTIONS, uuid: row_column.data, additional_req_params: additional_req_params).first.text
+                                converted_value = ConceptRest.get_concept(action: ConceptRestActions::ACTION_DESCRIPTIONS, uuid: data_column.data, additional_req_params: additional_req_params).first.text
                             end
 
                             # if the row is an array get the text values into a more readable form
-                        elsif row_column.data.kind_of? Array
+                        elsif data_column.data.kind_of? Array
 
                             # loop through each item in the array and generate a comma separated list of values
-                            row_column.data.each_with_index { |item, index|
+                            data_column.data.each_with_index { |item, index|
 
                                 separator = ', '
 
@@ -434,16 +489,17 @@ module ConceptConcern
                                     separator = ''
                                 end
 
-                                data += separator + item['data'].to_s
+                                data += separator + item.data.to_s
                             }
 
                         end
 
-                        # add the sememe column id and data to the sememe data row
-                        data_row[:columns][sememe_column.columnConceptSequence] = {data: data, display: converted_value}
-
+                        # store the data for the column
+                        column_data = {data: data, display: converted_value}
                     end
 
+                    # add the sememe column id and data to the sememe data row
+                    data_row[:columns][row_column.columnConceptSequence] = column_data
                 }
 
             end

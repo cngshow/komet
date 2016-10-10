@@ -686,6 +686,20 @@ class KometDashboardController < ApplicationController
 
     end
 
+    def get_new_property_info
+
+        sememe_id = params[:sememe]
+
+        sememe = get_sememe_definition_details(sememe_id)
+
+        if sememe[:data].empty?
+            render json: {} and return
+        end
+
+        render json: sememe
+
+    end
+
     def edit_concept
 
     end
