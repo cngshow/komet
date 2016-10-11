@@ -139,18 +139,18 @@ class ApplicationController < ActionController::Base
           $log.error("Error message is #{ex.message}")
         end
       end
+
+      # clear out the user session and reset it based on the refreshing of the roles
+      clear_user_session
+      user_session(UserSession::LOGIN, user_login)
+      user_session(UserSession::PWD, user_pwd) if user_pwd
+
       if user_info
         user_session(UserSession::LAST_ROLE_CHECK, Time.now)
-        user_session(UserSession::LOGIN, user_login)
         user_session(UserSession::ROLES, user_info['roles'])
         user_session(UserSession::TOKEN, user_info['token'])
-        user_session(UserSession::PWD, ssoi ? nil : user_pwd)
-      else
-        user_session(UserSession::LOGIN, user_login)
-        user_session(UserSession::ROLES, nil)
-        user_session(UserSession::TOKEN, nil)
-        user_session(UserSession::PWD, ssoi? ? nil : user_pwd)
-        user_session(UserSession::LAST_ROLE_CHECK, nil)
+        # user_session(UserSession::EMAIL, user_info['email'])
+        # user_session(UserSession::USER_NAME, user_info['user_name'])
       end
     end
     $log.debug("The roles for user #{user_session(UserSession::LOGIN)} are #{user_session(UserSession::ROLES)}")

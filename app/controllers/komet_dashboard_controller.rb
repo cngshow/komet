@@ -182,10 +182,10 @@ class KometDashboardController < ApplicationController
         end
 
         if !boolean(parent_search) && node[:child_count] != 0
-            node[:badge] = "&nbsp;&nbsp;<span class=\"badge badge-success\" title=\"kma\">#{node[:child_count]}</span>"
+            node[:badge] = "&nbsp;&nbsp;<span class=\"badge badge-success\" title=\"#{node[:child_count]} children\">#{node[:child_count]}</span>"
 
         elsif boolean(parent_search) && node[:parent_count] != 0
-            node[:badge] = "&nbsp;&nbsp;<span class=\"badge badge-success\" title=\"kma\">#{node[:parent_count]}</span>"
+            node[:badge] = "&nbsp;&nbsp;<span class=\"badge badge-success\" title=\"#{node[:parent_count]} parents\">#{node[:parent_count]}</span>"
         else
             node[:badge] = ''
         end
@@ -198,7 +198,7 @@ class KometDashboardController < ApplicationController
             has_many_parents = true
 
             if first_level
-                node[:badge] = "&nbsp;&nbsp;<span class=\"badge badge-success\" title=\"kma\">#{node[:parent_count]}</span>"
+                node[:badge] = "&nbsp;&nbsp;<span class=\"badge badge-success\" title=\"#{node[:parent_count]} parents\">#{node[:parent_count]}</span>"
             end
 
             concept.parents.each do |parent|
@@ -218,7 +218,7 @@ class KometDashboardController < ApplicationController
                 node[:terminology_type] = 'vhat'
 
                 if node[:parent_count] != 0
-                    parent_node[:badge] = "&nbsp;&nbsp;<span class=\"badge badge-success\" title=\"kma\">#{parent_node[:parent_count]}</span>"
+                    parent_node[:badge] = "&nbsp;&nbsp;<span class=\"badge badge-success\" title=\"#{parent_node[:parent_count]} parents\">#{parent_node[:parent_count]}</span>"
                 end
 
                 if parent_node[:defined].nil?
