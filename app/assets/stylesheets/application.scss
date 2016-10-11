@@ -608,6 +608,9 @@ td.komet-concept-table-nested-indicator.komet-concept-table-nested-indicator-ope
 .komet-concept-description-panel{
     border-left: 4px solid #ff9100;
 }
+.komet-concept-description-panel ~ .komet-concept-description-panel{
+    margin-top: 10px;
+}
 .komet-concept-description-title{
     color: #ff9100;
 }

@@ -1,10 +1,6 @@
 <div class="komet-concept-section-title komet-concept-description-title">DESCRIPTIONS</div>
 
-<% @descriptions.each_with_index do |description, concept_index| %>
-
-    <% if concept_index > 0 %>
-        <div class="concept-section-panel-spacer"></div>
-    <% end %>
+<% @descriptions.each do |description| %>
 
     <div id="komet_concept_description_panel_<%= @viewer_id %>_<%= description[:uuid] %>" class="komet-concept-section-panel komet-concept-description-panel">
 

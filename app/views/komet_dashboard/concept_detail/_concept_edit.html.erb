@@ -33,7 +33,7 @@
                 <button type="button" class="btn btn-primary ui-state-disabled" id="komet_concept_save_<%= @viewer_id %>" onclick="WindowManager.viewers[<%= @viewer_id %>].showSaveSection('confirm')">Save</button>
             </div>
 
-            <div id="komet_concept_confirm_section_<%= @viewer_id %>" class="komet-form-warning hide">
+            <div id="komet_concept_confirm_section_<%= @viewer_id %>" class="komet-form-warning">
                 Are you sure you want to commit changes?
                 <button type="button" class="btn btn-default" onclick="WindowManager.viewers[<%= @viewer_id %>].showSaveSection('save')">No</button>
                 <button class="btn btn-primary">Yes</button>
@@ -71,7 +71,7 @@
                 DESCRIPTIONS
                 <div class="komet-flex-right">
                     Add Description
-                    <div class="glyphicon glyphicon-plus-sign" onclick=""></div>
+                    <div class="glyphicon glyphicon-plus-sign" onclick="WindowManager.viewers[<%= @viewer_id %>].addDescriptionRow()"></div>
                 </div>
             </div>
 

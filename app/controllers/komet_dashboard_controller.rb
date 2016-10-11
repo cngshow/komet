@@ -702,6 +702,10 @@ class KometDashboardController < ApplicationController
 
     def edit_concept
 
+        params
+
+        render json: {concept_id: nil}
+
     end
 
     def clone_concept
