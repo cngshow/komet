@@ -19,7 +19,7 @@
         <div>
             <% if @attributes[2][:value] == 'Primitive' %>
                 <div class="komet-tree-node-icon komet-tree-node-primitive" title="<%= @attributes[2][:value] %>"></div>
-            <% elsif @attributes[2][:value] == 'Defined' %>
+            <% elsif @attributes[2][:value] == 'Fully Defined' || @attributes[2][:value] == 'Defined' %>
                 <div class="komet-tree-node-icon komet-tree-node-defined" title="<%= @attributes[2][:value] %>"></div>
             <% end %>
         </div>

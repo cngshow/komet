@@ -136,7 +136,7 @@ class KometDashboardController < ApplicationController
         node = {}
         node[:id] = concept.conChronology.identifiers.uuids.first
         node[:text] = concept.conChronology.description
-        node[:has_children] = !concept.children.nil?
+        node[:has_children] = !concept.children.nil? && concept.children.length > 0
         node[:defined] = concept.isConceptDefined
         node[:state] = concept.conVersion.state.name
         node[:author] = concept.conVersion.authorSequence
@@ -654,7 +654,7 @@ class KometDashboardController < ApplicationController
         parent_concept_sequence = IdAPIsRest.get_id(uuid_or_id: parent_concept_id, action: IdAPIsRestActions::ACTION_TRANSLATE, additional_req_params: {inputType: 'uuid', outputType: 'conceptSequence'}).value
 
         body_params = {
-            fsn: preferred_term + ' (' + parent_concept_text + ')',
+            fsn: preferred_term, # + ' (' + parent_concept_text + ')',
             #preferredTerm: preferred_term,
             parentConceptIds: [parent_concept_sequence.to_i],
             descriptionLanguageConceptId: 8
@@ -683,6 +683,20 @@ class KometDashboardController < ApplicationController
         new_concept_id = IdAPIsRest.get_id(uuid_or_id: new_concept_id.value, action: IdAPIsRestActions::ACTION_TRANSLATE, additional_req_params: {inputType: 'conceptSequence', outputType: 'uuid'}).value
 
         render json: {concept_id: new_concept_id}
+
+    end
+
+    def get_new_property_info
+
+        sememe_id = params[:sememe]
+
+        sememe = get_sememe_definition_details(sememe_id)
+
+        if sememe[:data].empty?
+            render json: {} and return
+        end
+
+        render json: sememe
 
     end
 

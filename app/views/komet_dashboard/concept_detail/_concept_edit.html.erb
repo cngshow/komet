@@ -18,6 +18,15 @@
 
         <div class="panel-body" id="komet_concept_editor_section_<%= @viewer_id %>">
 
+            <div class="komet-concept-body-tools">
+
+                <div class="komet-flex-right">
+                    <label for="komet_concept_editor_properties_<%= @viewer_id %>">Properties</label>
+                    <input type="checkbox" id="komet_concept_editor_properties_<%= @viewer_id %>" checked onclick="WindowManager.viewers[<%= @viewer_id %>].toggleProperties()">
+                </div>
+
+            </div>
+
             <div id="komet_concept_save_section_<%= @viewer_id %>">
                 All fields required except where noted as Optional.
                 <button type="button" class="btn btn-default" onclick="WindowManager.viewers[<%= @viewer_id %>].cancelAction('<%= @viewer_previous_content_type %>', '<%= @viewer_previous_content_id %>')">Cancel</button>
@@ -31,8 +40,7 @@
             </div>
 
             <div id="mainblockattributes">
-                <div class="komet-concept-section-title komet-concept-attributes-title">ATTRIBUTES
-                    <i class="fa fa-pencil-square" style="color:green" aria-hidden="true"></i></div>
+                <div class="komet-concept-section-title komet-concept-attributes-title">ATTRIBUTES</div>
                 <div id="komet_concept_attributes_panel_<%= @viewer_id %>" class="komet-concept-section-panel komet-concept-attributes-panel">
 
                     <!-- main header block - always visible -->
@@ -126,6 +134,10 @@
         if (WindowManager.getLinkedViewerID() == "<%= @viewer_id %>") {
             WindowManager.viewers[<%= @viewer_id %>].swapLinkIcon(true);
         }
+    }
+
+    if (WindowManager.getLinkedViewerID() == "<%= @viewer_id %>" && TaxonomyModule.tree.selectedConceptID != WindowManager.viewers[<%= @viewer_id %>].currentConceptID) {
+        WindowManager.viewers[<%= @viewer_id %>].showInTaxonomyTree();
     }
 
     $(document).ready(function () {

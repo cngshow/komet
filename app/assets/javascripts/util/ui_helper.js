@@ -57,7 +57,77 @@ var UIHelper = (function () {
         return '<div class="' + classLevel + '"><div class="glyphicon glyphicon-alert"></div>' + message + '</div>';
     }
 
-    function toggleChangeHighlights(containerElementOrSelector, showChanges){
+    function generateConfirmationDialog(title, message, closeCallback, buttonText, positioningElementOrSelector, formID) {
+
+        var dialogID = "komet_generated_confirm_dialog";
+        var body = $("body");
+        var position = {my: "center", at: "center", of: body};
+        var buttonClicked = "cancel";
+        var buttonType = "button";
+        var dialogString = '<div id="' + dialogID + '"><div class="komet-confimation-dialog-message">' + message + '</div></div>';
+
+        if (buttonText == undefined || buttonText == null) {
+            buttonText = "Yes";
+        }
+
+        if (positioningElementOrSelector != undefined && positioningElementOrSelector != null) {
+
+            var element;
+
+            // If the type of the second parameter is a string, then use it as a jquery selector, otherwise use as is
+            if (typeof positioningElementOrSelector === "string") {
+                element = $(positioningElementOrSelector);
+            } else {
+                element = positioningElementOrSelector;
+            }
+
+            position = {my: "right bottom", at: "left bottom", of: element};
+        }
+
+        if (formID == undefined){
+            formID = null;
+        } else {
+            buttonType = "submit";
+        }
+
+        body.prepend(dialogString);
+
+        var dialog = $("#" + dialogID);
+
+        dialog.dialog({
+            beforeClose: function(e) { closeCallback(buttonClicked); dialog.remove();},
+            title: title,
+            resizable: false,
+            height: "auto",
+            width: 400,
+            modal: true,
+            position: position,
+            dialogClass: "komet-confirmation-dialog komet-dialog-no-close-button",
+            buttons:{
+                Cancel: {
+                    "class": "btn btn-default",
+                    text: "Cancel",
+                    click: function () {
+                        $(this).dialog("close");
+                    }
+                },
+                OK: {
+                    "autofocus": "true",
+                    text: buttonText,
+                    "class": "btn btn-primary",
+                    click: function () {
+
+                        buttonClicked = buttonText;
+                        $(this).dialog("close");
+                    }//,
+                    //type: buttonType,
+                    //form: formID
+                }
+            }
+        });
+    }
+
+    function toggleChangeHighlights(containerElementOrSelector, showChanges) {
 
         var element;
 
@@ -837,6 +907,7 @@ var UIHelper = (function () {
         isTabActive: isTabActive,
         initializeContextMenus: initializeContextMenus,
         generateFormErrorMessage: generateFormErrorMessage,
+        generateConfirmationDialog: generateConfirmationDialog,
         toggleChangeHighlights: toggleChangeHighlights,
         toggleFieldAvailability: toggleFieldAvailability,
         hasFormChanged: hasFormChanged,
