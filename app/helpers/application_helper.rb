@@ -18,6 +18,7 @@ Copyright Notice
 =end
 
 require './lib/isaac_rest/concept_rest'
+require './lib/isaac_rest/coordinate_rest'
 require './lib/rails_common/roles/user_session'
 
 module ApplicationHelper
@@ -39,6 +40,10 @@ module ApplicationHelper
         else
             return version.first.text
         end
+    end
+
+    def get_edit_token
+        CoordinateRest.get_coordinate(action: CoordinateRestActions::ACTION_EDIT_TOKEN, additional_req_params: {ssoToken: get_user_token, CommonRest::CacheRequest => false}).token
     end
 
     def komet_user

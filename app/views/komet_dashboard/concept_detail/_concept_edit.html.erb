@@ -3,6 +3,8 @@
 
     <%= form_tag(taxonomy_edit_concept_path, method: 'post', id: "komet_concept_edit_form_#{@viewer_id}") do %>
 
+        <input type="hidden" name="concept_id" value="<%= @concept_id %>">
+
         <div class="panel-heading">
             <span class="panel-title komet-section-title">
               <span id="komet_concept_panel_tree_link_<%= @viewer_id %>" class="fa fa-chain-broken" onclick="WindowManager.toggleViewerLinkage('<%= @viewer_id %>', WindowManager.getLinkedViewerID() != '<%= @viewer_id %>');" title="Viewer linked to Taxonomy Tree. Click to unlink."></span>
@@ -80,40 +82,6 @@
             <div id="komet_concept_associations_panel_<%= @viewer_id %>" class="komet-concept-section-panel komet-concept-associations-panel">
                 <div class="komet-concept-section-panel-details komet-changeable">
 
-                    <div id="komet_concept_edit_association_row_<%= @viewer_id %>" class="komet-concept-edit-row">
-
-                        <div>
-                            <select id="komet_concept_edit_association_type_0_<%= @viewer_id %>" name="associations[0][type]" class="form-control komet-concept-edit-association-type">
-                                <option>Is a attribute</option>
-                                <option>After</option>
-                            </select>
-                        </div>
-
-                        <div>
-                            <autosuggest
-                                id-base="komet_concept_edit_association_target_0"
-                                id-postfix="_<%= @viewer_id %>"
-                                name="associations[0][target"
-                                nameFormat="array"
-                                value=""
-                                display-value=""
-                                type-value=""
-                                classes="komet-concept-edit-association-target">
-                            </autosuggest>
-                        </div>
-
-                        <div>
-                            <select id="komet_concept_edit_association_state_0_<%= @viewer_id %>" name="associations[0][state]" class="form-control komet-concept-edit-association-state">
-                                <option>Active</option>
-                                <option>Inactive</option>
-                            </select>
-                        </div>
-
-                        <div class="komet-concept-edit-row-tools">
-                            <div class="glyphicon glyphicon-remove" onclick=""></div>
-                        </div>
-
-                    </div>
 
                 </div>
             </div>
@@ -147,10 +115,11 @@
             dialect: <%= raw @dialect_options.to_json %>,
             case: <%= raw @case_options.to_json %>,
             acceptability: <%= raw @acceptability_options.to_json %>,
-            descriptionType: <%= raw @description_type_options.to_json %>
+            descriptionType: <%= raw @description_type_options.to_json %>,
+            associationType: <%= raw @association_type_options.to_json %>
         };
 
-        WindowManager.viewers[<%= @viewer_id %>].editConcept(<%= raw @attributes.to_json %>, <%= raw @descriptions.to_json %>, selectOptions);
+        WindowManager.viewers[<%= @viewer_id %>].editConcept(<%= raw @attributes.to_json %>, <%= raw @descriptions.to_json %>, <%= raw @associations.to_json %>, selectOptions);
         UIHelper.initializeContextMenus();
     });
 </script>

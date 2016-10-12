@@ -19,66 +19,67 @@ Copyright Notice
 require './lib/isaac_rest/common_rest'
 
 module CoordinateRestActions
-  ACTION_COORDINATES_TOKEN = :coordinates_token
-  ACTION_COORDINATES = :coordinates
-  ACTION_LANGUAGE_COORDINATE = :language_coordinate
-  ACTION_LOGIC_COORDINATE = :logic_coordinate
-  ACTION_STAMP_COORDINATE = :stamp_coordinate
-  ACTION_TAXONOMY_COORDINATE = :taxonomy_coordinate
-  ACTION_EDIT_TOKEN = :editToken
+    ACTION_COORDINATES_TOKEN = :coordinates_token
+    ACTION_COORDINATES = :coordinates
+    ACTION_LANGUAGE_COORDINATE = :language_coordinate
+    ACTION_LOGIC_COORDINATE = :logic_coordinate
+    ACTION_STAMP_COORDINATE = :stamp_coordinate
+    ACTION_TAXONOMY_COORDINATE = :taxonomy_coordinate
+    ACTION_EDIT_TOKEN = :edit_token
 end
 
 module CoordinateRest
-  include CoordinateRestActions
-  include CommonActionSyms
-  extend self
+    include CoordinateRestActions
+    include CommonActionSyms
+    extend self
 
-  #always name the root_path ROOT_PATH!
-  ROOT_PATH = ISAAC_ROOT + 'rest/1/coordinate/'
-  COORDINATES_TOKEN_PATH = ROOT_PATH + 'coordinatesToken'
-  COORDINATES_PATH = ROOT_PATH + 'coordinates'
-  LANGUAGE_COORDINATE_PATH = ROOT_PATH + 'languageCoordinate'
-  LOGIC_COORDINATE_PATH = ROOT_PATH + 'logicCoordinate'
-  STAMP_COORDINATE_PATH = ROOT_PATH + 'stampCoordinate'
-  TAXONOMY_COORDINATE_PATH = ROOT_PATH + 'taxonomyCoordinate'
-  EDIT_TOKEN_PATH = ROOT_PATH + 'editToken'
-  ACTION_CONSTANTS = {
-      ACTION_COORDINATES_TOKEN => {PATH_SYM => COORDINATES_TOKEN_PATH, STARTING_PARAMS_SYM => {}, CLAZZ_SYM => Gov::Vha::Isaac::Rest::Api1::Data::RestCoordinatesToken},
-      ACTION_COORDINATES => {PATH_SYM => COORDINATES_PATH, STARTING_PARAMS_SYM => {}, CLAZZ_SYM => Gov::Vha::Isaac::Rest::Api1::Data::Coordinate::RestCoordinates},
-      ACTION_LANGUAGE_COORDINATE => {PATH_SYM => LANGUAGE_COORDINATE_PATH, STARTING_PARAMS_SYM => {}, CLAZZ_SYM => Gov::Vha::Isaac::Rest::Api1::Data::Coordinate::RestLanguageCoordinate},
-      ACTION_LOGIC_COORDINATE => {PATH_SYM => LOGIC_COORDINATE_PATH, STARTING_PARAMS_SYM => {}, CLAZZ_SYM => Gov::Vha::Isaac::Rest::Api1::Data::Coordinate::RestLogicCoordinate},
-      ACTION_STAMP_COORDINATE => {PATH_SYM => STAMP_COORDINATE_PATH, STARTING_PARAMS_SYM => {}, CLAZZ_SYM => Gov::Vha::Isaac::Rest::Api1::Data::Coordinate::RestStampCoordinate},
-      ACTION_TAXONOMY_COORDINATE => {PATH_SYM => TAXONOMY_COORDINATE_PATH, STARTING_PARAMS_SYM => {}, CLAZZ_SYM => Gov::Vha::Isaac::Rest::Api1::Data::Coordinate::RestTaxonomyCoordinate},
-      ACTION_EDIT_TOKEN => {PATH_SYM => EDIT_TOKEN_PATH, STARTING_PARAMS_SYM => {}, CLAZZ_SYM => Gov::Vha::Isaac::Rest::Api1::Data::RestEditToken},
-  }
+    #always name the root_path ROOT_PATH!
+    ROOT_PATH = ISAAC_ROOT + 'rest/1/coordinate/'
+    PATH_COORDINATES_TOKEN = ROOT_PATH + 'coordinatesToken'
+    PATH_COORDINATES = ROOT_PATH + 'coordinates'
+    PATH_LANGUAGE_COORDINATE = ROOT_PATH + 'languageCoordinate'
+    PATH_LOGIC_COORDINATE = ROOT_PATH + 'logicCoordinate'
+    PATH_STAMP_COORDINATE = ROOT_PATH + 'stampCoordinate'
+    PATH_TAXONOMY_COORDINATE = ROOT_PATH + 'taxonomyCoordinate'
+    PATH_EDIT_TOKEN = ROOT_PATH + 'editToken'
 
-  class << self
-    #attr_accessor :instance_data
-  end
+    ACTION_CONSTANTS = {
+        ACTION_COORDINATES_TOKEN => {PATH_SYM => PATH_COORDINATES_TOKEN, STARTING_PARAMS_SYM => {}, CLAZZ_SYM => Gov::Vha::Isaac::Rest::Api1::Data::RestCoordinatesToken},
+        ACTION_COORDINATES => {PATH_SYM => PATH_COORDINATES, STARTING_PARAMS_SYM => {}, CLAZZ_SYM => Gov::Vha::Isaac::Rest::Api1::Data::Coordinate::RestCoordinates},
+        ACTION_LANGUAGE_COORDINATE => {PATH_SYM => PATH_LANGUAGE_COORDINATE, STARTING_PARAMS_SYM => {}, CLAZZ_SYM => Gov::Vha::Isaac::Rest::Api1::Data::Coordinate::RestLanguageCoordinate},
+        ACTION_LOGIC_COORDINATE => {PATH_SYM => PATH_LOGIC_COORDINATE, STARTING_PARAMS_SYM => {}, CLAZZ_SYM => Gov::Vha::Isaac::Rest::Api1::Data::Coordinate::RestLogicCoordinate},
+        ACTION_STAMP_COORDINATE => {PATH_SYM => PATH_STAMP_COORDINATE, STARTING_PARAMS_SYM => {}, CLAZZ_SYM => Gov::Vha::Isaac::Rest::Api1::Data::Coordinate::RestStampCoordinate},
+        ACTION_TAXONOMY_COORDINATE => {PATH_SYM => PATH_TAXONOMY_COORDINATE, STARTING_PARAMS_SYM => {}, CLAZZ_SYM => Gov::Vha::Isaac::Rest::Api1::Data::Coordinate::RestTaxonomyCoordinate},
+        ACTION_EDIT_TOKEN => {PATH_SYM => PATH_EDIT_TOKEN, STARTING_PARAMS_SYM => {}, CLAZZ_SYM => Gov::Vha::Isaac::Rest::Api1::Data::RestEditToken}
+    }
 
-  class Coordinate < CommonRestBase::RestBase
-    include CommonRest
-    register_rest(rest_module: CoordinateRest, rest_actions: CoordinateRestActions)
-
-    attr_accessor :uuid
-
-    def initialize(params:, action:, action_constants:)
-      super(params: params, action: action, action_constants: action_constants)
+    class << self
+        #attr_accessor :instance_data
     end
 
-    def rest_call
-      json = rest_fetch(url_string: get_url, params: get_params, raw_url: get_url)
-      enunciate_json(json)
+    class Coordinate < CommonRestBase::RestBase
+        include CommonRest
+        register_rest(rest_module: CoordinateRest, rest_actions: CoordinateRestActions)
+
+        attr_accessor :uuid
+
+        def initialize(params:, action:, action_constants:)
+            super(params: params, action: action, action_constants: action_constants)
+        end
+
+        def rest_call
+            json = rest_fetch(url_string: get_url, params: get_params, raw_url: get_url)
+            enunciate_json(json)
+        end
     end
-  end
 
-  def main_fetch(**hash)
-    get_coordinate(action: hash[:action], additional_req_params: hash[:params])
-  end
+    def main_fetch(**hash)
+        get_coordinate(action: hash[:action], additional_req_params: hash[:params])
+    end
 
-  def get_coordinate(action:, additional_req_params: nil)
-    Coordinate.new(action: action,  params: additional_req_params, action_constants: ACTION_CONSTANTS).rest_call
-  end
+    def get_coordinate(action:, additional_req_params: nil)
+        Coordinate.new(action: action,  params: additional_req_params, action_constants: ACTION_CONSTANTS).rest_call
+    end
 end
 
 =begin
@@ -90,7 +91,4 @@ d = CoordinateRest::get_coordinate(action: CoordinateRestActions::ACTION_LOGIC_C
 e = CoordinateRest::get_coordinate(action: CoordinateRestActions::ACTION_STAMP_COORDINATE)
 f = CoordinateRest::get_coordinate(action: CoordinateRestActions::ACTION_TAXONOMY_COORDINATE)
 g = CoordinateRest::get_coordinate(action: CoordinateRestActions::ACTION_EDIT_TOKEN)
-
-
-
 =end

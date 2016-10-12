@@ -38,6 +38,7 @@ unless $rake
       $VERBOSE = v
       ###############################################
       ######### COMMON REST IMPORTS GO HERE!!!!!!
+      require './lib/isaac_rest/association_rest'
       require './lib/isaac_rest/logic_graph_rest'
       require './lib/isaac_rest/concept_rest'
       require './lib/isaac_rest/id_apis_rest'

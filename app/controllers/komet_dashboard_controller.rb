@@ -428,6 +428,24 @@ class KometDashboardController < ApplicationController
     end
 
     ##
+    # get_concept_associations - RESTful route for populating concept association tab using an http :GET
+    # The current tree node representing the concept is identified in the request params with the key :concept_id
+    # @return none - setting the @associations variable
+    def get_concept_associations(concept_id = nil, stated = nil)
+
+        if concept_id == nil && params[:concept_id]
+            concept_id = params[:concept_id].to_i
+        end
+
+        if stated == nil && params[:stated]
+            stated = params[:stated]
+        end
+
+        @associations =  get_associations(concept_id, stated)
+
+    end
+
+    ##
     # get_concept_sememes - RESTful route for populating concept sememes section using an http :GET
     # The current tree node representing the concept is identified in the request params with the key :concept_id
     # @return none - setting the @concept_sememes variable
@@ -613,35 +631,6 @@ class KometDashboardController < ApplicationController
 
     end
 
-    def get_concept_edit_info
-
-        @concept_id = params[:concept_id]
-        @viewer_id =  params[:viewer_id]
-        @viewer_action = params[:viewer_action]
-        @viewer_previous_content_id = params[:viewer_previous_content_id]
-        @viewer_previous_content_type = params[:viewer_previous_content_type]
-
-        if @viewer_id == nil || @viewer_id == '' || @viewer_id == 'new'
-            @viewer_id = get_next_id
-        end
-
-        get_concept_attributes(@concept_id, true)
-        get_concept_descriptions(@concept_id, true)
-
-        @language_options = get_concept_children(concept_id: $isaac_metadata_auxiliary['LANGUAGE']['uuids'].first[:uuid], returnJSON: false, removeSemanticTag: true)
-        @dialect_options = get_concept_children(concept_id: $isaac_metadata_auxiliary['DIALECT_ASSEMBLAGE']['uuids'].first[:uuid], returnJSON: false, removeSemanticTag: true)
-        @case_options = get_concept_children(concept_id: $isaac_metadata_auxiliary['DESCRIPTION_CASE_SIGNIFICANCE']['uuids'].first[:uuid], returnJSON: false, removeSemanticTag: true)
-        @acceptability_options = [
-            {concept_id: $isaac_metadata_auxiliary['ACCEPTABLE']['uuids'].first[:uuid], text: $isaac_metadata_auxiliary['ACCEPTABLE']['fsn']},
-            {concept_id: $isaac_metadata_auxiliary['PREFERRED']['uuids'].first[:uuid], text: $isaac_metadata_auxiliary['PREFERRED']['fsn']}
-        ]
-        @description_type_options = get_concept_children(concept_id: '09c43aa9-eaed-5217-bc5f-23cacca4df38', returnJSON: false, removeSemanticTag: true)
-
-
-        render partial: params[:partial]
-
-    end
-
     def create_concept
 
         description_type = params[:komet_create_concept_description_type]
@@ -667,7 +656,7 @@ class KometDashboardController < ApplicationController
             body_params[:descriptionExtendedTypeConceptId] = description_type.to_i
         end
 
-        new_concept_id = ConceptRest::get_concept(action: ConceptRestActions::ACTION_CREATE, body_params: body_params )
+        new_concept_id = ConceptRest::get_concept(action: ConceptRestActions::ACTION_CREATE, additional_req_params: {editToken: get_edit_token}, body_params: body_params )
 
         if new_concept_id.is_a? CommonRest::UnexpectedResponse
             render json: {concept_id: nil} and return
@@ -686,9 +675,39 @@ class KometDashboardController < ApplicationController
 
     end
 
+    def get_concept_edit_info
+
+        @concept_id = params[:concept_id]
+        @viewer_id =  params[:viewer_id]
+        @viewer_action = params[:viewer_action]
+        @viewer_previous_content_id = params[:viewer_previous_content_id]
+        @viewer_previous_content_type = params[:viewer_previous_content_type]
+
+        if @viewer_id == nil || @viewer_id == '' || @viewer_id == 'new'
+            @viewer_id = get_next_id
+        end
+
+        get_concept_attributes(@concept_id, true)
+        get_concept_descriptions(@concept_id, true)
+        get_concept_associations(@concept_id, true)
+
+        @language_options = get_concept_children(concept_id: $isaac_metadata_auxiliary['LANGUAGE']['uuids'].first[:uuid], returnJSON: false, removeSemanticTag: true)
+        @dialect_options = get_concept_children(concept_id: $isaac_metadata_auxiliary['DIALECT_ASSEMBLAGE']['uuids'].first[:uuid], returnJSON: false, removeSemanticTag: true)
+        @case_options = get_concept_children(concept_id: $isaac_metadata_auxiliary['DESCRIPTION_CASE_SIGNIFICANCE']['uuids'].first[:uuid], returnJSON: false, removeSemanticTag: true)
+        @acceptability_options = get_concept_children(concept_id: $isaac_metadata_auxiliary['DESCRIPTION_ACCEPTABILITY']['uuids'].first[:uuid], returnJSON: false, removeSemanticTag: true)
+        @description_type_options = get_concept_children(concept_id: $isaac_metadata_auxiliary['DESCRIPTION_TYPE']['uuids'].first[:uuid], returnJSON: false, removeSemanticTag: true)
+        @description_extended_type_options = get_concept_children(concept_id: '09c43aa9-eaed-5217-bc5f-23cacca4df38', returnJSON: false, removeSemanticTag: true)
+        @association_type_options = get_association_types
+
+        render partial: params[:partial]
+
+    end
+
     def get_new_property_info
 
         sememe_id = params[:sememe]
+        sememe_text = params[:sememe_display]
+        sememe_type = params[:sememe_type]
 
         sememe = get_sememe_definition_details(sememe_id)
 
@@ -696,13 +715,67 @@ class KometDashboardController < ApplicationController
             render json: {} and return
         end
 
+        # add the parent concept to the concept recents array in the session
+        add_to_recents(CONCEPT_RECENTS, sememe_id, sememe_text, sememe_type)
+
         render json: sememe
 
     end
 
     def edit_concept
 
-        params
+        concept_id =  params[:concept_id]
+        concept_nid = IdAPIsRest.get_id(uuid_or_id: concept_id, action: IdAPIsRestActions::ACTION_TRANSLATE, additional_req_params: {inputType: 'uuid', outputType: 'nid'}).value
+
+        if params[:descriptions]
+
+            params[:descriptions].each do |description_id, description|
+
+                additional_req_params = {editToken: get_edit_token}
+
+                body_params = {
+                    caseSignificanceConceptSequence: description['description_case_significance'],
+                    languageConceptSequence: description['description_language'],
+                    text: description['text'],
+                    descriptionTypeConceptSequence: description['description_type']
+                }
+
+                # if the description ID is a UUID, then it is an existing description to be updated, otherwise it is a new description to be created
+                if is_id?(description_id)
+
+                    if description['description_state'].downcase == 'active'
+                        active = true
+                    else
+                        active = false
+                    end
+
+                    body_params[:active] = active
+
+                    success = SememeRest::get_sememe(action: SememeRestActions::ACTION_DESCRIPTION_UPDATE, uuid_or_id: description_id, additional_req_params: additional_req_params, body_params: body_params)
+                else
+
+                    body_params[:referencedComponentNid] = concept_nid
+                    success = SememeRest::get_sememe(action: SememeRestActions::ACTION_DESCRIPTION_CREATE, additional_req_params: additional_req_params, body_params: body_params)
+
+                    if success.is_a? CommonRest::UnexpectedResponse
+                        render json: {concept_id: nil} and return
+                    end
+                end
+
+                success
+            end
+        end
+
+        if params[:remove]
+
+            params[:remove].each do |concept_id, value|
+                SememeRest::get_sememe(action: SememeRestActions::ACTION_SEMEME_UPDATE_STATE, uuid_or_id: concept_id, additional_req_params: {editToken: get_edit_token}, body_params: {value: false})
+            end
+
+        end
+
+        # clear taxonomy caches after writing data
+        clear_rest_caches
 
         render json: {concept_id: nil}
 
@@ -790,8 +863,7 @@ class KometDashboardController < ApplicationController
         @stated = 'true'
 
         if !session[:coordinatestoken]
-            results = CoordinateRest.get_coordinate(action: CoordinateRestActions::ACTION_COORDINATES_TOKEN)
-            session[:coordinatestoken] = results
+            session[:coordinatestoken] = CoordinateRest.get_coordinate(action: CoordinateRestActions::ACTION_COORDINATES_TOKEN)
         end
 
          editToken = CoordinateRest.get_coordinate(action: CoordinateRestActions::ACTION_EDIT_TOKEN, additional_req_params: {ssoToken:'somestring'})

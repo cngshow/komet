@@ -17,6 +17,7 @@ Copyright Notice
  limitations under the License.
 =end
 
+require './lib/isaac_rest/association_rest'
 require './lib/isaac_rest/concept_rest'
 require './lib/isaac_rest/sememe_rest'
 require './lib/isaac_rest/id_apis_rest'
@@ -151,6 +152,7 @@ module ConceptConcern
             # loop thru the dialects array, pull out all the language refsets, and add them to the attributes array
             description.dialects.each do |dialect|
 
+                dialect_sequence = dialect.sememeChronology.sememeSequence
                 dialect_id = dialect.sememeChronology.identifiers.uuids.first
                 dialect_name = get_concept_metadata(dialect.sememeChronology.assemblageSequence)
                 dialect_state = dialect.sememeVersion.state.name
@@ -186,7 +188,7 @@ module ConceptConcern
                     dialect_acceptability = 'Acceptable'
                 end
 
-                attributes << {label: 'Refset', id: dialect_id, text: dialect_name, acceptability: dialect_acceptability, state: dialect_state, time: dialect_time, author: dialect_author, module: dialect_module, path: dialect_path}
+                attributes << {label: 'Refset', id: dialect_id, sequence: dialect_sequence, text: dialect_name, acceptability: dialect_acceptability, state: dialect_state, time: dialect_time, author: dialect_author, module: dialect_module, path: dialect_path}
             end
 
             description_info[:attributes] = attributes
@@ -210,6 +212,7 @@ module ConceptConcern
                             description_type_id = description.send(value)
                         end
 
+                        description_info[:description_type_sequence] = description.send(value)
                         description_info[:description_type_id] = description_type_id
 
                         case converted_value
@@ -240,6 +243,7 @@ module ConceptConcern
                             language_id = description.send(value)
                         end
 
+                        description_info[:language_sequence] = description.send(value)
                         description_info[:language_id] = language_id
 
                         case converted_value
@@ -259,6 +263,7 @@ module ConceptConcern
                             case_significance_id = description.send(value)
                         end
 
+                        description_info[:case_significance_sequence] = description.send(value)
                         description_info[:case_significance_id] = case_significance_id
 
                         case converted_value
@@ -289,6 +294,77 @@ module ConceptConcern
         end
 
         return return_descriptions
+    end
+
+    ##
+    # get_associations - takes a uuid and returns all associations related to it.
+    # @param [String] uuid - The UUID to look up associations for
+    # @param [Boolean] stated - Whether to display the stated (true) or inferred view of concepts
+    # @return [object] a hash that contains an array of all the associations
+    def get_associations(uuid, stated)
+
+        coordinates_token = session[:coordinatestoken].token
+        return_associations = []
+        additional_req_params = {coordToken: coordinates_token, stated: stated, expand: 'source, target'}
+
+        associations = AssociationRest.get_association(action: AssociationRestActions::ACTION_WITH_SOURCE, uuid_or_id: uuid, additional_req_params: additional_req_params)
+
+        if associations.is_a? CommonRest::UnexpectedResponse
+            return return_associations
+        end
+
+        # iterate over the array of RestAssociationItemVersion returned
+        associations.each do |association|
+
+            id = association.identifiers.uuids.first
+            type_id = association.associationTypeSequence
+
+            type = AssociationRest.get_association(action: AssociationRestActions::ACTION_TYPE, uuid_or_id: type_id, additional_req_params: {coordToken: coordinates_token, stated: stated})
+
+            if type.is_a? CommonRest::UnexpectedResponse
+                return return_associations
+            end
+
+            #type_id = type.identifiers.uuids.first
+            type_text = type.description
+
+            target_id = association.targetConcept.identifiers.uuids.first
+            target_text = association.targetConcept.description
+            # TODO - remove the hard-coding of type to 'vhat' when the type flags are implemented in the REST APIs
+            target_taxonomy_type = 'vhat'
+            state = association.associationItemStamp.state.name
+            time = DateTime.strptime((association.associationItemStamp.time / 1000).to_s, '%s').strftime('%m/%d/%Y')
+            author = get_concept_metadata(association.associationItemStamp.authorSequence)
+            association_module = get_concept_metadata(association.associationItemStamp.moduleSequence)
+            path = get_concept_metadata(association.associationItemStamp.pathSequence)
+
+            return_associations << {id: id, type_id: type_id, type_text: type_text, target_id: target_id, target_text: target_text, target_taxonomy_type: target_taxonomy_type, state: state, time: time, author: author, association_module: association_module, path: path}
+        end
+
+        return return_associations
+    end
+
+    ##
+    # get_association_types - returns all of the association types.
+    # @return [object] a hash that contains an array of all the association types
+    def get_association_types
+
+        coordinates_token = session[:coordinatestoken].token
+        return_types = []
+        additional_req_params = {coordToken: coordinates_token}
+
+        types = AssociationRest.get_association(action: AssociationRestActions::ACTION_TYPES, additional_req_params: additional_req_params)
+
+        if types.is_a? CommonRest::UnexpectedResponse
+            return return_types
+        end
+
+        # iterate over the array of restAssociationTypeVersion returned
+        types.each do |type|
+            return_types << {concept_id: type.identifiers.uuids.first, concept_sequence: type.associationConceptSequence, text: type.description}
+        end
+
+        return return_types
     end
 
     ##

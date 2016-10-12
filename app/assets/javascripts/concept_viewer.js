@@ -486,7 +486,7 @@ var ConceptViewer = function(viewerID, currentConceptID, viewerAction) {
         return hasErrors;
     };
 
-    ConceptViewer.prototype.editConcept = function(attributes, descriptions, selectOptions){
+    ConceptViewer.prototype.editConcept = function(attributes, descriptions, associations, selectOptions){
 
         var divtext = "";
         var form = $("#komet_concept_edit_form_" + this.viewerID);
@@ -515,6 +515,16 @@ var ConceptViewer = function(viewerID, currentConceptID, viewerAction) {
         var descriptionSections = document.createRange().createContextualFragment(descriptionSectionsString);
         form.find(".komet-concept-description-title").after(descriptionSections);
 
+        var associationSectionString = "";
+
+        for (var i = 0; i < associations.length; i++){
+            associationSectionString += this.createAssociationRowString(associations[i]);
+        }
+
+        // create a dom fragment from our included fields structure
+        var associationSections = document.createRange().createContextualFragment(associationSectionString);
+        $("#komet_concept_associations_panel_" + this.viewerID).find(".komet-concept-section-panel-details").append(associationSections);
+
         UIHelper.processAutoSuggestTags("#komet_concept_edit_form_" + this.viewerID);
 
         var thisViewer = this;
@@ -536,7 +546,7 @@ var ConceptViewer = function(viewerID, currentConceptID, viewerAction) {
                     } else {
 
                         TaxonomyModule.tree.reloadTreeStatedView(TaxonomyModule.getStatedView(), false);
-                        $.publish(KometChannels.Taxonomy.taxonomyTreeNodeSelectedChannel, [null, data.concept_id, true, thisViewer.viewerID, WindowManager.INLINE]);
+                        $.publish(KometChannels.Taxonomy.taxonomyTreeNodeSelectedChannel, [null, data.concept_id, TaxonomyModule.getStatedView(), thisViewer.viewerID, WindowManager.INLINE]);
                     }
                 }
             });
@@ -571,11 +581,11 @@ var ConceptViewer = function(viewerID, currentConceptID, viewerAction) {
         if (rowData != null){
 
             uuid = rowData.uuid;
-            type = rowData.description_type_short;
+            type = rowData.description_type_sequence;
             text = rowData.text;
             state = rowData.attributes[0].state;
-            language = rowData.language_id;
-            caseSignificance = rowData.case_significance;
+            language = rowData.language_sequence;
+            caseSignificance = rowData.case_significance_sequence;
         } else {
 
             isNew = true;
@@ -592,8 +602,8 @@ var ConceptViewer = function(viewerID, currentConceptID, viewerAction) {
             + '<div class="komet-concept-section-panel-details">'
             + '<div class="komet-concept-edit-row komet-concept-edit-description-row">'
             + '<div>' + this.createSelectField("description_type", uuid, this.selectFieldOptions.descriptionType, type) + '</div>'
-            + '<div><input type="text" id="komet_concept_edit_description_type_' + uuid + '_' + this.viewerID + '" name="descriptions[' + uuid + '][type]" value="' + text + '" class="form-control komet_concept_edit_description_type"></div>'
-            + '<div>' + this.createSelectField("description_acceptability", uuid, this.selectFieldOptions.acceptability, acceptability) + '</div>'
+            + '<div><input type="text" id="komet_concept_edit_description_type_' + uuid + '_' + this.viewerID + '" name="descriptions[' + uuid + '][text]" value="' + text + '" class="form-control komet_concept_edit_description_type"></div>'
+            //+ '<div>' + this.createSelectField("description_acceptability", uuid, this.selectFieldOptions.acceptability, acceptability) + '</div>'
             + '<div>' + this.createSelectField("description_state", uuid, this.selectFieldOptions.state, state) + '</div>'
             + '<div>' + this.createSelectField("description_language", uuid, this.selectFieldOptions.language, language) + '</div>'
             + '<div>' + this.createSelectField("description_case_significance", uuid, this.selectFieldOptions.caseSignificance, caseSignificance) + '</div>'
@@ -722,6 +732,63 @@ var ConceptViewer = function(viewerID, currentConceptID, viewerAction) {
         UIHelper.processAutoSuggestTags("#" + formID);
     };
 
+    ConceptViewer.prototype.createAssociationRowString = function (rowData) {
+
+        var associationRow = "";
+        var uuid = "";
+        var type_id = "";
+        var type_text = "";
+        var state = "";
+        var value_id = "";
+        var value_text = "";
+        var value_taxonomy_type = "";
+        var isNew = false;
+
+        if (rowData != null){
+
+            uuid = rowData.id;
+            type_id = rowData.type_id;
+            type_text = rowData.type_text;
+            state = rowData.state;
+
+            if (rowData.target_id){
+
+                value_id = rowData.target_id;
+                value_text = rowData.target_text;
+                value_taxonomy_type = rowData.target_taxonomy_type;
+            } else {
+
+                value_id = rowData.source_id;
+                value_text = rowData.source_text;
+                value_taxonomy_type = rowData.source_taxonomy_type;
+            }
+
+        } else {
+
+            isNew = true;
+            uuid = window.performance.now().toString().replace(".", "");
+        }
+
+        var rowID = "komet_concept_association_panel_" + uuid + "_" + this.viewerID;
+
+        associationRow += '<div class="komet-concept-edit-row komet-concept-edit-association-row">'
+            + '<div>' + this.createSelectField("association_type", uuid, this.selectFieldOptions.associationType, type_id) + '</div>'
+            + '<div><autosuggest id-base="komet_concept_edit_association_value_' + uuid + '" '
+            + 'id-postfix="_' + this.viewerID + '" '
+            + 'name="associations[' + uuid + '][value" '
+            + 'nameFormat="array" '
+            + 'value="' + value_id + '" '
+            + 'display-value="' + value_text + '" '
+            + 'type-value="' + value_taxonomy_type + '" '
+            + 'classes="komet-concept-add-property-sememe">'
+            + '</autosuggest></div>'
+            + '<div>' + this.createSelectField("description_state", uuid, this.selectFieldOptions.state, state) + '</div>'
+            + '<div class="komet-concept-edit-row-tools"><div class="glyphicon glyphicon-remove" onclick="WindowManager.viewers[' + this.viewerID + '].removeRow(\'' + uuid + '\', \'' + rowID + '\', \'association\', ' + isNew + ', this)"></div></div>'
+            + '</div>';
+
+        return associationRow;
+    }.bind(this);
+
     ConceptViewer.prototype.removeRow = function (conceptID, rowID, type, isNew, closeElement) {
 
         var confirmCallback = function(buttonClicked){
@@ -735,7 +802,8 @@ var ConceptViewer = function(viewerID, currentConceptID, viewerAction) {
                 } else {
 
                     row.addClass("hide");
-                    row.html('<input type="hidden" name="remove[' + type + ']" value="' + conceptID + '">');
+                    row.html('<input type="hidden" name="remove[' + conceptID + ']" value="">');
+                    //row.html('<input type="hidden" name="remove[' + type + '][' + conceptID + ']" value="' + conceptID + '">');
                 }
             }
 
@@ -771,7 +839,7 @@ var ConceptViewer = function(viewerID, currentConceptID, viewerAction) {
             var optionArray = [];
 
             for (var i = 0; i < options.length; i++){
-                optionArray.push({value: options[i].concept_id, label: options[i].text});
+                optionArray.push({value: options[i].concept_sequence, label: options[i].text});
             }
 
             return optionArray;
@@ -788,6 +856,8 @@ var ConceptViewer = function(viewerID, currentConceptID, viewerAction) {
         this.selectFieldOptions.caseSignificance = createOptions(selectOptions.case);
 
         this.selectFieldOptions.acceptability = createOptions(selectOptions.acceptability);
+
+        this.selectFieldOptions.associationType = createOptions(selectOptions.associationType);
 
         this.selectFieldOptions.state = [
             {value: "Active", label: "Active"},
