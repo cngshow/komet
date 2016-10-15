@@ -25,6 +25,7 @@ module CoordinateRestActions
   ACTION_LOGIC_COORDINATE = :logic_coordinate
   ACTION_STAMP_COORDINATE = :stamp_coordinate
   ACTION_TAXONOMY_COORDINATE = :taxonomy_coordinate
+  ACTION_EDIT_TOKEN = :editToken
 end
 
 module CoordinateRest
@@ -40,14 +41,15 @@ module CoordinateRest
   LOGIC_COORDINATE_PATH = ROOT_PATH + 'logicCoordinate'
   STAMP_COORDINATE_PATH = ROOT_PATH + 'stampCoordinate'
   TAXONOMY_COORDINATE_PATH = ROOT_PATH + 'taxonomyCoordinate'
-
+  EDIT_TOKEN_PATH = ROOT_PATH + 'editToken'
   ACTION_CONSTANTS = {
       ACTION_COORDINATES_TOKEN => {PATH_SYM => COORDINATES_TOKEN_PATH, STARTING_PARAMS_SYM => {}, CLAZZ_SYM => Gov::Vha::Isaac::Rest::Api1::Data::RestCoordinatesToken},
       ACTION_COORDINATES => {PATH_SYM => COORDINATES_PATH, STARTING_PARAMS_SYM => {}, CLAZZ_SYM => Gov::Vha::Isaac::Rest::Api1::Data::Coordinate::RestCoordinates},
       ACTION_LANGUAGE_COORDINATE => {PATH_SYM => LANGUAGE_COORDINATE_PATH, STARTING_PARAMS_SYM => {}, CLAZZ_SYM => Gov::Vha::Isaac::Rest::Api1::Data::Coordinate::RestLanguageCoordinate},
       ACTION_LOGIC_COORDINATE => {PATH_SYM => LOGIC_COORDINATE_PATH, STARTING_PARAMS_SYM => {}, CLAZZ_SYM => Gov::Vha::Isaac::Rest::Api1::Data::Coordinate::RestLogicCoordinate},
       ACTION_STAMP_COORDINATE => {PATH_SYM => STAMP_COORDINATE_PATH, STARTING_PARAMS_SYM => {}, CLAZZ_SYM => Gov::Vha::Isaac::Rest::Api1::Data::Coordinate::RestStampCoordinate},
-      ACTION_TAXONOMY_COORDINATE => {PATH_SYM => TAXONOMY_COORDINATE_PATH, STARTING_PARAMS_SYM => {}, CLAZZ_SYM => Gov::Vha::Isaac::Rest::Api1::Data::Coordinate::RestTaxonomyCoordinate}
+      ACTION_TAXONOMY_COORDINATE => {PATH_SYM => TAXONOMY_COORDINATE_PATH, STARTING_PARAMS_SYM => {}, CLAZZ_SYM => Gov::Vha::Isaac::Rest::Api1::Data::Coordinate::RestTaxonomyCoordinate},
+      ACTION_EDIT_TOKEN => {PATH_SYM => EDIT_TOKEN_PATH, STARTING_PARAMS_SYM => {}, CLAZZ_SYM => Gov::Vha::Isaac::Rest::Api1::Data::RestEditToken},
   }
 
   class << self
@@ -87,6 +89,7 @@ c = CoordinateRest::get_coordinate(action: CoordinateRestActions::ACTION_LANGUAG
 d = CoordinateRest::get_coordinate(action: CoordinateRestActions::ACTION_LOGIC_COORDINATE)
 e = CoordinateRest::get_coordinate(action: CoordinateRestActions::ACTION_STAMP_COORDINATE)
 f = CoordinateRest::get_coordinate(action: CoordinateRestActions::ACTION_TAXONOMY_COORDINATE)
+g = CoordinateRest::get_coordinate(action: CoordinateRestActions::ACTION_EDIT_TOKEN)
 
 
 

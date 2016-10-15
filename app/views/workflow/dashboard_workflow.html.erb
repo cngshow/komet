@@ -1,0 +1,102 @@
+<link rel="stylesheet" href="//code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css">
+<div id="komet_workflow_section">
+  <div class="komet-mapping-section-panel-header">
+    <!-- Title -->
+    <div class="komet-mapping-section-panel-title">
+      Workflow
+    </div>
+  </div>
+
+  <div class="komet-mapping-section-panel-header-shelf">
+    <div>
+      <div class="input-group">
+        <span class="input-group-addon" ><span class="fa fa-search"></span></span>
+        <input id="komet_mapping_item_filter" class="form-control" placeholder="Type to Search workflow Items...">
+      </div>
+    </div>
+    <button class="btn btn-default form-control komet-mapping-item-filter-button">Search</button>
+</div>
+  <div>
+    <%= label_tag "komet_workflow_overview_page_size", 'Page Size:' %>
+    <%= select_tag "komet_workflow_overview_page_size", options_for_select([['25'], ['50'], ['100'], ['250'], ['500'], ['1000']], '25')  %>
+    <div id="komet_workflow_overview_sets_refresh" title="Reload Workflow Set Grid" class="fa fa-refresh" onclick="WorkflowModule.loadOverviewSetsGrid();"></div>
+    </div>
+
+  </div>
+<div>
+<div id="komet_workflow_overview_items" style="height: 450px; width:820px;padding:5px;float:left" class="ag-fresh"></div>
+</div>
+<div id="komet_workflow_concept" class="komet-concept-section" style="width:450px;float:left">
+
+  <div id="komet_view_concept_form" title="Workflow" style="border:solid 1px black;padding:5px;">
+    <div class="komet-mapping-section-panel-header" style="width: 100%">
+<div style="float:left;width: 95%">Workflow</div>
+      <!-- expand/collapse icon - controls details drawer -->
+      <div class="glyphicon glyphicon-remove" style="float: right"  onclick="WorkflowModule.hideWindow()"></div>
+    </div>
+    <div id="komet_view_concept_tabs">
+      <ul>
+        <li><a href='#concept'>Concept</a></li>
+        <li><a href='#history'>History</a></li>
+      </ul>
+      <div id="concept">
+
+        <div id="koment_concept_name">
+          <label for="komet_workflow_name">Workflow Name</label>
+          <div id="komet-workflow_name_display"></div>
+        </div>
+        <div id="koment_description">
+          <label for="komet_workflow_description">Description</label>
+          <div id="komet-workflow_description_display"></div>
+        </div>
+        <div id="koment_author">
+          <label for="komet_workflow_author">Author</label>
+          <div id="komet-workflow_author_display"></div>
+        </div>
+        <div id="koment_reviewer_approver">
+          <label for="komet_workflow_reviewer_approver">Reviewer / Approver</label>
+          <div id="komet-workflow_reviewer_approver_display"></div>
+        </div>
+        <div>
+          <div id="workflow_concept_grid" style="height: 250px;" class="ag-fresh"></div> <BR>
+        </div>
+        <div>
+          <label for="komet_workflow_previous_comment">Previous Comment</label>
+        </div>
+      </div>
+      <div id="history">
+        <div id="koment_history_name">
+          <label for="komet_history_workflow_name">Workflow Name</label>
+          <div id="komet_history-workflow_name_display"></div>
+        </div>
+        <div id="koment_history_description">
+          <label for="komet_history_workflow_description">Description</label>
+          <div id="komet_history-workflow_description_display"></div>
+        </div>
+        <div id="koment_history_author">
+          <label for="komet_history_workflow_author">Author</label>
+          <div id="komet_history-workflow_author_display"></div>
+        </div>
+        <div id="koment_history_reviewer_approver">
+          <label for="komet_history_workflow_reviewer_approver">Reviewer / Approver</label>
+          <div id="komet_history-workflow_reviewer_approver_display"></div>
+        </div>
+        <div>
+          <div id="workflow_history" style="height: 250px;" class="ag-fresh"></div> <BR>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+</div>
+</div>
+<script>
+  //}();
+
+  $(document).ready(function () {
+    $("#komet_view_concept_tabs").tabs();
+    WorkflowModule.loadOverviewItemsGrid();
+  });
+
+</script>

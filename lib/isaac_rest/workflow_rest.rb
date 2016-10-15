@@ -20,17 +20,16 @@ require './lib/isaac_rest/common_rest'
 
 module WorkflowRestActions
 
-  ACTION_ACTIONS_FOR_PROCESS_AND_USER = :actionsForProcessAndUser
-  ACTION_ADVANCEABLE_PROCESS_INFORMATION= :advanceableProcessInformation
-  ACTION_DEFAULT_DEFINITION = :defaultDefinition
-  #ACTION_AVAILABLE_DEFINITION = :availableDefinitions
-  ACTION_HISTORIES_FOR_PROCESS = :historiesForProcess
-
-  #ACTION_PERMISSIONS_FOR_DEFINITION_AND_USER = :permissionsForDefinitionAndUser
+  ACTION_ALL_DEFINITION = :all
   ACTION_PROCESS = :process
-  ACTION_CREATE_WORKFLOW_PROCESS = :createWorkflowProcess
-  ACTION_ADVANCE_WORKFLOW_PROCESS = :advanceWorkflowProcess
-  ACTION_REMOVE_COMPONENT_FROM_WORKFLOW = :removeComponentFromWorkflow
+  ACTION_HISTORY = :history
+  ACTION_LOCKED = :locked
+  ACTION_ACTIONS = :actions
+  ACTION_AVAILABLE = :avaiable
+
+  ACTION_CREATE = :create
+  ACTION_ADVANCE = :advance
+  ACTION_LOCK = :lock
 
 end
 
@@ -42,60 +41,66 @@ module WorkflowRest
   #always name the root_path ROOT_PATH!
   ROOT_PATH = ISAAC_ROOT + 'rest/1/workflow/'
   PATH_WORKFLOW_WRITE = ISAAC_ROOT + 'rest/write/1/workflow/'
-  PATH_ACTION_ACTIONS_FOR_PROCESS_AND_USER_WORKFLOW = ROOT_PATH + 'actionsForProcessAndUser'
-  PATH_ADVANCEABLE_PROCESS_INFORMATION_WORKFLOW =  ROOT_PATH + 'advanceableProcessInformation'
-  PATH_DEFAULT_DEFINITION_WORKFLOW = ROOT_PATH + 'defaultDefinition'
-  #PATH_AVAILABLE_DEFINITION_WORKFLOW = ROOT_PATH + 'availableDefinitions'
-  PATH_HISTORIES_FOR_PROCESS_WORKFLOW =  ROOT_PATH + 'historiesForProcess'
+  PATH_ALL_DEFINITION_WORKFLOW = ROOT_PATH + 'definition/all'
   PATH_PROCESS_WORKFLOW =  ROOT_PATH + 'process'
-  PATH_CREATE_WORKFLOW_PROCESS_WORKFLOW = PATH_WORKFLOW_WRITE + 'create/createWorkflowProcess'
-  PATH_ADVANCE_WORKFLOW_PROCESS_WORKFLOW = PATH_WORKFLOW_WRITE + 'update/advanceWorkflowProcess'
-  PATH_REMOVE_COMPONENT_FROM_WORKFLOW = PATH_WORKFLOW_WRITE + 'update/removeComponentFromWorkflow'
+  PATH_HISTORY_WORKFLOW = ROOT_PATH + 'process/history'
+  PATH_LOCKED_WORKFLOW = ROOT_PATH + 'process/locked'
+  PATH_ACTIONS_WORKFLOW = ROOT_PATH + 'process/actions'
+  PATH_AVAILABLE_WORKFLOW = ROOT_PATH + 'process/avaiable'
+
+  PATH_CREATE_WORKFLOW = PATH_WORKFLOW_WRITE + 'create/process/create'
+  PATH_ADVANCE_WORKFLOW = PATH_WORKFLOW_WRITE + 'update/process/advance'
+  PATH_LOCK_WORKFLOW = PATH_WORKFLOW_WRITE + 'update/process/lock'
 
   PARAMS_EMPTY = {}
 
   ACTION_CONSTANTS = {
-      ACTION_ACTIONS_FOR_PROCESS_AND_USER => {
-          PATH_SYM => PATH_ACTION_ACTIONS_FOR_PROCESS_AND_USER_WORKFLOW,
+      ACTION_ALL_DEFINITION => {
+          PATH_SYM => PATH_ALL_DEFINITION_WORKFLOW,
           STARTING_PARAMS_SYM => PARAMS_EMPTY,
-          CLAZZ_SYM => Gov::Vha::Isaac::Rest::Api1::Data::Workflow::RestWorkflowAvailableAction },
-      ACTION_ADVANCEABLE_PROCESS_INFORMATION  => {
-          PATH_SYM => PATH_ADVANCEABLE_PROCESS_INFORMATION_WORKFLOW,
-          STARTING_PARAMS_SYM => PARAMS_EMPTY,
-          CLAZZ_SYM => Gov::Vha::Isaac::Rest::Api1::Data::Workflow::RestWorkflowProcessHistoriesMapEntry
-      },
-      ACTION_DEFAULT_DEFINITION  => {
-          PATH_SYM => PATH_DEFAULT_DEFINITION_WORKFLOW ,
-          STARTING_PARAMS_SYM => PARAMS_EMPTY,
-          CLAZZ_SYM => Gov::Vha::Isaac::Rest::Api::Data::Wrappers::RestUUID
-      },
-      ACTION_HISTORIES_FOR_PROCESS  => {
-          PATH_SYM => PATH_HISTORIES_FOR_PROCESS_WORKFLOW,
-          STARTING_PARAMS_SYM => PARAMS_EMPTY,
-          CLAZZ_SYM => Gov::Vha::Isaac::Rest::Api1::Data::Workflow::RestWorkflowProcessHistory
-      },
-
+          CLAZZ_SYM => Gov::Vha::Isaac::Rest::Api::Data::Wrappers::RestUUID },
       ACTION_PROCESS  => {
-          PATH_SYM => PATH_PROCESS_WORKFLOW,
+          PATH_SYM => PATH_PROCESS_WORKFLOW ,
           STARTING_PARAMS_SYM => PARAMS_EMPTY,
           CLAZZ_SYM => Gov::Vha::Isaac::Rest::Api1::Data::Workflow::RestWorkflowProcess
       },
+      ACTION_HISTORY  => {
+          PATH_SYM => PATH_HISTORY_WORKFLOW ,
+          STARTING_PARAMS_SYM => PARAMS_EMPTY,
+          CLAZZ_SYM => Gov::Vha::Isaac::Rest::Api1::Data::Workflow::RestWorkflowProcessHistory
+      },
+      ACTION_LOCKED  => {
+          PATH_SYM => PATH_LOCKED_WORKFLOW ,
+          STARTING_PARAMS_SYM => PARAMS_EMPTY,
+          CLAZZ_SYM => Gov::Vha::Isaac::Rest::Api::Data::Wrappers::RestBoolean
+      },
+      ACTION_ACTIONS  => {
+          PATH_SYM => PATH_ACTIONS_WORKFLOW ,
+          STARTING_PARAMS_SYM => PARAMS_EMPTY,
+          CLAZZ_SYM => Gov::Vha::Isaac::Rest::Api1::Data::Workflow::RestWorkflowAvailableAction
+      },
+      ACTION_AVAILABLE  => {
+          PATH_SYM => PATH_AVAILABLE_WORKFLOW,
+          STARTING_PARAMS_SYM => PARAMS_EMPTY,
+          CLAZZ_SYM => Gov::Vha::Isaac::Rest::Api1::Data::Workflow::RestWorkflowProcessHistoriesMapEntry
+      },
 
-      ACTION_CREATE_WORKFLOW_PROCESS   => {
-          PATH_SYM => PATH_CREATE_WORKFLOW_PROCESS_WORKFLOW,
+
+      ACTION_CREATE   => {
+          PATH_SYM => PATH_CREATE_WORKFLOW,
           STARTING_PARAMS_SYM => PARAMS_EMPTY,
           CLAZZ_SYM => Gov::Vha::Isaac::Rest::Api::Data::Wrappers::RestInteger,
           HTTP_METHOD_KEY => HTTP_METHOD_POST,
           BODY_CLASS => Gov::Vha::Isaac::Rest::Api1::Data::Workflow::RestWorkflowProcessBaseCreate
       },
-      ACTION_ADVANCE_WORKFLOW_PROCESS  => {
-          PATH_SYM => PATH_ADVANCE_WORKFLOW_PROCESS_WORKFLOW,
+      ACTION_ADVANCE  => {
+          PATH_SYM => PATH_ADVANCE_WORKFLOW,
           STARTING_PARAMS_SYM => PARAMS_EMPTY,
           CLAZZ_SYM => Gov::Vha::Isaac::Rest::Api::Data::Wrappers::RestInteger,
           HTTP_METHOD_KEY => HTTP_METHOD_PUT
       },
-      ACTION_REMOVE_COMPONENT_FROM_WORKFLOW => {
-          PATH_SYM => PATH_REMOVE_COMPONENT_FROM_WORKFLOW,
+      ACTION_LOCK => {
+          PATH_SYM => PATH_LOCK_WORKFLOW,
           STARTING_PARAMS_SYM => PARAMS_EMPTY,
           CLAZZ_SYM => Gov::Vha::Isaac::Rest::Api::Data::Wrappers::RestInteger,
           HTTP_METHOD_KEY => HTTP_METHOD_PUT
@@ -109,10 +114,10 @@ module WorkflowRest
   class Workflow < CommonRestBase::RestBase
     include CommonRest
     register_rest(rest_module: WorkflowRest, rest_actions: WorkflowRestActions)
-    attr_accessor :uuid
+    # attr_accessor :uuid
 
-    def initialize(uuid:, params:, body_params:, action:, action_constants:)
-       super(params: params, body_params: body_params, action: action, action_constants: action_constants)
+    def initialize( params:, body_params:, action:, action_constants:)
+      super(params: params, body_params: body_params, action: action, action_constants: action_constants)
     end
 
     def rest_call
@@ -122,11 +127,11 @@ module WorkflowRest
   end
 
   def main_fetch(**hash)
-    get_workflow(action: hash[:action], uuid: hash[:id], additional_req_params: hash[:params], body_params: hash[:body_params])
+    get_workflow(action: hash[:action],  additional_req_params: hash[:params], body_params: hash[:body_params])
   end
 
-  def get_workflow(action:, uuid: nil, additional_req_params: nil, body_params: {})
-    Workflow.new(uuid: uuid, params: additional_req_params, body_params: body_params, action: action, action_constants: ACTION_CONSTANTS).rest_call
+  def get_workflow(action:,  additional_req_params: nil, body_params: {})
+    Workflow.new(params: additional_req_params, body_params: body_params, action: action, action_constants: ACTION_CONSTANTS).rest_call
   end
 end
 

@@ -1,9 +1,22 @@
 <link rel="stylesheet" href="//code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css">
 
-<nav class="navbar navbar-default">
+<nav class="navbar navbar-default" style="background-color:black;">
 
-  <div id="komet_navbar_navigation">
-    <button id="startbtn">Start workflow</button>
+  <div id="komet_navbar_navigation" style="background-color:black;padding:5px ">
+    <button id="startbtn" style="background-color: #5ec200;color:white;">Start workflow</button>
+    <input id="processid" type="text"  class="hide" value="<%=params[:processID] %>">
+    <!-- todo remove hard code labels from here.    -->
+      <div style="background-color:black;display:none;width:100%;" id="editdiv" >
+          <div  style="background-color:black;color:green;width:450px; float:left"><label for="komet_Edit_workflow">Edit Workflow</label></div>
+          <div style="color:white;float:left;width:450px;">
+              <div style="float:left;">Transition:</div><div style="float:left;"><select style="height:30px" id="komet_workflow_transition" class="form-control"  >
+                 <option value=""> - Select -</option>
+                </select></div>
+          </div>
+          <div style="color:white;float:left;width:250px;">
+              <label id="komet_workflow_name" for="komet_workflow_name">Workflow Name</label>
+          </div>
+      </div>
   </div>
 </nav>
 
@@ -23,5 +36,7 @@
 
   $(document).ready(function () {
     WorkflowModule.initialize();
+
+
   });
 </script>
