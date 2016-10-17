@@ -89,20 +89,20 @@ module WorkflowRest
       ACTION_CREATE   => {
           PATH_SYM => PATH_CREATE_WORKFLOW,
           STARTING_PARAMS_SYM => PARAMS_EMPTY,
-          CLAZZ_SYM => Gov::Vha::Isaac::Rest::Api::Data::Wrappers::RestInteger,
+          CLAZZ_SYM => Gov::Vha::Isaac::Rest::Api::Data::Wrappers::RestWriteResponse,
           HTTP_METHOD_KEY => HTTP_METHOD_POST,
           BODY_CLASS => Gov::Vha::Isaac::Rest::Api1::Data::Workflow::RestWorkflowProcessBaseCreate
       },
       ACTION_ADVANCE  => {
           PATH_SYM => PATH_ADVANCE_WORKFLOW,
           STARTING_PARAMS_SYM => PARAMS_EMPTY,
-          CLAZZ_SYM => Gov::Vha::Isaac::Rest::Api::Data::Wrappers::RestInteger,
+          CLAZZ_SYM => Gov::Vha::Isaac::Rest::Api::Data::Wrappers::RestWriteResponse,
           HTTP_METHOD_KEY => HTTP_METHOD_PUT
       },
       ACTION_LOCK => {
           PATH_SYM => PATH_LOCK_WORKFLOW,
           STARTING_PARAMS_SYM => PARAMS_EMPTY,
-          CLAZZ_SYM => Gov::Vha::Isaac::Rest::Api::Data::Wrappers::RestInteger,
+          CLAZZ_SYM => Gov::Vha::Isaac::Rest::Api::Data::Wrappers::RestWriteResponse,
           HTTP_METHOD_KEY => HTTP_METHOD_PUT
       },
   }

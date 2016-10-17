@@ -198,6 +198,7 @@ class ApplicationController < ActionController::Base
 
     if cache_type == CACHE_TYPE_TAXONOMY || cache_type == CACHE_TYPE_ALL
 
+      CommonRest.clear_cache(rest_module: AssociationRest)
       CommonRest.clear_cache(rest_module: CommentApis)
       CommonRest.clear_cache(rest_module: ConceptRest)
       CommonRest.clear_cache(rest_module: IdAPIsRest)

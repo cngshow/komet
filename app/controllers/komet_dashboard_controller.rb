@@ -912,9 +912,6 @@ class KometDashboardController < ApplicationController
             session[:coordinatestoken] = CoordinateRest.get_coordinate(action: CoordinateRestActions::ACTION_COORDINATES_TOKEN)
         end
 
-         editToken = CoordinateRest.get_coordinate(action: CoordinateRestActions::ACTION_EDIT_TOKEN, additional_req_params: {ssoToken:'somestring'})
-         session[:editToken] = editToken
-
         $log.debug("token initial #{session[:coordinatestoken].token}" )
     end
 

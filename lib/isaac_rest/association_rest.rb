@@ -75,19 +75,19 @@ module AssociationRest
         ACTION_TYPE_CREATE => {
             PATH_SYM => PATH_TYPE_CREATE ,
             STARTING_PARAMS_SYM => PARAMS_EMPTY,
-            CLAZZ_SYM => Gov::Vha::Isaac::Rest::Api::Data::Wrappers::RestUUID,
+            CLAZZ_SYM => Gov::Vha::Isaac::Rest::Api::Data::Wrappers::RestWriteResponse,
             HTTP_METHOD_KEY => HTTP_METHOD_POST,
             BODY_CLASS => Gov::Vha::Isaac::Rest::Api1::Data::Association::RestAssociationTypeVersionBaseCreate},
         ACTION_ITEM_CREATE => {
             PATH_SYM => PATH_ITEM_CREATE ,
             STARTING_PARAMS_SYM => PARAMS_EMPTY,
-            CLAZZ_SYM => Gov::Vha::Isaac::Rest::Api::Data::Wrappers::RestUUID,
+            CLAZZ_SYM => Gov::Vha::Isaac::Rest::Api::Data::Wrappers::RestWriteResponse,
             HTTP_METHOD_KEY => HTTP_METHOD_POST,
             BODY_CLASS => Gov::Vha::Isaac::Rest::Api1::Data::Association::RestAssociationItemVersionBaseCreate},
         ACTION_ITEM_UPDATE => {
             PATH_SYM => PATH_ITEM_UPDATE, 
             STARTING_PARAMS_SYM => PARAMS_EMPTY,
-            CLAZZ_SYM => Gov::Vha::Isaac::Rest::Api::Data::Wrappers::RestUUID,
+            CLAZZ_SYM => Gov::Vha::Isaac::Rest::Api::Data::Wrappers::RestWriteResponse,
             HTTP_METHOD_KEY => HTTP_METHOD_PUT,
             BODY_CLASS => Gov::Vha::Isaac::Rest::Api1::Data::Association::RestAssociationItemVersionBase}
     }

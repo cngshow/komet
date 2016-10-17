@@ -61,18 +61,18 @@ module ConceptRest
         ACTION_CREATE => {
             PATH_SYM => PATH_CREATE_CONCEPT,
             STARTING_PARAMS_SYM => PARAMS_EMPTY,
-            CLAZZ_SYM => Gov::Vha::Isaac::Rest::Api::Data::Wrappers::RestInteger,
+            CLAZZ_SYM => Gov::Vha::Isaac::Rest::Api::Data::Wrappers::RestWriteResponse,
             HTTP_METHOD_KEY => HTTP_METHOD_POST,
             BODY_CLASS => Gov::Vha::Isaac::Rest::Api1::Data::Concept::RestConceptCreateData},
         ACTION_UPDATE_ACTIVATE => {
             PATH_SYM => PATH_UPDATE_ACTIVATE_CONCEPT,
             STARTING_PARAMS_SYM => PARAMS_EMPTY,
-            CLAZZ_SYM => Gov::Vha::Isaac::Rest::Api::Data::Wrappers::RestInteger,
+            CLAZZ_SYM => Gov::Vha::Isaac::Rest::Api::Data::Wrappers::RestWriteResponse,
             HTTP_METHOD_KEY => HTTP_METHOD_PUT},
         ACTION_UPDATE_DEACTIVATE => {
             PATH_SYM => PATH_UPDATE_DEACTIVATE_CONCEPT,
             STARTING_PARAMS_SYM => PARAMS_EMPTY,
-            CLAZZ_SYM => Gov::Vha::Isaac::Rest::Api::Data::Wrappers::RestInteger,
+            CLAZZ_SYM => Gov::Vha::Isaac::Rest::Api::Data::Wrappers::RestWriteResponse,
             HTTP_METHOD_KEY => HTTP_METHOD_PUT},
     }
 

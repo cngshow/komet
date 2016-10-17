@@ -88,11 +88,11 @@ var WorkflowModule = (function () {
         params = {name:name,description:description}
         $.post( gon.routes.taxonomy_create_workflow_path , params, function( results ) {
             // create_workflow rest api call line 32 in workflow_controller.rb
-            processedID = results.value;
+            processedID = results.process_id;
         });
 
          dialog.dialog( "close" ); //closing dialog
-        location.replace('/komet_dashboard/dashboard?processID=' + process_Id)
+        location.replace('/komet_dashboard/dashboard?processID=' + processedID)
         //todo there is problem with rest api. see line no 60 in workflow_controller.rb
         //populates dropdown on workflow footer. At this point all the edit controls needs to show and be acitve
 

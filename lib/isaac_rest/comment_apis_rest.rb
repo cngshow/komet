@@ -52,13 +52,13 @@ module CommentApis
         ACTION_CREATE => {
             PATH_SYM => PATH_CREATE,
             STARTING_PARAMS_SYM => PARAMS_EMPTY,
-            CLAZZ_SYM => Gov::Vha::Isaac::Rest::Api::Data::Wrappers::RestInteger,
+            CLAZZ_SYM => Gov::Vha::Isaac::Rest::Api::Data::Wrappers::RestWriteResponse,
             HTTP_METHOD_KEY => HTTP_METHOD_POST,
             BODY_CLASS => Gov::Vha::Isaac::Rest::Api1::Data::Comment::RestCommentVersionBaseCreate},
         ACTION_UPDATE => {
             PATH_SYM => PATH_UPDATE,
             STARTING_PARAMS_SYM => PARAMS_EMPTY,
-            CLAZZ_SYM => Gov::Vha::Isaac::Rest::Api::Data::Wrappers::RestInteger,
+            CLAZZ_SYM => Gov::Vha::Isaac::Rest::Api::Data::Wrappers::RestWriteResponse,
             HTTP_METHOD_KEY => HTTP_METHOD_PUT,
             BODY_CLASS => Gov::Vha::Isaac::Rest::Api1::Data::Comment::RestCommentVersionBase},
     }

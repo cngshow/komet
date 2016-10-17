@@ -86,19 +86,19 @@ module SememeRest
         ACTION_DESCRIPTION_CREATE => {
             PATH_SYM => PATH_DESCRIPTION_CREATE,
             STARTING_PARAMS_SYM => PARAMS_EMPTY,
-            CLAZZ_SYM => Gov::Vha::Isaac::Rest::Api::Data::Wrappers::RestInteger,
+            CLAZZ_SYM => Gov::Vha::Isaac::Rest::Api::Data::Wrappers::RestWriteResponse,
             HTTP_METHOD_KEY => HTTP_METHOD_POST,
             BODY_CLASS => Gov::Vha::Isaac::Rest::Api1::Data::Sememe::RestSememeDescriptionCreateData},
         ACTION_DESCRIPTION_UPDATE => {
             PATH_SYM => PATH_DESCRIPTION_UPDATE, 
             STARTING_PARAMS_SYM => PARAMS_EMPTY,
-            CLAZZ_SYM => Gov::Vha::Isaac::Rest::Api::Data::Wrappers::RestInteger,
+            CLAZZ_SYM => Gov::Vha::Isaac::Rest::Api::Data::Wrappers::RestWriteResponse,
             HTTP_METHOD_KEY => HTTP_METHOD_PUT,
             BODY_CLASS => Gov::Vha::Isaac::Rest::Api1::Data::Sememe::RestSememeDescriptionUpdateData},
         ACTION_SEMEME_UPDATE_STATE => {
             PATH_SYM => PATH_SEMEME_UPDATE_STATE, 
             STARTING_PARAMS_SYM => PARAMS_EMPTY,
-            CLAZZ_SYM => Gov::Vha::Isaac::Rest::Api::Data::Wrappers::RestInteger,
+            CLAZZ_SYM => Gov::Vha::Isaac::Rest::Api::Data::Wrappers::RestWriteResponse,
             HTTP_METHOD_KEY => HTTP_METHOD_PUT,
             BODY_CLASS => Gov::Vha::Isaac::Rest::Api::Data::Wrappers::RestBoolean}
     }

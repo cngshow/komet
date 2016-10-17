@@ -30,25 +30,28 @@ class WorkflowController < ApplicationController
   layout 'workflow'
 
   def create_workflow  #create workflow on success it returns processID
-    usersToken = get_user_token
     default_definition = get_all_definition #this make a call to all definition rest api and get definitionID
     name = params[:name] #populated from create workflow form and passed in from javascript file workflow.js line 82 has saveworkflow function
     description = params[:description]#populated from create workflow form and passed in from javascript file workflow.js line 82 has saveworkflow function
-    editToken = session[:editToken].token #in komet dashboard this session is populated
-    additional_req_params ={editToken:editToken} # have to pass it to all write rest api's
+    additional_req_params ={editToken: get_edit_token} # have to pass it to all write rest api's
     body_params = {definitionId:default_definition[0].value, name:name,description:description} #create workflow requires body params
     #code line below make a call to create work flow rest api
     results =  WorkflowRest.get_workflow(action: WorkflowRestActions::ACTION_CREATE,  body_params: body_params,additional_req_params:additional_req_params)
-    render json:  results.to_json   #create workflow on success it returns processID
+
+    if results.is_a? CommonRest::UnexpectedResponse
+      render json: {process_id: nil} and return
+    end
+
+    render json: {process_id: results.uuid}   #create workflow on success it returns processID
   end
 
   def get_all_definition #returns definition id. this id is passed in other rest api calls.  this rest api works successfully
-    @default_definition =  get_workflow(action: WorkflowRestActions::ACTION_ALL_DEFINITION)
+    @default_definition =  WorkflowRest.get_workflow(action: WorkflowRestActions::ACTION_ALL_DEFINITION)
   end
 
 
    def get_workflowLock #todo  rest api code from yesterday  10/13 has a bug. joel working on resolving error on dated 10/14
-     processId = params[:processId]
+     process_id = params[:processId]
      additional_req_params ={processId:params[:processId] }
      @workflowLockState =  WorkflowRest.get_workflow(action: WorkflowRestActions::ACTION_LOCKED,  additional_req_params: additional_req_params)
    end
@@ -58,9 +61,8 @@ class WorkflowController < ApplicationController
   end
 
   def get_transition  #based on old rest api naming i named method get transtion. all new changes in rest api this is now called action instead of transition
-    processId = params[:processId]
-    editToken = session[:editToken].token #in komet dashboard this session is populated
-    additional_req_params ={processId:processId ,editToken:editToken}
+    process_id = params[:processId]
+    additional_req_params ={processId:process_id ,editToken: get_edit_token}
     transition =  WorkflowRest.get_workflow(action: WorkflowRestActions::ACTION_ACTIONS,  additional_req_params: additional_req_params)
     render json:  transition.to_json
   end
@@ -72,8 +74,8 @@ class WorkflowController < ApplicationController
   end
 
 def  get_history #based on processID  #todo  rest api code from yesterday  10/13 has a bug. joel working on resolving error on dated 10/14
-  processId = params[:processId]
-  additional_req_params ={processId:processId}
+  process_id = params[:processId]
+  additional_req_params ={processId:process_id}
   historiesforprocess =  WorkflowRest.get_workflow(action: WorkflowRestActions::ACTION_HISTORY,  additional_req_params: additional_req_params)
   render json:  historiesforprocess.to_json
 end
@@ -82,9 +84,8 @@ end
 def get_advanceable_process_information #this method populated grid on dashboard workflow
   #todo search text box filter on top of workflowdashboard does not work has bug
   column_definitions = {}
-  definitionId = get_all_definition
-  editToken = session[:editToken].token
-  additional_req_params ={definitionId:definitionId[0].value ,editToken:editToken}
+  definition_id = get_all_definition
+  additional_req_params ={definitionId:definition_id[0].value ,editToken: get_edit_token}
   filter = params[:overview_sets_filter]
   page_size = 1000 #params[:overview_items_page_size]
   page_number = 1 #params[:overview_items_page_number]
