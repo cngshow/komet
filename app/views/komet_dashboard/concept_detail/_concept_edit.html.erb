@@ -72,18 +72,25 @@
             <div class="komet-concept-section-title komet-concept-description-title">
                 DESCRIPTIONS
                 <div class="komet-flex-right">
-                    Add Description
-                    <div class="glyphicon glyphicon-plus-sign" onclick="WindowManager.viewers[<%= @viewer_id %>].addDescriptionRow()"></div>
+                    <div class="komet-concept-add-description" onclick="WindowManager.viewers[<%= @viewer_id %>].addDescriptionRow()">
+                        Add Description
+                        <div class="glyphicon glyphicon-plus-sign"></div>
+                    </div>
                 </div>
             </div>
 
-            <div class="komet-concept-section-title komet-concept-associations-title">ASSOCIATIONS</div>
+            <div class="komet-concept-section-title komet-concept-associations-title">
+                ASSOCIATIONS
+                <div class="komet-flex-right">
+                    <div class="komet-concept-add-association" onclick="WindowManager.viewers[<%= @viewer_id %>].addAssociationRow()">
+                        Add Association
+                        <div class="glyphicon glyphicon-plus-sign"></div>
+                    </div>
+                </div>
+            </div>
 
             <div id="komet_concept_associations_panel_<%= @viewer_id %>" class="komet-concept-section-panel komet-concept-associations-panel">
-                <div class="komet-concept-section-panel-details komet-changeable">
-
-
-                </div>
+                <div class="komet-concept-section-panel-details komet-changeable"></div>
             </div>
 
         </div>

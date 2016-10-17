@@ -149,29 +149,26 @@ module ConceptConcern
 
             header_dialects = ''
 
-            # loop thru the dialects array, pull out all the language refsets, and add them to the attributes array
+            # loop thru the dialects array, and add them to the attributes array
             description.dialects.each do |dialect|
 
-                dialect_sequence = dialect.sememeChronology.sememeSequence
-                dialect_id = dialect.sememeChronology.identifiers.uuids.first
-                dialect_name = get_concept_metadata(dialect.sememeChronology.assemblageSequence)
+                dialect_sememe_sequence = dialect.sememeChronology.sememeSequence
+                dialect_sememe_id = dialect.sememeChronology.identifiers.uuids.first
                 dialect_state = dialect.sememeVersion.state.name
                 dialect_time = DateTime.strptime((dialect.sememeVersion.time / 1000).to_s, '%s').strftime('%m/%d/%Y')
                 dialect_author = get_concept_metadata(dialect.sememeVersion.authorSequence)
                 dialect_module = get_concept_metadata(dialect.sememeVersion.moduleSequence)
                 dialect_path = get_concept_metadata(dialect.sememeVersion.pathSequence)
-                dialect_acceptability = dialect.dataColumns.first.data
+                acceptability_sequence = IdAPIsRest.get_id(uuid_or_id: dialect.dataColumns.first.data, action: IdAPIsRestActions::ACTION_TRANSLATE, additional_req_params: {inputType: 'nid', outputType: 'conceptSequence'}).value
+
+                # TODO switch to using only uuids once REST APIs support it
+                dialect_sequence = dialect.sememeChronology.assemblageSequence
+                dialect_metadata = find_metadata_by_id(dialect.sememeChronology.assemblageSequence, id_type: 'sequence', return_description: false)
+                dialect_id = dialect_metadata['uuids'].first[:uuid]
+                dialect_name = dialect_metadata['fsn']
 
                 if dialect_author == 'user'
                     dialect_author = 'System User'
-                end
-
-                case dialect_name
-
-                    when 'US English dialect'
-                        dialect_name = 'US English'
-                    when 'GB English dialect'
-                        dialect_name = 'GB English'
                 end
 
                 if header_dialects != ''
@@ -180,15 +177,27 @@ module ConceptConcern
 
                 header_dialects += dialect_name
 
-                if dialect_acceptability.to_s == $PROPS['KOMET.preferred_concept_id']
+                acceptability_metadata = find_metadata_by_id(acceptability_sequence, id_type: 'sequence', return_description: false)
+                acceptability_id = acceptability_metadata['uuids'].first[:uuid]
+                acceptability_text = acceptability_metadata['fsn']
+                header_dialects += ' (' + acceptability_text + ')'
 
-                    dialect_acceptability = 'Preferred'
-                    header_dialects += ' (Preferred)'
-                else
-                    dialect_acceptability = 'Acceptable'
-                end
-
-                attributes << {label: 'Refset', id: dialect_id, sequence: dialect_sequence, text: dialect_name, acceptability: dialect_acceptability, state: dialect_state, time: dialect_time, author: dialect_author, module: dialect_module, path: dialect_path}
+                attributes << {
+                    label: 'Dialect',
+                    sememe_id: dialect_sememe_id,
+                    sememe_sequence: dialect_sememe_sequence,
+                    id: dialect_id,
+                    sequence: dialect_sequence,
+                    text: dialect_name,
+                    acceptability_sequence: acceptability_sequence,
+                    acceptability_id: acceptability_id,
+                    acceptability_text: acceptability_text,
+                    state: dialect_state,
+                    time: dialect_time,
+                    author: dialect_author,
+                    module: dialect_module,
+                    path: dialect_path
+                }
             end
 
             description_info[:attributes] = attributes

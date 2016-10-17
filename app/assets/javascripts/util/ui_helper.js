@@ -172,7 +172,7 @@ var UIHelper = (function () {
 
     /*
      * hasFormChanged - Check to see if there were changes in a form, optionally returning the change details and highlighting them.
-     * @param [object or string] formElementOrSelector - Either a jquery object or the class or ID selector (including the "#" or "." prefix) that respresents the form to search for changes.
+     * @param [object or string] formElementOrSelector - Either a jquery object or the class or ID selector (including the "#" or "." prefix) that represents the form to search for changes.
      * @param [boolean] returnChanges - Should an array of changes be returned (true), or simply true/false (false). If this and highlightChanges
      *                                  are false then the function will only loop until it finds the first change. (Optional: default = false)
      * @param [boolean] highlightChanges - Should changes be highlighted. Requires the "komet-highlight-changes" class on the elements you want highlighted. (Optional: default = false)

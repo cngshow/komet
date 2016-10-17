@@ -156,6 +156,7 @@ body > header, body > footer{
     flex: 1 1 auto;
     text-align: right;
     justify-content: flex-end;
+    display: flex;
 }
 .komet-main div.komet-containing-block{
     display: flex;
@@ -245,6 +246,13 @@ body > header, body > footer{
 }
 .komet-indent-block{
     margin-left: 10px;
+}
+.komet-disabled{
+    pointer-events: none;
+    cursor: default !important;
+    opacity: .35;
+    filter: Alpha(Opacity=35);
+    background-image: none;
 }
 
 // KOMET Navigation styles
@@ -756,7 +764,7 @@ td.komet-concept-table-nested-indicator.komet-concept-table-nested-indicator-ope
 }
 
 // Concept Editor Viewer Styles
-.komet-concept-create .komet-concept-section-title .komet-flex-right, .komet-concept-edit .komet-concept-section-title .komet-flex-right{
+.komet-concept-create .komet-concept-section-title .komet-flex-right > div, .komet-concept-edit .komet-concept-section-title .komet-flex-right > div{
     color: green;
     cursor: pointer;
 }
@@ -808,17 +816,20 @@ td.komet-concept-table-nested-indicator.komet-concept-table-nested-indicator-ope
 .komet-concept-edit-row .komet-indent-block .komet-concept-section-title{
     margin-bottom: 5px;
 }
-.komet-concept-edit-description-properties-row{
+.komet-concept-properties-section{
+    margin-bottom: 8px;
+}
+.komet-concept-edit-description-properties-row, .komet-concept-edit-description-dialect-row{
     flex-wrap: nowrap;
 }
-.komet-concept-edit-description-properties-row .input-group{
+.komet-concept-edit-description-properties-row .input-group, .komet-concept-edit-description-dialect-row .input-group{
     margin-right: 5px;
 }
 .komet-concept-edit-description-properties-row label{
     min-width: 50px;
     width: 50px;
-    max-width: 50px;
-    padding: 6px 0px;
+    //max-width: 50px;
+    padding: 6px 2px;
     height: 26px;
     font-size: smaller;
     background-color: rgba(66, 139, 202, 1);
@@ -835,7 +846,7 @@ td.komet-concept-table-nested-indicator.komet-concept-table-nested-indicator-ope
 .komet-concept-edit-association-type{
     width: 140px;
 }
-.komet-concept-edit-association-target{
+.komet-concept-edit-association-value{
     width: 300px;
 }
 .komet-concept-edit-association-state{
