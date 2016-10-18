@@ -220,7 +220,7 @@ class ApplicationController < ActionController::Base
   private
 
   def self.check_for_metadata_auxiliary_dump
-    return unless $isaac_metadata_auxiliary.nil?
+    return if(!$isaac_metadata_auxiliary.nil? || $rake)
     begin
       return unless File.exists? METADATA_DUMP_FILE
       File.open(METADATA_DUMP_FILE) do |f|
