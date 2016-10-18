@@ -203,7 +203,7 @@ body > header, body > footer{
 .komet-form-warning{
     background-color: rgba(255, 239, 0, 1);
 }
-.komet-form-error{
+.komet-form-error, .komet-form-field-error{
     background-color: #ff5000;
     color: white;
 }
@@ -215,15 +215,14 @@ body > header, body > footer{
     border: solid lightgrey 1px;
 }
 .komet-form-field-error {
-    background-color: #ff5000;
     border: solid lightgrey 1px;
-    color: white;
     padding-left: 5px;
+    margin-top: 5px;
 }
 .komet-form-field-error .glyphicon, .komet-form-field-error .fa, .komet-form-error .glyphicon, .komet-form-error .fa, .komet-form-warning .glyphicon, .komet-form-warning .fa  {
     margin-right: 5px;
 }
-.komet-confirmation-dialog{
+div.komet-confirmation-dialog{
     overflow: visible;
 }
 .komet-confirmation-dialog .ui-dialog-titlebar{
@@ -349,6 +348,7 @@ body > header, body > footer{
     display: flex;
     flex-wrap: wrap;
     overflow-x: auto;
+    color: white;
 }
 .komet-panel .glyphicon, .komet-panel .fa {
     cursor: pointer;
@@ -361,6 +361,22 @@ body > header, body > footer{
     text-align: end;
     display: flex;
     justify-content: flex-end;
+    align-items: center;
+}
+.komet-panel .komet-panel-tools .fa{
+    font-size: larger;
+}
+.komet-panel .komet-panel-tools span{
+    margin-left: 4px;
+}
+.komet-panel .komet-panel-tools label{
+    margin-right: 4px;
+    margin-bottom: 0px;
+}
+.komet-panel .komet-panel-tools-control{
+    display: flex;
+    align-items: center;
+    margin: 0px 10px;
 }
 .komet-panel .komet-panel-tools .glyphicon, .komet-panel .komet-panel-tools .fa {
     margin-left: 10px;
@@ -384,6 +400,7 @@ body > header, body > footer{
 }
 .komet-panel .panel-body {
     background-color: #eef1f3;
+    padding: 5px 15px;
     //display: flex;
     //flex-direction: column;
 }
@@ -530,8 +547,7 @@ body > header, body > footer{
 }
 .komet-concept-section-panel-details{
     align-self: center;
-    width: 96%;
-    height: 80%;
+    width: 98%;
     border-top: 1px solid black;
     padding: 10px;
     margin-top: 10px;
@@ -771,6 +787,8 @@ td.komet-concept-table-nested-indicator.komet-concept-table-nested-indicator-ope
 .komet-concept-create .komet-concept-section-panel-details, .komet-concept-edit .komet-concept-section-panel-details{
     display: block;
     border: none;
+    padding: 0px;
+    margin: 0px;
 }
 .komet-concept-create .komet-concept-section-panel-details > div:not(.komet-autosuggest){
     margin-bottom: 15px;
@@ -838,13 +856,15 @@ td.komet-concept-table-nested-indicator.komet-concept-table-nested-indicator-ope
 }
 .komet-concept-edit-description-properties-sememe{
     width: 250px;
+    font-size: small;
 }
 .komet_concept_edit_description_properties_field{
     min-width: 150px;
     max-width: 250px;
 }
 .komet-concept-edit-association-type{
-    width: 140px;
+    width: 180px;
+    font-size: small;
 }
 .komet-concept-edit-association-value{
     width: 300px;

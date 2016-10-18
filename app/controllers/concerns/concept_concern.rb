@@ -49,15 +49,11 @@ module ConceptConcern
             return [{value: ''}, {value: ''}, {value: ''}]
         end
 
-        # TODO - switch to using this style for values that need to be specifically referenced in multiple places
         @concept_text = attributes.conChronology.description
         @concept_state = attributes.conVersion.state.name
 
         # TODO - remove the hard-coding of type to 'vhat' when the type flags are implemented in the REST APIs
         @concept_terminology_type =  'vhat'
-
-        return_attributes << {label: 'Text', value: attributes.conChronology.description}
-        return_attributes << {label: 'State', value: attributes.conVersion.state.name}
 
         if attributes.isConceptDefined.nil? || !boolean(attributes.isConceptDefined)
             defined = 'Primitive'
@@ -65,7 +61,22 @@ module ConceptConcern
             defined = 'Fully Defined'
         end
 
-        return_attributes << {label: 'Defined', value: defined}
+        @concept_defined = defined
+
+        # get the concept SCTID information if there is one
+        coding_id = IdAPIsRest.get_id(uuid_or_id: uuid, action: IdAPIsRestActions::ACTION_TRANSLATE, additional_req_params: {outputType: 'sctid'})
+
+        if coding_id.respond_to?(:value)
+            @terminology_id = {label: 'SCTID', value: coding_id.value}
+        else
+
+            # else get the concept VUID information if there is one
+            coding_id = IdAPIsRest.get_id(uuid_or_id: uuid, action: IdAPIsRestActions::ACTION_TRANSLATE, additional_req_params: {outputType: 'vuid'})
+
+            if coding_id.respond_to?(:value)
+                @terminology_id = {label: 'VUID', value: coding_id.value}
+            end
+        end
 
         return_attributes << {label: 'Time', value: DateTime.strptime((attributes.conVersion.time / 1000).to_s, '%s').strftime('%m/%d/%Y')}
 
@@ -79,25 +90,8 @@ module ConceptConcern
 
         return_attributes << {label: 'Module', value: get_concept_metadata(attributes.conVersion.moduleSequence)}
         return_attributes << {label: 'Path', value: get_concept_metadata(attributes.conVersion.pathSequence)}
-        return_attributes << {label: 'UUID', value: uuid}
-
-        # get the concept SCTID information if there is one and add it to the attributes array
-        coding_id = IdAPIsRest.get_id(uuid_or_id: uuid, action: IdAPIsRestActions::ACTION_TRANSLATE, additional_req_params: {outputType: 'sctid'})
-
-        if coding_id.respond_to?(:value)
-            return_attributes << {label: 'SCTID', value: coding_id.value}
-        else
-
-            # get the concept VUID information if there is one and add it to the attributes array
-            coding_id = IdAPIsRest.get_id(uuid_or_id: uuid, action: IdAPIsRestActions::ACTION_TRANSLATE, additional_req_params: {outputType: 'vuid'})
-
-            if coding_id.respond_to?(:value)
-                return_attributes << {label: 'VUID', value: coding_id.value}
-            end
-        end
 
         return return_attributes
-
     end
 
     ##

@@ -1,7 +1,7 @@
 <!-- DO NOT PUT ANYTHING ABOVE THE KOMET VIEWER DIV - IT WILL BREAK WINDOWING WHEN CLOSING VIEWERS-->
 <div class="panel panel-default komet-no-margins komet-panel komet-concept-edit" id="komet_viewer_<%= @viewer_id %>" data-komet-viewer-id="<%= @viewer_id %>">
 
-    <%= form_tag(taxonomy_edit_concept_path, method: 'post', id: "komet_concept_edit_form_#{@viewer_id}") do %>
+    <%= form_tag(taxonomy_edit_concept_path, method: 'post', id: "komet_concept_editor_form_#{@viewer_id}") do %>
 
         <input type="hidden" name="concept_id" value="<%= @concept_id %>">
 
@@ -12,60 +12,65 @@
             </span>
 
             <div class="komet-panel-tools">
-                <!--<div class="glyphicon glyphicon-new-window"></div>
-                <div class="glyphicon glyphicon-resize-full"></div>-->
+
+                <div class="komet-panel-tools-control">
+                    <label for="komet_concept_editor_properties_<%= @viewer_id %>">Show Changes</label>
+                    <input type="checkbox" id="komet_concept_editor_show_changes_<%= @viewer_id %>" onclick="WindowManager.viewers[<%= @viewer_id %>].toggleEditorChangeHighlights(this)">
+                </div>
+
+                <div class="komet-panel-tools-control">
+                    <label for="komet_concept_editor_properties_<%= @viewer_id %>">Properties</label>
+                    <input type="checkbox" id="komet_concept_editor_properties_<%= @viewer_id %>" checked onclick="WindowManager.viewers[<%= @viewer_id %>].toggleProperties()">
+                </div>
+
                 <div class="glyphicon glyphicon-remove" onclick="WindowManager.closeViewer('<%= @viewer_id %>')"></div>
             </div>
         </div>
 
         <div class="panel-body" id="komet_concept_editor_section_<%= @viewer_id %>">
 
-            <div class="komet-concept-body-tools">
-
-                <div class="komet-flex-right">
-                    <label for="komet_concept_editor_properties_<%= @viewer_id %>">Properties</label>
-                    <input type="checkbox" id="komet_concept_editor_properties_<%= @viewer_id %>" checked onclick="WindowManager.viewers[<%= @viewer_id %>].toggleProperties()">
-                </div>
-
-            </div>
-
             <div id="komet_concept_save_section_<%= @viewer_id %>">
                 All fields required except where noted as Optional.
                 <button type="button" class="btn btn-default" onclick="WindowManager.viewers[<%= @viewer_id %>].cancelAction('<%= @viewer_previous_content_type %>', '<%= @viewer_previous_content_id %>')">Cancel</button>
-                <button type="button" class="btn btn-primary ui-state-disabled" id="komet_concept_save_<%= @viewer_id %>" onclick="WindowManager.viewers[<%= @viewer_id %>].showSaveSection('confirm')">Save</button>
+                <button type="button" class="btn btn-primary" id="komet_concept_save_<%= @viewer_id %>" onclick="WindowManager.viewers[<%= @viewer_id %>].showSaveSection('confirm')">Save</button>
             </div>
 
-            <div id="komet_concept_confirm_section_<%= @viewer_id %>" class="komet-form-warning">
+            <div id="komet_concept_confirm_section_<%= @viewer_id %>" class="komet-form-warning hide">
                 Are you sure you want to commit changes?
                 <button type="button" class="btn btn-default" onclick="WindowManager.viewers[<%= @viewer_id %>].showSaveSection('save')">No</button>
                 <button class="btn btn-primary">Yes</button>
             </div>
 
-            <div id="mainblockattributes">
-                <div class="komet-concept-section-title komet-concept-attributes-title">ATTRIBUTES</div>
-                <div id="komet_concept_attributes_panel_<%= @viewer_id %>" class="komet-concept-section-panel komet-concept-attributes-panel">
+            <div class="komet-concept-section-title komet-concept-attributes-title">Concept</div>
 
-                    <!-- main header block - always visible -->
-                    <div class="komet-concept-section-panel-header">
+            <div id="komet_concept_attributes_panel_<%= @viewer_id %>" class="komet-concept-section-panel komet-concept-attributes-panel">
+
+                <div class="komet-concept-section-panel-details">
+
+                    <div class="komet-concept-edit-row komet-concept-edit-attributes-row komet-changeable">
 
                         <!-- Status -->
                         <div class="komet-concept-attributes-status">
-                            <select id="komet_concept_Status">
-                                <option value="Active">Active</option>
-                                <option value="InActive">InActive</option>
+                            <select name="concept_state">
+                                <option value="Active" <% if @concept_state.downcase == 'active' %> selected <% end %>>Active</option>
+                                <option value="Inactive"<% if @concept_state.downcase == 'inactive' %> selected <% end %>>Inactive</option>
                             </select>
                         </div>
+
+                        <div class="komet-concept-attributes-details-name">
+                            <b>UUID:</b> <%= @concept_id %>
+                        </div>
+
                         <!-- Defined -->
-                        <div id="definedDiv"></div>
                         <div>
-                            <select id="komet_concept_defined">
-                                <option value="Primitive">Primitive</option>
-                                <option value="Fully Defined">Fully Defined</option>
-                            </select>
+                            <% if @concept_defined == 'Primitive' %>
+                                <div class="komet-tree-node-icon komet-tree-node-primitive" title="<%= @concept_defined %>"></div> &nbsp; <%= @concept_defined %>
+                            <% else %>
+                                <div class="komet-tree-node-icon komet-tree-node-defined" title="<%= @concept_defined %>"></div> &nbsp; <%= @concept_defined %>
+                            <% end %>
                         </div>
 
                     </div>
-
                 </div>
             </div>
 
@@ -90,7 +95,7 @@
             </div>
 
             <div id="komet_concept_associations_panel_<%= @viewer_id %>" class="komet-concept-section-panel komet-concept-associations-panel">
-                <div class="komet-concept-section-panel-details komet-changeable"></div>
+                <div class="komet-concept-section-panel-details"></div>
             </div>
 
         </div>

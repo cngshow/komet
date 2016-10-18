@@ -4,7 +4,7 @@
     <span class="panel-title komet-section-title komet-context-menu"
           data-menu-type="concept"
           data-menu-uuid="<%= @concept_id %>"
-          data-menu-concept-text="<%= @attributes[0][:value] %>"
+          data-menu-concept-text="<%= @concept_text %>"
           data-menu-concept-terminology-type="<%= @concept_terminology_type %>"
           data-menu-state="<%= @concept_state %>"
     >
@@ -14,26 +14,28 @@
     </span>
 
         <div class="komet-panel-tools">
-            <!--<div class="glyphicon glyphicon-new-window"></div>
-            <div class="glyphicon glyphicon-resize-full"></div>-->
-            <div class="glyphicon glyphicon-remove" onclick="WindowManager.closeViewer('<%= @viewer_id %>')"></div>
-        </div>
-    </div>
 
-    <div class="panel-body">
+            <div class="komet-panel-tools-control">
+                <div class="glyphicon glyphicon-plus-sign" onclick="WindowManager.viewers[<%= @viewer_id %>].togglePanelDetails('komet_viewer_<%= @viewer_id %>')"></div>
+                <span>Expand All</span>
+            </div>
 
-        <div class="komet-concept-body-tools">
-            <div class="glyphicon glyphicon-plus-sign" onclick="WindowManager.viewers[<%= @viewer_id %>].togglePanelDetails('komet_concept_panel_<%= @viewer_id %>')"></div>
-            <span>Expand All</span>
-            <div class="fa fa-pencil-square" onclick="$.publish(KometChannels.Taxonomy.taxonomyConceptEditorChannel, ['<%= @concept_id %>', '<%= @viewer_id %>', WindowManager.INLINE]);"></div>
+            <div class="komet-panel-tools-control">
+                <div class="fa fa-pencil-square" onclick="$.publish(KometChannels.Taxonomy.taxonomyConceptEditorChannel, ['<%= @concept_id %>', '<%= @viewer_id %>', WindowManager.INLINE]);"></div>
+            </div>
 
-            <div class="komet-flex-right">
+            <div class="komet-panel-tools-control">
                 <select id="komet_concept_stated_inferred_<%= @viewer_id %>" class="form-control komet-stated-inferred" onchange="ConceptsModule.setStatedView(<%= @viewer_id %>, this)">
                     <option value="true">Stated View</option>
                     <option value="false">Inferred View</option>
                 </select>
             </div>
+
+            <div class="glyphicon glyphicon-remove" onclick="WindowManager.closeViewer('<%= @viewer_id %>')"></div>
         </div>
+    </div>
+
+    <div class="panel-body">
 
         <div id="komet_concept_attributes_section_<%= @viewer_id %>" class="komet-concept-section"></div>
         <div id="komet_concept_descriptions_section_<%= @viewer_id %>" class="komet-concept-section"></div>

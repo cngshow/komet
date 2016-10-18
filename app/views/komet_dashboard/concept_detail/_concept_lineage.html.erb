@@ -30,23 +30,21 @@
                 <div class="komet-concept-lineage-summary-text">
 
                     <!-- Defined -->
-                    <% if @attributes[2][:value] == 'Primitive' %>
-                        <div class="komet-tree-node-icon komet-tree-node-primitive" title="<%= @attributes[2][:value] %>"></div>
-                    <% elsif @attributes[2][:value] == 'Defined' %>
-                        <div class="komet-tree-node-icon komet-tree-node-defined" title="<%= @attributes[2][:value] %>"></div>
+                    <% if @concept_defined == 'Primitive' %>
+                        <div class="komet-tree-node-icon komet-tree-node-primitive" title="<%= @concept_defined %>"></div>
+                    <% else %>
+                        <div class="komet-tree-node-icon komet-tree-node-defined" title="<%= @concept_defined %>"></div>
                     <% end %>
 
-                    &nbsp; <%= @attributes[0][:value] %>
+                    &nbsp; <%= @concept_text %>
 
                 </div>
 
-                <div>
-                    <% if @attributes[8] %>
-                        <%= @attributes[8][:label] %>: <%= @attributes[8][:value] %>
-                    <% elsif @attributes[7] %>
-                        <%= @attributes[7][:label] %>: <%= @attributes[7][:value] %>
-                    <% end %>
-                </div>
+                <div>UUID: <%= @concept_id %></div>
+
+                <% if @terminology_id %>
+                    <div><%= @terminology_id[:label] %>: <%= @terminology_id[:value] %></div>
+                <% end %>
 
                 <hr class="komet-concept-details-hr">
 

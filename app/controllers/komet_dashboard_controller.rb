@@ -761,8 +761,9 @@ class KometDashboardController < ApplicationController
                     return_value = SememeRest::get_sememe(action: SememeRestActions::ACTION_DESCRIPTION_CREATE, additional_req_params: additional_req_params, body_params: body_params)
 
                     if return_value.is_a? CommonRest::UnexpectedResponse
-                        failed_writes << {id: description_id, text: description['text']}
 
+                        failed_writes << {id: description_id, text: description['text'], type: 'description'}
+                        next
                     else
 
                         if active == false
@@ -771,7 +772,26 @@ class KometDashboardController < ApplicationController
                     end
                 end
 
-                return_value
+                if description[:properties]
+
+                    description[:properties].each do |property_id, property|
+
+                        property.each do |field_id, field|
+                            $log.debug('Description Property: ' + property_id + ' - Field ID: ' + field_id + ' - Field Value: ' + field)
+                        end
+
+                        failed_writes << {id: description_id + '_' + property_id, text: 'Description: ' + description['text'] + ' : Property: ' + property_id, type: 'property'}
+                    end
+                end
+
+                if description[:dialects]
+
+                    description[:dialects].each do |dialect_id, dialect|
+
+                        failed_writes << {id: description_id + '_' + dialect_id, text: 'Description: ' + description['text'] + ' : Dialect: ' + dialect[:dialect], type: 'dialect'}
+                    end
+                end
+
             end
         end
 
@@ -779,26 +799,28 @@ class KometDashboardController < ApplicationController
 
             params[:associations].each do |association_id, association|
 
-                additional_req_params = {editToken: get_edit_token}
-
                 target_nid = IdAPIsRest.get_id(uuid_or_id: association['target'], action: IdAPIsRestActions::ACTION_TRANSLATE, additional_req_params: {inputType: 'uuid', outputType: 'nid'}).value
                 body_params = {targetNid: target_nid}
 
                 # if the association ID is a UUID, then it is an existing association to be updated, otherwise it is a new association to be created
                 if is_id?(association_id)
 
-                    additional_req_params[:state] = association['association_state']
+                    #additional_req_params = {editToken: get_edit_token, state: association['association_state']}
 
-                    return_value = AssociationRest::get_association(action: AssociationRestActions::ACTION_ITEM_UPDATE, uuid_or_id: association_id, additional_req_params: additional_req_params, body_params: body_params)
+                    return_value = AssociationRest::get_association(action: AssociationRestActions::ACTION_ITEM_UPDATE, uuid_or_id: association_id, additional_req_params: {editToken: get_edit_token, state: association['association_state']}, body_params: body_params)
+
+                    if return_value.is_a? CommonRest::UnexpectedResponse
+                        failed_writes << {id: association_id, text: association['target_display'], type: 'association'}
+                    end
                 else
 
                     body_params[:associationTypeSequence] = association['association_type'] #IdAPIsRest.get_id(uuid_or_id: association['association_type'], action: IdAPIsRestActions::ACTION_TRANSLATE, additional_req_params: {inputType: 'uuid', outputType: 'sememeSequence'}).value
                     body_params[:sourceNid] = concept_nid
 
-                    return_value = AssociationRest::get_association(action: AssociationRestActions::ACTION_ITEM_CREATE, additional_req_params: additional_req_params, body_params: body_params)
+                    return_value = AssociationRest::get_association(action: AssociationRestActions::ACTION_ITEM_CREATE, additional_req_params: {editToken: get_edit_token}, body_params: body_params)
 
                     if return_value.is_a? CommonRest::UnexpectedResponse
-                        failed_writes << {id: association_id, text: association['target_display']}
+                        failed_writes << {id: association_id, text: association['target_display'], type: 'association'}
 
                     else
 
@@ -814,8 +836,8 @@ class KometDashboardController < ApplicationController
 
         if params[:remove]
 
-            params[:remove].each do |concept_id, value|
-                SememeRest::get_sememe(action: SememeRestActions::ACTION_SEMEME_UPDATE_STATE, uuid_or_id: concept_id, additional_req_params: {editToken: get_edit_token}, body_params: {value: false})
+            params[:remove].each do |remove_concept_id, value|
+                SememeRest::get_sememe(action: SememeRestActions::ACTION_SEMEME_UPDATE_STATE, uuid_or_id: remove_concept_id, additional_req_params: {editToken: get_edit_token}, body_params: {value: false})
             end
 
         end
@@ -823,7 +845,7 @@ class KometDashboardController < ApplicationController
         # clear taxonomy caches after writing data
         clear_rest_caches
 
-        render json: {concept_id: nil, failed: failed_writes}
+        render json: {concept_id: concept_id, failed: failed_writes}
 
     end
 
