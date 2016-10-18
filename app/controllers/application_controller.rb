@@ -18,6 +18,7 @@ class ApplicationController < ActionController::Base
   CACHE_TYPE_ALL = :all_caches
   CACHE_TYPE_TAXONOMY = :taxonomy_caches
   CACHE_TYPE_SYSTEM = :system_caches
+  METADATA_DUMP_FILE = "#{Rails.root}/tmp/isaac_metadata_auxiliary.dump"
 
   # Prevent CSRF attacks by raising an exception.
   # For APIs, you may want to use :null_session instead.
@@ -158,6 +159,7 @@ class ApplicationController < ActionController::Base
   end
 
   def self.parse_isaac_metadata_auxiliary
+    check_for_metadata_auxiliary_dump
     if $isaac_metadata_auxiliary.nil?
       constants_file = './config/generated/yaml/IsaacMetadataAuxiliary.yaml'
       prefix = File.basename(constants_file).split('.').first.to_sym
@@ -216,6 +218,20 @@ class ApplicationController < ActionController::Base
   end
 
   private
+
+  def self.check_for_metadata_auxiliary_dump
+    return unless $isaac_metadata_auxiliary.nil?
+    begin
+      return unless File.exists? METADATA_DUMP_FILE
+      File.open(METADATA_DUMP_FILE) do |f|
+        $isaac_metadata_auxiliary = Marshal.load(f)
+        $log.info("The auxiliary metadata (with translations) has been loaded from disk.")
+      end
+    rescue => ex
+      $log.error("Couldn't parse auxiliary dump file, a re-fetch will occur: #{ex}")
+    end
+  end
+
   def self.add_translations(json)
     translated_hash = json.deep_dup
     json.keys.each do |k|
@@ -223,6 +239,11 @@ class ApplicationController < ActionController::Base
       json[k]['uuids'].each do |uuid|
         translation = JSON.parse IdAPIsRest::get_id(action: IdAPIsRestActions::ACTION_TRANSLATE, uuid_or_id: uuid, additional_req_params: {'outputType' => 'conceptSequence'}).to_json
         translated_array << {uuid: uuid, translation: translation}
+        if $rake
+          @translation_num ||= 0
+          @translation_num +=1
+          puts "Translation #{@translation_num} completed!"
+        end
       end
       translated_hash[k]['uuids'] = translated_array
     end
