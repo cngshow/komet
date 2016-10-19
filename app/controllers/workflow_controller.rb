@@ -30,7 +30,7 @@ class WorkflowController < ApplicationController
   layout 'workflow'
 
   def create_workflow #create workflow on success it returns processID
-    default_definition = get_all_definition[0].value #this makes a call to all definition rest api and get definitionID
+    default_definition = get_all_definition.first.id #this makes a call to all definition rest api and get definitionID
     name = params[:name] #populated from create workflow form and passed in from javascript file workflow.js line 82 has saveworkflow function
     description = params[:description] #populated from create workflow form and passed in from javascript file workflow.js line 82 has saveworkflow function
     additional_req_params ={editToken: get_edit_token} # have to pass it to all write rest api's
@@ -86,7 +86,7 @@ class WorkflowController < ApplicationController
     #todo search text box filter on top of workflowdashboard does not work has bug
     column_definitions = {}
     definition_id = get_all_definition
-    additional_req_params ={definitionId: definition_id[0].value, editToken: get_edit_token}
+    additional_req_params ={definitionId: definition_id.first.id, editToken: get_edit_token}
     filter = params[:overview_sets_filter]
     page_size = 1000 #params[:overview_items_page_size]
     page_number = 1 #params[:overview_items_page_number]
@@ -128,7 +128,7 @@ class WorkflowController < ApplicationController
   private
   def set_user_workflow_session(args = {})
     # there is only one definition right now
-    def_uuid = args.has_key?(:def_uuid) ? args[:def_uuid] : get_all_definition[0].value
+    def_uuid = args.has_key?(:def_uuid) ? args[:def_uuid] : get_all_definition.first.id
     process_id = args.has_key?(:process_id) ? args[:process_id] : params[:process_id]
 
     if process_id
