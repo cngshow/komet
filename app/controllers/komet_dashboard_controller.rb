@@ -323,9 +323,7 @@ class KometDashboardController < ApplicationController
             end
 
             # if the node has no children (or no parents if doing a parent search) identify it as a leaf, otherwise it is a branch
-            if !raw_node[has_relation]
-                show_expander = false
-            end
+            show_expander = false unless raw_node[has_relation]
 
             node_text = raw_node[:text] + raw_node[:badge] + flags
 
@@ -345,12 +343,12 @@ class KometDashboardController < ApplicationController
 
         end
 
-        return tree_nodes
+        tree_nodes
     end
 
     def get_tree_node_flag(flag_name, ids_to_match)
 
-        flag = '';
+        flag = ''
 
         if session['color' + flag_name]
 
@@ -363,7 +361,7 @@ class KometDashboardController < ApplicationController
             end
         end
 
-        return flag
+        flag
     end
 
     ##
@@ -946,7 +944,7 @@ class KometDashboardController < ApplicationController
     end
 
     def dashboard
-
+        # user_session(UserSession::WORKFLOW_UUID, '6457fb1f-b67b-4679-8f56-fa811e1e2a6b')
         @stated = 'true'
 
         if !session[:coordinatestoken]

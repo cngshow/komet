@@ -29,8 +29,11 @@ Rails.application.routes.draw do
     get 'komet_dashboard/change_concept_state', :as => :taxonomy_change_concept_state
     get 'komet_dashboard/clone_concept', :as => :taxonomy_clone_concept
     post 'workflow/create_workflow', :as => :taxonomy_create_workflow
+    get 'workflow/get_history', :as => :workflow_get_history
     get 'workflow/get_transition', :as => :workflow_get_transition
     get 'workflow/get_process', :as => :workflow_get_process
+    get 'workflow/set_user_workflow', :as => :workflow_set_user_workflow
+    # get 'workflow/modal_confirm', :as => :workflow_modal_confirm
     get 'workflow/get_advanceable_process_information', :as => :workflow_get_advanceable_process_information
 
 

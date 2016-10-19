@@ -48,6 +48,12 @@ html, body{
     flex-direction: column;
 }
 
+//jquery validation error
+.error {
+  color: red;
+  padding-left: 5px;
+}
+
 // jQuery UI Overrides
 // need to reiterate this style for some reason - gets lost on the search page for advanced options
 .ui-accordion-content{

@@ -1,0 +1,115 @@
+<link rel="stylesheet" href="//code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css">
+<style>
+  .modal-wide .modal-dialog {
+    width: 50%; /* or whatever you wish */
+  }
+
+  .box {
+    display: inline-block;
+    padding-left: 15px;
+    /*width: 200px;*/
+    height: 30px;
+    margin: 3px;
+  }
+
+  .workflow_actions {
+    height: 25px;
+    display: inline-block;
+    font-size: smaller !important;
+    padding: 3px 12px;
+    flex: 0 0 auto;
+  }
+</style>
+<nav class="navbar navbar-default" style="background-color:black; width: 100%">
+  <!--<div id="komet_navbar_navigation" style="background-color:black;padding:5px ">-->
+  <% if user_session(UserSession::WORKFLOW_UUID) %>
+      <div class="box" style="color:white; text-align: center">
+        Workflow Name/Status:
+        <span id="edit_workflow_span" style="font-weight: bold; color: greenyellow">Loading Workflow...</span>
+      </div>
+      <div class="box" style="color:white;">
+        <select id="komet_workflow_transition" class="form-control workflow_actions">
+        </select>
+      </div>
+  <% else %>
+      <div class="box" style="color:white;">
+        <span id="startbtn" class="btn btn-default">Start Workflow</span>
+      </div>
+  <% end %>
+  <!--</div>-->
+</nav>
+
+<!-- Modal -->
+<div id="wfl_modal" class="modal fade modal-wide" role="dialog">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+        <h4 class="modal-title">title</h4>
+      </div>
+      <div class="modal-body">
+        <div id="wfl_form"></div>
+      </div>
+      <hr>
+      <!--<span class="btn btn-default" onclick="alert('cancelling...');$('#wfl_modal').dismiss();">Cancel</span>-->
+      <button type="button" class="close btn btn-default" data-dismiss="modal">Cancel</button>
+    </div>
+  </div>
+</div>
+
+
+<div id="komet_workflow_form" title="Create Workflow">
+  <form id="komet_workflow_create_form" name="komet_workflow_create_form">
+    <div>
+      <%= label_tag 'txtWorkflow_Name', 'Workflow Name' %><br>
+      <%= text_field_tag 'txtWorkflow_Name', nil, required: true, data: {required: true}, placeholder: 'Enter the Workflow Name', maxlength: 75, size: 75, class: 'form-control' %>
+    </div>
+    <div>
+      <%= label_tag 'txtWorkflow_Description', 'Workflow Description' %><br>
+      <%= text_area_tag 'txtWorkflow_Description', nil, required: true, placeholder: 'Enter a Description for this Workflow', rows: '5', cols: 76, class: 'form-control' %>
+    </div>
+
+  </form>
+</div>
+<button style="display: none" type="button" id="wfl_popmodal" class="btn btn-info btn-lg" data-toggle="modal" data-target="#wfl_modal">popmodal</button>
+
+<script>
+
+  $(document).ready(function () {
+    WorkflowModule.initialize();
+
+    <% if user_session(UserSession::WORKFLOW_UUID) %>
+    var transitions = $('#komet_workflow_transition');
+    transitions.hide();
+
+    $.get(gon.routes.workflow_get_process_path, {}, function (results) {
+      console.log('workflow edit process json is ' + JSON.stringify(results));
+      $('#edit_workflow_span').text(results.name + ' :: ' + results.processStatus.text);
+    });
+    $.get(gon.routes.workflow_get_transition_path, {}, function (results) {
+      transitions.empty();
+      transitions.append($('<option>').text("- Select a Workflow Action -").attr('value', ''));
+      var options = '';
+
+      for (var i = 0; i < results.length; i++) {
+        transitions.append($('<option>').text(results[i].action).attr('value', results[i].action));
+        transitions.show();
+      }
+    });
+
+    transitions.on('change', function () {
+      var option = $(this).find('option:selected').val();
+      if (option !== '') {
+        // set up the modal display and show it
+        $('.modal-title').text(option);
+        $.get(gon.routes.workflow_modal_confirm_path, {action: option}, function(result) {
+
+        });
+
+        //pop up the modal
+        $('#wfl_popmodal').click();
+      }
+    });
+    <% end %>
+  });
+</script>

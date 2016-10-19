@@ -36,6 +36,7 @@ Copyright Notice
 //= require jquery.enhsplitter
 //= require jquery.minicolors
 //= require jquery.contextMenu.min.js
+//= require jquery-validation/jquery.validate.min
 //= require_tree ../../../vendor/assets/javascripts/jquery-svg
 //= require_tree ../../../vendor/assets/javascripts/jsTree
 //= require_tree ../../../vendor/assets/javascripts/jquery-tiny-pubsub

@@ -25,7 +25,7 @@ module WorkflowRestActions
   ACTION_HISTORY = :history
   ACTION_LOCKED = :locked
   ACTION_ACTIONS = :actions
-  ACTION_AVAILABLE = :avaiable
+  ACTION_AVAILABLE = :available
 
   ACTION_CREATE = :create
   ACTION_ADVANCE = :advance
@@ -47,7 +47,7 @@ module WorkflowRest
   PATH_HISTORY_WORKFLOW = ROOT_PATH + 'process/history'
   PATH_LOCKED_WORKFLOW = ROOT_PATH + 'process/locked'
   PATH_ACTIONS_WORKFLOW = ROOT_PATH + 'process/actions'
-  PATH_AVAILABLE_WORKFLOW = ROOT_PATH + 'process/avaiable'
+  PATH_AVAILABLE_WORKFLOW = ROOT_PATH + 'process/available'
 
   PATH_CREATE_WORKFLOW = PATH_WORKFLOW_WRITE + 'create/process/create'
   PATH_ADVANCE_WORKFLOW = PATH_WORKFLOW_WRITE + 'update/process/advance'
@@ -86,6 +86,8 @@ module WorkflowRest
           STARTING_PARAMS_SYM => PARAMS_EMPTY,
           CLAZZ_SYM => Gov::Vha::Isaac::Rest::Api1::Data::Workflow::RestWorkflowProcessHistoriesMapEntry
       },
+
+
       ACTION_CREATE   => {
           PATH_SYM => PATH_CREATE_WORKFLOW,
           STARTING_PARAMS_SYM => PARAMS_EMPTY,
@@ -160,5 +162,12 @@ g = WorkflowRest::get_workflow(action: WorkflowRestActions::ACTION_PROCESS,uuid:
 #component = WorkflowRest::get_workflow(action: WorkflowRestActions::ACTION_COMPONENT, additional_req_params: {editToken: ,  processId : '...',  componentNid : 12345,  stampSequence : 12345 })
 #lock = WorkflowRest::get_workflow(action: WorkflowRestActions::ACTION_LOCK, additional_req_params: {editToken: , definitionId : '...',  userId : 12345,  role : '...'})
 #advance = WorkflowRest::get_workflow(action: WorkflowRestActions::ACTION_ADVANCE, additional_req_params: {editToken: , processId : '...',  userId : 12345,  actionRequested : '...',  comment : '...' })
+create = WorkflowRest::get_workflow(action: WorkflowRestActions::ACTION_CREATEWORKFLOWPROCESS, body_params: { definitionId : '...',creatorNid: 12345,name: 'workflow name',description : 'workflow description'} )
+addcomponent = WorkflowRest::get_workflow(action: WorkflowRestActions::ACTION_ADDCOMPONENTTOWORKFLOW, additional_req_params: {  processId : '...',  componentNid : 12345,  stampSequence : 12345 })
+addworkflowuserrole = WorkflowRest::get_workflow(action: WorkflowRestActions::ACTION_ADDWORKFLOWUSERROLE, additional_req_params:  {definitionId : '...',  userId : 12345,  role : '...'})
+advanceworkflowprocess = WorkflowRest::get_workflow(action: WorkflowRestActions::ACTION_ADVANCEWORKFLOWPROCESS, additional_req_params: {  processId : '...',  userId : 12345,  actionRequested : '...',  comment : '...' })
+removecomponentfromworkflow = WorkflowRest::get_workflow(action: WorkflowRestActions::ACTION_REMOVECOMPONENTFROMWORKFLOW, additional_req_params:  {  processId : '...',  componentNid : 12345,  stampSequence : 12345 })
+
+items =  WorkflowRest.get_workflow(action: WorkflowRestActions::ACTION_AVAILABLE, ...)
 
 =end
