@@ -126,13 +126,7 @@ module AssociationRest
 end
 
 =begin
-load('./lib/isaac_rest/sememe_rest.rb')
-a = AssociationRest::get_association(action: AssociationRestActions::ACTION_WITH_TYPE,uuid_or_id: AssociationRest::TEST_UUID_REF_COMP)
-a1 = AssociationRest::get_association(action: AssociationRestActions::ACTION_WITH_TYPE,uuid_or_id: "406e872b-2e19-5f5e-a71d-e4e4b2c68fe5",additional_req_params: ({expand: "chronology,nestedAssociations"}))
-b = AssociationRest::get_association(action: AssociationRestActions::ACTION_TYPES,uuid_or_id: AssociationRest::TEST_ID)
-c = AssociationRest::get_association(action: AssociationRestActions::ACTION_TYPE,uuid_or_id: AssociationRest::TEST_ID)
-d = AssociationRest::get_association(action: AssociationRestActions::ACTION_WITH_SOURCE,uuid_or_id: AssociationRest::TEST_ID)
-e = AssociationRest::get_association(action: AssociationRestActions::ACTION_WITH_TARGET,uuid_or_id: AssociationRest::TEST_UUID_SEMEME_DEF)
-f = AssociationRest::get_association(action: AssociationRestActions::ACTION_TYPE_CREATE,uuid_or_id: AssociationRest::TEST_SEMEME_TYPE_ID)
+load('./lib/isaac_rest/association_rest.rb')
+# TODO - add write tests and need to figure out passing editToken into write calls
 =end
 

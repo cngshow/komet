@@ -548,7 +548,7 @@ var ConceptViewer = function(viewerID, currentConceptID, viewerAction) {
                             if (data.failed[i].type == "description"){
 
                                 var descriptionPanel = editorSection.find("div[id^='komet_concept_description_panel_" + data.failed[i].id + "']");
-                                descriptionPanel.before(UIHelper.generateFormErrorMessage("This description was not processed."));
+                                descriptionPanel.before(UIHelper.generateFormErrorMessage("This description was not processed, and none of its properties or dialects were attempted to be processed."));
                                 descriptionPanel.css("margin-top", "0px");
 
                             } else if (data.failed[i].type == "property"){
@@ -661,11 +661,11 @@ var ConceptViewer = function(viewerID, currentConceptID, viewerAction) {
 
     ConceptViewer.prototype.createDescriptionPropertyRowString = function (descriptionID, rowData, fieldInfo) {
 
-        var propertyID = descriptionID + '_' + rowData.id;
+        var propertyID = descriptionID + '_' + rowData.uuid;
         var rowID = 'komet_concept_edit_description_properties_row_' + propertyID + '_' + this.viewerID;
 
         var rowString = '<div id="' + rowID + '" class="komet-concept-edit-row komet-concept-edit-description-properties-row komet-changeable"><div>'
-            + '<input type="hidden" name="descriptions[' + descriptionID + '][properties][' + rowData.id + '][sememe]" value="' + rowData.uuid + '"> '
+            + '<input type="hidden" name="descriptions[' + descriptionID + '][properties][' + rowData.uuid + '][sememe]" value="' + rowData.id + '"> '
             + '<span class="form-field komet-concept-edit-description-properties-sememe"><b>' + rowData.sememe_name + '</b></span></div>'
             + '<div class="komet-containing-block">';
 
@@ -681,12 +681,12 @@ var ConceptViewer = function(viewerID, currentConceptID, viewerAction) {
             }
 
             rowString += '<div class="input-group"><label for="komet_concept_edit_description_properties_' + viewerFieldID + '" class="input-group-addon" title="' + fieldLabel + '">' + fieldLabel + '</label>'
-                + '<input type="text" id="komet_concept_edit_description_properties_' + viewerFieldID + '" name="descriptions[' + descriptionID + '][properties][' + rowData.id + '][' + fieldID + ']" value="' + data + '" class="form-control komet_concept_edit_description_properties_field">'
+                + '<input type="text" id="komet_concept_edit_description_properties_' + viewerFieldID + '" name="descriptions[' + descriptionID + '][properties][' + rowData.uuid + '][' + fieldID + ']" value="' + data + '" class="form-control komet_concept_edit_description_properties_field">'
                 + '</div>';
 
         }.bind(this));
 
-        rowString += '</div><div class="komet-concept-edit-row-tools"><div class="glyphicon glyphicon-remove" onclick="WindowManager.viewers[' + this.viewerID + '].removeRow(\'' + rowData.id + '\', \'' + rowID + '\', \'property\', ' + rowData.new + ', this)"></div></div><!-- end komet-concept-edit-description-properties-row --></div>';
+        rowString += '</div><div class="komet-concept-edit-row-tools"><div class="glyphicon glyphicon-remove" onclick="WindowManager.viewers[' + this.viewerID + '].removeRow(\'' + rowData.uuid + '\', \'' + rowID + '\', \'property\', ' + rowData.new + ', this)"></div></div><!-- end komet-concept-edit-description-properties-row --></div>';
 
         return rowString;
     };

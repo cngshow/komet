@@ -463,7 +463,7 @@ module ConceptConcern
             sememe_name = ConceptRest.get_concept(action: ConceptRestActions::ACTION_DESCRIPTIONS, uuid: assemblage_sequence, additional_req_params: additional_req_params).first.text
 
             # start loading the row of sememe data with everything besides the columns
-            data_row = {sememe_name: sememe_name, sememe_description: sememe_definition.sememeUsageDescription, uuid: uuid, id: assemblage_sequence, state: 'Active', level: 1, has_nested: false, columns: {}}
+            data_row = {sememe_name: sememe_name, sememe_description: sememe_definition.sememeUsageDescription, uuid: get_next_id, id: assemblage_sequence, state: 'Active', level: 1, has_nested: false, columns: {}}
 
             # loop through all of the sememe's columns
             sememe_definition.columnInfo.each{ |row_column|

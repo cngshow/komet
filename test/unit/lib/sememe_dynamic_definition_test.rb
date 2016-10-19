@@ -15,7 +15,7 @@ class SememeDynamicDefinitionTest < Test::Unit::TestCase
   # to set up fixture information.
   def setup
     json = YAML.load_file(FILES[Fixtures::SEMEME_DEFINITION])
-    @rest_sememe_comp = Sememe.new(uuid: TEST_UUID_SEMEME_DEF, params: nil, action: ACTION_SEMEME_DEFINITION, action_constants: ACTION_CONSTANTS).get_rest_class(json).send(:from_json, json)
+    @rest_sememe_comp = Sememe.new(uuid: TEST_UUID_SEMEME_DEF, params: nil, body_params: {}, action: ACTION_SEMEME_DEFINITION, action_constants: ACTION_CONSTANTS).get_rest_class(json).send(:from_json, json)
   end
 
   def test_build_rest_sememe_dynamic_definition

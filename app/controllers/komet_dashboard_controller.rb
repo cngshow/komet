@@ -736,51 +736,71 @@ class KometDashboardController < ApplicationController
 
                 additional_req_params = {editToken: get_edit_token}
 
-                body_params = {
-                    caseSignificanceConceptSequence: description['description_case_significance'],
-                    languageConceptSequence: description['description_language'],
-                    text: description['text'],
-                    descriptionTypeConceptSequence: description['description_type']
-                }
-
                 if description['description_state'].downcase == 'active'
                     active = true
                 else
                     active = false
                 end
 
+                body_params = {
+                    caseSignificanceConceptSequence: description['description_case_significance'],
+                    languageConceptSequence: description['description_language'],
+                    text: description['text'],
+                    descriptionTypeConceptSequence: description['description_type'],
+                    active: active
+                }
+
                 # if the description ID is a UUID, then it is an existing description to be updated, otherwise it is a new description to be created
                 if is_id?(description_id)
-
-                    body_params[:active] = active
-
                     return_value = SememeRest::get_sememe(action: SememeRestActions::ACTION_DESCRIPTION_UPDATE, uuid_or_id: description_id, additional_req_params: additional_req_params, body_params: body_params)
                 else
 
                     body_params[:referencedComponentNid] = concept_nid
                     return_value = SememeRest::get_sememe(action: SememeRestActions::ACTION_DESCRIPTION_CREATE, additional_req_params: additional_req_params, body_params: body_params)
-
-                    if return_value.is_a? CommonRest::UnexpectedResponse
-
-                        failed_writes << {id: description_id, text: description['text'], type: 'description'}
-                        next
-                    else
-
-                        if active == false
-                            SememeRest::get_sememe(action: SememeRestActions::ACTION_SEMEME_UPDATE_STATE, uuid_or_id: return_value.value, additional_req_params: {editToken: get_edit_token}, body_params: {value: false})
-                        end
-                    end
                 end
+
+                # if the description create or update failed, mark it and skip to the next description. Do not process its dialects or properties.
+                if return_value.is_a? CommonRest::UnexpectedResponse
+
+                    failed_writes << {id: description_id, text: description['text'], type: 'description'}
+                    next
+                end
+
+                description_id = return_value.uuid
 
                 if description[:properties]
 
                     description[:properties].each do |property_id, property|
 
+                        sememe_id = property['sememe']
+
+                        #remove the sememe property
+                        property.delete('sememe')
+
+                        body_params = {columnData: []}
+                        additional_req_params = {editToken: get_edit_token}
+
                         property.each do |field_id, field|
+
                             $log.debug('Description Property: ' + property_id + ' - Field ID: ' + field_id + ' - Field Value: ' + field)
+                            body_params[:columnData] << {columnNumber: field_id, data: field, '@class' => 'gov.vha.isaac.rest.api1.data.sememe.dataTypes.RestDynamicSememeString'}
                         end
 
-                        failed_writes << {id: description_id + '_' + property_id, text: 'Description: ' + description['text'] + ' : Property: ' + property_id, type: 'property'}
+                        # if the property ID is a UUID, then it is an existing property to be updated, otherwise it is a new property to be created
+                        if is_id?(property_id)
+                            return_value = SememeRest::get_sememe(action: SememeRestActions::ACTION_SEMEME_UPDATE, uuid_or_id: property_id, additional_req_params: additional_req_params, body_params: body_params)
+                        else
+
+                            body_params[:assemblageConcept] = sememe_id
+                            body_params[:referencedComponent] = description_id
+
+                            return_value = SememeRest::get_sememe(action: SememeRestActions::ACTION_SEMEME_CREATE, additional_req_params: additional_req_params, body_params: body_params)
+                        end
+
+                        # if the description create or update failed, mark it
+                        if return_value.is_a? CommonRest::UnexpectedResponse
+                            failed_writes << {id: description_id + '_' + property_id, text: 'Description: ' + description['text'] + ' : Property: ' + property_id, type: 'property'}
+                        end
                     end
                 end
 
@@ -800,14 +820,19 @@ class KometDashboardController < ApplicationController
             params[:associations].each do |association_id, association|
 
                 target_nid = IdAPIsRest.get_id(uuid_or_id: association['target'], action: IdAPIsRestActions::ACTION_TRANSLATE, additional_req_params: {inputType: 'uuid', outputType: 'nid'}).value
+
                 body_params = {targetNid: target_nid}
+
+                if association['association_state'].downcase == 'active'
+                    body_params[:active] = true
+                else
+                    body_params[:active] = false
+                end
 
                 # if the association ID is a UUID, then it is an existing association to be updated, otherwise it is a new association to be created
                 if is_id?(association_id)
 
-                    #additional_req_params = {editToken: get_edit_token, state: association['association_state']}
-
-                    return_value = AssociationRest::get_association(action: AssociationRestActions::ACTION_ITEM_UPDATE, uuid_or_id: association_id, additional_req_params: {editToken: get_edit_token, state: association['association_state']}, body_params: body_params)
+                    return_value = AssociationRest::get_association(action: AssociationRestActions::ACTION_ITEM_UPDATE, uuid_or_id: association_id, additional_req_params: {editToken: get_edit_token}, body_params: body_params)
 
                     if return_value.is_a? CommonRest::UnexpectedResponse
                         failed_writes << {id: association_id, text: association['target_display'], type: 'association'}
@@ -821,12 +846,6 @@ class KometDashboardController < ApplicationController
 
                     if return_value.is_a? CommonRest::UnexpectedResponse
                         failed_writes << {id: association_id, text: association['target_display'], type: 'association'}
-
-                    else
-
-                        if association['association_state'].downcase == 'inactive'
-                            SememeRest::get_sememe(action: SememeRestActions::ACTION_SEMEME_UPDATE_STATE, uuid_or_id: return_value.value, additional_req_params: {editToken: get_edit_token}, body_params: {value: false})
-                        end
                     end
                 end
 
@@ -837,7 +856,7 @@ class KometDashboardController < ApplicationController
         if params[:remove]
 
             params[:remove].each do |remove_concept_id, value|
-                SememeRest::get_sememe(action: SememeRestActions::ACTION_SEMEME_UPDATE_STATE, uuid_or_id: remove_concept_id, additional_req_params: {editToken: get_edit_token}, body_params: {value: false})
+                ComponentRest::get_component(action: ComponentRestActions::ACTION_UPDATE_STATE, uuid_or_id: remove_concept_id, additional_req_params: {editToken: get_edit_token, active: false})
             end
 
         end

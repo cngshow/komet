@@ -15,7 +15,7 @@ class SememeReferencedComponentTest < Test::Unit::TestCase
   # to set up fixture information.
   def setup
     json = YAML.load_file(FILES[Fixtures::SEMEME_BY_REFERENCED_COMPONENT])
-    @rest_sememe_comp = Sememe.new(uuid: TEST_UUID_SEMEME_DEF, params: nil, action: ACTION_BY_REFERENCED_COMPONENT, action_constants: ACTION_CONSTANTS).get_rest_class(json.first).send(:from_json, json.first)
+    @rest_sememe_comp = Sememe.new(uuid: TEST_UUID_SEMEME_DEF, params: nil, body_params: {}, action: ACTION_BY_REFERENCED_COMPONENT, action_constants: ACTION_CONSTANTS).get_rest_class(json.first).send(:from_json, json.first)
   end
 
   def test_build_rest_sememe_by_referenced_component

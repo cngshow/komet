@@ -27,7 +27,8 @@ module SememeRestActions
     ACTION_SEMEME_TYPE = :sememe_type
     ACTION_DESCRIPTION_CREATE = :description_create
     ACTION_DESCRIPTION_UPDATE = :description_update
-    ACTION_SEMEME_UPDATE_STATE = :sememe_update_state
+    ACTION_SEMEME_CREATE = :sememe_create
+    ACTION_SEMEME_UPDATE = :sememe_update
 end
 
 module SememeRest
@@ -48,7 +49,8 @@ module SememeRest
 
     PATH_DESCRIPTION_CREATE = PATH_CONCEPT_WRITE + 'description/create'
     PATH_DESCRIPTION_UPDATE = PATH_CONCEPT_WRITE + 'description/update/{id}'
-    PATH_SEMEME_UPDATE_STATE = PATH_CONCEPT_WRITE + 'update/updateState/{id}'
+    PATH_SEMEME_CREATE = PATH_CONCEPT_WRITE + 'create/'
+    PATH_SEMEME_UPDATE = PATH_CONCEPT_WRITE + 'update/{id}'
 
     TEST_ID = '3621bf47-a54c-5f6e-a68d-c4dcb7156815'#'a60bd881-9010-3260-9653-0c85716b4391' #'1f5bd727-27c5-59b9-bcc3-964d6155a010'#19554b92-9025-554b-8fa1-1d1d95fe57f4'#useful for testing the actions VERSION, CHRONOLOGY, BY_ASSEMBLAGE
     TEST_ASSEMBLAGE_ID = '3e0cd740-2cc6-3d68-ace7-bad2eb2621da'
@@ -95,12 +97,18 @@ module SememeRest
             CLAZZ_SYM => Gov::Vha::Isaac::Rest::Api::Data::Wrappers::RestWriteResponse,
             HTTP_METHOD_KEY => HTTP_METHOD_PUT,
             BODY_CLASS => Gov::Vha::Isaac::Rest::Api1::Data::Sememe::RestSememeDescriptionUpdateData},
-        ACTION_SEMEME_UPDATE_STATE => {
-            PATH_SYM => PATH_SEMEME_UPDATE_STATE, 
+        ACTION_SEMEME_CREATE => {
+            PATH_SYM => PATH_SEMEME_CREATE,
+            STARTING_PARAMS_SYM => PARAMS_EMPTY,
+            CLAZZ_SYM => Gov::Vha::Isaac::Rest::Api::Data::Wrappers::RestWriteResponse,
+            HTTP_METHOD_KEY => HTTP_METHOD_POST,
+            BODY_CLASS => Gov::Vha::Isaac::Rest::Api1::Data::Sememe::RestDynamicSememeBaseCreate},
+        ACTION_SEMEME_UPDATE => {
+            PATH_SYM => PATH_SEMEME_UPDATE,
             STARTING_PARAMS_SYM => PARAMS_EMPTY,
             CLAZZ_SYM => Gov::Vha::Isaac::Rest::Api::Data::Wrappers::RestWriteResponse,
             HTTP_METHOD_KEY => HTTP_METHOD_PUT,
-            BODY_CLASS => Gov::Vha::Isaac::Rest::Api::Data::Wrappers::RestBoolean}
+            BODY_CLASS => Gov::Vha::Isaac::Rest::Api1::Data::Sememe::RestDynamicSememeBase}
     }
 
     class << self
@@ -115,7 +123,7 @@ module SememeRest
 
         def initialize(uuid:, params:, body_params:, action:, action_constants:)
             @uuid = uuid.to_s unless uuid.nil?
-            uuid_check uuid: uuid unless [SememeRestActions::ACTION_DESCRIPTION_CREATE].include?(action)
+            uuid_check uuid: uuid unless [SememeRestActions::ACTION_DESCRIPTION_CREATE, SememeRestActions::ACTION_SEMEME_CREATE].include?(action)
             super(params: params, body_params: body_params, action: action, action_constants: action_constants)
         end
 
@@ -135,7 +143,7 @@ module SememeRest
         Sememe.new(uuid: uuid_or_id, params: additional_req_params, body_params: body_params, action: action, action_constants: ACTION_CONSTANTS).rest_call
     end
 end
-
+# TODO - add write tests and need to figure out passing editToken into write calls
 =begin
 load('./lib/isaac_rest/sememe_rest.rb')
 a = SememeRest::get_sememe(action: SememeRestActions::ACTION_BY_REFERENCED_COMPONENT,uuid_or_id: SememeRest::TEST_UUID_REF_COMP)

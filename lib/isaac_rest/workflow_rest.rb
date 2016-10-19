@@ -30,6 +30,7 @@ module WorkflowRestActions
   ACTION_CREATE = :create
   ACTION_ADVANCE = :advance
   ACTION_LOCK = :lock
+  ACTION_COMPONENT = :component
 
 end
 
@@ -51,6 +52,7 @@ module WorkflowRest
   PATH_CREATE_WORKFLOW = PATH_WORKFLOW_WRITE + 'create/process/create'
   PATH_ADVANCE_WORKFLOW = PATH_WORKFLOW_WRITE + 'update/process/advance'
   PATH_LOCK_WORKFLOW = PATH_WORKFLOW_WRITE + 'update/process/lock'
+  PATH_COMPONENT_WORKFLOW = PATH_WORKFLOW_WRITE + 'update/process/component'
 
   PARAMS_EMPTY = {}
 
@@ -58,7 +60,7 @@ module WorkflowRest
       ACTION_ALL_DEFINITION => {
           PATH_SYM => PATH_ALL_DEFINITION_WORKFLOW,
           STARTING_PARAMS_SYM => PARAMS_EMPTY,
-          CLAZZ_SYM => Gov::Vha::Isaac::Rest::Api::Data::Wrappers::RestUUID },
+          CLAZZ_SYM => Gov::Vha::Isaac::Rest::Api1::Data::Workflow::RestWorkflowDefinition },
       ACTION_PROCESS  => {
           PATH_SYM => PATH_PROCESS_WORKFLOW ,
           STARTING_PARAMS_SYM => PARAMS_EMPTY,
@@ -84,8 +86,6 @@ module WorkflowRest
           STARTING_PARAMS_SYM => PARAMS_EMPTY,
           CLAZZ_SYM => Gov::Vha::Isaac::Rest::Api1::Data::Workflow::RestWorkflowProcessHistoriesMapEntry
       },
-
-
       ACTION_CREATE   => {
           PATH_SYM => PATH_CREATE_WORKFLOW,
           STARTING_PARAMS_SYM => PARAMS_EMPTY,
@@ -97,14 +97,23 @@ module WorkflowRest
           PATH_SYM => PATH_ADVANCE_WORKFLOW,
           STARTING_PARAMS_SYM => PARAMS_EMPTY,
           CLAZZ_SYM => Gov::Vha::Isaac::Rest::Api::Data::Wrappers::RestWriteResponse,
-          HTTP_METHOD_KEY => HTTP_METHOD_PUT
+          HTTP_METHOD_KEY => HTTP_METHOD_PUT,
+          BODY_CLASS => Gov::Vha::Isaac::Rest::Api1::Data::Workflow::RestWorkflowProcessAdvancementData
       },
       ACTION_LOCK => {
           PATH_SYM => PATH_LOCK_WORKFLOW,
           STARTING_PARAMS_SYM => PARAMS_EMPTY,
           CLAZZ_SYM => Gov::Vha::Isaac::Rest::Api::Data::Wrappers::RestWriteResponse,
-          HTTP_METHOD_KEY => HTTP_METHOD_PUT
+          HTTP_METHOD_KEY => HTTP_METHOD_PUT,
+          BODY_CLASS => Gov::Vha::Isaac::Rest::Api1::Data::Workflow::RestWorkflowLockingData
       },
+      ACTION_COMPONENT => {
+          PATH_SYM => PATH_COMPONENT_WORKFLOW,
+          STARTING_PARAMS_SYM => PARAMS_EMPTY,
+          CLAZZ_SYM => Gov::Vha::Isaac::Rest::Api::Data::Wrappers::RestWriteResponse,
+          HTTP_METHOD_KEY => HTTP_METHOD_PUT,
+          BODY_CLASS => Gov::Vha::Isaac::Rest::Api1::Data::Workflow::RestWorkflowProcessComponentSpecificationData
+      }
   }
 
   class << self
@@ -146,12 +155,10 @@ e = WorkflowRest::get_workflow(action: WorkflowRestActions::ACTION_ISCOMPONENTIN
 f = WorkflowRest::get_workflow(action: WorkflowRestActions::ACTION_PERMISSIONSFORDEFINITIONANDUSER,uuid: 'cc0b2455-f546-48fa-90e8-e214cc8478d6')
 g = WorkflowRest::get_workflow(action: WorkflowRestActions::ACTION_PROCESS,uuid: 'cc0b2455-f546-48fa-90e8-e214cc8478d6')
 
-create = WorkflowRest::get_workflow(action: WorkflowRestActions::ACTION_CREATEWORKFLOWPROCESS, body_params: { definitionId : '...',creatorNid: 12345,name: 'workflow name',description : 'workflow description'} )
-addcomponent = WorkflowRest::get_workflow(action: WorkflowRestActions::ACTION_ADDCOMPONENTTOWORKFLOW, additional_req_params: {  processId : '...',  componentNid : 12345,  stampSequence : 12345 })
-addworkflowuserrole = WorkflowRest::get_workflow(action: WorkflowRestActions::ACTION_ADDWORKFLOWUSERROLE, additional_req_params:  {definitionId : '...',  userId : 12345,  role : '...'})
-advanceworkflowprocess = WorkflowRest::get_workflow(action: WorkflowRestActions::ACTION_ADVANCEWORKFLOWPROCESS, additional_req_params: {  processId : '...',  userId : 12345,  actionRequested : '...',  comment : '...' })
-removecomponentfromworkflow = WorkflowRest::get_workflow(action: WorkflowRestActions::ACTION_REMOVECOMPONENTFROMWORKFLOW, additional_req_params:  {  processId : '...',  componentNid : 12345,  stampSequence : 12345 })
-
-
+#TODO - need to figure out passing editToken into write calls
+#create = WorkflowRest::get_workflow(action: WorkflowRestActions::ACTION_CREATE, additional_req_params: {editToken: }, body_params: { definitionId : '...',creatorNid: 12345,name: 'workflow name',description : 'workflow description'} )
+#component = WorkflowRest::get_workflow(action: WorkflowRestActions::ACTION_COMPONENT, additional_req_params: {editToken: ,  processId : '...',  componentNid : 12345,  stampSequence : 12345 })
+#lock = WorkflowRest::get_workflow(action: WorkflowRestActions::ACTION_LOCK, additional_req_params: {editToken: , definitionId : '...',  userId : 12345,  role : '...'})
+#advance = WorkflowRest::get_workflow(action: WorkflowRestActions::ACTION_ADVANCE, additional_req_params: {editToken: , processId : '...',  userId : 12345,  actionRequested : '...',  comment : '...' })
 
 =end

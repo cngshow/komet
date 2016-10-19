@@ -23,8 +23,7 @@ module ConceptRestActions
     ACTION_DESCRIPTIONS = :descriptions
     ACTION_CHRONOLOGY = :chronology
     ACTION_CREATE = :create
-    ACTION_UPDATE_ACTIVATE = :activate
-    ACTION_UPDATE_DEACTIVATE = :deactivate
+    ACTION_UPDATE = :update
 end
 
 module ConceptRest
@@ -39,8 +38,7 @@ module ConceptRest
     PATH_VERSION_CONCEPT = ROOT_PATH + 'version/{id}'
     PATH_DESCRIPTIONS_CONCEPT = ROOT_PATH + 'descriptions/{id}'
     PATH_CREATE_CONCEPT = PATH_CONCEPT_WRITE + 'create'
-    PATH_UPDATE_ACTIVATE_CONCEPT = PATH_CONCEPT_WRITE + 'update/activate/{id}'
-    PATH_UPDATE_DEACTIVATE_CONCEPT = PATH_CONCEPT_WRITE + 'update/deactivate/{id}'
+    PATH_UPDATE_CONCEPT = PATH_CONCEPT_WRITE + 'update/{id}'
     TEST_UUID = 'a60bd881-9010-3260-9653-0c85716b4391' #useful for testing
 
     PARAMS_EMPTY = {}
@@ -64,16 +62,12 @@ module ConceptRest
             CLAZZ_SYM => Gov::Vha::Isaac::Rest::Api::Data::Wrappers::RestWriteResponse,
             HTTP_METHOD_KEY => HTTP_METHOD_POST,
             BODY_CLASS => Gov::Vha::Isaac::Rest::Api1::Data::Concept::RestConceptCreateData},
-        ACTION_UPDATE_ACTIVATE => {
-            PATH_SYM => PATH_UPDATE_ACTIVATE_CONCEPT,
+        ACTION_UPDATE => {
+            PATH_SYM => PATH_UPDATE_CONCEPT,
             STARTING_PARAMS_SYM => PARAMS_EMPTY,
             CLAZZ_SYM => Gov::Vha::Isaac::Rest::Api::Data::Wrappers::RestWriteResponse,
-            HTTP_METHOD_KEY => HTTP_METHOD_PUT},
-        ACTION_UPDATE_DEACTIVATE => {
-            PATH_SYM => PATH_UPDATE_DEACTIVATE_CONCEPT,
-            STARTING_PARAMS_SYM => PARAMS_EMPTY,
-            CLAZZ_SYM => Gov::Vha::Isaac::Rest::Api::Data::Wrappers::RestWriteResponse,
-            HTTP_METHOD_KEY => HTTP_METHOD_PUT},
+            HTTP_METHOD_KEY => HTTP_METHOD_PUT,
+            BODY_CLASS => Gov::Vha::Isaac::Rest::Api1::Data::Concept::RestConceptUpdateData}
     }
 
     class << self
@@ -113,10 +107,7 @@ load('./lib/isaac_rest/concept_rest.rb')
 a = ConceptRest::get_concept(action: ConceptRestActions::ACTION_DESCRIPTIONS,uuid: 'cc0b2455-f546-48fa-90e8-e214cc8478d6')
 b = ConceptRest::get_concept(action: ConceptRestActions::ACTION_CHRONOLOGY,uuid: 'cc0b2455-f546-48fa-90e8-e214cc8478d6')
 c = ConceptRest::get_concept(action: ConceptRestActions::ACTION_VERSION,uuid: 'cc0b2455-f546-48fa-90e8-e214cc8478d6')
-create = ConceptRest::get_concept(action: ConceptRestActions::ACTION_CREATE, body_params: {fsn: 'Concept Create Test 1', preferredTerm: 'Concept Create Test 1', parentIds: [11] } )
-activate = ConceptRest::get_concept(action: ConceptRestActions::ACTION_UPDATE_ACTIVATE, uuid: '0b356bba-9f7c-4d22-8fa3-717c3dd7eb7f')
-deactivate = ConceptRest::get_concept(action: ConceptRestActions::ACTION_UPDATE_DEACTIVATE, uuid: '0b356bba-9f7c-4d22-8fa3-717c3dd7eb7f')
-#note this will fail!  Use the module ConceptRestActions!!
-# c = ConceptRest::get_concept(action: "version",uuid: 'cc0b2455-f546-48fa-90e8-e214cc8478d6')
-#  a = Concept.new(uuid: "ddd", params: nil, action: :version, action_constants: ACTION_CONSTANTS)
+#TODO - need to figure out passing editToken into write calls
+#create = ConceptRest::get_concept(action: ConceptRestActions::ACTION_CREATE, additional_req_params: {editToken: }, body_params: {fsn: 'Concept Create Test 1', descriptionLanguageConceptId: 8, parentConceptIds: [11] } )
+#update = ConceptRest::get_concept(action: ConceptRestActions::ACTION_UPDATE, additional_req_params: {editToken: }, uuid: 'cc0b2455-f546-48fa-90e8-e214cc8478d6, body_params: {active: true})
 =end
