@@ -686,6 +686,7 @@ class KometDashboardController < ApplicationController
         end
 
         get_concept_attributes(@concept_id, true)
+        get_concept_sememes(@concept_id, true)
         get_concept_descriptions(@concept_id, true)
         get_concept_associations(@concept_id, true)
 
@@ -728,6 +729,75 @@ class KometDashboardController < ApplicationController
         concept_nid = IdAPIsRest.get_id(uuid_or_id: concept_id, action: IdAPIsRestActions::ACTION_TRANSLATE, additional_req_params: {inputType: 'uuid', outputType: 'nid'}).value
         failed_writes = []
 
+        # this is a lambda to be used to process sememes nested under the concept and descriptions
+        process_sememes = ->(referenced_id, sememes, type, error_text_prefix = '') {
+
+            sememes.each do |sememe_instance_id, sememe|
+
+                # get the sememe definition ID  and name
+                sememe_definition_id = sememe['sememe']
+                sememe_name = sememe['sememe_name']
+
+                # remove the sememe and sememe name properties
+                sememe.delete('sememe')
+                sememe.delete('sememe_name')
+
+                if sememe[:state].downcase == 'active'
+                    active = true
+                else
+                    active = false
+                end
+
+                # remove the state property
+                sememe.delete('state')
+
+                body_params = {active: active, columnData: []}
+                additional_req_params = {editToken: get_edit_token}
+
+                sememe.each do |field_id, field|
+
+                    $log.debug('Description Property: ' + sememe_instance_id + ' - Field ID: ' + field_id + ' - Field Value: ' + field['value'])
+                    body_params[:columnData] << {columnNumber: field['column_number'], data: field['value'], '@class' => field['data_type_class']}
+                end
+
+                # if the sememe ID is a UUID, then it is an existing sememe to be updated, otherwise it is a new sememe to be created
+                if is_id?(sememe_instance_id)
+                    return_value = SememeRest::get_sememe(action: SememeRestActions::ACTION_SEMEME_UPDATE, uuid_or_id: sememe_instance_id, additional_req_params: additional_req_params, body_params: body_params)
+                else
+
+                    body_params[:assemblageConcept] = sememe_definition_id
+                    body_params[:referencedComponent] = referenced_id
+
+                    return_value = SememeRest::get_sememe(action: SememeRestActions::ACTION_SEMEME_CREATE, additional_req_params: additional_req_params, body_params: body_params)
+                end
+
+                # if the sememe create or update failed, mark it
+                if return_value.is_a? CommonRest::UnexpectedResponse
+                    failed_writes << {id: referenced_id + '_' + sememe_instance_id, text: error_text_prefix + type + ': ' + sememe_name, type: type}
+                end
+            end
+        }
+
+        if params[:concept_state]
+
+            if params[:concept_state].downcase == 'active'
+                active = true
+            else
+                active = false
+            end
+
+            return_value = ComponentRest::get_component(action: ComponentRestActions::ACTION_UPDATE_STATE, uuid_or_id: concept_id, additional_req_params: {editToken: get_edit_token, active: active})
+
+            # if the concept state change failed, mark it
+            if return_value.is_a? CommonRest::UnexpectedResponse
+                failed_writes << {id: concept_id, text: params[:concept_state], type: 'concept'}
+            end
+        end
+
+        if params[:properties]
+            process_sememes.call(concept_id, params[:properties], 'concept property')
+        end
+
         if params[:descriptions]
 
             params[:descriptions].each do |description_id, description|
@@ -753,7 +823,32 @@ class KometDashboardController < ApplicationController
                     return_value = SememeRest::get_sememe(action: SememeRestActions::ACTION_DESCRIPTION_UPDATE, uuid_or_id: description_id, additional_req_params: additional_req_params, body_params: body_params)
                 else
 
+                    preferred = []
+                    acceptable = []
+
+                    # process the dialects
+                    if description[:dialects]
+
+                        description[:dialects].each do |dialect_id, dialect|
+
+                            if find_metadata_by_id(dialect['acceptability'], id_type: 'sequence').downcase == 'preferred'
+                                preferred << dialect['dialect']
+                            else
+                                acceptable << dialect['dialect']
+                            end
+                        end
+                    end
+
+                    if preferred.length > 0
+                        body_params[:preferredInDialectAssemblagesIds] = preferred
+                    end
+
+                    if acceptable.length > 0
+                        body_params[:acceptableInDialectAssemblagesIds] = acceptable
+                    end
+
                     body_params[:referencedComponentNid] = concept_nid
+
                     return_value = SememeRest::get_sememe(action: SememeRestActions::ACTION_DESCRIPTION_CREATE, additional_req_params: additional_req_params, body_params: body_params)
                 end
 
@@ -767,47 +862,7 @@ class KometDashboardController < ApplicationController
                 description_id = return_value.uuid
 
                 if description[:properties]
-
-                    description[:properties].each do |property_id, property|
-
-                        sememe_id = property['sememe']
-
-                        #remove the sememe property
-                        property.delete('sememe')
-
-                        body_params = {columnData: []}
-                        additional_req_params = {editToken: get_edit_token}
-
-                        property.each do |field_id, field|
-
-                            $log.debug('Description Property: ' + property_id + ' - Field ID: ' + field_id + ' - Field Value: ' + field)
-                            body_params[:columnData] << {columnNumber: field_id, data: field, '@class' => 'gov.vha.isaac.rest.api1.data.sememe.dataTypes.RestDynamicSememeString'}
-                        end
-
-                        # if the property ID is a UUID, then it is an existing property to be updated, otherwise it is a new property to be created
-                        if is_id?(property_id)
-                            return_value = SememeRest::get_sememe(action: SememeRestActions::ACTION_SEMEME_UPDATE, uuid_or_id: property_id, additional_req_params: additional_req_params, body_params: body_params)
-                        else
-
-                            body_params[:assemblageConcept] = sememe_id
-                            body_params[:referencedComponent] = description_id
-
-                            return_value = SememeRest::get_sememe(action: SememeRestActions::ACTION_SEMEME_CREATE, additional_req_params: additional_req_params, body_params: body_params)
-                        end
-
-                        # if the description create or update failed, mark it
-                        if return_value.is_a? CommonRest::UnexpectedResponse
-                            failed_writes << {id: description_id + '_' + property_id, text: 'Description: ' + description['text'] + ' : Property: ' + property_id, type: 'property'}
-                        end
-                    end
-                end
-
-                if description[:dialects]
-
-                    description[:dialects].each do |dialect_id, dialect|
-
-                        failed_writes << {id: description_id + '_' + dialect_id, text: 'Description: ' + description['text'] + ' : Dialect: ' + dialect[:dialect], type: 'dialect'}
-                    end
+                    process_sememes.call(description_id, description[:properties], 'description property', 'Description: ' + description['text'] + ' : ')
                 end
 
             end
@@ -851,12 +906,17 @@ class KometDashboardController < ApplicationController
             end
         end
 
+        # TODO - this should never actually get called, remove if it stays that way
         if params[:remove]
 
             params[:remove].each do |remove_concept_id, value|
                 ComponentRest::get_component(action: ComponentRestActions::ACTION_UPDATE_STATE, uuid_or_id: remove_concept_id, additional_req_params: {editToken: get_edit_token, active: false})
-            end
 
+                # if the concept state change failed, mark it
+                if return_value.is_a? CommonRest::UnexpectedResponse
+                    failed_writes << {id: remove_concept_id, text: 'inactivate', type: 'inactivate'}
+                end
+            end
         end
 
         # clear taxonomy caches after writing data

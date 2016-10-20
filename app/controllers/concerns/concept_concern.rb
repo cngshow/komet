@@ -413,7 +413,7 @@ module ConceptConcern
         refsets_results[:page_number] = results.paginationData.pageNum
         use_column_list = [];
 
-        display_data = process_attached_refsets(stated, results.results, sememe_types, [],use_column_list)
+        display_data = process_attached_refsets(stated, results.results, sememe_types, [], use_column_list)
 
         refsets_results[:data] = display_data
         refsets_results[:columns] = use_column_list
@@ -463,15 +463,33 @@ module ConceptConcern
             sememe_name = ConceptRest.get_concept(action: ConceptRestActions::ACTION_DESCRIPTIONS, uuid: assemblage_sequence, additional_req_params: additional_req_params).first.text
 
             # start loading the row of sememe data with everything besides the columns
-            data_row = {sememe_name: sememe_name, sememe_description: sememe_definition.sememeUsageDescription, uuid: get_next_id, id: assemblage_sequence, state: 'Active', level: 1, has_nested: false, columns: {}}
+            data_row = {sememe_name: sememe_name, sememe_description: sememe_definition.sememeUsageDescription, sememe_instance_id: get_next_id, sememe_definition_id: assemblage_sequence, state: 'Active', level: 1, has_nested: false, columns: {}}
 
             # loop through all of the sememe's columns
             sememe_definition.columnInfo.each{ |row_column|
 
                 # If not added to our hash of columns then add it
-                if row_column && ! field_info[row_column.columnConceptSequence]
+                if row_column && ! field_info[assemblage_sequence.to_s + '_' + row_column.columnConceptSequence.to_s]
 
-                    field_info[row_column.columnConceptSequence] = {name: row_column.columnName, description: row_column.columnDescription, data_type: row_column.columnDataType.name, required: row_column.columnRequired, column_used: false}
+                    # get the column data type from the validator data if it exists, otherwise use string
+                    if row_column.columnValidatorData && row_column.columnValidatorData.length > 0
+                        data_type_class = ruby_classname_to_java(class_name: row_column.columnValidatorData[0].class)
+                    else
+                        data_type_class = 'gov.vha.isaac.rest.api1.data.sememe.dataTypes.RestDynamicSememeString'
+                    end
+
+                    field_info[assemblage_sequence.to_s + '_' + row_column.columnConceptSequence.to_s] = {
+                        sememe_definition_id: assemblage_sequence,
+                        column_id: row_column.columnConceptSequence,
+                        name: row_column.columnName,
+                        description: row_column.columnDescription,
+                        data_type: row_column.columnDataType.name,
+                        data_type_class: data_type_class,
+                        column_number: row_column.columnOrder,
+                        required: row_column.columnRequired,
+                        column_used: false
+                    }
+
                     data_row[:columns][row_column.columnConceptSequence] = {}
                 end
             }
@@ -514,22 +532,41 @@ module ConceptConcern
                 end
 
                 # start loading the row of sememe data with everything besides the data columns
-                data_row = {sememe_name: sememe_info[:sememe_name], sememe_description: sememe_definition.sememeUsageDescription, uuid: uuid, id: assemblage_sequence, state: sememe.sememeVersion.state.name, level: level, has_nested: has_nested, columns: {}}
+                data_row = {sememe_name: sememe_info[:sememe_name], sememe_description: sememe_definition.sememeUsageDescription, sememe_instance_id: uuid, sememe_definition_id: assemblage_sequence, state: sememe.sememeVersion.state.name, level: level, has_nested: has_nested, columns: {}}
 
                 # loop through all of the sememe's data columns
                 sememe_definition.columnInfo.each{ |row_column|
 
                     # search to see if we have already added this column to our list of used columns.
                     list_index = used_column_list.find_index {|list_column|
-                        list_column[:id] == row_column.columnConceptSequence
+                        list_column[:sememe_definition_id] == assemblage_sequence && list_column[:column_id] == row_column.columnConceptSequence
                     }
 
                     # If not added to our list of used columns add it to the end of the list
                     if row_column && !list_index
 
-                        used_column_list << {id: row_column.columnConceptSequence, name: row_column.columnName, description: row_column.columnDescription, data_type: row_column.columnDataType.name, required: row_column.columnRequired, column_used: false}
+                        # get the column data type from the validator data if it exists, otherwise use string
+                        if row_column.columnValidatorData && row_column.columnValidatorData.length > 0
+                            data_type_class = ruby_classname_to_java(class_name: row_column.columnValidatorData[0].class)
+                        else
+                            data_type_class = 'gov.vha.isaac.rest.api1.data.sememe.dataTypes.RestDynamicSememeString'
+                        end
+
+                        used_column_data = {
+                            sememe_definition_id: assemblage_sequence,
+                            column_id: row_column.columnConceptSequence,
+                            name: row_column.columnName,
+                            description: row_column.columnDescription,
+                            data_type: row_column.columnDataType.name,
+                            data_type_class: data_type_class,
+                            column_number: row_column.columnOrder,
+                            required: row_column.columnRequired,
+                            column_used: false
+                        }
+
+                        used_column_list << used_column_data
+                        used_column_hash[assemblage_sequence.to_s + '_' + row_column.columnConceptSequence.to_s] = used_column_data
                         list_index = (used_column_list.length) - 1
-                        used_column_hash[row_column.columnConceptSequence] = {name: row_column.columnName, description: row_column.columnDescription, data_type: row_column.columnDataType.name, required: row_column.columnRequired, column_used: false}
                     end
 
                     data_column = sememe.dataColumns[row_column.columnOrder]
@@ -540,7 +577,7 @@ module ConceptConcern
 
                         # mark in our column lists that this column has data in at least one row
                         used_column_list[list_index][:column_used] = true
-                        used_column_hash[row_column.columnConceptSequence][:column_used] = true
+                        used_column_hash[assemblage_sequence.to_s + '_' + row_column.columnConceptSequence.to_s][:column_used] = true
 
                         data = data_column.data
                         converted_value = ''

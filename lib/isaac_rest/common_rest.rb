@@ -1,9 +1,10 @@
 require './lib/rails_common/util/helpers'
+require './lib/rails_common/util/controller_helpers'
 require './lib/isaac_rest/enunciate/isaac-rest.rb'
 require 'uri'
 
 module CommonRest
-  include KOMETUtilities
+  include KOMETUtilities, CommonController
 
   UnexpectedResponse = Struct.new(:body, :status) do
   end
@@ -78,7 +79,7 @@ module CommonRest
       if http_method == CommonActionSyms::HTTP_METHOD_POST || http_method == CommonActionSyms::HTTP_METHOD_PUT
 
         req.headers['Content-Type'] = 'application/json'
-        body_class = CommonRestBase::RestBase.ruby_to_java(class_name: action_constants.fetch(action)[CommonActionSyms::BODY_CLASS])
+        body_class = ruby_classname_to_java(class_name: action_constants.fetch(action)[CommonActionSyms::BODY_CLASS])
         body_params[:@class] = body_class
         req.body = body_params.to_json
         $log.debug('Body Params: ' + body_params.to_s)
@@ -311,19 +312,6 @@ module CommonRestBase
     end
 
     private
-
-    def self.ruby_to_java(class_name:)
-
-      parts = class_name.to_s.split('::')
-      packageless_class_name = parts.pop
-
-      parts.map! do |package_part|
-        package_part.downcase
-      end
-
-      parts << packageless_class_name
-      parts.join('.')
-    end
 
     def self.parse_id(url_id_template, url_with_id)
 

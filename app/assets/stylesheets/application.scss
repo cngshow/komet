@@ -383,6 +383,7 @@ div.komet-confirmation-dialog{
     display: flex;
     align-items: center;
     margin: 0px 10px;
+    cursor: pointer;
 }
 .komet-panel .komet-panel-tools .glyphicon, .komet-panel .komet-panel-tools .fa {
     margin-left: 10px;
@@ -840,16 +841,16 @@ td.komet-concept-table-nested-indicator.komet-concept-table-nested-indicator-ope
 .komet-concept-edit-row .komet-indent-block .komet-concept-section-title{
     margin-bottom: 5px;
 }
-.komet-concept-properties-section{
+.komet-concept-description-dialect-section{
     margin-bottom: 8px;
 }
-.komet-concept-edit-description-properties-row, .komet-concept-edit-description-dialect-row{
+.komet-concept-edit-description-properties-row, .komet-concept-edit-description-dialect-row, .komet-concept-edit-concept-properties-row{
     flex-wrap: nowrap;
 }
-.komet-concept-edit-description-properties-row .input-group, .komet-concept-edit-description-dialect-row .input-group{
+.komet-concept-edit-description-properties-row .input-group, .komet-concept-edit-description-dialect-row .input-group, .komet-concept-edit-concept-properties-row .input-group{
     margin-right: 5px;
 }
-.komet-concept-edit-description-properties-row label{
+.komet-concept-edit-description-properties-row label, .komet-concept-edit-concept-properties-row label{
     min-width: 50px;
     width: 50px;
     //max-width: 50px;
@@ -860,11 +861,11 @@ td.komet-concept-table-nested-indicator.komet-concept-table-nested-indicator-ope
     color: white;
     overflow: hidden;
 }
-.komet-concept-edit-description-properties-sememe{
+.komet-concept-edit-description-properties-sememe, .komet-concept-edit-concept-properties-sememe{
     width: 250px;
     font-size: small;
 }
-.komet_concept_edit_description_properties_field{
+.komet_concept_edit_description_properties_field, .komet_concept_edit_concept_properties_field{
     min-width: 150px;
     max-width: 250px;
 }

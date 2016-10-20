@@ -1,5 +1,5 @@
-<!-- DO NOT PUT ANYTHING ABOVE THE KOMET VIEWER DIV - IT WILL BREAK WINDOWING WHEN CLOSING VIEWERS-->
 <div class="panel panel-default komet-no-margins komet-panel komet-concept-edit" id="komet_viewer_<%= @viewer_id %>" data-komet-viewer-id="<%= @viewer_id %>">
+    <!-- DO NOT PUT ANYTHING ABOVE THE KOMET VIEWER DIV - IT WILL BREAK WINDOWING WHEN CLOSING VIEWERS AND BE REPEATED EVERY TIME NEW CONTENT IS LOADED TO INLINE VIEWER -->
 
     <%= form_tag(taxonomy_edit_concept_path, method: 'post', id: "komet_concept_editor_form_#{@viewer_id}") do %>
 
@@ -47,15 +47,7 @@
 
                 <div class="komet-concept-section-panel-details">
 
-                    <div class="komet-concept-edit-row komet-concept-edit-attributes-row komet-changeable">
-
-                        <!-- Status -->
-                        <div class="komet-concept-attributes-status">
-                            <select name="concept_state">
-                                <option value="Active" <% if @concept_state.downcase == 'active' %> selected <% end %>>Active</option>
-                                <option value="Inactive"<% if @concept_state.downcase == 'inactive' %> selected <% end %>>Inactive</option>
-                            </select>
-                        </div>
+                    <div id="komet_concept_edit_concept_row_<%= @viewer_id %>" class="komet-concept-edit-row komet-concept-edit-attributes-row komet-changeable">
 
                         <div class="komet-concept-attributes-details-name">
                             <b>UUID:</b> <%= @concept_id %>
@@ -70,7 +62,27 @@
                             <% end %>
                         </div>
 
+                        <!-- Status -->
+                        <div class="komet-concept-attributes-status">
+                            <select name="concept_state">
+                                <option value="Active" <% if @concept_state.downcase == 'active' %> selected <% end %>>Active</option>
+                                <option value="Inactive"<% if @concept_state.downcase == 'inactive' %> selected <% end %>>Inactive</option>
+                            </select>
+                        </div>
+
                     </div>
+
+                    <div class="komet-indent-block komet-concept-properties-section">
+                        <div class="komet-concept-section-title komet-concept-attributes-title">
+                            Properties
+                            <div class="komet-flex-right">
+                                <div class="komet-concept-add-concept-property" onclick="WindowManager.viewers[<%= @viewer_id %>].addPropertyRow('<%= @concept_id %>', this, 'concept')">
+                                    Add Property <div class="glyphicon glyphicon-plus-sign"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
                 </div>
             </div>
 
@@ -100,38 +112,40 @@
 
         </div>
     <% end # end form  %>
-</div>
 
-<script>
+    <script>
 
-    if (!WindowManager.viewers.hasOwnProperty('<%= @viewer_id %>') || !(WindowManager.viewers[<%= @viewer_id %>] instanceof ConceptViewer)) {
-        ConceptsModule.createViewer("<%= @viewer_id %>", "<%= @concept_id %>", "<%= @viewer_action %>");
-    } else {
+        if (!WindowManager.viewers.hasOwnProperty('<%= @viewer_id %>') || !(WindowManager.viewers[<%= @viewer_id %>] instanceof ConceptViewer)) {
+            ConceptsModule.createViewer("<%= @viewer_id %>", "<%= @concept_id %>", "<%= @viewer_action %>");
+        } else {
 
-        WindowManager.viewers[<%= @viewer_id %>].currentConceptID = "<%= @concept_id %>";
-        WindowManager.viewers[<%= @viewer_id %>].viewerAction = "<%= @viewer_action %>";
+            WindowManager.viewers[<%= @viewer_id %>].currentConceptID = "<%= @concept_id %>";
+            WindowManager.viewers[<%= @viewer_id %>].viewerAction = "<%= @viewer_action %>";
 
-        if (WindowManager.getLinkedViewerID() == "<%= @viewer_id %>") {
-            WindowManager.viewers[<%= @viewer_id %>].swapLinkIcon(true);
+            if (WindowManager.getLinkedViewerID() == "<%= @viewer_id %>") {
+                WindowManager.viewers[<%= @viewer_id %>].swapLinkIcon(true);
+            }
         }
-    }
 
-    if (WindowManager.getLinkedViewerID() == "<%= @viewer_id %>" && TaxonomyModule.tree.selectedConceptID != WindowManager.viewers[<%= @viewer_id %>].currentConceptID) {
-        WindowManager.viewers[<%= @viewer_id %>].showInTaxonomyTree();
-    }
+        if (WindowManager.getLinkedViewerID() == "<%= @viewer_id %>" && TaxonomyModule.tree.selectedConceptID != WindowManager.viewers[<%= @viewer_id %>].currentConceptID) {
+            WindowManager.viewers[<%= @viewer_id %>].showInTaxonomyTree();
+        }
 
-    $(document).ready(function () {
+        $(document).ready(function () {
 
-        var selectOptions = {
-            language: <%= raw @language_options.to_json %>,
-            dialect: <%= raw @dialect_options.to_json %>,
-            case: <%= raw @case_options.to_json %>,
-            acceptability: <%= raw @acceptability_options.to_json %>,
-            descriptionType: <%= raw @description_type_options.to_json %>,
-            associationType: <%= raw @association_type_options.to_json %>
-        };
+            var selectOptions = {
+                language: <%= raw @language_options.to_json %>,
+                dialect: <%= raw @dialect_options.to_json %>,
+                case: <%= raw @case_options.to_json %>,
+                acceptability: <%= raw @acceptability_options.to_json %>,
+                descriptionType: <%= raw @description_type_options.to_json %>,
+                associationType: <%= raw @association_type_options.to_json %>
+            };
 
-        WindowManager.viewers[<%= @viewer_id %>].editConcept(<%= raw @attributes.to_json %>, <%= raw @descriptions.to_json %>, <%= raw @associations.to_json %>, selectOptions);
-        UIHelper.initializeContextMenus();
-    });
-</script>
+            WindowManager.viewers[<%= @viewer_id %>].editConcept(<%= raw @attributes.to_json %>, <%= raw @concept_sememes.to_json %>, <%= raw @descriptions.to_json %>, <%= raw @associations.to_json %>, selectOptions);
+            UIHelper.initializeContextMenus();
+        });
+    </script>
+
+    <!-- DO NOT PUT ANYTHING ABOVE THE BELOW THIS LAST DIV - IT WILL GET REPEATED EVERY TIME NEW CONTENT IS LOADED TO INLINE VIEWER-->
+</div>
