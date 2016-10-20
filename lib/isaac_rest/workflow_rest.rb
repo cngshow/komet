@@ -45,7 +45,6 @@ module WorkflowRest
   PATH_ALL_DEFINITION_WORKFLOW = ROOT_PATH + 'definition/all'
   PATH_PROCESS_WORKFLOW =  ROOT_PATH + 'process'
   PATH_HISTORY_WORKFLOW = ROOT_PATH + 'process/history'
-  PATH_LOCKED_WORKFLOW = ROOT_PATH + 'process/locked'
   PATH_ACTIONS_WORKFLOW = ROOT_PATH + 'process/actions'
   PATH_AVAILABLE_WORKFLOW = ROOT_PATH + 'process/available'
 
@@ -71,11 +70,6 @@ module WorkflowRest
           STARTING_PARAMS_SYM => PARAMS_EMPTY,
           CLAZZ_SYM => Gov::Vha::Isaac::Rest::Api1::Data::Workflow::RestWorkflowProcessHistory
       },
-      ACTION_LOCKED  => {
-          PATH_SYM => PATH_LOCKED_WORKFLOW ,
-          STARTING_PARAMS_SYM => PARAMS_EMPTY,
-          CLAZZ_SYM => String#Gov::Vha::Isaac::Rest::Api::Data::Wrappers::RestBoolean
-      },
       ACTION_ACTIONS  => {
           PATH_SYM => PATH_ACTIONS_WORKFLOW ,
           STARTING_PARAMS_SYM => PARAMS_EMPTY,
@@ -86,8 +80,6 @@ module WorkflowRest
           STARTING_PARAMS_SYM => PARAMS_EMPTY,
           CLAZZ_SYM => Gov::Vha::Isaac::Rest::Api1::Data::Workflow::RestWorkflowProcessHistoriesMapEntry
       },
-
-
       ACTION_CREATE   => {
           PATH_SYM => PATH_CREATE_WORKFLOW,
           STARTING_PARAMS_SYM => PARAMS_EMPTY,
@@ -107,14 +99,14 @@ module WorkflowRest
           STARTING_PARAMS_SYM => PARAMS_EMPTY,
           CLAZZ_SYM => Gov::Vha::Isaac::Rest::Api::Data::Wrappers::RestWriteResponse,
           HTTP_METHOD_KEY => HTTP_METHOD_PUT,
-          BODY_CLASS => String#Gov::Vha::Isaac::Rest::Api1::Data::Workflow::RestWorkflowLockingData
+          BODY_CLASS => Gov::Vha::Isaac::Rest::Api1::Data::Workflow::RestWorkflowProcessBaseCreate
       },
       ACTION_COMPONENT => {
           PATH_SYM => PATH_COMPONENT_WORKFLOW,
           STARTING_PARAMS_SYM => PARAMS_EMPTY,
           CLAZZ_SYM => Gov::Vha::Isaac::Rest::Api::Data::Wrappers::RestWriteResponse,
           HTTP_METHOD_KEY => HTTP_METHOD_PUT,
-          BODY_CLASS => String#Gov::Vha::Isaac::Rest::Api1::Data::Workflow::RestWorkflowProcessComponentSpecificationData
+          BODY_CLASS => Gov::Vha::Isaac::Rest::Api1::Data::Workflow::RestWorkflowProcessBaseCreate
       }
   }
 
