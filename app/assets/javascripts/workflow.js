@@ -182,12 +182,7 @@ var WorkflowModule = (function () {
     }
 
     function advance_workflow() {
-        $('#wfl_modal_form').validate({
-            errorPlacement: function (error, element) {
-                var lbl = $("label[for='" + element.attr('id') + "']");
-                error.insertAfter(lbl);
-            }
-        });
+        validator();
 
         if ($('#wfl_modal_form').valid()) {
             //submit the form to transition the workflow
@@ -196,10 +191,22 @@ var WorkflowModule = (function () {
         }
     }
 
+    // this validates the modal form setting up the error placement
+    function validator() {
+        return $('#wfl_modal_form').validate({
+            errorPlacement: function (error, element) {
+                var lbl = $("label[for='" + element.attr('id') + "']");
+                error.insertAfter(lbl);
+            }
+        });
+    }
+
+    //reset the dropdown in the footer
     function reset_modal() {
-        //reset the dropdown in the footer to the default and close the modal
-        $('#komet_workflow_transition').val('');
-        $('#wfl_modal').modal('toggle');
+        validator().resetForm(); //removed jquery validation errors
+        document.getElementById("wfl_modal_form").reset(); // blanks out the form
+        $('#komet_workflow_transition').val(''); // sets the transition drop down to the default
+        $('#wfl_modal').modal('toggle'); //closes the modal
     }
 
     function release(uuid) {
