@@ -77,7 +77,7 @@ class WorkflowController < ApplicationController
   end
 
   # def modal_confirm
-  #   action = params[:action]
+  #   action = params[:id]
   #
   #   render partial: ''
   # end

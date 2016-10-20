@@ -177,6 +177,31 @@ var WorkflowModule = (function () {
         event.api.autoSizeColumns();
     }
 
+    function cancel_advancement() {
+        reset_modal();
+    }
+
+    function advance_workflow() {
+        $('#wfl_modal_form').validate({
+            errorPlacement: function (error, element) {
+                var lbl = $("label[for='" + element.attr('id') + "']");
+                error.insertAfter(lbl);
+            }
+        });
+
+        if ($('#wfl_modal_form').valid()) {
+            //submit the form to transition the workflow
+
+            reset_modal();
+        }
+    }
+
+    function reset_modal() {
+        //reset the dropdown in the footer to the default and close the modal
+        $('#komet_workflow_transition').val('');
+        $('#wfl_modal').modal('toggle');
+    }
+
     function release(uuid) {
         alert('releasing ' + uuid + '. we need to add the conditional so this action only happens with claimed workflows...those with the lock/unlock');
     }
@@ -331,9 +356,8 @@ var WorkflowModule = (function () {
         hideWindow:hideWindow,
         showTaxonomy:showTaxonomy,
         showHistory:showHistory,
-        release: release
-
-
+        release: release,
+        cancel_advancement: cancel_advancement,
+        advance_workflow: advance_workflow
     };
-
 })();

@@ -24,12 +24,10 @@
   <!--<div id="komet_navbar_navigation" style="background-color:black;padding:5px ">-->
   <% if user_session(UserSession::WORKFLOW_UUID) %>
       <div class="box" style="color:white; text-align: center">
-        Workflow Name/Status:
-        <span id="edit_workflow_span" style="font-weight: bold; color: greenyellow">Loading Workflow...</span>
+        Workflow:<span id="edit_workflow_span" style="font-weight: bold; color: greenyellow; padding-left: 10px">Loading Workflow...</span>
       </div>
       <div class="box" style="color:white;">
-        <select id="komet_workflow_transition" class="form-control workflow_actions">
-        </select>
+        <select id="komet_workflow_transition" class="form-control workflow_actions"></select>
       </div>
   <% else %>
       <div class="box" style="color:white;">
@@ -40,19 +38,27 @@
 </nav>
 
 <!-- Modal -->
-<div id="wfl_modal" class="modal fade modal-wide" role="dialog">
+<div id="wfl_modal" class="modal fade modal-wide" data-backdrop="static" role="dialog">
   <div class="modal-dialog">
     <div class="modal-content">
       <div class="modal-header">
-        <button type="button" class="close" data-dismiss="modal">&times;</button>
-        <h4 class="modal-title">title</h4>
+        <h2 class="modal-title">Workflow Action</h2>
+        <h4>Transition <span id="wfl_title_name" style="color: darkgreen; font-weight: bold"></span> workflow to '<span id="wfl_title_action" style="font-weight: bold"></span>'</h4>
       </div>
       <div class="modal-body">
-        <div id="wfl_form"></div>
+        <form id="wfl_modal_form" name="wfl_modal_form">
+          <input type="hidden" id="transition_uuid" name="transition_uuid"/>
+          <div id="transition_addl_info_div"></div>
+          <hr>
+          <%= label_tag 'wfl_modal_comment', 'Comment'%>
+          <%= text_area_tag 'wfl_modal_comment', nil, required: true, placeholder: 'Enter a comment supporting this workflow transition', rows: '3', cols: 76, class: 'form-control'%>
+        </form>
       </div>
       <hr>
-      <!--<span class="btn btn-default" onclick="alert('cancelling...');$('#wfl_modal').dismiss();">Cancel</span>-->
-      <button type="button" class="close btn btn-default" data-dismiss="modal">Cancel</button>
+      <div align="center" style="padding-bottom: 10px">
+        <span class="btn btn-default" onclick=WorkflowModule.cancel_advancement();>Cancel</span>
+        <span class="btn btn-default" onclick=WorkflowModule.advance_workflow();>Submit</span>
+      </div>
     </div>
   </div>
 </div>
@@ -71,7 +77,7 @@
 
   </form>
 </div>
-<button style="display: none" type="button" id="wfl_popmodal" class="btn btn-info btn-lg" data-toggle="modal" data-target="#wfl_modal">popmodal</button>
+<button style="display: none" type="button" id="wfl_popmodal" data-toggle="modal" data-target="#wfl_modal"></button>
 
 <script>
 
@@ -84,7 +90,7 @@
 
     $.get(gon.routes.workflow_get_process_path, {}, function (results) {
       console.log('workflow edit process json is ' + JSON.stringify(results));
-      $('#edit_workflow_span').text(results.name + ' :: ' + results.processStatus.text);
+      $('#edit_workflow_span').text(results.name);
     });
     $.get(gon.routes.workflow_get_transition_path, {}, function (results) {
       transitions.empty();
@@ -92,19 +98,24 @@
       var options = '';
 
       for (var i = 0; i < results.length; i++) {
-        transitions.append($('<option>').text(results[i].action).attr('value', results[i].action));
+        transitions.append($('<option>').text(results[i].outcomeState).attr('value', results[i].id));
         transitions.show();
       }
     });
 
     transitions.on('change', function () {
-      var option = $(this).find('option:selected').val();
-      if (option !== '') {
-        // set up the modal display and show it
-        $('.modal-title').text(option);
-        $.get(gon.routes.workflow_modal_confirm_path, {action: option}, function(result) {
+      var option = $(this).find('option:selected');
 
-        });
+      if (option.val() !== '') {
+        // set up the modal display and show it
+        $('#wfl_title_name').text($('#edit_workflow_span').text());
+        $('#wfl_title_action').text(option.text());
+
+        // set the uuid that is the key of the selected option
+        $('#transition_uuid').val(option.val());
+
+//        $.get(gon.routes.workflow_modal_confirm_path, {action: option}, function (result) {
+//        });
 
         //pop up the modal
         $('#wfl_popmodal').click();
