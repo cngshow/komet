@@ -74,7 +74,7 @@ module WorkflowRest
       ACTION_LOCKED  => {
           PATH_SYM => PATH_LOCKED_WORKFLOW ,
           STARTING_PARAMS_SYM => PARAMS_EMPTY,
-          CLAZZ_SYM => Gov::Vha::Isaac::Rest::Api::Data::Wrappers::RestBoolean
+          CLAZZ_SYM => String#Gov::Vha::Isaac::Rest::Api::Data::Wrappers::RestBoolean
       },
       ACTION_ACTIONS  => {
           PATH_SYM => PATH_ACTIONS_WORKFLOW ,
@@ -107,14 +107,14 @@ module WorkflowRest
           STARTING_PARAMS_SYM => PARAMS_EMPTY,
           CLAZZ_SYM => Gov::Vha::Isaac::Rest::Api::Data::Wrappers::RestWriteResponse,
           HTTP_METHOD_KEY => HTTP_METHOD_PUT,
-          BODY_CLASS => Gov::Vha::Isaac::Rest::Api1::Data::Workflow::RestWorkflowLockingData
+          BODY_CLASS => String#Gov::Vha::Isaac::Rest::Api1::Data::Workflow::RestWorkflowLockingData
       },
       ACTION_COMPONENT => {
           PATH_SYM => PATH_COMPONENT_WORKFLOW,
           STARTING_PARAMS_SYM => PARAMS_EMPTY,
           CLAZZ_SYM => Gov::Vha::Isaac::Rest::Api::Data::Wrappers::RestWriteResponse,
           HTTP_METHOD_KEY => HTTP_METHOD_PUT,
-          BODY_CLASS => Gov::Vha::Isaac::Rest::Api1::Data::Workflow::RestWorkflowProcessComponentSpecificationData
+          BODY_CLASS => String#Gov::Vha::Isaac::Rest::Api1::Data::Workflow::RestWorkflowProcessComponentSpecificationData
       }
   }
 
