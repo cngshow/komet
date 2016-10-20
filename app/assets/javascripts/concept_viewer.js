@@ -1211,7 +1211,7 @@ var ConceptViewer = function(viewerID, currentConceptID, viewerAction) {
             } else if (previous_type == "MappingViewer"){
                 $.publish(KometChannels.Mapping.mappingTreeNodeSelectedChannel, ["", previous_id, this.viewerID, WindowManager.INLINE]);
             }
-            WindowManager.closeViewer(this.viewerID);
+            WindowManager.closeViewer(this.viewerID.toString());
             return false;
         }
     };

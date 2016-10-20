@@ -62,6 +62,13 @@
             }
         }
 
+        console.log("<%= @viewer_id %>");
+        console.log("WindowManager.getLinkedViewerID(): " + WindowManager.getLinkedViewerID());
+        console.log("TaxonomyModule.tree.selectedConceptID: " + TaxonomyModule.tree.selectedConceptID);
+        console.log("WindowManager.viewers[<%= @viewer_id %>].currentConceptID: " + WindowManager.viewers[<%= @viewer_id %>].currentConceptID);
+        console.log("WindowManager.getLinkedViewerID() == <%= @viewer_id %>: " + WindowManager.getLinkedViewerID() == "<%= @viewer_id %>");
+        console.log("TaxonomyModule.tree.selectedConceptID != WindowManager.viewers[<%= @viewer_id %>].currentConceptID: " + TaxonomyModule.tree.selectedConceptID != WindowManager.viewers[<%= @viewer_id %>].currentConceptID);
+
         if (WindowManager.getLinkedViewerID() == "<%= @viewer_id %>" && TaxonomyModule.tree.selectedConceptID != WindowManager.viewers[<%= @viewer_id %>].currentConceptID) {
             WindowManager.viewers[<%= @viewer_id %>].showInTaxonomyTree();
         }
