@@ -27,7 +27,7 @@ module ComponentRest
     include CommonActionSyms
     extend self
     
-    PATH_COMPONENT_WRITE_API = ISAAC_ROOT + 'rest/write/component/'
+    PATH_COMPONENT_WRITE_API = ISAAC_ROOT + 'rest/write/1/component/'
     PATH_UPDATE_STATE = PATH_COMPONENT_WRITE_API + 'update/state/{id}'
     
     PARAMS_EMPTY = {}

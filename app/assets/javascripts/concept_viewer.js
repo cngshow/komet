@@ -923,15 +923,19 @@ var ConceptViewer = function(viewerID, currentConceptID, viewerAction) {
                                 sememe_info.data.new = true;
 
                                 var section = "";
+                                var rowString = "";
 
                                 if (property_type == "description"){
+
                                     section = $("#komet_concept_description_panel_" + descriptionID + "_" + thisViewer.viewerID).find(".komet-concept-description-properties-section");
+                                    rowString = thisViewer.createDescriptionPropertyRowString(descriptionID, sememe_info.data, sememe_info.field_info);
                                 } else {
+
                                     section = $("#komet_concept_attributes_panel_" + thisViewer.viewerID).find(".komet-concept-properties-section");
+                                    rowString = thisViewer.createConceptPropertyRowString(sememe_info.data, sememe_info.field_info);
                                 }
 
                                 // generate the new row string and create a dom fragment it
-                                var rowString = thisViewer["create" + property_type.substr(0,1).toUpperCase() + property_type.substr(1) + "PropertyRowString"](descriptionID, sememe_info.data, sememe_info.field_info);
                                 var row = document.createRange().createContextualFragment(rowString);
 
                                 section.append(row);

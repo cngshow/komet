@@ -666,11 +666,7 @@ class KometDashboardController < ApplicationController
         # clear taxonomy caches after writing data
         clear_rest_caches
 
-        # get the parent concept uuid from the sequence
-        new_concept_id = IdAPIsRest.get_id(uuid_or_id: new_concept_id.value, action: IdAPIsRestActions::ACTION_TRANSLATE, additional_req_params: {inputType: 'conceptSequence', outputType: 'uuid'}).value
-
-        render json: {concept_id: new_concept_id}
-
+        render json: {concept_id: new_concept_id.uuid}
     end
 
     def get_concept_edit_info
