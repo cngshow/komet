@@ -90,19 +90,19 @@ namespace :rest_fixtures do
     require './lib/isaac_rest/sememe_rest.rb'
 
     SememeRest::get_sememe(action: SememeRestActions::ACTION_BY_REFERENCED_COMPONENT, uuid_or_id: SememeRest::TEST_UUID_REF_COMP) #the simple fact that we fetch the rest data motivates a yaml file's generation in temp.
-    file_loc = KOMETUtilities::TMP_FILE_PREFIX + url_to_path_string(SememeRest::BY_REFERENCED_COMPONENT_SEMEME_PATH) + KOMETUtilities::YML_EXT
+    file_loc = KOMETUtilities::TMP_FILE_PREFIX + url_to_path_string(SememeRest::PATH_BY_REFERENCED_COMPONENT_SEMEME) + KOMETUtilities::YML_EXT
     FileUtils.cp(file_loc, FILES[SEMEME_BY_REFERENCED_COMPONENT])
 
     a = SememeRest::get_sememe(action: SememeRestActions::ACTION_CHRONOLOGY, uuid_or_id: SememeRest::TEST_ID, additional_req_params: {expand: 'versionsAll'}) #the simple fact that we fetch the rest data motivates a yaml file's generation in temp.
-    file_loc = KOMETUtilities::TMP_FILE_PREFIX + url_to_path_string(SememeRest::CHRONOLOGY_SEMEME_PATH) + KOMETUtilities::YML_EXT
+    file_loc = KOMETUtilities::TMP_FILE_PREFIX + url_to_path_string(SememeRest::PATH_CHRONOLOGY_SEMEME) + KOMETUtilities::YML_EXT
     FileUtils.cp(file_loc, FILES[SEMEME_CHRONOLOGY])
 
     SememeRest::get_sememe(action: SememeRestActions::ACTION_VERSION, uuid_or_id: SememeRest::TEST_SEMEME_TYPE_ID) #the simple fact that we fetch the rest data motivates a yaml file's generation in temp.
-    file_loc = KOMETUtilities::TMP_FILE_PREFIX + url_to_path_string(SememeRest::VERSION_SEMEME_PATH) + KOMETUtilities::YML_EXT
+    file_loc = KOMETUtilities::TMP_FILE_PREFIX + url_to_path_string(SememeRest::PATH_VERSION_SEMEME) + KOMETUtilities::YML_EXT
     FileUtils.cp(file_loc, FILES[SEMEME_VERSIONS])
 
     SememeRest::get_sememe(action: SememeRestActions::ACTION_BY_ASSEMBLAGE, uuid_or_id: SememeRest::TEST_ASSEMBLAGE_ID) #the simple fact that we fetch the rest data motivates a yaml file's generation in temp.
-    file_loc = KOMETUtilities::TMP_FILE_PREFIX + url_to_path_string(SememeRest::BY_ASSEMBLAGE_SEMEME_PATH) + KOMETUtilities::YML_EXT
+    file_loc = KOMETUtilities::TMP_FILE_PREFIX + url_to_path_string(SememeRest::PATH_BY_ASSEMBLAGE_SEMEME) + KOMETUtilities::YML_EXT
     FileUtils.cp(file_loc, FILES[SEMEME_BY_ASSEMBLAGE])
 
     # SememeRest::get_sememe(action: SememeRestActions::ACTION_SEMEME_DEFINITION, uuid_or_id: '0418a591-f75b-39ad-be2c-3ab849326da9') #the simple fact that we fetch the rest data motivates a yaml file's generation in temp.
@@ -110,7 +110,7 @@ namespace :rest_fixtures do
     # FileUtils.cp(file_loc, FILES[SEMEME_DEFINITION])
 
     SememeRest::get_sememe(action: SememeRestActions::ACTION_SEMEME_TYPE, uuid_or_id: SememeRest::TEST_SEMEME_TYPE_ID) #the simple fact that we fetch the rest data motivates a yaml file's generation in temp.
-    file_loc = KOMETUtilities::TMP_FILE_PREFIX + url_to_path_string(SememeRest::TYPE_SEMEME_PATH) + KOMETUtilities::YML_EXT
+    file_loc = KOMETUtilities::TMP_FILE_PREFIX + url_to_path_string(SememeRest::PATH_TYPE_SEMEME) + KOMETUtilities::YML_EXT
     FileUtils.cp(file_loc, FILES[SEMEME_TYPE])
   end
 

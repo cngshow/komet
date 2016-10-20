@@ -375,7 +375,7 @@ class MappingController < ApplicationController
 
         # source_system: source_system, source_system_display: source_system_display, source_version: source_version, target_system: target_system, target_system_display: target_system_display, target_version: target_version
         body_params = {name: set_name, description: description}
-        request_params = {state: state}
+        request_params = {state: state, editToken: get_edit_token}
 
         if set_id && set_id != ''
             MappingApis::get_mapping_api(uuid_or_id: set_id, action: MappingApiActions::ACTION_UPDATE_SET, additional_req_params: request_params, body_params: body_params)

@@ -36,6 +36,19 @@ namespace :isaac do
     end
   end
 
+  desc 'This task hits the isaac rest server. Builds all Isaac metadata + translations. Maven (mvn) must be on your path'
+  task :metadata_auxiliary => :environment do
+    raise "Issac root is not defined.  You can set the environment variable ISAAC_ROOT=http://my.isaac.instance.com" if ISAAC_ROOT.empty?
+    system('mvn -U initialize')
+    puts("Starting rest calls, a tails of the log will let you observer the progress...")
+    require './lib/isaac_rest/id_apis_rest'
+    ApplicationController.parse_isaac_metadata_auxiliary
+    dump = Marshal.dump($isaac_metadata_auxiliary)
+    open(ApplicationController::METADATA_DUMP_FILE, 'wb') { |f| f.puts dump }
+    puts("Done!")
+  end
+
+
   desc 'Build local isaac rest project'
   task :build_r => :build_isaac_rest
   desc 'Build local isaac rest project'

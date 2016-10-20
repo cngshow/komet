@@ -99,7 +99,7 @@ var UIHelper = (function () {
             title: title,
             resizable: false,
             height: "auto",
-            width: 400,
+            width: 500,
             modal: true,
             position: position,
             dialogClass: "komet-confirmation-dialog komet-dialog-no-close-button",
@@ -119,14 +119,15 @@ var UIHelper = (function () {
 
                         buttonClicked = buttonText;
                         $(this).dialog("close");
-                    }//,
-                    //type: buttonType,
-                    //form: formID
+                    },
+                    type: buttonType,
+                    form: formID
                 }
             }
         });
     }
 
+    // TODO - Not very useful if showChanges is true
     function toggleChangeHighlights(containerElementOrSelector, showChanges) {
 
         var element;
@@ -172,10 +173,10 @@ var UIHelper = (function () {
 
     /*
      * hasFormChanged - Check to see if there were changes in a form, optionally returning the change details and highlighting them.
-     * @param [object or string] formElementOrSelector - Either a jquery object or the class or ID selector (including the "#" or "." prefix) that respresents the form to search for changes.
+     * @param [object or string] formElementOrSelector - Either a jquery object or the class or ID selector (including the "#" or "." prefix) that represents the form to search for changes.
      * @param [boolean] returnChanges - Should an array of changes be returned (true), or simply true/false (false). If this and highlightChanges
      *                                  are false then the function will only loop until it finds the first change. (Optional: default = false)
-     * @param [boolean] highlightChanges - Should changes be highlighted. Requires the "komet-highlight-changes" class on the elements you want highlighted. (Optional: default = false)
+     * @param [boolean] highlightChanges - Should changes be highlighted. Requires the "komet-changeable" class on the elements you want highlighted. (Optional: default = false)
      * @return [array or boolean] - If returnChanges is true, returns an array containing a hash of each fields changes ({field, oldValue, newValue}), otherwise returns true or false.
      */
     function hasFormChanged(formElementOrSelector, returnChanges, highlightChanges) {
@@ -199,6 +200,9 @@ var UIHelper = (function () {
         } else {
             element = formElementOrSelector;
         }
+
+        // remove current highlights
+        UIHelper.toggleChangeHighlights(element, false);
 
         // find all non-hidden form fields and loop through them
         element.find(":input:not(:button):not([type=hidden])").each(function () {

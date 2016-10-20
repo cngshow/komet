@@ -16,7 +16,7 @@ class SememeTypeTest < Test::Unit::TestCase
   def setup
     #build our isaac_root object from our yaml fixture
     json = YAML.load_file(FILES[Fixtures::SYSTEM_API_SEMEME_TYPE])
-    @rest_sememe_v = Sememe.new(uuid: TEST_SEMEME_TYPE_ID, params: nil, action: ACTION_VERSION, action_constants: ACTION_CONSTANTS).get_rest_class(json.first).send(:from_json, json.first)
+    @rest_sememe_v = Sememe.new(uuid: TEST_SEMEME_TYPE_ID, body_params: {}, params: nil, action: ACTION_VERSION, action_constants: ACTION_CONSTANTS).get_rest_class(json.first).send(:from_json, json.first)
   end
 
   def test_build_rest_sememe_types

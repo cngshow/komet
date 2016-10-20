@@ -17,6 +17,7 @@ Copyright Notice
  limitations under the License.
 =end
 
+require './lib/isaac_rest/association_rest'
 require './lib/isaac_rest/concept_rest'
 require './lib/isaac_rest/sememe_rest'
 require './lib/isaac_rest/id_apis_rest'
@@ -48,15 +49,11 @@ module ConceptConcern
             return [{value: ''}, {value: ''}, {value: ''}]
         end
 
-        # TODO - switch to using this style for values that need to be specifically referenced in multiple places
         @concept_text = attributes.conChronology.description
         @concept_state = attributes.conVersion.state.name
 
         # TODO - remove the hard-coding of type to 'vhat' when the type flags are implemented in the REST APIs
         @concept_terminology_type =  'vhat'
-
-        return_attributes << {label: 'Text', value: attributes.conChronology.description}
-        return_attributes << {label: 'State', value: attributes.conVersion.state.name}
 
         if attributes.isConceptDefined.nil? || !boolean(attributes.isConceptDefined)
             defined = 'Primitive'
@@ -64,7 +61,22 @@ module ConceptConcern
             defined = 'Fully Defined'
         end
 
-        return_attributes << {label: 'Defined', value: defined}
+        @concept_defined = defined
+
+        # get the concept SCTID information if there is one
+        coding_id = IdAPIsRest.get_id(uuid_or_id: uuid, action: IdAPIsRestActions::ACTION_TRANSLATE, additional_req_params: {outputType: 'sctid'})
+
+        if coding_id.respond_to?(:value)
+            @terminology_id = {label: 'SCTID', value: coding_id.value}
+        else
+
+            # else get the concept VUID information if there is one
+            coding_id = IdAPIsRest.get_id(uuid_or_id: uuid, action: IdAPIsRestActions::ACTION_TRANSLATE, additional_req_params: {outputType: 'vuid'})
+
+            if coding_id.respond_to?(:value)
+                @terminology_id = {label: 'VUID', value: coding_id.value}
+            end
+        end
 
         return_attributes << {label: 'Time', value: DateTime.strptime((attributes.conVersion.time / 1000).to_s, '%s').strftime('%m/%d/%Y')}
 
@@ -78,25 +90,8 @@ module ConceptConcern
 
         return_attributes << {label: 'Module', value: get_concept_metadata(attributes.conVersion.moduleSequence)}
         return_attributes << {label: 'Path', value: get_concept_metadata(attributes.conVersion.pathSequence)}
-        return_attributes << {label: 'UUID', value: uuid}
-
-        # get the concept SCTID information if there is one and add it to the attributes array
-        coding_id = IdAPIsRest.get_id(uuid_or_id: uuid, action: IdAPIsRestActions::ACTION_TRANSLATE, additional_req_params: {outputType: 'sctid'})
-
-        if coding_id.respond_to?(:value)
-            return_attributes << {label: 'SCTID', value: coding_id.value}
-        else
-
-            # get the concept VUID information if there is one and add it to the attributes array
-            coding_id = IdAPIsRest.get_id(uuid_or_id: uuid, action: IdAPIsRestActions::ACTION_TRANSLATE, additional_req_params: {outputType: 'vuid'})
-
-            if coding_id.respond_to?(:value)
-                return_attributes << {label: 'VUID', value: coding_id.value}
-            end
-        end
 
         return return_attributes
-
     end
 
     ##
@@ -148,28 +143,26 @@ module ConceptConcern
 
             header_dialects = ''
 
-            # loop thru the dialects array, pull out all the language refsets, and add them to the attributes array
+            # loop thru the dialects array, and add them to the attributes array
             description.dialects.each do |dialect|
 
-                dialect_id = dialect.sememeChronology.identifiers.uuids.first
-                dialect_name = get_concept_metadata(dialect.sememeChronology.assemblageSequence)
+                dialect_sememe_sequence = dialect.sememeChronology.sememeSequence
+                dialect_sememe_id = dialect.sememeChronology.identifiers.uuids.first
                 dialect_state = dialect.sememeVersion.state.name
                 dialect_time = DateTime.strptime((dialect.sememeVersion.time / 1000).to_s, '%s').strftime('%m/%d/%Y')
                 dialect_author = get_concept_metadata(dialect.sememeVersion.authorSequence)
                 dialect_module = get_concept_metadata(dialect.sememeVersion.moduleSequence)
                 dialect_path = get_concept_metadata(dialect.sememeVersion.pathSequence)
-                dialect_acceptability = dialect.dataColumns.first.data
+                acceptability_sequence = IdAPIsRest.get_id(uuid_or_id: dialect.dataColumns.first.data, action: IdAPIsRestActions::ACTION_TRANSLATE, additional_req_params: {inputType: 'nid', outputType: 'conceptSequence'}).value
+
+                # TODO switch to using only uuids once REST APIs support it
+                dialect_sequence = dialect.sememeChronology.assemblageSequence
+                dialect_metadata = find_metadata_by_id(dialect.sememeChronology.assemblageSequence, id_type: 'sequence', return_description: false)
+                dialect_id = dialect_metadata['uuids'].first[:uuid]
+                dialect_name = dialect_metadata['fsn']
 
                 if dialect_author == 'user'
                     dialect_author = 'System User'
-                end
-
-                case dialect_name
-
-                    when 'US English dialect'
-                        dialect_name = 'US English'
-                    when 'GB English dialect'
-                        dialect_name = 'GB English'
                 end
 
                 if header_dialects != ''
@@ -178,15 +171,27 @@ module ConceptConcern
 
                 header_dialects += dialect_name
 
-                if dialect_acceptability.to_s == $PROPS['KOMET.preferred_concept_id']
+                acceptability_metadata = find_metadata_by_id(acceptability_sequence, id_type: 'sequence', return_description: false)
+                acceptability_id = acceptability_metadata['uuids'].first[:uuid]
+                acceptability_text = acceptability_metadata['fsn']
+                header_dialects += ' (' + acceptability_text + ')'
 
-                    dialect_acceptability = 'Preferred'
-                    header_dialects += ' (Preferred)'
-                else
-                    dialect_acceptability = 'Acceptable'
-                end
-
-                attributes << {label: 'Refset', id: dialect_id, text: dialect_name, acceptability: dialect_acceptability, state: dialect_state, time: dialect_time, author: dialect_author, module: dialect_module, path: dialect_path}
+                attributes << {
+                    label: 'Dialect',
+                    sememe_id: dialect_sememe_id,
+                    sememe_sequence: dialect_sememe_sequence,
+                    id: dialect_id,
+                    sequence: dialect_sequence,
+                    text: dialect_name,
+                    acceptability_sequence: acceptability_sequence,
+                    acceptability_id: acceptability_id,
+                    acceptability_text: acceptability_text,
+                    state: dialect_state,
+                    time: dialect_time,
+                    author: dialect_author,
+                    module: dialect_module,
+                    path: dialect_path
+                }
             end
 
             description_info[:attributes] = attributes
@@ -210,6 +215,7 @@ module ConceptConcern
                             description_type_id = description.send(value)
                         end
 
+                        description_info[:description_type_sequence] = description.send(value)
                         description_info[:description_type_id] = description_type_id
 
                         case converted_value
@@ -240,6 +246,7 @@ module ConceptConcern
                             language_id = description.send(value)
                         end
 
+                        description_info[:language_sequence] = description.send(value)
                         description_info[:language_id] = language_id
 
                         case converted_value
@@ -259,6 +266,7 @@ module ConceptConcern
                             case_significance_id = description.send(value)
                         end
 
+                        description_info[:case_significance_sequence] = description.send(value)
                         description_info[:case_significance_id] = case_significance_id
 
                         case converted_value
@@ -289,6 +297,77 @@ module ConceptConcern
         end
 
         return return_descriptions
+    end
+
+    ##
+    # get_associations - takes a uuid and returns all associations related to it.
+    # @param [String] uuid - The UUID to look up associations for
+    # @param [Boolean] stated - Whether to display the stated (true) or inferred view of concepts
+    # @return [object] a hash that contains an array of all the associations
+    def get_associations(uuid, stated)
+
+        coordinates_token = session[:coordinatestoken].token
+        return_associations = []
+        additional_req_params = {coordToken: coordinates_token, stated: stated, expand: 'source, target'}
+
+        associations = AssociationRest.get_association(action: AssociationRestActions::ACTION_WITH_SOURCE, uuid_or_id: uuid, additional_req_params: additional_req_params)
+
+        if associations.is_a? CommonRest::UnexpectedResponse
+            return return_associations
+        end
+
+        # iterate over the array of RestAssociationItemVersion returned
+        associations.each do |association|
+
+            id = association.identifiers.uuids.first
+            type_id = association.associationTypeSequence
+
+            type = AssociationRest.get_association(action: AssociationRestActions::ACTION_TYPE, uuid_or_id: type_id, additional_req_params: {coordToken: coordinates_token, stated: stated})
+
+            if type.is_a? CommonRest::UnexpectedResponse
+                return return_associations
+            end
+
+            #type_id = type.identifiers.uuids.first
+            type_text = type.description
+
+            target_id = association.targetConcept.identifiers.uuids.first
+            target_text = association.targetConcept.description
+            # TODO - remove the hard-coding of type to 'vhat' when the type flags are implemented in the REST APIs
+            target_taxonomy_type = 'vhat'
+            state = association.associationItemStamp.state.name
+            time = DateTime.strptime((association.associationItemStamp.time / 1000).to_s, '%s').strftime('%m/%d/%Y')
+            author = get_concept_metadata(association.associationItemStamp.authorSequence)
+            association_module = get_concept_metadata(association.associationItemStamp.moduleSequence)
+            path = get_concept_metadata(association.associationItemStamp.pathSequence)
+
+            return_associations << {id: id, type_id: type_id, type_text: type_text, target_id: target_id, target_text: target_text, target_taxonomy_type: target_taxonomy_type, state: state, time: time, author: author, association_module: association_module, path: path}
+        end
+
+        return return_associations
+    end
+
+    ##
+    # get_association_types - returns all of the association types.
+    # @return [object] a hash that contains an array of all the association types
+    def get_association_types
+
+        coordinates_token = session[:coordinatestoken].token
+        return_types = []
+        additional_req_params = {coordToken: coordinates_token}
+
+        types = AssociationRest.get_association(action: AssociationRestActions::ACTION_TYPES, additional_req_params: additional_req_params)
+
+        if types.is_a? CommonRest::UnexpectedResponse
+            return return_types
+        end
+
+        # iterate over the array of restAssociationTypeVersion returned
+        types.each do |type|
+            return_types << {concept_id: type.identifiers.uuids.first, concept_sequence: type.associationConceptSequence, text: type.description}
+        end
+
+        return return_types
     end
 
     ##
@@ -334,7 +413,7 @@ module ConceptConcern
         refsets_results[:page_number] = results.paginationData.pageNum
         use_column_list = [];
 
-        display_data = process_attached_refsets(stated, results.results, sememe_types, [],use_column_list)
+        display_data = process_attached_refsets(stated, results.results, sememe_types, [], use_column_list)
 
         refsets_results[:data] = display_data
         refsets_results[:columns] = use_column_list
@@ -384,15 +463,33 @@ module ConceptConcern
             sememe_name = ConceptRest.get_concept(action: ConceptRestActions::ACTION_DESCRIPTIONS, uuid: assemblage_sequence, additional_req_params: additional_req_params).first.text
 
             # start loading the row of sememe data with everything besides the columns
-            data_row = {sememe_name: sememe_name, sememe_description: sememe_definition.sememeUsageDescription, uuid: uuid, id: assemblage_sequence, state: 'Active', level: 1, has_nested: false, columns: {}}
+            data_row = {sememe_name: sememe_name, sememe_description: sememe_definition.sememeUsageDescription, sememe_instance_id: get_next_id, sememe_definition_id: assemblage_sequence, state: 'Active', level: 1, has_nested: false, columns: {}}
 
             # loop through all of the sememe's columns
             sememe_definition.columnInfo.each{ |row_column|
 
                 # If not added to our hash of columns then add it
-                if row_column && ! field_info[row_column.columnConceptSequence]
+                if row_column && ! field_info[assemblage_sequence.to_s + '_' + row_column.columnConceptSequence.to_s]
 
-                    field_info[row_column.columnConceptSequence] = {name: row_column.columnName, description: row_column.columnDescription, data_type: row_column.columnDataType.name, required: row_column.columnRequired, column_used: false}
+                    # get the column data type from the validator data if it exists, otherwise use string
+                    if row_column.columnValidatorData && row_column.columnValidatorData.length > 0
+                        data_type_class = ruby_classname_to_java(class_name: row_column.columnValidatorData[0].class)
+                    else
+                        data_type_class = 'gov.vha.isaac.rest.api1.data.sememe.dataTypes.RestDynamicSememeString'
+                    end
+
+                    field_info[assemblage_sequence.to_s + '_' + row_column.columnConceptSequence.to_s] = {
+                        sememe_definition_id: assemblage_sequence,
+                        column_id: row_column.columnConceptSequence,
+                        name: row_column.columnName,
+                        description: row_column.columnDescription,
+                        data_type: row_column.columnDataType.name,
+                        data_type_class: data_type_class,
+                        column_number: row_column.columnOrder,
+                        required: row_column.columnRequired,
+                        column_used: false
+                    }
+
                     data_row[:columns][row_column.columnConceptSequence] = {}
                 end
             }
@@ -435,22 +532,41 @@ module ConceptConcern
                 end
 
                 # start loading the row of sememe data with everything besides the data columns
-                data_row = {sememe_name: sememe_info[:sememe_name], sememe_description: sememe_definition.sememeUsageDescription, uuid: uuid, id: assemblage_sequence, state: sememe.sememeVersion.state.name, level: level, has_nested: has_nested, columns: {}}
+                data_row = {sememe_name: sememe_info[:sememe_name], sememe_description: sememe_definition.sememeUsageDescription, sememe_instance_id: uuid, sememe_definition_id: assemblage_sequence, state: sememe.sememeVersion.state.name, level: level, has_nested: has_nested, columns: {}}
 
                 # loop through all of the sememe's data columns
                 sememe_definition.columnInfo.each{ |row_column|
 
                     # search to see if we have already added this column to our list of used columns.
                     list_index = used_column_list.find_index {|list_column|
-                        list_column[:id] == row_column.columnConceptSequence
+                        list_column[:sememe_definition_id] == assemblage_sequence && list_column[:column_id] == row_column.columnConceptSequence
                     }
 
                     # If not added to our list of used columns add it to the end of the list
                     if row_column && !list_index
 
-                        used_column_list << {id: row_column.columnConceptSequence, name: row_column.columnName, description: row_column.columnDescription, data_type: row_column.columnDataType.name, required: row_column.columnRequired, column_used: false}
+                        # get the column data type from the validator data if it exists, otherwise use string
+                        if row_column.columnValidatorData && row_column.columnValidatorData.length > 0
+                            data_type_class = ruby_classname_to_java(class_name: row_column.columnValidatorData[0].class)
+                        else
+                            data_type_class = 'gov.vha.isaac.rest.api1.data.sememe.dataTypes.RestDynamicSememeString'
+                        end
+
+                        used_column_data = {
+                            sememe_definition_id: assemblage_sequence,
+                            column_id: row_column.columnConceptSequence,
+                            name: row_column.columnName,
+                            description: row_column.columnDescription,
+                            data_type: row_column.columnDataType.name,
+                            data_type_class: data_type_class,
+                            column_number: row_column.columnOrder,
+                            required: row_column.columnRequired,
+                            column_used: false
+                        }
+
+                        used_column_list << used_column_data
+                        used_column_hash[assemblage_sequence.to_s + '_' + row_column.columnConceptSequence.to_s] = used_column_data
                         list_index = (used_column_list.length) - 1
-                        used_column_hash[row_column.columnConceptSequence] = {name: row_column.columnName, description: row_column.columnDescription, data_type: row_column.columnDataType.name, required: row_column.columnRequired, column_used: false}
                     end
 
                     data_column = sememe.dataColumns[row_column.columnOrder]
@@ -461,7 +577,7 @@ module ConceptConcern
 
                         # mark in our column lists that this column has data in at least one row
                         used_column_list[list_index][:column_used] = true
-                        used_column_hash[row_column.columnConceptSequence][:column_used] = true
+                        used_column_hash[assemblage_sequence.to_s + '_' + row_column.columnConceptSequence.to_s][:column_used] = true
 
                         data = data_column.data
                         converted_value = ''

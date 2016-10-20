@@ -18,7 +18,7 @@ class SememeAssemblageTest < Test::Unit::TestCase
     begin
       #build our isaac_root object from our yaml fixture
       json = YAML.load_file(FILES[Fixtures::SEMEME_BY_ASSEMBLAGE])
-      rest_sememe_assemblage = Sememe.new(uuid: TEST_ID, params: nil, action: ACTION_BY_ASSEMBLAGE, action_constants: ACTION_CONSTANTS).get_rest_class(json).send(:from_json, json)
+      rest_sememe_assemblage = Sememe.new(uuid: TEST_ID, params: nil, body_params: {}, action: ACTION_BY_ASSEMBLAGE, action_constants: ACTION_CONSTANTS).get_rest_class(json).send(:from_json, json)
 
       #assert(!rest_sememe_assemblage.results.first.nil? , 'There should be at least one sememe returned!') #turns out zero results can happen!
       assert(rest_sememe_assemblage.class.eql?(Gov::Vha::Isaac::Rest::Api1::Data::Sememe::RestSememeVersionPage) , 'The sememe was not properly converted to a RestSememeVersionPage!')

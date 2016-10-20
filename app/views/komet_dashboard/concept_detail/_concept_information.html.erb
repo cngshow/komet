@@ -1,39 +1,43 @@
-<!-- DO NOT PUT ANYTHING ABOVE THE KOMET VIEWER DIV - IT WILL BREAK WINDOWING WHEN CLOSING VIEWERS-->
 <div class="panel panel-default komet-no-margins komet-panel" id="komet_viewer_<%= @viewer_id %>" data-komet-viewer-id="<%= @viewer_id %>">
+    <!-- DO NOT PUT ANYTHING ABOVE THE KOMET VIEWER DIV - IT WILL BREAK WINDOWING WHEN CLOSING VIEWERS AND BE REPEATED EVERY TIME NEW CONTENT IS LOADED TO INLINE VIEWER -->
+
     <div class="panel-heading">
-    <span class="panel-title komet-section-title komet-context-menu"
-          data-menu-type="concept"
-          data-menu-uuid="<%= @concept_id %>"
-          data-menu-concept-text="<%= @attributes[0][:value] %>"
-          data-menu-concept-terminology-type="<%= @concept_terminology_type %>"
-          data-menu-state="<%= @concept_state %>"
-    >
+        <span class="panel-title komet-section-title komet-context-menu"
+              data-menu-type="concept"
+              data-menu-uuid="<%= @concept_id %>"
+              data-menu-concept-text="<%= @concept_text %>"
+              data-menu-concept-terminology-type="<%= @concept_terminology_type %>"
+              data-menu-state="<%= @concept_state %>"
+        >
         <span id="komet_concept_panel_tree_link_<%= @viewer_id %>" class="fa fa-chain-broken" onclick="WindowManager.toggleViewerLinkage('<%= @viewer_id %>', WindowManager.getLinkedViewerID() != '<%= @viewer_id %>');" title="Viewer linked to Taxonomy Tree. Click to unlink."></span>
         <span id="komet_concept_panel_tree_show_<%= @viewer_id %>" class="fa fa-tree" onclick="WindowManager.viewers[<%= @viewer_id %>].showInTaxonomyTree();" title="Show in Taxonomy Tree"></span>
         <%= @concept_text %>
     </span>
 
         <div class="komet-panel-tools">
-            <!--<div class="glyphicon glyphicon-new-window"></div>
-            <div class="glyphicon glyphicon-resize-full"></div>-->
-            <div class="glyphicon glyphicon-remove" onclick="WindowManager.closeViewer('<%= @viewer_id %>')"></div>
-        </div>
-    </div>
 
-    <div class="panel-body">
+            <div class="komet-panel-tools-control" onclick="WindowManager.viewers[<%= @viewer_id %>].togglePanelDetails('komet_viewer_<%= @viewer_id %>')">
+                <div class="glyphicon glyphicon-plus-sign"></div>
+                <span>Expand All</span>
+            </div>
 
-        <div class="komet-concept-body-tools">
-            <div class="glyphicon glyphicon-plus-sign" onclick="WindowManager.viewers[<%= @viewer_id %>].togglePanelDetails('komet_concept_panel_<%= @viewer_id %>')"></div>
-            <span>Expand All</span>
-            <div class="fa fa-pencil-square" onclick="$.publish(KometChannels.Taxonomy.taxonomyConceptEditorChannel, ['<%= @concept_id %>', '<%= @viewer_id %>', WindowManager.INLINE]);"></div>
+            <div class="komet-panel-tools-control" onclick="$.publish(KometChannels.Taxonomy.taxonomyConceptEditorChannel, ['<%= @concept_id %>', '<%= @viewer_id %>', WindowManager.INLINE]);">
+                <div class="fa fa-pencil-square"></div>
+                <span>Edit Concept</span>
+            </div>
 
-            <div class="komet-flex-right">
+            <div class="komet-panel-tools-control">
                 <select id="komet_concept_stated_inferred_<%= @viewer_id %>" class="form-control komet-stated-inferred" onchange="ConceptsModule.setStatedView(<%= @viewer_id %>, this)">
                     <option value="true">Stated View</option>
                     <option value="false">Inferred View</option>
                 </select>
             </div>
+
+            <div class="glyphicon glyphicon-remove" onclick="WindowManager.closeViewer('<%= @viewer_id %>')"></div>
         </div>
+    </div>
+
+    <div class="panel-body">
 
         <div id="komet_concept_attributes_section_<%= @viewer_id %>" class="komet-concept-section"></div>
         <div id="komet_concept_descriptions_section_<%= @viewer_id %>" class="komet-concept-section"></div>
@@ -43,43 +47,50 @@
         <div id="komet_concept_refsets_section_<%= @viewer_id %>" class="komet-concept-section"></div>
 
     </div>
-</div>
 
-<script>
+    <script>
 
-    if (!WindowManager.viewers.hasOwnProperty('<%= @viewer_id %>') || !(WindowManager.viewers[<%= @viewer_id %>] instanceof ConceptViewer)) {
-        ConceptsModule.createViewer("<%= @viewer_id %>", "<%= @concept_id %>", "<%= @viewer_action %>");
-    } else {
+        if (!WindowManager.viewers.hasOwnProperty('<%= @viewer_id %>') || !(WindowManager.viewers[<%= @viewer_id %>] instanceof ConceptViewer)) {
+            ConceptsModule.createViewer("<%= @viewer_id %>", "<%= @concept_id %>", "<%= @viewer_action %>");
+        } else {
 
-        WindowManager.viewers[<%= @viewer_id %>].currentConceptID = "<%= @concept_id %>";
-        WindowManager.viewers[<%= @viewer_id %>].viewerAction = "<%= @viewer_action %>";
+            WindowManager.viewers[<%= @viewer_id %>].currentConceptID = "<%= @concept_id %>";
+            WindowManager.viewers[<%= @viewer_id %>].viewerAction = "<%= @viewer_action %>";
 
-        if (WindowManager.getLinkedViewerID() == "<%= @viewer_id %>") {
-            WindowManager.viewers["<%= @viewer_id %>"].swapLinkIcon(true);
+            if (WindowManager.getLinkedViewerID() == "<%= @viewer_id %>") {
+                WindowManager.viewers["<%= @viewer_id %>"].swapLinkIcon(true);
+            }
         }
-    }
 
-    if (WindowManager.getLinkedViewerID() == "<%= @viewer_id %>" && TaxonomyModule.tree.selectedConceptID != WindowManager.viewers[<%= @viewer_id %>].currentConceptID) {
-        WindowManager.viewers[<%= @viewer_id %>].showInTaxonomyTree();
-    }
+        console.log("<%= @viewer_id %>");
+        console.log("WindowManager.getLinkedViewerID(): " + WindowManager.getLinkedViewerID());
+        console.log("TaxonomyModule.tree.selectedConceptID: " + TaxonomyModule.tree.selectedConceptID);
+        console.log("WindowManager.viewers[<%= @viewer_id %>].currentConceptID: " + WindowManager.viewers[<%= @viewer_id %>].currentConceptID);
+        console.log("WindowManager.getLinkedViewerID() == <%= @viewer_id %>: " + WindowManager.getLinkedViewerID() == "<%= @viewer_id %>");
+        console.log("TaxonomyModule.tree.selectedConceptID != WindowManager.viewers[<%= @viewer_id %>].currentConceptID: " + TaxonomyModule.tree.selectedConceptID != WindowManager.viewers[<%= @viewer_id %>].currentConceptID);
 
-    $('#komet_concept_attributes_section_<%= @viewer_id %>').html("<%= j(render(:partial => 'komet_dashboard/concept_detail/concept_attributes')) %>");
-    $('#komet_concept_descriptions_section_<%= @viewer_id %>').html("<%= j(render(:partial => 'komet_dashboard/concept_detail/concept_descriptions')) %>");
-    $('#komet_concept_sememes_section_<%= @viewer_id %>').html("<%= j(render(:partial => 'komet_dashboard/concept_detail/concept_sememes')) %>");
-    $('#komet_concept_lineage_section_<%= @viewer_id %>').html("<%= j(render(:partial => 'komet_dashboard/concept_detail/concept_lineage')) %>");
-    $('#komet_concept_diagram_section_<%= @viewer_id %>').html("<%= j(render(:partial => 'komet_dashboard/concept_detail/concept_diagram')) %>");
-    $('#komet_concept_refsets_section_<%= @viewer_id %>').html("<%= j(render(:partial => 'komet_dashboard/concept_detail/concept_refsets')) %>");
+        if (WindowManager.getLinkedViewerID() == "<%= @viewer_id %>" && TaxonomyModule.tree.selectedConceptID != WindowManager.viewers[<%= @viewer_id %>].currentConceptID) {
+            WindowManager.viewers[<%= @viewer_id %>].showInTaxonomyTree();
+        }
 
-    $(document).ready(function () {
+        $('#komet_concept_attributes_section_<%= @viewer_id %>').html("<%= j(render(:partial => 'komet_dashboard/concept_detail/concept_attributes')) %>");
+        $('#komet_concept_descriptions_section_<%= @viewer_id %>').html("<%= j(render(:partial => 'komet_dashboard/concept_detail/concept_descriptions')) %>");
+        $('#komet_concept_sememes_section_<%= @viewer_id %>').html("<%= j(render(:partial => 'komet_dashboard/concept_detail/concept_sememes')) %>");
+        $('#komet_concept_lineage_section_<%= @viewer_id %>').html("<%= j(render(:partial => 'komet_dashboard/concept_detail/concept_lineage')) %>");
+        $('#komet_concept_diagram_section_<%= @viewer_id %>').html("<%= j(render(:partial => 'komet_dashboard/concept_detail/concept_diagram')) %>");
+        $('#komet_concept_refsets_section_<%= @viewer_id %>').html("<%= j(render(:partial => 'komet_dashboard/concept_detail/concept_refsets')) %>");
 
-        $("#komet_concept_stated_inferred_<%= @viewer_id %> option").filter(function () {
-            return $(this)[0].value == "<%= @stated %>";
-        }).prop('selected', true);
+        $(document).ready(function () {
 
-        WindowManager.viewers[<%= @viewer_id %>].restorePanelStates();
-        WindowManager.viewers[<%= @viewer_id %>].loadLineageTrees();
-        UIHelper.initializeContextMenus();
-    });
-</script>
+            $("#komet_concept_stated_inferred_<%= @viewer_id %> option").filter(function () {
+                return $(this)[0].value == "<%= @stated %>";
+            }).prop('selected', true);
 
+            WindowManager.viewers[<%= @viewer_id %>].restorePanelStates();
+            WindowManager.viewers[<%= @viewer_id %>].loadLineageTrees();
+            UIHelper.initializeContextMenus();
+        });
+    </script>
 
+    <!-- DO NOT PUT ANYTHING ABOVE THE BELOW THIS LAST DIV - IT WILL GET REPEATED EVERY TIME NEW CONTENT IS LOADED TO INLINE VIEWER-->
+</div>

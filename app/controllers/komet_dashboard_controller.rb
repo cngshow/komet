@@ -182,10 +182,10 @@ class KometDashboardController < ApplicationController
         end
 
         if !boolean(parent_search) && node[:child_count] != 0
-            node[:badge] = "&nbsp;&nbsp;<span class=\"badge badge-success\" title=\"kma\">#{node[:child_count]}</span>"
+            node[:badge] = "&nbsp;&nbsp;<span class=\"badge badge-success\" title=\"#{node[:child_count]} children\">#{node[:child_count]}</span>"
 
         elsif boolean(parent_search) && node[:parent_count] != 0
-            node[:badge] = "&nbsp;&nbsp;<span class=\"badge badge-success\" title=\"kma\">#{node[:parent_count]}</span>"
+            node[:badge] = "&nbsp;&nbsp;<span class=\"badge badge-success\" title=\"#{node[:parent_count]} parents\">#{node[:parent_count]}</span>"
         else
             node[:badge] = ''
         end
@@ -198,7 +198,7 @@ class KometDashboardController < ApplicationController
             has_many_parents = true
 
             if first_level
-                node[:badge] = "&nbsp;&nbsp;<span class=\"badge badge-success\" title=\"kma\">#{node[:parent_count]}</span>"
+                node[:badge] = "&nbsp;&nbsp;<span class=\"badge badge-success\" title=\"#{node[:parent_count]} parents\">#{node[:parent_count]}</span>"
             end
 
             concept.parents.each do |parent|
@@ -218,7 +218,7 @@ class KometDashboardController < ApplicationController
                 node[:terminology_type] = 'vhat'
 
                 if node[:parent_count] != 0
-                    parent_node[:badge] = "&nbsp;&nbsp;<span class=\"badge badge-success\" title=\"kma\">#{parent_node[:parent_count]}</span>"
+                    parent_node[:badge] = "&nbsp;&nbsp;<span class=\"badge badge-success\" title=\"#{parent_node[:parent_count]} parents\">#{parent_node[:parent_count]}</span>"
                 end
 
                 if parent_node[:defined].nil?
@@ -323,9 +323,7 @@ class KometDashboardController < ApplicationController
             end
 
             # if the node has no children (or no parents if doing a parent search) identify it as a leaf, otherwise it is a branch
-            if !raw_node[has_relation]
-                show_expander = false
-            end
+            show_expander = false unless raw_node[has_relation]
 
             node_text = raw_node[:text] + raw_node[:badge] + flags
 
@@ -345,12 +343,12 @@ class KometDashboardController < ApplicationController
 
         end
 
-        return tree_nodes
+        tree_nodes
     end
 
     def get_tree_node_flag(flag_name, ids_to_match)
 
-        flag = '';
+        flag = ''
 
         if session['color' + flag_name]
 
@@ -363,7 +361,7 @@ class KometDashboardController < ApplicationController
             end
         end
 
-        return flag
+        flag
     end
 
     ##
@@ -424,6 +422,24 @@ class KometDashboardController < ApplicationController
         end
 
         @descriptions =  get_descriptions(concept_id, stated)
+
+    end
+
+    ##
+    # get_concept_associations - RESTful route for populating concept association tab using an http :GET
+    # The current tree node representing the concept is identified in the request params with the key :concept_id
+    # @return none - setting the @associations variable
+    def get_concept_associations(concept_id = nil, stated = nil)
+
+        if concept_id == nil && params[:concept_id]
+            concept_id = params[:concept_id].to_i
+        end
+
+        if stated == nil && params[:stated]
+            stated = params[:stated]
+        end
+
+        @associations =  get_associations(concept_id, stated)
 
     end
 
@@ -613,35 +629,6 @@ class KometDashboardController < ApplicationController
 
     end
 
-    def get_concept_edit_info
-
-        @concept_id = params[:concept_id]
-        @viewer_id =  params[:viewer_id]
-        @viewer_action = params[:viewer_action]
-        @viewer_previous_content_id = params[:viewer_previous_content_id]
-        @viewer_previous_content_type = params[:viewer_previous_content_type]
-
-        if @viewer_id == nil || @viewer_id == '' || @viewer_id == 'new'
-            @viewer_id = get_next_id
-        end
-
-        get_concept_attributes(@concept_id, true)
-        get_concept_descriptions(@concept_id, true)
-
-        @language_options = get_concept_children(concept_id: $isaac_metadata_auxiliary['LANGUAGE']['uuids'].first[:uuid], returnJSON: false, removeSemanticTag: true)
-        @dialect_options = get_concept_children(concept_id: $isaac_metadata_auxiliary['DIALECT_ASSEMBLAGE']['uuids'].first[:uuid], returnJSON: false, removeSemanticTag: true)
-        @case_options = get_concept_children(concept_id: $isaac_metadata_auxiliary['DESCRIPTION_CASE_SIGNIFICANCE']['uuids'].first[:uuid], returnJSON: false, removeSemanticTag: true)
-        @acceptability_options = [
-            {concept_id: $isaac_metadata_auxiliary['ACCEPTABLE']['uuids'].first[:uuid], text: $isaac_metadata_auxiliary['ACCEPTABLE']['fsn']},
-            {concept_id: $isaac_metadata_auxiliary['PREFERRED']['uuids'].first[:uuid], text: $isaac_metadata_auxiliary['PREFERRED']['fsn']}
-        ]
-        @description_type_options = get_concept_children(concept_id: '09c43aa9-eaed-5217-bc5f-23cacca4df38', returnJSON: false, removeSemanticTag: true)
-
-
-        render partial: params[:partial]
-
-    end
-
     def create_concept
 
         description_type = params[:komet_create_concept_description_type]
@@ -667,7 +654,7 @@ class KometDashboardController < ApplicationController
             body_params[:descriptionExtendedTypeConceptId] = description_type.to_i
         end
 
-        new_concept_id = ConceptRest::get_concept(action: ConceptRestActions::ACTION_CREATE, body_params: body_params )
+        new_concept_id = ConceptRest::get_concept(action: ConceptRestActions::ACTION_CREATE, additional_req_params: {editToken: get_edit_token}, body_params: body_params )
 
         if new_concept_id.is_a? CommonRest::UnexpectedResponse
             render json: {concept_id: nil} and return
@@ -679,16 +666,45 @@ class KometDashboardController < ApplicationController
         # clear taxonomy caches after writing data
         clear_rest_caches
 
-        # get the parent concept uuid from the sequence
-        new_concept_id = IdAPIsRest.get_id(uuid_or_id: new_concept_id.value, action: IdAPIsRestActions::ACTION_TRANSLATE, additional_req_params: {inputType: 'conceptSequence', outputType: 'uuid'}).value
+        render json: {concept_id: new_concept_id.uuid}
+    end
 
-        render json: {concept_id: new_concept_id}
+    def get_concept_edit_info
+
+        @concept_id = params[:concept_id]
+        @viewer_id =  params[:viewer_id]
+        @viewer_action = params[:viewer_action]
+        @viewer_previous_content_id = params[:viewer_previous_content_id]
+        @viewer_previous_content_type = params[:viewer_previous_content_type]
+
+        if @viewer_id == nil || @viewer_id == '' || @viewer_id == 'new'
+            @viewer_id = get_next_id
+        end
+
+        get_concept_attributes(@concept_id, true)
+        get_concept_sememes(@concept_id, true)
+        get_concept_descriptions(@concept_id, true)
+        get_concept_associations(@concept_id, true)
+
+        @language_options = get_concept_children(concept_id: $isaac_metadata_auxiliary['LANGUAGE']['uuids'].first[:uuid], returnJSON: false, removeSemanticTag: true)
+        # TODO - Change get_concept_children function to pull all leaf nodes so we can stop hardcoding this uuid
+        @dialect_options = get_concept_children(concept_id: 'c0836284-f631-3c86-8cfc-56a67814efab', returnJSON: false, removeSemanticTag: true)
+        @case_options = get_concept_children(concept_id: $isaac_metadata_auxiliary['DESCRIPTION_CASE_SIGNIFICANCE']['uuids'].first[:uuid], returnJSON: false, removeSemanticTag: true)
+        @acceptability_options = get_concept_children(concept_id: $isaac_metadata_auxiliary['DESCRIPTION_ACCEPTABILITY']['uuids'].first[:uuid], returnJSON: false, removeSemanticTag: true)
+        @description_type_options = get_concept_children(concept_id: $isaac_metadata_auxiliary['DESCRIPTION_TYPE']['uuids'].first[:uuid], returnJSON: false, removeSemanticTag: true)
+        # TODO - Change get_concept_children function to pull all leaf nodes so we can stop hardcoding this uuid
+        @description_extended_type_options = get_concept_children(concept_id: '09c43aa9-eaed-5217-bc5f-23cacca4df38', returnJSON: false, removeSemanticTag: true)
+        @association_type_options = get_association_types
+
+        render partial: params[:partial]
 
     end
 
     def get_new_property_info
 
         sememe_id = params[:sememe]
+        sememe_text = params[:sememe_display]
+        sememe_type = params[:sememe_type]
 
         sememe = get_sememe_definition_details(sememe_id)
 
@@ -696,11 +712,213 @@ class KometDashboardController < ApplicationController
             render json: {} and return
         end
 
+        # add the parent concept to the concept recents array in the session
+        add_to_recents(CONCEPT_RECENTS, sememe_id, sememe_text, sememe_type)
+
         render json: sememe
 
     end
 
     def edit_concept
+
+        concept_id =  params[:concept_id]
+        concept_nid = IdAPIsRest.get_id(uuid_or_id: concept_id, action: IdAPIsRestActions::ACTION_TRANSLATE, additional_req_params: {inputType: 'uuid', outputType: 'nid'}).value
+        failed_writes = []
+
+        # this is a lambda to be used to process sememes nested under the concept and descriptions
+        process_sememes = ->(referenced_id, sememes, type, error_text_prefix = '') {
+
+            sememes.each do |sememe_instance_id, sememe|
+
+                # get the sememe definition ID  and name
+                sememe_definition_id = sememe['sememe']
+                sememe_name = sememe['sememe_name']
+
+                # remove the sememe and sememe name properties
+                sememe.delete('sememe')
+                sememe.delete('sememe_name')
+
+                if sememe[:state].downcase == 'active'
+                    active = true
+                else
+                    active = false
+                end
+
+                # remove the state property
+                sememe.delete('state')
+
+                body_params = {active: active, columnData: []}
+                additional_req_params = {editToken: get_edit_token}
+
+                sememe.each do |field_id, field|
+
+                    $log.debug('Description Property: ' + sememe_instance_id + ' - Field ID: ' + field_id + ' - Field Value: ' + field['value'])
+                    body_params[:columnData] << {columnNumber: field['column_number'], data: field['value'], '@class' => field['data_type_class']}
+                end
+
+                # if the sememe ID is a UUID, then it is an existing sememe to be updated, otherwise it is a new sememe to be created
+                if is_id?(sememe_instance_id)
+                    return_value = SememeRest::get_sememe(action: SememeRestActions::ACTION_SEMEME_UPDATE, uuid_or_id: sememe_instance_id, additional_req_params: additional_req_params, body_params: body_params)
+                else
+
+                    body_params[:assemblageConcept] = sememe_definition_id
+                    body_params[:referencedComponent] = referenced_id
+
+                    return_value = SememeRest::get_sememe(action: SememeRestActions::ACTION_SEMEME_CREATE, additional_req_params: additional_req_params, body_params: body_params)
+                end
+
+                # if the sememe create or update failed, mark it
+                if return_value.is_a? CommonRest::UnexpectedResponse
+                    failed_writes << {id: referenced_id + '_' + sememe_instance_id, text: error_text_prefix + type + ': ' + sememe_name, type: type}
+                end
+            end
+        }
+
+        if params[:concept_state]
+
+            if params[:concept_state].downcase == 'active'
+                active = true
+            else
+                active = false
+            end
+
+            return_value = ComponentRest::get_component(action: ComponentRestActions::ACTION_UPDATE_STATE, uuid_or_id: concept_id, additional_req_params: {editToken: get_edit_token, active: active})
+
+            # if the concept state change failed, mark it
+            if return_value.is_a? CommonRest::UnexpectedResponse
+                failed_writes << {id: concept_id, text: params[:concept_state], type: 'concept'}
+            end
+        end
+
+        if params[:properties]
+            process_sememes.call(concept_id, params[:properties], 'concept property')
+        end
+
+        if params[:descriptions]
+
+            params[:descriptions].each do |description_id, description|
+
+                additional_req_params = {editToken: get_edit_token}
+
+                if description['description_state'].downcase == 'active'
+                    active = true
+                else
+                    active = false
+                end
+
+                body_params = {
+                    caseSignificanceConceptSequence: description['description_case_significance'],
+                    languageConceptSequence: description['description_language'],
+                    text: description['text'],
+                    descriptionTypeConceptSequence: description['description_type'],
+                    active: active
+                }
+
+                # if the description ID is a UUID, then it is an existing description to be updated, otherwise it is a new description to be created
+                if is_id?(description_id)
+                    return_value = SememeRest::get_sememe(action: SememeRestActions::ACTION_DESCRIPTION_UPDATE, uuid_or_id: description_id, additional_req_params: additional_req_params, body_params: body_params)
+                else
+
+                    preferred = []
+                    acceptable = []
+
+                    # process the dialects
+                    if description[:dialects]
+
+                        description[:dialects].each do |dialect_id, dialect|
+
+                            if find_metadata_by_id(dialect['acceptability'], id_type: 'sequence').downcase == 'preferred'
+                                preferred << dialect['dialect']
+                            else
+                                acceptable << dialect['dialect']
+                            end
+                        end
+                    end
+
+                    if preferred.length > 0
+                        body_params[:preferredInDialectAssemblagesIds] = preferred
+                    end
+
+                    if acceptable.length > 0
+                        body_params[:acceptableInDialectAssemblagesIds] = acceptable
+                    end
+
+                    body_params[:referencedComponentNid] = concept_nid
+
+                    return_value = SememeRest::get_sememe(action: SememeRestActions::ACTION_DESCRIPTION_CREATE, additional_req_params: additional_req_params, body_params: body_params)
+                end
+
+                # if the description create or update failed, mark it and skip to the next description. Do not process its dialects or properties.
+                if return_value.is_a? CommonRest::UnexpectedResponse
+
+                    failed_writes << {id: description_id, text: description['text'], type: 'description'}
+                    next
+                end
+
+                description_id = return_value.uuid
+
+                if description[:properties]
+                    process_sememes.call(description_id, description[:properties], 'description property', 'Description: ' + description['text'] + ' : ')
+                end
+
+            end
+        end
+
+        if params[:associations]
+
+            params[:associations].each do |association_id, association|
+
+                target_nid = IdAPIsRest.get_id(uuid_or_id: association['target'], action: IdAPIsRestActions::ACTION_TRANSLATE, additional_req_params: {inputType: 'uuid', outputType: 'nid'}).value
+
+                body_params = {targetNid: target_nid}
+
+                if association['association_state'].downcase == 'active'
+                    body_params[:active] = true
+                else
+                    body_params[:active] = false
+                end
+
+                # if the association ID is a UUID, then it is an existing association to be updated, otherwise it is a new association to be created
+                if is_id?(association_id)
+
+                    return_value = AssociationRest::get_association(action: AssociationRestActions::ACTION_ITEM_UPDATE, uuid_or_id: association_id, additional_req_params: {editToken: get_edit_token}, body_params: body_params)
+
+                    if return_value.is_a? CommonRest::UnexpectedResponse
+                        failed_writes << {id: association_id, text: association['target_display'], type: 'association'}
+                    end
+                else
+
+                    body_params[:associationTypeSequence] = association['association_type'] #IdAPIsRest.get_id(uuid_or_id: association['association_type'], action: IdAPIsRestActions::ACTION_TRANSLATE, additional_req_params: {inputType: 'uuid', outputType: 'sememeSequence'}).value
+                    body_params[:sourceNid] = concept_nid
+
+                    return_value = AssociationRest::get_association(action: AssociationRestActions::ACTION_ITEM_CREATE, additional_req_params: {editToken: get_edit_token}, body_params: body_params)
+
+                    if return_value.is_a? CommonRest::UnexpectedResponse
+                        failed_writes << {id: association_id, text: association['target_display'], type: 'association'}
+                    end
+                end
+
+                return_value
+            end
+        end
+
+        # TODO - this should never actually get called, remove if it stays that way
+        if params[:remove]
+
+            params[:remove].each do |remove_concept_id, value|
+                ComponentRest::get_component(action: ComponentRestActions::ACTION_UPDATE_STATE, uuid_or_id: remove_concept_id, additional_req_params: {editToken: get_edit_token, active: false})
+
+                # if the concept state change failed, mark it
+                if return_value.is_a? CommonRest::UnexpectedResponse
+                    failed_writes << {id: remove_concept_id, text: 'inactivate', type: 'inactivate'}
+                end
+            end
+        end
+
+        # clear taxonomy caches after writing data
+        clear_rest_caches
+
+        render json: {concept_id: concept_id, failed: failed_writes}
 
     end
 
@@ -782,12 +1000,11 @@ class KometDashboardController < ApplicationController
     end
 
     def dashboard
-
+        # user_session(UserSession::WORKFLOW_UUID, '6457fb1f-b67b-4679-8f56-fa811e1e2a6b')
         @stated = 'true'
 
         if !session[:coordinatestoken]
-            results = CoordinateRest.get_coordinate(action: CoordinateRestActions::ACTION_COORDINATES_TOKEN)
-            session[:coordinatestoken] = results
+            session[:coordinatestoken] = CoordinateRest.get_coordinate(action: CoordinateRestActions::ACTION_COORDINATES_TOKEN)
         end
 
         $log.debug("token initial #{session[:coordinatestoken].token}" )

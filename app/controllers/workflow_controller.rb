@@ -25,27 +25,131 @@ require './lib/isaac_rest/id_apis_rest'
 #WorkflowController -
 # handles the workflow screens
 class WorkflowController < ApplicationController
-  include ApplicationHelper, CommonController
+  include ApplicationHelper, CommonController, WorkflowRest
 
   layout 'workflow'
 
-  def create_workflow
-    usersToken = get_user_token
-    default_definition = get_default_definition
-    name = params[:name]
-    description = params[:description]
-    body_params = {definitionId: default_definition.value, creatorNid: 12345, name:name,description:description}
+  def create_workflow #create workflow on success it returns processID
+    default_definition = get_all_definition.first.id #this makes a call to all definition rest api and get definitionID
+    name = params[:name] #populated from create workflow form and passed in from javascript file workflow.js line 82 has saveworkflow function
+    description = params[:description] #populated from create workflow form and passed in from javascript file workflow.js line 82 has saveworkflow function
+    additional_req_params ={editToken: get_edit_token} # have to pass it to all write rest api's
+    body_params = {definitionId: default_definition, name: name, description: description} #create workflow requires body params
+    #code line below make a call to create work flow rest api
+    results = WorkflowRest.get_workflow(action: WorkflowRestActions::ACTION_CREATE, body_params: body_params, additional_req_params: additional_req_params)
 
-    results =  WorkflowRest.get_workflow(action: WorkflowRestActions::ACTION_CREATE_WORKFLOW_PROCESS,  body_params: body_params)
-    session[:workflow] = results
-    render json:  results.to_json
+    if results.is_a? CommonRest::UnexpectedResponse
+      render json: {process_id: nil} and return
+    end
+
+    process_id = results.uuid
+    set_user_workflow_session({def_uuid: default_definition, process_id: process_id})
+    render json: {process_id: process_id}
   end
 
-  def get_default_definition
-    @default_definition =  WorkflowRest.get_workflow(action: WorkflowRestActions::ACTION_DEFAULT_DEFINITION)
+  def get_all_definition #returns definition id. this id is passed in other rest api calls.  this rest api works successfully
+    @default_definition = WorkflowRest.get_workflow(action: WorkflowRestActions::ACTION_ALL_DEFINITION)
+  end
+
+
+  def get_workflowLock
+    @workflowLockState = get_workflow_details(action: WorkflowRestActions::ACTION_LOCKED)
+  end
+
+  def set_user_workflow
+    set_user_workflow_session
+    render json: {}
   end
 
   def dashboard_workflow
-
   end
+
+  def get_transition
+    get_workflow_details(action: WorkflowRestActions::ACTION_ACTIONS, include_token: true)
+  end
+
+  def get_process
+    get_workflow_details(action: WorkflowRestActions::ACTION_PROCESS)
+  end
+
+  def get_history #based on processID  #todo  rest api code from yesterday  10/13 has a bug. joel working on resolving error on dated 10/14
+    get_workflow_details(action: WorkflowRestActions::ACTION_HISTORY)
+  end
+
+  # def modal_confirm
+  #   action = params[:id]
+  #
+  #   render partial: ''
+  # end
+
+  def get_advanceable_process_information #this method populated grid on dashboard workflow
+    #todo search text box filter on top of workflowdashboard does not work has bug
+    column_definitions = {}
+    definition_id = get_all_definition
+    additional_req_params ={definitionId: definition_id.first.id, editToken: get_edit_token}
+    filter = params[:overview_sets_filter]
+    page_size = 1000 #params[:overview_items_page_size]
+    page_number = 1 #params[:overview_items_page_number]
+    results = {column_definitions: column_definitions, page_number: page_number}
+    item_data = []
+    extended_columns = []
+    #make call to rest api. this rest api works successfully
+    # items = get_workflow_details(action: WorkflowRestActions::ACTION_AVAILABLE) # todo hash as last argument? **args = {}
+
+    items = WorkflowRest.get_workflow(action: WorkflowRestActions::ACTION_AVAILABLE, additional_req_params: additional_req_params)
+
+    if items.is_a? CommonRest::UnexpectedResponse
+      return {total_number: 0, page_number: 1, data: []}
+    end
+
+    items.each do |item| #this code  populates the grid on workflow dashboar
+
+      item_hash = {}
+      item_hash[:process_id] = item.key.id
+      item_hash[:name] = '<a  onclick=WorkflowModule.showTaxonomy("' + item.key.id + '")>' + item.key.name + '</a>'
+      item_hash[:description] = item.key.description
+      item_hash[:status] = "#{item.key.processStatus.name}<span class=\"fa fa-lock\" style=\"color: red\"></span>&nbsp;&nbsp;<span class=\"fa fa-unlock\" style=\"color: green\"></span>&nbsp;&nbsp;<a onclick=WorkflowModule.release('#{item.key.id}') class=\"fa fa-undo btn btn-sm btn-outline-primary\" aria-hidden=\"true\"></a>"
+      item_hash[:viewhistory] = '<a onclick=WorkflowModule.showHistory("' + item.key.id + '")>View History</a>'
+      item_hash[:viewconcept] = '<a onclick=WorkflowModule.showConcept("' + item.key.id + '")>View Concept</a>'
+      item_hash[:release] = '<a onclick=WorkflowModule.release("' + item.key.id + '") class="btn btn-primary btn-sm">Release</a>'
+      item_data << item_hash
+    end
+
+    results[:total_number] = items.length
+
+    # matching_items = session['work_item_data'].select { |item|
+    #  item[:set_id] == set_id.to_s
+    #}
+
+    results[:data] = item_data
+    render json: results
+  end
+
+  private
+  def set_user_workflow_session(args = {})
+    # there is only one definition right now
+    def_uuid = args.has_key?(:def_uuid) ? args[:def_uuid] : get_all_definition.first.id
+    process_id = args.has_key?(:process_id) ? args[:process_id] : params[:process_id]
+
+    if process_id
+      user_session(UserSession::WORKFLOW_UUID, process_id)
+      user_session(UserSession::WORKFLOW_DEF_UUID, def_uuid)
+    end
+  end
+
+  def get_workflow_details(action:, include_token: false)
+    wfl_uuid = params[:processId] ? params[:processId] : user_session(UserSession::WORKFLOW_UUID)
+    results = []
+
+    if wfl_uuid
+      additional_req_params ={processId: wfl_uuid}
+      additional_req_params[:editToken] = get_edit_token if include_token
+      results = WorkflowRest.get_workflow(action: action, additional_req_params: additional_req_params)
+    end
+    render json: results.to_json
+  end
+
 end
+
+
+

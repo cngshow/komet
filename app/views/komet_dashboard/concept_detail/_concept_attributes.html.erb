@@ -5,22 +5,22 @@
     <!-- main header block - always visible -->
     <div class="komet-concept-section-panel-header">
 
-        <% if @attributes[1][:value] != '' %>
+        <% if @concept_state != '' %>
             <!-- expand/collapse icon - controls details drawer -->
             <div class="glyphicon glyphicon-plus-sign" onclick="WindowManager.viewers[<%= @viewer_id %>].togglePanelDetails('komet_concept_attributes_panel_<%= @viewer_id %>', null, true)"></div>
         <% end %>
 
         <!-- Status -->
         <div class="komet-concept-attributes-status">
-            <%= @attributes[1][:value] %>
+            <%= @concept_state %>
         </div>
 
         <!-- Defined -->
-        <div>
-            <% if @attributes[2][:value] == 'Primitive' %>
-                <div class="komet-tree-node-icon komet-tree-node-primitive" title="<%= @attributes[2][:value] %>"></div>
-            <% elsif @attributes[2][:value] == 'Fully Defined' || @attributes[2][:value] == 'Defined' %>
-                <div class="komet-tree-node-icon komet-tree-node-defined" title="<%= @attributes[2][:value] %>"></div>
+        <div class="komet-containing-block">
+            <% if @concept_defined == 'Primitive' %>
+                <div class="komet-tree-node-icon komet-tree-node-primitive" title="<%= @concept_defined %>"></div> &nbsp; <%= @concept_defined %>
+            <% else %>
+                <div class="komet-tree-node-icon komet-tree-node-defined" title="<%= @concept_defined %>"></div> &nbsp; <%= @concept_defined %>
             <% end %>
         </div>
 
@@ -29,12 +29,32 @@
     <!-- details drawer - can be collapsed -->
     <div class="komet-concept-section-panel-details">
 
-        <!-- loop through the attributes attributes -->
-        <% @attributes.drop(3).each_with_index do |attribute, attribute_index| %>
+        <div class="komet-concept-attributes-details-row">
 
-            <% if attribute_index > 0 %>
-                <hr class="komet-concept-details-hr" />
-            <% end %>
+            <div class="komet-concept-attributes-details-name">
+                <b>UUID:</b> <%= @concept_id %>
+            </div>
+
+        </div>
+
+        <% if @terminology_id %>
+
+            <hr class="komet-concept-details-hr" />
+
+            <div class="komet-concept-attributes-details-row">
+
+                <div class="komet-concept-attributes-details-name">
+                    <b><%= @terminology_id[:label] %>:</b> <%= @terminology_id[:value] %>
+                </div>
+
+            </div>
+
+        <% end %>
+
+        <!-- loop through the attributes attributes -->
+        <% @attributes.each_with_index do |attribute, attribute_index| %>
+
+            <hr class="komet-concept-details-hr" />
 
             <div class="komet-concept-attributes-details-row">
 

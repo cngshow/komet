@@ -52,13 +52,13 @@ module CommentApis
         ACTION_CREATE => {
             PATH_SYM => PATH_CREATE,
             STARTING_PARAMS_SYM => PARAMS_EMPTY,
-            CLAZZ_SYM => Gov::Vha::Isaac::Rest::Api::Data::Wrappers::RestInteger,
+            CLAZZ_SYM => Gov::Vha::Isaac::Rest::Api::Data::Wrappers::RestWriteResponse,
             HTTP_METHOD_KEY => HTTP_METHOD_POST,
             BODY_CLASS => Gov::Vha::Isaac::Rest::Api1::Data::Comment::RestCommentVersionBaseCreate},
         ACTION_UPDATE => {
             PATH_SYM => PATH_UPDATE,
             STARTING_PARAMS_SYM => PARAMS_EMPTY,
-            CLAZZ_SYM => Gov::Vha::Isaac::Rest::Api::Data::Wrappers::RestInteger,
+            CLAZZ_SYM => Gov::Vha::Isaac::Rest::Api::Data::Wrappers::RestWriteResponse,
             HTTP_METHOD_KEY => HTTP_METHOD_PUT,
             BODY_CLASS => Gov::Vha::Isaac::Rest::Api1::Data::Comment::RestCommentVersionBase},
     }
@@ -99,8 +99,9 @@ end
 =begin
 load('./lib/isaac_rest/comment_apis_rest.rb')
 {commentedItem: '614592', comment: 'Comment 1', commentContext: 'context?'}
-post_test = CommentApis::get_comment_api(action: CommentApiActions::ACTION_CREATE,  body_params: {commentedItem: '614592', comment: 'Comment 2', commentContext: 'context?'} )
-put_test = CommentApis::get_comment_api(action: CommentApiActions::ACTION_UPDATE, additional_req_params: {state: 'INACTIVE', id: '27ec9a64-be83-4ef4-8bc2-a5e279b4d5f8'},  body_params: {comment: 'Comment 1.1', commentContext: 'context?'} )
+#TODO - need to figure out passing editToken into write calls
+#post_test = CommentApis::get_comment_api(action: CommentApiActions::ACTION_CREATE, additional_req_params: {editToken: },  body_params: {commentedItem: '614592', comment: 'Comment 2', commentContext: 'context?'} )
+#put_test = CommentApis::get_comment_api(action: CommentApiActions::ACTION_UPDATE, additional_req_params: {editToken: , id: '27ec9a64-be83-4ef4-8bc2-a5e279b4d5f8'},  body_params: {comment: 'Comment 1.1', commentContext: 'context?'} )
 get_test = CommentApis::get_comment_api(uuid_or_id: '669c79b6-f977-4284-8594-a45673cedb6b', action: CommentApiActions::ACTION_BY_REFERENCED_COMPONENT,  additional_req_params: {} )
 =end
 

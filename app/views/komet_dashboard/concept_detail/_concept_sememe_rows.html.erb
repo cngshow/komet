@@ -4,12 +4,12 @@
     <td class="komet-concept-table-nested-indicator komet-concept-table-level-<%= row[:level] %>">
         <% if row[:has_nested] %>
 
-            <div class="glyphicon glyphicon-arrow-right" onclick="WindowManager.viewers[<%= @viewer_id %>].toggleNestedTableRows($(this), <%= row[:id] %>)"></div>
+            <div class="glyphicon glyphicon-arrow-right" onclick="WindowManager.viewers[<%= @viewer_id %>].toggleNestedTableRows($(this), <%= row[:sememe_definition_id] %>)"></div>
 
         <% end %>
     </td>
     <td><%= row[:state] %></td>
-    <td data-menu-type="sememe" data-menu-uuid="<%= row[:uuid] %>"><%= row[:sememe_name] %></td>
+    <td data-menu-type="sememe" data-menu-uuid="<%= row[:sememe_instance_id] %>"><%= row[:sememe_name] %></td>
 
     <!-- loop through all of the columns -->
     <% @concept_sememes[:columns].each do |column|
@@ -23,22 +23,22 @@
         <td>
 
             <!-- if the row has data for this column print it out, otherwise leave it empty -->
-            <% if row[:columns].has_key?(column[:id]) && !row[:columns][column[:id]].empty?%>
+            <% if row[:columns].has_key?(column[:column_id]) && !row[:columns][column[:column_id]].empty?%>
 
                 <%
                    # if this row has a display value, show that in place of the row data and put a tooltip on the cell to show the row data
-                   if row[:columns][column[:id]][:display] == ''
+                   if row[:columns][column[:column_id]][:display] == ''
 
-                       cell_display = row[:columns][column[:id]][:data]
+                       cell_display = row[:columns][column[:column_id]][:data]
                        tooltip = ''
                    else
 
-                       cell_display = row[:columns][column[:id]][:display]
-                       tooltip = " title='#{row[:columns][column[:id]][:data]}'"
+                       cell_display = row[:columns][column[:column_id]][:display]
+                       tooltip = " title='#{row[:columns][column[:column_id]][:data]}'"
                    end
 
                    if (column[:data_type] =~ /uuid|nid|sctid/i)
-                       menu_attributes = "data-menu-type='sememe' data-menu-uuid='#{row[:columns][column[:id]][:data]}'"
+                       menu_attributes = "data-menu-type='sememe' data-menu-uuid='#{row[:columns][column[:column_id]][:data]}'"
                    else
                        menu_attributes = "data-menu-type='value' data-menu-copy-value='#{cell_display}'"
                    end
@@ -60,7 +60,7 @@
 <!-- if this row has a children call this partial again for each child, increasing the depth count -->
 <% if row[:has_nested] %>
 
-    <tbody id="komet_concept_table_nested_row_<%= @viewer_id %>_<%= row[:id] %>" class="komet-concept-table-nested-row">
+    <tbody id="komet_concept_table_nested_row_<%= @viewer_id %>_<%= row[:sememe_definition_id] %>" class="komet-concept-table-nested-row">
         <%= render(partial: 'komet_dashboard/concept_detail/concept_sememe_rows', collection: row[:nested_rows], as: :row, locals: { depth: depth + 1 }) %>
     </tbody>
 <% end %>

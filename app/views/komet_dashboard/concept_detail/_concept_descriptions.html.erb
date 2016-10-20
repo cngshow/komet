@@ -1,10 +1,6 @@
 <div class="komet-concept-section-title komet-concept-description-title">DESCRIPTIONS</div>
 
-<% @descriptions.each_with_index do |description, concept_index| %>
-
-    <% if concept_index > 0 %>
-        <div class="concept-section-panel-spacer"></div>
-    <% end %>
+<% @descriptions.each do |description| %>
 
     <div id="komet_concept_description_panel_<%= @viewer_id %>_<%= description[:uuid] %>" class="komet-concept-section-panel komet-concept-description-panel">
 
@@ -51,7 +47,7 @@
 
                     <span><%= description[:state] %></span>
                     <span title="<%= description[:language] %>"><%= description[:language_short] %></span>
-                    <span><%= description[:header_dialects] %></span>
+                    <span> - <%= description[:header_dialects] %></span>
 
                     </div>
 
@@ -71,7 +67,7 @@
                 <div class="komet-concept-description-details-row">
 
                     <%
-                       if attribute[:label] == "UUID"
+                       if attribute[:label] == 'UUID'
                            tag_details = 'class="komet-concept-description-details-name komet-context-menu" data-menu-type="concept" data-menu-uuid="' + description[:uuid] + '"'
                        else
                            tag_details = 'class="komet-concept-description-details-name"'
@@ -82,10 +78,10 @@
                         <b><%= attribute[:label] %>:</b> <%= attribute[:text] %>
                     </div>
 
-                    <% if attribute[:label] == 'Refset' %>
+                    <% if attribute[:label] == 'Dialect' %>
 
                         <div class="komet-concept-description-details-acceptability">
-                            <b>Acceptability:</b> <%= attribute[:acceptability] %>
+                            <b>Acceptability:</b> <%= attribute[:acceptability_text] %>
                         </div>
 
                     <% end %>

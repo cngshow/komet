@@ -396,9 +396,9 @@ var ConceptViewer = function(viewerID, currentConceptID, viewerAction) {
 
         var thisViewer = this;
 
-        $("#komet_create_concept_form_" + this.viewerID).submit(function () {
+        $("#komet_concept_editor_form_" + this.viewerID).submit(function () {
 
-            $("#komet_create_concept_form_" + this.viewerID).find(".komet-form-error, .komet-form-field-error").remove();
+            $("#komet_concept_editor_form_" + this.viewerID).find(".komet-form-error, .komet-form-field-error").remove();
 
             $.ajax({
                 type: "POST",
@@ -486,39 +486,115 @@ var ConceptViewer = function(viewerID, currentConceptID, viewerAction) {
         return hasErrors;
     };
 
-    ConceptViewer.prototype.editConcept = function(attributes, descriptions, selectOptions){
+    ConceptViewer.prototype.editConcept = function(attributes, conceptProperties, descriptions, associations, selectOptions){
 
-        var divtext = "";
-        var editSection = $("#komet_concept_editor_section_" + this.viewerID);
+        var form = $("#komet_concept_editor_form_" + this.viewerID);
 
         this.loadSelectFieldOptions(selectOptions);
 
-        this.selectItemByValue(document.getElementById('komet_concept_Status'),attributes[1].value);
+        var conceptPropertiesSectionString = "";
 
-        if ( attributes[2].value == 'Primitive') {
-            divtext = "<div class='komet-tree-node-icon komet-tree-node-primitive' title=''" + attributes[2].value + "'></div>"
-        } else {
-            divtext = "<div class='komet-tree-node-icon komet-tree-node-defined' title='" + attributes[2].value + "'></div>"
+        for (var i = 0; i < conceptProperties.rows.length; i++){
+            conceptPropertiesSectionString += this.createConceptPropertyRowString(conceptProperties.rows[i], conceptProperties.field_info);
         }
 
-        $("#definedDiv").html(divtext);
-
-        this.selectItemByValue(document.getElementById('komet_concept_defined'),attributes[2].value);
+        // create a dom fragment from our included fields structure
+        var conceptPropertiesSection = document.createRange().createContextualFragment(conceptPropertiesSectionString);
+        $("#komet_concept_attributes_panel_" + this.viewerID).find(".komet-concept-properties-section").append(conceptPropertiesSection);
 
         var descriptionSectionsString = "";
-        var firstSection = true;
+        //var descriptionIDs = []; // see if we will ever allow updating of dialects before removing
 
         for (var i = 0; i < descriptions.length; i++){
 
-            descriptionSectionsString += this.createDescriptionRowString(firstSection, descriptions[i]);
-            firstSection = false;
+            //descriptionIDs.push(descriptions[i].uuid); // see if we will ever allow updating of dialects before removing
+            descriptionSectionsString += this.createDescriptionRowString(descriptions[i]);
         }
 
         // create a dom fragment from our included fields structure
         var descriptionSections = document.createRange().createContextualFragment(descriptionSectionsString);
-        editSection.find(".komet-concept-description-title").after(descriptionSections);
+        form.find(".komet-concept-description-title").after(descriptionSections);
 
-        UIHelper.processAutoSuggestTags("#komet_concept_edit_form_" + this.viewerID);
+        var associationSectionString = "";
+
+        for (var i = 0; i < associations.length; i++){
+            associationSectionString += this.createAssociationRowString(associations[i]);
+        }
+
+        // create a dom fragment from our included fields structure
+        var associationSection = document.createRange().createContextualFragment(associationSectionString);
+        $("#komet_concept_associations_panel_" + this.viewerID).find(".komet-concept-section-panel-details").append(associationSection);
+
+        UIHelper.processAutoSuggestTags("#komet_concept_editor_form_" + this.viewerID);
+
+        //for (var i = 0; i < descriptionIDs.length; i++){ // see if we will ever allow updating of dialects before removing
+        //    this.setAddDialectLinkState(descriptionIDs[i]);
+        //}
+
+        var thisViewer = this;
+
+        form.submit(function () {
+
+            form.find(".komet-form-error, .komet-form-field-error").remove();
+
+            $.ajax({
+                type: "POST",
+                url: $(this).attr("action"),
+                data: $(this).serialize(),
+                success: function (data) {
+
+                    console.log(data);
+
+                    if (data.failed.length > 0){
+
+                        var editorSection = $("#komet_concept_editor_section_" + thisViewer.viewerID);
+
+                        var errorString = "Errors occurred, all changes not listed were processed. The following updates were not successful: ";
+
+                        for (var i = 0; i < data.failed.length; i++){
+
+                            errorString += '<div>' + data.failed[i].type + ': ' + data.failed[i].text + '</div>';
+
+                            if (data.failed[i].type == "concept") {
+
+                                editorSection.find("div[id^='komet_concept_edit_concept_row_']").before(UIHelper.generateFormErrorMessage("The status of the concept was not changed."));
+
+                            } else if (data.failed[i].type == "concept property") {
+
+                                editorSection.find("div[id^='komet_concept_edit_concept_properties_row_" + data.failed[i].id + "']").before(UIHelper.generateFormErrorMessage("This property was not processed."));
+
+                            } else if (data.failed[i].type == "description"){
+
+                                var descriptionPanel = editorSection.find("div[id^='komet_concept_description_panel_" + data.failed[i].id + "']");
+                                descriptionPanel.before(UIHelper.generateFormErrorMessage("This description was not processed, and none of its properties or dialects were attempted to be processed."));
+                                descriptionPanel.css("margin-top", "0px");
+
+                            } else if (data.failed[i].type == "description property"){
+
+                                editorSection.find("div[id^='komet_concept_edit_description_properties_row_" + data.failed[i].id + "']").before(UIHelper.generateFormErrorMessage("This description property was not processed."));
+
+                            } else if (data.failed[i].type == "dialect"){
+
+                                editorSection.find("div[id^='komet_concept_edit_description_dialect_row_" + data.failed[i].id + "']").before(UIHelper.generateFormErrorMessage("This dialect was not processed."));
+
+                            } else if (data.failed[i].type == "association"){
+
+                                editorSection.find("div[id^='komet_concept_association_row_" + data.failed[i].id + "']").before(UIHelper.generateFormErrorMessage("This association was not processed."));
+                            }
+                        }
+
+                        editorSection.prepend(UIHelper.generateFormErrorMessage(errorString));
+                    } else {
+
+                        TaxonomyModule.tree.reloadTreeStatedView(TaxonomyModule.getStatedView(), false);
+                        $.publish(KometChannels.Taxonomy.taxonomyTreeNodeSelectedChannel, [null, data.concept_id, TaxonomyModule.getStatedView(), thisViewer.viewerID, WindowManager.INLINE]);
+                    }
+                }
+            });
+
+            // have to return false to stop the form from posting twice.
+            return false;
+        });
     };
 
     ConceptViewer.prototype.selectItemByValue = function(elmnt, value) {
@@ -530,72 +606,20 @@ var ConceptViewer = function(viewerID, currentConceptID, viewerAction) {
         }
     };
 
-    ConceptViewer.prototype.createDescriptionRowString = function (firstSection, rowData) {
+    ConceptViewer.prototype.createConceptPropertyRowString = function (rowData, fieldInfo) {
 
-        var descriptionRow = "";
-        var uuid = "";
-        var type = "";
-        var text = "";
-        var state = "";
-        var acceptability = "";
-        var language = "";
-        var caseSignificance = "";
+        var rowID = 'komet_concept_edit_concept_properties_row_' + rowData.sememe_instance_id + '_' + this.viewerID;
 
-        if (rowData != null){
-
-            uuid = rowData.uuid;
-            type = rowData.description_type_short;
-            text = rowData.text;
-            state = rowData.attributes[0].state;
-            language = rowData.language_id;
-            caseSignificance = rowData.case_significance;
-        }
-
-        if (!firstSection){
-            descriptionRow = '<div class="concept-section-panel-spacer"></div>';
-        }
-
-        descriptionRow += '<div id="komet_concept_description_panel_' + uuid + '_' + this.viewerID + '" class="komet-concept-section-panel komet-concept-description-panel">'
-            + '<div class="komet-concept-section-panel-details">'
-            + '<div class="komet-concept-edit-row komet-concept-edit-description-row">'
-            + '<div>' + this.createSelectField("description_type", uuid, this.selectFieldOptions.descriptionType, type) + '</div>'
-            + '<div><input type="text" id="komet_concept_edit_description_type_' + uuid + '_' + this.viewerID + '" name="descriptions[' + uuid + '][type]" value="' + text + '" class="form-control komet_concept_edit_description_type"></div>'
-            + '<div>' + this.createSelectField("description_acceptability", uuid, this.selectFieldOptions.acceptability, acceptability) + '</div>'
-            + '<div>' + this.createSelectField("description_state", uuid, this.selectFieldOptions.state, state) + '</div>'
-            + '<div>' + this.createSelectField("description_language", uuid, this.selectFieldOptions.language, language) + '</div>'
-            + '<div>' + this.createSelectField("description_case_significance", uuid, this.selectFieldOptions.caseSignificance, caseSignificance) + '</div>'
-            + '<div class="komet-concept-edit-row-tools"><div class="glyphicon glyphicon-remove" onclick=""></div></div>'
-            + '</div>'
-            + '<div class="komet-indent-block komet-concept-properties-section"><div class="komet-concept-section-title komet-concept-description-title">Properties'
-            + '<div class="komet-flex-right">Add Property <div class="glyphicon glyphicon-plus-sign" onclick="WindowManager.viewers[' + this.viewerID + '].addPropertyRow(\'' + uuid + '\', this)"></div></div></div>';
-
-        if (rowData.nested_properties) {
-
-            $.each(rowData.nested_properties.data, function (index, property) {
-                descriptionRow += this.createDescriptionPropertyRowString(uuid, property, rowData.nested_properties.field_info);
-            }.bind(this));
-        }
-
-        descriptionRow += '<!-- end komet-indent-block --></div><!-- end komet-concept-section-panel-details --></div><!-- end komet_concept_description_panel --></div>';
-
-        return descriptionRow;
-    }.bind(this);
-
-    ConceptViewer.prototype.createDescriptionPropertyRowString = function (descriptionID, property, fieldInfo) {
-
-        var propertyID = descriptionID + '_' + property.id;
-        var viewerPropertyID = propertyID + '_' + this.viewerID;
-        var rowID = 'komet_concept_edit_description_properties_row_' + viewerPropertyID;
-
-        var propertyString = '<div id="' + rowID + '" class="komet-concept-edit-row komet-concept-edit-description-properties-row"><div>'
-            + '<input type="hidden" name="descriptions[' + descriptionID + '][' + property.id + '][sememe]" value="' + property.uuid + '"> '
-            + '<span class="form-field komet-concept-edit-description-properties-sememe"><b>' + property.sememe_name + '</b></span></div>'
+        var rowString = '<div id="' + rowID + '" class="komet-concept-edit-row komet-concept-edit-concept-properties-row komet-changeable"><div>'
+            + '<input type="hidden" name="[properties][' + rowData.sememe_instance_id + '][sememe]" value="' + rowData.sememe_definition_id + '"> '
+            + '<span class="form-field komet-concept-edit-concept-properties-sememe"><b>' + rowData.sememe_name + '</b></span></div>'
             + '<div class="komet-containing-block">';
 
-        $.each(property.columns, function (fieldID, field) {
+        $.each(rowData.columns, function (fieldID, field) {
 
-            var viewerFieldID = fieldID + '_' + viewerPropertyID;
-            var fieldLabel = fieldInfo[fieldID].name;
+            var viewerFieldID = rowData.sememe_instance_id + '_' + fieldID + '_' + this.viewerID;
+            var fieldInfoKey = rowData.sememe_definition_id + '_' + fieldID;
+            var fieldLabel = fieldInfo[fieldInfoKey].name;
 
             var data = "";
 
@@ -603,26 +627,275 @@ var ConceptViewer = function(viewerID, currentConceptID, viewerAction) {
                 data = field.data;
             }
 
-            propertyString += '<div class="input-group"><label for="komet_concept_edit_description_properties_' + viewerFieldID + '" class="input-group-addon" title="' + fieldLabel + '">' + fieldLabel + '</label>'
-                + '<input type="text" id="komet_concept_edit_description_properties_' + viewerFieldID + '" name="descriptions[' + descriptionID + '][' + property.id + '][' + fieldID + ']" value="' + data + '" class="form-control komet_concept_edit_description_properties_field">'
+            rowString += '<input type="hidden" name="[properties][' + rowData.sememe_instance_id + '][' + fieldID + '][column_number]" value="' + fieldInfo[fieldInfoKey].column_number + '">'
+                + '<input type="hidden" name="[properties][' + rowData.sememe_instance_id + '][' + fieldID + '][data_type_class]" value="' + fieldInfo[fieldInfoKey].data_type_class + '">'
+                + '<div class="input-group"><label for="komet_concept_edit_concept_properties_' + viewerFieldID + '" class="input-group-addon" title="' + fieldLabel + '">' + fieldLabel + '</label>'
+                + '<input type="text" id="komet_concept_edit_concept_properties_' + viewerFieldID + '" name="[properties][' + rowData.sememe_instance_id + '][' + fieldID + '][value]" value="' + data + '" class="form-control komet_concept_edit_concept_properties_field">'
                 + '</div>';
 
         }.bind(this));
 
-        propertyString += '</div><div class="komet-concept-edit-row-tools"><div class="glyphicon glyphicon-remove" onclick="WindowManager.viewers[' + this.viewerID + '].removeRow(\'' + property.id + '\', \'' + rowID + '\', \'property\', ' + property.new + ', this)"></div></div><!-- end komet-concept-edit-description-properties-row --></div>';
+        rowString +=  '<div>' + this.createSelectField("properties", rowData.sememe_instance_id, null, null, "state", this.selectFieldOptions.state, rowData.state) + '</div></div>';
 
-        return propertyString;
+        if (rowData.new) {
+            rowString += '<div class="komet-concept-edit-row-tools"><div class="glyphicon glyphicon-remove" onclick="WindowManager.viewers[' + this.viewerID + '].removeRow(\'' + rowData.sememe_instance_id + '\', \'' + rowID + '\', \'concept property\', ' + rowData.new + ', this)"></div></div>';
+        }
+
+        rowString += '<!-- end komet-concept-edit-concept-properties-row --></div>';
+
+        return rowString;
     };
 
-    ConceptViewer.prototype.addPropertyRow = function (descriptionID, addElement) {
+    ConceptViewer.prototype.createDescriptionRowString = function (rowData) {
+
+        var rowString = "";
+        var descriptionID = "";
+        var type = "";
+        var text = "";
+        var state = "";
+        var language = "";
+        var caseSignificance = "";
+        var propertiesSectionClass = " hide";
+        var isNew = false;
+
+        if (rowData != null){
+
+            descriptionID = rowData.uuid;
+            type = rowData.description_type_sequence;
+            text = rowData.text;
+            state = rowData.attributes[0].state;
+            language = rowData.language_sequence;
+            caseSignificance = rowData.case_significance_sequence;
+        } else {
+
+            isNew = true;
+            descriptionID = window.performance.now().toString().replace(".", "");
+        }
+
+        if ($("#komet_concept_editor_properties_" + this.viewerID).is(":checked")){
+            propertiesSectionClass = "";
+        }
+
+        var rowID = "komet_concept_description_panel_" + descriptionID + "_" + this.viewerID;
+
+        rowString += '<div id="' + rowID + '" class="komet-concept-section-panel komet-concept-description-panel">'
+            + '<div class="komet-concept-section-panel-details">'
+            + '<div class="komet-concept-edit-row komet-concept-edit-description-row komet-changeable">'
+            + '<div>' + this.createSelectField("descriptions", descriptionID, null, null, "description_type", this.selectFieldOptions.descriptionType, type) + '</div>'
+            + '<div><input type="text" id="komet_concept_edit_description_type_' + descriptionID + '_' + this.viewerID + '" name="descriptions[' + descriptionID + '][text]" value="' + text + '" class="form-control komet_concept_edit_description_type"></div>'
+            + '<div>' + this.createSelectField("descriptions", descriptionID, null, null, "description_language", this.selectFieldOptions.language, language) + '</div>'
+            + '<div>' + this.createSelectField("descriptions", descriptionID, null, null, "description_case_significance", this.selectFieldOptions.caseSignificance, caseSignificance) + '</div>'
+            + '<div>' + this.createSelectField("descriptions", descriptionID, null, null, "description_state", this.selectFieldOptions.state, state) + '</div>';
+
+        if (isNew){
+            rowString += '<div class="komet-concept-edit-row-tools"><div class="glyphicon glyphicon-remove" onclick="WindowManager.viewers[' + this.viewerID + '].removeRow(\'' + descriptionID + '\', \'' + rowID + '\', \'description\', ' + isNew + ', this)"></div></div>';
+        }
+
+        rowString += '</div>'
+            + '<div class="komet-indent-block komet-concept-description-dialect-section"><div class="komet-concept-section-title komet-concept-description-title">Dialects';
+
+        if (isNew){
+            rowString += '<div class="komet-flex-right"><div class="komet-concept-add-description-dialect" onclick="WindowManager.viewers[' + this.viewerID + '].addDialectRow(\'' + descriptionID + '\')">Add Dialect <div class="glyphicon glyphicon-plus-sign"></div></div></div>';
+        }
+
+        rowString += '</div>';
+
+        if (rowData && rowData.attributes) {
+
+            $.each(rowData.attributes, function (index, attribute) {
+
+                if (attribute.label == "Dialect"){
+                    rowString += this.createDescriptionDialectRowString(descriptionID, attribute);
+                }
+            }.bind(this));
+        }
+
+        rowString += '</div>'
+            + '<div class="komet-indent-block komet-concept-description-properties-section' + propertiesSectionClass + '"><div class="komet-concept-section-title komet-concept-description-title">Properties'
+            + '<div class="komet-flex-right"><div class="komet-concept-add-description-property" onclick="WindowManager.viewers[' + this.viewerID + '].addPropertyRow(\'' + descriptionID + '\', this, \'description\')">Add Property <div class="glyphicon glyphicon-plus-sign"></div></div></div></div>';
+
+        if (rowData && rowData.nested_properties) {
+
+            $.each(rowData.nested_properties.data, function (index, property) {
+                rowString += this.createDescriptionPropertyRowString(descriptionID, property, rowData.nested_properties.field_info);
+            }.bind(this));
+        }
+
+        rowString += '<!-- end komet-indent-block --></div><!-- end komet-concept-section-panel-details --></div><!-- end komet_concept_description_panel --></div>';
+
+        return rowString;
+    }.bind(this);
+
+    ConceptViewer.prototype.createDescriptionPropertyRowString = function (descriptionID, rowData, fieldInfo) {
+
+        var propertyID = descriptionID + '_' + rowData.sememe_instance_id;
+        var rowID = 'komet_concept_edit_description_properties_row_' + propertyID + '_' + this.viewerID;
+
+        var rowString = '<div id="' + rowID + '" class="komet-concept-edit-row komet-concept-edit-description-properties-row komet-changeable"><div>'
+            + '<input type="hidden" name="descriptions[' + descriptionID + '][properties][' + rowData.sememe_instance_id + '][sememe]" value="' + rowData.sememe_definition_id + '"> '
+            + '<input type="hidden" name="descriptions[' + descriptionID + '][properties][' + rowData.sememe_instance_id + '][sememe_name]" value="' + rowData.sememe_name + '"> '
+            + '<span class="form-field komet-concept-edit-description-properties-sememe"><b>' + rowData.sememe_name + '</b></span></div>'
+            + '<div class="komet-containing-block">';
+
+        $.each(rowData.columns, function (fieldID, field) {
+
+            var viewerFieldID = propertyID + '_' + fieldID + '_' + this.viewerID;
+            var fieldInfoKey = rowData.sememe_definition_id + '_' + fieldID;
+            var fieldLabel = fieldInfo[fieldInfoKey].name;
+
+            var data = "";
+
+            if (field.data){
+                data = field.data;
+            }
+
+            rowString += '<input type="hidden" name="descriptions[' + descriptionID + '][properties][' + rowData.sememe_instance_id + '][' + fieldID + '][column_number]" value="' + fieldInfo[fieldInfoKey].column_number + '">'
+                + '<input type="hidden" name="descriptions[' + descriptionID + '][properties][' + rowData.sememe_instance_id + '][' + fieldID + '][data_type_class]" value="' + fieldInfo[fieldInfoKey].data_type_class + '">'
+                + '<div class="input-group"><label for="komet_concept_edit_description_properties_' + viewerFieldID + '" class="input-group-addon" title="' + fieldLabel + '">' + fieldLabel + '</label>'
+                + '<input type="text" id="komet_concept_edit_description_properties_' + viewerFieldID + '" name="descriptions[' + descriptionID + '][properties][' + rowData.sememe_instance_id + '][' + fieldID + '][value]" value="' + data + '" class="form-control komet_concept_edit_description_properties_field">'
+                + '</div>';
+
+        }.bind(this));
+
+        rowString += '<div>' + this.createSelectField("descriptions", descriptionID, "properties", rowData.sememe_instance_id, "state", this.selectFieldOptions.state, rowData.state) + '</div>'
+            + '</div>';
+
+        if (rowData.new){
+            rowString += '<div class="komet-concept-edit-row-tools"><div class="glyphicon glyphicon-remove" onclick="WindowManager.viewers[' + this.viewerID + '].removeRow(\'' + rowData.sememe_instance_id + '\', \'' + rowID + '\', \'description property\', ' + rowData.new + ', this)"></div></div>';
+        }
+
+        rowString += '<!-- end komet-concept-edit-description-properties-row --></div>';
+
+        return rowString;
+    };
+
+    ConceptViewer.prototype.createDescriptionDialectRowString = function (descriptionID, rowData) {
+
+        // TODO - see if we want to ever handle dialects like attached sememes, where they can be updated as well. If not remove the remenants of that code.
+        var dialectID = "";
+        var dialect = "";
+        var acceptability = "";
+        //var state = "";
+        var isNew = false;
+        var rowString = null;
+
+        if (rowData != null){
+
+            //conceptID = rowData.sememe_id;
+            //dialect = rowData.sequence;
+            //acceptability = rowData.acceptability_sequence;
+            //state = rowData.state;
+
+            rowString = '<div class="komet-concept-edit-row komet-concept-edit-description-dialect-row">'
+                + '<div>' + rowData.text + '</div>'
+                + '<div>' + rowData.acceptability_text + '</div>'
+                + '</div>';
+        } else {
+
+            isNew = true;
+            dialectID = window.performance.now().toString().replace(".", "");
+            var dialectID = descriptionID + '_' + dialectID;
+            var viewerDialectID = dialectID + '_' + this.viewerID;
+            var rowID = 'komet_concept_edit_description_dialect_row_' + viewerDialectID;
+
+            rowString = '<div id="' + rowID + '" class="komet-concept-edit-row komet-concept-edit-description-dialect-row">'
+                + '<div>' + this.createSelectField("descriptions", descriptionID, "dialects", dialectID, "dialect", this.selectFieldOptions.dialect, dialect) + '</div>'
+                + '<div>' + this.createSelectField("descriptions", descriptionID, "dialects", dialectID, "acceptability", this.selectFieldOptions.acceptability, acceptability) + '</div>'
+                + '<div class="komet-concept-edit-row-tools"><div class="glyphicon glyphicon-remove" onclick="WindowManager.viewers[' + this.viewerID + '].removeRow(\'' + dialectID + '\', \'' + rowID + '\', \'dialect\', ' + isNew + ', this)"></div></div>'
+                + '</div>';
+        }
+
+        return rowString;
+    };
+
+    ConceptViewer.prototype.createAssociationRowString = function (rowData) {
+
+        var rowString = "";
+        var associationID = "";
+        var typeID = "";
+        var state = "";
+        var targetID = "";
+        var targetText = "";
+        var targetTaxonomyType = "";
+        var isNew = false;
+        var typeDisplay = "";
+
+        if (rowData != null){
+
+            associationID = rowData.id;
+            typeDisplay = '<span class="komet-concept-edit-association-type"><input type="hidden" name="associations[' + associationID + '][association_type]" value="' + rowData.type_id + '">'
+                + '<b>' + rowData.type_text + '</b></span>';
+            state = rowData.state;
+
+            if (rowData.target_id){
+
+                targetID = rowData.target_id;
+                targetText = rowData.target_text;
+                targetTaxonomyType = rowData.target_taxonomy_type;
+            }
+
+        } else {
+
+            isNew = true;
+            associationID = window.performance.now().toString().replace(".", "");
+            typeDisplay = this.createSelectField("associations", associationID, null, null, "association_type", this.selectFieldOptions.associationType, "");
+
+        }
+
+        var rowID = "komet_concept_association_row_" + associationID + "_" + this.viewerID;
+
+        rowString += '<div id="' + rowID + '" class="komet-concept-edit-row komet-concept-edit-association-row komet-changeable">'
+            + '<div>' + typeDisplay + '</div>'
+            + '<div><autosuggest id-base="komet_concept_edit_association_value_' + associationID + '" '
+            + 'id-postfix="_' + this.viewerID + '" '
+            + 'name="associations[' + associationID + '][target" '
+            + 'name-format="array" '
+            + 'value="' + targetID + '" '
+            + 'display-value="' + targetText + '" '
+            + 'type-value="' + targetTaxonomyType + '" '
+            + 'classes="komet-concept-edit-association-value">'
+            + '</autosuggest></div>'
+            + '<div>' + this.createSelectField("associations", associationID, null, null, "association_state", this.selectFieldOptions.state, state) + '</div>';
+
+        if (isNew){
+            rowString += '<div class="komet-concept-edit-row-tools"><div class="glyphicon glyphicon-remove" onclick="WindowManager.viewers[' + this.viewerID + '].removeRow(\'' + associationID + '\', \'' + rowID + '\', \'association\', ' + isNew + ', this)"></div></div>';
+        }
+
+        rowString += '</div>';
+
+        return rowString;
+    }.bind(this);
+
+    ConceptViewer.prototype.addDescriptionRow = function () {
+
+        var editorSection = $("#komet_concept_editor_section_" + this.viewerID);
+        var appendAfter = editorSection.find(".komet-concept-description-panel");
+
+        if (appendAfter.length > 0){
+            appendAfter = appendAfter.last();
+        } else {
+            appendAfter = editorSection.find(".komet-concept-description-title");
+        }
+
+        // generate the new row string and create a dom fragment it
+        var descriptionRowString = this.createDescriptionRowString(null);
+        var propertyRow = document.createRange().createContextualFragment(descriptionRowString);
+
+        appendAfter.after(propertyRow);
+        UIHelper.processAutoSuggestTags(editorSection);
+
+        editorSection.change();
+    };
+
+    ConceptViewer.prototype.addPropertyRow = function (descriptionID, addElement, property_type) {
 
         var formID = "komet_concept_add_property_form_" + this.viewerID;
 
-        var addPropertyString = '<form action="' + gon.routes.taxonomy_get_new_property_info_path + '" id="' + formID + '" class="komet-concept-add-property-form">'
+        var addRowString = '<form action="' + gon.routes.taxonomy_get_new_property_info_path + '" id="' + formID + '" class="komet-concept-add-property-form">'
             + '<autosuggest id-base="komet_concept_add_property_sememe" '
             + 'id-postfix="_' + this.viewerID + '" '
             + 'name="sememe" '
-            + 'label: "Search for a concept to use as a property" '
+            + 'label: "Search for a concept to use as a ' + property_type + ' property" '
             + 'classes="komet-concept-add-property-sememe">'
             + '</autosuggest></form>';
 
@@ -641,18 +914,34 @@ var ConceptViewer = function(viewerID, currentConceptID, viewerAction) {
                         data: $(this).serialize(),
                         success: function (sememe_info) {
 
+                            var editorSection = $("#komet_concept_editor_section_" + thisViewer.viewerID);
+
                             if (sememe_info.data == null){
-                                $("#komet_concept_editor_section_" + thisViewer.viewerID).prepend(UIHelper.generateFormErrorMessage("An error has occurred. The property was not created."));
+                                editorSection.prepend(UIHelper.generateFormErrorMessage("An error has occurred. The property was not created."));
                             } else {
 
                                 sememe_info.data.new = true;
-                                var propertyRowString = thisViewer.createDescriptionPropertyRowString(descriptionID, sememe_info.data, sememe_info.field_info);
 
-                                // create a dom fragment from our string
-                                var propertyRow = document.createRange().createContextualFragment(propertyRowString);
-                                $("#komet_concept_description_panel_" + descriptionID + "_" + thisViewer.viewerID).find(".komet-indent-block").append(propertyRow);
+                                var section = "";
+                                var rowString = "";
 
-                                UIHelper.processAutoSuggestTags("#komet_concept_edit_description_properties_row_" + sememe_info.data.id + "_" + thisViewer.viewerID);
+                                if (property_type == "description"){
+
+                                    section = $("#komet_concept_description_panel_" + descriptionID + "_" + thisViewer.viewerID).find(".komet-concept-description-properties-section");
+                                    rowString = thisViewer.createDescriptionPropertyRowString(descriptionID, sememe_info.data, sememe_info.field_info);
+                                } else {
+
+                                    section = $("#komet_concept_attributes_panel_" + thisViewer.viewerID).find(".komet-concept-properties-section");
+                                    rowString = thisViewer.createConceptPropertyRowString(sememe_info.data, sememe_info.field_info);
+                                }
+
+                                // generate the new row string and create a dom fragment it
+                                var row = document.createRange().createContextualFragment(rowString);
+
+                                section.append(row);
+                                UIHelper.processAutoSuggestTags(section);
+
+                                editorSection.change();
                             }
                         }
                     });
@@ -666,9 +955,50 @@ var ConceptViewer = function(viewerID, currentConceptID, viewerAction) {
 
         }.bind(this);
 
-        UIHelper.generateConfirmationDialog("Add a Property", addPropertyString, confirmCallback, "Add", addElement);
+        UIHelper.generateConfirmationDialog("Add a Property", addRowString, confirmCallback, "Add", addElement);
         UIHelper.processAutoSuggestTags("#" + formID);
+    };
 
+    ConceptViewer.prototype.addDialectRow = function (descriptionID) {
+
+        var section = $("#komet_concept_description_panel_" + descriptionID + "_" + this.viewerID).find(".komet-concept-description-dialect-section");
+
+        // generate the new row string and create a dom fragment it
+        var rowString = this.createDescriptionDialectRowString(descriptionID);
+        var row = document.createRange().createContextualFragment(rowString);
+
+        section.append(row);
+        UIHelper.processAutoSuggestTags(section);
+        this.setAddDialectLinkState(descriptionID);
+
+        $("#komet_concept_editor_section_" + this.viewerID).change();
+    };
+
+    ConceptViewer.prototype.addAssociationRow = function () {
+
+        var section = $("#komet_concept_associations_panel_" + this.viewerID).find(".komet-concept-section-panel-details");
+
+        // generate the new row string and create a dom fragment it
+        var rowString = this.createAssociationRowString(null);
+        var row = document.createRange().createContextualFragment(rowString);
+
+        section.append(row);
+        UIHelper.processAutoSuggestTags(section);
+
+        $("#komet_concept_editor_section_" + this.viewerID).change();
+    };
+
+    ConceptViewer.prototype.setAddDialectLinkState = function (descriptionID) {
+
+        var descriptionPanel = $("#komet_concept_description_panel_" + descriptionID + "_" + this.viewerID);
+        var addDialect = descriptionPanel.find(".komet-concept-add-description-dialect");
+
+        // find all dialect rows under the description that have not been removed
+        if (descriptionPanel.find(".komet-concept-edit-description-dialect-row").not(".komet-removed").length < this.selectFieldOptions.dialect.length){
+            addDialect.removeClass("komet-disabled");
+        } else {
+            addDialect.addClass("komet-disabled");
+        }
     };
 
     ConceptViewer.prototype.removeRow = function (conceptID, rowID, type, isNew, closeElement) {
@@ -677,14 +1007,30 @@ var ConceptViewer = function(viewerID, currentConceptID, viewerAction) {
 
             if (buttonClicked != 'cancel') {
 
+                var descriptionID = null;
                 var row = $("#" + rowID);
+
+                // if this is a dialect then get the related description ID.
+                if (type == "dialect"){
+
+                    var descriptionSection = row.closest(".komet-concept-description-panel");
+
+                    // get the description ID from the section ID - the in between the '_'s after 'description_panel'
+                    descriptionID = descriptionSection.attr('id').match(/description_panel_([^)]+)_/)[1];
+                }
 
                 if (isNew){
                     row.remove();
                 } else {
 
-                    row.addClass("hide");
-                    row.html('<input type="hidden" name="remove[' + type + ']" value="' + conceptID + '">');
+                    row.addClass("hide komet-removed");
+                    row.html('<input type="hidden" name="remove[' + conceptID + ']" value="">');
+                    //row.html('<input type="hidden" name="remove[' + type + '][' + conceptID + ']" value="' + conceptID + '">');
+                }
+
+                // if this is a dialect then check the Add Dialect link state.
+                if (type == "dialect"){
+                    this.setAddDialectLinkState(descriptionID);
                 }
             }
 
@@ -693,15 +1039,29 @@ var ConceptViewer = function(viewerID, currentConceptID, viewerAction) {
         UIHelper.generateConfirmationDialog("Delete " + type + "?", "Are you sure you want to remove this " + type + "?", confirmCallback, "Yes", closeElement);
     };
 
-    ConceptViewer.prototype.createSelectField = function (fieldName, fieldID, options, selectedItem) {
+    ConceptViewer.prototype.createSelectField = function (type, typeID, subtype, subtypeID, fieldName, options, selectedItem) {
 
-        var fieldString = '<select id="komet_concept_edit_' + fieldName + '_' + fieldID + '_' + this.viewerID + '" name="descriptions[' + fieldID + '][' + fieldName + ']" class="form-control komet_concept_edit_' + fieldName + '">';
+        var idSubtypeID = "";
+        var nameSubtype = "";
+        var nameSubtypeID = "";
+
+        if (subtype != undefined || subtype != null){
+
+            idSubtypeID = subtypeID + "_";
+            nameSubtype = "[" + subtype + "]";
+            nameSubtypeID = "[" + subtypeID + "]";
+        }
+
+        var id = "komet_concept_edit_" + typeID + "_" + idSubtypeID + fieldName + '_' + this.viewerID;
+        var name = type + '[' + typeID + ']' + nameSubtype + nameSubtypeID + '[' + fieldName + ']';
+
+        var fieldString = '<select id="' + id + '" name="' + name + '" class="form-control komet_concept_edit_' + fieldName + '">';
 
         for (var i = 0; i < options.length; i++) {
 
             fieldString += '<option ';
 
-            if (selectedItem === options[i].value) {
+            if (selectedItem == options[i].value) {
                 fieldString += 'selected="selected" ';
             }
 
@@ -720,7 +1080,7 @@ var ConceptViewer = function(viewerID, currentConceptID, viewerAction) {
             var optionArray = [];
 
             for (var i = 0; i < options.length; i++){
-                optionArray.push({value: options[i].concept_id, label: options[i].text});
+                optionArray.push({value: options[i].concept_sequence, label: options[i].text});
             }
 
             return optionArray;
@@ -737,6 +1097,8 @@ var ConceptViewer = function(viewerID, currentConceptID, viewerAction) {
         this.selectFieldOptions.caseSignificance = createOptions(selectOptions.case);
 
         this.selectFieldOptions.acceptability = createOptions(selectOptions.acceptability);
+
+        this.selectFieldOptions.associationType = createOptions(selectOptions.associationType);
 
         this.selectFieldOptions.state = [
             {value: "Active", label: "Active"},
@@ -766,16 +1128,17 @@ var ConceptViewer = function(viewerID, currentConceptID, viewerAction) {
     };
 
     ConceptViewer.prototype.toggleProperties = function(){
-        $("#komet_viewer_" + this.viewerID).find(".komet-concept-properties-section").toggleClass("hide");
+        $("#komet_viewer_" + this.viewerID).find(".komet-concept-description-properties-section").toggleClass("hide");
     };
 
     ConceptViewer.prototype.showSaveSection = function (sectionName) {
 
         var saveSection = $("#komet_concept_save_section_" + this.viewerID);
         var confirmSection = $("#komet_concept_confirm_section_" + this.viewerID);
-        var createSection = $("#komet_concept_editor_section_" + this.viewerID);
+        var editorSection = $("#komet_concept_editor_section_" + this.viewerID);
 
-        $("#komet_create_concept_form_" + this.viewerID).find(".komet-form-error, .komet-form-field-error").remove();
+        var form = $("#komet_concept_editor_form_" + this.viewerID);
+        form.find(".komet-form-error, .komet-form-field-error").remove();
 
         if (sectionName == 'confirm'){
 
@@ -789,24 +1152,56 @@ var ConceptViewer = function(viewerID, currentConceptID, viewerAction) {
 
             if (hasErrors){
 
-                createSection.prepend(UIHelper.generateFormErrorMessage("Please fix the errors below."));
+                editorSection.prepend(UIHelper.generateFormErrorMessage("Please fix the errors below."));
                 return false;
             }
 
-            console.log(UIHelper.hasFormChanged(createSection, true, true));
-            saveSection.toggleClass("hide");
-            confirmSection.toggleClass("hide");
+            var confirmCallback = function(buttonClicked) {
+
+                var showChangesCheckbox = $("#komet_concept_editor_show_changes_" + this.viewerID);
+
+                if (showChangesCheckbox.length == 0 || !showChangesCheckbox[0].checked){
+                    UIHelper.toggleChangeHighlights(editorSection, false);
+                }
+
+                if (buttonClicked != 'cancel') {
+                    form.submit();
+                }
+            }.bind(this);
+
+            console.log(UIHelper.hasFormChanged(editorSection, true, true));
+            UIHelper.generateConfirmationDialog("Save Concept", "Are you sure you want to commit your changes?", confirmCallback, "Save", "#komet_concept_save_" + this.viewerID);
+            //saveSection.toggleClass("hide");
+            //confirmSection.toggleClass("hide");
 
         } else {
 
-            saveSection.toggleClass("hide");
-            confirmSection.toggleClass("hide");
-            UIHelper.toggleChangeHighlights(createSection, false);
+            //saveSection.toggleClass("hide");
+            //confirmSection.toggleClass("hide");
+            UIHelper.toggleChangeHighlights(editorSection, false);
+        }
+    };
+
+    // TODO - Find ways to make this more efficient
+    ConceptViewer.prototype.toggleEditorChangeHighlights = function(checkbox){
+
+        var editorSection = $("#komet_concept_editor_section_" + this.viewerID);
+
+        if (checkbox.checked){
+
+            UIHelper.hasFormChanged(editorSection, true, true);
+
+            editorSection.change(function(){
+                UIHelper.hasFormChanged(editorSection, true, true);
+            });
+        } else {
+
+            editorSection.off("change");
+            UIHelper.toggleChangeHighlights(editorSection, false);
         }
     };
 
     ConceptViewer.prototype.cancelAction = function(previous_type, previous_id){
-
 
         if (previous_type && previous_id){
 
@@ -816,13 +1211,11 @@ var ConceptViewer = function(viewerID, currentConceptID, viewerAction) {
             } else if (previous_type == "MappingViewer"){
                 $.publish(KometChannels.Mapping.mappingTreeNodeSelectedChannel, ["", previous_id, this.viewerID, WindowManager.INLINE]);
             }
-
+            WindowManager.closeViewer(this.viewerID.toString());
             return false;
         }
-
-        WindowManager.closeViewer(this.viewerID);
     };
 
     // call our constructor function
-    this.init(viewerID, currentConceptID, viewerAction)
+    this.init(viewerID, currentConceptID, viewerAction);
 };

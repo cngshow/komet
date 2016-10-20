@@ -1,7 +1,7 @@
 ##
 # Do common initialization tasks in komet tooling
 #
-REST_API_VERSIONS = [:"1.5"].freeze
+REST_API_VERSIONS = [:"1.6"].freeze
 
 require './lib/rails_common/props/prop_loader'
 require './lib/rails_common/logging/open_logging'
@@ -38,8 +38,10 @@ unless $rake
       $VERBOSE = v
       ###############################################
       ######### COMMON REST IMPORTS GO HERE!!!!!!
+      require './lib/isaac_rest/association_rest'
       require './lib/isaac_rest/logic_graph_rest'
       require './lib/isaac_rest/concept_rest'
+      require './lib/isaac_rest/component_rest'
       require './lib/isaac_rest/id_apis_rest'
       require './lib/isaac_rest/search_apis_rest'
       require './lib/isaac_rest/sememe_rest'
