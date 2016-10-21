@@ -34,7 +34,10 @@ class WorkflowController < ApplicationController
     name = params[:name] #populated from create workflow form and passed in from javascript file workflow.js line 82 has saveworkflow function
     description = params[:description] #populated from create workflow form and passed in from javascript file workflow.js line 82 has saveworkflow function
     additional_req_params ={editToken: get_edit_token} # have to pass it to all write rest api's
-    body_params = {definitionId: default_definition, name: name, description: description} #create workflow requires body params
+    body_params = Gov::Vha::Isaac::Rest::Api1::Data::Workflow::RestWorkflowProcessBaseCreate.new
+    body_params.definitionId = default_definition
+    body_params.name = name
+    body_params.description = description
     #code line below make a call to create work flow rest api
     results = WorkflowRest.get_workflow(action: WorkflowRestActions::ACTION_CREATE, body_params: body_params, additional_req_params: additional_req_params)
 
@@ -48,7 +51,7 @@ class WorkflowController < ApplicationController
   end
 
   def get_all_definition #returns definition id. this id is passed in other rest api calls.  this rest api works successfully
-    @default_definition = WorkflowRest.get_workflow(action: WorkflowRestActions::ACTION_ALL_DEFINITION)
+    @default_definition = get_workflow(action: WorkflowRestActions::ACTION_ALL_DEFINITION)
   end
 
 

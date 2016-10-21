@@ -130,7 +130,7 @@ module CommonRestBase
     attr_accessor :params, :body_params, :action, :action_constants
 
     def initialize(params:, body_params: {}, action:, action_constants:)
-
+      body_params = body_params.to_jaxb_json_hash if body_params.respond_to? :to_jaxb_json_hash
       @params = params
       @body_params = body_params
       @action = action
@@ -220,7 +220,6 @@ module CommonRestBase
         hash = rest_module.const_get :ACTION_CONSTANTS
 
         rest_actions.constants.each do |c|
-
           c = rest_actions.const_get c
           path = hash[c][PATH_SYM]
           paths[c] = path
