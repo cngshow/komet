@@ -183,10 +183,11 @@ var WorkflowModule = (function () {
 
     function advance_workflow() {
         validator();
+        var form = $('#wfl_modal_form');
 
-        if ($('#wfl_modal_form').valid()) {
+        if (form.valid()) {
             //submit the form to transition the workflow
-
+            form.submit();
             reset_modal();
         }
     }
