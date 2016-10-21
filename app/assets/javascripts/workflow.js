@@ -292,7 +292,7 @@ var WorkflowModule = (function () {
     function set_name_and_description(results) {
         $('#komet-workflow_name_display').html(results.name);
         $('#komet-workflow_description_display').html(results.description);
-        $('#komet-workflow_creator_display').html(results.creatorId);
+        $('#komet-workflow_creator_display').html(results.creatorName);
     }
 
     function showConcept(process_Id)  // this function populates data when user clicks on View concept link from workflow dashboard grid

@@ -74,7 +74,11 @@ class WorkflowController < ApplicationController
   end
 
   def get_process
-    get_workflow_details(action: WorkflowRestActions::ACTION_PROCESS)
+    results = get_workflow_details_hash(action: WorkflowRestActions::ACTION_PROCESS)
+    results = results.to_jaxb_json_hash
+    u = ConceptRest::get_concept(action: ConceptRestActions::ACTION_DESCRIPTIONS, uuid: results['creatorId'])
+    results['creatorName'] = u.first.text # todo this is pulling the first description as opposed to finding the preferred name
+    render json: results.to_json
   end
 
   def get_history
