@@ -47,7 +47,7 @@
           '<span id="wfl_title_action" style="font-weight: bold"></span>'</h4>
       </div>
       <div class="modal-body">
-        <%= form_tag workflow_advance_workflow_path do %>
+        <%= form_tag workflow_advance_workflow_path, id: 'wfl_modal_form', name: 'wfl_modal_form' do %>
           <input type="hidden" id="transition_uuid" name="transition_uuid"/>
           <div id="transition_addl_info_div"></div>
           <hr>
