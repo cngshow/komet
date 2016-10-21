@@ -26,6 +26,7 @@ require './lib/isaac_rest/id_apis_rest'
 # handles the workflow screens
 class WorkflowController < ApplicationController
   include ApplicationHelper, CommonController, WorkflowRest, ConceptRest
+  include Gov::Vha::Isaac::Rest::Api1::Data::Workflow
 
   layout 'workflow'
 
@@ -34,7 +35,7 @@ class WorkflowController < ApplicationController
     name = params[:name] #populated from create workflow form and passed in from javascript file workflow.js line 82 has saveworkflow function
     description = params[:description] #populated from create workflow form and passed in from javascript file workflow.js line 82 has saveworkflow function
     additional_req_params ={editToken: get_edit_token} # have to pass it to all write rest api's
-    body_params = Gov::Vha::Isaac::Rest::Api1::Data::Workflow::RestWorkflowProcessBaseCreate.new
+    body_params = RestWorkflowProcessBaseCreate.new
     body_params.definitionId = default_definition
     body_params.name = name
     body_params.description = description
@@ -68,7 +69,8 @@ class WorkflowController < ApplicationController
   end
 
   def get_transition
-    get_workflow_details(action: WorkflowRestActions::ACTION_ACTIONS, include_token: true)
+    a = get_workflow_details(action: WorkflowRestActions::ACTION_ACTIONS, include_token: true)
+    a
   end
 
   def get_process
@@ -141,6 +143,19 @@ class WorkflowController < ApplicationController
 
     results[:data] = item_data
     render json: results
+  end
+
+  def advance_workflow
+    #grab params
+    comment = params[:wfl_modal_comment]
+    transition_uuid = params[:transition_uuid]
+    advancement = RestWorkflowProcessAdvancementData.new
+    advancement.actionRequested = 'Edit'
+    advancement.comment = comment
+    result = WorkflowRest.get_workflow(action: WorkflowRestActions::ACTION_ADVANCE, body_params: advancement, additional_req_params: {editToken: get_edit_token, CommonRest::CacheRequest => false})
+    $log.debug("Advanced: #{result}")
+    clear_user_workflow
+    redirect_to komet_dashboard_dashboard_path
   end
 
   private

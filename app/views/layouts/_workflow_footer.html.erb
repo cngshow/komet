@@ -47,12 +47,12 @@
           '<span id="wfl_title_action" style="font-weight: bold"></span>'</h4>
       </div>
       <div class="modal-body">
-        <%= form_tag workflow_advance_workflow_path, id: 'wfl_modal_form', name: 'wfl_modal_form' do %>
-          <input type="hidden" id="transition_uuid" name="transition_uuid"/>
-          <div id="transition_addl_info_div"></div>
-          <hr>
-          <%= label_tag 'wfl_modal_comment', 'Comment' %>
-          <%= text_area_tag 'wfl_modal_comment', nil, required: true, placeholder: 'Enter a comment supporting this workflow transition', rows: '3', cols: 76, class: 'form-control' %>
+        <%= form_tag(workflow_advance_workflow_path, method: :post, id: 'wfl_modal_form', name: 'wfl_modal_form') do %>
+            <input type="hidden" id="transition_uuid" name="transition_uuid"/>
+            <div id="transition_addl_info_div"></div>
+            <hr>
+            <%= label_tag 'wfl_modal_comment', 'Comment' %>
+            <%= text_area_tag 'wfl_modal_comment', nil, required: true, placeholder: 'Enter a comment supporting this workflow transition', rows: '3', cols: 76, class: 'form-control' %>
         <% end %>
       </div>
       <hr>

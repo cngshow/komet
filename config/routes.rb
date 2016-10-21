@@ -35,8 +35,7 @@ Rails.application.routes.draw do
     get 'workflow/set_user_workflow', :as => :workflow_set_user_workflow
     get 'workflow/modal_transition_metadata', :as => :workflow_modal_transition_metadata
     get 'workflow/get_advanceable_process_information', :as => :workflow_get_advanceable_process_information
-    put 'workflow/advance_workflow', :as => :workflow_advance_workflow
-
+    post 'workflow/advance_workflow', :as => :workflow_advance_workflow
 
     get 'search/get_assemblage_suggestions'
     get 'search/get_assemblage_recents'
