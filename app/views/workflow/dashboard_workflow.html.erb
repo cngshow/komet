@@ -28,26 +28,41 @@
 </div>
 <div id="komet_workflow_concept" class="komet-concept-section" style="width:40%;float:right">
 
-  <div id="komet_view_concept_form" style="border:solid 1px black;padding:5px;">
+  <div id="komet_view_concept_form" style="border:solid 1px black;padding:5px; overflow: scroll">
     <div class="komet-mapping-section-panel-header" style="width: 100%">
       <div style="float:left;width: 95%">Workflow</div>
       <!-- expand/collapse icon - controls details drawer -->
       <div class="glyphicon glyphicon-remove" style="float: right" onclick="WorkflowModule.hideWindow()"></div>
     </div>
     <div id="komet_view_concept_tabs">
+     <div class="komet-workflow-set-definition-row">
+
+        <div id="komet_concept_name" class="komet-workflow-history-item">
+          <label for="komet_workflow_name">Workflow Name</label>
+          <div id="komet-workflow_name_display" class="komet-mapping-set-editor-display"></div>
+        </div>
+
+        <div id="komet_description" class="komet-workflow-history-item">
+          <label for="komet_workflow_description">Description</label>
+          <div id="komet-workflow_description_display"  class="komet-mapping-set-editor-display"></div>
+        </div>
+
+      </div>
+      <div class="komet-workflow-set-definition-row">
+        <!--todo need to convert creatorid to creator name  -->
+        <div id="komet_concept_name" class="komet-workflow-history-item">
+          <label for="komet_workflow_creator">Creator</label>
+          <div id="komet-workflow_creator_display" class="komet-mapping-set-editor-display"></div>
+        </div>
+
+      </div>
+
       <ul>
         <li><a href='#concept'>Concept</a></li>
         <li><a href='#history'>History</a></li>
       </ul>
       <div id="concept">
-        <div id="komet_concept_name">
-          <label for="komet_workflow_name">Workflow Name</label>
-          <div id="komet-workflow_name_display"></div>
-        </div>
-        <div id="komet_description">
-          <label for="komet_workflow_description">Description</label>
-          <div id="komet-workflow_description_display"></div>
-        </div>
+
         <hr>
         <div><!-- make this a scrollable div -->
           <div id="workflow_concept_grid" style="height: 250px;" class="ag-fresh"></div>
@@ -57,18 +72,25 @@
           <label for="komet_workflow_previous_comment">Previous Comment</label>
         </div>
       </div>
-      <div id="history">
-        <div id="komet_history_name">
-          <label for="komet_history_workflow_name">Workflow Name</label>
-          <div id="komet_history-workflow_name_display"></div>
-        </div>
-        <div id="komet_history_description">
-          <label for="komet_history_workflow_description">Description</label>
-          <div id="komet_history-workflow_description_display"></div>
-        </div>
-        <hr>
+      <div id="history"> <!--todo need to convert userid to username  -->
         <div>
-          <!--<div id="workflow_history" style="height: 250px;" class="ag-fresh"></div>-->
+          <div class="komet-workflow-set-definition-row">
+
+            <div class="komet-workflow-history-item">
+              <label for="komet_workflow_name">User Name</label>
+              <div id="komet-workflow_username_display" class="komet-mapping-set-editor-display"></div>
+            </div>
+
+            <div class="komet-workflow-history-item">
+              <label for="komet_workflow_date">Date</label>
+              <div id="komet-workflow_date_display"  class="komet-mapping-set-editor-display"></div>
+            </div>
+            <div class="komet-workflow-history-item">
+              <label for="komet_workflow_action">Action</label>
+              <div id="komet-workflow_action_display"  class="komet-mapping-set-editor-display"></div>
+            </div>
+          </div>
+          <hr class="komet-concept-details-hr">
           <div id="workflow_history" style="height: 250px;"></div>
         </div>
       </div>

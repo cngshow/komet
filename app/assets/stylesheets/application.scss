@@ -1135,7 +1135,15 @@ td.komet-concept-table-nested-indicator.komet-concept-table-nested-indicator-ope
     border: 0px;
 }
 
-
+.komet-workflow-history-item{
+  margin: 4px;
+  flex: 1 1 50%;
+  height: 70px;
+}
+.komet-workflow-set-definition-row
+{
+  display:flex;
+}
 // TODO - OLD STYLES THAT SHOULD BE DELETED (Make sure not being used)
 .komet_dashboard .navbar{
     margin-bottom: 0px;

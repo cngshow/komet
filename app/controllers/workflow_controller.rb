@@ -72,7 +72,7 @@ class WorkflowController < ApplicationController
     get_workflow_details(action: WorkflowRestActions::ACTION_PROCESS)
   end
 
-  def get_history #based on processID  #todo  rest api code from yesterday  10/13 has a bug. joel working on resolving error on dated 10/14
+  def get_history #based on processID
     get_workflow_details(action: WorkflowRestActions::ACTION_HISTORY)
   end
 
