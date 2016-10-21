@@ -64,7 +64,7 @@ class MappingController < ApplicationController
             set_hash[:id] = get_next_id
             set_hash[:set_id] = set.identifiers.uuids.first
             set_hash[:text] = set.name
-            set_hash[:state] = set.mappingSetStamp.state.name
+            set_hash[:state] = set.mappingSetStamp.state.enumName
             # TODO - remove the hard-coding of type to 'vhat' when the type flags are implemented in the REST APIs
             set_hash[:terminology_type] = 'vhat'
             set_hash[:icon] = 'komet-tree-node-icon fa fa-folder'
@@ -123,7 +123,7 @@ class MappingController < ApplicationController
             set_hash[:set_id] = set.identifiers.uuids.first
             set_hash[:name] = set.name
             set_hash[:description] = set.description
-            set_hash[:state] = set.mappingSetStamp.state.name
+            set_hash[:state] = set.mappingSetStamp.state.enumName
             set_hash[:time] = DateTime.strptime((set.mappingSetStamp.time / 1000).to_s, '%s').strftime('%m/%d/%Y')
             set_hash[:author] = get_concept_metadata(set.mappingSetStamp.authorSequence)
             set_hash[:module] = get_concept_metadata(set.mappingSetStamp.moduleSequence)
@@ -211,7 +211,7 @@ class MappingController < ApplicationController
                 label_display = field.columnName
                 description = field.columnDescription
                 order = field.columnOrder.to_s
-                data_type = field.columnDataType.name
+                data_type = field.columnDataType.enumName
                 required = field.columnRequired
                 validator_types = field.columnValidatorTypes
                 validators = field.columnValidatorData
@@ -229,7 +229,7 @@ class MappingController < ApplicationController
                 #
                 #     validator_types.each_with_index do |validator_type, index|
                 #
-                #         if validators[index].class == DATA_TYPES_CLASS::RestDynamicSememeUUID && validator_type.name == 'Is Kind Of' && validators[index].dataObjectType.name == 'CONCEPT'
+                #         if validators[index].class == DATA_TYPES_CLASS::RestDynamicSememeUUID && validator_type.enumName == 'IS KIND OF' && validators[index].dataObjectType.enumName == 'CONCEPT'
                 #
                 #             field_type = 'select'
                 #
@@ -261,7 +261,7 @@ class MappingController < ApplicationController
             @map_set[:set_id] = set.identifiers.uuids.first
             @map_set[:name] = set.name
             @map_set[:description] = set.description
-            @map_set[:state] = set.mappingSetStamp.state.name
+            @map_set[:state] = set.mappingSetStamp.state.enumName
             @map_set[:time] = DateTime.strptime((set.mappingSetStamp.time / 1000).to_s, '%s').strftime('%m/%d/%Y')
             @map_set[:author] = get_concept_metadata(set.mappingSetStamp.authorSequence)
             @map_set[:module] = get_concept_metadata(set.mappingSetStamp.moduleSequence)
@@ -324,7 +324,7 @@ class MappingController < ApplicationController
             item_hash[:qualifier] = item.qualifierConcept
             item_hash[:qualifier_display] = item.qualifierDescription
             item_hash[:comments] = ''
-            item_hash[:state] = item.mappingItemStamp.state.name
+            item_hash[:state] = item.mappingItemStamp.state.enumName
             item_hash[:time] = DateTime.strptime((item.mappingItemStamp.time / 1000).to_s, '%s').strftime('%m/%d/%Y')
             item_hash[:author] = get_concept_metadata(item.mappingItemStamp.authorSequence)
             item_hash[:module] = get_concept_metadata(item.mappingItemStamp.moduleSequence)

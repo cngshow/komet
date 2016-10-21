@@ -913,6 +913,9 @@ module Sememe
     # - RestDynamicSememeSequence
     # - RestDynamicSememeUUID
     # 
+    # The class type strings are also available in the /rest/1/system/enumeration/restDynamicSememeDataType call, which returns all of the available data
+    # types, names, ids, and class type information.
+    # 
     # Example JSON that provides two columns of differing types:
     # 
     # {
@@ -921,9 +924,11 @@ module Sememe
     # &quot;columnData&quot;: [{
     # &quot;@class&quot;: &quot;gov.vha.isaac.rest.api1.data.sememe.dataTypes.RestDynamicSememeString&quot;,
     # &quot;data&quot;: &quot;test&quot;
+    # &quot;columnNumber&quot;: &quot;0&quot;
     # }, {
     # &quot;@class&quot;: &quot;gov.vha.isaac.rest.api1.data.sememe.dataTypes.RestDynamicSememeLong&quot;,
     # &quot;data&quot;: 5
+    # &quot;columnNumber&quot;: &quot;1&quot;
     # }]
     # }
     attr_accessor :columnData
@@ -3503,15 +3508,18 @@ module Enumerations
   # (no documentation provided)
   class Enumeration 
 
-    # The name of this enumeration type
-    attr_accessor :name
+    # The enum name of this enumeration type
+    attr_accessor :enumName
+    # The user-friendly name of this enumeration type - if available.  May be null
+    attr_accessor :friendlyName
     # The identifier of this enumeration.  This would be passed back to a call that requested an enum type.
     attr_accessor :enumId
 
     # the json hash for this Enumeration
     def to_jaxb_json_hash
       _h = {}
-      _h['name'] = name.to_jaxb_json_hash unless name.nil?
+      _h['enumName'] = enumName.to_jaxb_json_hash unless enumName.nil?
+      _h['friendlyName'] = friendlyName.to_jaxb_json_hash unless friendlyName.nil?
       _h['enumId'] = enumId.to_jaxb_json_hash unless enumId.nil?
       return _h
     end
@@ -3523,23 +3531,42 @@ module Enumerations
 
     #initializes this Enumeration with a json hash
     def init_jaxb_json_hash(_o)
-        if !_o['name'].nil?
-          _oa = _o['name']
+        if !_o['enumName'].nil?
+          _oa = _o['enumName']
             if(_oa.is_a? Hash)
-              @name = EnunciateHelpers::LAMB_CLASS_AWARE.call(_oa) if _oa['@class']
-              @name =  String.from_json(_oa) unless _oa['@class']
+              @enumName = EnunciateHelpers::LAMB_CLASS_AWARE.call(_oa) if _oa['@class']
+              @enumName =  String.from_json(_oa) unless _oa['@class']
             elsif (_oa.is_a? Array)
               #an array(of hashes hopefully) or scalar
-              @name = Array.new
+              @enumName = Array.new
               _oa.each { | _item | 
                  if ((_item.nil? || _item['@class'].nil?)rescue true)
-                   @name.push String.from_json(_item)
+                   @enumName.push String.from_json(_item)
                  else
-                   @name.push EnunciateHelpers::LAMB_CLASS_AWARE.call(_item)
+                   @enumName.push EnunciateHelpers::LAMB_CLASS_AWARE.call(_item)
                  end
                }
             else
-                @name = _oa
+                @enumName = _oa
+            end
+          end
+        if !_o['friendlyName'].nil?
+          _oa = _o['friendlyName']
+            if(_oa.is_a? Hash)
+              @friendlyName = EnunciateHelpers::LAMB_CLASS_AWARE.call(_oa) if _oa['@class']
+              @friendlyName =  String.from_json(_oa) unless _oa['@class']
+            elsif (_oa.is_a? Array)
+              #an array(of hashes hopefully) or scalar
+              @friendlyName = Array.new
+              _oa.each { | _item | 
+                 if ((_item.nil? || _item['@class'].nil?)rescue true)
+                   @friendlyName.push String.from_json(_item)
+                 else
+                   @friendlyName.push EnunciateHelpers::LAMB_CLASS_AWARE.call(_item)
+                 end
+               }
+            else
+                @friendlyName = _oa
             end
           end
         if !_o['enumId'].nil?
@@ -8188,12 +8215,16 @@ module Enumerations
   # (no documentation provided)
   class RestDynamicSememeDataType < Gov::Vha::Isaac::Rest::Api1::Data::Enumerations::Enumeration 
 
+    # The full value of the &quot;@class&quot; annotation that needs to be passed back in when constructing a RestDynamicSememeData like
+    # RestDynamicSememeDouble.
+    attr_accessor :classType
     # (no documentation provided)
     attr_accessor :all
 
     # the json hash for this RestDynamicSememeDataType
     def to_jaxb_json_hash
       _h = super
+      _h['classType'] = classType.to_jaxb_json_hash unless classType.nil?
       if !all.nil?
         _ha = Array.new
         all.each { | _item | _ha.push _item.to_jaxb_json_hash }
@@ -8205,6 +8236,25 @@ module Enumerations
     #initializes this RestDynamicSememeDataType with a json hash
     def init_jaxb_json_hash(_o)
       super _o
+        if !_o['classType'].nil?
+          _oa = _o['classType']
+            if(_oa.is_a? Hash)
+              @classType = EnunciateHelpers::LAMB_CLASS_AWARE.call(_oa) if _oa['@class']
+              @classType =  String.from_json(_oa) unless _oa['@class']
+            elsif (_oa.is_a? Array)
+              #an array(of hashes hopefully) or scalar
+              @classType = Array.new
+              _oa.each { | _item | 
+                 if ((_item.nil? || _item['@class'].nil?)rescue true)
+                   @classType.push String.from_json(_item)
+                 else
+                   @classType.push EnunciateHelpers::LAMB_CLASS_AWARE.call(_item)
+                 end
+               }
+            else
+                @classType = _oa
+            end
+          end
         if !_o['all'].nil?
           _oa = _o['all']
             if(_oa.is_a? Hash)
@@ -8318,65 +8368,6 @@ module Enumerations
       end
     end
   end
-
-end
-
-end
-
-end
-
-end
-
-end
-
-end
-
-end
-
-module Gov
-
-module Vha
-
-module Isaac
-
-module Rest
-
-module Api1
-
-module Data
-
-module Sememe
-
-module DataTypes
-
-  # (no documentation provided)
-  class RestDynamicSememeString < Gov::Vha::Isaac::Rest::Api1::Data::Sememe::RestDynamicSememeData 
-
-
-    # the json hash for this RestDynamicSememeString
-    def to_jaxb_json_hash
-      _h = super
-      return _h
-    end
-
-    #initializes this RestDynamicSememeString with a json hash
-    def init_jaxb_json_hash(_o)
-      super _o
-    end
-
-    # constructs a RestDynamicSememeString from a (parsed) JSON hash
-    def self.from_json(o)
-      if o.nil?
-        return nil
-      else
-        inst = new
-        inst.init_jaxb_json_hash o
-        return inst
-      end
-    end
-  end
-
-end
 
 end
 
@@ -8599,6 +8590,65 @@ module Mapping
       end
     end
   end
+
+end
+
+end
+
+end
+
+end
+
+end
+
+end
+
+end
+
+module Gov
+
+module Vha
+
+module Isaac
+
+module Rest
+
+module Api1
+
+module Data
+
+module Sememe
+
+module DataTypes
+
+  # (no documentation provided)
+  class RestDynamicSememeString < Gov::Vha::Isaac::Rest::Api1::Data::Sememe::RestDynamicSememeData 
+
+
+    # the json hash for this RestDynamicSememeString
+    def to_jaxb_json_hash
+      _h = super
+      return _h
+    end
+
+    #initializes this RestDynamicSememeString with a json hash
+    def init_jaxb_json_hash(_o)
+      super _o
+    end
+
+    # constructs a RestDynamicSememeString from a (parsed) JSON hash
+    def self.from_json(o)
+      if o.nil?
+        return nil
+      else
+        inst = new
+        inst.init_jaxb_json_hash o
+        return inst
+      end
+    end
+  end
+
+end
 
 end
 

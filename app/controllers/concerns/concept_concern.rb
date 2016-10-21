@@ -50,7 +50,7 @@ module ConceptConcern
         end
 
         @concept_text = attributes.conChronology.description
-        @concept_state = attributes.conVersion.state.name
+        @concept_state = attributes.conVersion.state.enumName
 
         # TODO - remove the hard-coding of type to 'vhat' when the type flags are implemented in the REST APIs
         @concept_terminology_type =  'vhat'
@@ -121,7 +121,7 @@ module ConceptConcern
 
             # get the description UUID information and add it to the attributes array
             description_uuid = description.sememeChronology.identifiers.uuids.first
-            description_state = description.sememeVersion.state.name
+            description_state = description.sememeVersion.state.enumName
             description_time = DateTime.strptime((description.sememeVersion.time / 1000).to_s, '%s').strftime('%m/%d/%Y')
             description_author = get_concept_metadata(description.sememeVersion.authorSequence)
             description_module = get_concept_metadata(description.sememeVersion.moduleSequence)
@@ -148,7 +148,7 @@ module ConceptConcern
 
                 dialect_sememe_sequence = dialect.sememeChronology.sememeSequence
                 dialect_sememe_id = dialect.sememeChronology.identifiers.uuids.first
-                dialect_state = dialect.sememeVersion.state.name
+                dialect_state = dialect.sememeVersion.state.enumName
                 dialect_time = DateTime.strptime((dialect.sememeVersion.time / 1000).to_s, '%s').strftime('%m/%d/%Y')
                 dialect_author = get_concept_metadata(dialect.sememeVersion.authorSequence)
                 dialect_module = get_concept_metadata(dialect.sememeVersion.moduleSequence)
@@ -335,7 +335,7 @@ module ConceptConcern
             target_text = association.targetConcept.description
             # TODO - remove the hard-coding of type to 'vhat' when the type flags are implemented in the REST APIs
             target_taxonomy_type = 'vhat'
-            state = association.associationItemStamp.state.name
+            state = association.associationItemStamp.state.enumName
             time = DateTime.strptime((association.associationItemStamp.time / 1000).to_s, '%s').strftime('%m/%d/%Y')
             author = get_concept_metadata(association.associationItemStamp.authorSequence)
             association_module = get_concept_metadata(association.associationItemStamp.moduleSequence)
@@ -483,7 +483,7 @@ module ConceptConcern
                         column_id: row_column.columnConceptSequence,
                         name: row_column.columnName,
                         description: row_column.columnDescription,
-                        data_type: row_column.columnDataType.name,
+                        data_type: row_column.columnDataType.enumName,
                         data_type_class: data_type_class,
                         column_number: row_column.columnOrder,
                         required: row_column.columnRequired,
@@ -532,7 +532,7 @@ module ConceptConcern
                 end
 
                 # start loading the row of sememe data with everything besides the data columns
-                data_row = {sememe_name: sememe_info[:sememe_name], sememe_description: sememe_definition.sememeUsageDescription, sememe_instance_id: uuid, sememe_definition_id: assemblage_sequence, state: sememe.sememeVersion.state.name, level: level, has_nested: has_nested, columns: {}}
+                data_row = {sememe_name: sememe_info[:sememe_name], sememe_description: sememe_definition.sememeUsageDescription, sememe_instance_id: uuid, sememe_definition_id: assemblage_sequence, state: sememe.sememeVersion.state.enumName, level: level, has_nested: has_nested, columns: {}}
 
                 # loop through all of the sememe's data columns
                 sememe_definition.columnInfo.each{ |row_column|
@@ -545,9 +545,9 @@ module ConceptConcern
                     # If not added to our list of used columns add it to the end of the list
                     if row_column && !list_index
 
-                        # get the column data type from the validator data if it exists, otherwise use string
-                        if row_column.columnValidatorData && row_column.columnValidatorData.length > 0
-                            data_type_class = ruby_classname_to_java(class_name: row_column.columnValidatorData[0].class)
+                        # get the column data type column data if it exists, otherwise use string
+                        if row_column.columnDataType.classType
+                            data_type_class = row_column.columnDataType.classType
                         else
                             data_type_class = 'gov.vha.isaac.rest.api1.data.sememe.dataTypes.RestDynamicSememeString'
                         end
@@ -557,7 +557,7 @@ module ConceptConcern
                             column_id: row_column.columnConceptSequence,
                             name: row_column.columnName,
                             description: row_column.columnDescription,
-                            data_type: row_column.columnDataType.name,
+                            data_type: row_column.columnDataType.enumName,
                             data_type_class: data_type_class,
                             column_number: row_column.columnOrder,
                             required: row_column.columnRequired,
@@ -675,7 +675,7 @@ module ConceptConcern
 
 
                 # start loading the row of sememe data with everything besides the data columns
-                data_row = {sememe_name: sememe_types[assemblage_sequence][:sememe_name], sememe_description: sememe_types[assemblage_sequence][:sememe_description], uuid: uuid, id: assemblage_sequence, state: {data:sememe.sememeVersion.state.name,display:''},referencedComponentNidDescription: {data:sememe.sememeChronology.referencedComponentNidDescription,display:''} ,columns: {}}
+                data_row = {sememe_name: sememe_types[assemblage_sequence][:sememe_name], sememe_description: sememe_types[assemblage_sequence][:sememe_description], uuid: uuid, id: assemblage_sequence, state: {data:sememe.sememeVersion.state.enumName,display:''},referencedComponentNidDescription: {data:sememe.sememeChronology.referencedComponentNidDescription,display:''} ,columns: {}}
 
                 # loop through all of the sememe's data columns
                 sememe.dataColumns.each{|row_column|
@@ -692,7 +692,7 @@ module ConceptConcern
 
                         # If not added to our list of used columns add it to the end of the list
                         if sememe_column && !is_column_used
-                            used_column_list << {id:sememe_column.columnConceptSequence, field: sememe_column.columnName, headerName: sememe_column.columnName, data_type: sememe_column.columnDataType.name}
+                            used_column_list << {id:sememe_column.columnConceptSequence, field: sememe_column.columnName, headerName: sememe_column.columnName, data_type: sememe_column.columnDataType.enumName}
                         end
 
                         data = row_column.data

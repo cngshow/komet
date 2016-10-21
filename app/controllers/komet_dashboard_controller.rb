@@ -138,7 +138,7 @@ class KometDashboardController < ApplicationController
         node[:text] = concept.conChronology.description
         node[:has_children] = !concept.children.nil? && concept.children.length > 0
         node[:defined] = concept.isConceptDefined
-        node[:state] = concept.conVersion.state.name
+        node[:state] = concept.conVersion.state.enumName
         node[:author] = concept.conVersion.authorSequence
         node[:module] = concept.conVersion.moduleSequence
         node[:path] = concept.conVersion.pathSequence
@@ -208,7 +208,7 @@ class KometDashboardController < ApplicationController
                 parent_node[:id] = parent.conChronology.identifiers.uuids.first
                 parent_node[:text] = parent.conChronology.description
                 parent_node[:defined] = parent.isConceptDefined
-                parent_node[:state] = parent.conVersion.state.name
+                parent_node[:state] = parent.conVersion.state.enumName
                 parent_node[:author] = parent.conVersion.authorSequence
                 parent_node[:module] = parent.conVersion.moduleSequence
                 parent_node[:path] = parent.conVersion.pathSequence

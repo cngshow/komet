@@ -257,7 +257,7 @@ var ConceptViewer = function(viewerID, currentConceptID, viewerAction) {
                     tooltip = " title='" + params.value.data + "'";
                 }
 
-                if (['uuid', 'nid', 'sctid'].indexOf(params.colDef.data_type) >= 0) {
+                if (['uuid', 'nid', 'sctid'].indexOf(params.colDef.data_type.toLowerCase) >= 0) {
                     menu_attributes = "data-menu-type='sememe' data-menu-uuid='" + params.value.data + "'";
                 }
                 else {
@@ -1061,7 +1061,7 @@ var ConceptViewer = function(viewerID, currentConceptID, viewerAction) {
 
             fieldString += '<option ';
 
-            if (selectedItem == options[i].value) {
+            if (selectedItem != null && selectedItem.toString().toLowerCase() == options[i].value.toString().toLowerCase()) {
                 fieldString += 'selected="selected" ';
             }
 
