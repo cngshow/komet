@@ -25,7 +25,7 @@ require './lib/isaac_rest/id_apis_rest'
 #WorkflowController -
 # handles the workflow screens
 class WorkflowController < ApplicationController
-  include ApplicationHelper, CommonController, WorkflowRest
+  include ApplicationHelper, CommonController, WorkflowRest, ConceptRest
 
   layout 'workflow'
 
@@ -75,8 +75,18 @@ class WorkflowController < ApplicationController
     get_workflow_details(action: WorkflowRestActions::ACTION_PROCESS)
   end
 
-  def get_history #based on processID
-    get_workflow_details(action: WorkflowRestActions::ACTION_HISTORY)
+  def get_history
+    results = get_workflow_details_hash(action: WorkflowRestActions::ACTION_HISTORY)
+    results = results.to_jaxb_json_hash
+
+    # iterate the results getting the name for the userId from the concept description api
+    results.each do |h|
+      # get the user name
+      u = ConceptRest::get_concept(action: ConceptRestActions::ACTION_DESCRIPTIONS, uuid: h['userId'])
+      h['userName'] = u.first.text # todo this is pulling the first description as opposed to finding the preferred name
+    end
+
+    render json: results.to_json
   end
 
   def modal_transition_metadata
@@ -145,7 +155,7 @@ class WorkflowController < ApplicationController
     end
   end
 
-  def get_workflow_details(action:, include_token: false)
+  def get_workflow_details_hash(action:, include_token: false)
     wfl_uuid = params[:processId] ? params[:processId] : user_session(UserSession::WORKFLOW_UUID)
     results = []
 
@@ -154,9 +164,12 @@ class WorkflowController < ApplicationController
       additional_req_params[:editToken] = get_edit_token if include_token
       results = WorkflowRest.get_workflow(action: action, additional_req_params: additional_req_params)
     end
-    render json: results.to_json
+    results
   end
 
+  def get_workflow_details(action:, include_token: false)
+    render json: get_workflow_details_hash(action: action, include_token: include_token).to_json
+  end
 end
 
 

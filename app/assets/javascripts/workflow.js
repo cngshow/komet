@@ -263,25 +263,23 @@ var WorkflowModule = (function () {
         var getHistorydata = "";
         $.get(gon.routes.workflow_get_history_path, {processId: process_Id}, function (results) {
             $.each(results, function (index, value) {
-                if (index == 0)
-                {
-                    $('#komet-workflow_username_display').html(value.userId);
-                    $('#komet-workflow_date_display').html(value.timeAdvanced );
-                    $('#komet-workflow_action_display').html(value.action);
-                }
-
                 getHistorydata = '<div class="komet-workflow-set-definition-row">' ;
-                getHistorydata +='<div class="komet-workflow-history-item"><label for="workflow_user">Workflow User:</label><div>' + value.userId +'</div></div>';
-                getHistorydata +='<div class="komet-workflow-history-item"><label for="workflow_time">Time:</label><div>' + value.timeAdvanced +'</div></div>';
+                getHistorydata +='<div class="komet-workflow-history-item"><label for="workflow_user">Workflow User:</label><div>' + value.userName +'</div></div>';
                 getHistorydata +='<div class="komet-workflow-history-item"><label for="workflow_starting_state">Starting State:</label><div>' + value.initialState +'</div></div>';
-                getHistorydata += '</div><div class="komet-workflow-set-definition-row">' ;
+                getHistorydata +='<div class="komet-workflow-history-item"><label for="workflow_time">Time:</label><div>' + (new Date(value.timeAdvanced)).toLocaleString() +'</div></div>';
+                getHistorydata +='</div>';
+                getHistorydata +='<div class="komet-workflow-set-definition-row">';
                 getHistorydata +='<div class="komet-workflow-history-item"><label for="workflow_action">Action:</label><div>' + value.action +'</div></div>';
                 getHistorydata +='<div class="komet-workflow-history-item"><label for="workflow_resulting_state">Resulting State:</label><div>'+  value.outcomeState +'</div></div>';
-                getHistorydata += '</div><div class="komet-workflow-set-definition-row">' ;
-                getHistorydata +='<div class="komet-workflow-history-item"><label for="workflow_comment">Comment:</label><div>' + value.comment + '</div></div></div>';
-               // getHistorydata = '<div class="komet-mapping-set-definition-row">' ;
+                getHistorydata +='<div class="komet-workflow-history-item">&nbsp;<div>&nbsp;</div></div>';
+                getHistorydata +='</div>';
+                if (value.comment.length > 0) {
+                    getHistorydata += '<div class="komet-workflow-set-definition-row">';
+                    getHistorydata += '<div class="komet-workflow-history-item"><label for="workflow_comment">Comment:</label><div>' + value.comment + '</div></div></div>';
+                    // getHistorydata = '<div class="komet-mapping-set-definition-row">' ;
+                }
                 getHistorydata +='<hr class="komet-concept-details-hr">';
-            })
+            });
             $('#workflow_history').html (getHistorydata);
 
             if (args[1] === undefined) {
