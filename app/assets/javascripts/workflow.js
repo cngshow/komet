@@ -206,7 +206,7 @@ var WorkflowModule = (function () {
         validator().resetForm(); //removed jquery validation errors
         document.getElementById("wfl_modal_form").reset(); // blanks out the form
         $('#komet_workflow_transition').val(''); // sets the transition drop down to the default
-        $('#wfl_modal').modal('toggle'); //closes the modal
+        $('#wfl_modal').modal('hide'); //closes the modal
     }
 
     function release(uuid) {

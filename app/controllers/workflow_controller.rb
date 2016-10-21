@@ -76,11 +76,16 @@ class WorkflowController < ApplicationController
     get_workflow_details(action: WorkflowRestActions::ACTION_HISTORY)
   end
 
-  # def modal_confirm
-  #   action = params[:id]
-  #
-  #   render partial: ''
-  # end
+  def modal_transition_metadata
+    action = params[:action_uuid]
+    if (action.eql?('e47c7651-ed0d-4d0b-a12b-4d0080864a60'))
+      t = "hello #{action}<br><br><label for=\"greg\">Greg</label><br><input type=\"text\" id=\"greg\" name=\"greg\" required=\"required\"\>"
+    else
+      t = "hello #{action}<br><br><span style=\"font-weight: bold\">nothing new here</span>"
+    end
+    render text: ''
+    # render text: t
+  end
 
   def get_advanceable_process_information #this method populated grid on dashboard workflow
     #todo search text box filter on top of workflowdashboard does not work has bug

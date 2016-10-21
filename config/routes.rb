@@ -33,7 +33,7 @@ Rails.application.routes.draw do
     get 'workflow/get_transition', :as => :workflow_get_transition
     get 'workflow/get_process', :as => :workflow_get_process
     get 'workflow/set_user_workflow', :as => :workflow_set_user_workflow
-    # get 'workflow/modal_confirm', :as => :workflow_modal_confirm
+    get 'workflow/modal_transition_metadata', :as => :workflow_modal_transition_metadata
     get 'workflow/get_advanceable_process_information', :as => :workflow_get_advanceable_process_information
 
 
