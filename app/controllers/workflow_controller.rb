@@ -16,13 +16,11 @@ Copyright Notice
  See the License for the specific language governing permissions and
  limitations under the License.
 =end
-
-
 require './lib/rails_common/util/controller_helpers'
 require './lib/isaac_rest/id_apis_rest'
 
 ##
-#WorkflowController -
+# WorkflowController -
 # handles the workflow screens
 class WorkflowController < ApplicationController
   include ApplicationHelper, CommonController, WorkflowRest, ConceptRest
@@ -51,7 +49,7 @@ class WorkflowController < ApplicationController
     render json: {process_id: process_id}
   end
 
-  def get_all_definition #returns definition id. this id is passed in other rest api calls.  this rest api works successfully
+  def get_all_definition #returns definition id. this id is passed in other rest api calls
     @default_definition = get_workflow(action: WorkflowRestActions::ACTION_ALL_DEFINITION)
   end
 
@@ -69,8 +67,7 @@ class WorkflowController < ApplicationController
   end
 
   def get_transition
-    a = get_workflow_details(action: WorkflowRestActions::ACTION_ACTIONS, include_token: true)
-    a
+    get_workflow_details(action: WorkflowRestActions::ACTION_ACTIONS, include_token: true)
   end
 
   def get_process
@@ -126,13 +123,14 @@ class WorkflowController < ApplicationController
       return {total_number: 0, page_number: 1, data: []}
     end
 
-    items.each do |item| #this code  populates the grid on workflow dashboar
-
+    #this code  populates the grid on workflow dashboard
+    items.each do |item|
       item_hash = {}
       item_hash[:process_id] = item.key.id
-      item_hash[:name] = '<a  onclick=WorkflowModule.showTaxonomy("' + item.key.id + '")>' + item.key.name + '</a>'
+      item_hash[:name] = '<a onclick=WorkflowModule.showTaxonomy("' + item.key.id + '")>' + item.key.name + '</a>'
       item_hash[:description] = item.key.description
-      item_hash[:status] = "#{item.key.processStatus.name}<span class=\"fa fa-lock\" style=\"color: red\"></span>&nbsp;&nbsp;<span class=\"fa fa-unlock\" style=\"color: green\"></span>&nbsp;&nbsp;<a onclick=WorkflowModule.release('#{item.key.id}') class=\"fa fa-undo btn btn-sm btn-outline-primary\" aria-hidden=\"true\"></a>"
+      status = get_workflow_details_hash(action: WorkflowRestActions::ACTION_HISTORY).last.outcomeState
+      item_hash[:status] = "#{status}<span class=\"fa fa-lock\" style=\"color: red\"></span>&nbsp;&nbsp;<span class=\"fa fa-unlock\" style=\"color: green\"></span>&nbsp;&nbsp;<a onclick=WorkflowModule.release('#{item.key.id}') class=\"fa fa-undo btn btn-sm btn-outline-primary\" aria-hidden=\"true\"></a>"
       item_hash[:viewhistory] = '<a onclick=WorkflowModule.showHistory("' + item.key.id + '")>View History</a>'
       item_hash[:viewconcept] = '<a onclick=WorkflowModule.showConcept("' + item.key.id + '")>View Concept</a>'
       item_hash[:release] = '<a onclick=WorkflowModule.release("' + item.key.id + '") class="btn btn-primary btn-sm">Release</a>'
@@ -140,11 +138,6 @@ class WorkflowController < ApplicationController
     end
 
     results[:total_number] = items.length
-
-    # matching_items = session['work_item_data'].select { |item|
-    #  item[:set_id] == set_id.to_s
-    #}
-
     results[:data] = item_data
     render json: results
   end
