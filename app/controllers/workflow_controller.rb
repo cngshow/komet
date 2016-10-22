@@ -129,8 +129,7 @@ class WorkflowController < ApplicationController
       item_hash[:process_id] = item.key.id
       item_hash[:name] = '<a onclick=WorkflowModule.showTaxonomy("' + item.key.id + '")>' + item.key.name + '</a>'
       item_hash[:description] = item.key.description
-      status = get_workflow_details_hash(action: WorkflowRestActions::ACTION_HISTORY).last.outcomeState
-      item_hash[:status] = "#{status}<span class=\"fa fa-lock\" style=\"color: red\"></span>&nbsp;&nbsp;<span class=\"fa fa-unlock\" style=\"color: green\"></span>&nbsp;&nbsp;<a onclick=WorkflowModule.release('#{item.key.id}') class=\"fa fa-undo btn btn-sm btn-outline-primary\" aria-hidden=\"true\"></a>"
+      item_hash[:status] = "#{item.value.last.outcomeState}<span class=\"fa fa-lock\" style=\"color: red\"></span>&nbsp;&nbsp;<span class=\"fa fa-unlock\" style=\"color: green\"></span>&nbsp;&nbsp;<a onclick=WorkflowModule.release('#{item.key.id}') class=\"fa fa-undo btn btn-sm btn-outline-primary\" aria-hidden=\"true\"></a>"
       item_hash[:viewhistory] = '<a onclick=WorkflowModule.showHistory("' + item.key.id + '")>View History</a>'
       item_hash[:viewconcept] = '<a onclick=WorkflowModule.showConcept("' + item.key.id + '")>View Concept</a>'
       item_hash[:release] = '<a onclick=WorkflowModule.release("' + item.key.id + '") class="btn btn-primary btn-sm">Release</a>'
