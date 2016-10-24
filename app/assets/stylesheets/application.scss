@@ -286,11 +286,11 @@ div.komet-confirmation-dialog{
     display: flex;
 }
 .komet-logo-komet{
-    color:#009BFF;
+    color:#183445;
     margin-right: 4px;
 }
 .komet-logo-tooling{
-    color:rgba(0, 155, 255, 0.4);
+    color:#414199;
 }
 .komet-navbar-navigation{
     margin-bottom: 0px;
@@ -350,7 +350,7 @@ div.komet-confirmation-dialog{
 
 // KOMET Panel Styles
 .komet-panel .panel-heading {
-    background-color: #4f80d9;
+    background-color: #414cba;
     display: flex;
     flex-wrap: wrap;
     overflow-x: auto;
@@ -406,7 +406,7 @@ div.komet-confirmation-dialog{
     padding-top: 4px;
 }
 .komet-panel .panel-body {
-    background-color: #eef1f3;
+    background-color: #FFFFFF;
     padding: 5px 15px;
     //display: flex;
     //flex-direction: column;
@@ -615,10 +615,10 @@ td.komet-concept-table-nested-indicator.komet-concept-table-nested-indicator-ope
 
 // Concept Viewer Attribute Styles
 .komet-concept-attributes-panel{
-    border-left: 4px solid #5ec200;
+    border-left: 4px solid #a1000e;
 }
 .komet-concept-attributes-title{
-    color: #5ec200;
+    color: #a1000e;
 }
 .komet-concept-attributes-status{
     margin-right: 5px;
@@ -637,13 +637,13 @@ td.komet-concept-table-nested-indicator.komet-concept-table-nested-indicator-ope
 
 // Concept Viewer Description Styles
 .komet-concept-description-panel{
-    border-left: 4px solid #ff9100;
+    border-left: 4px solid #264b03;
 }
 .komet-concept-description-panel ~ .komet-concept-description-panel{
     margin-top: 10px;
 }
 .komet-concept-description-title{
-    color: #ff9100;
+    color: #264b03;
 }
 .komet-concept-description-panel-header{
     flex-wrap: nowrap;
@@ -685,10 +685,10 @@ td.komet-concept-table-nested-indicator.komet-concept-table-nested-indicator-ope
 
 // Concept Viewer Lineage Styles
 .komet-concept-lineage-panel{
-    border-left: 4px solid #009bff;
+    border-left: 4px solid #045487;
 }
 .komet-concept-lineage-title{
-    color: #009bff;
+    color: #045487;
 }
 .komet-concept-lineage-tree-container{
     margin-left: 0%;
@@ -729,18 +729,18 @@ td.komet-concept-table-nested-indicator.komet-concept-table-nested-indicator-ope
 
 // Concept Viewer Associations Styles
 .komet-concept-associations-panel{
-    border-left: 4px solid rgb(255, 80, 77);
+    border-left: 4px solid #ad0300;
 }
 .komet-concept-associations-title{
-    color: rgb(255, 80, 77);
+    color: #ad0300;
 }
 
 // Concept Viewer Sememes Styles
 .komet-concept-sememes-panel{
-    border-left: 4px solid #b59d00;
+    border-left: 4px solid #850c07;
 }
 .komet-concept-sememes-title{
-    color: #b59d00;
+    color: #850c07;
 }
 
 // Concept Viewer Diagram Styles
@@ -972,7 +972,7 @@ td.komet-concept-table-nested-indicator.komet-concept-table-nested-indicator-ope
 }
 .komet-mapping-section-panel-header{
     display: flex;
-    background-color: #4f80d9;
+    background-color: #414199;
     color: white;
     font-weight: bold;
     height: 26px;

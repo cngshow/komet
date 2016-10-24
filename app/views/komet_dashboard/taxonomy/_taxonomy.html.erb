@@ -1,20 +1,13 @@
 <div class="panel panel-default komet-no-margins komet-panel" id="komet_taxonomy_panel">
 
   <div class="panel-heading">
-
-    <span class="panel-title komet-section-title">
-      Taxonomy
-    </span>
-
     <div class="komet-panel-tools">
-
-      <select id="komet_taxonomy_stated_inferred" class="form-control komet-stated-inferred" onchange="setStatedView(this)">
-        <option value="true">Stated View</option>
-        <option value="false">Inferred View</option>
+      <label for="komet_taxonomy_stated_inferred">Toggle Stated/Inferred View</label>
+      <select name="komet_taxonomy_stated_inferred" id="komet_taxonomy_stated_inferred" class="form-control komet-stated-inferred" onchange="setStatedView(this)">
+        <option value="true" selected="selected">Stated</option>
+        <option value="false">Inferred</option>
       </select>
-
-      <!--<div class="glyphicon glyphicon-time"></div>-->
-      <div class="glyphicon glyphicon-refresh" onclick="TaxonomyModule.tree.reloadTreeStatedView(TaxonomyModule.getStatedView(), false)"></div>
+      <div class="glyphicon glyphicon-refresh" onclick="TaxonomyModule.tree.reloadTreeStatedView(TaxonomyModule.getStatedView(), false)" title="Refresh"></div>
 
     </div>
 

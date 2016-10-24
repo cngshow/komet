@@ -1,38 +1,36 @@
 <link rel="stylesheet" href="//code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css">
 
-<nav class="komet-navbar">
+<nav class="komet-navbar" role="navigation">
 
-    <div class="komet-navbar-header">
-        <div class="komet-logo-komet">KOMET</div> <div class="komet-logo-tooling">Tooling</div>
+  <div class="komet-navbar-header"  role="navigation">
+    <div class="komet-logo-komet" title="KOMET">KOMET</div> <div class="komet-logo-tooling" title="Tooling">Tooling</div>
+  </div>
+
+  <div class="komet-navbar-navigation" role="navigation">
+
+    <div onclick="location.replace('<%= komet_dashboard_dashboard_path %>')" title="Taxonomy Dashboard" class="active" role="navigation">Taxonomy Dashboard</div>
+    <div onclick="location.replace('<%= workflow_dashboard_path %>')" title="Workflows" role="navigation">Workflows</div>
+
+    <div class="dropdown" role="navigation">
+      <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false" title="Actions">Actions <span class="caret"></span></a>
+      <ul class="dropdown-menu" aria-hidden="true" aria-label="submenu">
+        <li><a onclick="$.publish(KometChannels.Taxonomy.taxonomyConceptEditorChannel, [null, WindowManager.getLinkedViewerID(), WindowManager.INLINE]); return false;" title="Create New Concept">Create New Concept</a></li>
+        <li><a onclick="MappingModule.createNewMapSet(true); return false;" title="Create New Map">Create New Map</a></li>
+      </ul>
     </div>
 
-    <div class="komet-navbar-navigation">
+  </div>
 
-        <div onclick="location.replace('<%= komet_dashboard_dashboard_path %>')">Taxonomy Dashboard</div>
-        <div onclick="location.replace('<%= workflow_dashboard_path %>')">Workflows</div>
-
-        <div class="dropdown">
-            <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Actions <span class="caret"></span></a>
-            <ul class="dropdown-menu">
-                <li><a onclick="$.publish(KometChannels.Taxonomy.taxonomyConceptEditorChannel, [null, WindowManager.getLinkedViewerID(), WindowManager.INLINE]); return false;">Create New Concept</a></li>
-                <li><a onclick="MappingModule.createNewMapSet(true); return false;">Create New Map</a></li>
-                <li role="separator" class="divider"></li>
-                <li><a href="#">View Workflows</a></li>
-            </ul>
-        </div>
-
-    </div>
-
-    <div class="komet-navbar-tools">
-        <div><div class="glyphicon glyphicon-cog" id="komet_user_preference_link" title="Settings"></div></div>
-        <div><div class="glyphicon glyphicon-user"></div> <%= raw komet_user %></div>
-        <div id="logout" onclick="location.replace('<%= logout_path %>')"><div class="glyphicon glyphicon-log-out"></div> Logout</div>
-    </div>
+  <div class="komet-navbar-tools" role="navigation">
+    <div><div class="glyphicon glyphicon-cog" id="komet_user_preference_link" title="Settings"></div></div>
+    <div><div class="glyphicon glyphicon-user" title="User ID"></div> <%= raw komet_user %></div>
+    <div id="logout" onclick="location.replace('<%= logout_path %>')"><div class="glyphicon glyphicon-log-out" title="Logout"></div> Logout</div>
+  </div>
 
 </nav>
 
 <div id="komet_user_preference_form" title="User's Preference">
-    <div id="komet_preferences_tabs">
+    <div id="komet_preferences_tabs" role="tab">
         <ul>
             <li><a href='#useroptions'>Options</a></li>
             <li><a href='#color-module'>Color Module</a></li>
@@ -45,7 +43,7 @@
                     <table>
                         <tr>
                             <td>Select Language:&nbsp;&nbsp;</td>
-                            <td><select id="komet_concept_language">
+                            <td><select id="komet_concept_language" aria-labelledby="Select Language">
                             </select></td>
                         </tr>
                     </table>
