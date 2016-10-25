@@ -8,23 +8,23 @@
 
   <div class="komet-navbar-navigation" role="navigation">
 
-    <div onclick="location.replace('<%= komet_dashboard_dashboard_path %>')" title="Taxonomy Dashboard" class="active" role="navigation">Taxonomy Dashboard</div>
-    <div onclick="location.replace('<%= workflow_dashboard_path %>')" title="Workflows" role="navigation">Workflows</div>
+    <div onclick="location.replace('<%= komet_dashboard_dashboard_path %>')" title="Taxonomy Dashboard" class="active" role="navigation" tabindex=0>Taxonomy Dashboard</div>
+    <div onclick="location.replace('<%= workflow_dashboard_path %>')" title="Workflows" role="navigation" tabindex=0>Workflows</div>
 
-    <div class="dropdown" role="navigation">
+    <div class="dropdown" role="presentation">
       <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false" title="Actions">Actions <span class="caret"></span></a>
       <ul class="dropdown-menu" aria-hidden="true" aria-label="submenu">
-        <li><a onclick="$.publish(KometChannels.Taxonomy.taxonomyConceptEditorChannel, [null, WindowManager.getLinkedViewerID(), WindowManager.INLINE]); return false;" title="Create New Concept">Create New Concept</a></li>
-        <li><a onclick="MappingModule.createNewMapSet(true); return false;" title="Create New Map">Create New Map</a></li>
+        <li><a href="#" onclick="$.publish(KometChannels.Taxonomy.taxonomyConceptEditorChannel, [null, WindowManager.getLinkedViewerID(), WindowManager.INLINE]); return false;" title="Create New Concept">Create New Concept</a></li>
+        <li><a href="#" onclick="MappingModule.createNewMapSet(true); return false;" title="Create New Map">Create New Map</a></li>
       </ul>
     </div>
 
   </div>
 
   <div class="komet-navbar-tools" role="navigation">
-    <div><div class="glyphicon glyphicon-cog" id="komet_user_preference_link" title="Settings"></div></div>
+    <div><div class="glyphicon glyphicon-cog" id="komet_user_preference_link" title="Settings" tabindex=0></div></div>
     <div><div class="glyphicon glyphicon-user" title="User ID"></div> <%= raw komet_user %></div>
-    <div id="logout" onclick="location.replace('<%= logout_path %>')"><div class="glyphicon glyphicon-log-out" title="Logout"></div> Logout</div>
+    <div id="logout" onclick="location.replace('<%= logout_path %>')" tabindex=0><div class="glyphicon glyphicon-log-out" title="Logout"></div> Logout</div>
   </div>
 
 </nav>

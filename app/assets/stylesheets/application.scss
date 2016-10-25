@@ -309,6 +309,11 @@ div.komet-confirmation-dialog{
 .komet-logo-tooling{
     color:#414199;
 }
+.komet-navbar-navigation .dropdown a:focus{
+    outline: thin dotted;
+    outline: 5px auto -webkit-focus-ring-color;
+    outline-offset: -2px;
+}
 .komet-navbar-navigation{
     margin-bottom: 0px;
     border-left: 4px solid white;
@@ -326,7 +331,7 @@ div.komet-confirmation-dialog{
     align-items: center;
     cursor: pointer;
 }
-.komet-navbar-navigation > div:hover{
+.komet-navbar-navigation > div:hover, .komet-navbar-navigation > div:focus{
     border-bottom: 1px solid black;
 }
 .komet-navbar-tools{
@@ -346,7 +351,7 @@ div.komet-confirmation-dialog{
     border-bottom: 1px solid transparent;
     cursor: pointer;
 }
-.komet-navbar-tools > div:hover{
+.komet-navbar-tools > div:hover, .komet-navbar-tools > div:focus{
     border-bottom: 1px solid black;
 }
 #komet_user_preference_link{
@@ -1182,7 +1187,7 @@ td.komet-concept-table-nested-indicator.komet-concept-table-nested-indicator-ope
     border-bottom: 1px solid transparent;
     color: black;
 }
-#komet_navbar_navigation .nav a:hover {
+#komet_navbar_navigation .nav a:hover, #komet_navbar_navigation .nav a:focus {
     border-bottom: 1px solid black;
 }
 #komet_navbar_tools{
@@ -1204,7 +1209,7 @@ td.komet-concept-table-nested-indicator.komet-concept-table-nested-indicator-ope
     text-decoration: none;
     color: black;
 }
-#komet_navbar_tools a:hover {
+#komet_navbar_tools a:hover, #komet_navbar_tools a:focus {
     text-decoration: none;
     color: black;
 }
