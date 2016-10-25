@@ -36,23 +36,24 @@ end
 module WorkflowRest
   include WorkflowRestActions
   include CommonActionSyms
-  extend self
+  extend self, CacheClear
 
   #always name the root_path ROOT_PATH!
   ROOT_PATH = ISAAC_ROOT + 'rest/1/workflow/'
-  PATH_WORKFLOW_WRITE = ISAAC_ROOT + 'rest/write/1/workflow/'
   PATH_ALL_DEFINITION_WORKFLOW = ROOT_PATH + 'definition/all'
   PATH_PROCESS_WORKFLOW =  ROOT_PATH + 'process'
   PATH_HISTORY_WORKFLOW = PATH_PROCESS_WORKFLOW + '/history'
   PATH_ACTIONS_WORKFLOW = PATH_PROCESS_WORKFLOW + '/actions'
   PATH_AVAILABLE_WORKFLOW = PATH_PROCESS_WORKFLOW + '/available'
 
+  PATH_WORKFLOW_WRITE = ISAAC_ROOT + 'rest/write/1/workflow/'
   PATH_CREATE_WORKFLOW = PATH_WORKFLOW_WRITE + 'create/process/create'
   PATH_ADVANCE_WORKFLOW = PATH_WORKFLOW_WRITE + 'update/process/advance'
-  PATH_LOCK_WORKFLOW = PATH_WORKFLOW_WRITE + 'update/process/lock'
-  PATH_COMPONENT_WORKFLOW = PATH_WORKFLOW_WRITE + 'update/process/component'
+  PATH_LOCK_WORKFLOW = PATH_WORKFLOW_WRITE + 'update/process/lock/{processId}'
+  PATH_COMPONENT_WORKFLOW = PATH_WORKFLOW_WRITE + 'update/process/component/{id}'
 
   PARAMS_EMPTY = {}
+  PARAMS_NO_CACHE = CommonRest::CacheRequest::PARAMS_NO_CACHE
 
   ACTION_CONSTANTS = {
       ACTION_ALL_DEFINITION => {
@@ -81,33 +82,39 @@ module WorkflowRest
       },
       ACTION_CREATE   => {
           PATH_SYM => PATH_CREATE_WORKFLOW,
-          STARTING_PARAMS_SYM => PARAMS_EMPTY,
+          STARTING_PARAMS_SYM => PARAMS_NO_CACHE,
           CLAZZ_SYM => Gov::Vha::Isaac::Rest::Api::Data::Wrappers::RestWriteResponse,
           HTTP_METHOD_KEY => HTTP_METHOD_POST,
-          BODY_CLASS => Gov::Vha::Isaac::Rest::Api1::Data::Workflow::RestWorkflowProcessBaseCreate
+          BODY_CLASS => Gov::Vha::Isaac::Rest::Api1::Data::Workflow::RestWorkflowProcessBaseCreate,
+          CALLBACKS => [WorkflowRest.clear_lambda]
       },
       ACTION_ADVANCE  => {
           PATH_SYM => PATH_ADVANCE_WORKFLOW,
-          STARTING_PARAMS_SYM => PARAMS_EMPTY,
+          STARTING_PARAMS_SYM => PARAMS_NO_CACHE,
           CLAZZ_SYM => Gov::Vha::Isaac::Rest::Api::Data::Wrappers::RestWriteResponse,
           HTTP_METHOD_KEY => HTTP_METHOD_PUT,
-          BODY_CLASS => Gov::Vha::Isaac::Rest::Api1::Data::Workflow::RestWorkflowProcessAdvancementData
+          BODY_CLASS => Gov::Vha::Isaac::Rest::Api1::Data::Workflow::RestWorkflowProcessAdvancementData,
+          CALLBACKS => [WorkflowRest.clear_lambda]
       },
       ACTION_LOCK => {
           PATH_SYM => PATH_LOCK_WORKFLOW,
-          STARTING_PARAMS_SYM => PARAMS_EMPTY,
+          STARTING_PARAMS_SYM => PARAMS_NO_CACHE,
           CLAZZ_SYM => Gov::Vha::Isaac::Rest::Api::Data::Wrappers::RestWriteResponse,
           HTTP_METHOD_KEY => HTTP_METHOD_PUT,
-          BODY_CLASS => Gov::Vha::Isaac::Rest::Api1::Data::Workflow::RestWorkflowProcessBaseCreate
+          BODY_CLASS => Gov::Vha::Isaac::Rest::Api1::Data::Workflow::RestWorkflowProcessBaseCreate,
+          CALLBACKS => [WorkflowRest.clear_lambda]
       },
       ACTION_COMPONENT => {
           PATH_SYM => PATH_COMPONENT_WORKFLOW,
-          STARTING_PARAMS_SYM => PARAMS_EMPTY,
+          STARTING_PARAMS_SYM => PARAMS_NO_CACHE,
           CLAZZ_SYM => Gov::Vha::Isaac::Rest::Api::Data::Wrappers::RestWriteResponse,
           HTTP_METHOD_KEY => HTTP_METHOD_PUT,
-          BODY_CLASS => Gov::Vha::Isaac::Rest::Api1::Data::Workflow::RestWorkflowProcessBaseCreate
+          BODY_CLASS => Gov::Vha::Isaac::Rest::Api1::Data::Workflow::RestWorkflowProcessBaseCreate,
+          CALLBACKS => [WorkflowRest.clear_lambda]
       }
   }
+
+
 
   class << self
     #attr_accessor :instance_data
@@ -116,14 +123,18 @@ module WorkflowRest
   class Workflow < CommonRestBase::RestBase
     include CommonRest
     register_rest(rest_module: WorkflowRest, rest_actions: WorkflowRestActions)
-    # attr_accessor :uuid
+     attr_accessor :processId_or_uuid_or_nid
 
-    def initialize( params:, body_params:, action:, action_constants:)
+    def initialize(id:, params:, body_params:, action:, action_constants:)
+      @processId_or_uuid_or_nid = id
       super(params: params, body_params: body_params, action: action, action_constants: action_constants)
     end
 
     def rest_call
-      json = rest_fetch(url_string: get_url, params: get_params,body_params: body_params, raw_url: get_url)
+      url = get_url
+      url_string = url.gsub('{id}', processId_or_uuid_or_nid.to_s)
+      url_string = url.gsub('{processId}', processId_or_uuid_or_nid.to_s)
+      json = rest_fetch(url_string: url_string, params: get_params,body_params: body_params, raw_url: get_url)
       enunciate_json(json)
     end
   end
@@ -132,8 +143,8 @@ module WorkflowRest
     get_workflow(action: hash[:action],  additional_req_params: hash[:params], body_params: hash[:body_params])
   end
 
-  def get_workflow(action:,  additional_req_params: nil, body_params: {})
-    Workflow.new(params: additional_req_params, body_params: body_params, action: action, action_constants: ACTION_CONSTANTS).rest_call
+  def get_workflow(action:, processId_or_uuid_or_nid: nil,additional_req_params: nil, body_params: {})
+    Workflow.new(id: processId_or_uuid_or_nid, params: additional_req_params, body_params: body_params, action: action, action_constants: ACTION_CONSTANTS).rest_call
   end
 end
 

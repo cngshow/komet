@@ -15,9 +15,11 @@ class ApplicationController < ActionController::Base
   include UserSession
   include ServletSupport
 
-  CACHE_TYPE_ALL = :all_caches
-  CACHE_TYPE_TAXONOMY = :taxonomy_caches
-  CACHE_TYPE_SYSTEM = :system_caches
+  CACHE_TYPE_TAXONOMY = [AssociationRest,CommentApis, ConceptRest, IdAPIsRest, LogicGraphRest, MappingApis, SearchApis, SememeRest, TaxonomyRest].freeze
+  CACHE_TYPE_SYSTEM = [CoordinateRest, SystemApis].freeze
+  CACHE_TYPE_WORKFLOW = [WorkflowRest].freeze
+  CACHE_TYPE_ALL = [CACHE_TYPE_TAXONOMY, CACHE_TYPE_SYSTEM, CACHE_TYPE_WORKFLOW].flatten.freeze
+
   METADATA_DUMP_FILE = "#{Rails.root}/tmp/isaac_metadata_auxiliary.dump"
 
   # Prevent CSRF attacks by raising an exception.
@@ -194,26 +196,12 @@ class ApplicationController < ActionController::Base
   # clear_rest_caches - Clear all relevant REST caches
   # @param [String] cache_type - An ApplicationController constant representing the types of caches to clear:
   #                               CACHE_TYPE_TAXONOMY - (default) clears all taxonomy related caches, anything that would be displayed in the GUI
-  #                               CACHE_TYPE_SYSTEM - clears all caches that deal with internal system data (ie: metadata, coordinate tokens, ect.). Should very rarely be used
+  #                               CACHE_TYPE_WORKFLOW - clears all workflow related caches, anything that would be displayed in the GUI
+  #                               CACHE_TYPE_SYSTEM -   clears all caches that deal with internal system data (ie: metadata, coordinate tokens, ect.). Should very rarely be used
   #                               CACHE_TYPE_ALL - clears all caches. Should very rarely be used
   def clear_rest_caches(cache_type: CACHE_TYPE_TAXONOMY)
-
-    if cache_type == CACHE_TYPE_TAXONOMY || cache_type == CACHE_TYPE_ALL
-
-      CommonRest.clear_cache(rest_module: AssociationRest)
-      CommonRest.clear_cache(rest_module: CommentApis)
-      CommonRest.clear_cache(rest_module: ConceptRest)
-      CommonRest.clear_cache(rest_module: IdAPIsRest)
-      CommonRest.clear_cache(rest_module: LogicGraphRest)
-      CommonRest.clear_cache(rest_module: MappingApis)
-      CommonRest.clear_cache(rest_module: SearchApis)
-      CommonRest.clear_cache(rest_module: SememeRest)
-      CommonRest.clear_cache(rest_module: TaxonomyRest)
-
-    elsif cache_type == CACHE_TYPE_SYSTEM || cache_type == CACHE_TYPE_ALL
-
-      CommonRest.clear_cache(rest_module: CoordinateRest)
-      CommonRest.clear_cache(rest_module: SystemApis)
+    cache_type.each do |module_class|
+      CommonRest.clear_cache(rest_module: module_class)
     end
   end
 

@@ -11,6 +11,7 @@ module CommonRest
 
   #used as your key in the req params to indicate if this request is cached
   module CacheRequest
+    PARAMS_NO_CACHE = {CommonRest::CacheRequest => false}
   end
 
   CONNECTION = Faraday.new do |faraday|
@@ -105,7 +106,7 @@ module CommonRest
 
       return UnexpectedResponse.new(response.body, response.status)
     end
-
+    invoke_callbacks if self.respond_to? :invoke_callbacks #if I have been mixed into an instance of common rest base I will respond to this
     json.freeze
     json_to_yaml_file(json, url_to_path_string(raw_url))
     $rest_cache[cache_lookup] = json unless http_method != CommonActionSyms::HTTP_METHOD_GET
@@ -122,6 +123,7 @@ module CommonActionSyms
   HTTP_METHOD_PUT = :put
   HTTP_METHOD_POST = :post
   BODY_CLASS = :body_class
+  CALLBACKS = :callbacks
 end
 
 module CommonRestBase
@@ -137,6 +139,15 @@ module CommonRestBase
       @action_constants = action_constants
     end
 
+    def invoke_callbacks
+      begin
+        @action_constants[action][CALLBACKS].each do |c| c.call end  if (@action_constants.key?(action) && @action_constants[action].key?(CALLBACKS))
+      rescue => ex
+        $log.error("Could not execute a callback.  The remaining callbacks will not be attempted. #{ex}")
+        $log.error(ex.backtrace.join("\n"))
+      end
+    end
+
     def get_url
       action_constants.fetch(action).fetch(PATH_SYM)
     end
@@ -149,7 +160,6 @@ module CommonRestBase
     end
 
     def get_params
-
       r_val = action_constants.fetch(action).fetch(STARTING_PARAMS_SYM).clone
       r_val.merge!(params) unless params.nil?
       r_val
@@ -277,14 +287,11 @@ module CommonRestBase
               invocation_found = true
               $log.debug('inv found 1')
 
-            elsif (act_path.include? '{id}')
-
+            elsif (act_path =~ /\{\w+\}/)
               id = parse_id(act_path, url)
-
               if (id)
-
                 invocation_found = true
-                $log.debug('inv found 2 (id)')
+                $log.debug('inv found #{id}')
               end
             end
 
@@ -312,22 +319,27 @@ module CommonRestBase
 
     private
 
+    #This method will need to be made recursive if the day comes that we have multiple ids in a url.
     def self.parse_id(url_id_template, url_with_id)
-
       id = nil
-
-      if (url_id_template =~ /\{id\}/)
-
-        a = url_id_template.split('{id}')
+      if (url_id_template =~ /\{(\w+)\}/)
+        path_part = "{#{$1}}"
+        a = url_id_template.split(path_part)
         first = a[0]
         second = a[1].to_s #nil goes to ""
-
         if ((url_with_id.start_with? first) && (url_with_id.end_with? second))
           id = url_with_id.sub(first, '').sub(second, '')
         end
       end
-
       id
+    end
+  end
+end
+
+module CacheClear
+  def clear_lambda
+    -> do
+      CommonRest.clear_cache(rest_module: self)
     end
   end
 end
