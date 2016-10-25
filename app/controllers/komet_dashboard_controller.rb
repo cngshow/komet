@@ -102,10 +102,17 @@ class KometDashboardController < ApplicationController
                 return []
             end
 
+            inactive_class = ''
+
+            # if the node is inactive apply the correct class
+            if isaac_concept.conVersion.state.enumName && isaac_concept.conVersion.state.enumName.downcase.eql?('inactive')
+                inactive_class = ' komet-inactive-tree-node'
+            end
+
             # load the root node into our return variable
             # TODO - remove the hard-coding of type to 'vhat' when the type flags are implemented in the REST APIs
-            root_anchor_attributes = { class: 'komet-context-menu', 'data-menu-type' => 'concept', 'data-menu-uuid' => isaac_concept.conChronology.identifiers.uuids.first,
-                                       'data-menu-state' => 'ACTIVE', 'data-menu-concept-text' => isaac_concept.conChronology.description,
+            root_anchor_attributes = { class: 'komet-context-menu' + inactive_class, 'data-menu-type' => 'concept', 'data-menu-uuid' => isaac_concept.conChronology.identifiers.uuids.first,
+                                       'data-menu-state' => isaac_concept.conVersion.state.enumName, 'data-menu-concept-text' => isaac_concept.conChronology.description,
                                        'data-menu-concept-terminology-type' => 'vhat'}
             root_node = {id: 0, concept_id: isaac_concept.conChronology.identifiers.uuids.first, text: isaac_concept.conChronology.description, parent_reversed: false, parent_search: parent_search, icon: 'komet-tree-node-icon komet-tree-node-primitive', a_attr: root_anchor_attributes, state: {opened: 'true'}}
         else
@@ -946,11 +953,7 @@ class KometDashboardController < ApplicationController
         concept_id = params[:concept_id]
         newState = params[:newState]
 
-        if newState == 'active'
-            results = ConceptRest::get_concept(action: ConceptRestActions::ACTION_UPDATE_ACTIVATE, uuid: concept_id)
-        else
-            results = ConceptRest::get_concept(action: ConceptRestActions::ACTION_UPDATE_DEACTIVATE, uuid: concept_id)
-        end
+        results = ComponentRest::get_component(action: ComponentRestActions::ACTION_UPDATE_STATE, uuid_or_id: concept_id, additional_req_params: {editToken: get_edit_token, active: newState})
 
         if results.is_a? CommonRest::UnexpectedResponse
             render json: {state: nil} and return
@@ -959,7 +962,7 @@ class KometDashboardController < ApplicationController
         # clear taxonomy caches after writing data
         clear_rest_caches
 
-        render json: {state: state}
+        render json: {state: newState}
     end
 
     ##

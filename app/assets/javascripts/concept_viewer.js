@@ -398,7 +398,7 @@ var ConceptViewer = function(viewerID, currentConceptID, viewerAction) {
 
         $("#komet_concept_editor_form_" + this.viewerID).submit(function () {
 
-            $("#komet_concept_editor_form_" + this.viewerID).find(".komet-form-error, .komet-form-field-error").remove();
+            UIHelper.removePageMessages("#komet_concept_editor_form_" + this.viewerID);
 
             $.ajax({
                 type: "POST",
@@ -409,7 +409,7 @@ var ConceptViewer = function(viewerID, currentConceptID, viewerAction) {
                     console.log(data);
 
                     if (data.concept_id == null){
-                        $("#komet_concept_editor_section_" + thisViewer.viewerID).prepend(UIHelper.generateFormErrorMessage("An error has occurred. The concept was not created."));
+                        $("#komet_concept_editor_section_" + thisViewer.viewerID).prepend(UIHelper.generatePageMessage("An error has occurred. The concept was not created."));
                     } else {
 
                         TaxonomyModule.tree.reloadTreeStatedView(TaxonomyModule.getStatedView(), false);
@@ -473,13 +473,13 @@ var ConceptViewer = function(viewerID, currentConceptID, viewerAction) {
 
         if (parent.val() == undefined || parent.val() == ""){
 
-            $("#komet_create_concept_parent_fields_" + this.viewerID).after(UIHelper.generateFormErrorMessage("The Parent field must be filled in."));
+            $("#komet_create_concept_parent_fields_" + this.viewerID).after(UIHelper.generatePageMessage("The Parent field must be filled in."));
             hasErrors = true;
         }
 
         if (description.val() == undefined || description.val() == ""){
 
-            description.after(UIHelper.generateFormErrorMessage("The Description field must be filled in."));
+            description.after(UIHelper.generatePageMessage("The Description field must be filled in."));
             hasErrors = true;
         }
 
@@ -535,7 +535,7 @@ var ConceptViewer = function(viewerID, currentConceptID, viewerAction) {
 
         form.submit(function () {
 
-            form.find(".komet-form-error, .komet-form-field-error").remove();
+            UIHelper.removePageMessages(form);
 
             $.ajax({
                 type: "POST",
@@ -557,33 +557,33 @@ var ConceptViewer = function(viewerID, currentConceptID, viewerAction) {
 
                             if (data.failed[i].type == "concept") {
 
-                                editorSection.find("div[id^='komet_concept_edit_concept_row_']").before(UIHelper.generateFormErrorMessage("The status of the concept was not changed."));
+                                editorSection.find("div[id^='komet_concept_edit_concept_row_']").before(UIHelper.generatePageMessage("The status of the concept was not changed."));
 
                             } else if (data.failed[i].type == "concept property") {
 
-                                editorSection.find("div[id^='komet_concept_edit_concept_properties_row_" + data.failed[i].id + "']").before(UIHelper.generateFormErrorMessage("This property was not processed."));
+                                editorSection.find("div[id^='komet_concept_edit_concept_properties_row_" + data.failed[i].id + "']").before(UIHelper.generatePageMessage("This property was not processed."));
 
                             } else if (data.failed[i].type == "description"){
 
                                 var descriptionPanel = editorSection.find("div[id^='komet_concept_description_panel_" + data.failed[i].id + "']");
-                                descriptionPanel.before(UIHelper.generateFormErrorMessage("This description was not processed, and none of its properties or dialects were attempted to be processed."));
+                                descriptionPanel.before(UIHelper.generatePageMessage("This description was not processed, and none of its properties or dialects were attempted to be processed."));
                                 descriptionPanel.css("margin-top", "0px");
 
                             } else if (data.failed[i].type == "description property"){
 
-                                editorSection.find("div[id^='komet_concept_edit_description_properties_row_" + data.failed[i].id + "']").before(UIHelper.generateFormErrorMessage("This description property was not processed."));
+                                editorSection.find("div[id^='komet_concept_edit_description_properties_row_" + data.failed[i].id + "']").before(UIHelper.generatePageMessage("This description property was not processed."));
 
                             } else if (data.failed[i].type == "dialect"){
 
-                                editorSection.find("div[id^='komet_concept_edit_description_dialect_row_" + data.failed[i].id + "']").before(UIHelper.generateFormErrorMessage("This dialect was not processed."));
+                                editorSection.find("div[id^='komet_concept_edit_description_dialect_row_" + data.failed[i].id + "']").before(UIHelper.generatePageMessage("This dialect was not processed."));
 
                             } else if (data.failed[i].type == "association"){
 
-                                editorSection.find("div[id^='komet_concept_association_row_" + data.failed[i].id + "']").before(UIHelper.generateFormErrorMessage("This association was not processed."));
+                                editorSection.find("div[id^='komet_concept_association_row_" + data.failed[i].id + "']").before(UIHelper.generatePageMessage("This association was not processed."));
                             }
                         }
 
-                        editorSection.prepend(UIHelper.generateFormErrorMessage(errorString));
+                        editorSection.prepend(UIHelper.generatePageMessage(errorString));
                     } else {
 
                         TaxonomyModule.tree.reloadTreeStatedView(TaxonomyModule.getStatedView(), false);
@@ -917,7 +917,7 @@ var ConceptViewer = function(viewerID, currentConceptID, viewerAction) {
                             var editorSection = $("#komet_concept_editor_section_" + thisViewer.viewerID);
 
                             if (sememe_info.data == null){
-                                editorSection.prepend(UIHelper.generateFormErrorMessage("An error has occurred. The property was not created."));
+                                editorSection.prepend(UIHelper.generatePageMessage("An error has occurred. The property was not created."));
                             } else {
 
                                 sememe_info.data.new = true;
@@ -1114,13 +1114,13 @@ var ConceptViewer = function(viewerID, currentConceptID, viewerAction) {
 
         //if (parent.val() == undefined || parent.val() == ""){
         //
-        //    $("#komet_create_concept_parent_fields_" + this.viewerID).after(UIHelper.generateFormErrorMessage("The Parent field must be filled in."));
+        //    $("#komet_create_concept_parent_fields_" + this.viewerID).after(UIHelper.generatePageMessage("The Parent field must be filled in."));
         //    hasErrors = true;
         //}
         //
         //if (description.val() == undefined || description.val() == ""){
         //
-        //    description.after(UIHelper.generateFormErrorMessage("The Description field must be filled in."));
+        //    description.after(UIHelper.generatePageMessage("The Description field must be filled in."));
         //    hasErrors = true;
         //}
 
@@ -1138,7 +1138,7 @@ var ConceptViewer = function(viewerID, currentConceptID, viewerAction) {
         var editorSection = $("#komet_concept_editor_section_" + this.viewerID);
 
         var form = $("#komet_concept_editor_form_" + this.viewerID);
-        form.find(".komet-form-error, .komet-form-field-error").remove();
+        UIHelper.removePageMessages(form);
 
         if (sectionName == 'confirm'){
 
@@ -1152,7 +1152,7 @@ var ConceptViewer = function(viewerID, currentConceptID, viewerAction) {
 
             if (hasErrors){
 
-                editorSection.prepend(UIHelper.generateFormErrorMessage("Please fix the errors below."));
+                editorSection.prepend(UIHelper.generatePageMessage("Please fix the errors below."));
                 return false;
             }
 

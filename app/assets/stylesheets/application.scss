@@ -206,27 +206,44 @@ body > header, body > footer{
 .komet-highlight-changes{
     background-color: rgba(255, 239, 0, 1);
 }
-.komet-form-warning{
+.komet-page-warning {
     background-color: rgba(255, 239, 0, 1);
 }
-.komet-form-error, .komet-form-field-error{
+.komet-page-error{
     background-color: #ff5000;
     color: white;
 }
-.komet-form-warning, .komet-form-error{
+.komet-page-success{
+    background-color: green;
+    color: white;
+}
+.komet-page-message{
     margin-bottom: 5px;
     line-height: 200%;
     width: 100%;
     padding: 5px;
     border: solid lightgrey 1px;
 }
-.komet-form-field-error {
+.komet-page-field-message {
     border: solid lightgrey 1px;
     padding-left: 5px;
     margin-top: 5px;
 }
-.komet-form-field-error .glyphicon, .komet-form-field-error .fa, .komet-form-error .glyphicon, .komet-form-error .fa, .komet-form-warning .glyphicon, .komet-form-warning .fa  {
+.komet-page-message, .komet-page-field-message{
+    display: flex;
+    align-items: center;
+}
+.komet-page-message .glyphicon, .komet-page-message .fa, .komet-page-field-message .glyphicon, .komet-page-field-message .fa {
     margin-right: 5px;
+}
+.komet-page-message .glyphicon-remove, .komet-page-field-message .glyphicon-remove {
+    cursor: pointer;
+}
+.komet-page-message-container{
+    flex: 1 1 auto;
+    display: flex;
+    flex-direction: column;
+    margin: 0px 5px;
 }
 div.komet-confirmation-dialog{
     overflow: visible;

@@ -553,7 +553,7 @@ var MappingViewer = function(viewerID, currentSetID, viewerAction) {
 
     MappingViewer.prototype.addSetField = function(){
 
-        $("#" + this.SET_INCLUDE_FIELD_DIALOG).find(".komet-form-error, .komet-form-field-error").remove();
+        UIHelper.removePageMessages("#" + this.SET_INCLUDE_FIELD_DIALOG);
 
         var prefix = "#komet_mapping_set_editor_add_fields_";
         var typeField = $(prefix + "type_" + this.viewerID);
@@ -563,7 +563,7 @@ var MappingViewer = function(viewerID, currentSetID, viewerAction) {
 
         if (typeField.val() == "" || labelField.val() == "" || (typeField.val() == "select" && typeField.val() == "")){
 
-            $(prefix + "options_section_" + this.viewerID).after(UIHelper.generateFormErrorMessage("All fields must be filled in."));
+            $(prefix + "options_section_" + this.viewerID).after(UIHelper.generatePageMessage("All fields must be filled in."));
             return;
         }
 
@@ -573,7 +573,7 @@ var MappingViewer = function(viewerID, currentSetID, viewerAction) {
 
         if (this.setEditorMapSet.include_fields.indexOf(name) >= 0){
 
-            $(prefix + "options_section_" + this.viewerID).after(UIHelper.generateFormErrorMessage("The label must be unique. There is another field in this mapset with this label."));
+            $(prefix + "options_section_" + this.viewerID).after(UIHelper.generatePageMessage("The label must be unique. There is another field in this mapset with this label."));
             return;
         }
 
@@ -778,7 +778,7 @@ var MappingViewer = function(viewerID, currentSetID, viewerAction) {
 
     MappingViewer.prototype.addSetItemsField = function(){
 
-        $("#" + this.ITEMS_INCLUDE_FIELD_DIALOG).find(".komet-form-error, .komet-form-field-error").remove();
+        UIHelper.removePageMessages("#" + this.ITEMS_INCLUDE_FIELD_DIALOG);
 
         var prefix = "#komet_mapping_set_editor_items_add_fields_";
         var typeField = $(prefix + "type_" + this.viewerID);
@@ -788,7 +788,7 @@ var MappingViewer = function(viewerID, currentSetID, viewerAction) {
 
         if (typeField.val() == "" || labelField.val() == "" || (typeField.val() == "select" && typeField.val() == "")){
 
-            $(prefix + "options_section_" + this.viewerID).after(UIHelper.generateFormErrorMessage("All fields must be filled in."));
+            $(prefix + "options_section_" + this.viewerID).after(UIHelper.generatePageMessage("All fields must be filled in."));
             return;
         }
 
@@ -798,7 +798,7 @@ var MappingViewer = function(viewerID, currentSetID, viewerAction) {
 
         if (this.setEditorMapSet.item_fields.indexOf(name) >= 0){
 
-            $(prefix + "options_section_" + this.viewerID).after(UIHelper.generateFormErrorMessage("The label must be unique. There is another field in this mapset with this label."));
+            $(prefix + "options_section_" + this.viewerID).after(UIHelper.generatePageMessage("The label must be unique. There is another field in this mapset with this label."));
             return;
         }
 

@@ -24,12 +24,6 @@
                 <button type="button" class="btn btn-primary ui-state-disabled" id="komet_concept_save_<%= @viewer_id %>" onclick="WindowManager.viewers[<%= @viewer_id %>].showSaveSection('confirm')">Save</button>
             </div>
 
-            <div id="komet_concept_confirm_section_<%= @viewer_id %>" class="komet-form-warning hide">
-                Are you sure you want to commit changes?
-                <button type="button" class="btn btn-default" onclick="WindowManager.viewers[<%= @viewer_id %>].showSaveSection('save')">No</button>
-                <button class="btn btn-primary">Yes</button>
-            </div>
-
             <div class="komet-concept-section-title komet-concept-associations-title">ASSOCIATIONS</div>
 
             <div id="komet_concept_associations_panel_<%= @viewer_id %>" class="komet-concept-section-panel komet-concept-associations-panel">

@@ -46,15 +46,43 @@ var UIHelper = (function () {
         return (tabpage !== undefined ? (tabpage === tabpageId) : false);
     }
 
-    function generateFormErrorMessage(message, formLevelError){
+    function generatePageMessage(message, isPageLevelMessage, messageType){
 
-        var classLevel = "komet-form-field-error";
-
-        if (formLevelError != undefined && formLevelError){
-            classLevel = "komet-form-error";
+        if (messageType == undefined || messageType == null || !(messageType == "success" || messageType == "warning")){
+            messageType = "error";
         }
 
-        return '<div class="' + classLevel + '"><div class="glyphicon glyphicon-alert"></div>' + message + '</div>';
+        var icon = '<div class="glyphicon glyphicon-alert" title="alert message"></div>';
+
+        if (messageType == "success"){
+            icon = '<div class="glyphicon glyphicon-ok-circle" title="success message"></div>';
+        }
+
+        var messageType = "komet-page-" + messageType;
+        var classLevel = "komet-page-field-message";
+
+        if (isPageLevelMessage != undefined && isPageLevelMessage){
+            classLevel = "komet-page-message";
+        }
+
+        var id = window.performance.now().toString().replace(".", "");
+
+        return '<div id="komet_' + id + '" class="' + classLevel + ' ' + messageType + '">' + icon + '<div class="komet-page-message-container">' + message + '</div>'
+            + '<div class="komet-flex-right"><div class="glyphicon glyphicon-remove" onclick="$(\'#komet_' + id + '\').remove();" title="Remove message"></div></div></div>';
+    }
+
+    function removePageMessages(containerElementOrSelector) {
+
+        var element;
+
+        // If the type of the first parameter is a string, then use it as a jquery selector, otherwise use as is
+        if (typeof containerElementOrSelector === "string"){
+            element = $(containerElementOrSelector);
+        } else {
+            element = containerElementOrSelector;
+        }
+
+        element.find(".komet-page-message, .komet-page-field-message").remove();
     }
 
     function generateConfirmationDialog(title, message, closeCallback, buttonText, positioningElementOrSelector, formID) {
@@ -755,17 +783,17 @@ var UIHelper = (function () {
 
                         items.separatorState = {type: "cm_separator"};
 
-                        if (conceptState == 'Active') {
+                        if (conceptState.toLowerCase() == 'active') {
                             items.activeInactiveUuid = {
                                 name: "Inactivate Concept",
                                 icon: "context-menu-icon glyphicon-ban-circle",
-                                callback: changeConceptState(uuid, 'InActive')
+                                callback: changeConceptState($triggerElement, uuid, conceptText, 'false')
                             };
                         } else {
                             items.activeInactiveUuid = {
                                 name: "Activate Concept",
                                 icon: "context-menu-icon glyphicon-ok-circle",
-                                callback: changeConceptState(uuid, 'Active')
+                                callback: changeConceptState($triggerElement, uuid, conceptText, 'true')
                             };
                         }
                     }
@@ -894,14 +922,39 @@ var UIHelper = (function () {
         };
     }
 
-    function changeConceptState(id, newState) {
+    function changeConceptState(element, concept_id, conceptText, newState) {
 
         return function (){
 
-            params = {id: id, newState: newState } ;
+            var params = {concept_id: concept_id, newState: newState } ;
 
             $.get( gon.routes.taxonomy_change_concept_state_path , params, function( results ) {
-                TaxonomyModule.tree.reloadTreeStatedView($("#komet_taxonomy_stated_inferred")[0].value);
+
+                var splitter = $("#komet_west_pane");
+
+                UIHelper.removePageMessages(splitter);
+
+                //var viewerPanel = element.parents("div[id^=komet_viewer_]");
+                //
+                //// if the viewerID was not passed it (but not if it is null), look up what it should be
+                //if (viewerPanel.length > 0) {
+                //    splitter = viewerPanel;
+                //}
+
+                if (conceptText == null){
+                    conceptText = "";
+                } else {
+                    conceptText = " '" + conceptText + "'";
+                }
+
+                if (results.state != null) {
+
+                    splitter.prepend(UIHelper.generatePageMessage("The concept" + conceptText + " state was successfully updated.", true, "success"));
+                    TaxonomyModule.tree.reloadTreeStatedView($("#komet_taxonomy_stated_inferred")[0].value);
+                } else {
+
+                    splitter.prepend(UIHelper.generatePageMessage("The concept state was not updated."));
+                }
             });
         };
     }
@@ -920,7 +973,8 @@ var UIHelper = (function () {
         getActiveTabId: getActiveTabId,
         isTabActive: isTabActive,
         initializeContextMenus: initializeContextMenus,
-        generateFormErrorMessage: generateFormErrorMessage,
+        generatePageMessage: generatePageMessage,
+        removePageMessages: removePageMessages,
         generateConfirmationDialog: generateConfirmationDialog,
         toggleChangeHighlights: toggleChangeHighlights,
         toggleFieldAvailability: toggleFieldAvailability,
