@@ -13,17 +13,16 @@ var TaxonomySearchModule = (function () {
             animate: false
         });
 
-        // setup the assemblage field autocomplete functionality
-        //$("#taxonomy_search_assemblage_display").autocomplete({
-        //    source: gon.routes.search_get_assemblage_suggestions_path,
-        //    minLength: 3,
-        //    select: onAssemblageSuggestionSelection,
-        //    change: onAssemblageSuggestionChange
-        //});
+        var form = $("#komet_taxonomy_search_form");
+
+        form.submit(function () {
+
+            TaxonomySearchModule.loadResultGrid()
+            return false
+        });
 
         // load any previous assemblage queries into a menu for the user to select from
-        UIHelper.processAutoSuggestTags("#komet_taxonomy_search_form");
-        //loadAssemblageRecents();
+        UIHelper.processAutoSuggestTags(form);
     }
 
     function loadResultGrid() {

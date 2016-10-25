@@ -370,27 +370,31 @@ class MappingController < ApplicationController
         set_id = params[:komet_mapping_set_editor_set_id]
         set_name = params[:komet_mapping_set_editor_name]
         description = params[:komet_mapping_set_editor_description]
-        state = params[:komet_mapping_set_editor_state]
+
+        if params[:komet_mapping_set_editor_state].downcase == 'active'
+            active = true
+        else
+            active = false
+        end
 
 
         # source_system: source_system, source_system_display: source_system_display, source_version: source_version, target_system: target_system, target_system_display: target_system_display, target_version: target_version
-        body_params = {name: set_name, description: description}
-        request_params = {state: state, editToken: get_edit_token}
+        body_params = {name: set_name, description: description, active: active}
+        request_params = {editToken: get_edit_token}
 
         if set_id && set_id != ''
             MappingApis::get_mapping_api(uuid_or_id: set_id, action: MappingApiActions::ACTION_UPDATE_SET, additional_req_params: request_params, body_params: body_params)
         else
 
-            set_id = MappingApis::get_mapping_api(action: MappingApiActions::ACTION_CREATE_SET, additional_req_params: request_params, body_params: body_params )
+            return_value = MappingApis::get_mapping_api(action: MappingApiActions::ACTION_CREATE_SET, additional_req_params: request_params, body_params: body_params )
 
-            if set_id.is_a? CommonRest::UnexpectedResponse
+            if return_value.is_a? CommonRest::UnexpectedResponse
 
                 render json: {set_id: nil}
                 return
             end
 
-            # get the uuid from the concept sequence
-            set_id = IdAPIsRest.get_id(uuid_or_id: set_id.value, action: IdAPIsRestActions::ACTION_TRANSLATE, additional_req_params: {inputType: 'conceptSequence', outputType: 'uuid'}).value
+            set_id = return_value.uuid
         end
 
         # clear taxonomy caches after writing data

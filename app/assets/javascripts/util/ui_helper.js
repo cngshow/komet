@@ -353,7 +353,7 @@ var UIHelper = (function () {
         if (label == null){
             label = "";
         } else {
-            label = '<label for="' + fieldIDBase + fieldIDPostfix + '">' + label + '</label>';
+            label = '<label for="' + fieldIDBase + '_display' + fieldIDPostfix + '">' + label + '</label>';
         }
 
         var idName = fieldIDBase;
@@ -610,6 +610,16 @@ var UIHelper = (function () {
 
         $.contextMenu({
             selector: '.komet-context-menu',
+            events: {
+                show: function(opt) {
+                    // show event is executed every time the menu is shown!
+                    // find all clickable commands and set their title-attribute
+                    // to their textContent value
+                    opt.$menu.find('.context-menu-item > span').attr('title', function() {
+                        return $(this).text();
+                    });
+                }
+            },
             build: function($triggerElement, e){
 
                 var items = {};

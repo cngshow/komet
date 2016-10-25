@@ -5,7 +5,7 @@
         <div class="komet-search-combo-column">
 
             <div id="taxonomy_search_combo_field">
-                <%= label_tag :search_text, 'Search Text:' %>
+                <%= label_tag :taxonomy_search_text, 'Search Text:' %>
                 <%= text_field_tag (:taxonomy_search_text) %>
             </div>
 
@@ -13,7 +13,7 @@
         </div>
 
         <div class="komet-flex-right">
-            <button type="button" class="btn btn-primary" onclick="TaxonomySearchModule.loadResultGrid()">Search</button>
+            <button class="btn btn-primary" title="Search">Search</button>
         </div>
 
     </div>
@@ -58,7 +58,7 @@
 <% end %>
 
 <br>
-<button id="taxonomy_search_export" onclick="TaxonomySearchModule.exportCSV()">CSV Export</button>
+<button type="button" id="taxonomy_search_export" onclick="TaxonomySearchModule.exportCSV()" title="CSV Export">CSV Export</button>
 <div id="taxonomy_search_results" style="height: 450px;" class="ag-fresh"></div>
 
 <script>
