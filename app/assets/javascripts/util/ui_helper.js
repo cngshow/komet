@@ -192,10 +192,12 @@ var UIHelper = (function () {
 
             element.removeClass("ui-state-disabled");
             element.addClass("ui-state-enabled");
+            element.prop("disabled", false);
         } else {
 
             element.removeClass("ui-state-enabled");
             element.addClass("ui-state-disabled");
+            element.prop("disabled", true);
         }
     }
 

@@ -258,6 +258,11 @@ div.komet-confirmation-dialog{
 .komet-dialog-no-close-button .ui-dialog-titlebar-close{
     display: none;
 }
+.komet-link-button{
+    background: none !important;
+    border: none;
+    padding: 0 !important;
+}
 .komet-splitter{
     height: 100%;
     width: 100%;
@@ -294,6 +299,12 @@ div.komet-confirmation-dialog{
 .komet-navbar a{
     text-decoration: none;
     color: black
+}
+.komet-navbar button{
+    height: 24px;
+    display: flex;
+    flex: 0 0 auto;
+    align-items: center;
 }
 .komet-navbar-header{
     font-size: 24px;
@@ -342,7 +353,7 @@ div.komet-confirmation-dialog{
 .komet-navbar-tools > :first-child{
     border-left: 4px solid white;
 }
-.komet-navbar-tools > div{
+.komet-navbar-tools > *{
     display: flex;
     flex: 0 0 auto;
     align-items: center;
@@ -817,7 +828,7 @@ td.komet-concept-table-nested-indicator.komet-concept-table-nested-indicator-ope
 }
 
 // Concept Editor Viewer Styles
-.komet-concept-create .komet-concept-section-title .komet-flex-right > div, .komet-concept-edit .komet-concept-section-title .komet-flex-right > div{
+.komet-concept-create .komet-concept-section-title .komet-flex-right > button, .komet-concept-edit .komet-concept-section-title .komet-flex-right > button{
     color: green;
     cursor: pointer;
 }
@@ -860,7 +871,7 @@ td.komet-concept-table-nested-indicator.komet-concept-table-nested-indicator-ope
     font-size: small;
     padding: 3px 2px;
 }
-.komet-concept-edit button {
+.komet-concept-edit .panel-body button:not(.komet-link-button) {
     height: 26px;
     font-size: small;
     padding: 2px 8px;
