@@ -137,7 +137,7 @@ var ConceptsModule = (function () {
     }
 
     function setStatedView(viewerID, field) {
-        loadViewerData(WindowManager.viewers[viewerID].currentConceptID, field.value, viewerID);
+        loadViewerData(WindowManager.viewers[viewerID].currentConceptID, field.value, VIEW, viewerID);
     }
 
     return {

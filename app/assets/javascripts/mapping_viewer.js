@@ -134,9 +134,9 @@ var MappingViewer = function(viewerID, currentSetID, viewerAction) {
         linkIcon.toggleClass("fa-chain-broken", !linked);
 
         if (linked){
-            linkIcon.attr("title", this.LINKED_TEXT);
+            linkIcon.parent().attr("title", this.LINKED_TEXT);
         } else {
-            linkIcon.attr("title", this.UNLINKED_TEXT);
+            linkIcon.parent().attr("title", this.UNLINKED_TEXT);
         }
 
         this.toggleTreeIcon();
