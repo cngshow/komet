@@ -336,7 +336,7 @@ module CommonRestBase
   end
 end
 
-module CacheClear
+module CommonRestCallbacks
   def clear_lambda
     -> do
       CommonRest.clear_cache(rest_module: self)

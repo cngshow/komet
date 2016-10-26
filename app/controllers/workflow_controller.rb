@@ -61,7 +61,7 @@ class WorkflowController < ApplicationController
 
   def set_user_workflow
     process_id = params[:process_id]
-    result = WorkflowRest.get_workflow(processId_or_uuid_or_nid: process_id,action: WorkflowRestActions::ACTION_LOCK, body_params: {}, additional_req_params: {editToken: get_edit_token, acquireLock: false})
+    result = WorkflowRest.get_workflow(processId_or_uuid_or_nid: process_id,action: WorkflowRestActions::ACTION_LOCK, body_params: {}, additional_req_params: {editToken: get_edit_token, acquireLock: true})
     # if result.is_a? CommonRest::UnexpectedResponse
     #   render json: {} #not sure
     #   return
@@ -155,7 +155,7 @@ class WorkflowController < ApplicationController
     advancement = RestWorkflowProcessAdvancementData.new
     advancement.actionRequested = 'Edit'
     advancement.comment = comment
-    result = WorkflowRest.get_workflow(action: WorkflowRestActions::ACTION_ADVANCE, body_params: advancement, additional_req_params: {editToken: get_edit_token, CommonRest::CacheRequest => false})
+    result = WorkflowRest.get_workflow(action: WorkflowRestActions::ACTION_ADVANCE, body_params: advancement, additional_req_params: {editToken: get_edit_token})
     failure = result.is_a? CommonRest::UnexpectedResponse
     $log.debug("Advanced: #{result}")
     clear_user_workflow  unless failure

@@ -36,7 +36,7 @@ end
 module WorkflowRest
   include WorkflowRestActions
   include CommonActionSyms
-  extend self, CacheClear
+  extend self, CommonRestCallbacks
 
   #always name the root_path ROOT_PATH!
   ROOT_PATH = ISAAC_ROOT + 'rest/1/workflow/'
