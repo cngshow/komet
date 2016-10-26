@@ -9,10 +9,10 @@
               data-menu-concept-terminology-type="<%= @concept_terminology_type %>"
               data-menu-state="<%= @concept_state %>"
         >
-        <span id="komet_concept_panel_tree_link_<%= @viewer_id %>" class="fa fa-chain-broken" onclick="WindowManager.toggleViewerLinkage('<%= @viewer_id %>', WindowManager.getLinkedViewerID() != '<%= @viewer_id %>');" title="Viewer linked to Taxonomy Tree. Click to unlink."></span>
-        <span id="komet_concept_panel_tree_show_<%= @viewer_id %>" class="fa fa-tree" onclick="WindowManager.viewers[<%= @viewer_id %>].showInTaxonomyTree();" title="Show in Taxonomy Tree"></span>
-        <%= @concept_text %>
-    </span>
+            <span id="komet_concept_panel_tree_link_<%= @viewer_id %>" class="fa fa-chain-broken" onclick="WindowManager.toggleViewerLinkage('<%= @viewer_id %>', WindowManager.getLinkedViewerID() != '<%= @viewer_id %>');" title="Viewer linked to Taxonomy Tree. Click to unlink."></span>
+            <span id="komet_concept_panel_tree_show_<%= @viewer_id %>" class="fa fa-tree" onclick="WindowManager.viewers[<%= @viewer_id %>].showInTaxonomyTree();" title="Show in Taxonomy Tree"></span>
+            <%= @concept_text %>
+        </span>
 
         <div class="komet-panel-tools">
 
@@ -27,10 +27,14 @@
             </div>
 
             <div class="komet-panel-tools-control">
-                <select id="komet_concept_stated_inferred_<%= @viewer_id %>" class="form-control komet-stated-inferred" onchange="ConceptsModule.setStatedView(<%= @viewer_id %>, this)">
-                    <option value="true">Stated View</option>
-                    <option value="false">Inferred View</option>
-                </select>
+                <div class="btn-group" data-toggle="buttons">
+                    <label class="btn btn-default" for="komet_concept_stated_<%= @viewer_id %>">
+                        <input type="radio" name="komet_concept_stated_inferred" id="komet_concept_stated_<%= @viewer_id %>" value="true" autocomplete="off" title="Stated View"> Stated
+                    </label>
+                    <label class="btn btn-default" for="komet_concept_inferred_<%= @viewer_id %>">
+                        <input type="radio" name="komet_concept_stated_inferred" id="komet_concept_inferred_<%= @viewer_id %>" value="false" autocomplete="off" title="Inferred View"> Inferred
+                    </label>
+                </div>
             </div>
 
             <div class="glyphicon glyphicon-remove" onclick="WindowManager.closeViewer('<%= @viewer_id %>')"></div>
@@ -62,13 +66,6 @@
             }
         }
 
-        console.log("<%= @viewer_id %>");
-        console.log("WindowManager.getLinkedViewerID(): " + WindowManager.getLinkedViewerID());
-        console.log("TaxonomyModule.tree.selectedConceptID: " + TaxonomyModule.tree.selectedConceptID);
-        console.log("WindowManager.viewers[<%= @viewer_id %>].currentConceptID: " + WindowManager.viewers[<%= @viewer_id %>].currentConceptID);
-        console.log("WindowManager.getLinkedViewerID() == <%= @viewer_id %>: " + WindowManager.getLinkedViewerID() == "<%= @viewer_id %>");
-        console.log("TaxonomyModule.tree.selectedConceptID != WindowManager.viewers[<%= @viewer_id %>].currentConceptID: " + TaxonomyModule.tree.selectedConceptID != WindowManager.viewers[<%= @viewer_id %>].currentConceptID);
-
         if (WindowManager.getLinkedViewerID() == "<%= @viewer_id %>" && TaxonomyModule.tree.selectedConceptID != WindowManager.viewers[<%= @viewer_id %>].currentConceptID) {
             WindowManager.viewers[<%= @viewer_id %>].showInTaxonomyTree();
         }
@@ -82,9 +79,25 @@
 
         $(document).ready(function () {
 
-            $("#komet_concept_stated_inferred_<%= @viewer_id %> option").filter(function () {
-                return $(this)[0].value == "<%= @stated %>";
-            }).prop('selected', true);
+            var stated = $("#komet_viewer_<%= @viewer_id %>").find("input[name='komet_concept_stated_inferred']");
+
+            stated.change(function(){
+
+                stated.parent().toggleClass("btn-primary btn-default");
+                ConceptsModule.setStatedView("<%= @viewer_id %>", this);
+            });
+
+            stated.each(function(index, button){
+
+                if (button.value == "<%= @stated %>"){
+
+                    var buttonParent = button.parentElement;
+
+                    button.checked = true;
+                    buttonParent.classList.add('btn-primary');
+                    $(buttonParent).removeClass("btn-default");
+                }
+            });
 
             WindowManager.viewers[<%= @viewer_id %>].restorePanelStates();
             WindowManager.viewers[<%= @viewer_id %>].loadLineageTrees();

@@ -140,7 +140,7 @@ var ConceptViewer = function(viewerID, currentConceptID, viewerAction) {
 
     ConceptViewer.prototype.loadLineageTrees = function(){
 
-        var stated = $("#komet_concept_stated_inferred_" + this.viewerID)[0].value
+        var stated = this.getStatedView();
 
         if (this.trees.hasOwnProperty(this.PARENTS_TREE) && this.trees[this.PARENTS_TREE].tree.jstree(true)){
 
@@ -313,7 +313,7 @@ var ConceptViewer = function(viewerID, currentConceptID, viewerAction) {
     };
 
     ConceptViewer.prototype.getStatedView = function(){
-        return $('#komet_concept_stated_inferred_' + this.viewerID)[0].value;
+        return $('#komet_concept_stated_' + this.viewerID).prop("checked");;
     };
 
     ConceptViewer.prototype.exportCSV  = function(){

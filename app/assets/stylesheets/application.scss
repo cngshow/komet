@@ -397,9 +397,17 @@ div.komet-confirmation-dialog{
 .komet-panel .komet-panel-tools span{
     margin-left: 4px;
 }
-.komet-panel .komet-panel-tools label{
+.komet-panel .komet-panel-tools label:not(.btn){
     margin-right: 4px;
     margin-bottom: 0px;
+}
+.komet-panel .komet-panel-tools .btn-group{
+    height: 25px;
+    font-size: smaller !important;
+}
+.komet-panel .komet-panel-tools .btn{
+    height: 25px;
+    padding: 3px 12px;
 }
 .komet-panel .komet-panel-tools-control{
     display: flex;
