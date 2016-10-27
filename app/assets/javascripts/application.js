@@ -49,7 +49,32 @@ Copyright Notice
 // require util/ajax_cache.js
 // Can also do this as long as we have no load order dependencies in the util directory (Currently we do not)
 // require_tree ./util
+
+// this is for ajax_flash notifications
+//= require bootstrap-notify
 //= require_tree .
+
+function flash_notify(options, settings) {
+    $.notify(options, settings);
+}
+
+$( document ).ajaxComplete(function(event, jqXHR, ajaxOptions) {
+    var url = ajaxOptions.url;
+    var patt = new RegExp(gon.routes.flash_notifier_flash_notifications_path);
+    var res = patt.test(url);
+
+    // only make the rest call for routes that are NOT the flash notifier call
+    if (! res) {
+        $.get(gon.routes.flash_notifier_flash_notifications_path, function (results) {
+            //iterate the results calling $.notify
+            var arrayLength = results.length;
+
+            for (var i = 0; i < arrayLength; i++) {
+                flash_notify(results[i].options, results[i].settings);
+            }
+        });
+    }
+});
 
 //** javascript plugin overrides
 
