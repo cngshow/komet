@@ -149,11 +149,10 @@ class WorkflowController < ApplicationController
   end
 
   def advance_workflow
-    #grab params
     comment = params[:wfl_modal_comment]
-    transition_uuid = params[:transition_uuid]
+    transition_action = params[:transition_action]
     advancement = RestWorkflowProcessAdvancementData.new
-    advancement.actionRequested = 'Edit'
+    advancement.actionRequested = transition_action
     advancement.comment = comment
     result = WorkflowRest.get_workflow(action: WorkflowRestActions::ACTION_ADVANCE, body_params: advancement, additional_req_params: {editToken: get_edit_token})
     failure = result.is_a? CommonRest::UnexpectedResponse

@@ -1,7 +1,7 @@
 ##
 # Do common initialization tasks in komet tooling
 #
-REST_API_VERSIONS = [:"1.6"].freeze
+REST_API_VERSIONS = [:"1.7"].freeze
 
 require './lib/rails_common/props/prop_loader'
 require './lib/rails_common/logging/open_logging'

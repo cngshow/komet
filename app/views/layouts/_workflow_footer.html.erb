@@ -48,8 +48,7 @@
       </div>
       <div class="modal-body">
         <%= form_tag(workflow_advance_workflow_path, method: :post, id: 'wfl_modal_form', name: 'wfl_modal_form') do %>
-            <input type="hidden" id="transition_uuid" name="transition_uuid"/>
-            <div id="transition_addl_info_div"></div>
+            <input type="hidden" id="transition_action" name="transition_action"/> <div id="transition_addl_info_div"></div>
             <hr>
             <%= label_tag 'wfl_modal_comment', 'Comment' %>
             <%= text_area_tag 'wfl_modal_comment', nil, required: true, placeholder: 'Enter a comment supporting this workflow transition', rows: '3', cols: 76, class: 'form-control' %>
@@ -103,24 +102,24 @@
       var options = '';
 
       for (var i = 0; i < results.length; i++) {
-        transitions.append($('<option>').text(results[i].outcomeState).attr('value', results[i].id));
+        transitions.append($('<option>').text(results[i].outcomeState).attr('value', results[i].action));
         transitions.show();
       }
     });
 
     transitions.on('change', function () {
       var option = $(this).find('option:selected');
-      var action_uuid = option.val();
+      var action = option.val();
 
-      if (action_uuid !== '') {
+      if (action !== '') {
         // set up the modal display and show it
         $('#wfl_title_name').text($('#edit_workflow_span').text());
         $('#wfl_title_action').text(option.text());
 
         // set the uuid that is the key of the selected option
-        $('#transition_uuid').val(action_uuid);
+        $('#transition_action').val(action);
 
-        $.get(gon.routes.workflow_modal_transition_metadata_path, {action_uuid: action_uuid})
+        $.get(gon.routes.workflow_modal_transition_metadata_path, {action: action})
             .done(function (data) {
               $('#transition_addl_info_div').html(data);
             })
