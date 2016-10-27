@@ -21,7 +21,7 @@ var TaxonomyModule = (function () {
 
     function init() {
 
-        this.defaultStatedView = $("#komet_taxonomy_stated_inferred")[0].value;
+        this.defaultStatedView = this.getStatedView();
 
         this.tree = new KometTaxonomyTree("taxonomy_tree", this.defaultStatedView, false, null, true, null);
     }
@@ -40,12 +40,17 @@ var TaxonomyModule = (function () {
     }
 
     function getStatedView(){
-        return $("#komet_taxonomy_stated_inferred")[0].value;
-    };
+        return $("#komet_taxonomy_stated").prop("checked");
+    }
+
+    function setStatedView(field){
+        this.tree.reloadTreeStatedView(field.value);
+    }
 
     return {
         initialize: init,
-        getStatedView: getStatedView
+        getStatedView: getStatedView,
+        setStatedView: setStatedView
     };
 
 })();

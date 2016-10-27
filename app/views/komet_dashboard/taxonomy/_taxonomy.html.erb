@@ -1,35 +1,52 @@
 <div class="panel panel-default komet-no-margins komet-panel" id="komet_taxonomy_panel">
 
-  <div class="panel-heading">
-    <div class="komet-panel-tools">
-      <label for="komet_taxonomy_stated_inferred">Toggle Stated/Inferred View</label>
-      <select name="komet_taxonomy_stated_inferred" id="komet_taxonomy_stated_inferred" class="form-control komet-stated-inferred" onchange="setStatedView(this)">
-        <option value="true" selected="selected">Stated</option>
-        <option value="false">Inferred</option>
-      </select>
-      <div class="glyphicon glyphicon-refresh" onclick="TaxonomyModule.tree.reloadTreeStatedView(TaxonomyModule.getStatedView(), false)" title="Refresh"></div>
+    <div class="panel-heading">
+        <div class="komet-panel-tools">
+
+            <div class="btn-group" data-toggle="buttons">
+                <label class="btn btn-default" for="komet_taxonomy_stated">
+                    <input type="radio" name="komet_taxonomy_stated_inferred" id="komet_taxonomy_stated" value="true" autocomplete="off" title="Stated View"> Stated
+                </label>
+                <label class="btn btn-default" for="komet_taxonomy_inferred">
+                    <input type="radio" name="komet_taxonomy_stated_inferred" id="komet_taxonomy_inferred" value="false" autocomplete="off" title="Inferred View"> Inferred
+                </label>
+            </div>
+
+            <div class="glyphicon glyphicon-refresh" onclick="TaxonomyModule.tree.reloadTreeStatedView(TaxonomyModule.getStatedView(), false)" title="Refresh" tabindex="0"></div>
+
+        </div>
 
     </div>
-
-  </div>
 </div>
 
 <div id='taxonomy_tree'></div>
 
 <script>
 
-  $(document).ready(function () {
+    $(document).ready(function () {
 
-    $("#komet_taxonomy_stated_inferred option").filter(function() {
-      return $(this)[0].value == "<%= @stated %>";
-    }).prop('selected', true);
+        var stated = $("#komet_taxonomy_panel").find("input[name='komet_taxonomy_stated_inferred']");
 
-    WindowManager.initialize();
-    TaxonomyModule.initialize();
-    ConceptsModule.initialize();
-  });
+        stated.change(function(){
 
-  function setStatedView(field){
-    TaxonomyModule.tree.reloadTreeStatedView(field.value);
-  }
+            stated.parent().toggleClass("btn-primary btn-default");
+            TaxonomyModule.setStatedView(this);
+        });
+
+        stated.each(function(index, button){
+
+             if (button.value == "<%= @stated %>"){
+
+                 var buttonParent = button.parentElement;
+
+                 button.checked = true;
+                 buttonParent.classList.add('btn-primary');
+                 $(buttonParent).removeClass("btn-default");
+             }
+        });
+
+        WindowManager.initialize();
+        TaxonomyModule.initialize();
+        ConceptsModule.initialize();
+    });
 </script>

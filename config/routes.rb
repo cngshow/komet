@@ -7,7 +7,6 @@ Rails.application.routes.draw do
     get  'external/logout', :as => :logout
 
     get 'komet_dashboard/dashboard'
-    get 'workflow/dashboard_workflow', :as => :workflow_dashboard
     get 'komet_dashboard/metadata'
     get 'komet_dashboard/version'
     get 'komet_dashboard/get_concept_suggestions'
@@ -28,6 +27,10 @@ Rails.application.routes.draw do
     post 'komet_dashboard/edit_concept', :as => :taxonomy_edit_concept
     get 'komet_dashboard/change_concept_state', :as => :taxonomy_change_concept_state
     get 'komet_dashboard/clone_concept', :as => :taxonomy_clone_concept
+
+    # workflow routes
+=begin
+    get 'workflow/dashboard_workflow', :as => :workflow_dashboard
     post 'workflow/create_workflow', :as => :taxonomy_create_workflow
     get 'workflow/get_history', :as => :workflow_get_history
     get 'workflow/get_transition', :as => :workflow_get_transition
@@ -36,6 +39,7 @@ Rails.application.routes.draw do
     get 'workflow/modal_transition_metadata', :as => :workflow_modal_transition_metadata
     get 'workflow/get_advanceable_process_information', :as => :workflow_get_advanceable_process_information
     post 'workflow/advance_workflow', :as => :workflow_advance_workflow
+=end
 
     get 'search/get_assemblage_suggestions'
     get 'search/get_assemblage_recents'
@@ -51,6 +55,9 @@ Rails.application.routes.draw do
     post 'mapping/process_map_set'
     get 'mapping/map_item_editor'
     post 'mapping/process_map_item'
+
+    # flash notifications route via completed ajax calls
+    get 'flash_notifier/flash_notifications'
 
     # You can have the root of your site routed with "root"
     root 'external#login'

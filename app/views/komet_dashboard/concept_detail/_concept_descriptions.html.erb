@@ -8,8 +8,9 @@
         <div class="komet-concept-section-panel-header komet-concept-description-panel-header">
 
             <!-- expand/collapse icon - controls details drawer -->
-            <div class="glyphicon glyphicon-plus-sign" onclick="WindowManager.viewers[<%= @viewer_id %>].togglePanelDetails('komet_concept_description_panel_<%= @viewer_id %>_<%= description[:uuid] %>')"></div>
-
+            <button type="button" class="komet-link-button" onclick="WindowManager.viewers[<%= @viewer_id %>].togglePanelDetails('komet_concept_description_panel_<%= @viewer_id %>_<%= description[:uuid] %>')" title="Expand">
+                <div class="glyphicon glyphicon-plus-sign"></div>
+            </button>
 
             <div class="komet-concept-description-header-block">
 

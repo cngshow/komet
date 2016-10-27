@@ -2,30 +2,46 @@
 
 <nav class="komet-navbar" role="navigation">
 
-  <div class="komet-navbar-header"  role="navigation">
-    <div class="komet-logo-komet" title="KOMET">KOMET</div> <div class="komet-logo-tooling" title="Tooling">Tooling</div>
-  </div>
-
-  <div class="komet-navbar-navigation" role="navigation">
-
-    <div onclick="location.replace('<%= komet_dashboard_dashboard_path %>')" title="Taxonomy Dashboard" class="active" role="navigation">Taxonomy Dashboard</div>
-    <div onclick="location.replace('<%= workflow_dashboard_path %>')" title="Workflows" role="navigation">Workflows</div>
-
-    <div class="dropdown" role="navigation">
-      <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false" title="Actions">Actions <span class="caret"></span></a>
-      <ul class="dropdown-menu" aria-hidden="true" aria-label="submenu">
-        <li><a onclick="$.publish(KometChannels.Taxonomy.taxonomyConceptEditorChannel, [null, WindowManager.getLinkedViewerID(), WindowManager.INLINE]); return false;" title="Create New Concept">Create New Concept</a></li>
-        <li><a onclick="MappingModule.createNewMapSet(true); return false;" title="Create New Map">Create New Map</a></li>
-      </ul>
+    <div class="komet-navbar-header" role="navigation">
+        <div class="komet-logo-komet" title="KOMET">KOMET</div> <div class="komet-logo-tooling" title="Tooling">Tooling</div>
     </div>
 
-  </div>
+    <div class="komet-navbar-navigation" role="navigation">
 
-  <div class="komet-navbar-tools" role="navigation">
-    <div><div class="glyphicon glyphicon-cog" id="komet_user_preference_link" title="Settings"></div></div>
-    <div><div class="glyphicon glyphicon-user" title="User ID"></div> <%= raw komet_user %></div>
-    <div id="logout" onclick="location.replace('<%= logout_path %>')"><div class="glyphicon glyphicon-log-out" title="Logout"></div> Logout</div>
-  </div>
+        <div>
+            <button type="button" class="komet-link-button" onclick="location.replace('<%= komet_dashboard_dashboard_path %>')" title="Taxonomy Dashboard" role="navigation">Taxonomy Dashboard</button>
+        </div>
+
+        <!--<div>-->
+            <!--<button type="button" class="komet-link-button" onclick="location.replace('<%#= workflow_dashboard_path %>')" title="Workflows" role="navigation">Workflows</button>-->
+        <!--</div>-->
+
+        <div class="dropdown" role="presentation">
+            <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false" title="Actions">Actions <span class="caret"></span></a>
+            <ul class="dropdown-menu" aria-hidden="true" aria-label="submenu">
+                <li><a href="#" onclick="$.publish(KometChannels.Taxonomy.taxonomyConceptEditorChannel, [null, WindowManager.getLinkedViewerID(), WindowManager.INLINE]); return false;" title="Create New Concept">Create New Concept</a></li>
+                <li><a href="#" onclick="MappingModule.createNewMapSet(true); return false;" title="Create New Map">Create New Map</a></li>
+            </ul>
+        </div>
+
+    </div>
+
+    <div class="komet-navbar-tools" role="navigation">
+
+        <div>
+            <button type="button" class="komet-link-button" title="Settings" id="komet_user_preference_link" role="navigation">
+                <div class="glyphicon glyphicon-cog"></div>
+            </button>
+        </div>
+
+        <div><div class="glyphicon glyphicon-user" title="User ID"></div> <%= raw komet_user %></div>
+
+        <div>
+            <button type="button" class="komet-link-button" id="logout" onclick="location.replace('<%= logout_path %>')" title="Logout" role="navigation">
+                <div class="glyphicon glyphicon-log-out" title="Logout"></div> Logout
+            </button>
+        </div>
+    </div>
 
 </nav>
 

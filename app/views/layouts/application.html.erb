@@ -21,7 +21,8 @@
   <%= yield %>
 </main>
 <footer class="komet-workflow-action-bar">
-<%= render partial: 'layouts/workflow_footer'%>
+  KOMET Tooling <%= $PROPS['PRISME.war_version'] ? $PROPS['PRISME.war_version'] : 'Unversioned by PRISME.' %>
+<%#= render partial: 'layouts/workflow_footer'%>
 </footer>
 </body>
     <script>

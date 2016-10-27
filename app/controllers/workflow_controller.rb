@@ -28,6 +28,7 @@ class WorkflowController < ApplicationController
 
   layout 'workflow'
 
+
   def create_workflow #create workflow on success it returns processID
     default_definition = get_all_definition.first.id #this makes a call to all definition rest api and get definitionID
     name = params[:name] #populated from create workflow form and passed in from javascript file workflow.js line 82 has saveworkflow function
@@ -54,11 +55,17 @@ class WorkflowController < ApplicationController
   end
 
 
-  def get_workflowLock
-    @workflowLockState = get_workflow_details(action: WorkflowRestActions::ACTION_LOCKED)
-  end
+  # def get_workflowLock
+  #   @workflowLockState = get_workflow_details(action: WorkflowRestActions::ACTION_LOCKED)
+  # end
 
   def set_user_workflow
+    process_id = params[:process_id]
+    result = WorkflowRest.get_workflow(processId_or_uuid_or_nid: process_id,action: WorkflowRestActions::ACTION_LOCK, body_params: {}, additional_req_params: {editToken: get_edit_token, acquireLock: true})
+    # if result.is_a? CommonRest::UnexpectedResponse
+    #   render json: {} #not sure
+    #   return
+    # end
     set_user_workflow_session
     render json: {}
   end
@@ -142,21 +149,22 @@ class WorkflowController < ApplicationController
   end
 
   def advance_workflow
-    #grab params
     comment = params[:wfl_modal_comment]
-    transition_uuid = params[:transition_uuid]
+    transition_action = params[:transition_action]
     advancement = RestWorkflowProcessAdvancementData.new
-    advancement.actionRequested = 'Edit'
+    advancement.actionRequested = transition_action
     advancement.comment = comment
-    result = WorkflowRest.get_workflow(action: WorkflowRestActions::ACTION_ADVANCE, body_params: advancement, additional_req_params: {editToken: get_edit_token, CommonRest::CacheRequest => false})
+    result = WorkflowRest.get_workflow(action: WorkflowRestActions::ACTION_ADVANCE, body_params: advancement, additional_req_params: {editToken: get_edit_token})
+    failure = result.is_a? CommonRest::UnexpectedResponse
     $log.debug("Advanced: #{result}")
-    clear_user_workflow
+    clear_user_workflow  unless failure
+    flash.alert = result.body if failure
     redirect_to komet_dashboard_dashboard_path
   end
 
   private
   def set_user_workflow_session(args = {})
-    # there is only one definition right now
+    #there is only one definition right now
     def_uuid = args.has_key?(:def_uuid) ? args[:def_uuid] : get_all_definition.first.id
     process_id = args.has_key?(:process_id) ? args[:process_id] : params[:process_id]
 

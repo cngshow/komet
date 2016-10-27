@@ -5,14 +5,16 @@
 
         <div class="panel-heading">
             <span class="panel-title komet-section-title">
-              <span id="komet_concept_panel_tree_link_<%= @viewer_id %>" class="fa fa-chain-broken" onclick="WindowManager.toggleViewerLinkage('<%= @viewer_id %>', WindowManager.getLinkedViewerID() != '<%= @viewer_id %>');" title="Viewer linked to Taxonomy Tree. Click to unlink."></span>
+                <button type="button" class="komet-link-button" onclick="WindowManager.toggleViewerLinkage('<%= @viewer_id %>', WindowManager.getLinkedViewerID() != '<%= @viewer_id %>');" title="Viewer linked to Taxonomy Tree. Click to unlink.">
+                    <span id="komet_concept_panel_tree_link_<%= @viewer_id %>" class="fa fa-chain-broken" ></span>
+                </button>
                 New Concept
             </span>
 
             <div class="komet-panel-tools">
-                <!--<div class="glyphicon glyphicon-new-window"></div>
-                <div class="glyphicon glyphicon-resize-full"></div>-->
-                <div class="glyphicon glyphicon-remove" onclick="WindowManager.closeViewer('<%= @viewer_id %>')"></div>
+                <button type="button" class="komet-link-button" onclick="WindowManager.closeViewer('<%= @viewer_id %>')" title="Close Viewer">
+                    <div class="glyphicon glyphicon-remove"></div>
+                </button>
             </div>
         </div>
 
@@ -21,7 +23,7 @@
             <div id="komet_concept_save_section_<%= @viewer_id %>">
                 All fields required except where noted as Optional.
                 <button type="button" class="btn btn-default" onclick="WindowManager.viewers[<%= @viewer_id %>].cancelAction('<%= @viewer_previous_content_type %>', '<%= @viewer_previous_content_id %>')">Cancel</button>
-                <button type="button" class="btn btn-primary ui-state-disabled" id="komet_concept_save_<%= @viewer_id %>" onclick="WindowManager.viewers[<%= @viewer_id %>].showSaveSection('confirm')">Save</button>
+                <button type="button" class="btn btn-primary ui-state-disabled" disabled id="komet_concept_save_<%= @viewer_id %>" onclick="WindowManager.viewers[<%= @viewer_id %>].showSaveSection('confirm')">Save</button>
             </div>
 
             <div class="komet-concept-section-title komet-concept-associations-title">ASSOCIATIONS</div>

@@ -3,29 +3,31 @@
 
 <div id="komet_concept_diagram_panel_<%= @viewer_id %>" class="komet-concept-section-panel komet-concept-diagram-panel">
 
-  <!-- main header block - always visible -->
-  <div class="komet-concept-section-panel-header">
+    <!-- main header block - always visible -->
+    <div class="komet-concept-section-panel-header">
 
-    <!-- expand/collapse icon - controls details drawer -->
-    <div class="glyphicon glyphicon-plus-sign" onclick="WindowManager.viewers[<%= @viewer_id %>].togglePanelDetails('komet_concept_diagram_panel_<%= @viewer_id %>', null, true)"></div>
+        <!-- expand/collapse icon - controls details drawer -->
+        <button type="button" class="komet-link-button" onclick="WindowManager.viewers[<%= @viewer_id %>].togglePanelDetails('komet_concept_diagram_panel_<%= @viewer_id %>', null, true)" title="Expand">
+            <div class="glyphicon glyphicon-plus-sign"></div>
+        </button>
 
-    <!-- description type, refset -->
-    <div>
-      <span id="concept_diagram_header_text_<%= @viewer_id %>">Click here to view diagram</span>
+        <!-- description type, refset -->
+        <div>
+            <span id="concept_diagram_header_text_<%= @viewer_id %>">Click here to view diagram</span>
+        </div>
+
     </div>
 
-  </div>
+    <!-- details drawer - can be collapsed -->
+    <div class="komet-concept-section-panel-details">
+        <div id="concept_diagram_notfound">No Svg Diagram </div>
+        <div id="svgbasics_<%= @viewer_id %>" class="komet-concept-svg"></div>
 
-  <!-- details drawer - can be collapsed -->
-  <div class="komet-concept-section-panel-details">
-    <div id="concept_diagram_notfound">No Svg Diagram </div>
-    <div id="svgbasics_<%= @viewer_id %>" class="komet-concept-svg"></div>
-
-  </div>
+    </div>
 
 </div>
 
 <script>
-  WindowManager.viewers[<%= @viewer_id %>].setPanelState('komet_concept_diagram_panel_<%= @viewer_id %>', null, SvgHelper.renderDiagram);
+    WindowManager.viewers[<%= @viewer_id %>].setPanelState('komet_concept_diagram_panel_<%= @viewer_id %>', null, SvgHelper.renderDiagram);
 </script>
 

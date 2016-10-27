@@ -1,5 +1,12 @@
 namespace :isaac do
 
+  def require_all(dir)
+    ruby_files = Dir.glob(dir + '*.rb')
+    ruby_files.each do |rf|
+      require rf
+    end
+  end
+
   # set ISAAC_PATH=<path to isaac workspace>
   local_isaac = ENV['ISAAC_PATH']
 
@@ -41,7 +48,7 @@ namespace :isaac do
     raise "Issac root is not defined.  You can set the environment variable ISAAC_ROOT=http://my.isaac.instance.com" if ISAAC_ROOT.empty?
     system('mvn -U initialize')
     puts("Starting rest calls, a tails of the log will let you observer the progress...")
-    require './lib/isaac_rest/id_apis_rest'
+    require_all './lib/isaac_rest/'
     ApplicationController.parse_isaac_metadata_auxiliary
     dump = Marshal.dump($isaac_metadata_auxiliary)
     open(ApplicationController::METADATA_DUMP_FILE, 'wb') { |f| f.puts dump }
