@@ -25,12 +25,12 @@
                 <span>Expand All</span>
             </button>
 
-          <% if can_edit_concept? %>
+          <%# if can_edit_concept? %>
             <button type="button" class="komet-link-button komet-panel-tools-control" onclick="$.publish(KometChannels.Taxonomy.taxonomyConceptEditorChannel, ['<%= @concept_id %>', '<%= @viewer_id %>', WindowManager.INLINE]);" title="Edit Concept">
                 <div class="fa fa-pencil-square" title="Edit Concept"></div>
                 <span>Edit Concept</span>
             </button>
-          <% end %>
+          <%# end %>
 
           <div class="komet-panel-tools-control">
                 <div class="btn-group" data-toggle="buttons">
