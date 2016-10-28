@@ -4,7 +4,6 @@ require 'openssl'
 require './lib/rails_common/roles/ssoi'
 require './lib/rails_common/roles/user_session'
 require './lib/rails_common/util/servlet_support'
-require './lib/rails_common/util/bootstrap_notifier'
 
 OpenSSL::SSL::VERIFY_PEER = OpenSSL::SSL::VERIFY_NONE
 
@@ -15,7 +14,6 @@ class ApplicationController < ActionController::Base
   include SSOI
   include UserSession
   include ServletSupport
-  include BootstrapNotifier
 
   CACHE_TYPE_TAXONOMY = [AssociationRest,CommentApis, ConceptRest, IdAPIsRest, LogicGraphRest, MappingApis, SearchApis, SememeRest, TaxonomyRest].freeze
   CACHE_TYPE_SYSTEM = [CoordinateRest, SystemApis].freeze
@@ -177,6 +175,7 @@ class ApplicationController < ActionController::Base
   def setup_constants
     ApplicationController.parse_isaac_metadata_auxiliary
     gon.IsaacMetadataAuxiliary = $isaac_metadata_auxiliary
+    gon.roles = pundit_user[:roles]
   end
 
   def pundit_user
@@ -187,11 +186,6 @@ class ApplicationController < ActionController::Base
     else
       {user: nil, roles: [], token: 'Not Authorized'}
     end
-  end
-
-  #dynamically add authorization methods
-  def add_pundit_methods
-    PunditDynamicRoles::add_controller_methods self
   end
 
   ##
