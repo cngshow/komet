@@ -30,7 +30,7 @@ class ApplicationController < ActionController::Base
   after_action :verify_authorized
   before_action :ensure_rest_version
   before_action :ensure_roles
-  before_action :read_only? # must be after ensure_roles
+  before_action :read_only # must be after ensure_roles
   # todo tried testing with reviewer? and could not get to the login page
 
   before_action :set_render_menu, :setup_routes, :setup_constants

@@ -32,8 +32,8 @@ class KometDashboardController < ApplicationController
     after_filter :byte_size unless Rails.env.production?
     skip_before_action :ensure_roles, only: [:version]
     skip_after_action :verify_authorized, only: [:version]
-    skip_before_action :read_only?, only: [:version]
-    before_action :can_edit_concept?, only: [:get_concept_create_info, :create_concept, :get_concept_edit_info, :edit_concept, :clone_concept, :change_concept_state  ]
+    skip_before_action :read_only, only: [:version]
+    before_action :can_edit_concept, only: [:get_concept_create_info, :create_concept, :get_concept_edit_info, :edit_concept, :clone_concept, :change_concept_state  ]
 
     ##
     # load_tree_data - RESTful route for populating the taxonomy tree using an http :GET
