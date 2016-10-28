@@ -179,7 +179,7 @@ class ApplicationController < ActionController::Base
   end
 
   def pundit_user
-    if user_session_defined?
+    if (user_session_defined? && user_session(UserSession::LOGIN))
       {user: user_session(UserSession::LOGIN),
        roles: user_session(UserSession::ROLES),
        token: user_session(UserSession::TOKEN)}
