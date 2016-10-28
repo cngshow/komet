@@ -729,7 +729,7 @@ var UIHelper = (function () {
                     }
 
                     items.copyUuid = {name: "Copy UUID", icon: "context-menu-icon glyphicon-copy", callback: copyToClipboard(uuid)};
-
+//GPB BEGIN if the user has the editor role then include these... CAN WE MAKE THIS A .ERB FILE?
                     items.separatorConceptEditor = {type: "cm_separator"};
 
                     items.editConcept = {name:"Edit Concept", icon: "context-menu-icon glyphicon-pencil", callback:  openConceptEditor($triggerElement, uuid)};
@@ -799,6 +799,7 @@ var UIHelper = (function () {
                             };
                         }
                     }
+//GPB END if the user has the editor role then include these...
 
                 } else if (menuType == "paste_target") {
 
