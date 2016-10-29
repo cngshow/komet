@@ -26,7 +26,7 @@ require './lib/isaac_rest/search_apis_rest'
 # handles the loading of the taxonomy tree
 class KometDashboardController < ApplicationController
     include TaxonomyConcern, ConceptConcern, InstrumentationConcern, SearchApis
-    include CommonController
+    include CommonController, TaxonomyHelper
 
     before_action :setup_routes, :setup_constants, :only => [:dashboard]
     after_filter :byte_size unless Rails.env.production?
@@ -352,24 +352,6 @@ class KometDashboardController < ApplicationController
         end
 
         tree_nodes
-    end
-
-    def get_tree_node_flag(flag_name, ids_to_match)
-
-        flag = ''
-
-        if session['color' + flag_name]
-
-            colors = session['color' + flag_name].find_all{|key, hash|
-                hash[flag_name + 'id'].to_i.in?(ids_to_match) && hash['colorid'] != ''
-            }
-
-            colors.each do |color|
-                flag = ' <span class="komet-node-' + flag_name + '-flag" style="border-color: ' + color[1]['colorid'] + ';"></span>'
-            end
-        end
-
-        flag
     end
 
     ##

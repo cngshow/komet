@@ -191,11 +191,9 @@ var UIHelper = (function () {
         if (enable){
 
             element.removeClass("ui-state-disabled");
-            element.addClass("ui-state-enabled");
             element.prop("disabled", false);
         } else {
 
-            element.removeClass("ui-state-enabled");
             element.addClass("ui-state-disabled");
             element.prop("disabled", true);
         }
@@ -937,13 +935,6 @@ var UIHelper = (function () {
 
                 UIHelper.removePageMessages(splitter);
 
-                //var viewerPanel = element.parents("div[id^=komet_viewer_]");
-                //
-                //// if the viewerID was not passed it (but not if it is null), look up what it should be
-                //if (viewerPanel.length > 0) {
-                //    splitter = viewerPanel;
-                //}
-
                 if (conceptText == null){
                     conceptText = "";
                 } else {
@@ -952,8 +943,14 @@ var UIHelper = (function () {
 
                 if (results.state != null) {
 
-                    splitter.prepend(UIHelper.generatePageMessage("The concept" + conceptText + " state was successfully updated.", true, "success"));
-                    TaxonomyModule.tree.reloadTreeStatedView($("#komet_taxonomy_stated_inferred")[0].value);
+                    splitter.prepend(UIHelper.generatePageMessage("The state of concept " + conceptText + " was successfully updated.", true, "success"));
+                    TaxonomyModule.tree.reloadTreeStatedView(TaxonomyModule.getStatedView(), false);
+
+                    // if the mapping module has been loaded then refresh the mapping tree
+                    if (MappingModule.tree){
+                        MappingModule.tree.reloadTree();
+                    }
+
                 } else {
 
                     splitter.prepend(UIHelper.generatePageMessage("The concept state was not updated."));
@@ -990,6 +987,7 @@ var UIHelper = (function () {
         loadAutoSuggestRecents: loadAutoSuggestRecents,
         useAutoSuggestRecent: useAutoSuggestRecent,
         getElementRightFromWindow: getElementRightFromWindow,
+        changeConceptState: changeConceptState,
         VHAT: VHAT,
         SNOMED: SNOMED,
         LOINC: LOINC,

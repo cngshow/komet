@@ -24,7 +24,7 @@ require './lib/isaac_rest/id_apis_rest'
 # MappingController -
 # handles the concept mapping screens
 class MappingController < ApplicationController
-    include ApplicationHelper, CommonController
+    include ApplicationHelper, CommonController, TaxonomyHelper
 
     before_filter :init_session
     skip_before_filter :set_render_menu, :only => [:map_set_editor]
@@ -61,13 +61,17 @@ class MappingController < ApplicationController
 
             set_hash = {}
 
+            flags = get_tree_node_flag('module', [set.mappingSetStamp.moduleSequence])
+            flags << get_tree_node_flag('path', [set.mappingSetStamp.pathSequence])
+
             set_hash[:id] = get_next_id
             set_hash[:set_id] = set.identifiers.uuids.first
-            set_hash[:text] = set.name
+            set_hash[:text] = set.name + flags
             set_hash[:state] = set.mappingSetStamp.state.enumName
             # TODO - remove the hard-coding of type to 'vhat' when the type flags are implemented in the REST APIs
             set_hash[:terminology_type] = 'vhat'
             set_hash[:icon] = 'komet-tree-node-icon fa fa-folder'
+
             set_hash[:a_attr] = {class: 'komet-context-menu',
                                  'data-menu-type' => 'map_set',
                                  'data-menu-uuid' => set_hash[:set_id],
@@ -75,6 +79,10 @@ class MappingController < ApplicationController
                                  'data-menu-state' => set_hash[:state],
                                  'data-menu-concept-terminology-type' => set_hash[:terminology_type]
             }
+
+            if set_hash[:state].downcase.eql?('inactive')
+                set_hash[:a_attr][:class] << ' komet-inactive-tree-node'
+            end
 
             mapping_tree << set_hash
         end
@@ -97,7 +105,7 @@ class MappingController < ApplicationController
             @viewer_id = get_next_id.to_s
         end
 
-        if @mapping_action == 'set_details' || @mapping_action == 'create_set'
+        if @mapping_action == 'set_details' || @mapping_action == 'create_set' || @mapping_action == 'edit_set'
             map_set_editor
         end
 

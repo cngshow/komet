@@ -2,7 +2,7 @@ var MappingModule = (function () {
 
     const SET_LIST = 'set_list';
     const SET_DETAILS = 'set_details';
-    const SET_EDITOR = 'set_editor';
+    const SET_EDITOR = 'edit_set';
     const ITEM_EDITOR = 'item_editor';
     const CREATE_SET = 'create_set';
 
@@ -31,16 +31,15 @@ var MappingModule = (function () {
     function subscribeToMappingTree() {
 
         // listen for the onChange event broadcast by any of the taxonomy this.trees.
-        $.subscribe(KometChannels.Mapping.mappingTreeNodeSelectedChannel, function (e, treeID, setID, viewerID, windowType) {
+        $.subscribe(KometChannels.Mapping.mappingTreeNodeSelectedChannel, function (e, treeID, setID, viewerID, windowType, action) {
 
-            //viewerID = WindowManager.getLinkedViewerID();
+            if (action == undefined || action == null) {
 
-            var action;
-
-            if (setID == null || setID == 0){
-                action = SET_LIST;
-            } else {
-                action = SET_DETAILS;
+                if (setID == null || setID == 0) {
+                    action = SET_LIST;
+                } else {
+                    action = SET_DETAILS;
+                }
             }
 
             callLoadViewerData(setID, action, viewerID, windowType);
