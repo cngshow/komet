@@ -11,7 +11,7 @@ class FlashNotifierController < ApplicationController
 
   # this is called from application.js when ajax calls are completed to flash messages
   def flash_notifications
-    $log.debug("calling flash notifications")
+    $log.debug('calling flash notifications')
     render json: show_flash
   end
 

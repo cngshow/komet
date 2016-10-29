@@ -75,6 +75,48 @@ $( document ).ajaxComplete(function(event, jqXHR, ajaxOptions) {
         });
     }
 });
+/*
+$( document ).ajaxSend(function(event, jqXHR, ajaxOptions) {
+    var url = ajaxOptions.url;
+    var patt = new RegExp(gon.routes.flash_notifier_roles_path);
+    var res = patt.test(url);
+console.log(gon.routes.flash_notifier_roles_path);
+    // only make the rest call for routes that are NOT the flash notifier call
+    // if (! res) {
+    //     $.get(gon.routes.flash_notifier_roles_path, function (results) {
+    //         console.log(results);
+    //         console.log('- ' + gon.roles);
+    //
+    //         if (arr_diff(gon.roles, results).length != 0) {
+    //             flash_notify({message: 'Your roles have changed. Please refresh your browser.'}, {type: 'danger'});
+    //         }
+    //     });
+    // }
+});
+
+function arr_diff (a1, a2) {
+
+    var a = [], diff = [];
+
+    for (var i = 0; i < a1.length; i++) {
+        a[a1[i]] = true;
+    }
+
+    for (var i = 0; i < a2.length; i++) {
+        if (a[a2[i]]) {
+            delete a[a2[i]];
+        } else {
+            a[a2[i]] = true;
+        }
+    }
+
+    for (var k in a) {
+        diff.push(k);
+    }
+
+    return diff;
+}
+*/
 
 //** javascript plugin overrides
 
