@@ -16,18 +16,6 @@
  See the License for the specific language governing permissions and
  limitations under the License.
  */
-
-var inArray = function(array, value) {
-  var i = array.length;
-
-  while (i--) {
-    if (array[i] == value) {
-      return true;
-    }
-  }
-  return false;
-};
-
 var RolesModule = (function() {
   <%
     method_bodies = ''
@@ -43,7 +31,7 @@ var RolesModule = (function() {
       Roles::COMPOSITE_ROLES.each_pair { |func_name, roles|
       public_methods << "#{func_name}: #{func_name}\n"
       method_bodies << "function #{func_name}() {\nvar ret = false;\n"
-      roles.each { |r| method_bodies << "\tret = ret || inArray(gon.roles, '#{r}');\n" }
+      roles.each { |r| method_bodies << "\tret = ret || Common.in_array(gon.roles, '#{r}');\n" }
       method_bodies << "return ret;\n}\n\n"
     }
   %>
