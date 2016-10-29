@@ -90,6 +90,161 @@ module Data
 module Mapping
 
   # (no documentation provided)
+  class RestMappingItemVersionBase 
+
+    # The target concept sequence being mapped by this map item.  This field is optional, and may be blank, if no target mapping
+    # is available.
+    attr_accessor :targetConcept
+    # An (optional) concept sequence used to qualify this mapping entry
+    attr_accessor :qualifierConcept
+    # The (optional) extended fields which carry additional information about this map item.  For details on these fields, read
+    # the assemblage definition of the assemblage concept provided with RestMappingSetVersion#mapItemExtendedFieldsType for
+    # the RestMappingSetVersion of #mapSetConcept
+    attr_accessor :mapItemExtendedFields
+    # True to indicate the mapping item should be set as active, false for inactive.
+    # This field is optional, if not provided, it will be assumed to be active.
+    attr_accessor :active
+
+    # the json hash for this RestMappingItemVersionBase
+    def to_jaxb_json_hash
+      _h = {}
+      _h['targetConcept'] = targetConcept.to_jaxb_json_hash unless targetConcept.nil?
+      _h['qualifierConcept'] = qualifierConcept.to_jaxb_json_hash unless qualifierConcept.nil?
+      if !mapItemExtendedFields.nil?
+        _ha = Array.new
+        mapItemExtendedFields.each { | _item | _ha.push _item.to_jaxb_json_hash }
+        _h['mapItemExtendedFields'] = _ha
+      end
+      _h['active'] = active.to_jaxb_json_hash unless active.nil?
+      return _h
+    end
+
+    # the json (string form) for this RestMappingItemVersionBase
+    def to_json
+      to_jaxb_json_hash.to_json
+    end
+
+    #initializes this RestMappingItemVersionBase with a json hash
+    def init_jaxb_json_hash(_o)
+        if !_o['targetConcept'].nil?
+          _oa = _o['targetConcept']
+            if(_oa.is_a? Hash)
+              @targetConcept = EnunciateHelpers::LAMB_CLASS_AWARE.call(_oa) if _oa['@class']
+              @targetConcept =  Fixnum.from_json(_oa) unless _oa['@class']
+            elsif (_oa.is_a? Array)
+              #an array(of hashes hopefully) or scalar
+              @targetConcept = Array.new
+              _oa.each { | _item | 
+                 if ((_item.nil? || _item['@class'].nil?)rescue true)
+                   @targetConcept.push Fixnum.from_json(_item)
+                 else
+                   @targetConcept.push EnunciateHelpers::LAMB_CLASS_AWARE.call(_item)
+                 end
+               }
+            else
+                @targetConcept = _oa
+            end
+          end
+        if !_o['qualifierConcept'].nil?
+          _oa = _o['qualifierConcept']
+            if(_oa.is_a? Hash)
+              @qualifierConcept = EnunciateHelpers::LAMB_CLASS_AWARE.call(_oa) if _oa['@class']
+              @qualifierConcept =  Fixnum.from_json(_oa) unless _oa['@class']
+            elsif (_oa.is_a? Array)
+              #an array(of hashes hopefully) or scalar
+              @qualifierConcept = Array.new
+              _oa.each { | _item | 
+                 if ((_item.nil? || _item['@class'].nil?)rescue true)
+                   @qualifierConcept.push Fixnum.from_json(_item)
+                 else
+                   @qualifierConcept.push EnunciateHelpers::LAMB_CLASS_AWARE.call(_item)
+                 end
+               }
+            else
+                @qualifierConcept = _oa
+            end
+          end
+        if !_o['mapItemExtendedFields'].nil?
+          _oa = _o['mapItemExtendedFields']
+            if(_oa.is_a? Hash)
+              @mapItemExtendedFields = EnunciateHelpers::LAMB_CLASS_AWARE.call(_oa) if _oa['@class']
+              @mapItemExtendedFields =  Gov::Vha::Isaac::Rest::Api1::Data::Sememe::RestDynamicSememeData.from_json(_oa) unless _oa['@class']
+            elsif (_oa.is_a? Array)
+              #an array(of hashes hopefully) or scalar
+              @mapItemExtendedFields = Array.new
+              _oa.each { | _item | 
+                 if ((_item.nil? || _item['@class'].nil?)rescue true)
+                   @mapItemExtendedFields.push Gov::Vha::Isaac::Rest::Api1::Data::Sememe::RestDynamicSememeData.from_json(_item)
+                 else
+                   @mapItemExtendedFields.push EnunciateHelpers::LAMB_CLASS_AWARE.call(_item)
+                 end
+               }
+            else
+                @mapItemExtendedFields = _oa
+            end
+          end
+        if !_o['active'].nil?
+          _oa = _o['active']
+            if(_oa.is_a? Hash)
+              @active = EnunciateHelpers::LAMB_CLASS_AWARE.call(_oa) if _oa['@class']
+              @active =  Boolean.from_json(_oa) unless _oa['@class']
+            elsif (_oa.is_a? Array)
+              #an array(of hashes hopefully) or scalar
+              @active = Array.new
+              _oa.each { | _item | 
+                 if ((_item.nil? || _item['@class'].nil?)rescue true)
+                   @active.push Boolean.from_json(_item)
+                 else
+                   @active.push EnunciateHelpers::LAMB_CLASS_AWARE.call(_item)
+                 end
+               }
+            else
+                @active = _oa
+            end
+          end
+    end
+
+    # constructs a RestMappingItemVersionBase from a (parsed) JSON hash
+    def self.from_json(o)
+      if o.nil?
+        return nil
+      else
+        inst = new
+        inst.init_jaxb_json_hash o
+        return inst
+      end
+    end
+  end
+
+end
+
+end
+
+end
+
+end
+
+end
+
+end
+
+end
+
+module Gov
+
+module Vha
+
+module Isaac
+
+module Rest
+
+module Api1
+
+module Data
+
+module Mapping
+
+  # (no documentation provided)
   class RestMappingSetVersionBase 
 
     # The primary name of this map set.
@@ -102,7 +257,8 @@ module Mapping
     # The (optional) purpose of this map set - or extended description of this map set.
     attr_accessor :purpose
     # True to indicate the mapping set should be set as active, false for inactive.
-    # This field is optional, if not provided, it will be assumed to be active.
+    # This field is optional, if not provided, it will be assumed to be active.  On return,
+    # this field duplicates information provided in the stamp.
     attr_accessor :active
 
     # the json hash for this RestMappingSetVersionBase
@@ -221,360 +377,6 @@ module Mapping
     end
 
     # constructs a RestMappingSetVersionBase from a (parsed) JSON hash
-    def self.from_json(o)
-      if o.nil?
-        return nil
-      else
-        inst = new
-        inst.init_jaxb_json_hash o
-        return inst
-      end
-    end
-  end
-
-end
-
-end
-
-end
-
-end
-
-end
-
-end
-
-end
-
-module Gov
-
-module Vha
-
-module Isaac
-
-module Rest
-
-module Api1
-
-module Data
-
-module Comment
-
-  # (no documentation provided)
-  class RestCommentVersionBase 
-
-    # The comment
-    attr_accessor :comment
-    # An (optional) comment context to store with the comment.  Typically used for key words, etc.
-    attr_accessor :commentContext
-    # True to indicate the comment should be set as active, false for inactive.
-    # This field is optional, if not provided, it will be assumed to be active.
-    attr_accessor :active
-
-    # the json hash for this RestCommentVersionBase
-    def to_jaxb_json_hash
-      _h = {}
-      _h['comment'] = comment.to_jaxb_json_hash unless comment.nil?
-      _h['commentContext'] = commentContext.to_jaxb_json_hash unless commentContext.nil?
-      _h['active'] = active.to_jaxb_json_hash unless active.nil?
-      return _h
-    end
-
-    # the json (string form) for this RestCommentVersionBase
-    def to_json
-      to_jaxb_json_hash.to_json
-    end
-
-    #initializes this RestCommentVersionBase with a json hash
-    def init_jaxb_json_hash(_o)
-        if !_o['comment'].nil?
-          _oa = _o['comment']
-            if(_oa.is_a? Hash)
-              @comment = EnunciateHelpers::LAMB_CLASS_AWARE.call(_oa) if _oa['@class']
-              @comment =  String.from_json(_oa) unless _oa['@class']
-            elsif (_oa.is_a? Array)
-              #an array(of hashes hopefully) or scalar
-              @comment = Array.new
-              _oa.each { | _item | 
-                 if ((_item.nil? || _item['@class'].nil?)rescue true)
-                   @comment.push String.from_json(_item)
-                 else
-                   @comment.push EnunciateHelpers::LAMB_CLASS_AWARE.call(_item)
-                 end
-               }
-            else
-                @comment = _oa
-            end
-          end
-        if !_o['commentContext'].nil?
-          _oa = _o['commentContext']
-            if(_oa.is_a? Hash)
-              @commentContext = EnunciateHelpers::LAMB_CLASS_AWARE.call(_oa) if _oa['@class']
-              @commentContext =  String.from_json(_oa) unless _oa['@class']
-            elsif (_oa.is_a? Array)
-              #an array(of hashes hopefully) or scalar
-              @commentContext = Array.new
-              _oa.each { | _item | 
-                 if ((_item.nil? || _item['@class'].nil?)rescue true)
-                   @commentContext.push String.from_json(_item)
-                 else
-                   @commentContext.push EnunciateHelpers::LAMB_CLASS_AWARE.call(_item)
-                 end
-               }
-            else
-                @commentContext = _oa
-            end
-          end
-        if !_o['active'].nil?
-          _oa = _o['active']
-            if(_oa.is_a? Hash)
-              @active = EnunciateHelpers::LAMB_CLASS_AWARE.call(_oa) if _oa['@class']
-              @active =  Boolean.from_json(_oa) unless _oa['@class']
-            elsif (_oa.is_a? Array)
-              #an array(of hashes hopefully) or scalar
-              @active = Array.new
-              _oa.each { | _item | 
-                 if ((_item.nil? || _item['@class'].nil?)rescue true)
-                   @active.push Boolean.from_json(_item)
-                 else
-                   @active.push EnunciateHelpers::LAMB_CLASS_AWARE.call(_item)
-                 end
-               }
-            else
-                @active = _oa
-            end
-          end
-    end
-
-    # constructs a RestCommentVersionBase from a (parsed) JSON hash
-    def self.from_json(o)
-      if o.nil?
-        return nil
-      else
-        inst = new
-        inst.init_jaxb_json_hash o
-        return inst
-      end
-    end
-  end
-
-end
-
-end
-
-end
-
-end
-
-end
-
-end
-
-end
-
-module Gov
-
-module Vha
-
-module Isaac
-
-module Rest
-
-module Api1
-
-module Data
-
-module Workflow
-
-  # (no documentation provided)
-  class RestWorkflowProcessAdvancementData 
-
-    # The advancement action requested
-    attr_accessor :actionRequested
-    # The comment associated with the advancement
-    attr_accessor :comment
-
-    # the json hash for this RestWorkflowProcessAdvancementData
-    def to_jaxb_json_hash
-      _h = {}
-      _h['actionRequested'] = actionRequested.to_jaxb_json_hash unless actionRequested.nil?
-      _h['comment'] = comment.to_jaxb_json_hash unless comment.nil?
-      return _h
-    end
-
-    # the json (string form) for this RestWorkflowProcessAdvancementData
-    def to_json
-      to_jaxb_json_hash.to_json
-    end
-
-    #initializes this RestWorkflowProcessAdvancementData with a json hash
-    def init_jaxb_json_hash(_o)
-        if !_o['actionRequested'].nil?
-          _oa = _o['actionRequested']
-            if(_oa.is_a? Hash)
-              @actionRequested = EnunciateHelpers::LAMB_CLASS_AWARE.call(_oa) if _oa['@class']
-              @actionRequested =  String.from_json(_oa) unless _oa['@class']
-            elsif (_oa.is_a? Array)
-              #an array(of hashes hopefully) or scalar
-              @actionRequested = Array.new
-              _oa.each { | _item | 
-                 if ((_item.nil? || _item['@class'].nil?)rescue true)
-                   @actionRequested.push String.from_json(_item)
-                 else
-                   @actionRequested.push EnunciateHelpers::LAMB_CLASS_AWARE.call(_item)
-                 end
-               }
-            else
-                @actionRequested = _oa
-            end
-          end
-        if !_o['comment'].nil?
-          _oa = _o['comment']
-            if(_oa.is_a? Hash)
-              @comment = EnunciateHelpers::LAMB_CLASS_AWARE.call(_oa) if _oa['@class']
-              @comment =  String.from_json(_oa) unless _oa['@class']
-            elsif (_oa.is_a? Array)
-              #an array(of hashes hopefully) or scalar
-              @comment = Array.new
-              _oa.each { | _item | 
-                 if ((_item.nil? || _item['@class'].nil?)rescue true)
-                   @comment.push String.from_json(_item)
-                 else
-                   @comment.push EnunciateHelpers::LAMB_CLASS_AWARE.call(_item)
-                 end
-               }
-            else
-                @comment = _oa
-            end
-          end
-    end
-
-    # constructs a RestWorkflowProcessAdvancementData from a (parsed) JSON hash
-    def self.from_json(o)
-      if o.nil?
-        return nil
-      else
-        inst = new
-        inst.init_jaxb_json_hash o
-        return inst
-      end
-    end
-  end
-
-end
-
-end
-
-end
-
-end
-
-end
-
-end
-
-end
-
-module Gov
-
-module Vha
-
-module Isaac
-
-module Rest
-
-module Api1
-
-module Data
-
-module Workflow
-
-  # (no documentation provided)
-  class RestWorkflowProcessBaseCreate 
-
-    # The workflow definition id
-    attr_accessor :definitionId
-    # The process name
-    attr_accessor :name
-    # The process description
-    attr_accessor :description
-
-    # the json hash for this RestWorkflowProcessBaseCreate
-    def to_jaxb_json_hash
-      _h = {}
-      _h['definitionId'] = definitionId.to_jaxb_json_hash unless definitionId.nil?
-      _h['name'] = name.to_jaxb_json_hash unless name.nil?
-      _h['description'] = description.to_jaxb_json_hash unless description.nil?
-      return _h
-    end
-
-    # the json (string form) for this RestWorkflowProcessBaseCreate
-    def to_json
-      to_jaxb_json_hash.to_json
-    end
-
-    #initializes this RestWorkflowProcessBaseCreate with a json hash
-    def init_jaxb_json_hash(_o)
-        if !_o['definitionId'].nil?
-          _oa = _o['definitionId']
-            if(_oa.is_a? Hash)
-              @definitionId = EnunciateHelpers::LAMB_CLASS_AWARE.call(_oa) if _oa['@class']
-              @definitionId =  String.from_json(_oa) unless _oa['@class']
-            elsif (_oa.is_a? Array)
-              #an array(of hashes hopefully) or scalar
-              @definitionId = Array.new
-              _oa.each { | _item | 
-                 if ((_item.nil? || _item['@class'].nil?)rescue true)
-                   @definitionId.push String.from_json(_item)
-                 else
-                   @definitionId.push EnunciateHelpers::LAMB_CLASS_AWARE.call(_item)
-                 end
-               }
-            else
-                @definitionId = _oa
-            end
-          end
-        if !_o['name'].nil?
-          _oa = _o['name']
-            if(_oa.is_a? Hash)
-              @name = EnunciateHelpers::LAMB_CLASS_AWARE.call(_oa) if _oa['@class']
-              @name =  String.from_json(_oa) unless _oa['@class']
-            elsif (_oa.is_a? Array)
-              #an array(of hashes hopefully) or scalar
-              @name = Array.new
-              _oa.each { | _item | 
-                 if ((_item.nil? || _item['@class'].nil?)rescue true)
-                   @name.push String.from_json(_item)
-                 else
-                   @name.push EnunciateHelpers::LAMB_CLASS_AWARE.call(_item)
-                 end
-               }
-            else
-                @name = _oa
-            end
-          end
-        if !_o['description'].nil?
-          _oa = _o['description']
-            if(_oa.is_a? Hash)
-              @description = EnunciateHelpers::LAMB_CLASS_AWARE.call(_oa) if _oa['@class']
-              @description =  String.from_json(_oa) unless _oa['@class']
-            elsif (_oa.is_a? Array)
-              #an array(of hashes hopefully) or scalar
-              @description = Array.new
-              _oa.each { | _item | 
-                 if ((_item.nil? || _item['@class'].nil?)rescue true)
-                   @description.push String.from_json(_item)
-                 else
-                   @description.push EnunciateHelpers::LAMB_CLASS_AWARE.call(_item)
-                 end
-               }
-            else
-                @description = _oa
-            end
-          end
-    end
-
-    # constructs a RestWorkflowProcessBaseCreate from a (parsed) JSON hash
     def self.from_json(o)
       if o.nil?
         return nil
@@ -887,91 +689,71 @@ module Api1
 
 module Data
 
-module Sememe
+module Comment
 
   # (no documentation provided)
-  class RestDynamicSememeBase 
+  class RestCommentVersionBase 
 
-    # The data to attach with this sememe instance (if any).  This may be null, empty, or a length up to the defined length of the sememe definition.
-    # 
-    # The supplied data must match the definition of the sememe - which can be read via SememeAPIs#getSememeDefinition(String, String)
-    # (1/sememe/sememeDefinition/{assemblageId})
-    # 
-    # RestDynamicSememeData is an abstract type.  The data passed here, must be of a concrete type.  For the server to deserialize the type properly,
-    # a field must be included of the form &quot;@class&quot;: &quot;gov.vha.isaac.rest.api1.data.sememe.dataTypes.CLASSTYPE&quot;
-    # 
-    # where CLASSTYPE is one of:
-    # - RestDynamicSememeArray
-    # - RestDynamicSememeBoolean
-    # - RestDynamicSememeByteArray
-    # - RestDynamicSememeDouble
-    # - RestDynamicSememeFloat
-    # - RestDynamicSememeInteger,
-    # - RestDynamicSememeLong,
-    # - RestDynamicSememeString,
-    # - RestDynamicSememeNid
-    # - RestDynamicSememeSequence
-    # - RestDynamicSememeUUID
-    # 
-    # The class type strings are also available in the /rest/1/system/enumeration/restDynamicSememeDataType call, which returns all of the available data
-    # types, names, ids, and class type information.
-    # 
-    # Example JSON that provides two columns of differing types:
-    # 
-    # {
-    # &quot;assemblageConcept&quot;: &quot;-2147483449&quot;,
-    # &quot;referencedComponent&quot;: &quot;-2147483557&quot;,
-    # &quot;columnData&quot;: [{
-    # &quot;@class&quot;: &quot;gov.vha.isaac.rest.api1.data.sememe.dataTypes.RestDynamicSememeString&quot;,
-    # &quot;data&quot;: &quot;test&quot;
-    # &quot;columnNumber&quot;: &quot;0&quot;
-    # }, {
-    # &quot;@class&quot;: &quot;gov.vha.isaac.rest.api1.data.sememe.dataTypes.RestDynamicSememeLong&quot;,
-    # &quot;data&quot;: 5
-    # &quot;columnNumber&quot;: &quot;1&quot;
-    # }]
-    # }
-    attr_accessor :columnData
-    # True to indicate the sememe should be set as active, false for inactive.
+    # The comment
+    attr_accessor :comment
+    # An (optional) comment context to store with the comment.  Typically used for key words, etc.
+    attr_accessor :commentContext
+    # True to indicate the comment should be set as active, false for inactive.
     # This field is optional, if not provided, it will be assumed to be active.
     attr_accessor :active
 
-    # the json hash for this RestDynamicSememeBase
+    # the json hash for this RestCommentVersionBase
     def to_jaxb_json_hash
       _h = {}
-      if !columnData.nil?
-        _ha = Array.new
-        columnData.each { | _item | _ha.push _item.to_jaxb_json_hash }
-        _h['columnData'] = _ha
-      end
+      _h['comment'] = comment.to_jaxb_json_hash unless comment.nil?
+      _h['commentContext'] = commentContext.to_jaxb_json_hash unless commentContext.nil?
       _h['active'] = active.to_jaxb_json_hash unless active.nil?
       return _h
     end
 
-    # the json (string form) for this RestDynamicSememeBase
+    # the json (string form) for this RestCommentVersionBase
     def to_json
       to_jaxb_json_hash.to_json
     end
 
-    #initializes this RestDynamicSememeBase with a json hash
+    #initializes this RestCommentVersionBase with a json hash
     def init_jaxb_json_hash(_o)
-        if !_o['columnData'].nil?
-          _oa = _o['columnData']
+        if !_o['comment'].nil?
+          _oa = _o['comment']
             if(_oa.is_a? Hash)
-              @columnData = EnunciateHelpers::LAMB_CLASS_AWARE.call(_oa) if _oa['@class']
-              @columnData =  Gov::Vha::Isaac::Rest::Api1::Data::Sememe::RestDynamicSememeData.from_json(_oa) unless _oa['@class']
+              @comment = EnunciateHelpers::LAMB_CLASS_AWARE.call(_oa) if _oa['@class']
+              @comment =  String.from_json(_oa) unless _oa['@class']
             elsif (_oa.is_a? Array)
               #an array(of hashes hopefully) or scalar
-              @columnData = Array.new
+              @comment = Array.new
               _oa.each { | _item | 
                  if ((_item.nil? || _item['@class'].nil?)rescue true)
-                   @columnData.push Gov::Vha::Isaac::Rest::Api1::Data::Sememe::RestDynamicSememeData.from_json(_item)
+                   @comment.push String.from_json(_item)
                  else
-                   @columnData.push EnunciateHelpers::LAMB_CLASS_AWARE.call(_item)
+                   @comment.push EnunciateHelpers::LAMB_CLASS_AWARE.call(_item)
                  end
                }
             else
-                @columnData = _oa
+                @comment = _oa
+            end
+          end
+        if !_o['commentContext'].nil?
+          _oa = _o['commentContext']
+            if(_oa.is_a? Hash)
+              @commentContext = EnunciateHelpers::LAMB_CLASS_AWARE.call(_oa) if _oa['@class']
+              @commentContext =  String.from_json(_oa) unless _oa['@class']
+            elsif (_oa.is_a? Array)
+              #an array(of hashes hopefully) or scalar
+              @commentContext = Array.new
+              _oa.each { | _item | 
+                 if ((_item.nil? || _item['@class'].nil?)rescue true)
+                   @commentContext.push String.from_json(_item)
+                 else
+                   @commentContext.push EnunciateHelpers::LAMB_CLASS_AWARE.call(_item)
+                 end
+               }
+            else
+                @commentContext = _oa
             end
           end
         if !_o['active'].nil?
@@ -995,7 +777,7 @@ module Sememe
           end
     end
 
-    # constructs a RestDynamicSememeBase from a (parsed) JSON hash
+    # constructs a RestCommentVersionBase from a (parsed) JSON hash
     def self.from_json(o)
       if o.nil?
         return nil
@@ -1033,143 +815,76 @@ module Api1
 
 module Data
 
-module Concept
+module Association
 
   # (no documentation provided)
-  class RestConceptChronology 
+  class RestAssociationItemVersionPage 
 
-    # The concept sequence identifier of this concept
-    attr_accessor :conceptSequence
-    # The &quot;best&quot; description for this concept.  This is selected based on the attributes within the session for
-    # stamp and language coordinates - or - if none present - the server default.
-    attr_accessor :description
-    # The data that was not expanded as part of this call (but can be)
-    attr_accessor :expandables
-    # The identifier data for the object
-    attr_accessor :identifiers
-    # The list of concept versions.  Depending on the expand parameter, may be empty, the latest only, or all versions.
-    attr_accessor :versions
+    # Link to retrieve current page
+    attr_accessor :paginationData
+    # The contained results
+    attr_accessor :results
 
-    # the json hash for this RestConceptChronology
+    # the json hash for this RestAssociationItemVersionPage
     def to_jaxb_json_hash
       _h = {}
-      _h['conceptSequence'] = conceptSequence.to_jaxb_json_hash unless conceptSequence.nil?
-      _h['description'] = description.to_jaxb_json_hash unless description.nil?
-      _h['expandables'] = expandables.to_jaxb_json_hash unless expandables.nil?
-      _h['identifiers'] = identifiers.to_jaxb_json_hash unless identifiers.nil?
-      if !versions.nil?
+      _h['paginationData'] = paginationData.to_jaxb_json_hash unless paginationData.nil?
+      if !results.nil?
         _ha = Array.new
-        versions.each { | _item | _ha.push _item.to_jaxb_json_hash }
-        _h['versions'] = _ha
+        results.each { | _item | _ha.push _item.to_jaxb_json_hash }
+        _h['results'] = _ha
       end
       return _h
     end
 
-    # the json (string form) for this RestConceptChronology
+    # the json (string form) for this RestAssociationItemVersionPage
     def to_json
       to_jaxb_json_hash.to_json
     end
 
-    #initializes this RestConceptChronology with a json hash
+    #initializes this RestAssociationItemVersionPage with a json hash
     def init_jaxb_json_hash(_o)
-        if !_o['conceptSequence'].nil?
-          _oa = _o['conceptSequence']
+        if !_o['paginationData'].nil?
+          _oa = _o['paginationData']
             if(_oa.is_a? Hash)
-              @conceptSequence = EnunciateHelpers::LAMB_CLASS_AWARE.call(_oa) if _oa['@class']
-              @conceptSequence =  Fixnum.from_json(_oa) unless _oa['@class']
+              @paginationData = EnunciateHelpers::LAMB_CLASS_AWARE.call(_oa) if _oa['@class']
+              @paginationData =  Gov::Vha::Isaac::Rest::Api::Data::Pagination.from_json(_oa) unless _oa['@class']
             elsif (_oa.is_a? Array)
               #an array(of hashes hopefully) or scalar
-              @conceptSequence = Array.new
+              @paginationData = Array.new
               _oa.each { | _item | 
                  if ((_item.nil? || _item['@class'].nil?)rescue true)
-                   @conceptSequence.push Fixnum.from_json(_item)
+                   @paginationData.push Gov::Vha::Isaac::Rest::Api::Data::Pagination.from_json(_item)
                  else
-                   @conceptSequence.push EnunciateHelpers::LAMB_CLASS_AWARE.call(_item)
+                   @paginationData.push EnunciateHelpers::LAMB_CLASS_AWARE.call(_item)
                  end
                }
             else
-                @conceptSequence = _oa
+                @paginationData = _oa
             end
           end
-        if !_o['description'].nil?
-          _oa = _o['description']
+        if !_o['results'].nil?
+          _oa = _o['results']
             if(_oa.is_a? Hash)
-              @description = EnunciateHelpers::LAMB_CLASS_AWARE.call(_oa) if _oa['@class']
-              @description =  String.from_json(_oa) unless _oa['@class']
+              @results = EnunciateHelpers::LAMB_CLASS_AWARE.call(_oa) if _oa['@class']
+              @results =  Gov::Vha::Isaac::Rest::Api1::Data::Association::RestAssociationItemVersion.from_json(_oa) unless _oa['@class']
             elsif (_oa.is_a? Array)
               #an array(of hashes hopefully) or scalar
-              @description = Array.new
+              @results = Array.new
               _oa.each { | _item | 
                  if ((_item.nil? || _item['@class'].nil?)rescue true)
-                   @description.push String.from_json(_item)
+                   @results.push Gov::Vha::Isaac::Rest::Api1::Data::Association::RestAssociationItemVersion.from_json(_item)
                  else
-                   @description.push EnunciateHelpers::LAMB_CLASS_AWARE.call(_item)
+                   @results.push EnunciateHelpers::LAMB_CLASS_AWARE.call(_item)
                  end
                }
             else
-                @description = _oa
-            end
-          end
-        if !_o['expandables'].nil?
-          _oa = _o['expandables']
-            if(_oa.is_a? Hash)
-              @expandables = EnunciateHelpers::LAMB_CLASS_AWARE.call(_oa) if _oa['@class']
-              @expandables =  Gov::Vha::Isaac::Rest::Api::Data::Expandables.from_json(_oa) unless _oa['@class']
-            elsif (_oa.is_a? Array)
-              #an array(of hashes hopefully) or scalar
-              @expandables = Array.new
-              _oa.each { | _item | 
-                 if ((_item.nil? || _item['@class'].nil?)rescue true)
-                   @expandables.push Gov::Vha::Isaac::Rest::Api::Data::Expandables.from_json(_item)
-                 else
-                   @expandables.push EnunciateHelpers::LAMB_CLASS_AWARE.call(_item)
-                 end
-               }
-            else
-                @expandables = _oa
-            end
-          end
-        if !_o['identifiers'].nil?
-          _oa = _o['identifiers']
-            if(_oa.is_a? Hash)
-              @identifiers = EnunciateHelpers::LAMB_CLASS_AWARE.call(_oa) if _oa['@class']
-              @identifiers =  Gov::Vha::Isaac::Rest::Api1::Data::RestIdentifiedObject.from_json(_oa) unless _oa['@class']
-            elsif (_oa.is_a? Array)
-              #an array(of hashes hopefully) or scalar
-              @identifiers = Array.new
-              _oa.each { | _item | 
-                 if ((_item.nil? || _item['@class'].nil?)rescue true)
-                   @identifiers.push Gov::Vha::Isaac::Rest::Api1::Data::RestIdentifiedObject.from_json(_item)
-                 else
-                   @identifiers.push EnunciateHelpers::LAMB_CLASS_AWARE.call(_item)
-                 end
-               }
-            else
-                @identifiers = _oa
-            end
-          end
-        if !_o['versions'].nil?
-          _oa = _o['versions']
-            if(_oa.is_a? Hash)
-              @versions = EnunciateHelpers::LAMB_CLASS_AWARE.call(_oa) if _oa['@class']
-              @versions =  Gov::Vha::Isaac::Rest::Api1::Data::Concept::RestConceptVersion.from_json(_oa) unless _oa['@class']
-            elsif (_oa.is_a? Array)
-              #an array(of hashes hopefully) or scalar
-              @versions = Array.new
-              _oa.each { | _item | 
-                 if ((_item.nil? || _item['@class'].nil?)rescue true)
-                   @versions.push Gov::Vha::Isaac::Rest::Api1::Data::Concept::RestConceptVersion.from_json(_item)
-                 else
-                   @versions.push EnunciateHelpers::LAMB_CLASS_AWARE.call(_item)
-                 end
-               }
-            else
-                @versions = _oa
+                @results = _oa
             end
           end
     end
 
-    # constructs a RestConceptChronology from a (parsed) JSON hash
+    # constructs a RestAssociationItemVersionPage from a (parsed) JSON hash
     def self.from_json(o)
       if o.nil?
         return nil
@@ -1450,6 +1165,138 @@ module Api1
 
 module Data
 
+module Logic
+
+  # (no documentation provided)
+  class RestLogicNode 
+
+    # The RestNodeSemanticType type of this node corresponding to the NodeSemantic enum
+    attr_accessor :nodeSemantic
+    # The UUID of the logic node itself (not of any referenced or associated component or concept)
+    attr_accessor :nodeUuid
+    # The list of child RestLogicNode instances contained within this RestLogicNode.
+    # A RestTypedConnctorNode may have exactly one child node
+    # A literal node may not have any child nodes at all
+    # Others may have one or more child nodes
+    attr_accessor :children
+
+    # the json hash for this RestLogicNode
+    def to_jaxb_json_hash
+      _h = {}
+      _h['nodeSemantic'] = nodeSemantic.to_jaxb_json_hash unless nodeSemantic.nil?
+      _h['nodeUuid'] = nodeUuid.to_jaxb_json_hash unless nodeUuid.nil?
+      if !children.nil?
+        _ha = Array.new
+        children.each { | _item | _ha.push _item.to_jaxb_json_hash }
+        _h['children'] = _ha
+      end
+      return _h
+    end
+
+    # the json (string form) for this RestLogicNode
+    def to_json
+      to_jaxb_json_hash.to_json
+    end
+
+    #initializes this RestLogicNode with a json hash
+    def init_jaxb_json_hash(_o)
+        if !_o['nodeSemantic'].nil?
+          _oa = _o['nodeSemantic']
+            if(_oa.is_a? Hash)
+              @nodeSemantic = EnunciateHelpers::LAMB_CLASS_AWARE.call(_oa) if _oa['@class']
+              @nodeSemantic =  Gov::Vha::Isaac::Rest::Api1::Data::Enumerations::RestNodeSemanticType.from_json(_oa) unless _oa['@class']
+            elsif (_oa.is_a? Array)
+              #an array(of hashes hopefully) or scalar
+              @nodeSemantic = Array.new
+              _oa.each { | _item | 
+                 if ((_item.nil? || _item['@class'].nil?)rescue true)
+                   @nodeSemantic.push Gov::Vha::Isaac::Rest::Api1::Data::Enumerations::RestNodeSemanticType.from_json(_item)
+                 else
+                   @nodeSemantic.push EnunciateHelpers::LAMB_CLASS_AWARE.call(_item)
+                 end
+               }
+            else
+                @nodeSemantic = _oa
+            end
+          end
+        if !_o['nodeUuid'].nil?
+          _oa = _o['nodeUuid']
+            if(_oa.is_a? Hash)
+              @nodeUuid = EnunciateHelpers::LAMB_CLASS_AWARE.call(_oa) if _oa['@class']
+              @nodeUuid =  String.from_json(_oa) unless _oa['@class']
+            elsif (_oa.is_a? Array)
+              #an array(of hashes hopefully) or scalar
+              @nodeUuid = Array.new
+              _oa.each { | _item | 
+                 if ((_item.nil? || _item['@class'].nil?)rescue true)
+                   @nodeUuid.push String.from_json(_item)
+                 else
+                   @nodeUuid.push EnunciateHelpers::LAMB_CLASS_AWARE.call(_item)
+                 end
+               }
+            else
+                @nodeUuid = _oa
+            end
+          end
+        if !_o['children'].nil?
+          _oa = _o['children']
+            if(_oa.is_a? Hash)
+              @children = EnunciateHelpers::LAMB_CLASS_AWARE.call(_oa) if _oa['@class']
+              @children =  Gov::Vha::Isaac::Rest::Api1::Data::Logic::RestLogicNode.from_json(_oa) unless _oa['@class']
+            elsif (_oa.is_a? Array)
+              #an array(of hashes hopefully) or scalar
+              @children = Array.new
+              _oa.each { | _item | 
+                 if ((_item.nil? || _item['@class'].nil?)rescue true)
+                   @children.push Gov::Vha::Isaac::Rest::Api1::Data::Logic::RestLogicNode.from_json(_item)
+                 else
+                   @children.push EnunciateHelpers::LAMB_CLASS_AWARE.call(_item)
+                 end
+               }
+            else
+                @children = _oa
+            end
+          end
+    end
+
+    # constructs a RestLogicNode from a (parsed) JSON hash
+    def self.from_json(o)
+      if o.nil?
+        return nil
+      else
+        inst = new
+        inst.init_jaxb_json_hash o
+        return inst
+      end
+    end
+  end
+
+end
+
+end
+
+end
+
+end
+
+end
+
+end
+
+end
+
+module Gov
+
+module Vha
+
+module Isaac
+
+module Rest
+
+module Api1
+
+module Data
+
 module Coordinate
 
   # (no documentation provided)
@@ -1597,174 +1444,25 @@ module Api1
 
 module Data
 
-module Coordinate
-
   # (no documentation provided)
-  class RestTaxonomyCoordinate 
-
-    # Boolean indicating whether or not RestTaxonomyCoordinate is of STATED PremiseType.
-    # If TRUE then RestTaxonomyCoordinate is of PremiseType STATED.
-    # If FALSE then RestTaxonomyCoordinate is of PremiseType INFERRED.
-    attr_accessor :stated
-    # RestStampCoordinate component of RestTaxonomyCoordinate
-    attr_accessor :stampCoordinate
-    # RestLanguageCoordinate component of RestTaxonomyCoordinate
-    attr_accessor :languageCoordinate
-    # RestLogicCoordinate component of RestTaxonomyCoordinate
-    attr_accessor :logicCoordinate
-
-    # the json hash for this RestTaxonomyCoordinate
-    def to_jaxb_json_hash
-      _h = {}
-      _h['stated'] = stated.to_jaxb_json_hash unless stated.nil?
-      _h['stampCoordinate'] = stampCoordinate.to_jaxb_json_hash unless stampCoordinate.nil?
-      _h['languageCoordinate'] = languageCoordinate.to_jaxb_json_hash unless languageCoordinate.nil?
-      _h['logicCoordinate'] = logicCoordinate.to_jaxb_json_hash unless logicCoordinate.nil?
-      return _h
-    end
-
-    # the json (string form) for this RestTaxonomyCoordinate
-    def to_json
-      to_jaxb_json_hash.to_json
-    end
-
-    #initializes this RestTaxonomyCoordinate with a json hash
-    def init_jaxb_json_hash(_o)
-        if !_o['stated'].nil?
-          _oa = _o['stated']
-            if(_oa.is_a? Hash)
-              @stated = EnunciateHelpers::LAMB_CLASS_AWARE.call(_oa) if _oa['@class']
-              @stated =  Boolean.from_json(_oa) unless _oa['@class']
-            elsif (_oa.is_a? Array)
-              #an array(of hashes hopefully) or scalar
-              @stated = Array.new
-              _oa.each { | _item | 
-                 if ((_item.nil? || _item['@class'].nil?)rescue true)
-                   @stated.push Boolean.from_json(_item)
-                 else
-                   @stated.push EnunciateHelpers::LAMB_CLASS_AWARE.call(_item)
-                 end
-               }
-            else
-                @stated = _oa
-            end
-          end
-        if !_o['stampCoordinate'].nil?
-          _oa = _o['stampCoordinate']
-            if(_oa.is_a? Hash)
-              @stampCoordinate = EnunciateHelpers::LAMB_CLASS_AWARE.call(_oa) if _oa['@class']
-              @stampCoordinate =  Gov::Vha::Isaac::Rest::Api1::Data::Coordinate::RestStampCoordinate.from_json(_oa) unless _oa['@class']
-            elsif (_oa.is_a? Array)
-              #an array(of hashes hopefully) or scalar
-              @stampCoordinate = Array.new
-              _oa.each { | _item | 
-                 if ((_item.nil? || _item['@class'].nil?)rescue true)
-                   @stampCoordinate.push Gov::Vha::Isaac::Rest::Api1::Data::Coordinate::RestStampCoordinate.from_json(_item)
-                 else
-                   @stampCoordinate.push EnunciateHelpers::LAMB_CLASS_AWARE.call(_item)
-                 end
-               }
-            else
-                @stampCoordinate = _oa
-            end
-          end
-        if !_o['languageCoordinate'].nil?
-          _oa = _o['languageCoordinate']
-            if(_oa.is_a? Hash)
-              @languageCoordinate = EnunciateHelpers::LAMB_CLASS_AWARE.call(_oa) if _oa['@class']
-              @languageCoordinate =  Gov::Vha::Isaac::Rest::Api1::Data::Coordinate::RestLanguageCoordinate.from_json(_oa) unless _oa['@class']
-            elsif (_oa.is_a? Array)
-              #an array(of hashes hopefully) or scalar
-              @languageCoordinate = Array.new
-              _oa.each { | _item | 
-                 if ((_item.nil? || _item['@class'].nil?)rescue true)
-                   @languageCoordinate.push Gov::Vha::Isaac::Rest::Api1::Data::Coordinate::RestLanguageCoordinate.from_json(_item)
-                 else
-                   @languageCoordinate.push EnunciateHelpers::LAMB_CLASS_AWARE.call(_item)
-                 end
-               }
-            else
-                @languageCoordinate = _oa
-            end
-          end
-        if !_o['logicCoordinate'].nil?
-          _oa = _o['logicCoordinate']
-            if(_oa.is_a? Hash)
-              @logicCoordinate = EnunciateHelpers::LAMB_CLASS_AWARE.call(_oa) if _oa['@class']
-              @logicCoordinate =  Gov::Vha::Isaac::Rest::Api1::Data::Coordinate::RestLogicCoordinate.from_json(_oa) unless _oa['@class']
-            elsif (_oa.is_a? Array)
-              #an array(of hashes hopefully) or scalar
-              @logicCoordinate = Array.new
-              _oa.each { | _item | 
-                 if ((_item.nil? || _item['@class'].nil?)rescue true)
-                   @logicCoordinate.push Gov::Vha::Isaac::Rest::Api1::Data::Coordinate::RestLogicCoordinate.from_json(_item)
-                 else
-                   @logicCoordinate.push EnunciateHelpers::LAMB_CLASS_AWARE.call(_item)
-                 end
-               }
-            else
-                @logicCoordinate = _oa
-            end
-          end
-    end
-
-    # constructs a RestTaxonomyCoordinate from a (parsed) JSON hash
-    def self.from_json(o)
-      if o.nil?
-        return nil
-      else
-        inst = new
-        inst.init_jaxb_json_hash o
-        return inst
-      end
-    end
-  end
-
-end
-
-end
-
-end
-
-end
-
-end
-
-end
-
-end
-
-module Gov
-
-module Vha
-
-module Isaac
-
-module Rest
-
-module Api1
-
-module Data
-
-  # (no documentation provided)
-  class RestCoordinatesToken 
+  class RestEditToken 
 
     # Serialized coordinates token
     attr_accessor :token
 
-    # the json hash for this RestCoordinatesToken
+    # the json hash for this RestEditToken
     def to_jaxb_json_hash
       _h = {}
       _h['token'] = token.to_jaxb_json_hash unless token.nil?
       return _h
     end
 
-    # the json (string form) for this RestCoordinatesToken
+    # the json (string form) for this RestEditToken
     def to_json
       to_jaxb_json_hash.to_json
     end
 
-    #initializes this RestCoordinatesToken with a json hash
+    #initializes this RestEditToken with a json hash
     def init_jaxb_json_hash(_o)
         if !_o['token'].nil?
           _oa = _o['token']
@@ -1787,7 +1485,7 @@ module Data
           end
     end
 
-    # constructs a RestCoordinatesToken from a (parsed) JSON hash
+    # constructs a RestEditToken from a (parsed) JSON hash
     def self.from_json(o)
       if o.nil?
         return nil
@@ -1823,116 +1521,394 @@ module Api
 
 module Data
 
-module Wrappers
-
   # (no documentation provided)
-  class RestWriteResponse 
+  class Pagination 
 
-    # The RestEditToken value - updated to be valid for a future submit.
-    attr_accessor :editToken
-    # The UUID value of the item that was created or updated.
-    attr_accessor :uuid
-    # The Integer NID value of the item created or updated (if applicable, may be null)
-    attr_accessor :nid
-    # The Integer sequence value of the item created or updated (if applicable, may be null)
-    attr_accessor :sequence
+    # Link to retrieve previous result set page - not provided if no previous page exists.
+    attr_accessor :previousUrl
+    # Link to retrieve next result set page
+    attr_accessor :nextUrl
+    # The page (of maximum size pageSize) number from beginning of dataset starting at 1
+    attr_accessor :pageNum
+    # Estimated size of set of all matching values of which the current page is a subset. Value is negative if and only if unknown. May be affected by filtering.
+    attr_accessor :approximateTotal
+    # True if the approximateTotal value is an exact count of results, false if the value is an estimate.
+    attr_accessor :totalIsExact
 
-    # the json hash for this RestWriteResponse
+    # the json hash for this Pagination
     def to_jaxb_json_hash
       _h = {}
-      _h['editToken'] = editToken.to_jaxb_json_hash unless editToken.nil?
-      _h['uuid'] = uuid.to_jaxb_json_hash unless uuid.nil?
-      _h['nid'] = nid.to_jaxb_json_hash unless nid.nil?
-      _h['sequence'] = sequence.to_jaxb_json_hash unless sequence.nil?
+      _h['previousUrl'] = previousUrl.to_jaxb_json_hash unless previousUrl.nil?
+      _h['nextUrl'] = nextUrl.to_jaxb_json_hash unless nextUrl.nil?
+      _h['pageNum'] = pageNum.to_jaxb_json_hash unless pageNum.nil?
+      _h['approximateTotal'] = approximateTotal.to_jaxb_json_hash unless approximateTotal.nil?
+      _h['totalIsExact'] = totalIsExact.to_jaxb_json_hash unless totalIsExact.nil?
       return _h
     end
 
-    # the json (string form) for this RestWriteResponse
+    # the json (string form) for this Pagination
     def to_json
       to_jaxb_json_hash.to_json
     end
 
-    #initializes this RestWriteResponse with a json hash
+    #initializes this Pagination with a json hash
     def init_jaxb_json_hash(_o)
-        if !_o['editToken'].nil?
-          _oa = _o['editToken']
+        if !_o['previousUrl'].nil?
+          _oa = _o['previousUrl']
             if(_oa.is_a? Hash)
-              @editToken = EnunciateHelpers::LAMB_CLASS_AWARE.call(_oa) if _oa['@class']
-              @editToken =  Gov::Vha::Isaac::Rest::Api1::Data::RestEditToken.from_json(_oa) unless _oa['@class']
+              @previousUrl = EnunciateHelpers::LAMB_CLASS_AWARE.call(_oa) if _oa['@class']
+              @previousUrl =  String.from_json(_oa) unless _oa['@class']
             elsif (_oa.is_a? Array)
               #an array(of hashes hopefully) or scalar
-              @editToken = Array.new
+              @previousUrl = Array.new
               _oa.each { | _item | 
                  if ((_item.nil? || _item['@class'].nil?)rescue true)
-                   @editToken.push Gov::Vha::Isaac::Rest::Api1::Data::RestEditToken.from_json(_item)
+                   @previousUrl.push String.from_json(_item)
                  else
-                   @editToken.push EnunciateHelpers::LAMB_CLASS_AWARE.call(_item)
+                   @previousUrl.push EnunciateHelpers::LAMB_CLASS_AWARE.call(_item)
                  end
                }
             else
-                @editToken = _oa
+                @previousUrl = _oa
             end
           end
-        if !_o['uuid'].nil?
-          _oa = _o['uuid']
+        if !_o['nextUrl'].nil?
+          _oa = _o['nextUrl']
             if(_oa.is_a? Hash)
-              @uuid = EnunciateHelpers::LAMB_CLASS_AWARE.call(_oa) if _oa['@class']
-              @uuid =  String.from_json(_oa) unless _oa['@class']
+              @nextUrl = EnunciateHelpers::LAMB_CLASS_AWARE.call(_oa) if _oa['@class']
+              @nextUrl =  String.from_json(_oa) unless _oa['@class']
             elsif (_oa.is_a? Array)
               #an array(of hashes hopefully) or scalar
-              @uuid = Array.new
+              @nextUrl = Array.new
               _oa.each { | _item | 
                  if ((_item.nil? || _item['@class'].nil?)rescue true)
-                   @uuid.push String.from_json(_item)
+                   @nextUrl.push String.from_json(_item)
                  else
-                   @uuid.push EnunciateHelpers::LAMB_CLASS_AWARE.call(_item)
+                   @nextUrl.push EnunciateHelpers::LAMB_CLASS_AWARE.call(_item)
                  end
                }
             else
-                @uuid = _oa
+                @nextUrl = _oa
             end
           end
-        if !_o['nid'].nil?
-          _oa = _o['nid']
+        if !_o['pageNum'].nil?
+          _oa = _o['pageNum']
             if(_oa.is_a? Hash)
-              @nid = EnunciateHelpers::LAMB_CLASS_AWARE.call(_oa) if _oa['@class']
-              @nid =  Fixnum.from_json(_oa) unless _oa['@class']
+              @pageNum = EnunciateHelpers::LAMB_CLASS_AWARE.call(_oa) if _oa['@class']
+              @pageNum =  Fixnum.from_json(_oa) unless _oa['@class']
             elsif (_oa.is_a? Array)
               #an array(of hashes hopefully) or scalar
-              @nid = Array.new
+              @pageNum = Array.new
               _oa.each { | _item | 
                  if ((_item.nil? || _item['@class'].nil?)rescue true)
-                   @nid.push Fixnum.from_json(_item)
+                   @pageNum.push Fixnum.from_json(_item)
                  else
-                   @nid.push EnunciateHelpers::LAMB_CLASS_AWARE.call(_item)
+                   @pageNum.push EnunciateHelpers::LAMB_CLASS_AWARE.call(_item)
                  end
                }
             else
-                @nid = _oa
+                @pageNum = _oa
             end
           end
-        if !_o['sequence'].nil?
-          _oa = _o['sequence']
+        if !_o['approximateTotal'].nil?
+          _oa = _o['approximateTotal']
             if(_oa.is_a? Hash)
-              @sequence = EnunciateHelpers::LAMB_CLASS_AWARE.call(_oa) if _oa['@class']
-              @sequence =  Fixnum.from_json(_oa) unless _oa['@class']
+              @approximateTotal = EnunciateHelpers::LAMB_CLASS_AWARE.call(_oa) if _oa['@class']
+              @approximateTotal =  Fixnum.from_json(_oa) unless _oa['@class']
             elsif (_oa.is_a? Array)
               #an array(of hashes hopefully) or scalar
-              @sequence = Array.new
+              @approximateTotal = Array.new
               _oa.each { | _item | 
                  if ((_item.nil? || _item['@class'].nil?)rescue true)
-                   @sequence.push Fixnum.from_json(_item)
+                   @approximateTotal.push Fixnum.from_json(_item)
                  else
-                   @sequence.push EnunciateHelpers::LAMB_CLASS_AWARE.call(_item)
+                   @approximateTotal.push EnunciateHelpers::LAMB_CLASS_AWARE.call(_item)
                  end
                }
             else
-                @sequence = _oa
+                @approximateTotal = _oa
+            end
+          end
+        if !_o['totalIsExact'].nil?
+          _oa = _o['totalIsExact']
+            if(_oa.is_a? Hash)
+              @totalIsExact = EnunciateHelpers::LAMB_CLASS_AWARE.call(_oa) if _oa['@class']
+              @totalIsExact =  Boolean.from_json(_oa) unless _oa['@class']
+            elsif (_oa.is_a? Array)
+              #an array(of hashes hopefully) or scalar
+              @totalIsExact = Array.new
+              _oa.each { | _item | 
+                 if ((_item.nil? || _item['@class'].nil?)rescue true)
+                   @totalIsExact.push Boolean.from_json(_item)
+                 else
+                   @totalIsExact.push EnunciateHelpers::LAMB_CLASS_AWARE.call(_item)
+                 end
+               }
+            else
+                @totalIsExact = _oa
             end
           end
     end
 
-    # constructs a RestWriteResponse from a (parsed) JSON hash
+    # constructs a Pagination from a (parsed) JSON hash
+    def self.from_json(o)
+      if o.nil?
+        return nil
+      else
+        inst = new
+        inst.init_jaxb_json_hash o
+        return inst
+      end
+    end
+  end
+
+end
+
+end
+
+end
+
+end
+
+end
+
+end
+
+module Gov
+
+module Vha
+
+module Isaac
+
+module Rest
+
+module Api1
+
+module Data
+
+  # (no documentation provided)
+  class RestUserInfo 
+
+    # The UUID(s) that identify the concept which is a placeholder for a user in the system.
+    attr_accessor :userId
+    # The unique name of the user, used as the FSN on the concept that represents the user.
+    # This value was created from the information passed in via the SSO authentication.
+    attr_accessor :uniqueName
+    # The user-preferred name of the current user.  This may be identical to the unique name, or it may have been customized by the user.
+    attr_accessor :preferredName
+
+    # the json hash for this RestUserInfo
+    def to_jaxb_json_hash
+      _h = {}
+      _h['userId'] = userId.to_jaxb_json_hash unless userId.nil?
+      _h['uniqueName'] = uniqueName.to_jaxb_json_hash unless uniqueName.nil?
+      _h['preferredName'] = preferredName.to_jaxb_json_hash unless preferredName.nil?
+      return _h
+    end
+
+    # the json (string form) for this RestUserInfo
+    def to_json
+      to_jaxb_json_hash.to_json
+    end
+
+    #initializes this RestUserInfo with a json hash
+    def init_jaxb_json_hash(_o)
+        if !_o['userId'].nil?
+          _oa = _o['userId']
+            if(_oa.is_a? Hash)
+              @userId = EnunciateHelpers::LAMB_CLASS_AWARE.call(_oa) if _oa['@class']
+              @userId =  Gov::Vha::Isaac::Rest::Api1::Data::RestIdentifiedObject.from_json(_oa) unless _oa['@class']
+            elsif (_oa.is_a? Array)
+              #an array(of hashes hopefully) or scalar
+              @userId = Array.new
+              _oa.each { | _item | 
+                 if ((_item.nil? || _item['@class'].nil?)rescue true)
+                   @userId.push Gov::Vha::Isaac::Rest::Api1::Data::RestIdentifiedObject.from_json(_item)
+                 else
+                   @userId.push EnunciateHelpers::LAMB_CLASS_AWARE.call(_item)
+                 end
+               }
+            else
+                @userId = _oa
+            end
+          end
+        if !_o['uniqueName'].nil?
+          _oa = _o['uniqueName']
+            if(_oa.is_a? Hash)
+              @uniqueName = EnunciateHelpers::LAMB_CLASS_AWARE.call(_oa) if _oa['@class']
+              @uniqueName =  String.from_json(_oa) unless _oa['@class']
+            elsif (_oa.is_a? Array)
+              #an array(of hashes hopefully) or scalar
+              @uniqueName = Array.new
+              _oa.each { | _item | 
+                 if ((_item.nil? || _item['@class'].nil?)rescue true)
+                   @uniqueName.push String.from_json(_item)
+                 else
+                   @uniqueName.push EnunciateHelpers::LAMB_CLASS_AWARE.call(_item)
+                 end
+               }
+            else
+                @uniqueName = _oa
+            end
+          end
+        if !_o['preferredName'].nil?
+          _oa = _o['preferredName']
+            if(_oa.is_a? Hash)
+              @preferredName = EnunciateHelpers::LAMB_CLASS_AWARE.call(_oa) if _oa['@class']
+              @preferredName =  String.from_json(_oa) unless _oa['@class']
+            elsif (_oa.is_a? Array)
+              #an array(of hashes hopefully) or scalar
+              @preferredName = Array.new
+              _oa.each { | _item | 
+                 if ((_item.nil? || _item['@class'].nil?)rescue true)
+                   @preferredName.push String.from_json(_item)
+                 else
+                   @preferredName.push EnunciateHelpers::LAMB_CLASS_AWARE.call(_item)
+                 end
+               }
+            else
+                @preferredName = _oa
+            end
+          end
+    end
+
+    # constructs a RestUserInfo from a (parsed) JSON hash
+    def self.from_json(o)
+      if o.nil?
+        return nil
+      else
+        inst = new
+        inst.init_jaxb_json_hash o
+        return inst
+      end
+    end
+  end
+
+end
+
+end
+
+end
+
+end
+
+end
+
+end
+
+module Gov
+
+module Vha
+
+module Isaac
+
+module Rest
+
+module Api1
+
+module Data
+
+module Coordinate
+
+  # (no documentation provided)
+  class RestLanguageCoordinate 
+
+    # Sequence number of the language concept associated with the language coordinate.
+    # The language will be something like
+    # english, spanish, french, danish, polish, dutch,
+    # lithuanian, chinese, japanese, or swedish.
+    attr_accessor :language
+    # Ordered list of dialect assemblage sequence numbers. Order determines preference.
+    # A dialect assemblage will be something like US (US Dialect) or GB (Great Britain Dialect).
+    attr_accessor :dialectAssemblagePreferences
+    # Ordered list of description type sequence numbers. Order determines preference.
+    # A description type will be something like FSN (Fully Specified Name), Synonym or Definition.
+    attr_accessor :descriptionTypePreferences
+
+    # the json hash for this RestLanguageCoordinate
+    def to_jaxb_json_hash
+      _h = {}
+      _h['language'] = language.to_jaxb_json_hash unless language.nil?
+      if !dialectAssemblagePreferences.nil?
+        _ha = Array.new
+        dialectAssemblagePreferences.each { | _item | _ha.push _item.to_jaxb_json_hash }
+        _h['dialectAssemblagePreferences'] = _ha
+      end
+      if !descriptionTypePreferences.nil?
+        _ha = Array.new
+        descriptionTypePreferences.each { | _item | _ha.push _item.to_jaxb_json_hash }
+        _h['descriptionTypePreferences'] = _ha
+      end
+      return _h
+    end
+
+    # the json (string form) for this RestLanguageCoordinate
+    def to_json
+      to_jaxb_json_hash.to_json
+    end
+
+    #initializes this RestLanguageCoordinate with a json hash
+    def init_jaxb_json_hash(_o)
+        if !_o['language'].nil?
+          _oa = _o['language']
+            if(_oa.is_a? Hash)
+              @language = EnunciateHelpers::LAMB_CLASS_AWARE.call(_oa) if _oa['@class']
+              @language =  Fixnum.from_json(_oa) unless _oa['@class']
+            elsif (_oa.is_a? Array)
+              #an array(of hashes hopefully) or scalar
+              @language = Array.new
+              _oa.each { | _item | 
+                 if ((_item.nil? || _item['@class'].nil?)rescue true)
+                   @language.push Fixnum.from_json(_item)
+                 else
+                   @language.push EnunciateHelpers::LAMB_CLASS_AWARE.call(_item)
+                 end
+               }
+            else
+                @language = _oa
+            end
+          end
+        if !_o['dialectAssemblagePreferences'].nil?
+          _oa = _o['dialectAssemblagePreferences']
+            if(_oa.is_a? Hash)
+              @dialectAssemblagePreferences = EnunciateHelpers::LAMB_CLASS_AWARE.call(_oa) if _oa['@class']
+              @dialectAssemblagePreferences =  Fixnum.from_json(_oa) unless _oa['@class']
+            elsif (_oa.is_a? Array)
+              #an array(of hashes hopefully) or scalar
+              @dialectAssemblagePreferences = Array.new
+              _oa.each { | _item | 
+                 if ((_item.nil? || _item['@class'].nil?)rescue true)
+                   @dialectAssemblagePreferences.push Fixnum.from_json(_item)
+                 else
+                   @dialectAssemblagePreferences.push EnunciateHelpers::LAMB_CLASS_AWARE.call(_item)
+                 end
+               }
+            else
+                @dialectAssemblagePreferences = _oa
+            end
+          end
+        if !_o['descriptionTypePreferences'].nil?
+          _oa = _o['descriptionTypePreferences']
+            if(_oa.is_a? Hash)
+              @descriptionTypePreferences = EnunciateHelpers::LAMB_CLASS_AWARE.call(_oa) if _oa['@class']
+              @descriptionTypePreferences =  Fixnum.from_json(_oa) unless _oa['@class']
+            elsif (_oa.is_a? Array)
+              #an array(of hashes hopefully) or scalar
+              @descriptionTypePreferences = Array.new
+              _oa.each { | _item | 
+                 if ((_item.nil? || _item['@class'].nil?)rescue true)
+                   @descriptionTypePreferences.push Fixnum.from_json(_item)
+                 else
+                   @descriptionTypePreferences.push EnunciateHelpers::LAMB_CLASS_AWARE.call(_item)
+                 end
+               }
+            else
+                @descriptionTypePreferences = _oa
+            end
+          end
+    end
+
+    # constructs a RestLanguageCoordinate from a (parsed) JSON hash
     def self.from_json(o)
       if o.nil?
         return nil
@@ -1970,118 +1946,109 @@ module Api1
 
 module Data
 
-module Sememe
+module Search
 
   # (no documentation provided)
-  class RestSememeDescriptionUpdateData 
+  class RestSearchResult 
 
-    # The concept sequence of the concept that represents the case significance flag on the description .
-    # This should be description case sensitive, description not case sensitive or description initial character sensitive
-    attr_accessor :caseSignificanceConceptSequence
-    # The concept sequence of the concept that represents the language of the description (note, this is NOT
-    # the dialect)
-    attr_accessor :languageConceptSequence
-    # The text of the description
-    attr_accessor :text
-    # The concept sequence of the concept that represents the type of the description.
-    # This should be FSN, Synonym, or Definition.
-    attr_accessor :descriptionTypeConceptSequence
-    # True to indicate the mapping set should be set as active, false for inactive.
-    # This field is optional, if not provided, it will be assumed to be active.
+    # The internal identifier of the sememe that matched the query
+    attr_accessor :matchNid
+    # The text of the description that matched the query (may be blank, if the description is not available/active on the path used to populate this)
+    attr_accessor :matchText
+    # The Lucene Score for this result.  This value is only useful for ranking search results relative to other search results within the SAME QUERY
+    # execution.  It may not be used to rank one query against another.
+    attr_accessor :score
+    # Returns true if the sememe that matched the query is active (with the specified of default stamp,
+    # false if inactive.
     attr_accessor :active
+    # The data that was not expanded as part of this call (but can be)
+    attr_accessor :expandables
+    # The (optionally) populated identifiers (UUIDs) of the sememe that matched the query.  Must pass expand=&#39;uuid&#39; to have
+    # this populated.
+    attr_accessor :identifiers
+    # The (optionally) populated concept that is referenced (indirectly) by the sememe that matched the query.  This is calculated by
+    # looking up the sememe of the matchNid, and then getting the referenced component of that sememe.  If the referenced component
+    # is a concept, that is the concept that is returned.  If the referenced component is a sememe, then the process is repeated (following
+    # the referenced component reference of the sememe) - continuing until a concept is found.  If an (unusual) case occurs where the
+    # sememe chain doesn&#39;t lead to a concept, this will not be populated.  This is populated by passing the expand parameter &#39;referencedConcept&#39;.
+    # If this is passed, you may also (optionally) pass the parameters &#39;versionsLatestOnly&#39; or &#39;versionsAll&#39;
+    attr_accessor :referencedConcept
 
-    # the json hash for this RestSememeDescriptionUpdateData
+    # the json hash for this RestSearchResult
     def to_jaxb_json_hash
       _h = {}
-      _h['caseSignificanceConceptSequence'] = caseSignificanceConceptSequence.to_jaxb_json_hash unless caseSignificanceConceptSequence.nil?
-      _h['languageConceptSequence'] = languageConceptSequence.to_jaxb_json_hash unless languageConceptSequence.nil?
-      _h['text'] = text.to_jaxb_json_hash unless text.nil?
-      _h['descriptionTypeConceptSequence'] = descriptionTypeConceptSequence.to_jaxb_json_hash unless descriptionTypeConceptSequence.nil?
+      _h['matchNid'] = matchNid.to_jaxb_json_hash unless matchNid.nil?
+      _h['matchText'] = matchText.to_jaxb_json_hash unless matchText.nil?
+      _h['score'] = score.to_jaxb_json_hash unless score.nil?
       _h['active'] = active.to_jaxb_json_hash unless active.nil?
+      _h['expandables'] = expandables.to_jaxb_json_hash unless expandables.nil?
+      _h['identifiers'] = identifiers.to_jaxb_json_hash unless identifiers.nil?
+      _h['referencedConcept'] = referencedConcept.to_jaxb_json_hash unless referencedConcept.nil?
       return _h
     end
 
-    # the json (string form) for this RestSememeDescriptionUpdateData
+    # the json (string form) for this RestSearchResult
     def to_json
       to_jaxb_json_hash.to_json
     end
 
-    #initializes this RestSememeDescriptionUpdateData with a json hash
+    #initializes this RestSearchResult with a json hash
     def init_jaxb_json_hash(_o)
-        if !_o['caseSignificanceConceptSequence'].nil?
-          _oa = _o['caseSignificanceConceptSequence']
+        if !_o['matchNid'].nil?
+          _oa = _o['matchNid']
             if(_oa.is_a? Hash)
-              @caseSignificanceConceptSequence = EnunciateHelpers::LAMB_CLASS_AWARE.call(_oa) if _oa['@class']
-              @caseSignificanceConceptSequence =  Fixnum.from_json(_oa) unless _oa['@class']
+              @matchNid = EnunciateHelpers::LAMB_CLASS_AWARE.call(_oa) if _oa['@class']
+              @matchNid =  Fixnum.from_json(_oa) unless _oa['@class']
             elsif (_oa.is_a? Array)
               #an array(of hashes hopefully) or scalar
-              @caseSignificanceConceptSequence = Array.new
+              @matchNid = Array.new
               _oa.each { | _item | 
                  if ((_item.nil? || _item['@class'].nil?)rescue true)
-                   @caseSignificanceConceptSequence.push Fixnum.from_json(_item)
+                   @matchNid.push Fixnum.from_json(_item)
                  else
-                   @caseSignificanceConceptSequence.push EnunciateHelpers::LAMB_CLASS_AWARE.call(_item)
+                   @matchNid.push EnunciateHelpers::LAMB_CLASS_AWARE.call(_item)
                  end
                }
             else
-                @caseSignificanceConceptSequence = _oa
+                @matchNid = _oa
             end
           end
-        if !_o['languageConceptSequence'].nil?
-          _oa = _o['languageConceptSequence']
+        if !_o['matchText'].nil?
+          _oa = _o['matchText']
             if(_oa.is_a? Hash)
-              @languageConceptSequence = EnunciateHelpers::LAMB_CLASS_AWARE.call(_oa) if _oa['@class']
-              @languageConceptSequence =  Fixnum.from_json(_oa) unless _oa['@class']
+              @matchText = EnunciateHelpers::LAMB_CLASS_AWARE.call(_oa) if _oa['@class']
+              @matchText =  String.from_json(_oa) unless _oa['@class']
             elsif (_oa.is_a? Array)
               #an array(of hashes hopefully) or scalar
-              @languageConceptSequence = Array.new
+              @matchText = Array.new
               _oa.each { | _item | 
                  if ((_item.nil? || _item['@class'].nil?)rescue true)
-                   @languageConceptSequence.push Fixnum.from_json(_item)
+                   @matchText.push String.from_json(_item)
                  else
-                   @languageConceptSequence.push EnunciateHelpers::LAMB_CLASS_AWARE.call(_item)
+                   @matchText.push EnunciateHelpers::LAMB_CLASS_AWARE.call(_item)
                  end
                }
             else
-                @languageConceptSequence = _oa
+                @matchText = _oa
             end
           end
-        if !_o['text'].nil?
-          _oa = _o['text']
+        if !_o['score'].nil?
+          _oa = _o['score']
             if(_oa.is_a? Hash)
-              @text = EnunciateHelpers::LAMB_CLASS_AWARE.call(_oa) if _oa['@class']
-              @text =  String.from_json(_oa) unless _oa['@class']
+              @score = EnunciateHelpers::LAMB_CLASS_AWARE.call(_oa) if _oa['@class']
+              @score =  Float.from_json(_oa) unless _oa['@class']
             elsif (_oa.is_a? Array)
               #an array(of hashes hopefully) or scalar
-              @text = Array.new
+              @score = Array.new
               _oa.each { | _item | 
                  if ((_item.nil? || _item['@class'].nil?)rescue true)
-                   @text.push String.from_json(_item)
+                   @score.push Float.from_json(_item)
                  else
-                   @text.push EnunciateHelpers::LAMB_CLASS_AWARE.call(_item)
+                   @score.push EnunciateHelpers::LAMB_CLASS_AWARE.call(_item)
                  end
                }
             else
-                @text = _oa
-            end
-          end
-        if !_o['descriptionTypeConceptSequence'].nil?
-          _oa = _o['descriptionTypeConceptSequence']
-            if(_oa.is_a? Hash)
-              @descriptionTypeConceptSequence = EnunciateHelpers::LAMB_CLASS_AWARE.call(_oa) if _oa['@class']
-              @descriptionTypeConceptSequence =  Fixnum.from_json(_oa) unless _oa['@class']
-            elsif (_oa.is_a? Array)
-              #an array(of hashes hopefully) or scalar
-              @descriptionTypeConceptSequence = Array.new
-              _oa.each { | _item | 
-                 if ((_item.nil? || _item['@class'].nil?)rescue true)
-                   @descriptionTypeConceptSequence.push Fixnum.from_json(_item)
-                 else
-                   @descriptionTypeConceptSequence.push EnunciateHelpers::LAMB_CLASS_AWARE.call(_item)
-                 end
-               }
-            else
-                @descriptionTypeConceptSequence = _oa
+                @score = _oa
             end
           end
         if !_o['active'].nil?
@@ -2103,491 +2070,66 @@ module Sememe
                 @active = _oa
             end
           end
-    end
-
-    # constructs a RestSememeDescriptionUpdateData from a (parsed) JSON hash
-    def self.from_json(o)
-      if o.nil?
-        return nil
-      else
-        inst = new
-        inst.init_jaxb_json_hash o
-        return inst
-      end
-    end
-  end
-
-end
-
-end
-
-end
-
-end
-
-end
-
-end
-
-end
-
-module Gov
-
-module Vha
-
-module Isaac
-
-module Rest
-
-module Api1
-
-module Data
-
-module Workflow
-
-  # (no documentation provided)
-  class RestWorkflowDefinition 
-
-    # The definition identifier
-    attr_accessor :id
-    # The bpmn2 id that contains the definition if it exists.
-    attr_accessor :bpmn2Id
-    # The definition name.
-    attr_accessor :name
-    # The definition namespace.
-    attr_accessor :namespace
-    # The version of the definition.
-    attr_accessor :version
-    # The workflow roles available defined via the definition .
-    attr_accessor :roles
-
-    # the json hash for this RestWorkflowDefinition
-    def to_jaxb_json_hash
-      _h = {}
-      _h['id'] = id.to_jaxb_json_hash unless id.nil?
-      _h['bpmn2Id'] = bpmn2Id.to_jaxb_json_hash unless bpmn2Id.nil?
-      _h['name'] = name.to_jaxb_json_hash unless name.nil?
-      _h['namespace'] = namespace.to_jaxb_json_hash unless namespace.nil?
-      _h['version'] = version.to_jaxb_json_hash unless version.nil?
-      if !roles.nil?
-        _ha = Array.new
-        roles.each { | _item | _ha.push _item.to_jaxb_json_hash }
-        _h['roles'] = _ha
-      end
-      return _h
-    end
-
-    # the json (string form) for this RestWorkflowDefinition
-    def to_json
-      to_jaxb_json_hash.to_json
-    end
-
-    #initializes this RestWorkflowDefinition with a json hash
-    def init_jaxb_json_hash(_o)
-        if !_o['id'].nil?
-          _oa = _o['id']
+        if !_o['expandables'].nil?
+          _oa = _o['expandables']
             if(_oa.is_a? Hash)
-              @id = EnunciateHelpers::LAMB_CLASS_AWARE.call(_oa) if _oa['@class']
-              @id =  String.from_json(_oa) unless _oa['@class']
+              @expandables = EnunciateHelpers::LAMB_CLASS_AWARE.call(_oa) if _oa['@class']
+              @expandables =  Gov::Vha::Isaac::Rest::Api::Data::Expandables.from_json(_oa) unless _oa['@class']
             elsif (_oa.is_a? Array)
               #an array(of hashes hopefully) or scalar
-              @id = Array.new
+              @expandables = Array.new
               _oa.each { | _item | 
                  if ((_item.nil? || _item['@class'].nil?)rescue true)
-                   @id.push String.from_json(_item)
+                   @expandables.push Gov::Vha::Isaac::Rest::Api::Data::Expandables.from_json(_item)
                  else
-                   @id.push EnunciateHelpers::LAMB_CLASS_AWARE.call(_item)
+                   @expandables.push EnunciateHelpers::LAMB_CLASS_AWARE.call(_item)
                  end
                }
             else
-                @id = _oa
+                @expandables = _oa
             end
           end
-        if !_o['bpmn2Id'].nil?
-          _oa = _o['bpmn2Id']
+        if !_o['identifiers'].nil?
+          _oa = _o['identifiers']
             if(_oa.is_a? Hash)
-              @bpmn2Id = EnunciateHelpers::LAMB_CLASS_AWARE.call(_oa) if _oa['@class']
-              @bpmn2Id =  String.from_json(_oa) unless _oa['@class']
+              @identifiers = EnunciateHelpers::LAMB_CLASS_AWARE.call(_oa) if _oa['@class']
+              @identifiers =  Gov::Vha::Isaac::Rest::Api1::Data::RestIdentifiedObject.from_json(_oa) unless _oa['@class']
             elsif (_oa.is_a? Array)
               #an array(of hashes hopefully) or scalar
-              @bpmn2Id = Array.new
+              @identifiers = Array.new
               _oa.each { | _item | 
                  if ((_item.nil? || _item['@class'].nil?)rescue true)
-                   @bpmn2Id.push String.from_json(_item)
+                   @identifiers.push Gov::Vha::Isaac::Rest::Api1::Data::RestIdentifiedObject.from_json(_item)
                  else
-                   @bpmn2Id.push EnunciateHelpers::LAMB_CLASS_AWARE.call(_item)
+                   @identifiers.push EnunciateHelpers::LAMB_CLASS_AWARE.call(_item)
                  end
                }
             else
-                @bpmn2Id = _oa
+                @identifiers = _oa
             end
           end
-        if !_o['name'].nil?
-          _oa = _o['name']
+        if !_o['referencedConcept'].nil?
+          _oa = _o['referencedConcept']
             if(_oa.is_a? Hash)
-              @name = EnunciateHelpers::LAMB_CLASS_AWARE.call(_oa) if _oa['@class']
-              @name =  String.from_json(_oa) unless _oa['@class']
+              @referencedConcept = EnunciateHelpers::LAMB_CLASS_AWARE.call(_oa) if _oa['@class']
+              @referencedConcept =  Gov::Vha::Isaac::Rest::Api1::Data::Concept::RestConceptChronology.from_json(_oa) unless _oa['@class']
             elsif (_oa.is_a? Array)
               #an array(of hashes hopefully) or scalar
-              @name = Array.new
+              @referencedConcept = Array.new
               _oa.each { | _item | 
                  if ((_item.nil? || _item['@class'].nil?)rescue true)
-                   @name.push String.from_json(_item)
+                   @referencedConcept.push Gov::Vha::Isaac::Rest::Api1::Data::Concept::RestConceptChronology.from_json(_item)
                  else
-                   @name.push EnunciateHelpers::LAMB_CLASS_AWARE.call(_item)
+                   @referencedConcept.push EnunciateHelpers::LAMB_CLASS_AWARE.call(_item)
                  end
                }
             else
-                @name = _oa
-            end
-          end
-        if !_o['namespace'].nil?
-          _oa = _o['namespace']
-            if(_oa.is_a? Hash)
-              @namespace = EnunciateHelpers::LAMB_CLASS_AWARE.call(_oa) if _oa['@class']
-              @namespace =  String.from_json(_oa) unless _oa['@class']
-            elsif (_oa.is_a? Array)
-              #an array(of hashes hopefully) or scalar
-              @namespace = Array.new
-              _oa.each { | _item | 
-                 if ((_item.nil? || _item['@class'].nil?)rescue true)
-                   @namespace.push String.from_json(_item)
-                 else
-                   @namespace.push EnunciateHelpers::LAMB_CLASS_AWARE.call(_item)
-                 end
-               }
-            else
-                @namespace = _oa
-            end
-          end
-        if !_o['version'].nil?
-          _oa = _o['version']
-            if(_oa.is_a? Hash)
-              @version = EnunciateHelpers::LAMB_CLASS_AWARE.call(_oa) if _oa['@class']
-              @version =  String.from_json(_oa) unless _oa['@class']
-            elsif (_oa.is_a? Array)
-              #an array(of hashes hopefully) or scalar
-              @version = Array.new
-              _oa.each { | _item | 
-                 if ((_item.nil? || _item['@class'].nil?)rescue true)
-                   @version.push String.from_json(_item)
-                 else
-                   @version.push EnunciateHelpers::LAMB_CLASS_AWARE.call(_item)
-                 end
-               }
-            else
-                @version = _oa
-            end
-          end
-        if !_o['roles'].nil?
-          _oa = _o['roles']
-            if(_oa.is_a? Hash)
-              @roles = EnunciateHelpers::LAMB_CLASS_AWARE.call(_oa) if _oa['@class']
-              @roles =  Gov::Vha::Isaac::Rest::Api1::Data::Enumerations::RestUserRoleType.from_json(_oa) unless _oa['@class']
-            elsif (_oa.is_a? Array)
-              #an array(of hashes hopefully) or scalar
-              @roles = Array.new
-              _oa.each { | _item | 
-                 if ((_item.nil? || _item['@class'].nil?)rescue true)
-                   @roles.push Gov::Vha::Isaac::Rest::Api1::Data::Enumerations::RestUserRoleType.from_json(_item)
-                 else
-                   @roles.push EnunciateHelpers::LAMB_CLASS_AWARE.call(_item)
-                 end
-               }
-            else
-                @roles = _oa
+                @referencedConcept = _oa
             end
           end
     end
 
-    # constructs a RestWorkflowDefinition from a (parsed) JSON hash
-    def self.from_json(o)
-      if o.nil?
-        return nil
-      else
-        inst = new
-        inst.init_jaxb_json_hash o
-        return inst
-      end
-    end
-  end
-
-end
-
-end
-
-end
-
-end
-
-end
-
-end
-
-end
-
-module Gov
-
-module Vha
-
-module Isaac
-
-module Rest
-
-module Api1
-
-module Data
-
-module Sememe
-
-  # (no documentation provided)
-  class RestDynamicSememeDefinition 
-
-    # The concept sequence of the concept that is used as an assemblage.  The rest of the descriptive details of the
-    # sememe assemblage (returned in this object) are read from this concept.
-    attr_accessor :assemblageConceptId
-    # the user-friendly description of the overall purpose of this sememe
-    attr_accessor :sememeUsageDescription
-    # the column information that describes the data that may be returned as part of a sememe instance.
-    attr_accessor :columnInfo
-    # Return the RestObjectChronologyType of the restriction on referenced components for this sememe (if any - may return null)
-    # 
-    # If there is a restriction, the nid set for the referenced component in an instance of this sememe must be of the type listed here.
-    # 
-    # See rest/1/enumeration/restObjectChronologyType for a list of potential object types returned.
-    attr_accessor :referencedComponentTypeRestriction
-    # Return the RestSememeType of the sub restriction on referenced components for this DynamicSememe (if any - may return null)
-    # 
-    # If there is a restriction, the nid set for the referenced component in an instance of this sememe must be of the type listed here.
-    # 
-    # This is only applicable when #referencedComponentTypeRestriction returns RestObjectChronologyType#SEMEME
-    # 
-    # See rest/1/enumeration/restSememeType for a list of potential object types returned.
-    attr_accessor :referencedComponentTypeSubRestriction
-
-    # the json hash for this RestDynamicSememeDefinition
-    def to_jaxb_json_hash
-      _h = {}
-      _h['assemblageConceptId'] = assemblageConceptId.to_jaxb_json_hash unless assemblageConceptId.nil?
-      _h['sememeUsageDescription'] = sememeUsageDescription.to_jaxb_json_hash unless sememeUsageDescription.nil?
-      if !columnInfo.nil?
-        _ha = Array.new
-        columnInfo.each { | _item | _ha.push _item.to_jaxb_json_hash }
-        _h['columnInfo'] = _ha
-      end
-      _h['referencedComponentTypeRestriction'] = referencedComponentTypeRestriction.to_jaxb_json_hash unless referencedComponentTypeRestriction.nil?
-      _h['referencedComponentTypeSubRestriction'] = referencedComponentTypeSubRestriction.to_jaxb_json_hash unless referencedComponentTypeSubRestriction.nil?
-      return _h
-    end
-
-    # the json (string form) for this RestDynamicSememeDefinition
-    def to_json
-      to_jaxb_json_hash.to_json
-    end
-
-    #initializes this RestDynamicSememeDefinition with a json hash
-    def init_jaxb_json_hash(_o)
-        if !_o['assemblageConceptId'].nil?
-          _oa = _o['assemblageConceptId']
-            if(_oa.is_a? Hash)
-              @assemblageConceptId = EnunciateHelpers::LAMB_CLASS_AWARE.call(_oa) if _oa['@class']
-              @assemblageConceptId =  Fixnum.from_json(_oa) unless _oa['@class']
-            elsif (_oa.is_a? Array)
-              #an array(of hashes hopefully) or scalar
-              @assemblageConceptId = Array.new
-              _oa.each { | _item | 
-                 if ((_item.nil? || _item['@class'].nil?)rescue true)
-                   @assemblageConceptId.push Fixnum.from_json(_item)
-                 else
-                   @assemblageConceptId.push EnunciateHelpers::LAMB_CLASS_AWARE.call(_item)
-                 end
-               }
-            else
-                @assemblageConceptId = _oa
-            end
-          end
-        if !_o['sememeUsageDescription'].nil?
-          _oa = _o['sememeUsageDescription']
-            if(_oa.is_a? Hash)
-              @sememeUsageDescription = EnunciateHelpers::LAMB_CLASS_AWARE.call(_oa) if _oa['@class']
-              @sememeUsageDescription =  String.from_json(_oa) unless _oa['@class']
-            elsif (_oa.is_a? Array)
-              #an array(of hashes hopefully) or scalar
-              @sememeUsageDescription = Array.new
-              _oa.each { | _item | 
-                 if ((_item.nil? || _item['@class'].nil?)rescue true)
-                   @sememeUsageDescription.push String.from_json(_item)
-                 else
-                   @sememeUsageDescription.push EnunciateHelpers::LAMB_CLASS_AWARE.call(_item)
-                 end
-               }
-            else
-                @sememeUsageDescription = _oa
-            end
-          end
-        if !_o['columnInfo'].nil?
-          _oa = _o['columnInfo']
-            if(_oa.is_a? Hash)
-              @columnInfo = EnunciateHelpers::LAMB_CLASS_AWARE.call(_oa) if _oa['@class']
-              @columnInfo =  Gov::Vha::Isaac::Rest::Api1::Data::Sememe::RestDynamicSememeColumnInfo.from_json(_oa) unless _oa['@class']
-            elsif (_oa.is_a? Array)
-              #an array(of hashes hopefully) or scalar
-              @columnInfo = Array.new
-              _oa.each { | _item | 
-                 if ((_item.nil? || _item['@class'].nil?)rescue true)
-                   @columnInfo.push Gov::Vha::Isaac::Rest::Api1::Data::Sememe::RestDynamicSememeColumnInfo.from_json(_item)
-                 else
-                   @columnInfo.push EnunciateHelpers::LAMB_CLASS_AWARE.call(_item)
-                 end
-               }
-            else
-                @columnInfo = _oa
-            end
-          end
-        if !_o['referencedComponentTypeRestriction'].nil?
-          _oa = _o['referencedComponentTypeRestriction']
-            if(_oa.is_a? Hash)
-              @referencedComponentTypeRestriction = EnunciateHelpers::LAMB_CLASS_AWARE.call(_oa) if _oa['@class']
-              @referencedComponentTypeRestriction =  Gov::Vha::Isaac::Rest::Api1::Data::Enumerations::RestObjectChronologyType.from_json(_oa) unless _oa['@class']
-            elsif (_oa.is_a? Array)
-              #an array(of hashes hopefully) or scalar
-              @referencedComponentTypeRestriction = Array.new
-              _oa.each { | _item | 
-                 if ((_item.nil? || _item['@class'].nil?)rescue true)
-                   @referencedComponentTypeRestriction.push Gov::Vha::Isaac::Rest::Api1::Data::Enumerations::RestObjectChronologyType.from_json(_item)
-                 else
-                   @referencedComponentTypeRestriction.push EnunciateHelpers::LAMB_CLASS_AWARE.call(_item)
-                 end
-               }
-            else
-                @referencedComponentTypeRestriction = _oa
-            end
-          end
-        if !_o['referencedComponentTypeSubRestriction'].nil?
-          _oa = _o['referencedComponentTypeSubRestriction']
-            if(_oa.is_a? Hash)
-              @referencedComponentTypeSubRestriction = EnunciateHelpers::LAMB_CLASS_AWARE.call(_oa) if _oa['@class']
-              @referencedComponentTypeSubRestriction =  Gov::Vha::Isaac::Rest::Api1::Data::Enumerations::RestSememeType.from_json(_oa) unless _oa['@class']
-            elsif (_oa.is_a? Array)
-              #an array(of hashes hopefully) or scalar
-              @referencedComponentTypeSubRestriction = Array.new
-              _oa.each { | _item | 
-                 if ((_item.nil? || _item['@class'].nil?)rescue true)
-                   @referencedComponentTypeSubRestriction.push Gov::Vha::Isaac::Rest::Api1::Data::Enumerations::RestSememeType.from_json(_item)
-                 else
-                   @referencedComponentTypeSubRestriction.push EnunciateHelpers::LAMB_CLASS_AWARE.call(_item)
-                 end
-               }
-            else
-                @referencedComponentTypeSubRestriction = _oa
-            end
-          end
-    end
-
-    # constructs a RestDynamicSememeDefinition from a (parsed) JSON hash
-    def self.from_json(o)
-      if o.nil?
-        return nil
-      else
-        inst = new
-        inst.init_jaxb_json_hash o
-        return inst
-      end
-    end
-  end
-
-end
-
-end
-
-end
-
-end
-
-end
-
-end
-
-end
-
-module Gov
-
-module Vha
-
-module Isaac
-
-module Rest
-
-module Api1
-
-module Data
-
-module Workflow
-
-  # (no documentation provided)
-  class RestWorkflowComponentToStampMapEntry 
-
-    # The key
-    attr_accessor :key
-    # The value
-    attr_accessor :value
-
-    # the json hash for this RestWorkflowComponentToStampMapEntry
-    def to_jaxb_json_hash
-      _h = {}
-      _h['key'] = key.to_jaxb_json_hash unless key.nil?
-      _h['value'] = value.to_jaxb_json_hash unless value.nil?
-      return _h
-    end
-
-    # the json (string form) for this RestWorkflowComponentToStampMapEntry
-    def to_json
-      to_jaxb_json_hash.to_json
-    end
-
-    #initializes this RestWorkflowComponentToStampMapEntry with a json hash
-    def init_jaxb_json_hash(_o)
-        if !_o['key'].nil?
-          _oa = _o['key']
-            if(_oa.is_a? Hash)
-              @key = EnunciateHelpers::LAMB_CLASS_AWARE.call(_oa) if _oa['@class']
-              @key =  Fixnum.from_json(_oa) unless _oa['@class']
-            elsif (_oa.is_a? Array)
-              #an array(of hashes hopefully) or scalar
-              @key = Array.new
-              _oa.each { | _item | 
-                 if ((_item.nil? || _item['@class'].nil?)rescue true)
-                   @key.push Fixnum.from_json(_item)
-                 else
-                   @key.push EnunciateHelpers::LAMB_CLASS_AWARE.call(_item)
-                 end
-               }
-            else
-                @key = _oa
-            end
-          end
-        if !_o['value'].nil?
-          _oa = _o['value']
-            if(_oa.is_a? Hash)
-              @value = EnunciateHelpers::LAMB_CLASS_AWARE.call(_oa) if _oa['@class']
-              @value =  Gov::Vha::Isaac::Rest::Api1::Data::RestStampedVersion.from_json(_oa) unless _oa['@class']
-            elsif (_oa.is_a? Array)
-              #an array(of hashes hopefully) or scalar
-              @value = Array.new
-              _oa.each { | _item | 
-                 if ((_item.nil? || _item['@class'].nil?)rescue true)
-                   @value.push Gov::Vha::Isaac::Rest::Api1::Data::RestStampedVersion.from_json(_item)
-                 else
-                   @value.push EnunciateHelpers::LAMB_CLASS_AWARE.call(_item)
-                 end
-               }
-            else
-                @value = _oa
-            end
-          end
-    end
-
-    # constructs a RestWorkflowComponentToStampMapEntry from a (parsed) JSON hash
+    # constructs a RestSearchResult from a (parsed) JSON hash
     def self.from_json(o)
       if o.nil?
         return nil
@@ -2628,48 +2170,436 @@ module Data
 module Concept
 
   # (no documentation provided)
-  class RestConceptUpdateData 
+  class RestConceptChronology 
 
-    # True to indicate the concept should be set as active, false for inactive.
-    # This field is optional, if not provided, it will be assumed to be active.
-    attr_accessor :active
+    # The concept sequence identifier of this concept
+    attr_accessor :conceptSequence
+    # The &quot;best&quot; description for this concept.  This is selected based on the attributes within the session for
+    # stamp and language coordinates - or - if none present - the server default.
+    attr_accessor :description
+    # The data that was not expanded as part of this call (but can be)
+    attr_accessor :expandables
+    # The identifier data for the object
+    attr_accessor :identifiers
+    # The list of concept versions.  Depending on the expand parameter, may be empty, the latest only, or all versions.
+    attr_accessor :versions
 
-    # the json hash for this RestConceptUpdateData
+    # the json hash for this RestConceptChronology
     def to_jaxb_json_hash
       _h = {}
-      _h['active'] = active.to_jaxb_json_hash unless active.nil?
+      _h['conceptSequence'] = conceptSequence.to_jaxb_json_hash unless conceptSequence.nil?
+      _h['description'] = description.to_jaxb_json_hash unless description.nil?
+      _h['expandables'] = expandables.to_jaxb_json_hash unless expandables.nil?
+      _h['identifiers'] = identifiers.to_jaxb_json_hash unless identifiers.nil?
+      if !versions.nil?
+        _ha = Array.new
+        versions.each { | _item | _ha.push _item.to_jaxb_json_hash }
+        _h['versions'] = _ha
+      end
       return _h
     end
 
-    # the json (string form) for this RestConceptUpdateData
+    # the json (string form) for this RestConceptChronology
     def to_json
       to_jaxb_json_hash.to_json
     end
 
-    #initializes this RestConceptUpdateData with a json hash
+    #initializes this RestConceptChronology with a json hash
     def init_jaxb_json_hash(_o)
-        if !_o['active'].nil?
-          _oa = _o['active']
+        if !_o['conceptSequence'].nil?
+          _oa = _o['conceptSequence']
             if(_oa.is_a? Hash)
-              @active = EnunciateHelpers::LAMB_CLASS_AWARE.call(_oa) if _oa['@class']
-              @active =  Boolean.from_json(_oa) unless _oa['@class']
+              @conceptSequence = EnunciateHelpers::LAMB_CLASS_AWARE.call(_oa) if _oa['@class']
+              @conceptSequence =  Fixnum.from_json(_oa) unless _oa['@class']
             elsif (_oa.is_a? Array)
               #an array(of hashes hopefully) or scalar
-              @active = Array.new
+              @conceptSequence = Array.new
               _oa.each { | _item | 
                  if ((_item.nil? || _item['@class'].nil?)rescue true)
-                   @active.push Boolean.from_json(_item)
+                   @conceptSequence.push Fixnum.from_json(_item)
                  else
-                   @active.push EnunciateHelpers::LAMB_CLASS_AWARE.call(_item)
+                   @conceptSequence.push EnunciateHelpers::LAMB_CLASS_AWARE.call(_item)
                  end
                }
             else
-                @active = _oa
+                @conceptSequence = _oa
+            end
+          end
+        if !_o['description'].nil?
+          _oa = _o['description']
+            if(_oa.is_a? Hash)
+              @description = EnunciateHelpers::LAMB_CLASS_AWARE.call(_oa) if _oa['@class']
+              @description =  String.from_json(_oa) unless _oa['@class']
+            elsif (_oa.is_a? Array)
+              #an array(of hashes hopefully) or scalar
+              @description = Array.new
+              _oa.each { | _item | 
+                 if ((_item.nil? || _item['@class'].nil?)rescue true)
+                   @description.push String.from_json(_item)
+                 else
+                   @description.push EnunciateHelpers::LAMB_CLASS_AWARE.call(_item)
+                 end
+               }
+            else
+                @description = _oa
+            end
+          end
+        if !_o['expandables'].nil?
+          _oa = _o['expandables']
+            if(_oa.is_a? Hash)
+              @expandables = EnunciateHelpers::LAMB_CLASS_AWARE.call(_oa) if _oa['@class']
+              @expandables =  Gov::Vha::Isaac::Rest::Api::Data::Expandables.from_json(_oa) unless _oa['@class']
+            elsif (_oa.is_a? Array)
+              #an array(of hashes hopefully) or scalar
+              @expandables = Array.new
+              _oa.each { | _item | 
+                 if ((_item.nil? || _item['@class'].nil?)rescue true)
+                   @expandables.push Gov::Vha::Isaac::Rest::Api::Data::Expandables.from_json(_item)
+                 else
+                   @expandables.push EnunciateHelpers::LAMB_CLASS_AWARE.call(_item)
+                 end
+               }
+            else
+                @expandables = _oa
+            end
+          end
+        if !_o['identifiers'].nil?
+          _oa = _o['identifiers']
+            if(_oa.is_a? Hash)
+              @identifiers = EnunciateHelpers::LAMB_CLASS_AWARE.call(_oa) if _oa['@class']
+              @identifiers =  Gov::Vha::Isaac::Rest::Api1::Data::RestIdentifiedObject.from_json(_oa) unless _oa['@class']
+            elsif (_oa.is_a? Array)
+              #an array(of hashes hopefully) or scalar
+              @identifiers = Array.new
+              _oa.each { | _item | 
+                 if ((_item.nil? || _item['@class'].nil?)rescue true)
+                   @identifiers.push Gov::Vha::Isaac::Rest::Api1::Data::RestIdentifiedObject.from_json(_item)
+                 else
+                   @identifiers.push EnunciateHelpers::LAMB_CLASS_AWARE.call(_item)
+                 end
+               }
+            else
+                @identifiers = _oa
+            end
+          end
+        if !_o['versions'].nil?
+          _oa = _o['versions']
+            if(_oa.is_a? Hash)
+              @versions = EnunciateHelpers::LAMB_CLASS_AWARE.call(_oa) if _oa['@class']
+              @versions =  Gov::Vha::Isaac::Rest::Api1::Data::Concept::RestConceptVersion.from_json(_oa) unless _oa['@class']
+            elsif (_oa.is_a? Array)
+              #an array(of hashes hopefully) or scalar
+              @versions = Array.new
+              _oa.each { | _item | 
+                 if ((_item.nil? || _item['@class'].nil?)rescue true)
+                   @versions.push Gov::Vha::Isaac::Rest::Api1::Data::Concept::RestConceptVersion.from_json(_item)
+                 else
+                   @versions.push EnunciateHelpers::LAMB_CLASS_AWARE.call(_item)
+                 end
+               }
+            else
+                @versions = _oa
             end
           end
     end
 
-    # constructs a RestConceptUpdateData from a (parsed) JSON hash
+    # constructs a RestConceptChronology from a (parsed) JSON hash
+    def self.from_json(o)
+      if o.nil?
+        return nil
+      else
+        inst = new
+        inst.init_jaxb_json_hash o
+        return inst
+      end
+    end
+  end
+
+end
+
+end
+
+end
+
+end
+
+end
+
+end
+
+end
+
+module Gov
+
+module Vha
+
+module Isaac
+
+module Rest
+
+module Api1
+
+module Data
+
+module Systeminfo
+
+  # (no documentation provided)
+  class RestDependencyInfo 
+
+    # Maven Dependency Group ID
+    attr_accessor :groupId
+    # Maven Dependency Artifact ID
+    attr_accessor :artifactId
+    # Maven Dependency Version
+    attr_accessor :version
+    # Maven Dependency Classifier
+    attr_accessor :classifier
+    # Maven Dependency Type
+    attr_accessor :type
+
+    # the json hash for this RestDependencyInfo
+    def to_jaxb_json_hash
+      _h = {}
+      _h['groupId'] = groupId.to_jaxb_json_hash unless groupId.nil?
+      _h['artifactId'] = artifactId.to_jaxb_json_hash unless artifactId.nil?
+      _h['version'] = version.to_jaxb_json_hash unless version.nil?
+      _h['classifier'] = classifier.to_jaxb_json_hash unless classifier.nil?
+      _h['type'] = type.to_jaxb_json_hash unless type.nil?
+      return _h
+    end
+
+    # the json (string form) for this RestDependencyInfo
+    def to_json
+      to_jaxb_json_hash.to_json
+    end
+
+    #initializes this RestDependencyInfo with a json hash
+    def init_jaxb_json_hash(_o)
+        if !_o['groupId'].nil?
+          _oa = _o['groupId']
+            if(_oa.is_a? Hash)
+              @groupId = EnunciateHelpers::LAMB_CLASS_AWARE.call(_oa) if _oa['@class']
+              @groupId =  String.from_json(_oa) unless _oa['@class']
+            elsif (_oa.is_a? Array)
+              #an array(of hashes hopefully) or scalar
+              @groupId = Array.new
+              _oa.each { | _item | 
+                 if ((_item.nil? || _item['@class'].nil?)rescue true)
+                   @groupId.push String.from_json(_item)
+                 else
+                   @groupId.push EnunciateHelpers::LAMB_CLASS_AWARE.call(_item)
+                 end
+               }
+            else
+                @groupId = _oa
+            end
+          end
+        if !_o['artifactId'].nil?
+          _oa = _o['artifactId']
+            if(_oa.is_a? Hash)
+              @artifactId = EnunciateHelpers::LAMB_CLASS_AWARE.call(_oa) if _oa['@class']
+              @artifactId =  String.from_json(_oa) unless _oa['@class']
+            elsif (_oa.is_a? Array)
+              #an array(of hashes hopefully) or scalar
+              @artifactId = Array.new
+              _oa.each { | _item | 
+                 if ((_item.nil? || _item['@class'].nil?)rescue true)
+                   @artifactId.push String.from_json(_item)
+                 else
+                   @artifactId.push EnunciateHelpers::LAMB_CLASS_AWARE.call(_item)
+                 end
+               }
+            else
+                @artifactId = _oa
+            end
+          end
+        if !_o['version'].nil?
+          _oa = _o['version']
+            if(_oa.is_a? Hash)
+              @version = EnunciateHelpers::LAMB_CLASS_AWARE.call(_oa) if _oa['@class']
+              @version =  String.from_json(_oa) unless _oa['@class']
+            elsif (_oa.is_a? Array)
+              #an array(of hashes hopefully) or scalar
+              @version = Array.new
+              _oa.each { | _item | 
+                 if ((_item.nil? || _item['@class'].nil?)rescue true)
+                   @version.push String.from_json(_item)
+                 else
+                   @version.push EnunciateHelpers::LAMB_CLASS_AWARE.call(_item)
+                 end
+               }
+            else
+                @version = _oa
+            end
+          end
+        if !_o['classifier'].nil?
+          _oa = _o['classifier']
+            if(_oa.is_a? Hash)
+              @classifier = EnunciateHelpers::LAMB_CLASS_AWARE.call(_oa) if _oa['@class']
+              @classifier =  String.from_json(_oa) unless _oa['@class']
+            elsif (_oa.is_a? Array)
+              #an array(of hashes hopefully) or scalar
+              @classifier = Array.new
+              _oa.each { | _item | 
+                 if ((_item.nil? || _item['@class'].nil?)rescue true)
+                   @classifier.push String.from_json(_item)
+                 else
+                   @classifier.push EnunciateHelpers::LAMB_CLASS_AWARE.call(_item)
+                 end
+               }
+            else
+                @classifier = _oa
+            end
+          end
+        if !_o['type'].nil?
+          _oa = _o['type']
+            if(_oa.is_a? Hash)
+              @type = EnunciateHelpers::LAMB_CLASS_AWARE.call(_oa) if _oa['@class']
+              @type =  String.from_json(_oa) unless _oa['@class']
+            elsif (_oa.is_a? Array)
+              #an array(of hashes hopefully) or scalar
+              @type = Array.new
+              _oa.each { | _item | 
+                 if ((_item.nil? || _item['@class'].nil?)rescue true)
+                   @type.push String.from_json(_item)
+                 else
+                   @type.push EnunciateHelpers::LAMB_CLASS_AWARE.call(_item)
+                 end
+               }
+            else
+                @type = _oa
+            end
+          end
+    end
+
+    # constructs a RestDependencyInfo from a (parsed) JSON hash
+    def self.from_json(o)
+      if o.nil?
+        return nil
+      else
+        inst = new
+        inst.init_jaxb_json_hash o
+        return inst
+      end
+    end
+  end
+
+end
+
+end
+
+end
+
+end
+
+end
+
+end
+
+end
+
+module Gov
+
+module Vha
+
+module Isaac
+
+module Rest
+
+module Api1
+
+module Data
+
+module Association
+
+  # (no documentation provided)
+  class RestAssociationTypeVersionBaseCreate 
+
+    # The best (primary) name of the association, per the user specified stamp coordinates.
+    # This would typically be a value like &quot;broader than&quot;
+    attr_accessor :associationName
+    # The inverse name (if any) of the association, per the user specified stamp coordinates.  This optional
+    # field may not be present.  This would typically be a value like &quot;narrower than&quot;
+    attr_accessor :associationInverseName
+    # The description of the purpose of this association.
+    attr_accessor :description
+
+    # the json hash for this RestAssociationTypeVersionBaseCreate
+    def to_jaxb_json_hash
+      _h = {}
+      _h['associationName'] = associationName.to_jaxb_json_hash unless associationName.nil?
+      _h['associationInverseName'] = associationInverseName.to_jaxb_json_hash unless associationInverseName.nil?
+      _h['description'] = description.to_jaxb_json_hash unless description.nil?
+      return _h
+    end
+
+    # the json (string form) for this RestAssociationTypeVersionBaseCreate
+    def to_json
+      to_jaxb_json_hash.to_json
+    end
+
+    #initializes this RestAssociationTypeVersionBaseCreate with a json hash
+    def init_jaxb_json_hash(_o)
+        if !_o['associationName'].nil?
+          _oa = _o['associationName']
+            if(_oa.is_a? Hash)
+              @associationName = EnunciateHelpers::LAMB_CLASS_AWARE.call(_oa) if _oa['@class']
+              @associationName =  String.from_json(_oa) unless _oa['@class']
+            elsif (_oa.is_a? Array)
+              #an array(of hashes hopefully) or scalar
+              @associationName = Array.new
+              _oa.each { | _item | 
+                 if ((_item.nil? || _item['@class'].nil?)rescue true)
+                   @associationName.push String.from_json(_item)
+                 else
+                   @associationName.push EnunciateHelpers::LAMB_CLASS_AWARE.call(_item)
+                 end
+               }
+            else
+                @associationName = _oa
+            end
+          end
+        if !_o['associationInverseName'].nil?
+          _oa = _o['associationInverseName']
+            if(_oa.is_a? Hash)
+              @associationInverseName = EnunciateHelpers::LAMB_CLASS_AWARE.call(_oa) if _oa['@class']
+              @associationInverseName =  String.from_json(_oa) unless _oa['@class']
+            elsif (_oa.is_a? Array)
+              #an array(of hashes hopefully) or scalar
+              @associationInverseName = Array.new
+              _oa.each { | _item | 
+                 if ((_item.nil? || _item['@class'].nil?)rescue true)
+                   @associationInverseName.push String.from_json(_item)
+                 else
+                   @associationInverseName.push EnunciateHelpers::LAMB_CLASS_AWARE.call(_item)
+                 end
+               }
+            else
+                @associationInverseName = _oa
+            end
+          end
+        if !_o['description'].nil?
+          _oa = _o['description']
+            if(_oa.is_a? Hash)
+              @description = EnunciateHelpers::LAMB_CLASS_AWARE.call(_oa) if _oa['@class']
+              @description =  String.from_json(_oa) unless _oa['@class']
+            elsif (_oa.is_a? Array)
+              #an array(of hashes hopefully) or scalar
+              @description = Array.new
+              _oa.each { | _item | 
+                 if ((_item.nil? || _item['@class'].nil?)rescue true)
+                   @description.push String.from_json(_item)
+                 else
+                   @description.push EnunciateHelpers::LAMB_CLASS_AWARE.call(_item)
+                 end
+               }
+            else
+                @description = _oa
+            end
+          end
+    end
+
+    # constructs a RestAssociationTypeVersionBaseCreate from a (parsed) JSON hash
     def self.from_json(o)
       if o.nil?
         return nil
@@ -3165,96 +3095,158 @@ module Api1
 
 module Data
 
-module Association
-
   # (no documentation provided)
-  class RestAssociationTypeVersionBaseCreate 
+  class RestStampedVersion 
 
-    # The best (primary) name of the association, per the user specified stamp coordinates.
-    # This would typically be a value like &quot;broader than&quot;
-    attr_accessor :associationName
-    # The inverse name (if any) of the association, per the user specified stamp coordinates.  This optional
-    # field may not be present.  This would typically be a value like &quot;narrower than&quot;
-    attr_accessor :associationInverseName
-    # The description of the purpose of this association.
-    attr_accessor :description
+    # The stamp sequence of this version
+    attr_accessor :stampSequence
+    # The State of this version (active, inactive, primordial or cancelled)
+    attr_accessor :state
+    # The time stamp of this version (in standard java form)
+    attr_accessor :time
+    # The concept sequence of the concept that identifies the author of this version
+    attr_accessor :authorSequence
+    # The concept sequence of the module that this version is in
+    attr_accessor :moduleSequence
+    # The concept sequence of the path that this version is in
+    attr_accessor :pathSequence
 
-    # the json hash for this RestAssociationTypeVersionBaseCreate
+    # the json hash for this RestStampedVersion
     def to_jaxb_json_hash
       _h = {}
-      _h['associationName'] = associationName.to_jaxb_json_hash unless associationName.nil?
-      _h['associationInverseName'] = associationInverseName.to_jaxb_json_hash unless associationInverseName.nil?
-      _h['description'] = description.to_jaxb_json_hash unless description.nil?
+      _h['stampSequence'] = stampSequence.to_jaxb_json_hash unless stampSequence.nil?
+      _h['state'] = state.to_jaxb_json_hash unless state.nil?
+      _h['time'] = time.to_jaxb_json_hash unless time.nil?
+      _h['authorSequence'] = authorSequence.to_jaxb_json_hash unless authorSequence.nil?
+      _h['moduleSequence'] = moduleSequence.to_jaxb_json_hash unless moduleSequence.nil?
+      _h['pathSequence'] = pathSequence.to_jaxb_json_hash unless pathSequence.nil?
       return _h
     end
 
-    # the json (string form) for this RestAssociationTypeVersionBaseCreate
+    # the json (string form) for this RestStampedVersion
     def to_json
       to_jaxb_json_hash.to_json
     end
 
-    #initializes this RestAssociationTypeVersionBaseCreate with a json hash
+    #initializes this RestStampedVersion with a json hash
     def init_jaxb_json_hash(_o)
-        if !_o['associationName'].nil?
-          _oa = _o['associationName']
+        if !_o['stampSequence'].nil?
+          _oa = _o['stampSequence']
             if(_oa.is_a? Hash)
-              @associationName = EnunciateHelpers::LAMB_CLASS_AWARE.call(_oa) if _oa['@class']
-              @associationName =  String.from_json(_oa) unless _oa['@class']
+              @stampSequence = EnunciateHelpers::LAMB_CLASS_AWARE.call(_oa) if _oa['@class']
+              @stampSequence =  Fixnum.from_json(_oa) unless _oa['@class']
             elsif (_oa.is_a? Array)
               #an array(of hashes hopefully) or scalar
-              @associationName = Array.new
+              @stampSequence = Array.new
               _oa.each { | _item | 
                  if ((_item.nil? || _item['@class'].nil?)rescue true)
-                   @associationName.push String.from_json(_item)
+                   @stampSequence.push Fixnum.from_json(_item)
                  else
-                   @associationName.push EnunciateHelpers::LAMB_CLASS_AWARE.call(_item)
+                   @stampSequence.push EnunciateHelpers::LAMB_CLASS_AWARE.call(_item)
                  end
                }
             else
-                @associationName = _oa
+                @stampSequence = _oa
             end
           end
-        if !_o['associationInverseName'].nil?
-          _oa = _o['associationInverseName']
+        if !_o['state'].nil?
+          _oa = _o['state']
             if(_oa.is_a? Hash)
-              @associationInverseName = EnunciateHelpers::LAMB_CLASS_AWARE.call(_oa) if _oa['@class']
-              @associationInverseName =  String.from_json(_oa) unless _oa['@class']
+              @state = EnunciateHelpers::LAMB_CLASS_AWARE.call(_oa) if _oa['@class']
+              @state =  Gov::Vha::Isaac::Rest::Api1::Data::Enumerations::RestStateType.from_json(_oa) unless _oa['@class']
             elsif (_oa.is_a? Array)
               #an array(of hashes hopefully) or scalar
-              @associationInverseName = Array.new
+              @state = Array.new
               _oa.each { | _item | 
                  if ((_item.nil? || _item['@class'].nil?)rescue true)
-                   @associationInverseName.push String.from_json(_item)
+                   @state.push Gov::Vha::Isaac::Rest::Api1::Data::Enumerations::RestStateType.from_json(_item)
                  else
-                   @associationInverseName.push EnunciateHelpers::LAMB_CLASS_AWARE.call(_item)
+                   @state.push EnunciateHelpers::LAMB_CLASS_AWARE.call(_item)
                  end
                }
             else
-                @associationInverseName = _oa
+                @state = _oa
             end
           end
-        if !_o['description'].nil?
-          _oa = _o['description']
+        if !_o['time'].nil?
+          _oa = _o['time']
             if(_oa.is_a? Hash)
-              @description = EnunciateHelpers::LAMB_CLASS_AWARE.call(_oa) if _oa['@class']
-              @description =  String.from_json(_oa) unless _oa['@class']
+              @time = EnunciateHelpers::LAMB_CLASS_AWARE.call(_oa) if _oa['@class']
+              @time =  Bignum.from_json(_oa) unless _oa['@class']
             elsif (_oa.is_a? Array)
               #an array(of hashes hopefully) or scalar
-              @description = Array.new
+              @time = Array.new
               _oa.each { | _item | 
                  if ((_item.nil? || _item['@class'].nil?)rescue true)
-                   @description.push String.from_json(_item)
+                   @time.push Bignum.from_json(_item)
                  else
-                   @description.push EnunciateHelpers::LAMB_CLASS_AWARE.call(_item)
+                   @time.push EnunciateHelpers::LAMB_CLASS_AWARE.call(_item)
                  end
                }
             else
-                @description = _oa
+                @time = _oa
+            end
+          end
+        if !_o['authorSequence'].nil?
+          _oa = _o['authorSequence']
+            if(_oa.is_a? Hash)
+              @authorSequence = EnunciateHelpers::LAMB_CLASS_AWARE.call(_oa) if _oa['@class']
+              @authorSequence =  Fixnum.from_json(_oa) unless _oa['@class']
+            elsif (_oa.is_a? Array)
+              #an array(of hashes hopefully) or scalar
+              @authorSequence = Array.new
+              _oa.each { | _item | 
+                 if ((_item.nil? || _item['@class'].nil?)rescue true)
+                   @authorSequence.push Fixnum.from_json(_item)
+                 else
+                   @authorSequence.push EnunciateHelpers::LAMB_CLASS_AWARE.call(_item)
+                 end
+               }
+            else
+                @authorSequence = _oa
+            end
+          end
+        if !_o['moduleSequence'].nil?
+          _oa = _o['moduleSequence']
+            if(_oa.is_a? Hash)
+              @moduleSequence = EnunciateHelpers::LAMB_CLASS_AWARE.call(_oa) if _oa['@class']
+              @moduleSequence =  Fixnum.from_json(_oa) unless _oa['@class']
+            elsif (_oa.is_a? Array)
+              #an array(of hashes hopefully) or scalar
+              @moduleSequence = Array.new
+              _oa.each { | _item | 
+                 if ((_item.nil? || _item['@class'].nil?)rescue true)
+                   @moduleSequence.push Fixnum.from_json(_item)
+                 else
+                   @moduleSequence.push EnunciateHelpers::LAMB_CLASS_AWARE.call(_item)
+                 end
+               }
+            else
+                @moduleSequence = _oa
+            end
+          end
+        if !_o['pathSequence'].nil?
+          _oa = _o['pathSequence']
+            if(_oa.is_a? Hash)
+              @pathSequence = EnunciateHelpers::LAMB_CLASS_AWARE.call(_oa) if _oa['@class']
+              @pathSequence =  Fixnum.from_json(_oa) unless _oa['@class']
+            elsif (_oa.is_a? Array)
+              #an array(of hashes hopefully) or scalar
+              @pathSequence = Array.new
+              _oa.each { | _item | 
+                 if ((_item.nil? || _item['@class'].nil?)rescue true)
+                   @pathSequence.push Fixnum.from_json(_item)
+                 else
+                   @pathSequence.push EnunciateHelpers::LAMB_CLASS_AWARE.call(_item)
+                 end
+               }
+            else
+                @pathSequence = _oa
             end
           end
     end
 
-    # constructs a RestAssociationTypeVersionBaseCreate from a (parsed) JSON hash
+    # constructs a RestStampedVersion from a (parsed) JSON hash
     def self.from_json(o)
       if o.nil?
         return nil
@@ -3265,8 +3257,6 @@ module Association
       end
     end
   end
-
-end
 
 end
 
@@ -3499,237 +3489,6 @@ module Isaac
 
 module Rest
 
-module Api1
-
-module Data
-
-module Enumerations
-
-  # (no documentation provided)
-  class Enumeration 
-
-    # The enum name of this enumeration type
-    attr_accessor :enumName
-    # The user-friendly name of this enumeration type - if available.  May be null
-    attr_accessor :friendlyName
-    # The identifier of this enumeration.  This would be passed back to a call that requested an enum type.
-    attr_accessor :enumId
-
-    # the json hash for this Enumeration
-    def to_jaxb_json_hash
-      _h = {}
-      _h['enumName'] = enumName.to_jaxb_json_hash unless enumName.nil?
-      _h['friendlyName'] = friendlyName.to_jaxb_json_hash unless friendlyName.nil?
-      _h['enumId'] = enumId.to_jaxb_json_hash unless enumId.nil?
-      return _h
-    end
-
-    # the json (string form) for this Enumeration
-    def to_json
-      to_jaxb_json_hash.to_json
-    end
-
-    #initializes this Enumeration with a json hash
-    def init_jaxb_json_hash(_o)
-        if !_o['enumName'].nil?
-          _oa = _o['enumName']
-            if(_oa.is_a? Hash)
-              @enumName = EnunciateHelpers::LAMB_CLASS_AWARE.call(_oa) if _oa['@class']
-              @enumName =  String.from_json(_oa) unless _oa['@class']
-            elsif (_oa.is_a? Array)
-              #an array(of hashes hopefully) or scalar
-              @enumName = Array.new
-              _oa.each { | _item | 
-                 if ((_item.nil? || _item['@class'].nil?)rescue true)
-                   @enumName.push String.from_json(_item)
-                 else
-                   @enumName.push EnunciateHelpers::LAMB_CLASS_AWARE.call(_item)
-                 end
-               }
-            else
-                @enumName = _oa
-            end
-          end
-        if !_o['friendlyName'].nil?
-          _oa = _o['friendlyName']
-            if(_oa.is_a? Hash)
-              @friendlyName = EnunciateHelpers::LAMB_CLASS_AWARE.call(_oa) if _oa['@class']
-              @friendlyName =  String.from_json(_oa) unless _oa['@class']
-            elsif (_oa.is_a? Array)
-              #an array(of hashes hopefully) or scalar
-              @friendlyName = Array.new
-              _oa.each { | _item | 
-                 if ((_item.nil? || _item['@class'].nil?)rescue true)
-                   @friendlyName.push String.from_json(_item)
-                 else
-                   @friendlyName.push EnunciateHelpers::LAMB_CLASS_AWARE.call(_item)
-                 end
-               }
-            else
-                @friendlyName = _oa
-            end
-          end
-        if !_o['enumId'].nil?
-          _oa = _o['enumId']
-            if(_oa.is_a? Hash)
-              @enumId = EnunciateHelpers::LAMB_CLASS_AWARE.call(_oa) if _oa['@class']
-              @enumId =  Fixnum.from_json(_oa) unless _oa['@class']
-            elsif (_oa.is_a? Array)
-              #an array(of hashes hopefully) or scalar
-              @enumId = Array.new
-              _oa.each { | _item | 
-                 if ((_item.nil? || _item['@class'].nil?)rescue true)
-                   @enumId.push Fixnum.from_json(_item)
-                 else
-                   @enumId.push EnunciateHelpers::LAMB_CLASS_AWARE.call(_item)
-                 end
-               }
-            else
-                @enumId = _oa
-            end
-          end
-    end
-
-    # constructs a Enumeration from a (parsed) JSON hash
-    def self.from_json(o)
-      if o.nil?
-        return nil
-      else
-        inst = new
-        inst.init_jaxb_json_hash o
-        return inst
-      end
-    end
-  end
-
-end
-
-end
-
-end
-
-end
-
-end
-
-end
-
-end
-
-module Gov
-
-module Vha
-
-module Isaac
-
-module Rest
-
-module Api1
-
-module Data
-
-module Association
-
-  # (no documentation provided)
-  class RestAssociationItemVersionBase 
-
-    # The nid of the target item in the association.  Typically this is a concept, but it may also be a sequence.  Note that
-    # this may be null, in the case where the association intends to represent that no target is available for a particular
-    # association type and source component.
-    attr_accessor :targetNid
-    # True to indicate the association should be set as active, false for inactive.
-    # This field is optional, if not provided, it will be assumed to be active.
-    attr_accessor :active
-
-    # the json hash for this RestAssociationItemVersionBase
-    def to_jaxb_json_hash
-      _h = {}
-      _h['targetNid'] = targetNid.to_jaxb_json_hash unless targetNid.nil?
-      _h['active'] = active.to_jaxb_json_hash unless active.nil?
-      return _h
-    end
-
-    # the json (string form) for this RestAssociationItemVersionBase
-    def to_json
-      to_jaxb_json_hash.to_json
-    end
-
-    #initializes this RestAssociationItemVersionBase with a json hash
-    def init_jaxb_json_hash(_o)
-        if !_o['targetNid'].nil?
-          _oa = _o['targetNid']
-            if(_oa.is_a? Hash)
-              @targetNid = EnunciateHelpers::LAMB_CLASS_AWARE.call(_oa) if _oa['@class']
-              @targetNid =  Fixnum.from_json(_oa) unless _oa['@class']
-            elsif (_oa.is_a? Array)
-              #an array(of hashes hopefully) or scalar
-              @targetNid = Array.new
-              _oa.each { | _item | 
-                 if ((_item.nil? || _item['@class'].nil?)rescue true)
-                   @targetNid.push Fixnum.from_json(_item)
-                 else
-                   @targetNid.push EnunciateHelpers::LAMB_CLASS_AWARE.call(_item)
-                 end
-               }
-            else
-                @targetNid = _oa
-            end
-          end
-        if !_o['active'].nil?
-          _oa = _o['active']
-            if(_oa.is_a? Hash)
-              @active = EnunciateHelpers::LAMB_CLASS_AWARE.call(_oa) if _oa['@class']
-              @active =  Boolean.from_json(_oa) unless _oa['@class']
-            elsif (_oa.is_a? Array)
-              #an array(of hashes hopefully) or scalar
-              @active = Array.new
-              _oa.each { | _item | 
-                 if ((_item.nil? || _item['@class'].nil?)rescue true)
-                   @active.push Boolean.from_json(_item)
-                 else
-                   @active.push EnunciateHelpers::LAMB_CLASS_AWARE.call(_item)
-                 end
-               }
-            else
-                @active = _oa
-            end
-          end
-    end
-
-    # constructs a RestAssociationItemVersionBase from a (parsed) JSON hash
-    def self.from_json(o)
-      if o.nil?
-        return nil
-      else
-        inst = new
-        inst.init_jaxb_json_hash o
-        return inst
-      end
-    end
-  end
-
-end
-
-end
-
-end
-
-end
-
-end
-
-end
-
-end
-
-module Gov
-
-module Vha
-
-module Isaac
-
-module Rest
-
 module Api
 
 module Data
@@ -3898,87 +3657,6 @@ module Search
   end
 
 end
-
-end
-
-end
-
-end
-
-end
-
-end
-
-end
-
-module Gov
-
-module Vha
-
-module Isaac
-
-module Rest
-
-module Api1
-
-module Data
-
-  # (no documentation provided)
-  class RestIdentifiedObject 
-
-    # The globally unique, fixed, stable set of identifiers for the object
-    attr_accessor :uuids
-
-    # the json hash for this RestIdentifiedObject
-    def to_jaxb_json_hash
-      _h = {}
-      if !uuids.nil?
-        _ha = Array.new
-        uuids.each { | _item | _ha.push _item.to_jaxb_json_hash }
-        _h['uuids'] = _ha
-      end
-      return _h
-    end
-
-    # the json (string form) for this RestIdentifiedObject
-    def to_json
-      to_jaxb_json_hash.to_json
-    end
-
-    #initializes this RestIdentifiedObject with a json hash
-    def init_jaxb_json_hash(_o)
-        if !_o['uuids'].nil?
-          _oa = _o['uuids']
-            if(_oa.is_a? Hash)
-              @uuids = EnunciateHelpers::LAMB_CLASS_AWARE.call(_oa) if _oa['@class']
-              @uuids =  String.from_json(_oa) unless _oa['@class']
-            elsif (_oa.is_a? Array)
-              #an array(of hashes hopefully) or scalar
-              @uuids = Array.new
-              _oa.each { | _item | 
-                 if ((_item.nil? || _item['@class'].nil?)rescue true)
-                   @uuids.push String.from_json(_item)
-                 else
-                   @uuids.push EnunciateHelpers::LAMB_CLASS_AWARE.call(_item)
-                 end
-               }
-            else
-                @uuids = _oa
-            end
-          end
-    end
-
-    # constructs a RestIdentifiedObject from a (parsed) JSON hash
-    def self.from_json(o)
-      if o.nil?
-        return nil
-      else
-        inst = new
-        inst.init_jaxb_json_hash o
-        return inst
-      end
-    end
-  end
 
 end
 
@@ -4274,352 +3952,6 @@ module Api1
 
 module Data
 
-module Workflow
-
-  # (no documentation provided)
-  class RestWorkflowAvailableAction 
-
-    # The identifier
-    attr_accessor :id
-    # The definition id
-    attr_accessor :definitionId
-    # The initial state
-    attr_accessor :initialState
-    # The action
-    attr_accessor :action
-    # The outcome state
-    attr_accessor :outcomeState
-    # The role
-    attr_accessor :role
-
-    # the json hash for this RestWorkflowAvailableAction
-    def to_jaxb_json_hash
-      _h = {}
-      _h['id'] = id.to_jaxb_json_hash unless id.nil?
-      _h['definitionId'] = definitionId.to_jaxb_json_hash unless definitionId.nil?
-      _h['initialState'] = initialState.to_jaxb_json_hash unless initialState.nil?
-      _h['action'] = action.to_jaxb_json_hash unless action.nil?
-      _h['outcomeState'] = outcomeState.to_jaxb_json_hash unless outcomeState.nil?
-      _h['role'] = role.to_jaxb_json_hash unless role.nil?
-      return _h
-    end
-
-    # the json (string form) for this RestWorkflowAvailableAction
-    def to_json
-      to_jaxb_json_hash.to_json
-    end
-
-    #initializes this RestWorkflowAvailableAction with a json hash
-    def init_jaxb_json_hash(_o)
-        if !_o['id'].nil?
-          _oa = _o['id']
-            if(_oa.is_a? Hash)
-              @id = EnunciateHelpers::LAMB_CLASS_AWARE.call(_oa) if _oa['@class']
-              @id =  String.from_json(_oa) unless _oa['@class']
-            elsif (_oa.is_a? Array)
-              #an array(of hashes hopefully) or scalar
-              @id = Array.new
-              _oa.each { | _item | 
-                 if ((_item.nil? || _item['@class'].nil?)rescue true)
-                   @id.push String.from_json(_item)
-                 else
-                   @id.push EnunciateHelpers::LAMB_CLASS_AWARE.call(_item)
-                 end
-               }
-            else
-                @id = _oa
-            end
-          end
-        if !_o['definitionId'].nil?
-          _oa = _o['definitionId']
-            if(_oa.is_a? Hash)
-              @definitionId = EnunciateHelpers::LAMB_CLASS_AWARE.call(_oa) if _oa['@class']
-              @definitionId =  String.from_json(_oa) unless _oa['@class']
-            elsif (_oa.is_a? Array)
-              #an array(of hashes hopefully) or scalar
-              @definitionId = Array.new
-              _oa.each { | _item | 
-                 if ((_item.nil? || _item['@class'].nil?)rescue true)
-                   @definitionId.push String.from_json(_item)
-                 else
-                   @definitionId.push EnunciateHelpers::LAMB_CLASS_AWARE.call(_item)
-                 end
-               }
-            else
-                @definitionId = _oa
-            end
-          end
-        if !_o['initialState'].nil?
-          _oa = _o['initialState']
-            if(_oa.is_a? Hash)
-              @initialState = EnunciateHelpers::LAMB_CLASS_AWARE.call(_oa) if _oa['@class']
-              @initialState =  String.from_json(_oa) unless _oa['@class']
-            elsif (_oa.is_a? Array)
-              #an array(of hashes hopefully) or scalar
-              @initialState = Array.new
-              _oa.each { | _item | 
-                 if ((_item.nil? || _item['@class'].nil?)rescue true)
-                   @initialState.push String.from_json(_item)
-                 else
-                   @initialState.push EnunciateHelpers::LAMB_CLASS_AWARE.call(_item)
-                 end
-               }
-            else
-                @initialState = _oa
-            end
-          end
-        if !_o['action'].nil?
-          _oa = _o['action']
-            if(_oa.is_a? Hash)
-              @action = EnunciateHelpers::LAMB_CLASS_AWARE.call(_oa) if _oa['@class']
-              @action =  String.from_json(_oa) unless _oa['@class']
-            elsif (_oa.is_a? Array)
-              #an array(of hashes hopefully) or scalar
-              @action = Array.new
-              _oa.each { | _item | 
-                 if ((_item.nil? || _item['@class'].nil?)rescue true)
-                   @action.push String.from_json(_item)
-                 else
-                   @action.push EnunciateHelpers::LAMB_CLASS_AWARE.call(_item)
-                 end
-               }
-            else
-                @action = _oa
-            end
-          end
-        if !_o['outcomeState'].nil?
-          _oa = _o['outcomeState']
-            if(_oa.is_a? Hash)
-              @outcomeState = EnunciateHelpers::LAMB_CLASS_AWARE.call(_oa) if _oa['@class']
-              @outcomeState =  String.from_json(_oa) unless _oa['@class']
-            elsif (_oa.is_a? Array)
-              #an array(of hashes hopefully) or scalar
-              @outcomeState = Array.new
-              _oa.each { | _item | 
-                 if ((_item.nil? || _item['@class'].nil?)rescue true)
-                   @outcomeState.push String.from_json(_item)
-                 else
-                   @outcomeState.push EnunciateHelpers::LAMB_CLASS_AWARE.call(_item)
-                 end
-               }
-            else
-                @outcomeState = _oa
-            end
-          end
-        if !_o['role'].nil?
-          _oa = _o['role']
-            if(_oa.is_a? Hash)
-              @role = EnunciateHelpers::LAMB_CLASS_AWARE.call(_oa) if _oa['@class']
-              @role =  Gov::Vha::Isaac::Rest::Api1::Data::Enumerations::RestUserRoleType.from_json(_oa) unless _oa['@class']
-            elsif (_oa.is_a? Array)
-              #an array(of hashes hopefully) or scalar
-              @role = Array.new
-              _oa.each { | _item | 
-                 if ((_item.nil? || _item['@class'].nil?)rescue true)
-                   @role.push Gov::Vha::Isaac::Rest::Api1::Data::Enumerations::RestUserRoleType.from_json(_item)
-                 else
-                   @role.push EnunciateHelpers::LAMB_CLASS_AWARE.call(_item)
-                 end
-               }
-            else
-                @role = _oa
-            end
-          end
-    end
-
-    # constructs a RestWorkflowAvailableAction from a (parsed) JSON hash
-    def self.from_json(o)
-      if o.nil?
-        return nil
-      else
-        inst = new
-        inst.init_jaxb_json_hash o
-        return inst
-      end
-    end
-  end
-
-end
-
-end
-
-end
-
-end
-
-end
-
-end
-
-end
-
-module Gov
-
-module Vha
-
-module Isaac
-
-module Rest
-
-module Api1
-
-module Data
-
-module Mapping
-
-  # (no documentation provided)
-  class RestMappingItemVersionBase 
-
-    # The target concept sequence being mapped by this map item.  This field is optional, and may be blank, if no target mapping
-    # is available.
-    attr_accessor :targetConcept
-    # An (optional) concept sequence used to qualify this mapping entry
-    attr_accessor :qualifierConcept
-    # The (optional) extended fields which carry additional information about this map item.  For details on these fields, read
-    # the assemblage definition of the assemblage concept provided with RestMappingSetVersion#mapItemExtendedFieldsType for
-    # the RestMappingSetVersion of #mapSetConcept
-    attr_accessor :mapItemExtendedFields
-    # True to indicate the mapping item should be set as active, false for inactive.
-    # This field is optional, if not provided, it will be assumed to be active.
-    attr_accessor :active
-
-    # the json hash for this RestMappingItemVersionBase
-    def to_jaxb_json_hash
-      _h = {}
-      _h['targetConcept'] = targetConcept.to_jaxb_json_hash unless targetConcept.nil?
-      _h['qualifierConcept'] = qualifierConcept.to_jaxb_json_hash unless qualifierConcept.nil?
-      if !mapItemExtendedFields.nil?
-        _ha = Array.new
-        mapItemExtendedFields.each { | _item | _ha.push _item.to_jaxb_json_hash }
-        _h['mapItemExtendedFields'] = _ha
-      end
-      _h['active'] = active.to_jaxb_json_hash unless active.nil?
-      return _h
-    end
-
-    # the json (string form) for this RestMappingItemVersionBase
-    def to_json
-      to_jaxb_json_hash.to_json
-    end
-
-    #initializes this RestMappingItemVersionBase with a json hash
-    def init_jaxb_json_hash(_o)
-        if !_o['targetConcept'].nil?
-          _oa = _o['targetConcept']
-            if(_oa.is_a? Hash)
-              @targetConcept = EnunciateHelpers::LAMB_CLASS_AWARE.call(_oa) if _oa['@class']
-              @targetConcept =  Fixnum.from_json(_oa) unless _oa['@class']
-            elsif (_oa.is_a? Array)
-              #an array(of hashes hopefully) or scalar
-              @targetConcept = Array.new
-              _oa.each { | _item | 
-                 if ((_item.nil? || _item['@class'].nil?)rescue true)
-                   @targetConcept.push Fixnum.from_json(_item)
-                 else
-                   @targetConcept.push EnunciateHelpers::LAMB_CLASS_AWARE.call(_item)
-                 end
-               }
-            else
-                @targetConcept = _oa
-            end
-          end
-        if !_o['qualifierConcept'].nil?
-          _oa = _o['qualifierConcept']
-            if(_oa.is_a? Hash)
-              @qualifierConcept = EnunciateHelpers::LAMB_CLASS_AWARE.call(_oa) if _oa['@class']
-              @qualifierConcept =  Fixnum.from_json(_oa) unless _oa['@class']
-            elsif (_oa.is_a? Array)
-              #an array(of hashes hopefully) or scalar
-              @qualifierConcept = Array.new
-              _oa.each { | _item | 
-                 if ((_item.nil? || _item['@class'].nil?)rescue true)
-                   @qualifierConcept.push Fixnum.from_json(_item)
-                 else
-                   @qualifierConcept.push EnunciateHelpers::LAMB_CLASS_AWARE.call(_item)
-                 end
-               }
-            else
-                @qualifierConcept = _oa
-            end
-          end
-        if !_o['mapItemExtendedFields'].nil?
-          _oa = _o['mapItemExtendedFields']
-            if(_oa.is_a? Hash)
-              @mapItemExtendedFields = EnunciateHelpers::LAMB_CLASS_AWARE.call(_oa) if _oa['@class']
-              @mapItemExtendedFields =  Gov::Vha::Isaac::Rest::Api1::Data::Sememe::RestDynamicSememeData.from_json(_oa) unless _oa['@class']
-            elsif (_oa.is_a? Array)
-              #an array(of hashes hopefully) or scalar
-              @mapItemExtendedFields = Array.new
-              _oa.each { | _item | 
-                 if ((_item.nil? || _item['@class'].nil?)rescue true)
-                   @mapItemExtendedFields.push Gov::Vha::Isaac::Rest::Api1::Data::Sememe::RestDynamicSememeData.from_json(_item)
-                 else
-                   @mapItemExtendedFields.push EnunciateHelpers::LAMB_CLASS_AWARE.call(_item)
-                 end
-               }
-            else
-                @mapItemExtendedFields = _oa
-            end
-          end
-        if !_o['active'].nil?
-          _oa = _o['active']
-            if(_oa.is_a? Hash)
-              @active = EnunciateHelpers::LAMB_CLASS_AWARE.call(_oa) if _oa['@class']
-              @active =  Boolean.from_json(_oa) unless _oa['@class']
-            elsif (_oa.is_a? Array)
-              #an array(of hashes hopefully) or scalar
-              @active = Array.new
-              _oa.each { | _item | 
-                 if ((_item.nil? || _item['@class'].nil?)rescue true)
-                   @active.push Boolean.from_json(_item)
-                 else
-                   @active.push EnunciateHelpers::LAMB_CLASS_AWARE.call(_item)
-                 end
-               }
-            else
-                @active = _oa
-            end
-          end
-    end
-
-    # constructs a RestMappingItemVersionBase from a (parsed) JSON hash
-    def self.from_json(o)
-      if o.nil?
-        return nil
-      else
-        inst = new
-        inst.init_jaxb_json_hash o
-        return inst
-      end
-    end
-  end
-
-end
-
-end
-
-end
-
-end
-
-end
-
-end
-
-end
-
-module Gov
-
-module Vha
-
-module Isaac
-
-module Rest
-
-module Api1
-
-module Data
-
 module Coordinate
 
   # (no documentation provided)
@@ -4767,204 +4099,175 @@ module Api1
 
 module Data
 
-module Workflow
-
   # (no documentation provided)
-  class RestWorkflowProcessHistory 
+  class RestIdentifiedObject 
 
-    # The identifier data
-    attr_accessor :id
-    # The process id
-    attr_accessor :processId
-    # The workflow user
-    attr_accessor :userId
-    # The time advanced
-    attr_accessor :timeAdvanced
-    # The state
-    attr_accessor :initialState
-    # The action
-    attr_accessor :action
-    # The outcome
-    attr_accessor :outcomeState
-    # The comment
-    attr_accessor :comment
+    # The globally unique, fixed, stable set of identifiers for the object
+    attr_accessor :uuids
 
-    # the json hash for this RestWorkflowProcessHistory
+    # the json hash for this RestIdentifiedObject
     def to_jaxb_json_hash
       _h = {}
-      _h['id'] = id.to_jaxb_json_hash unless id.nil?
-      _h['processId'] = processId.to_jaxb_json_hash unless processId.nil?
-      _h['userId'] = userId.to_jaxb_json_hash unless userId.nil?
-      _h['timeAdvanced'] = timeAdvanced.to_jaxb_json_hash unless timeAdvanced.nil?
-      _h['initialState'] = initialState.to_jaxb_json_hash unless initialState.nil?
-      _h['action'] = action.to_jaxb_json_hash unless action.nil?
-      _h['outcomeState'] = outcomeState.to_jaxb_json_hash unless outcomeState.nil?
-      _h['comment'] = comment.to_jaxb_json_hash unless comment.nil?
+      if !uuids.nil?
+        _ha = Array.new
+        uuids.each { | _item | _ha.push _item.to_jaxb_json_hash }
+        _h['uuids'] = _ha
+      end
       return _h
     end
 
-    # the json (string form) for this RestWorkflowProcessHistory
+    # the json (string form) for this RestIdentifiedObject
     def to_json
       to_jaxb_json_hash.to_json
     end
 
-    #initializes this RestWorkflowProcessHistory with a json hash
+    #initializes this RestIdentifiedObject with a json hash
     def init_jaxb_json_hash(_o)
-        if !_o['id'].nil?
-          _oa = _o['id']
+        if !_o['uuids'].nil?
+          _oa = _o['uuids']
             if(_oa.is_a? Hash)
-              @id = EnunciateHelpers::LAMB_CLASS_AWARE.call(_oa) if _oa['@class']
-              @id =  String.from_json(_oa) unless _oa['@class']
+              @uuids = EnunciateHelpers::LAMB_CLASS_AWARE.call(_oa) if _oa['@class']
+              @uuids =  String.from_json(_oa) unless _oa['@class']
             elsif (_oa.is_a? Array)
               #an array(of hashes hopefully) or scalar
-              @id = Array.new
+              @uuids = Array.new
               _oa.each { | _item | 
                  if ((_item.nil? || _item['@class'].nil?)rescue true)
-                   @id.push String.from_json(_item)
+                   @uuids.push String.from_json(_item)
                  else
-                   @id.push EnunciateHelpers::LAMB_CLASS_AWARE.call(_item)
+                   @uuids.push EnunciateHelpers::LAMB_CLASS_AWARE.call(_item)
                  end
                }
             else
-                @id = _oa
-            end
-          end
-        if !_o['processId'].nil?
-          _oa = _o['processId']
-            if(_oa.is_a? Hash)
-              @processId = EnunciateHelpers::LAMB_CLASS_AWARE.call(_oa) if _oa['@class']
-              @processId =  String.from_json(_oa) unless _oa['@class']
-            elsif (_oa.is_a? Array)
-              #an array(of hashes hopefully) or scalar
-              @processId = Array.new
-              _oa.each { | _item | 
-                 if ((_item.nil? || _item['@class'].nil?)rescue true)
-                   @processId.push String.from_json(_item)
-                 else
-                   @processId.push EnunciateHelpers::LAMB_CLASS_AWARE.call(_item)
-                 end
-               }
-            else
-                @processId = _oa
-            end
-          end
-        if !_o['userId'].nil?
-          _oa = _o['userId']
-            if(_oa.is_a? Hash)
-              @userId = EnunciateHelpers::LAMB_CLASS_AWARE.call(_oa) if _oa['@class']
-              @userId =  String.from_json(_oa) unless _oa['@class']
-            elsif (_oa.is_a? Array)
-              #an array(of hashes hopefully) or scalar
-              @userId = Array.new
-              _oa.each { | _item | 
-                 if ((_item.nil? || _item['@class'].nil?)rescue true)
-                   @userId.push String.from_json(_item)
-                 else
-                   @userId.push EnunciateHelpers::LAMB_CLASS_AWARE.call(_item)
-                 end
-               }
-            else
-                @userId = _oa
-            end
-          end
-        if !_o['timeAdvanced'].nil?
-          _oa = _o['timeAdvanced']
-            if(_oa.is_a? Hash)
-              @timeAdvanced = EnunciateHelpers::LAMB_CLASS_AWARE.call(_oa) if _oa['@class']
-              @timeAdvanced =  Bignum.from_json(_oa) unless _oa['@class']
-            elsif (_oa.is_a? Array)
-              #an array(of hashes hopefully) or scalar
-              @timeAdvanced = Array.new
-              _oa.each { | _item | 
-                 if ((_item.nil? || _item['@class'].nil?)rescue true)
-                   @timeAdvanced.push Bignum.from_json(_item)
-                 else
-                   @timeAdvanced.push EnunciateHelpers::LAMB_CLASS_AWARE.call(_item)
-                 end
-               }
-            else
-                @timeAdvanced = _oa
-            end
-          end
-        if !_o['initialState'].nil?
-          _oa = _o['initialState']
-            if(_oa.is_a? Hash)
-              @initialState = EnunciateHelpers::LAMB_CLASS_AWARE.call(_oa) if _oa['@class']
-              @initialState =  String.from_json(_oa) unless _oa['@class']
-            elsif (_oa.is_a? Array)
-              #an array(of hashes hopefully) or scalar
-              @initialState = Array.new
-              _oa.each { | _item | 
-                 if ((_item.nil? || _item['@class'].nil?)rescue true)
-                   @initialState.push String.from_json(_item)
-                 else
-                   @initialState.push EnunciateHelpers::LAMB_CLASS_AWARE.call(_item)
-                 end
-               }
-            else
-                @initialState = _oa
-            end
-          end
-        if !_o['action'].nil?
-          _oa = _o['action']
-            if(_oa.is_a? Hash)
-              @action = EnunciateHelpers::LAMB_CLASS_AWARE.call(_oa) if _oa['@class']
-              @action =  String.from_json(_oa) unless _oa['@class']
-            elsif (_oa.is_a? Array)
-              #an array(of hashes hopefully) or scalar
-              @action = Array.new
-              _oa.each { | _item | 
-                 if ((_item.nil? || _item['@class'].nil?)rescue true)
-                   @action.push String.from_json(_item)
-                 else
-                   @action.push EnunciateHelpers::LAMB_CLASS_AWARE.call(_item)
-                 end
-               }
-            else
-                @action = _oa
-            end
-          end
-        if !_o['outcomeState'].nil?
-          _oa = _o['outcomeState']
-            if(_oa.is_a? Hash)
-              @outcomeState = EnunciateHelpers::LAMB_CLASS_AWARE.call(_oa) if _oa['@class']
-              @outcomeState =  String.from_json(_oa) unless _oa['@class']
-            elsif (_oa.is_a? Array)
-              #an array(of hashes hopefully) or scalar
-              @outcomeState = Array.new
-              _oa.each { | _item | 
-                 if ((_item.nil? || _item['@class'].nil?)rescue true)
-                   @outcomeState.push String.from_json(_item)
-                 else
-                   @outcomeState.push EnunciateHelpers::LAMB_CLASS_AWARE.call(_item)
-                 end
-               }
-            else
-                @outcomeState = _oa
-            end
-          end
-        if !_o['comment'].nil?
-          _oa = _o['comment']
-            if(_oa.is_a? Hash)
-              @comment = EnunciateHelpers::LAMB_CLASS_AWARE.call(_oa) if _oa['@class']
-              @comment =  String.from_json(_oa) unless _oa['@class']
-            elsif (_oa.is_a? Array)
-              #an array(of hashes hopefully) or scalar
-              @comment = Array.new
-              _oa.each { | _item | 
-                 if ((_item.nil? || _item['@class'].nil?)rescue true)
-                   @comment.push String.from_json(_item)
-                 else
-                   @comment.push EnunciateHelpers::LAMB_CLASS_AWARE.call(_item)
-                 end
-               }
-            else
-                @comment = _oa
+                @uuids = _oa
             end
           end
     end
 
-    # constructs a RestWorkflowProcessHistory from a (parsed) JSON hash
+    # constructs a RestIdentifiedObject from a (parsed) JSON hash
+    def self.from_json(o)
+      if o.nil?
+        return nil
+      else
+        inst = new
+        inst.init_jaxb_json_hash o
+        return inst
+      end
+    end
+  end
+
+end
+
+end
+
+end
+
+end
+
+end
+
+end
+
+module Gov
+
+module Vha
+
+module Isaac
+
+module Rest
+
+module Api1
+
+module Data
+
+module Enumerations
+
+  # (no documentation provided)
+  class Enumeration 
+
+    # The enum name of this enumeration type
+    attr_accessor :enumName
+    # The user-friendly name of this enumeration type - if available.  May be null
+    attr_accessor :friendlyName
+    # The identifier of this enumeration.  This would be passed back to a call that requested an enum type.
+    attr_accessor :enumId
+
+    # the json hash for this Enumeration
+    def to_jaxb_json_hash
+      _h = {}
+      _h['enumName'] = enumName.to_jaxb_json_hash unless enumName.nil?
+      _h['friendlyName'] = friendlyName.to_jaxb_json_hash unless friendlyName.nil?
+      _h['enumId'] = enumId.to_jaxb_json_hash unless enumId.nil?
+      return _h
+    end
+
+    # the json (string form) for this Enumeration
+    def to_json
+      to_jaxb_json_hash.to_json
+    end
+
+    #initializes this Enumeration with a json hash
+    def init_jaxb_json_hash(_o)
+        if !_o['enumName'].nil?
+          _oa = _o['enumName']
+            if(_oa.is_a? Hash)
+              @enumName = EnunciateHelpers::LAMB_CLASS_AWARE.call(_oa) if _oa['@class']
+              @enumName =  String.from_json(_oa) unless _oa['@class']
+            elsif (_oa.is_a? Array)
+              #an array(of hashes hopefully) or scalar
+              @enumName = Array.new
+              _oa.each { | _item | 
+                 if ((_item.nil? || _item['@class'].nil?)rescue true)
+                   @enumName.push String.from_json(_item)
+                 else
+                   @enumName.push EnunciateHelpers::LAMB_CLASS_AWARE.call(_item)
+                 end
+               }
+            else
+                @enumName = _oa
+            end
+          end
+        if !_o['friendlyName'].nil?
+          _oa = _o['friendlyName']
+            if(_oa.is_a? Hash)
+              @friendlyName = EnunciateHelpers::LAMB_CLASS_AWARE.call(_oa) if _oa['@class']
+              @friendlyName =  String.from_json(_oa) unless _oa['@class']
+            elsif (_oa.is_a? Array)
+              #an array(of hashes hopefully) or scalar
+              @friendlyName = Array.new
+              _oa.each { | _item | 
+                 if ((_item.nil? || _item['@class'].nil?)rescue true)
+                   @friendlyName.push String.from_json(_item)
+                 else
+                   @friendlyName.push EnunciateHelpers::LAMB_CLASS_AWARE.call(_item)
+                 end
+               }
+            else
+                @friendlyName = _oa
+            end
+          end
+        if !_o['enumId'].nil?
+          _oa = _o['enumId']
+            if(_oa.is_a? Hash)
+              @enumId = EnunciateHelpers::LAMB_CLASS_AWARE.call(_oa) if _oa['@class']
+              @enumId =  Fixnum.from_json(_oa) unless _oa['@class']
+            elsif (_oa.is_a? Array)
+              #an array(of hashes hopefully) or scalar
+              @enumId = Array.new
+              _oa.each { | _item | 
+                 if ((_item.nil? || _item['@class'].nil?)rescue true)
+                   @enumId.push Fixnum.from_json(_item)
+                 else
+                   @enumId.push EnunciateHelpers::LAMB_CLASS_AWARE.call(_item)
+                 end
+               }
+            else
+                @enumId = _oa
+            end
+          end
+    end
+
+    # constructs a Enumeration from a (parsed) JSON hash
     def self.from_json(o)
       if o.nil?
         return nil
@@ -5002,109 +4305,51 @@ module Api1
 
 module Data
 
-module Search
+module Association
 
   # (no documentation provided)
-  class RestSearchResult 
+  class RestAssociationItemVersionBase 
 
-    # The internal identifier of the sememe that matched the query
-    attr_accessor :matchNid
-    # The text of the description that matched the query (may be blank, if the description is not available/active on the path used to populate this)
-    attr_accessor :matchText
-    # The Lucene Score for this result.  This value is only useful for ranking search results relative to other search results within the SAME QUERY
-    # execution.  It may not be used to rank one query against another.
-    attr_accessor :score
-    # Returns true if the sememe that matched the query is active (with the specified of default stamp,
-    # false if inactive.
+    # The nid of the target item in the association.  Typically this is a concept, but it may also be a sequence.  Note that
+    # this may be null, in the case where the association intends to represent that no target is available for a particular
+    # association type and source component.
+    attr_accessor :targetNid
+    # True to indicate the association should be set as active, false for inactive.
+    # This field is optional, if not provided, it will be assumed to be active.
     attr_accessor :active
-    # The data that was not expanded as part of this call (but can be)
-    attr_accessor :expandables
-    # The (optionally) populated identifiers (UUIDs) of the sememe that matched the query.  Must pass expand=&#39;uuid&#39; to have
-    # this populated.
-    attr_accessor :identifiers
-    # The (optionally) populated concept that is referenced (indirectly) by the sememe that matched the query.  This is calculated by
-    # looking up the sememe of the matchNid, and then getting the referenced component of that sememe.  If the referenced component
-    # is a concept, that is the concept that is returned.  If the referenced component is a sememe, then the process is repeated (following
-    # the referenced component reference of the sememe) - continuing until a concept is found.  If an (unusual) case occurs where the
-    # sememe chain doesn&#39;t lead to a concept, this will not be populated.  This is populated by passing the expand parameter &#39;referencedConcept&#39;.
-    # If this is passed, you may also (optionally) pass the parameters &#39;versionsLatestOnly&#39; or &#39;versionsAll&#39;
-    attr_accessor :referencedConcept
 
-    # the json hash for this RestSearchResult
+    # the json hash for this RestAssociationItemVersionBase
     def to_jaxb_json_hash
       _h = {}
-      _h['matchNid'] = matchNid.to_jaxb_json_hash unless matchNid.nil?
-      _h['matchText'] = matchText.to_jaxb_json_hash unless matchText.nil?
-      _h['score'] = score.to_jaxb_json_hash unless score.nil?
+      _h['targetNid'] = targetNid.to_jaxb_json_hash unless targetNid.nil?
       _h['active'] = active.to_jaxb_json_hash unless active.nil?
-      _h['expandables'] = expandables.to_jaxb_json_hash unless expandables.nil?
-      _h['identifiers'] = identifiers.to_jaxb_json_hash unless identifiers.nil?
-      _h['referencedConcept'] = referencedConcept.to_jaxb_json_hash unless referencedConcept.nil?
       return _h
     end
 
-    # the json (string form) for this RestSearchResult
+    # the json (string form) for this RestAssociationItemVersionBase
     def to_json
       to_jaxb_json_hash.to_json
     end
 
-    #initializes this RestSearchResult with a json hash
+    #initializes this RestAssociationItemVersionBase with a json hash
     def init_jaxb_json_hash(_o)
-        if !_o['matchNid'].nil?
-          _oa = _o['matchNid']
+        if !_o['targetNid'].nil?
+          _oa = _o['targetNid']
             if(_oa.is_a? Hash)
-              @matchNid = EnunciateHelpers::LAMB_CLASS_AWARE.call(_oa) if _oa['@class']
-              @matchNid =  Fixnum.from_json(_oa) unless _oa['@class']
+              @targetNid = EnunciateHelpers::LAMB_CLASS_AWARE.call(_oa) if _oa['@class']
+              @targetNid =  Fixnum.from_json(_oa) unless _oa['@class']
             elsif (_oa.is_a? Array)
               #an array(of hashes hopefully) or scalar
-              @matchNid = Array.new
+              @targetNid = Array.new
               _oa.each { | _item | 
                  if ((_item.nil? || _item['@class'].nil?)rescue true)
-                   @matchNid.push Fixnum.from_json(_item)
+                   @targetNid.push Fixnum.from_json(_item)
                  else
-                   @matchNid.push EnunciateHelpers::LAMB_CLASS_AWARE.call(_item)
+                   @targetNid.push EnunciateHelpers::LAMB_CLASS_AWARE.call(_item)
                  end
                }
             else
-                @matchNid = _oa
-            end
-          end
-        if !_o['matchText'].nil?
-          _oa = _o['matchText']
-            if(_oa.is_a? Hash)
-              @matchText = EnunciateHelpers::LAMB_CLASS_AWARE.call(_oa) if _oa['@class']
-              @matchText =  String.from_json(_oa) unless _oa['@class']
-            elsif (_oa.is_a? Array)
-              #an array(of hashes hopefully) or scalar
-              @matchText = Array.new
-              _oa.each { | _item | 
-                 if ((_item.nil? || _item['@class'].nil?)rescue true)
-                   @matchText.push String.from_json(_item)
-                 else
-                   @matchText.push EnunciateHelpers::LAMB_CLASS_AWARE.call(_item)
-                 end
-               }
-            else
-                @matchText = _oa
-            end
-          end
-        if !_o['score'].nil?
-          _oa = _o['score']
-            if(_oa.is_a? Hash)
-              @score = EnunciateHelpers::LAMB_CLASS_AWARE.call(_oa) if _oa['@class']
-              @score =  Float.from_json(_oa) unless _oa['@class']
-            elsif (_oa.is_a? Array)
-              #an array(of hashes hopefully) or scalar
-              @score = Array.new
-              _oa.each { | _item | 
-                 if ((_item.nil? || _item['@class'].nil?)rescue true)
-                   @score.push Float.from_json(_item)
-                 else
-                   @score.push EnunciateHelpers::LAMB_CLASS_AWARE.call(_item)
-                 end
-               }
-            else
-                @score = _oa
+                @targetNid = _oa
             end
           end
         if !_o['active'].nil?
@@ -5126,66 +4371,404 @@ module Search
                 @active = _oa
             end
           end
-        if !_o['expandables'].nil?
-          _oa = _o['expandables']
+    end
+
+    # constructs a RestAssociationItemVersionBase from a (parsed) JSON hash
+    def self.from_json(o)
+      if o.nil?
+        return nil
+      else
+        inst = new
+        inst.init_jaxb_json_hash o
+        return inst
+      end
+    end
+  end
+
+end
+
+end
+
+end
+
+end
+
+end
+
+end
+
+end
+
+module Gov
+
+module Vha
+
+module Isaac
+
+module Rest
+
+module Api1
+
+module Data
+
+module Concept
+
+  # (no documentation provided)
+  class RestConceptUpdateData 
+
+    # True to indicate the concept should be set as active, false for inactive.
+    # This field is optional, if not provided, it will be assumed to be active.
+    attr_accessor :active
+
+    # the json hash for this RestConceptUpdateData
+    def to_jaxb_json_hash
+      _h = {}
+      _h['active'] = active.to_jaxb_json_hash unless active.nil?
+      return _h
+    end
+
+    # the json (string form) for this RestConceptUpdateData
+    def to_json
+      to_jaxb_json_hash.to_json
+    end
+
+    #initializes this RestConceptUpdateData with a json hash
+    def init_jaxb_json_hash(_o)
+        if !_o['active'].nil?
+          _oa = _o['active']
             if(_oa.is_a? Hash)
-              @expandables = EnunciateHelpers::LAMB_CLASS_AWARE.call(_oa) if _oa['@class']
-              @expandables =  Gov::Vha::Isaac::Rest::Api::Data::Expandables.from_json(_oa) unless _oa['@class']
+              @active = EnunciateHelpers::LAMB_CLASS_AWARE.call(_oa) if _oa['@class']
+              @active =  Boolean.from_json(_oa) unless _oa['@class']
             elsif (_oa.is_a? Array)
               #an array(of hashes hopefully) or scalar
-              @expandables = Array.new
+              @active = Array.new
               _oa.each { | _item | 
                  if ((_item.nil? || _item['@class'].nil?)rescue true)
-                   @expandables.push Gov::Vha::Isaac::Rest::Api::Data::Expandables.from_json(_item)
+                   @active.push Boolean.from_json(_item)
                  else
-                   @expandables.push EnunciateHelpers::LAMB_CLASS_AWARE.call(_item)
+                   @active.push EnunciateHelpers::LAMB_CLASS_AWARE.call(_item)
                  end
                }
             else
-                @expandables = _oa
-            end
-          end
-        if !_o['identifiers'].nil?
-          _oa = _o['identifiers']
-            if(_oa.is_a? Hash)
-              @identifiers = EnunciateHelpers::LAMB_CLASS_AWARE.call(_oa) if _oa['@class']
-              @identifiers =  Gov::Vha::Isaac::Rest::Api1::Data::RestIdentifiedObject.from_json(_oa) unless _oa['@class']
-            elsif (_oa.is_a? Array)
-              #an array(of hashes hopefully) or scalar
-              @identifiers = Array.new
-              _oa.each { | _item | 
-                 if ((_item.nil? || _item['@class'].nil?)rescue true)
-                   @identifiers.push Gov::Vha::Isaac::Rest::Api1::Data::RestIdentifiedObject.from_json(_item)
-                 else
-                   @identifiers.push EnunciateHelpers::LAMB_CLASS_AWARE.call(_item)
-                 end
-               }
-            else
-                @identifiers = _oa
-            end
-          end
-        if !_o['referencedConcept'].nil?
-          _oa = _o['referencedConcept']
-            if(_oa.is_a? Hash)
-              @referencedConcept = EnunciateHelpers::LAMB_CLASS_AWARE.call(_oa) if _oa['@class']
-              @referencedConcept =  Gov::Vha::Isaac::Rest::Api1::Data::Concept::RestConceptChronology.from_json(_oa) unless _oa['@class']
-            elsif (_oa.is_a? Array)
-              #an array(of hashes hopefully) or scalar
-              @referencedConcept = Array.new
-              _oa.each { | _item | 
-                 if ((_item.nil? || _item['@class'].nil?)rescue true)
-                   @referencedConcept.push Gov::Vha::Isaac::Rest::Api1::Data::Concept::RestConceptChronology.from_json(_item)
-                 else
-                   @referencedConcept.push EnunciateHelpers::LAMB_CLASS_AWARE.call(_item)
-                 end
-               }
-            else
-                @referencedConcept = _oa
+                @active = _oa
             end
           end
     end
 
-    # constructs a RestSearchResult from a (parsed) JSON hash
+    # constructs a RestConceptUpdateData from a (parsed) JSON hash
+    def self.from_json(o)
+      if o.nil?
+        return nil
+      else
+        inst = new
+        inst.init_jaxb_json_hash o
+        return inst
+      end
+    end
+  end
+
+end
+
+end
+
+end
+
+end
+
+end
+
+end
+
+end
+
+module Gov
+
+module Vha
+
+module Isaac
+
+module Rest
+
+module Api1
+
+module Data
+
+module Systeminfo
+
+  # (no documentation provided)
+  class RestLicenseInfo 
+
+    # Name of the license
+    attr_accessor :name
+    # URL to the license text
+    attr_accessor :url
+    # Comments related to the license
+    attr_accessor :comments
+
+    # the json hash for this RestLicenseInfo
+    def to_jaxb_json_hash
+      _h = {}
+      _h['name'] = name.to_jaxb_json_hash unless name.nil?
+      _h['url'] = url.to_jaxb_json_hash unless url.nil?
+      _h['comments'] = comments.to_jaxb_json_hash unless comments.nil?
+      return _h
+    end
+
+    # the json (string form) for this RestLicenseInfo
+    def to_json
+      to_jaxb_json_hash.to_json
+    end
+
+    #initializes this RestLicenseInfo with a json hash
+    def init_jaxb_json_hash(_o)
+        if !_o['name'].nil?
+          _oa = _o['name']
+            if(_oa.is_a? Hash)
+              @name = EnunciateHelpers::LAMB_CLASS_AWARE.call(_oa) if _oa['@class']
+              @name =  String.from_json(_oa) unless _oa['@class']
+            elsif (_oa.is_a? Array)
+              #an array(of hashes hopefully) or scalar
+              @name = Array.new
+              _oa.each { | _item | 
+                 if ((_item.nil? || _item['@class'].nil?)rescue true)
+                   @name.push String.from_json(_item)
+                 else
+                   @name.push EnunciateHelpers::LAMB_CLASS_AWARE.call(_item)
+                 end
+               }
+            else
+                @name = _oa
+            end
+          end
+        if !_o['url'].nil?
+          _oa = _o['url']
+            if(_oa.is_a? Hash)
+              @url = EnunciateHelpers::LAMB_CLASS_AWARE.call(_oa) if _oa['@class']
+              @url =  String.from_json(_oa) unless _oa['@class']
+            elsif (_oa.is_a? Array)
+              #an array(of hashes hopefully) or scalar
+              @url = Array.new
+              _oa.each { | _item | 
+                 if ((_item.nil? || _item['@class'].nil?)rescue true)
+                   @url.push String.from_json(_item)
+                 else
+                   @url.push EnunciateHelpers::LAMB_CLASS_AWARE.call(_item)
+                 end
+               }
+            else
+                @url = _oa
+            end
+          end
+        if !_o['comments'].nil?
+          _oa = _o['comments']
+            if(_oa.is_a? Hash)
+              @comments = EnunciateHelpers::LAMB_CLASS_AWARE.call(_oa) if _oa['@class']
+              @comments =  String.from_json(_oa) unless _oa['@class']
+            elsif (_oa.is_a? Array)
+              #an array(of hashes hopefully) or scalar
+              @comments = Array.new
+              _oa.each { | _item | 
+                 if ((_item.nil? || _item['@class'].nil?)rescue true)
+                   @comments.push String.from_json(_item)
+                 else
+                   @comments.push EnunciateHelpers::LAMB_CLASS_AWARE.call(_item)
+                 end
+               }
+            else
+                @comments = _oa
+            end
+          end
+    end
+
+    # constructs a RestLicenseInfo from a (parsed) JSON hash
+    def self.from_json(o)
+      if o.nil?
+        return nil
+      else
+        inst = new
+        inst.init_jaxb_json_hash o
+        return inst
+      end
+    end
+  end
+
+end
+
+end
+
+end
+
+end
+
+end
+
+end
+
+end
+
+module Gov
+
+module Vha
+
+module Isaac
+
+module Rest
+
+module Api1
+
+module Data
+
+module Systeminfo
+
+  # (no documentation provided)
+  class RestIdentifiedObjectsResult 
+
+    # Zero or one concept chronology
+    attr_accessor :concept
+    # Zero or one sememe chronology
+    attr_accessor :sememe
+
+    # the json hash for this RestIdentifiedObjectsResult
+    def to_jaxb_json_hash
+      _h = {}
+      _h['concept'] = concept.to_jaxb_json_hash unless concept.nil?
+      _h['sememe'] = sememe.to_jaxb_json_hash unless sememe.nil?
+      return _h
+    end
+
+    # the json (string form) for this RestIdentifiedObjectsResult
+    def to_json
+      to_jaxb_json_hash.to_json
+    end
+
+    #initializes this RestIdentifiedObjectsResult with a json hash
+    def init_jaxb_json_hash(_o)
+        if !_o['concept'].nil?
+          _oa = _o['concept']
+            if(_oa.is_a? Hash)
+              @concept = EnunciateHelpers::LAMB_CLASS_AWARE.call(_oa) if _oa['@class']
+              @concept =  Gov::Vha::Isaac::Rest::Api1::Data::Concept::RestConceptChronology.from_json(_oa) unless _oa['@class']
+            elsif (_oa.is_a? Array)
+              #an array(of hashes hopefully) or scalar
+              @concept = Array.new
+              _oa.each { | _item | 
+                 if ((_item.nil? || _item['@class'].nil?)rescue true)
+                   @concept.push Gov::Vha::Isaac::Rest::Api1::Data::Concept::RestConceptChronology.from_json(_item)
+                 else
+                   @concept.push EnunciateHelpers::LAMB_CLASS_AWARE.call(_item)
+                 end
+               }
+            else
+                @concept = _oa
+            end
+          end
+        if !_o['sememe'].nil?
+          _oa = _o['sememe']
+            if(_oa.is_a? Hash)
+              @sememe = EnunciateHelpers::LAMB_CLASS_AWARE.call(_oa) if _oa['@class']
+              @sememe =  Gov::Vha::Isaac::Rest::Api1::Data::Sememe::RestSememeChronology.from_json(_oa) unless _oa['@class']
+            elsif (_oa.is_a? Array)
+              #an array(of hashes hopefully) or scalar
+              @sememe = Array.new
+              _oa.each { | _item | 
+                 if ((_item.nil? || _item['@class'].nil?)rescue true)
+                   @sememe.push Gov::Vha::Isaac::Rest::Api1::Data::Sememe::RestSememeChronology.from_json(_item)
+                 else
+                   @sememe.push EnunciateHelpers::LAMB_CLASS_AWARE.call(_item)
+                 end
+               }
+            else
+                @sememe = _oa
+            end
+          end
+    end
+
+    # constructs a RestIdentifiedObjectsResult from a (parsed) JSON hash
+    def self.from_json(o)
+      if o.nil?
+        return nil
+      else
+        inst = new
+        inst.init_jaxb_json_hash o
+        return inst
+      end
+    end
+  end
+
+end
+
+end
+
+end
+
+end
+
+end
+
+end
+
+end
+
+module Gov
+
+module Vha
+
+module Isaac
+
+module Rest
+
+module Api1
+
+module Data
+
+module Mapping
+
+  # (no documentation provided)
+  class RestMappingSetExtensionValueBase 
+
+    # The value to store for this mapping set extension.  By the API, this could support any implementing type of RestDynamicSememeData - but
+    # in practice, the only currently supported types are:
+    # RestDynamicSememeString (for arbitrary values) and RestDynamicSememeNid, RestDynamicSememeUUID for storing a reference
+    # to another concept or sememe.  Internally, the  UUID type will be mapped to nid - and a read operation will only return RestDynamicSememeString
+    # or RestDynamicSememeNid
+    attr_accessor :extensionValue
+
+    # the json hash for this RestMappingSetExtensionValueBase
+    def to_jaxb_json_hash
+      _h = {}
+      _h['extensionValue'] = extensionValue.to_jaxb_json_hash unless extensionValue.nil?
+      return _h
+    end
+
+    # the json (string form) for this RestMappingSetExtensionValueBase
+    def to_json
+      to_jaxb_json_hash.to_json
+    end
+
+    #initializes this RestMappingSetExtensionValueBase with a json hash
+    def init_jaxb_json_hash(_o)
+        if !_o['extensionValue'].nil?
+          _oa = _o['extensionValue']
+            if(_oa.is_a? Hash)
+              @extensionValue = EnunciateHelpers::LAMB_CLASS_AWARE.call(_oa) if _oa['@class']
+              @extensionValue =  Gov::Vha::Isaac::Rest::Api1::Data::Sememe::RestDynamicSememeData.from_json(_oa) unless _oa['@class']
+            elsif (_oa.is_a? Array)
+              #an array(of hashes hopefully) or scalar
+              @extensionValue = Array.new
+              _oa.each { | _item | 
+                 if ((_item.nil? || _item['@class'].nil?)rescue true)
+                   @extensionValue.push Gov::Vha::Isaac::Rest::Api1::Data::Sememe::RestDynamicSememeData.from_json(_item)
+                 else
+                   @extensionValue.push EnunciateHelpers::LAMB_CLASS_AWARE.call(_item)
+                 end
+               }
+            else
+                @extensionValue = _oa
+            end
+          end
+    end
+
+    # constructs a RestMappingSetExtensionValueBase from a (parsed) JSON hash
     def self.from_json(o)
       if o.nil?
         return nil
@@ -5493,396 +5076,115 @@ module Api1
 
 module Data
 
-module Mapping
+module Sememe
 
   # (no documentation provided)
-  class RestMappingSetExtensionValueBase 
+  class RestDynamicSememeBase 
 
-    # The value to store for this mapping set extension.  By the API, this could support any implementing type of RestDynamicSememeData - but
-    # in practice, the only currently supported types are:
-    # RestDynamicSememeString (for arbitrary values) and RestDynamicSememeNid, RestDynamicSememeUUID for storing a reference
-    # to another concept or sememe.  Internally, the  UUID type will be mapped to nid - and a read operation will only return RestDynamicSememeString
-    # or RestDynamicSememeNid
-    attr_accessor :extensionValue
+    # The data to attach with this sememe instance (if any).  This may be null, empty, or a length up to the defined length of the sememe definition.
+    # 
+    # The supplied data must match the definition of the sememe - which can be read via SememeAPIs#getSememeDefinition(String, String)
+    # (1/sememe/sememeDefinition/{assemblageId})
+    # 
+    # RestDynamicSememeData is an abstract type.  The data passed here, must be of a concrete type.  For the server to deserialize the type properly,
+    # a field must be included of the form &quot;@class&quot;: &quot;gov.vha.isaac.rest.api1.data.sememe.dataTypes.CLASSTYPE&quot;
+    # 
+    # where CLASSTYPE is one of:
+    # - RestDynamicSememeArray
+    # - RestDynamicSememeBoolean
+    # - RestDynamicSememeByteArray
+    # - RestDynamicSememeDouble
+    # - RestDynamicSememeFloat
+    # - RestDynamicSememeInteger,
+    # - RestDynamicSememeLong,
+    # - RestDynamicSememeString,
+    # - RestDynamicSememeNid
+    # - RestDynamicSememeSequence
+    # - RestDynamicSememeUUID
+    # 
+    # The class type strings are also available in the /rest/1/system/enumeration/restDynamicSememeDataType call, which returns all of the available data
+    # types, names, ids, and class type information.
+    # 
+    # Example JSON that provides two columns of differing types:
+    # 
+    # {
+    # &quot;assemblageConcept&quot;: &quot;-2147483449&quot;,
+    # &quot;referencedComponent&quot;: &quot;-2147483557&quot;,
+    # &quot;columnData&quot;: [{
+    # &quot;@class&quot;: &quot;gov.vha.isaac.rest.api1.data.sememe.dataTypes.RestDynamicSememeString&quot;,
+    # &quot;data&quot;: &quot;test&quot;
+    # &quot;columnNumber&quot;: &quot;0&quot;
+    # }, {
+    # &quot;@class&quot;: &quot;gov.vha.isaac.rest.api1.data.sememe.dataTypes.RestDynamicSememeLong&quot;,
+    # &quot;data&quot;: 5
+    # &quot;columnNumber&quot;: &quot;1&quot;
+    # }]
+    # }
+    attr_accessor :columnData
+    # True to indicate the sememe should be set as active, false for inactive.
+    # This field is optional, if not provided, it will be assumed to be active.
+    attr_accessor :active
 
-    # the json hash for this RestMappingSetExtensionValueBase
+    # the json hash for this RestDynamicSememeBase
     def to_jaxb_json_hash
       _h = {}
-      _h['extensionValue'] = extensionValue.to_jaxb_json_hash unless extensionValue.nil?
-      return _h
-    end
-
-    # the json (string form) for this RestMappingSetExtensionValueBase
-    def to_json
-      to_jaxb_json_hash.to_json
-    end
-
-    #initializes this RestMappingSetExtensionValueBase with a json hash
-    def init_jaxb_json_hash(_o)
-        if !_o['extensionValue'].nil?
-          _oa = _o['extensionValue']
-            if(_oa.is_a? Hash)
-              @extensionValue = EnunciateHelpers::LAMB_CLASS_AWARE.call(_oa) if _oa['@class']
-              @extensionValue =  Gov::Vha::Isaac::Rest::Api1::Data::Sememe::RestDynamicSememeData.from_json(_oa) unless _oa['@class']
-            elsif (_oa.is_a? Array)
-              #an array(of hashes hopefully) or scalar
-              @extensionValue = Array.new
-              _oa.each { | _item | 
-                 if ((_item.nil? || _item['@class'].nil?)rescue true)
-                   @extensionValue.push Gov::Vha::Isaac::Rest::Api1::Data::Sememe::RestDynamicSememeData.from_json(_item)
-                 else
-                   @extensionValue.push EnunciateHelpers::LAMB_CLASS_AWARE.call(_item)
-                 end
-               }
-            else
-                @extensionValue = _oa
-            end
-          end
-    end
-
-    # constructs a RestMappingSetExtensionValueBase from a (parsed) JSON hash
-    def self.from_json(o)
-      if o.nil?
-        return nil
-      else
-        inst = new
-        inst.init_jaxb_json_hash o
-        return inst
-      end
-    end
-  end
-
-end
-
-end
-
-end
-
-end
-
-end
-
-end
-
-end
-
-module Gov
-
-module Vha
-
-module Isaac
-
-module Rest
-
-module Api1
-
-module Data
-
-module Association
-
-  # (no documentation provided)
-  class RestAssociationItemVersionPage 
-
-    # Link to retrieve current page
-    attr_accessor :paginationData
-    # The contained results
-    attr_accessor :results
-
-    # the json hash for this RestAssociationItemVersionPage
-    def to_jaxb_json_hash
-      _h = {}
-      _h['paginationData'] = paginationData.to_jaxb_json_hash unless paginationData.nil?
-      if !results.nil?
+      if !columnData.nil?
         _ha = Array.new
-        results.each { | _item | _ha.push _item.to_jaxb_json_hash }
-        _h['results'] = _ha
+        columnData.each { | _item | _ha.push _item.to_jaxb_json_hash }
+        _h['columnData'] = _ha
       end
+      _h['active'] = active.to_jaxb_json_hash unless active.nil?
       return _h
     end
 
-    # the json (string form) for this RestAssociationItemVersionPage
+    # the json (string form) for this RestDynamicSememeBase
     def to_json
       to_jaxb_json_hash.to_json
     end
 
-    #initializes this RestAssociationItemVersionPage with a json hash
+    #initializes this RestDynamicSememeBase with a json hash
     def init_jaxb_json_hash(_o)
-        if !_o['paginationData'].nil?
-          _oa = _o['paginationData']
+        if !_o['columnData'].nil?
+          _oa = _o['columnData']
             if(_oa.is_a? Hash)
-              @paginationData = EnunciateHelpers::LAMB_CLASS_AWARE.call(_oa) if _oa['@class']
-              @paginationData =  Gov::Vha::Isaac::Rest::Api::Data::Pagination.from_json(_oa) unless _oa['@class']
+              @columnData = EnunciateHelpers::LAMB_CLASS_AWARE.call(_oa) if _oa['@class']
+              @columnData =  Gov::Vha::Isaac::Rest::Api1::Data::Sememe::RestDynamicSememeData.from_json(_oa) unless _oa['@class']
             elsif (_oa.is_a? Array)
               #an array(of hashes hopefully) or scalar
-              @paginationData = Array.new
+              @columnData = Array.new
               _oa.each { | _item | 
                  if ((_item.nil? || _item['@class'].nil?)rescue true)
-                   @paginationData.push Gov::Vha::Isaac::Rest::Api::Data::Pagination.from_json(_item)
+                   @columnData.push Gov::Vha::Isaac::Rest::Api1::Data::Sememe::RestDynamicSememeData.from_json(_item)
                  else
-                   @paginationData.push EnunciateHelpers::LAMB_CLASS_AWARE.call(_item)
+                   @columnData.push EnunciateHelpers::LAMB_CLASS_AWARE.call(_item)
                  end
                }
             else
-                @paginationData = _oa
+                @columnData = _oa
             end
           end
-        if !_o['results'].nil?
-          _oa = _o['results']
+        if !_o['active'].nil?
+          _oa = _o['active']
             if(_oa.is_a? Hash)
-              @results = EnunciateHelpers::LAMB_CLASS_AWARE.call(_oa) if _oa['@class']
-              @results =  Gov::Vha::Isaac::Rest::Api1::Data::Association::RestAssociationItemVersion.from_json(_oa) unless _oa['@class']
+              @active = EnunciateHelpers::LAMB_CLASS_AWARE.call(_oa) if _oa['@class']
+              @active =  Boolean.from_json(_oa) unless _oa['@class']
             elsif (_oa.is_a? Array)
               #an array(of hashes hopefully) or scalar
-              @results = Array.new
+              @active = Array.new
               _oa.each { | _item | 
                  if ((_item.nil? || _item['@class'].nil?)rescue true)
-                   @results.push Gov::Vha::Isaac::Rest::Api1::Data::Association::RestAssociationItemVersion.from_json(_item)
+                   @active.push Boolean.from_json(_item)
                  else
-                   @results.push EnunciateHelpers::LAMB_CLASS_AWARE.call(_item)
+                   @active.push EnunciateHelpers::LAMB_CLASS_AWARE.call(_item)
                  end
                }
             else
-                @results = _oa
-            end
-          end
-    end
-
-    # constructs a RestAssociationItemVersionPage from a (parsed) JSON hash
-    def self.from_json(o)
-      if o.nil?
-        return nil
-      else
-        inst = new
-        inst.init_jaxb_json_hash o
-        return inst
-      end
-    end
-  end
-
-end
-
-end
-
-end
-
-end
-
-end
-
-end
-
-end
-
-module Gov
-
-module Vha
-
-module Isaac
-
-module Rest
-
-module Api1
-
-module Data
-
-module Systeminfo
-
-  # (no documentation provided)
-  class RestIdentifiedObjectsResult 
-
-    # Zero or one concept chronology
-    attr_accessor :concept
-    # Zero or one sememe chronology
-    attr_accessor :sememe
-
-    # the json hash for this RestIdentifiedObjectsResult
-    def to_jaxb_json_hash
-      _h = {}
-      _h['concept'] = concept.to_jaxb_json_hash unless concept.nil?
-      _h['sememe'] = sememe.to_jaxb_json_hash unless sememe.nil?
-      return _h
-    end
-
-    # the json (string form) for this RestIdentifiedObjectsResult
-    def to_json
-      to_jaxb_json_hash.to_json
-    end
-
-    #initializes this RestIdentifiedObjectsResult with a json hash
-    def init_jaxb_json_hash(_o)
-        if !_o['concept'].nil?
-          _oa = _o['concept']
-            if(_oa.is_a? Hash)
-              @concept = EnunciateHelpers::LAMB_CLASS_AWARE.call(_oa) if _oa['@class']
-              @concept =  Gov::Vha::Isaac::Rest::Api1::Data::Concept::RestConceptChronology.from_json(_oa) unless _oa['@class']
-            elsif (_oa.is_a? Array)
-              #an array(of hashes hopefully) or scalar
-              @concept = Array.new
-              _oa.each { | _item | 
-                 if ((_item.nil? || _item['@class'].nil?)rescue true)
-                   @concept.push Gov::Vha::Isaac::Rest::Api1::Data::Concept::RestConceptChronology.from_json(_item)
-                 else
-                   @concept.push EnunciateHelpers::LAMB_CLASS_AWARE.call(_item)
-                 end
-               }
-            else
-                @concept = _oa
-            end
-          end
-        if !_o['sememe'].nil?
-          _oa = _o['sememe']
-            if(_oa.is_a? Hash)
-              @sememe = EnunciateHelpers::LAMB_CLASS_AWARE.call(_oa) if _oa['@class']
-              @sememe =  Gov::Vha::Isaac::Rest::Api1::Data::Sememe::RestSememeChronology.from_json(_oa) unless _oa['@class']
-            elsif (_oa.is_a? Array)
-              #an array(of hashes hopefully) or scalar
-              @sememe = Array.new
-              _oa.each { | _item | 
-                 if ((_item.nil? || _item['@class'].nil?)rescue true)
-                   @sememe.push Gov::Vha::Isaac::Rest::Api1::Data::Sememe::RestSememeChronology.from_json(_item)
-                 else
-                   @sememe.push EnunciateHelpers::LAMB_CLASS_AWARE.call(_item)
-                 end
-               }
-            else
-                @sememe = _oa
+                @active = _oa
             end
           end
     end
 
-    # constructs a RestIdentifiedObjectsResult from a (parsed) JSON hash
-    def self.from_json(o)
-      if o.nil?
-        return nil
-      else
-        inst = new
-        inst.init_jaxb_json_hash o
-        return inst
-      end
-    end
-  end
-
-end
-
-end
-
-end
-
-end
-
-end
-
-end
-
-end
-
-module Gov
-
-module Vha
-
-module Isaac
-
-module Rest
-
-module Api1
-
-module Data
-
-module Logic
-
-  # (no documentation provided)
-  class RestLogicNode 
-
-    # The RestNodeSemanticType type of this node corresponding to the NodeSemantic enum
-    attr_accessor :nodeSemantic
-    # The UUID of the logic node itself (not of any referenced or associated component or concept)
-    attr_accessor :nodeUuid
-    # The list of child RestLogicNode instances contained within this RestLogicNode.
-    # A RestTypedConnctorNode may have exactly one child node
-    # A literal node may not have any child nodes at all
-    # Others may have one or more child nodes
-    attr_accessor :children
-
-    # the json hash for this RestLogicNode
-    def to_jaxb_json_hash
-      _h = {}
-      _h['nodeSemantic'] = nodeSemantic.to_jaxb_json_hash unless nodeSemantic.nil?
-      _h['nodeUuid'] = nodeUuid.to_jaxb_json_hash unless nodeUuid.nil?
-      if !children.nil?
-        _ha = Array.new
-        children.each { | _item | _ha.push _item.to_jaxb_json_hash }
-        _h['children'] = _ha
-      end
-      return _h
-    end
-
-    # the json (string form) for this RestLogicNode
-    def to_json
-      to_jaxb_json_hash.to_json
-    end
-
-    #initializes this RestLogicNode with a json hash
-    def init_jaxb_json_hash(_o)
-        if !_o['nodeSemantic'].nil?
-          _oa = _o['nodeSemantic']
-            if(_oa.is_a? Hash)
-              @nodeSemantic = EnunciateHelpers::LAMB_CLASS_AWARE.call(_oa) if _oa['@class']
-              @nodeSemantic =  Gov::Vha::Isaac::Rest::Api1::Data::Enumerations::RestNodeSemanticType.from_json(_oa) unless _oa['@class']
-            elsif (_oa.is_a? Array)
-              #an array(of hashes hopefully) or scalar
-              @nodeSemantic = Array.new
-              _oa.each { | _item | 
-                 if ((_item.nil? || _item['@class'].nil?)rescue true)
-                   @nodeSemantic.push Gov::Vha::Isaac::Rest::Api1::Data::Enumerations::RestNodeSemanticType.from_json(_item)
-                 else
-                   @nodeSemantic.push EnunciateHelpers::LAMB_CLASS_AWARE.call(_item)
-                 end
-               }
-            else
-                @nodeSemantic = _oa
-            end
-          end
-        if !_o['nodeUuid'].nil?
-          _oa = _o['nodeUuid']
-            if(_oa.is_a? Hash)
-              @nodeUuid = EnunciateHelpers::LAMB_CLASS_AWARE.call(_oa) if _oa['@class']
-              @nodeUuid =  String.from_json(_oa) unless _oa['@class']
-            elsif (_oa.is_a? Array)
-              #an array(of hashes hopefully) or scalar
-              @nodeUuid = Array.new
-              _oa.each { | _item | 
-                 if ((_item.nil? || _item['@class'].nil?)rescue true)
-                   @nodeUuid.push String.from_json(_item)
-                 else
-                   @nodeUuid.push EnunciateHelpers::LAMB_CLASS_AWARE.call(_item)
-                 end
-               }
-            else
-                @nodeUuid = _oa
-            end
-          end
-        if !_o['children'].nil?
-          _oa = _o['children']
-            if(_oa.is_a? Hash)
-              @children = EnunciateHelpers::LAMB_CLASS_AWARE.call(_oa) if _oa['@class']
-              @children =  Gov::Vha::Isaac::Rest::Api1::Data::Logic::RestLogicNode.from_json(_oa) unless _oa['@class']
-            elsif (_oa.is_a? Array)
-              #an array(of hashes hopefully) or scalar
-              @children = Array.new
-              _oa.each { | _item | 
-                 if ((_item.nil? || _item['@class'].nil?)rescue true)
-                   @children.push Gov::Vha::Isaac::Rest::Api1::Data::Logic::RestLogicNode.from_json(_item)
-                 else
-                   @children.push EnunciateHelpers::LAMB_CLASS_AWARE.call(_item)
-                 end
-               }
-            else
-                @children = _oa
-            end
-          end
-    end
-
-    # constructs a RestLogicNode from a (parsed) JSON hash
+    # constructs a RestDynamicSememeBase from a (parsed) JSON hash
     def self.from_json(o)
       if o.nil?
         return nil
@@ -6071,76 +5373,118 @@ module Api1
 
 module Data
 
-module Workflow
+module Coordinate
 
   # (no documentation provided)
-  class RestWorkflowProcessHistoriesMapEntry 
+  class RestTaxonomyCoordinate 
 
-    # The key RestWorkflowProcess
-    attr_accessor :key
-    # The array of RestWorkflowProcessHistory objects
-    attr_accessor :value
+    # Boolean indicating whether or not RestTaxonomyCoordinate is of STATED PremiseType.
+    # If TRUE then RestTaxonomyCoordinate is of PremiseType STATED.
+    # If FALSE then RestTaxonomyCoordinate is of PremiseType INFERRED.
+    attr_accessor :stated
+    # RestStampCoordinate component of RestTaxonomyCoordinate
+    attr_accessor :stampCoordinate
+    # RestLanguageCoordinate component of RestTaxonomyCoordinate
+    attr_accessor :languageCoordinate
+    # RestLogicCoordinate component of RestTaxonomyCoordinate
+    attr_accessor :logicCoordinate
 
-    # the json hash for this RestWorkflowProcessHistoriesMapEntry
+    # the json hash for this RestTaxonomyCoordinate
     def to_jaxb_json_hash
       _h = {}
-      _h['key'] = key.to_jaxb_json_hash unless key.nil?
-      if !value.nil?
-        _ha = Array.new
-        value.each { | _item | _ha.push _item.to_jaxb_json_hash }
-        _h['value'] = _ha
-      end
+      _h['stated'] = stated.to_jaxb_json_hash unless stated.nil?
+      _h['stampCoordinate'] = stampCoordinate.to_jaxb_json_hash unless stampCoordinate.nil?
+      _h['languageCoordinate'] = languageCoordinate.to_jaxb_json_hash unless languageCoordinate.nil?
+      _h['logicCoordinate'] = logicCoordinate.to_jaxb_json_hash unless logicCoordinate.nil?
       return _h
     end
 
-    # the json (string form) for this RestWorkflowProcessHistoriesMapEntry
+    # the json (string form) for this RestTaxonomyCoordinate
     def to_json
       to_jaxb_json_hash.to_json
     end
 
-    #initializes this RestWorkflowProcessHistoriesMapEntry with a json hash
+    #initializes this RestTaxonomyCoordinate with a json hash
     def init_jaxb_json_hash(_o)
-        if !_o['key'].nil?
-          _oa = _o['key']
+        if !_o['stated'].nil?
+          _oa = _o['stated']
             if(_oa.is_a? Hash)
-              @key = EnunciateHelpers::LAMB_CLASS_AWARE.call(_oa) if _oa['@class']
-              @key =  Gov::Vha::Isaac::Rest::Api1::Data::Workflow::RestWorkflowProcess.from_json(_oa) unless _oa['@class']
+              @stated = EnunciateHelpers::LAMB_CLASS_AWARE.call(_oa) if _oa['@class']
+              @stated =  Boolean.from_json(_oa) unless _oa['@class']
             elsif (_oa.is_a? Array)
               #an array(of hashes hopefully) or scalar
-              @key = Array.new
+              @stated = Array.new
               _oa.each { | _item | 
                  if ((_item.nil? || _item['@class'].nil?)rescue true)
-                   @key.push Gov::Vha::Isaac::Rest::Api1::Data::Workflow::RestWorkflowProcess.from_json(_item)
+                   @stated.push Boolean.from_json(_item)
                  else
-                   @key.push EnunciateHelpers::LAMB_CLASS_AWARE.call(_item)
+                   @stated.push EnunciateHelpers::LAMB_CLASS_AWARE.call(_item)
                  end
                }
             else
-                @key = _oa
+                @stated = _oa
             end
           end
-        if !_o['value'].nil?
-          _oa = _o['value']
+        if !_o['stampCoordinate'].nil?
+          _oa = _o['stampCoordinate']
             if(_oa.is_a? Hash)
-              @value = EnunciateHelpers::LAMB_CLASS_AWARE.call(_oa) if _oa['@class']
-              @value =  Gov::Vha::Isaac::Rest::Api1::Data::Workflow::RestWorkflowProcessHistory.from_json(_oa) unless _oa['@class']
+              @stampCoordinate = EnunciateHelpers::LAMB_CLASS_AWARE.call(_oa) if _oa['@class']
+              @stampCoordinate =  Gov::Vha::Isaac::Rest::Api1::Data::Coordinate::RestStampCoordinate.from_json(_oa) unless _oa['@class']
             elsif (_oa.is_a? Array)
               #an array(of hashes hopefully) or scalar
-              @value = Array.new
+              @stampCoordinate = Array.new
               _oa.each { | _item | 
                  if ((_item.nil? || _item['@class'].nil?)rescue true)
-                   @value.push Gov::Vha::Isaac::Rest::Api1::Data::Workflow::RestWorkflowProcessHistory.from_json(_item)
+                   @stampCoordinate.push Gov::Vha::Isaac::Rest::Api1::Data::Coordinate::RestStampCoordinate.from_json(_item)
                  else
-                   @value.push EnunciateHelpers::LAMB_CLASS_AWARE.call(_item)
+                   @stampCoordinate.push EnunciateHelpers::LAMB_CLASS_AWARE.call(_item)
                  end
                }
             else
-                @value = _oa
+                @stampCoordinate = _oa
+            end
+          end
+        if !_o['languageCoordinate'].nil?
+          _oa = _o['languageCoordinate']
+            if(_oa.is_a? Hash)
+              @languageCoordinate = EnunciateHelpers::LAMB_CLASS_AWARE.call(_oa) if _oa['@class']
+              @languageCoordinate =  Gov::Vha::Isaac::Rest::Api1::Data::Coordinate::RestLanguageCoordinate.from_json(_oa) unless _oa['@class']
+            elsif (_oa.is_a? Array)
+              #an array(of hashes hopefully) or scalar
+              @languageCoordinate = Array.new
+              _oa.each { | _item | 
+                 if ((_item.nil? || _item['@class'].nil?)rescue true)
+                   @languageCoordinate.push Gov::Vha::Isaac::Rest::Api1::Data::Coordinate::RestLanguageCoordinate.from_json(_item)
+                 else
+                   @languageCoordinate.push EnunciateHelpers::LAMB_CLASS_AWARE.call(_item)
+                 end
+               }
+            else
+                @languageCoordinate = _oa
+            end
+          end
+        if !_o['logicCoordinate'].nil?
+          _oa = _o['logicCoordinate']
+            if(_oa.is_a? Hash)
+              @logicCoordinate = EnunciateHelpers::LAMB_CLASS_AWARE.call(_oa) if _oa['@class']
+              @logicCoordinate =  Gov::Vha::Isaac::Rest::Api1::Data::Coordinate::RestLogicCoordinate.from_json(_oa) unless _oa['@class']
+            elsif (_oa.is_a? Array)
+              #an array(of hashes hopefully) or scalar
+              @logicCoordinate = Array.new
+              _oa.each { | _item | 
+                 if ((_item.nil? || _item['@class'].nil?)rescue true)
+                   @logicCoordinate.push Gov::Vha::Isaac::Rest::Api1::Data::Coordinate::RestLogicCoordinate.from_json(_item)
+                 else
+                   @logicCoordinate.push EnunciateHelpers::LAMB_CLASS_AWARE.call(_item)
+                 end
+               }
+            else
+                @logicCoordinate = _oa
             end
           end
     end
 
-    # constructs a RestWorkflowProcessHistoriesMapEntry from a (parsed) JSON hash
+    # constructs a RestTaxonomyCoordinate from a (parsed) JSON hash
     def self.from_json(o)
       if o.nil?
         return nil
@@ -6153,83 +5497,6 @@ module Workflow
   end
 
 end
-
-end
-
-end
-
-end
-
-end
-
-end
-
-end
-
-module Gov
-
-module Vha
-
-module Isaac
-
-module Rest
-
-module Api1
-
-module Data
-
-  # (no documentation provided)
-  class RestEditToken 
-
-    # Serialized coordinates token
-    attr_accessor :token
-
-    # the json hash for this RestEditToken
-    def to_jaxb_json_hash
-      _h = {}
-      _h['token'] = token.to_jaxb_json_hash unless token.nil?
-      return _h
-    end
-
-    # the json (string form) for this RestEditToken
-    def to_json
-      to_jaxb_json_hash.to_json
-    end
-
-    #initializes this RestEditToken with a json hash
-    def init_jaxb_json_hash(_o)
-        if !_o['token'].nil?
-          _oa = _o['token']
-            if(_oa.is_a? Hash)
-              @token = EnunciateHelpers::LAMB_CLASS_AWARE.call(_oa) if _oa['@class']
-              @token =  String.from_json(_oa) unless _oa['@class']
-            elsif (_oa.is_a? Array)
-              #an array(of hashes hopefully) or scalar
-              @token = Array.new
-              _oa.each { | _item | 
-                 if ((_item.nil? || _item['@class'].nil?)rescue true)
-                   @token.push String.from_json(_item)
-                 else
-                   @token.push EnunciateHelpers::LAMB_CLASS_AWARE.call(_item)
-                 end
-               }
-            else
-                @token = _oa
-            end
-          end
-    end
-
-    # constructs a RestEditToken from a (parsed) JSON hash
-    def self.from_json(o)
-      if o.nil?
-        return nil
-      else
-        inst = new
-        inst.init_jaxb_json_hash o
-        return inst
-      end
-    end
-  end
 
 end
 
@@ -6453,6 +5720,190 @@ module Api1
 
 module Data
 
+module Sememe
+
+  # (no documentation provided)
+  class RestDynamicSememeDefinition 
+
+    # The concept sequence of the concept that is used as an assemblage.  The rest of the descriptive details of the
+    # sememe assemblage (returned in this object) are read from this concept.
+    attr_accessor :assemblageConceptId
+    # the user-friendly description of the overall purpose of this sememe
+    attr_accessor :sememeUsageDescription
+    # the column information that describes the data that may be returned as part of a sememe instance.
+    attr_accessor :columnInfo
+    # Return the RestObjectChronologyType of the restriction on referenced components for this sememe (if any - may return null)
+    # 
+    # If there is a restriction, the nid set for the referenced component in an instance of this sememe must be of the type listed here.
+    # 
+    # See rest/1/enumeration/restObjectChronologyType for a list of potential object types returned.
+    attr_accessor :referencedComponentTypeRestriction
+    # Return the RestSememeType of the sub restriction on referenced components for this DynamicSememe (if any - may return null)
+    # 
+    # If there is a restriction, the nid set for the referenced component in an instance of this sememe must be of the type listed here.
+    # 
+    # This is only applicable when #referencedComponentTypeRestriction returns RestObjectChronologyType#SEMEME
+    # 
+    # See rest/1/enumeration/restSememeType for a list of potential object types returned.
+    attr_accessor :referencedComponentTypeSubRestriction
+
+    # the json hash for this RestDynamicSememeDefinition
+    def to_jaxb_json_hash
+      _h = {}
+      _h['assemblageConceptId'] = assemblageConceptId.to_jaxb_json_hash unless assemblageConceptId.nil?
+      _h['sememeUsageDescription'] = sememeUsageDescription.to_jaxb_json_hash unless sememeUsageDescription.nil?
+      if !columnInfo.nil?
+        _ha = Array.new
+        columnInfo.each { | _item | _ha.push _item.to_jaxb_json_hash }
+        _h['columnInfo'] = _ha
+      end
+      _h['referencedComponentTypeRestriction'] = referencedComponentTypeRestriction.to_jaxb_json_hash unless referencedComponentTypeRestriction.nil?
+      _h['referencedComponentTypeSubRestriction'] = referencedComponentTypeSubRestriction.to_jaxb_json_hash unless referencedComponentTypeSubRestriction.nil?
+      return _h
+    end
+
+    # the json (string form) for this RestDynamicSememeDefinition
+    def to_json
+      to_jaxb_json_hash.to_json
+    end
+
+    #initializes this RestDynamicSememeDefinition with a json hash
+    def init_jaxb_json_hash(_o)
+        if !_o['assemblageConceptId'].nil?
+          _oa = _o['assemblageConceptId']
+            if(_oa.is_a? Hash)
+              @assemblageConceptId = EnunciateHelpers::LAMB_CLASS_AWARE.call(_oa) if _oa['@class']
+              @assemblageConceptId =  Fixnum.from_json(_oa) unless _oa['@class']
+            elsif (_oa.is_a? Array)
+              #an array(of hashes hopefully) or scalar
+              @assemblageConceptId = Array.new
+              _oa.each { | _item | 
+                 if ((_item.nil? || _item['@class'].nil?)rescue true)
+                   @assemblageConceptId.push Fixnum.from_json(_item)
+                 else
+                   @assemblageConceptId.push EnunciateHelpers::LAMB_CLASS_AWARE.call(_item)
+                 end
+               }
+            else
+                @assemblageConceptId = _oa
+            end
+          end
+        if !_o['sememeUsageDescription'].nil?
+          _oa = _o['sememeUsageDescription']
+            if(_oa.is_a? Hash)
+              @sememeUsageDescription = EnunciateHelpers::LAMB_CLASS_AWARE.call(_oa) if _oa['@class']
+              @sememeUsageDescription =  String.from_json(_oa) unless _oa['@class']
+            elsif (_oa.is_a? Array)
+              #an array(of hashes hopefully) or scalar
+              @sememeUsageDescription = Array.new
+              _oa.each { | _item | 
+                 if ((_item.nil? || _item['@class'].nil?)rescue true)
+                   @sememeUsageDescription.push String.from_json(_item)
+                 else
+                   @sememeUsageDescription.push EnunciateHelpers::LAMB_CLASS_AWARE.call(_item)
+                 end
+               }
+            else
+                @sememeUsageDescription = _oa
+            end
+          end
+        if !_o['columnInfo'].nil?
+          _oa = _o['columnInfo']
+            if(_oa.is_a? Hash)
+              @columnInfo = EnunciateHelpers::LAMB_CLASS_AWARE.call(_oa) if _oa['@class']
+              @columnInfo =  Gov::Vha::Isaac::Rest::Api1::Data::Sememe::RestDynamicSememeColumnInfo.from_json(_oa) unless _oa['@class']
+            elsif (_oa.is_a? Array)
+              #an array(of hashes hopefully) or scalar
+              @columnInfo = Array.new
+              _oa.each { | _item | 
+                 if ((_item.nil? || _item['@class'].nil?)rescue true)
+                   @columnInfo.push Gov::Vha::Isaac::Rest::Api1::Data::Sememe::RestDynamicSememeColumnInfo.from_json(_item)
+                 else
+                   @columnInfo.push EnunciateHelpers::LAMB_CLASS_AWARE.call(_item)
+                 end
+               }
+            else
+                @columnInfo = _oa
+            end
+          end
+        if !_o['referencedComponentTypeRestriction'].nil?
+          _oa = _o['referencedComponentTypeRestriction']
+            if(_oa.is_a? Hash)
+              @referencedComponentTypeRestriction = EnunciateHelpers::LAMB_CLASS_AWARE.call(_oa) if _oa['@class']
+              @referencedComponentTypeRestriction =  Gov::Vha::Isaac::Rest::Api1::Data::Enumerations::RestObjectChronologyType.from_json(_oa) unless _oa['@class']
+            elsif (_oa.is_a? Array)
+              #an array(of hashes hopefully) or scalar
+              @referencedComponentTypeRestriction = Array.new
+              _oa.each { | _item | 
+                 if ((_item.nil? || _item['@class'].nil?)rescue true)
+                   @referencedComponentTypeRestriction.push Gov::Vha::Isaac::Rest::Api1::Data::Enumerations::RestObjectChronologyType.from_json(_item)
+                 else
+                   @referencedComponentTypeRestriction.push EnunciateHelpers::LAMB_CLASS_AWARE.call(_item)
+                 end
+               }
+            else
+                @referencedComponentTypeRestriction = _oa
+            end
+          end
+        if !_o['referencedComponentTypeSubRestriction'].nil?
+          _oa = _o['referencedComponentTypeSubRestriction']
+            if(_oa.is_a? Hash)
+              @referencedComponentTypeSubRestriction = EnunciateHelpers::LAMB_CLASS_AWARE.call(_oa) if _oa['@class']
+              @referencedComponentTypeSubRestriction =  Gov::Vha::Isaac::Rest::Api1::Data::Enumerations::RestSememeType.from_json(_oa) unless _oa['@class']
+            elsif (_oa.is_a? Array)
+              #an array(of hashes hopefully) or scalar
+              @referencedComponentTypeSubRestriction = Array.new
+              _oa.each { | _item | 
+                 if ((_item.nil? || _item['@class'].nil?)rescue true)
+                   @referencedComponentTypeSubRestriction.push Gov::Vha::Isaac::Rest::Api1::Data::Enumerations::RestSememeType.from_json(_item)
+                 else
+                   @referencedComponentTypeSubRestriction.push EnunciateHelpers::LAMB_CLASS_AWARE.call(_item)
+                 end
+               }
+            else
+                @referencedComponentTypeSubRestriction = _oa
+            end
+          end
+    end
+
+    # constructs a RestDynamicSememeDefinition from a (parsed) JSON hash
+    def self.from_json(o)
+      if o.nil?
+        return nil
+      else
+        inst = new
+        inst.init_jaxb_json_hash o
+        return inst
+      end
+    end
+  end
+
+end
+
+end
+
+end
+
+end
+
+end
+
+end
+
+end
+
+module Gov
+
+module Vha
+
+module Isaac
+
+module Rest
+
+module Api1
+
+module Data
+
 module Coordinate
 
   # (no documentation provided)
@@ -6596,6 +6047,153 @@ module Coordinate
     end
 
     # constructs a RestStampCoordinate from a (parsed) JSON hash
+    def self.from_json(o)
+      if o.nil?
+        return nil
+      else
+        inst = new
+        inst.init_jaxb_json_hash o
+        return inst
+      end
+    end
+  end
+
+end
+
+end
+
+end
+
+end
+
+end
+
+end
+
+end
+
+module Gov
+
+module Vha
+
+module Isaac
+
+module Rest
+
+module Api
+
+module Data
+
+module Wrappers
+
+  # (no documentation provided)
+  class RestWriteResponse 
+
+    # The RestEditToken value - updated to be valid for a future submit.
+    attr_accessor :editToken
+    # The UUID value of the item that was created or updated.
+    attr_accessor :uuid
+    # The Integer NID value of the item created or updated (if applicable, may be null)
+    attr_accessor :nid
+    # The Integer sequence value of the item created or updated (if applicable, may be null)
+    attr_accessor :sequence
+
+    # the json hash for this RestWriteResponse
+    def to_jaxb_json_hash
+      _h = {}
+      _h['editToken'] = editToken.to_jaxb_json_hash unless editToken.nil?
+      _h['uuid'] = uuid.to_jaxb_json_hash unless uuid.nil?
+      _h['nid'] = nid.to_jaxb_json_hash unless nid.nil?
+      _h['sequence'] = sequence.to_jaxb_json_hash unless sequence.nil?
+      return _h
+    end
+
+    # the json (string form) for this RestWriteResponse
+    def to_json
+      to_jaxb_json_hash.to_json
+    end
+
+    #initializes this RestWriteResponse with a json hash
+    def init_jaxb_json_hash(_o)
+        if !_o['editToken'].nil?
+          _oa = _o['editToken']
+            if(_oa.is_a? Hash)
+              @editToken = EnunciateHelpers::LAMB_CLASS_AWARE.call(_oa) if _oa['@class']
+              @editToken =  Gov::Vha::Isaac::Rest::Api1::Data::RestEditToken.from_json(_oa) unless _oa['@class']
+            elsif (_oa.is_a? Array)
+              #an array(of hashes hopefully) or scalar
+              @editToken = Array.new
+              _oa.each { | _item | 
+                 if ((_item.nil? || _item['@class'].nil?)rescue true)
+                   @editToken.push Gov::Vha::Isaac::Rest::Api1::Data::RestEditToken.from_json(_item)
+                 else
+                   @editToken.push EnunciateHelpers::LAMB_CLASS_AWARE.call(_item)
+                 end
+               }
+            else
+                @editToken = _oa
+            end
+          end
+        if !_o['uuid'].nil?
+          _oa = _o['uuid']
+            if(_oa.is_a? Hash)
+              @uuid = EnunciateHelpers::LAMB_CLASS_AWARE.call(_oa) if _oa['@class']
+              @uuid =  String.from_json(_oa) unless _oa['@class']
+            elsif (_oa.is_a? Array)
+              #an array(of hashes hopefully) or scalar
+              @uuid = Array.new
+              _oa.each { | _item | 
+                 if ((_item.nil? || _item['@class'].nil?)rescue true)
+                   @uuid.push String.from_json(_item)
+                 else
+                   @uuid.push EnunciateHelpers::LAMB_CLASS_AWARE.call(_item)
+                 end
+               }
+            else
+                @uuid = _oa
+            end
+          end
+        if !_o['nid'].nil?
+          _oa = _o['nid']
+            if(_oa.is_a? Hash)
+              @nid = EnunciateHelpers::LAMB_CLASS_AWARE.call(_oa) if _oa['@class']
+              @nid =  Fixnum.from_json(_oa) unless _oa['@class']
+            elsif (_oa.is_a? Array)
+              #an array(of hashes hopefully) or scalar
+              @nid = Array.new
+              _oa.each { | _item | 
+                 if ((_item.nil? || _item['@class'].nil?)rescue true)
+                   @nid.push Fixnum.from_json(_item)
+                 else
+                   @nid.push EnunciateHelpers::LAMB_CLASS_AWARE.call(_item)
+                 end
+               }
+            else
+                @nid = _oa
+            end
+          end
+        if !_o['sequence'].nil?
+          _oa = _o['sequence']
+            if(_oa.is_a? Hash)
+              @sequence = EnunciateHelpers::LAMB_CLASS_AWARE.call(_oa) if _oa['@class']
+              @sequence =  Fixnum.from_json(_oa) unless _oa['@class']
+            elsif (_oa.is_a? Array)
+              #an array(of hashes hopefully) or scalar
+              @sequence = Array.new
+              _oa.each { | _item | 
+                 if ((_item.nil? || _item['@class'].nil?)rescue true)
+                   @sequence.push Fixnum.from_json(_item)
+                 else
+                   @sequence.push EnunciateHelpers::LAMB_CLASS_AWARE.call(_item)
+                 end
+               }
+            else
+                @sequence = _oa
+            end
+          end
+    end
+
+    # constructs a RestWriteResponse from a (parsed) JSON hash
     def self.from_json(o)
       if o.nil?
         return nil
@@ -6786,6 +6384,179 @@ module Data
 module Sememe
 
   # (no documentation provided)
+  class RestSememeDescriptionUpdateData 
+
+    # The concept sequence of the concept that represents the case significance flag on the description .
+    # This should be description case sensitive, description not case sensitive or description initial character sensitive
+    attr_accessor :caseSignificanceConceptSequence
+    # The concept sequence of the concept that represents the language of the description (note, this is NOT
+    # the dialect)
+    attr_accessor :languageConceptSequence
+    # The text of the description
+    attr_accessor :text
+    # The concept sequence of the concept that represents the type of the description.
+    # This should be FSN, Synonym, or Definition.
+    attr_accessor :descriptionTypeConceptSequence
+    # True to indicate the mapping set should be set as active, false for inactive.
+    # This field is optional, if not provided, it will be assumed to be active.
+    attr_accessor :active
+
+    # the json hash for this RestSememeDescriptionUpdateData
+    def to_jaxb_json_hash
+      _h = {}
+      _h['caseSignificanceConceptSequence'] = caseSignificanceConceptSequence.to_jaxb_json_hash unless caseSignificanceConceptSequence.nil?
+      _h['languageConceptSequence'] = languageConceptSequence.to_jaxb_json_hash unless languageConceptSequence.nil?
+      _h['text'] = text.to_jaxb_json_hash unless text.nil?
+      _h['descriptionTypeConceptSequence'] = descriptionTypeConceptSequence.to_jaxb_json_hash unless descriptionTypeConceptSequence.nil?
+      _h['active'] = active.to_jaxb_json_hash unless active.nil?
+      return _h
+    end
+
+    # the json (string form) for this RestSememeDescriptionUpdateData
+    def to_json
+      to_jaxb_json_hash.to_json
+    end
+
+    #initializes this RestSememeDescriptionUpdateData with a json hash
+    def init_jaxb_json_hash(_o)
+        if !_o['caseSignificanceConceptSequence'].nil?
+          _oa = _o['caseSignificanceConceptSequence']
+            if(_oa.is_a? Hash)
+              @caseSignificanceConceptSequence = EnunciateHelpers::LAMB_CLASS_AWARE.call(_oa) if _oa['@class']
+              @caseSignificanceConceptSequence =  Fixnum.from_json(_oa) unless _oa['@class']
+            elsif (_oa.is_a? Array)
+              #an array(of hashes hopefully) or scalar
+              @caseSignificanceConceptSequence = Array.new
+              _oa.each { | _item | 
+                 if ((_item.nil? || _item['@class'].nil?)rescue true)
+                   @caseSignificanceConceptSequence.push Fixnum.from_json(_item)
+                 else
+                   @caseSignificanceConceptSequence.push EnunciateHelpers::LAMB_CLASS_AWARE.call(_item)
+                 end
+               }
+            else
+                @caseSignificanceConceptSequence = _oa
+            end
+          end
+        if !_o['languageConceptSequence'].nil?
+          _oa = _o['languageConceptSequence']
+            if(_oa.is_a? Hash)
+              @languageConceptSequence = EnunciateHelpers::LAMB_CLASS_AWARE.call(_oa) if _oa['@class']
+              @languageConceptSequence =  Fixnum.from_json(_oa) unless _oa['@class']
+            elsif (_oa.is_a? Array)
+              #an array(of hashes hopefully) or scalar
+              @languageConceptSequence = Array.new
+              _oa.each { | _item | 
+                 if ((_item.nil? || _item['@class'].nil?)rescue true)
+                   @languageConceptSequence.push Fixnum.from_json(_item)
+                 else
+                   @languageConceptSequence.push EnunciateHelpers::LAMB_CLASS_AWARE.call(_item)
+                 end
+               }
+            else
+                @languageConceptSequence = _oa
+            end
+          end
+        if !_o['text'].nil?
+          _oa = _o['text']
+            if(_oa.is_a? Hash)
+              @text = EnunciateHelpers::LAMB_CLASS_AWARE.call(_oa) if _oa['@class']
+              @text =  String.from_json(_oa) unless _oa['@class']
+            elsif (_oa.is_a? Array)
+              #an array(of hashes hopefully) or scalar
+              @text = Array.new
+              _oa.each { | _item | 
+                 if ((_item.nil? || _item['@class'].nil?)rescue true)
+                   @text.push String.from_json(_item)
+                 else
+                   @text.push EnunciateHelpers::LAMB_CLASS_AWARE.call(_item)
+                 end
+               }
+            else
+                @text = _oa
+            end
+          end
+        if !_o['descriptionTypeConceptSequence'].nil?
+          _oa = _o['descriptionTypeConceptSequence']
+            if(_oa.is_a? Hash)
+              @descriptionTypeConceptSequence = EnunciateHelpers::LAMB_CLASS_AWARE.call(_oa) if _oa['@class']
+              @descriptionTypeConceptSequence =  Fixnum.from_json(_oa) unless _oa['@class']
+            elsif (_oa.is_a? Array)
+              #an array(of hashes hopefully) or scalar
+              @descriptionTypeConceptSequence = Array.new
+              _oa.each { | _item | 
+                 if ((_item.nil? || _item['@class'].nil?)rescue true)
+                   @descriptionTypeConceptSequence.push Fixnum.from_json(_item)
+                 else
+                   @descriptionTypeConceptSequence.push EnunciateHelpers::LAMB_CLASS_AWARE.call(_item)
+                 end
+               }
+            else
+                @descriptionTypeConceptSequence = _oa
+            end
+          end
+        if !_o['active'].nil?
+          _oa = _o['active']
+            if(_oa.is_a? Hash)
+              @active = EnunciateHelpers::LAMB_CLASS_AWARE.call(_oa) if _oa['@class']
+              @active =  Boolean.from_json(_oa) unless _oa['@class']
+            elsif (_oa.is_a? Array)
+              #an array(of hashes hopefully) or scalar
+              @active = Array.new
+              _oa.each { | _item | 
+                 if ((_item.nil? || _item['@class'].nil?)rescue true)
+                   @active.push Boolean.from_json(_item)
+                 else
+                   @active.push EnunciateHelpers::LAMB_CLASS_AWARE.call(_item)
+                 end
+               }
+            else
+                @active = _oa
+            end
+          end
+    end
+
+    # constructs a RestSememeDescriptionUpdateData from a (parsed) JSON hash
+    def self.from_json(o)
+      if o.nil?
+        return nil
+      else
+        inst = new
+        inst.init_jaxb_json_hash o
+        return inst
+      end
+    end
+  end
+
+end
+
+end
+
+end
+
+end
+
+end
+
+end
+
+end
+
+module Gov
+
+module Vha
+
+module Isaac
+
+module Rest
+
+module Api1
+
+module Data
+
+module Sememe
+
+  # (no documentation provided)
   class RestSememeVersionPage 
 
     # Link to retrieve current page
@@ -6890,755 +6661,48 @@ module Api1
 
 module Data
 
-module Systeminfo
-
   # (no documentation provided)
-  class RestDependencyInfo 
+  class RestCoordinatesToken 
 
-    # Maven Dependency Group ID
-    attr_accessor :groupId
-    # Maven Dependency Artifact ID
-    attr_accessor :artifactId
-    # Maven Dependency Version
-    attr_accessor :version
-    # Maven Dependency Classifier
-    attr_accessor :classifier
-    # Maven Dependency Type
-    attr_accessor :type
+    # Serialized coordinates token
+    attr_accessor :token
 
-    # the json hash for this RestDependencyInfo
+    # the json hash for this RestCoordinatesToken
     def to_jaxb_json_hash
       _h = {}
-      _h['groupId'] = groupId.to_jaxb_json_hash unless groupId.nil?
-      _h['artifactId'] = artifactId.to_jaxb_json_hash unless artifactId.nil?
-      _h['version'] = version.to_jaxb_json_hash unless version.nil?
-      _h['classifier'] = classifier.to_jaxb_json_hash unless classifier.nil?
-      _h['type'] = type.to_jaxb_json_hash unless type.nil?
+      _h['token'] = token.to_jaxb_json_hash unless token.nil?
       return _h
     end
 
-    # the json (string form) for this RestDependencyInfo
+    # the json (string form) for this RestCoordinatesToken
     def to_json
       to_jaxb_json_hash.to_json
     end
 
-    #initializes this RestDependencyInfo with a json hash
+    #initializes this RestCoordinatesToken with a json hash
     def init_jaxb_json_hash(_o)
-        if !_o['groupId'].nil?
-          _oa = _o['groupId']
+        if !_o['token'].nil?
+          _oa = _o['token']
             if(_oa.is_a? Hash)
-              @groupId = EnunciateHelpers::LAMB_CLASS_AWARE.call(_oa) if _oa['@class']
-              @groupId =  String.from_json(_oa) unless _oa['@class']
+              @token = EnunciateHelpers::LAMB_CLASS_AWARE.call(_oa) if _oa['@class']
+              @token =  String.from_json(_oa) unless _oa['@class']
             elsif (_oa.is_a? Array)
               #an array(of hashes hopefully) or scalar
-              @groupId = Array.new
+              @token = Array.new
               _oa.each { | _item | 
                  if ((_item.nil? || _item['@class'].nil?)rescue true)
-                   @groupId.push String.from_json(_item)
+                   @token.push String.from_json(_item)
                  else
-                   @groupId.push EnunciateHelpers::LAMB_CLASS_AWARE.call(_item)
+                   @token.push EnunciateHelpers::LAMB_CLASS_AWARE.call(_item)
                  end
                }
             else
-                @groupId = _oa
-            end
-          end
-        if !_o['artifactId'].nil?
-          _oa = _o['artifactId']
-            if(_oa.is_a? Hash)
-              @artifactId = EnunciateHelpers::LAMB_CLASS_AWARE.call(_oa) if _oa['@class']
-              @artifactId =  String.from_json(_oa) unless _oa['@class']
-            elsif (_oa.is_a? Array)
-              #an array(of hashes hopefully) or scalar
-              @artifactId = Array.new
-              _oa.each { | _item | 
-                 if ((_item.nil? || _item['@class'].nil?)rescue true)
-                   @artifactId.push String.from_json(_item)
-                 else
-                   @artifactId.push EnunciateHelpers::LAMB_CLASS_AWARE.call(_item)
-                 end
-               }
-            else
-                @artifactId = _oa
-            end
-          end
-        if !_o['version'].nil?
-          _oa = _o['version']
-            if(_oa.is_a? Hash)
-              @version = EnunciateHelpers::LAMB_CLASS_AWARE.call(_oa) if _oa['@class']
-              @version =  String.from_json(_oa) unless _oa['@class']
-            elsif (_oa.is_a? Array)
-              #an array(of hashes hopefully) or scalar
-              @version = Array.new
-              _oa.each { | _item | 
-                 if ((_item.nil? || _item['@class'].nil?)rescue true)
-                   @version.push String.from_json(_item)
-                 else
-                   @version.push EnunciateHelpers::LAMB_CLASS_AWARE.call(_item)
-                 end
-               }
-            else
-                @version = _oa
-            end
-          end
-        if !_o['classifier'].nil?
-          _oa = _o['classifier']
-            if(_oa.is_a? Hash)
-              @classifier = EnunciateHelpers::LAMB_CLASS_AWARE.call(_oa) if _oa['@class']
-              @classifier =  String.from_json(_oa) unless _oa['@class']
-            elsif (_oa.is_a? Array)
-              #an array(of hashes hopefully) or scalar
-              @classifier = Array.new
-              _oa.each { | _item | 
-                 if ((_item.nil? || _item['@class'].nil?)rescue true)
-                   @classifier.push String.from_json(_item)
-                 else
-                   @classifier.push EnunciateHelpers::LAMB_CLASS_AWARE.call(_item)
-                 end
-               }
-            else
-                @classifier = _oa
-            end
-          end
-        if !_o['type'].nil?
-          _oa = _o['type']
-            if(_oa.is_a? Hash)
-              @type = EnunciateHelpers::LAMB_CLASS_AWARE.call(_oa) if _oa['@class']
-              @type =  String.from_json(_oa) unless _oa['@class']
-            elsif (_oa.is_a? Array)
-              #an array(of hashes hopefully) or scalar
-              @type = Array.new
-              _oa.each { | _item | 
-                 if ((_item.nil? || _item['@class'].nil?)rescue true)
-                   @type.push String.from_json(_item)
-                 else
-                   @type.push EnunciateHelpers::LAMB_CLASS_AWARE.call(_item)
-                 end
-               }
-            else
-                @type = _oa
+                @token = _oa
             end
           end
     end
 
-    # constructs a RestDependencyInfo from a (parsed) JSON hash
-    def self.from_json(o)
-      if o.nil?
-        return nil
-      else
-        inst = new
-        inst.init_jaxb_json_hash o
-        return inst
-      end
-    end
-  end
-
-end
-
-end
-
-end
-
-end
-
-end
-
-end
-
-end
-
-module Gov
-
-module Vha
-
-module Isaac
-
-module Rest
-
-module Api1
-
-module Data
-
-module Systeminfo
-
-  # (no documentation provided)
-  class RestLicenseInfo 
-
-    # Name of the license
-    attr_accessor :name
-    # URL to the license text
-    attr_accessor :url
-    # Comments related to the license
-    attr_accessor :comments
-
-    # the json hash for this RestLicenseInfo
-    def to_jaxb_json_hash
-      _h = {}
-      _h['name'] = name.to_jaxb_json_hash unless name.nil?
-      _h['url'] = url.to_jaxb_json_hash unless url.nil?
-      _h['comments'] = comments.to_jaxb_json_hash unless comments.nil?
-      return _h
-    end
-
-    # the json (string form) for this RestLicenseInfo
-    def to_json
-      to_jaxb_json_hash.to_json
-    end
-
-    #initializes this RestLicenseInfo with a json hash
-    def init_jaxb_json_hash(_o)
-        if !_o['name'].nil?
-          _oa = _o['name']
-            if(_oa.is_a? Hash)
-              @name = EnunciateHelpers::LAMB_CLASS_AWARE.call(_oa) if _oa['@class']
-              @name =  String.from_json(_oa) unless _oa['@class']
-            elsif (_oa.is_a? Array)
-              #an array(of hashes hopefully) or scalar
-              @name = Array.new
-              _oa.each { | _item | 
-                 if ((_item.nil? || _item['@class'].nil?)rescue true)
-                   @name.push String.from_json(_item)
-                 else
-                   @name.push EnunciateHelpers::LAMB_CLASS_AWARE.call(_item)
-                 end
-               }
-            else
-                @name = _oa
-            end
-          end
-        if !_o['url'].nil?
-          _oa = _o['url']
-            if(_oa.is_a? Hash)
-              @url = EnunciateHelpers::LAMB_CLASS_AWARE.call(_oa) if _oa['@class']
-              @url =  String.from_json(_oa) unless _oa['@class']
-            elsif (_oa.is_a? Array)
-              #an array(of hashes hopefully) or scalar
-              @url = Array.new
-              _oa.each { | _item | 
-                 if ((_item.nil? || _item['@class'].nil?)rescue true)
-                   @url.push String.from_json(_item)
-                 else
-                   @url.push EnunciateHelpers::LAMB_CLASS_AWARE.call(_item)
-                 end
-               }
-            else
-                @url = _oa
-            end
-          end
-        if !_o['comments'].nil?
-          _oa = _o['comments']
-            if(_oa.is_a? Hash)
-              @comments = EnunciateHelpers::LAMB_CLASS_AWARE.call(_oa) if _oa['@class']
-              @comments =  String.from_json(_oa) unless _oa['@class']
-            elsif (_oa.is_a? Array)
-              #an array(of hashes hopefully) or scalar
-              @comments = Array.new
-              _oa.each { | _item | 
-                 if ((_item.nil? || _item['@class'].nil?)rescue true)
-                   @comments.push String.from_json(_item)
-                 else
-                   @comments.push EnunciateHelpers::LAMB_CLASS_AWARE.call(_item)
-                 end
-               }
-            else
-                @comments = _oa
-            end
-          end
-    end
-
-    # constructs a RestLicenseInfo from a (parsed) JSON hash
-    def self.from_json(o)
-      if o.nil?
-        return nil
-      else
-        inst = new
-        inst.init_jaxb_json_hash o
-        return inst
-      end
-    end
-  end
-
-end
-
-end
-
-end
-
-end
-
-end
-
-end
-
-end
-
-module Gov
-
-module Vha
-
-module Isaac
-
-module Rest
-
-module Api
-
-module Data
-
-  # (no documentation provided)
-  class Pagination 
-
-    # Link to retrieve previous result set page - not provided if no previous page exists.
-    attr_accessor :previousUrl
-    # Link to retrieve next result set page
-    attr_accessor :nextUrl
-    # The page (of maximum size pageSize) number from beginning of dataset starting at 1
-    attr_accessor :pageNum
-    # Estimated size of set of all matching values of which the current page is a subset. Value is negative if and only if unknown. May be affected by filtering.
-    attr_accessor :approximateTotal
-    # True if the approximateTotal value is an exact count of results, false if the value is an estimate.
-    attr_accessor :totalIsExact
-
-    # the json hash for this Pagination
-    def to_jaxb_json_hash
-      _h = {}
-      _h['previousUrl'] = previousUrl.to_jaxb_json_hash unless previousUrl.nil?
-      _h['nextUrl'] = nextUrl.to_jaxb_json_hash unless nextUrl.nil?
-      _h['pageNum'] = pageNum.to_jaxb_json_hash unless pageNum.nil?
-      _h['approximateTotal'] = approximateTotal.to_jaxb_json_hash unless approximateTotal.nil?
-      _h['totalIsExact'] = totalIsExact.to_jaxb_json_hash unless totalIsExact.nil?
-      return _h
-    end
-
-    # the json (string form) for this Pagination
-    def to_json
-      to_jaxb_json_hash.to_json
-    end
-
-    #initializes this Pagination with a json hash
-    def init_jaxb_json_hash(_o)
-        if !_o['previousUrl'].nil?
-          _oa = _o['previousUrl']
-            if(_oa.is_a? Hash)
-              @previousUrl = EnunciateHelpers::LAMB_CLASS_AWARE.call(_oa) if _oa['@class']
-              @previousUrl =  String.from_json(_oa) unless _oa['@class']
-            elsif (_oa.is_a? Array)
-              #an array(of hashes hopefully) or scalar
-              @previousUrl = Array.new
-              _oa.each { | _item | 
-                 if ((_item.nil? || _item['@class'].nil?)rescue true)
-                   @previousUrl.push String.from_json(_item)
-                 else
-                   @previousUrl.push EnunciateHelpers::LAMB_CLASS_AWARE.call(_item)
-                 end
-               }
-            else
-                @previousUrl = _oa
-            end
-          end
-        if !_o['nextUrl'].nil?
-          _oa = _o['nextUrl']
-            if(_oa.is_a? Hash)
-              @nextUrl = EnunciateHelpers::LAMB_CLASS_AWARE.call(_oa) if _oa['@class']
-              @nextUrl =  String.from_json(_oa) unless _oa['@class']
-            elsif (_oa.is_a? Array)
-              #an array(of hashes hopefully) or scalar
-              @nextUrl = Array.new
-              _oa.each { | _item | 
-                 if ((_item.nil? || _item['@class'].nil?)rescue true)
-                   @nextUrl.push String.from_json(_item)
-                 else
-                   @nextUrl.push EnunciateHelpers::LAMB_CLASS_AWARE.call(_item)
-                 end
-               }
-            else
-                @nextUrl = _oa
-            end
-          end
-        if !_o['pageNum'].nil?
-          _oa = _o['pageNum']
-            if(_oa.is_a? Hash)
-              @pageNum = EnunciateHelpers::LAMB_CLASS_AWARE.call(_oa) if _oa['@class']
-              @pageNum =  Fixnum.from_json(_oa) unless _oa['@class']
-            elsif (_oa.is_a? Array)
-              #an array(of hashes hopefully) or scalar
-              @pageNum = Array.new
-              _oa.each { | _item | 
-                 if ((_item.nil? || _item['@class'].nil?)rescue true)
-                   @pageNum.push Fixnum.from_json(_item)
-                 else
-                   @pageNum.push EnunciateHelpers::LAMB_CLASS_AWARE.call(_item)
-                 end
-               }
-            else
-                @pageNum = _oa
-            end
-          end
-        if !_o['approximateTotal'].nil?
-          _oa = _o['approximateTotal']
-            if(_oa.is_a? Hash)
-              @approximateTotal = EnunciateHelpers::LAMB_CLASS_AWARE.call(_oa) if _oa['@class']
-              @approximateTotal =  Fixnum.from_json(_oa) unless _oa['@class']
-            elsif (_oa.is_a? Array)
-              #an array(of hashes hopefully) or scalar
-              @approximateTotal = Array.new
-              _oa.each { | _item | 
-                 if ((_item.nil? || _item['@class'].nil?)rescue true)
-                   @approximateTotal.push Fixnum.from_json(_item)
-                 else
-                   @approximateTotal.push EnunciateHelpers::LAMB_CLASS_AWARE.call(_item)
-                 end
-               }
-            else
-                @approximateTotal = _oa
-            end
-          end
-        if !_o['totalIsExact'].nil?
-          _oa = _o['totalIsExact']
-            if(_oa.is_a? Hash)
-              @totalIsExact = EnunciateHelpers::LAMB_CLASS_AWARE.call(_oa) if _oa['@class']
-              @totalIsExact =  Boolean.from_json(_oa) unless _oa['@class']
-            elsif (_oa.is_a? Array)
-              #an array(of hashes hopefully) or scalar
-              @totalIsExact = Array.new
-              _oa.each { | _item | 
-                 if ((_item.nil? || _item['@class'].nil?)rescue true)
-                   @totalIsExact.push Boolean.from_json(_item)
-                 else
-                   @totalIsExact.push EnunciateHelpers::LAMB_CLASS_AWARE.call(_item)
-                 end
-               }
-            else
-                @totalIsExact = _oa
-            end
-          end
-    end
-
-    # constructs a Pagination from a (parsed) JSON hash
-    def self.from_json(o)
-      if o.nil?
-        return nil
-      else
-        inst = new
-        inst.init_jaxb_json_hash o
-        return inst
-      end
-    end
-  end
-
-end
-
-end
-
-end
-
-end
-
-end
-
-end
-
-module Gov
-
-module Vha
-
-module Isaac
-
-module Rest
-
-module Api1
-
-module Data
-
-module Coordinate
-
-  # (no documentation provided)
-  class RestLanguageCoordinate 
-
-    # Sequence number of the language concept associated with the language coordinate.
-    # The language will be something like
-    # english, spanish, french, danish, polish, dutch,
-    # lithuanian, chinese, japanese, or swedish.
-    attr_accessor :language
-    # Ordered list of dialect assemblage sequence numbers. Order determines preference.
-    # A dialect assemblage will be something like US (US Dialect) or GB (Great Britain Dialect).
-    attr_accessor :dialectAssemblagePreferences
-    # Ordered list of description type sequence numbers. Order determines preference.
-    # A description type will be something like FSN (Fully Specified Name), Synonym or Definition.
-    attr_accessor :descriptionTypePreferences
-
-    # the json hash for this RestLanguageCoordinate
-    def to_jaxb_json_hash
-      _h = {}
-      _h['language'] = language.to_jaxb_json_hash unless language.nil?
-      if !dialectAssemblagePreferences.nil?
-        _ha = Array.new
-        dialectAssemblagePreferences.each { | _item | _ha.push _item.to_jaxb_json_hash }
-        _h['dialectAssemblagePreferences'] = _ha
-      end
-      if !descriptionTypePreferences.nil?
-        _ha = Array.new
-        descriptionTypePreferences.each { | _item | _ha.push _item.to_jaxb_json_hash }
-        _h['descriptionTypePreferences'] = _ha
-      end
-      return _h
-    end
-
-    # the json (string form) for this RestLanguageCoordinate
-    def to_json
-      to_jaxb_json_hash.to_json
-    end
-
-    #initializes this RestLanguageCoordinate with a json hash
-    def init_jaxb_json_hash(_o)
-        if !_o['language'].nil?
-          _oa = _o['language']
-            if(_oa.is_a? Hash)
-              @language = EnunciateHelpers::LAMB_CLASS_AWARE.call(_oa) if _oa['@class']
-              @language =  Fixnum.from_json(_oa) unless _oa['@class']
-            elsif (_oa.is_a? Array)
-              #an array(of hashes hopefully) or scalar
-              @language = Array.new
-              _oa.each { | _item | 
-                 if ((_item.nil? || _item['@class'].nil?)rescue true)
-                   @language.push Fixnum.from_json(_item)
-                 else
-                   @language.push EnunciateHelpers::LAMB_CLASS_AWARE.call(_item)
-                 end
-               }
-            else
-                @language = _oa
-            end
-          end
-        if !_o['dialectAssemblagePreferences'].nil?
-          _oa = _o['dialectAssemblagePreferences']
-            if(_oa.is_a? Hash)
-              @dialectAssemblagePreferences = EnunciateHelpers::LAMB_CLASS_AWARE.call(_oa) if _oa['@class']
-              @dialectAssemblagePreferences =  Fixnum.from_json(_oa) unless _oa['@class']
-            elsif (_oa.is_a? Array)
-              #an array(of hashes hopefully) or scalar
-              @dialectAssemblagePreferences = Array.new
-              _oa.each { | _item | 
-                 if ((_item.nil? || _item['@class'].nil?)rescue true)
-                   @dialectAssemblagePreferences.push Fixnum.from_json(_item)
-                 else
-                   @dialectAssemblagePreferences.push EnunciateHelpers::LAMB_CLASS_AWARE.call(_item)
-                 end
-               }
-            else
-                @dialectAssemblagePreferences = _oa
-            end
-          end
-        if !_o['descriptionTypePreferences'].nil?
-          _oa = _o['descriptionTypePreferences']
-            if(_oa.is_a? Hash)
-              @descriptionTypePreferences = EnunciateHelpers::LAMB_CLASS_AWARE.call(_oa) if _oa['@class']
-              @descriptionTypePreferences =  Fixnum.from_json(_oa) unless _oa['@class']
-            elsif (_oa.is_a? Array)
-              #an array(of hashes hopefully) or scalar
-              @descriptionTypePreferences = Array.new
-              _oa.each { | _item | 
-                 if ((_item.nil? || _item['@class'].nil?)rescue true)
-                   @descriptionTypePreferences.push Fixnum.from_json(_item)
-                 else
-                   @descriptionTypePreferences.push EnunciateHelpers::LAMB_CLASS_AWARE.call(_item)
-                 end
-               }
-            else
-                @descriptionTypePreferences = _oa
-            end
-          end
-    end
-
-    # constructs a RestLanguageCoordinate from a (parsed) JSON hash
-    def self.from_json(o)
-      if o.nil?
-        return nil
-      else
-        inst = new
-        inst.init_jaxb_json_hash o
-        return inst
-      end
-    end
-  end
-
-end
-
-end
-
-end
-
-end
-
-end
-
-end
-
-end
-
-module Gov
-
-module Vha
-
-module Isaac
-
-module Rest
-
-module Api1
-
-module Data
-
-  # (no documentation provided)
-  class RestStampedVersion 
-
-    # The stamp sequence of this version
-    attr_accessor :stampSequence
-    # The State of this version (active, inactive, primordial or cancelled)
-    attr_accessor :state
-    # The time stamp of this version (in standard java form)
-    attr_accessor :time
-    # The concept sequence of the concept that identifies the author of this version
-    attr_accessor :authorSequence
-    # The concept sequence of the module that this version is in
-    attr_accessor :moduleSequence
-    # The concept sequence of the path that this version is in
-    attr_accessor :pathSequence
-
-    # the json hash for this RestStampedVersion
-    def to_jaxb_json_hash
-      _h = {}
-      _h['stampSequence'] = stampSequence.to_jaxb_json_hash unless stampSequence.nil?
-      _h['state'] = state.to_jaxb_json_hash unless state.nil?
-      _h['time'] = time.to_jaxb_json_hash unless time.nil?
-      _h['authorSequence'] = authorSequence.to_jaxb_json_hash unless authorSequence.nil?
-      _h['moduleSequence'] = moduleSequence.to_jaxb_json_hash unless moduleSequence.nil?
-      _h['pathSequence'] = pathSequence.to_jaxb_json_hash unless pathSequence.nil?
-      return _h
-    end
-
-    # the json (string form) for this RestStampedVersion
-    def to_json
-      to_jaxb_json_hash.to_json
-    end
-
-    #initializes this RestStampedVersion with a json hash
-    def init_jaxb_json_hash(_o)
-        if !_o['stampSequence'].nil?
-          _oa = _o['stampSequence']
-            if(_oa.is_a? Hash)
-              @stampSequence = EnunciateHelpers::LAMB_CLASS_AWARE.call(_oa) if _oa['@class']
-              @stampSequence =  Fixnum.from_json(_oa) unless _oa['@class']
-            elsif (_oa.is_a? Array)
-              #an array(of hashes hopefully) or scalar
-              @stampSequence = Array.new
-              _oa.each { | _item | 
-                 if ((_item.nil? || _item['@class'].nil?)rescue true)
-                   @stampSequence.push Fixnum.from_json(_item)
-                 else
-                   @stampSequence.push EnunciateHelpers::LAMB_CLASS_AWARE.call(_item)
-                 end
-               }
-            else
-                @stampSequence = _oa
-            end
-          end
-        if !_o['state'].nil?
-          _oa = _o['state']
-            if(_oa.is_a? Hash)
-              @state = EnunciateHelpers::LAMB_CLASS_AWARE.call(_oa) if _oa['@class']
-              @state =  Gov::Vha::Isaac::Rest::Api1::Data::Enumerations::RestStateType.from_json(_oa) unless _oa['@class']
-            elsif (_oa.is_a? Array)
-              #an array(of hashes hopefully) or scalar
-              @state = Array.new
-              _oa.each { | _item | 
-                 if ((_item.nil? || _item['@class'].nil?)rescue true)
-                   @state.push Gov::Vha::Isaac::Rest::Api1::Data::Enumerations::RestStateType.from_json(_item)
-                 else
-                   @state.push EnunciateHelpers::LAMB_CLASS_AWARE.call(_item)
-                 end
-               }
-            else
-                @state = _oa
-            end
-          end
-        if !_o['time'].nil?
-          _oa = _o['time']
-            if(_oa.is_a? Hash)
-              @time = EnunciateHelpers::LAMB_CLASS_AWARE.call(_oa) if _oa['@class']
-              @time =  Bignum.from_json(_oa) unless _oa['@class']
-            elsif (_oa.is_a? Array)
-              #an array(of hashes hopefully) or scalar
-              @time = Array.new
-              _oa.each { | _item | 
-                 if ((_item.nil? || _item['@class'].nil?)rescue true)
-                   @time.push Bignum.from_json(_item)
-                 else
-                   @time.push EnunciateHelpers::LAMB_CLASS_AWARE.call(_item)
-                 end
-               }
-            else
-                @time = _oa
-            end
-          end
-        if !_o['authorSequence'].nil?
-          _oa = _o['authorSequence']
-            if(_oa.is_a? Hash)
-              @authorSequence = EnunciateHelpers::LAMB_CLASS_AWARE.call(_oa) if _oa['@class']
-              @authorSequence =  Fixnum.from_json(_oa) unless _oa['@class']
-            elsif (_oa.is_a? Array)
-              #an array(of hashes hopefully) or scalar
-              @authorSequence = Array.new
-              _oa.each { | _item | 
-                 if ((_item.nil? || _item['@class'].nil?)rescue true)
-                   @authorSequence.push Fixnum.from_json(_item)
-                 else
-                   @authorSequence.push EnunciateHelpers::LAMB_CLASS_AWARE.call(_item)
-                 end
-               }
-            else
-                @authorSequence = _oa
-            end
-          end
-        if !_o['moduleSequence'].nil?
-          _oa = _o['moduleSequence']
-            if(_oa.is_a? Hash)
-              @moduleSequence = EnunciateHelpers::LAMB_CLASS_AWARE.call(_oa) if _oa['@class']
-              @moduleSequence =  Fixnum.from_json(_oa) unless _oa['@class']
-            elsif (_oa.is_a? Array)
-              #an array(of hashes hopefully) or scalar
-              @moduleSequence = Array.new
-              _oa.each { | _item | 
-                 if ((_item.nil? || _item['@class'].nil?)rescue true)
-                   @moduleSequence.push Fixnum.from_json(_item)
-                 else
-                   @moduleSequence.push EnunciateHelpers::LAMB_CLASS_AWARE.call(_item)
-                 end
-               }
-            else
-                @moduleSequence = _oa
-            end
-          end
-        if !_o['pathSequence'].nil?
-          _oa = _o['pathSequence']
-            if(_oa.is_a? Hash)
-              @pathSequence = EnunciateHelpers::LAMB_CLASS_AWARE.call(_oa) if _oa['@class']
-              @pathSequence =  Fixnum.from_json(_oa) unless _oa['@class']
-            elsif (_oa.is_a? Array)
-              #an array(of hashes hopefully) or scalar
-              @pathSequence = Array.new
-              _oa.each { | _item | 
-                 if ((_item.nil? || _item['@class'].nil?)rescue true)
-                   @pathSequence.push Fixnum.from_json(_item)
-                 else
-                   @pathSequence.push EnunciateHelpers::LAMB_CLASS_AWARE.call(_item)
-                 end
-               }
-            else
-                @pathSequence = _oa
-            end
-          end
-    end
-
-    # constructs a RestStampedVersion from a (parsed) JSON hash
+    # constructs a RestCoordinatesToken from a (parsed) JSON hash
     def self.from_json(o)
       if o.nil?
         return nil
@@ -7844,6 +6908,467 @@ module Sememe
     end
 
     # constructs a RestDynamicSememeTypeCreate from a (parsed) JSON hash
+    def self.from_json(o)
+      if o.nil?
+        return nil
+      else
+        inst = new
+        inst.init_jaxb_json_hash o
+        return inst
+      end
+    end
+  end
+
+end
+
+end
+
+end
+
+end
+
+end
+
+end
+
+end
+
+module Gov
+
+module Vha
+
+module Isaac
+
+module Rest
+
+module Api1
+
+module Data
+
+module Sememe
+
+module DataTypes
+
+  # (no documentation provided)
+  class RestDynamicSememeDouble < Gov::Vha::Isaac::Rest::Api1::Data::Sememe::RestDynamicSememeData 
+
+
+    # the json hash for this RestDynamicSememeDouble
+    def to_jaxb_json_hash
+      _h = super
+      return _h
+    end
+
+    #initializes this RestDynamicSememeDouble with a json hash
+    def init_jaxb_json_hash(_o)
+      super _o
+    end
+
+    # constructs a RestDynamicSememeDouble from a (parsed) JSON hash
+    def self.from_json(o)
+      if o.nil?
+        return nil
+      else
+        inst = new
+        inst.init_jaxb_json_hash o
+        return inst
+      end
+    end
+  end
+
+end
+
+end
+
+end
+
+end
+
+end
+
+end
+
+end
+
+end
+
+module Gov
+
+module Vha
+
+module Isaac
+
+module Rest
+
+module Api1
+
+module Data
+
+module Logic
+
+  # (no documentation provided)
+  class RestLiteralNodeInstant < Gov::Vha::Isaac::Rest::Api1::Data::Logic::RestLogicNode 
+
+    # RestLiteralNodeInstant contains a literal Instant value, literalValue
+    attr_accessor :literalValue
+
+    # the json hash for this RestLiteralNodeInstant
+    def to_jaxb_json_hash
+      _h = super
+      _h['literalValue'] = literalValue.to_jaxb_json_hash unless literalValue.nil?
+      return _h
+    end
+
+    #initializes this RestLiteralNodeInstant with a json hash
+    def init_jaxb_json_hash(_o)
+      super _o
+        if !_o['literalValue'].nil?
+          _oa = _o['literalValue']
+            if(_oa.is_a? Hash)
+              @literalValue = EnunciateHelpers::LAMB_CLASS_AWARE.call(_oa) if _oa['@class']
+              @literalValue =  java.time::Instant.from_json(_oa) unless _oa['@class']
+            elsif (_oa.is_a? Array)
+              #an array(of hashes hopefully) or scalar
+              @literalValue = Array.new
+              _oa.each { | _item | 
+                 if ((_item.nil? || _item['@class'].nil?)rescue true)
+                   @literalValue.push java.time::Instant.from_json(_item)
+                 else
+                   @literalValue.push EnunciateHelpers::LAMB_CLASS_AWARE.call(_item)
+                 end
+               }
+            else
+                @literalValue = _oa
+            end
+          end
+    end
+
+    # constructs a RestLiteralNodeInstant from a (parsed) JSON hash
+    def self.from_json(o)
+      if o.nil?
+        return nil
+      else
+        inst = new
+        inst.init_jaxb_json_hash o
+        return inst
+      end
+    end
+  end
+
+end
+
+end
+
+end
+
+end
+
+end
+
+end
+
+end
+
+module Gov
+
+module Vha
+
+module Isaac
+
+module Rest
+
+module Api1
+
+module Data
+
+module Enumerations
+
+  # (no documentation provided)
+  class RestNodeSemanticType < Gov::Vha::Isaac::Rest::Api1::Data::Enumerations::Enumeration 
+
+    # (no documentation provided)
+    attr_accessor :all
+
+    # the json hash for this RestNodeSemanticType
+    def to_jaxb_json_hash
+      _h = super
+      if !all.nil?
+        _ha = Array.new
+        all.each { | _item | _ha.push _item.to_jaxb_json_hash }
+        _h['all'] = _ha
+      end
+      return _h
+    end
+
+    #initializes this RestNodeSemanticType with a json hash
+    def init_jaxb_json_hash(_o)
+      super _o
+        if !_o['all'].nil?
+          _oa = _o['all']
+            if(_oa.is_a? Hash)
+              @all = EnunciateHelpers::LAMB_CLASS_AWARE.call(_oa) if _oa['@class']
+              @all =  Gov::Vha::Isaac::Rest::Api1::Data::Enumerations::RestNodeSemanticType.from_json(_oa) unless _oa['@class']
+            elsif (_oa.is_a? Array)
+              #an array(of hashes hopefully) or scalar
+              @all = Array.new
+              _oa.each { | _item | 
+                 if ((_item.nil? || _item['@class'].nil?)rescue true)
+                   @all.push Gov::Vha::Isaac::Rest::Api1::Data::Enumerations::RestNodeSemanticType.from_json(_item)
+                 else
+                   @all.push EnunciateHelpers::LAMB_CLASS_AWARE.call(_item)
+                 end
+               }
+            else
+                @all = _oa
+            end
+          end
+    end
+
+    # constructs a RestNodeSemanticType from a (parsed) JSON hash
+    def self.from_json(o)
+      if o.nil?
+        return nil
+      else
+        inst = new
+        inst.init_jaxb_json_hash o
+        return inst
+      end
+    end
+  end
+
+end
+
+end
+
+end
+
+end
+
+end
+
+end
+
+end
+
+module Gov
+
+module Vha
+
+module Isaac
+
+module Rest
+
+module Api1
+
+module Data
+
+module Association
+
+  # (no documentation provided)
+  class RestAssociationTypeVersion < Gov::Vha::Isaac::Rest::Api1::Data::Association::RestAssociationTypeVersionBaseCreate 
+
+    # The data that was not expanded as part of this call (but can be)
+    attr_accessor :expandables
+    # The concept sequence of the concept that represents the association definition.
+    attr_accessor :associationConceptSequence
+    # The concept UUID(s) of the concept that represents the association definition
+    attr_accessor :identifiers
+    # The StampedVersion details for this association type
+    attr_accessor :associationItemStamp
+    # The Concept Chronology of the concept represented by associationConceptSequence.  Typically blank, unless requested via the expand parameter
+    # &#39;referencedConcept&#39;  If &#39;referencedConcept&#39; is passed, you can also pass &#39;versionsAll&#39; or &#39;versionsLatestOnly&#39;
+    attr_accessor :associationConcept
+
+    # the json hash for this RestAssociationTypeVersion
+    def to_jaxb_json_hash
+      _h = super
+      _h['expandables'] = expandables.to_jaxb_json_hash unless expandables.nil?
+      _h['associationConceptSequence'] = associationConceptSequence.to_jaxb_json_hash unless associationConceptSequence.nil?
+      _h['identifiers'] = identifiers.to_jaxb_json_hash unless identifiers.nil?
+      _h['associationItemStamp'] = associationItemStamp.to_jaxb_json_hash unless associationItemStamp.nil?
+      _h['associationConcept'] = associationConcept.to_jaxb_json_hash unless associationConcept.nil?
+      return _h
+    end
+
+    #initializes this RestAssociationTypeVersion with a json hash
+    def init_jaxb_json_hash(_o)
+      super _o
+        if !_o['expandables'].nil?
+          _oa = _o['expandables']
+            if(_oa.is_a? Hash)
+              @expandables = EnunciateHelpers::LAMB_CLASS_AWARE.call(_oa) if _oa['@class']
+              @expandables =  Gov::Vha::Isaac::Rest::Api::Data::Expandables.from_json(_oa) unless _oa['@class']
+            elsif (_oa.is_a? Array)
+              #an array(of hashes hopefully) or scalar
+              @expandables = Array.new
+              _oa.each { | _item | 
+                 if ((_item.nil? || _item['@class'].nil?)rescue true)
+                   @expandables.push Gov::Vha::Isaac::Rest::Api::Data::Expandables.from_json(_item)
+                 else
+                   @expandables.push EnunciateHelpers::LAMB_CLASS_AWARE.call(_item)
+                 end
+               }
+            else
+                @expandables = _oa
+            end
+          end
+        if !_o['associationConceptSequence'].nil?
+          _oa = _o['associationConceptSequence']
+            if(_oa.is_a? Hash)
+              @associationConceptSequence = EnunciateHelpers::LAMB_CLASS_AWARE.call(_oa) if _oa['@class']
+              @associationConceptSequence =  Fixnum.from_json(_oa) unless _oa['@class']
+            elsif (_oa.is_a? Array)
+              #an array(of hashes hopefully) or scalar
+              @associationConceptSequence = Array.new
+              _oa.each { | _item | 
+                 if ((_item.nil? || _item['@class'].nil?)rescue true)
+                   @associationConceptSequence.push Fixnum.from_json(_item)
+                 else
+                   @associationConceptSequence.push EnunciateHelpers::LAMB_CLASS_AWARE.call(_item)
+                 end
+               }
+            else
+                @associationConceptSequence = _oa
+            end
+          end
+        if !_o['identifiers'].nil?
+          _oa = _o['identifiers']
+            if(_oa.is_a? Hash)
+              @identifiers = EnunciateHelpers::LAMB_CLASS_AWARE.call(_oa) if _oa['@class']
+              @identifiers =  Gov::Vha::Isaac::Rest::Api1::Data::RestIdentifiedObject.from_json(_oa) unless _oa['@class']
+            elsif (_oa.is_a? Array)
+              #an array(of hashes hopefully) or scalar
+              @identifiers = Array.new
+              _oa.each { | _item | 
+                 if ((_item.nil? || _item['@class'].nil?)rescue true)
+                   @identifiers.push Gov::Vha::Isaac::Rest::Api1::Data::RestIdentifiedObject.from_json(_item)
+                 else
+                   @identifiers.push EnunciateHelpers::LAMB_CLASS_AWARE.call(_item)
+                 end
+               }
+            else
+                @identifiers = _oa
+            end
+          end
+        if !_o['associationItemStamp'].nil?
+          _oa = _o['associationItemStamp']
+            if(_oa.is_a? Hash)
+              @associationItemStamp = EnunciateHelpers::LAMB_CLASS_AWARE.call(_oa) if _oa['@class']
+              @associationItemStamp =  Gov::Vha::Isaac::Rest::Api1::Data::RestStampedVersion.from_json(_oa) unless _oa['@class']
+            elsif (_oa.is_a? Array)
+              #an array(of hashes hopefully) or scalar
+              @associationItemStamp = Array.new
+              _oa.each { | _item | 
+                 if ((_item.nil? || _item['@class'].nil?)rescue true)
+                   @associationItemStamp.push Gov::Vha::Isaac::Rest::Api1::Data::RestStampedVersion.from_json(_item)
+                 else
+                   @associationItemStamp.push EnunciateHelpers::LAMB_CLASS_AWARE.call(_item)
+                 end
+               }
+            else
+                @associationItemStamp = _oa
+            end
+          end
+        if !_o['associationConcept'].nil?
+          _oa = _o['associationConcept']
+            if(_oa.is_a? Hash)
+              @associationConcept = EnunciateHelpers::LAMB_CLASS_AWARE.call(_oa) if _oa['@class']
+              @associationConcept =  Gov::Vha::Isaac::Rest::Api1::Data::Concept::RestConceptChronology.from_json(_oa) unless _oa['@class']
+            elsif (_oa.is_a? Array)
+              #an array(of hashes hopefully) or scalar
+              @associationConcept = Array.new
+              _oa.each { | _item | 
+                 if ((_item.nil? || _item['@class'].nil?)rescue true)
+                   @associationConcept.push Gov::Vha::Isaac::Rest::Api1::Data::Concept::RestConceptChronology.from_json(_item)
+                 else
+                   @associationConcept.push EnunciateHelpers::LAMB_CLASS_AWARE.call(_item)
+                 end
+               }
+            else
+                @associationConcept = _oa
+            end
+          end
+    end
+
+    # constructs a RestAssociationTypeVersion from a (parsed) JSON hash
+    def self.from_json(o)
+      if o.nil?
+        return nil
+      else
+        inst = new
+        inst.init_jaxb_json_hash o
+        return inst
+      end
+    end
+  end
+
+end
+
+end
+
+end
+
+end
+
+end
+
+end
+
+end
+
+module Gov
+
+module Vha
+
+module Isaac
+
+module Rest
+
+module Api1
+
+module Data
+
+module Mapping
+
+  # (no documentation provided)
+  class RestMappingSetExtensionValueBaseCreate < Gov::Vha::Isaac::Rest::Api1::Data::Mapping::RestMappingSetExtensionValueBase 
+
+    # The concept that describes the purpose of this extended field on a map set definition.  The descriptions from this concept
+    # will be used as the label of the extension.  On create, this accepts a nid or a sequence.  On read, it returns a concept sequence.
+    attr_accessor :extensionNameConcept
+
+    # the json hash for this RestMappingSetExtensionValueBaseCreate
+    def to_jaxb_json_hash
+      _h = super
+      _h['extensionNameConcept'] = extensionNameConcept.to_jaxb_json_hash unless extensionNameConcept.nil?
+      return _h
+    end
+
+    #initializes this RestMappingSetExtensionValueBaseCreate with a json hash
+    def init_jaxb_json_hash(_o)
+      super _o
+        if !_o['extensionNameConcept'].nil?
+          _oa = _o['extensionNameConcept']
+            if(_oa.is_a? Hash)
+              @extensionNameConcept = EnunciateHelpers::LAMB_CLASS_AWARE.call(_oa) if _oa['@class']
+              @extensionNameConcept =  Fixnum.from_json(_oa) unless _oa['@class']
+            elsif (_oa.is_a? Array)
+              #an array(of hashes hopefully) or scalar
+              @extensionNameConcept = Array.new
+              _oa.each { | _item | 
+                 if ((_item.nil? || _item['@class'].nil?)rescue true)
+                   @extensionNameConcept.push Fixnum.from_json(_item)
+                 else
+                   @extensionNameConcept.push EnunciateHelpers::LAMB_CLASS_AWARE.call(_item)
+                 end
+               }
+            else
+                @extensionNameConcept = _oa
+            end
+          end
+    end
+
+    # constructs a RestMappingSetExtensionValueBaseCreate from a (parsed) JSON hash
     def self.from_json(o)
       if o.nil?
         return nil
@@ -8130,49 +7655,206 @@ module Data
 
 module Sememe
 
+module DataTypes
+
   # (no documentation provided)
-  class RestDynamicSememeVersion < Gov::Vha::Isaac::Rest::Api1::Data::Sememe::RestSememeVersion 
+  class RestDynamicSememeArray < Gov::Vha::Isaac::Rest::Api1::Data::Sememe::RestDynamicSememeData 
 
-    # The data attached to this sememe instance (if any).  The &#39;sememe/sememeDefinition/{id}&#39;
-    # can be read to determine the potential types and descriptions of these columns.
-    attr_accessor :dataColumns
 
-    # the json hash for this RestDynamicSememeVersion
+    # the json hash for this RestDynamicSememeArray
     def to_jaxb_json_hash
       _h = super
-      if !dataColumns.nil?
+      return _h
+    end
+
+    #initializes this RestDynamicSememeArray with a json hash
+    def init_jaxb_json_hash(_o)
+      super _o
+    end
+
+    # constructs a RestDynamicSememeArray from a (parsed) JSON hash
+    def self.from_json(o)
+      if o.nil?
+        return nil
+      else
+        inst = new
+        inst.init_jaxb_json_hash o
+        return inst
+      end
+    end
+  end
+
+end
+
+end
+
+end
+
+end
+
+end
+
+end
+
+end
+
+end
+
+module Gov
+
+module Vha
+
+module Isaac
+
+module Rest
+
+module Api1
+
+module Data
+
+module Enumerations
+
+  # (no documentation provided)
+  class RestObjectChronologyType < Gov::Vha::Isaac::Rest::Api1::Data::Enumerations::Enumeration 
+
+    # (no documentation provided)
+    attr_accessor :all
+
+    # the json hash for this RestObjectChronologyType
+    def to_jaxb_json_hash
+      _h = super
+      if !all.nil?
         _ha = Array.new
-        dataColumns.each { | _item | _ha.push _item.to_jaxb_json_hash }
-        _h['dataColumns'] = _ha
+        all.each { | _item | _ha.push _item.to_jaxb_json_hash }
+        _h['all'] = _ha
       end
       return _h
     end
 
-    #initializes this RestDynamicSememeVersion with a json hash
+    #initializes this RestObjectChronologyType with a json hash
     def init_jaxb_json_hash(_o)
       super _o
-        if !_o['dataColumns'].nil?
-          _oa = _o['dataColumns']
+        if !_o['all'].nil?
+          _oa = _o['all']
             if(_oa.is_a? Hash)
-              @dataColumns = EnunciateHelpers::LAMB_CLASS_AWARE.call(_oa) if _oa['@class']
-              @dataColumns =  Gov::Vha::Isaac::Rest::Api1::Data::Sememe::RestDynamicSememeData.from_json(_oa) unless _oa['@class']
+              @all = EnunciateHelpers::LAMB_CLASS_AWARE.call(_oa) if _oa['@class']
+              @all =  Gov::Vha::Isaac::Rest::Api1::Data::Enumerations::RestObjectChronologyType.from_json(_oa) unless _oa['@class']
             elsif (_oa.is_a? Array)
               #an array(of hashes hopefully) or scalar
-              @dataColumns = Array.new
+              @all = Array.new
               _oa.each { | _item | 
                  if ((_item.nil? || _item['@class'].nil?)rescue true)
-                   @dataColumns.push Gov::Vha::Isaac::Rest::Api1::Data::Sememe::RestDynamicSememeData.from_json(_item)
+                   @all.push Gov::Vha::Isaac::Rest::Api1::Data::Enumerations::RestObjectChronologyType.from_json(_item)
                  else
-                   @dataColumns.push EnunciateHelpers::LAMB_CLASS_AWARE.call(_item)
+                   @all.push EnunciateHelpers::LAMB_CLASS_AWARE.call(_item)
                  end
                }
             else
-                @dataColumns = _oa
+                @all = _oa
             end
           end
     end
 
-    # constructs a RestDynamicSememeVersion from a (parsed) JSON hash
+    # constructs a RestObjectChronologyType from a (parsed) JSON hash
+    def self.from_json(o)
+      if o.nil?
+        return nil
+      else
+        inst = new
+        inst.init_jaxb_json_hash o
+        return inst
+      end
+    end
+  end
+
+end
+
+end
+
+end
+
+end
+
+end
+
+end
+
+end
+
+module Gov
+
+module Vha
+
+module Isaac
+
+module Rest
+
+module Api1
+
+module Data
+
+module Mapping
+
+  # (no documentation provided)
+  class RestMappingItemVersionBaseCreate < Gov::Vha::Isaac::Rest::Api1::Data::Mapping::RestMappingItemVersionBase 
+
+    # The concept sequence that identifies the map set that this entry belongs to
+    attr_accessor :mapSetConcept
+    # The source concept sequence being mapped by this map item
+    attr_accessor :sourceConcept
+
+    # the json hash for this RestMappingItemVersionBaseCreate
+    def to_jaxb_json_hash
+      _h = super
+      _h['mapSetConcept'] = mapSetConcept.to_jaxb_json_hash unless mapSetConcept.nil?
+      _h['sourceConcept'] = sourceConcept.to_jaxb_json_hash unless sourceConcept.nil?
+      return _h
+    end
+
+    #initializes this RestMappingItemVersionBaseCreate with a json hash
+    def init_jaxb_json_hash(_o)
+      super _o
+        if !_o['mapSetConcept'].nil?
+          _oa = _o['mapSetConcept']
+            if(_oa.is_a? Hash)
+              @mapSetConcept = EnunciateHelpers::LAMB_CLASS_AWARE.call(_oa) if _oa['@class']
+              @mapSetConcept =  Fixnum.from_json(_oa) unless _oa['@class']
+            elsif (_oa.is_a? Array)
+              #an array(of hashes hopefully) or scalar
+              @mapSetConcept = Array.new
+              _oa.each { | _item | 
+                 if ((_item.nil? || _item['@class'].nil?)rescue true)
+                   @mapSetConcept.push Fixnum.from_json(_item)
+                 else
+                   @mapSetConcept.push EnunciateHelpers::LAMB_CLASS_AWARE.call(_item)
+                 end
+               }
+            else
+                @mapSetConcept = _oa
+            end
+          end
+        if !_o['sourceConcept'].nil?
+          _oa = _o['sourceConcept']
+            if(_oa.is_a? Hash)
+              @sourceConcept = EnunciateHelpers::LAMB_CLASS_AWARE.call(_oa) if _oa['@class']
+              @sourceConcept =  Fixnum.from_json(_oa) unless _oa['@class']
+            elsif (_oa.is_a? Array)
+              #an array(of hashes hopefully) or scalar
+              @sourceConcept = Array.new
+              _oa.each { | _item | 
+                 if ((_item.nil? || _item['@class'].nil?)rescue true)
+                   @sourceConcept.push Fixnum.from_json(_item)
+                 else
+                   @sourceConcept.push EnunciateHelpers::LAMB_CLASS_AWARE.call(_item)
+                 end
+               }
+            else
+                @sourceConcept = _oa
+            end
+          end
+    end
+
+    # constructs a RestMappingItemVersionBaseCreate from a (parsed) JSON hash
     def self.from_json(o)
       if o.nil?
         return nil
@@ -8213,18 +7895,14 @@ module Data
 module Enumerations
 
   # (no documentation provided)
-  class RestDynamicSememeDataType < Gov::Vha::Isaac::Rest::Api1::Data::Enumerations::Enumeration 
+  class RestConcreteDomainOperatorsType < Gov::Vha::Isaac::Rest::Api1::Data::Enumerations::Enumeration 
 
-    # The full value of the &quot;@class&quot; annotation that needs to be passed back in when constructing a RestDynamicSememeData like
-    # RestDynamicSememeDouble.
-    attr_accessor :classType
     # (no documentation provided)
     attr_accessor :all
 
-    # the json hash for this RestDynamicSememeDataType
+    # the json hash for this RestConcreteDomainOperatorsType
     def to_jaxb_json_hash
       _h = super
-      _h['classType'] = classType.to_jaxb_json_hash unless classType.nil?
       if !all.nil?
         _ha = Array.new
         all.each { | _item | _ha.push _item.to_jaxb_json_hash }
@@ -8233,39 +7911,20 @@ module Enumerations
       return _h
     end
 
-    #initializes this RestDynamicSememeDataType with a json hash
+    #initializes this RestConcreteDomainOperatorsType with a json hash
     def init_jaxb_json_hash(_o)
       super _o
-        if !_o['classType'].nil?
-          _oa = _o['classType']
-            if(_oa.is_a? Hash)
-              @classType = EnunciateHelpers::LAMB_CLASS_AWARE.call(_oa) if _oa['@class']
-              @classType =  String.from_json(_oa) unless _oa['@class']
-            elsif (_oa.is_a? Array)
-              #an array(of hashes hopefully) or scalar
-              @classType = Array.new
-              _oa.each { | _item | 
-                 if ((_item.nil? || _item['@class'].nil?)rescue true)
-                   @classType.push String.from_json(_item)
-                 else
-                   @classType.push EnunciateHelpers::LAMB_CLASS_AWARE.call(_item)
-                 end
-               }
-            else
-                @classType = _oa
-            end
-          end
         if !_o['all'].nil?
           _oa = _o['all']
             if(_oa.is_a? Hash)
               @all = EnunciateHelpers::LAMB_CLASS_AWARE.call(_oa) if _oa['@class']
-              @all =  Gov::Vha::Isaac::Rest::Api1::Data::Enumerations::RestDynamicSememeDataType.from_json(_oa) unless _oa['@class']
+              @all =  Gov::Vha::Isaac::Rest::Api1::Data::Enumerations::RestConcreteDomainOperatorsType.from_json(_oa) unless _oa['@class']
             elsif (_oa.is_a? Array)
               #an array(of hashes hopefully) or scalar
               @all = Array.new
               _oa.each { | _item | 
                  if ((_item.nil? || _item['@class'].nil?)rescue true)
-                   @all.push Gov::Vha::Isaac::Rest::Api1::Data::Enumerations::RestDynamicSememeDataType.from_json(_item)
+                   @all.push Gov::Vha::Isaac::Rest::Api1::Data::Enumerations::RestConcreteDomainOperatorsType.from_json(_item)
                  else
                    @all.push EnunciateHelpers::LAMB_CLASS_AWARE.call(_item)
                  end
@@ -8276,7 +7935,460 @@ module Enumerations
           end
     end
 
-    # constructs a RestDynamicSememeDataType from a (parsed) JSON hash
+    # constructs a RestConcreteDomainOperatorsType from a (parsed) JSON hash
+    def self.from_json(o)
+      if o.nil?
+        return nil
+      else
+        inst = new
+        inst.init_jaxb_json_hash o
+        return inst
+      end
+    end
+  end
+
+end
+
+end
+
+end
+
+end
+
+end
+
+end
+
+end
+
+module Gov
+
+module Vha
+
+module Isaac
+
+module Rest
+
+module Api1
+
+module Data
+
+module Logic
+
+  # (no documentation provided)
+  class RestLiteralNodeInteger < Gov::Vha::Isaac::Rest::Api1::Data::Logic::RestLogicNode 
+
+    # RestLiteralNodeInteger contains a literal int value, literalValue
+    attr_accessor :literalValue
+
+    # the json hash for this RestLiteralNodeInteger
+    def to_jaxb_json_hash
+      _h = super
+      _h['literalValue'] = literalValue.to_jaxb_json_hash unless literalValue.nil?
+      return _h
+    end
+
+    #initializes this RestLiteralNodeInteger with a json hash
+    def init_jaxb_json_hash(_o)
+      super _o
+        if !_o['literalValue'].nil?
+          _oa = _o['literalValue']
+            if(_oa.is_a? Hash)
+              @literalValue = EnunciateHelpers::LAMB_CLASS_AWARE.call(_oa) if _oa['@class']
+              @literalValue =  Fixnum.from_json(_oa) unless _oa['@class']
+            elsif (_oa.is_a? Array)
+              #an array(of hashes hopefully) or scalar
+              @literalValue = Array.new
+              _oa.each { | _item | 
+                 if ((_item.nil? || _item['@class'].nil?)rescue true)
+                   @literalValue.push Fixnum.from_json(_item)
+                 else
+                   @literalValue.push EnunciateHelpers::LAMB_CLASS_AWARE.call(_item)
+                 end
+               }
+            else
+                @literalValue = _oa
+            end
+          end
+    end
+
+    # constructs a RestLiteralNodeInteger from a (parsed) JSON hash
+    def self.from_json(o)
+      if o.nil?
+        return nil
+      else
+        inst = new
+        inst.init_jaxb_json_hash o
+        return inst
+      end
+    end
+  end
+
+end
+
+end
+
+end
+
+end
+
+end
+
+end
+
+end
+
+module Gov
+
+module Vha
+
+module Isaac
+
+module Rest
+
+module Api1
+
+module Data
+
+module Sememe
+
+  # (no documentation provided)
+  class RestDynamicSememeBaseCreate < Gov::Vha::Isaac::Rest::Api1::Data::Sememe::RestDynamicSememeBase 
+
+    # The concept sequence, nid or UUID that identifies the concept that defined the assemblage of this sememe.
+    # This is effectively the type of the sememe being created.
+    attr_accessor :assemblageConcept
+    # The nid or UUID (may NOT be a sequence) of desired referenced component of the sememe instance.
+    attr_accessor :referencedComponent
+
+    # the json hash for this RestDynamicSememeBaseCreate
+    def to_jaxb_json_hash
+      _h = super
+      _h['assemblageConcept'] = assemblageConcept.to_jaxb_json_hash unless assemblageConcept.nil?
+      _h['referencedComponent'] = referencedComponent.to_jaxb_json_hash unless referencedComponent.nil?
+      return _h
+    end
+
+    #initializes this RestDynamicSememeBaseCreate with a json hash
+    def init_jaxb_json_hash(_o)
+      super _o
+        if !_o['assemblageConcept'].nil?
+          _oa = _o['assemblageConcept']
+            if(_oa.is_a? Hash)
+              @assemblageConcept = EnunciateHelpers::LAMB_CLASS_AWARE.call(_oa) if _oa['@class']
+              @assemblageConcept =  String.from_json(_oa) unless _oa['@class']
+            elsif (_oa.is_a? Array)
+              #an array(of hashes hopefully) or scalar
+              @assemblageConcept = Array.new
+              _oa.each { | _item | 
+                 if ((_item.nil? || _item['@class'].nil?)rescue true)
+                   @assemblageConcept.push String.from_json(_item)
+                 else
+                   @assemblageConcept.push EnunciateHelpers::LAMB_CLASS_AWARE.call(_item)
+                 end
+               }
+            else
+                @assemblageConcept = _oa
+            end
+          end
+        if !_o['referencedComponent'].nil?
+          _oa = _o['referencedComponent']
+            if(_oa.is_a? Hash)
+              @referencedComponent = EnunciateHelpers::LAMB_CLASS_AWARE.call(_oa) if _oa['@class']
+              @referencedComponent =  String.from_json(_oa) unless _oa['@class']
+            elsif (_oa.is_a? Array)
+              #an array(of hashes hopefully) or scalar
+              @referencedComponent = Array.new
+              _oa.each { | _item | 
+                 if ((_item.nil? || _item['@class'].nil?)rescue true)
+                   @referencedComponent.push String.from_json(_item)
+                 else
+                   @referencedComponent.push EnunciateHelpers::LAMB_CLASS_AWARE.call(_item)
+                 end
+               }
+            else
+                @referencedComponent = _oa
+            end
+          end
+    end
+
+    # constructs a RestDynamicSememeBaseCreate from a (parsed) JSON hash
+    def self.from_json(o)
+      if o.nil?
+        return nil
+      else
+        inst = new
+        inst.init_jaxb_json_hash o
+        return inst
+      end
+    end
+  end
+
+end
+
+end
+
+end
+
+end
+
+end
+
+end
+
+end
+
+module Gov
+
+module Vha
+
+module Isaac
+
+module Rest
+
+module Api1
+
+module Data
+
+module Sememe
+
+  # (no documentation provided)
+  class RestSememeDescriptionVersion < Gov::Vha::Isaac::Rest::Api1::Data::Sememe::RestSememeVersion 
+
+    # The concept sequence of the concept that represents the case significance flag on the description .
+    # This should be description case sensitive, description not case sensitive or description initial character sensitive
+    attr_accessor :caseSignificanceConceptSequence
+    # The concept sequence of the concept that represents the language of the description (note, this is NOT
+    # the dialect)
+    attr_accessor :languageConceptSequence
+    # The text of the description
+    attr_accessor :text
+    # The concept sequence of the concept that represents the type of the description.
+    # This should be FSN, Synonym, or Definition.
+    attr_accessor :descriptionTypeConceptSequence
+    # The optional concept sequence of the concept that represents the extended type of the description.
+    # This should be a MetaData.DYNAMIC_SEMEME_EXTENDED_DESCRIPTION_TYPE.
+    attr_accessor :descriptionExtendedTypeConceptSequence
+    # The dialects attached to this sememe.  Not populated by default, include expand=nestedSememes to expand this.
+    attr_accessor :dialects
+
+    # the json hash for this RestSememeDescriptionVersion
+    def to_jaxb_json_hash
+      _h = super
+      _h['caseSignificanceConceptSequence'] = caseSignificanceConceptSequence.to_jaxb_json_hash unless caseSignificanceConceptSequence.nil?
+      _h['languageConceptSequence'] = languageConceptSequence.to_jaxb_json_hash unless languageConceptSequence.nil?
+      _h['text'] = text.to_jaxb_json_hash unless text.nil?
+      _h['descriptionTypeConceptSequence'] = descriptionTypeConceptSequence.to_jaxb_json_hash unless descriptionTypeConceptSequence.nil?
+      _h['descriptionExtendedTypeConceptSequence'] = descriptionExtendedTypeConceptSequence.to_jaxb_json_hash unless descriptionExtendedTypeConceptSequence.nil?
+      if !dialects.nil?
+        _ha = Array.new
+        dialects.each { | _item | _ha.push _item.to_jaxb_json_hash }
+        _h['dialects'] = _ha
+      end
+      return _h
+    end
+
+    #initializes this RestSememeDescriptionVersion with a json hash
+    def init_jaxb_json_hash(_o)
+      super _o
+        if !_o['caseSignificanceConceptSequence'].nil?
+          _oa = _o['caseSignificanceConceptSequence']
+            if(_oa.is_a? Hash)
+              @caseSignificanceConceptSequence = EnunciateHelpers::LAMB_CLASS_AWARE.call(_oa) if _oa['@class']
+              @caseSignificanceConceptSequence =  Fixnum.from_json(_oa) unless _oa['@class']
+            elsif (_oa.is_a? Array)
+              #an array(of hashes hopefully) or scalar
+              @caseSignificanceConceptSequence = Array.new
+              _oa.each { | _item | 
+                 if ((_item.nil? || _item['@class'].nil?)rescue true)
+                   @caseSignificanceConceptSequence.push Fixnum.from_json(_item)
+                 else
+                   @caseSignificanceConceptSequence.push EnunciateHelpers::LAMB_CLASS_AWARE.call(_item)
+                 end
+               }
+            else
+                @caseSignificanceConceptSequence = _oa
+            end
+          end
+        if !_o['languageConceptSequence'].nil?
+          _oa = _o['languageConceptSequence']
+            if(_oa.is_a? Hash)
+              @languageConceptSequence = EnunciateHelpers::LAMB_CLASS_AWARE.call(_oa) if _oa['@class']
+              @languageConceptSequence =  Fixnum.from_json(_oa) unless _oa['@class']
+            elsif (_oa.is_a? Array)
+              #an array(of hashes hopefully) or scalar
+              @languageConceptSequence = Array.new
+              _oa.each { | _item | 
+                 if ((_item.nil? || _item['@class'].nil?)rescue true)
+                   @languageConceptSequence.push Fixnum.from_json(_item)
+                 else
+                   @languageConceptSequence.push EnunciateHelpers::LAMB_CLASS_AWARE.call(_item)
+                 end
+               }
+            else
+                @languageConceptSequence = _oa
+            end
+          end
+        if !_o['text'].nil?
+          _oa = _o['text']
+            if(_oa.is_a? Hash)
+              @text = EnunciateHelpers::LAMB_CLASS_AWARE.call(_oa) if _oa['@class']
+              @text =  String.from_json(_oa) unless _oa['@class']
+            elsif (_oa.is_a? Array)
+              #an array(of hashes hopefully) or scalar
+              @text = Array.new
+              _oa.each { | _item | 
+                 if ((_item.nil? || _item['@class'].nil?)rescue true)
+                   @text.push String.from_json(_item)
+                 else
+                   @text.push EnunciateHelpers::LAMB_CLASS_AWARE.call(_item)
+                 end
+               }
+            else
+                @text = _oa
+            end
+          end
+        if !_o['descriptionTypeConceptSequence'].nil?
+          _oa = _o['descriptionTypeConceptSequence']
+            if(_oa.is_a? Hash)
+              @descriptionTypeConceptSequence = EnunciateHelpers::LAMB_CLASS_AWARE.call(_oa) if _oa['@class']
+              @descriptionTypeConceptSequence =  Fixnum.from_json(_oa) unless _oa['@class']
+            elsif (_oa.is_a? Array)
+              #an array(of hashes hopefully) or scalar
+              @descriptionTypeConceptSequence = Array.new
+              _oa.each { | _item | 
+                 if ((_item.nil? || _item['@class'].nil?)rescue true)
+                   @descriptionTypeConceptSequence.push Fixnum.from_json(_item)
+                 else
+                   @descriptionTypeConceptSequence.push EnunciateHelpers::LAMB_CLASS_AWARE.call(_item)
+                 end
+               }
+            else
+                @descriptionTypeConceptSequence = _oa
+            end
+          end
+        if !_o['descriptionExtendedTypeConceptSequence'].nil?
+          _oa = _o['descriptionExtendedTypeConceptSequence']
+            if(_oa.is_a? Hash)
+              @descriptionExtendedTypeConceptSequence = EnunciateHelpers::LAMB_CLASS_AWARE.call(_oa) if _oa['@class']
+              @descriptionExtendedTypeConceptSequence =  Fixnum.from_json(_oa) unless _oa['@class']
+            elsif (_oa.is_a? Array)
+              #an array(of hashes hopefully) or scalar
+              @descriptionExtendedTypeConceptSequence = Array.new
+              _oa.each { | _item | 
+                 if ((_item.nil? || _item['@class'].nil?)rescue true)
+                   @descriptionExtendedTypeConceptSequence.push Fixnum.from_json(_item)
+                 else
+                   @descriptionExtendedTypeConceptSequence.push EnunciateHelpers::LAMB_CLASS_AWARE.call(_item)
+                 end
+               }
+            else
+                @descriptionExtendedTypeConceptSequence = _oa
+            end
+          end
+        if !_o['dialects'].nil?
+          _oa = _o['dialects']
+            if(_oa.is_a? Hash)
+              @dialects = EnunciateHelpers::LAMB_CLASS_AWARE.call(_oa) if _oa['@class']
+              @dialects =  Gov::Vha::Isaac::Rest::Api1::Data::Sememe::RestDynamicSememeVersion.from_json(_oa) unless _oa['@class']
+            elsif (_oa.is_a? Array)
+              #an array(of hashes hopefully) or scalar
+              @dialects = Array.new
+              _oa.each { | _item | 
+                 if ((_item.nil? || _item['@class'].nil?)rescue true)
+                   @dialects.push Gov::Vha::Isaac::Rest::Api1::Data::Sememe::RestDynamicSememeVersion.from_json(_item)
+                 else
+                   @dialects.push EnunciateHelpers::LAMB_CLASS_AWARE.call(_item)
+                 end
+               }
+            else
+                @dialects = _oa
+            end
+          end
+    end
+
+    # constructs a RestSememeDescriptionVersion from a (parsed) JSON hash
+    def self.from_json(o)
+      if o.nil?
+        return nil
+      else
+        inst = new
+        inst.init_jaxb_json_hash o
+        return inst
+      end
+    end
+  end
+
+end
+
+end
+
+end
+
+end
+
+end
+
+end
+
+end
+
+module Gov
+
+module Vha
+
+module Isaac
+
+module Rest
+
+module Api1
+
+module Data
+
+module Enumerations
+
+  # (no documentation provided)
+  class RestExternalizableObjectType < Gov::Vha::Isaac::Rest::Api1::Data::Enumerations::Enumeration 
+
+    # (no documentation provided)
+    attr_accessor :all
+
+    # the json hash for this RestExternalizableObjectType
+    def to_jaxb_json_hash
+      _h = super
+      if !all.nil?
+        _ha = Array.new
+        all.each { | _item | _ha.push _item.to_jaxb_json_hash }
+        _h['all'] = _ha
+      end
+      return _h
+    end
+
+    #initializes this RestExternalizableObjectType with a json hash
+    def init_jaxb_json_hash(_o)
+      super _o
+        if !_o['all'].nil?
+          _oa = _o['all']
+            if(_oa.is_a? Hash)
+              @all = EnunciateHelpers::LAMB_CLASS_AWARE.call(_oa) if _oa['@class']
+              @all =  Gov::Vha::Isaac::Rest::Api1::Data::Enumerations::RestExternalizableObjectType.from_json(_oa) unless _oa['@class']
+            elsif (_oa.is_a? Array)
+              #an array(of hashes hopefully) or scalar
+              @all = Array.new
+              _oa.each { | _item | 
+                 if ((_item.nil? || _item['@class'].nil?)rescue true)
+                   @all.push Gov::Vha::Isaac::Rest::Api1::Data::Enumerations::RestExternalizableObjectType.from_json(_item)
+                 else
+                   @all.push EnunciateHelpers::LAMB_CLASS_AWARE.call(_item)
+                 end
+               }
+            else
+                @all = _oa
+            end
+          end
+    end
+
+    # constructs a RestExternalizableObjectType from a (parsed) JSON hash
     def self.from_json(o)
       if o.nil?
         return nil
@@ -8368,6 +8480,530 @@ module Enumerations
       end
     end
   end
+
+end
+
+end
+
+end
+
+end
+
+end
+
+end
+
+end
+
+module Gov
+
+module Vha
+
+module Isaac
+
+module Rest
+
+module Api1
+
+module Data
+
+module Sememe
+
+  # (no documentation provided)
+  class RestDynamicSememeVersion < Gov::Vha::Isaac::Rest::Api1::Data::Sememe::RestSememeVersion 
+
+    # The data attached to this sememe instance (if any).  The &#39;sememe/sememeDefinition/{id}&#39;
+    # can be read to determine the potential types and descriptions of these columns.
+    attr_accessor :dataColumns
+
+    # the json hash for this RestDynamicSememeVersion
+    def to_jaxb_json_hash
+      _h = super
+      if !dataColumns.nil?
+        _ha = Array.new
+        dataColumns.each { | _item | _ha.push _item.to_jaxb_json_hash }
+        _h['dataColumns'] = _ha
+      end
+      return _h
+    end
+
+    #initializes this RestDynamicSememeVersion with a json hash
+    def init_jaxb_json_hash(_o)
+      super _o
+        if !_o['dataColumns'].nil?
+          _oa = _o['dataColumns']
+            if(_oa.is_a? Hash)
+              @dataColumns = EnunciateHelpers::LAMB_CLASS_AWARE.call(_oa) if _oa['@class']
+              @dataColumns =  Gov::Vha::Isaac::Rest::Api1::Data::Sememe::RestDynamicSememeData.from_json(_oa) unless _oa['@class']
+            elsif (_oa.is_a? Array)
+              #an array(of hashes hopefully) or scalar
+              @dataColumns = Array.new
+              _oa.each { | _item | 
+                 if ((_item.nil? || _item['@class'].nil?)rescue true)
+                   @dataColumns.push Gov::Vha::Isaac::Rest::Api1::Data::Sememe::RestDynamicSememeData.from_json(_item)
+                 else
+                   @dataColumns.push EnunciateHelpers::LAMB_CLASS_AWARE.call(_item)
+                 end
+               }
+            else
+                @dataColumns = _oa
+            end
+          end
+    end
+
+    # constructs a RestDynamicSememeVersion from a (parsed) JSON hash
+    def self.from_json(o)
+      if o.nil?
+        return nil
+      else
+        inst = new
+        inst.init_jaxb_json_hash o
+        return inst
+      end
+    end
+  end
+
+end
+
+end
+
+end
+
+end
+
+end
+
+end
+
+end
+
+module Gov
+
+module Vha
+
+module Isaac
+
+module Rest
+
+module Api1
+
+module Data
+
+module Sememe
+
+module DataTypes
+
+  # (no documentation provided)
+  class RestDynamicSememeLong < Gov::Vha::Isaac::Rest::Api1::Data::Sememe::RestDynamicSememeData 
+
+
+    # the json hash for this RestDynamicSememeLong
+    def to_jaxb_json_hash
+      _h = super
+      return _h
+    end
+
+    #initializes this RestDynamicSememeLong with a json hash
+    def init_jaxb_json_hash(_o)
+      super _o
+    end
+
+    # constructs a RestDynamicSememeLong from a (parsed) JSON hash
+    def self.from_json(o)
+      if o.nil?
+        return nil
+      else
+        inst = new
+        inst.init_jaxb_json_hash o
+        return inst
+      end
+    end
+  end
+
+end
+
+end
+
+end
+
+end
+
+end
+
+end
+
+end
+
+end
+
+module Gov
+
+module Vha
+
+module Isaac
+
+module Rest
+
+module Api1
+
+module Data
+
+module Enumerations
+
+  # (no documentation provided)
+  class RestStampPrecedenceType < Gov::Vha::Isaac::Rest::Api1::Data::Enumerations::Enumeration 
+
+    # (no documentation provided)
+    attr_accessor :all
+
+    # the json hash for this RestStampPrecedenceType
+    def to_jaxb_json_hash
+      _h = super
+      if !all.nil?
+        _ha = Array.new
+        all.each { | _item | _ha.push _item.to_jaxb_json_hash }
+        _h['all'] = _ha
+      end
+      return _h
+    end
+
+    #initializes this RestStampPrecedenceType with a json hash
+    def init_jaxb_json_hash(_o)
+      super _o
+        if !_o['all'].nil?
+          _oa = _o['all']
+            if(_oa.is_a? Hash)
+              @all = EnunciateHelpers::LAMB_CLASS_AWARE.call(_oa) if _oa['@class']
+              @all =  Gov::Vha::Isaac::Rest::Api1::Data::Enumerations::RestStampPrecedenceType.from_json(_oa) unless _oa['@class']
+            elsif (_oa.is_a? Array)
+              #an array(of hashes hopefully) or scalar
+              @all = Array.new
+              _oa.each { | _item | 
+                 if ((_item.nil? || _item['@class'].nil?)rescue true)
+                   @all.push Gov::Vha::Isaac::Rest::Api1::Data::Enumerations::RestStampPrecedenceType.from_json(_item)
+                 else
+                   @all.push EnunciateHelpers::LAMB_CLASS_AWARE.call(_item)
+                 end
+               }
+            else
+                @all = _oa
+            end
+          end
+    end
+
+    # constructs a RestStampPrecedenceType from a (parsed) JSON hash
+    def self.from_json(o)
+      if o.nil?
+        return nil
+      else
+        inst = new
+        inst.init_jaxb_json_hash o
+        return inst
+      end
+    end
+  end
+
+end
+
+end
+
+end
+
+end
+
+end
+
+end
+
+end
+
+module Gov
+
+module Vha
+
+module Isaac
+
+module Rest
+
+module Api1
+
+module Data
+
+module Sememe
+
+module DataTypes
+
+  # (no documentation provided)
+  class RestDynamicSememeFloat < Gov::Vha::Isaac::Rest::Api1::Data::Sememe::RestDynamicSememeData 
+
+
+    # the json hash for this RestDynamicSememeFloat
+    def to_jaxb_json_hash
+      _h = super
+      return _h
+    end
+
+    #initializes this RestDynamicSememeFloat with a json hash
+    def init_jaxb_json_hash(_o)
+      super _o
+    end
+
+    # constructs a RestDynamicSememeFloat from a (parsed) JSON hash
+    def self.from_json(o)
+      if o.nil?
+        return nil
+      else
+        inst = new
+        inst.init_jaxb_json_hash o
+        return inst
+      end
+    end
+  end
+
+end
+
+end
+
+end
+
+end
+
+end
+
+end
+
+end
+
+end
+
+module Gov
+
+module Vha
+
+module Isaac
+
+module Rest
+
+module Api1
+
+module Data
+
+module Enumerations
+
+  # (no documentation provided)
+  class RestStateType < Gov::Vha::Isaac::Rest::Api1::Data::Enumerations::Enumeration 
+
+    # (no documentation provided)
+    attr_accessor :all
+
+    # the json hash for this RestStateType
+    def to_jaxb_json_hash
+      _h = super
+      if !all.nil?
+        _ha = Array.new
+        all.each { | _item | _ha.push _item.to_jaxb_json_hash }
+        _h['all'] = _ha
+      end
+      return _h
+    end
+
+    #initializes this RestStateType with a json hash
+    def init_jaxb_json_hash(_o)
+      super _o
+        if !_o['all'].nil?
+          _oa = _o['all']
+            if(_oa.is_a? Hash)
+              @all = EnunciateHelpers::LAMB_CLASS_AWARE.call(_oa) if _oa['@class']
+              @all =  Gov::Vha::Isaac::Rest::Api1::Data::Enumerations::RestStateType.from_json(_oa) unless _oa['@class']
+            elsif (_oa.is_a? Array)
+              #an array(of hashes hopefully) or scalar
+              @all = Array.new
+              _oa.each { | _item | 
+                 if ((_item.nil? || _item['@class'].nil?)rescue true)
+                   @all.push Gov::Vha::Isaac::Rest::Api1::Data::Enumerations::RestStateType.from_json(_item)
+                 else
+                   @all.push EnunciateHelpers::LAMB_CLASS_AWARE.call(_item)
+                 end
+               }
+            else
+                @all = _oa
+            end
+          end
+    end
+
+    # constructs a RestStateType from a (parsed) JSON hash
+    def self.from_json(o)
+      if o.nil?
+        return nil
+      else
+        inst = new
+        inst.init_jaxb_json_hash o
+        return inst
+      end
+    end
+  end
+
+end
+
+end
+
+end
+
+end
+
+end
+
+end
+
+end
+
+module Gov
+
+module Vha
+
+module Isaac
+
+module Rest
+
+module Api1
+
+module Data
+
+module Enumerations
+
+  # (no documentation provided)
+  class RestWorkflowProcessStatusType < Gov::Vha::Isaac::Rest::Api1::Data::Enumerations::Enumeration 
+
+    # Displayable text
+    attr_accessor :text
+    # (no documentation provided)
+    attr_accessor :all
+
+    # the json hash for this RestWorkflowProcessStatusType
+    def to_jaxb_json_hash
+      _h = super
+      _h['text'] = text.to_jaxb_json_hash unless text.nil?
+      if !all.nil?
+        _ha = Array.new
+        all.each { | _item | _ha.push _item.to_jaxb_json_hash }
+        _h['all'] = _ha
+      end
+      return _h
+    end
+
+    #initializes this RestWorkflowProcessStatusType with a json hash
+    def init_jaxb_json_hash(_o)
+      super _o
+        if !_o['text'].nil?
+          _oa = _o['text']
+            if(_oa.is_a? Hash)
+              @text = EnunciateHelpers::LAMB_CLASS_AWARE.call(_oa) if _oa['@class']
+              @text =  String.from_json(_oa) unless _oa['@class']
+            elsif (_oa.is_a? Array)
+              #an array(of hashes hopefully) or scalar
+              @text = Array.new
+              _oa.each { | _item | 
+                 if ((_item.nil? || _item['@class'].nil?)rescue true)
+                   @text.push String.from_json(_item)
+                 else
+                   @text.push EnunciateHelpers::LAMB_CLASS_AWARE.call(_item)
+                 end
+               }
+            else
+                @text = _oa
+            end
+          end
+        if !_o['all'].nil?
+          _oa = _o['all']
+            if(_oa.is_a? Hash)
+              @all = EnunciateHelpers::LAMB_CLASS_AWARE.call(_oa) if _oa['@class']
+              @all =  Gov::Vha::Isaac::Rest::Api1::Data::Enumerations::RestWorkflowProcessStatusType.from_json(_oa) unless _oa['@class']
+            elsif (_oa.is_a? Array)
+              #an array(of hashes hopefully) or scalar
+              @all = Array.new
+              _oa.each { | _item | 
+                 if ((_item.nil? || _item['@class'].nil?)rescue true)
+                   @all.push Gov::Vha::Isaac::Rest::Api1::Data::Enumerations::RestWorkflowProcessStatusType.from_json(_item)
+                 else
+                   @all.push EnunciateHelpers::LAMB_CLASS_AWARE.call(_item)
+                 end
+               }
+            else
+                @all = _oa
+            end
+          end
+    end
+
+    # constructs a RestWorkflowProcessStatusType from a (parsed) JSON hash
+    def self.from_json(o)
+      if o.nil?
+        return nil
+      else
+        inst = new
+        inst.init_jaxb_json_hash o
+        return inst
+      end
+    end
+  end
+
+end
+
+end
+
+end
+
+end
+
+end
+
+end
+
+end
+
+module Gov
+
+module Vha
+
+module Isaac
+
+module Rest
+
+module Api1
+
+module Data
+
+module Sememe
+
+module DataTypes
+
+  # (no documentation provided)
+  class RestDynamicSememeString < Gov::Vha::Isaac::Rest::Api1::Data::Sememe::RestDynamicSememeData 
+
+
+    # the json hash for this RestDynamicSememeString
+    def to_jaxb_json_hash
+      _h = super
+      return _h
+    end
+
+    #initializes this RestDynamicSememeString with a json hash
+    def init_jaxb_json_hash(_o)
+      super _o
+    end
+
+    # constructs a RestDynamicSememeString from a (parsed) JSON hash
+    def self.from_json(o)
+      if o.nil?
+        return nil
+      else
+        inst = new
+        inst.init_jaxb_json_hash o
+        return inst
+      end
+    end
+  end
+
+end
 
 end
 
@@ -8617,26 +9253,90 @@ module Api1
 
 module Data
 
-module Sememe
-
-module DataTypes
+module Logic
 
   # (no documentation provided)
-  class RestDynamicSememeString < Gov::Vha::Isaac::Rest::Api1::Data::Sememe::RestDynamicSememeData 
+  class RestTypedConnectorNode < Gov::Vha::Isaac::Rest::Api1::Data::Logic::RestLogicNode 
 
+    # RestTypedConnectorNode contains an int connectorTypeConceptSequence identifying a connector type concept
+    attr_accessor :connectorTypeConceptSequence
+    # Optionally-populated connectorTypeConceptVersion
+    attr_accessor :connectorTypeConceptVersion
+    # RestTypedConnectorNode contains a String connectorTypeConceptDescription describing a connector type concept
+    attr_accessor :connectorTypeConceptDescription
 
-    # the json hash for this RestDynamicSememeString
+    # the json hash for this RestTypedConnectorNode
     def to_jaxb_json_hash
       _h = super
+      _h['connectorTypeConceptSequence'] = connectorTypeConceptSequence.to_jaxb_json_hash unless connectorTypeConceptSequence.nil?
+      _h['connectorTypeConceptVersion'] = connectorTypeConceptVersion.to_jaxb_json_hash unless connectorTypeConceptVersion.nil?
+      _h['connectorTypeConceptDescription'] = connectorTypeConceptDescription.to_jaxb_json_hash unless connectorTypeConceptDescription.nil?
       return _h
     end
 
-    #initializes this RestDynamicSememeString with a json hash
+    #initializes this RestTypedConnectorNode with a json hash
     def init_jaxb_json_hash(_o)
       super _o
+        if !_o['connectorTypeConceptSequence'].nil?
+          _oa = _o['connectorTypeConceptSequence']
+            if(_oa.is_a? Hash)
+              @connectorTypeConceptSequence = EnunciateHelpers::LAMB_CLASS_AWARE.call(_oa) if _oa['@class']
+              @connectorTypeConceptSequence =  Fixnum.from_json(_oa) unless _oa['@class']
+            elsif (_oa.is_a? Array)
+              #an array(of hashes hopefully) or scalar
+              @connectorTypeConceptSequence = Array.new
+              _oa.each { | _item | 
+                 if ((_item.nil? || _item['@class'].nil?)rescue true)
+                   @connectorTypeConceptSequence.push Fixnum.from_json(_item)
+                 else
+                   @connectorTypeConceptSequence.push EnunciateHelpers::LAMB_CLASS_AWARE.call(_item)
+                 end
+               }
+            else
+                @connectorTypeConceptSequence = _oa
+            end
+          end
+        if !_o['connectorTypeConceptVersion'].nil?
+          _oa = _o['connectorTypeConceptVersion']
+            if(_oa.is_a? Hash)
+              @connectorTypeConceptVersion = EnunciateHelpers::LAMB_CLASS_AWARE.call(_oa) if _oa['@class']
+              @connectorTypeConceptVersion =  Gov::Vha::Isaac::Rest::Api1::Data::Concept::RestConceptVersion.from_json(_oa) unless _oa['@class']
+            elsif (_oa.is_a? Array)
+              #an array(of hashes hopefully) or scalar
+              @connectorTypeConceptVersion = Array.new
+              _oa.each { | _item | 
+                 if ((_item.nil? || _item['@class'].nil?)rescue true)
+                   @connectorTypeConceptVersion.push Gov::Vha::Isaac::Rest::Api1::Data::Concept::RestConceptVersion.from_json(_item)
+                 else
+                   @connectorTypeConceptVersion.push EnunciateHelpers::LAMB_CLASS_AWARE.call(_item)
+                 end
+               }
+            else
+                @connectorTypeConceptVersion = _oa
+            end
+          end
+        if !_o['connectorTypeConceptDescription'].nil?
+          _oa = _o['connectorTypeConceptDescription']
+            if(_oa.is_a? Hash)
+              @connectorTypeConceptDescription = EnunciateHelpers::LAMB_CLASS_AWARE.call(_oa) if _oa['@class']
+              @connectorTypeConceptDescription =  String.from_json(_oa) unless _oa['@class']
+            elsif (_oa.is_a? Array)
+              #an array(of hashes hopefully) or scalar
+              @connectorTypeConceptDescription = Array.new
+              _oa.each { | _item | 
+                 if ((_item.nil? || _item['@class'].nil?)rescue true)
+                   @connectorTypeConceptDescription.push String.from_json(_item)
+                 else
+                   @connectorTypeConceptDescription.push EnunciateHelpers::LAMB_CLASS_AWARE.call(_item)
+                 end
+               }
+            else
+                @connectorTypeConceptDescription = _oa
+            end
+          end
     end
 
-    # constructs a RestDynamicSememeString from a (parsed) JSON hash
+    # constructs a RestTypedConnectorNode from a (parsed) JSON hash
     def self.from_json(o)
       if o.nil?
         return nil
@@ -8647,8 +9347,6 @@ module DataTypes
       end
     end
   end
-
-end
 
 end
 
@@ -8775,149 +9473,76 @@ module Api1
 
 module Data
 
-module Enumerations
-
-  # (no documentation provided)
-  class RestObjectChronologyType < Gov::Vha::Isaac::Rest::Api1::Data::Enumerations::Enumeration 
-
-    # (no documentation provided)
-    attr_accessor :all
-
-    # the json hash for this RestObjectChronologyType
-    def to_jaxb_json_hash
-      _h = super
-      if !all.nil?
-        _ha = Array.new
-        all.each { | _item | _ha.push _item.to_jaxb_json_hash }
-        _h['all'] = _ha
-      end
-      return _h
-    end
-
-    #initializes this RestObjectChronologyType with a json hash
-    def init_jaxb_json_hash(_o)
-      super _o
-        if !_o['all'].nil?
-          _oa = _o['all']
-            if(_oa.is_a? Hash)
-              @all = EnunciateHelpers::LAMB_CLASS_AWARE.call(_oa) if _oa['@class']
-              @all =  Gov::Vha::Isaac::Rest::Api1::Data::Enumerations::RestObjectChronologyType.from_json(_oa) unless _oa['@class']
-            elsif (_oa.is_a? Array)
-              #an array(of hashes hopefully) or scalar
-              @all = Array.new
-              _oa.each { | _item | 
-                 if ((_item.nil? || _item['@class'].nil?)rescue true)
-                   @all.push Gov::Vha::Isaac::Rest::Api1::Data::Enumerations::RestObjectChronologyType.from_json(_item)
-                 else
-                   @all.push EnunciateHelpers::LAMB_CLASS_AWARE.call(_item)
-                 end
-               }
-            else
-                @all = _oa
-            end
-          end
-    end
-
-    # constructs a RestObjectChronologyType from a (parsed) JSON hash
-    def self.from_json(o)
-      if o.nil?
-        return nil
-      else
-        inst = new
-        inst.init_jaxb_json_hash o
-        return inst
-      end
-    end
-  end
-
-end
-
-end
-
-end
-
-end
-
-end
-
-end
-
-end
-
-module Gov
-
-module Vha
-
-module Isaac
-
-module Rest
-
-module Api1
-
-module Data
-
 module Mapping
 
   # (no documentation provided)
-  class RestMappingItemVersionBaseCreate < Gov::Vha::Isaac::Rest::Api1::Data::Mapping::RestMappingItemVersionBase 
+  class RestMappingSetVersionBaseCreate < Gov::Vha::Isaac::Rest::Api1::Data::Mapping::RestMappingSetVersionBase 
 
-    # The concept sequence that identifies the map set that this entry belongs to
-    attr_accessor :mapSetConcept
-    # The source concept sequence being mapped by this map item
-    attr_accessor :sourceConcept
+    # The (optional) extended fields which carry additional information about this map set definition.
+    attr_accessor :mapSetExtendedFields
+    # The (optional) extended fields that are declared for each map item instance that is created using this map set definition.
+    attr_accessor :mapItemExtendedFieldsDefinition
 
-    # the json hash for this RestMappingItemVersionBaseCreate
+    # the json hash for this RestMappingSetVersionBaseCreate
     def to_jaxb_json_hash
       _h = super
-      _h['mapSetConcept'] = mapSetConcept.to_jaxb_json_hash unless mapSetConcept.nil?
-      _h['sourceConcept'] = sourceConcept.to_jaxb_json_hash unless sourceConcept.nil?
+      if !mapSetExtendedFields.nil?
+        _ha = Array.new
+        mapSetExtendedFields.each { | _item | _ha.push _item.to_jaxb_json_hash }
+        _h['mapSetExtendedFields'] = _ha
+      end
+      if !mapItemExtendedFieldsDefinition.nil?
+        _ha = Array.new
+        mapItemExtendedFieldsDefinition.each { | _item | _ha.push _item.to_jaxb_json_hash }
+        _h['mapItemExtendedFieldsDefinition'] = _ha
+      end
       return _h
     end
 
-    #initializes this RestMappingItemVersionBaseCreate with a json hash
+    #initializes this RestMappingSetVersionBaseCreate with a json hash
     def init_jaxb_json_hash(_o)
       super _o
-        if !_o['mapSetConcept'].nil?
-          _oa = _o['mapSetConcept']
+        if !_o['mapSetExtendedFields'].nil?
+          _oa = _o['mapSetExtendedFields']
             if(_oa.is_a? Hash)
-              @mapSetConcept = EnunciateHelpers::LAMB_CLASS_AWARE.call(_oa) if _oa['@class']
-              @mapSetConcept =  Fixnum.from_json(_oa) unless _oa['@class']
+              @mapSetExtendedFields = EnunciateHelpers::LAMB_CLASS_AWARE.call(_oa) if _oa['@class']
+              @mapSetExtendedFields =  Gov::Vha::Isaac::Rest::Api1::Data::Mapping::RestMappingSetExtensionValueBaseCreate.from_json(_oa) unless _oa['@class']
             elsif (_oa.is_a? Array)
               #an array(of hashes hopefully) or scalar
-              @mapSetConcept = Array.new
+              @mapSetExtendedFields = Array.new
               _oa.each { | _item | 
                  if ((_item.nil? || _item['@class'].nil?)rescue true)
-                   @mapSetConcept.push Fixnum.from_json(_item)
+                   @mapSetExtendedFields.push Gov::Vha::Isaac::Rest::Api1::Data::Mapping::RestMappingSetExtensionValueBaseCreate.from_json(_item)
                  else
-                   @mapSetConcept.push EnunciateHelpers::LAMB_CLASS_AWARE.call(_item)
+                   @mapSetExtendedFields.push EnunciateHelpers::LAMB_CLASS_AWARE.call(_item)
                  end
                }
             else
-                @mapSetConcept = _oa
+                @mapSetExtendedFields = _oa
             end
           end
-        if !_o['sourceConcept'].nil?
-          _oa = _o['sourceConcept']
+        if !_o['mapItemExtendedFieldsDefinition'].nil?
+          _oa = _o['mapItemExtendedFieldsDefinition']
             if(_oa.is_a? Hash)
-              @sourceConcept = EnunciateHelpers::LAMB_CLASS_AWARE.call(_oa) if _oa['@class']
-              @sourceConcept =  Fixnum.from_json(_oa) unless _oa['@class']
+              @mapItemExtendedFieldsDefinition = EnunciateHelpers::LAMB_CLASS_AWARE.call(_oa) if _oa['@class']
+              @mapItemExtendedFieldsDefinition =  Gov::Vha::Isaac::Rest::Api1::Data::Sememe::RestDynamicSememeColumnInfoCreate.from_json(_oa) unless _oa['@class']
             elsif (_oa.is_a? Array)
               #an array(of hashes hopefully) or scalar
-              @sourceConcept = Array.new
+              @mapItemExtendedFieldsDefinition = Array.new
               _oa.each { | _item | 
                  if ((_item.nil? || _item['@class'].nil?)rescue true)
-                   @sourceConcept.push Fixnum.from_json(_item)
+                   @mapItemExtendedFieldsDefinition.push Gov::Vha::Isaac::Rest::Api1::Data::Sememe::RestDynamicSememeColumnInfoCreate.from_json(_item)
                  else
-                   @sourceConcept.push EnunciateHelpers::LAMB_CLASS_AWARE.call(_item)
+                   @mapItemExtendedFieldsDefinition.push EnunciateHelpers::LAMB_CLASS_AWARE.call(_item)
                  end
                }
             else
-                @sourceConcept = _oa
+                @mapItemExtendedFieldsDefinition = _oa
             end
           end
     end
 
-    # constructs a RestMappingItemVersionBaseCreate from a (parsed) JSON hash
+    # constructs a RestMappingSetVersionBaseCreate from a (parsed) JSON hash
     def self.from_json(o)
       if o.nil?
         return nil
@@ -8928,65 +9553,6 @@ module Mapping
       end
     end
   end
-
-end
-
-end
-
-end
-
-end
-
-end
-
-end
-
-end
-
-module Gov
-
-module Vha
-
-module Isaac
-
-module Rest
-
-module Api1
-
-module Data
-
-module Sememe
-
-module DataTypes
-
-  # (no documentation provided)
-  class RestDynamicSememeDouble < Gov::Vha::Isaac::Rest::Api1::Data::Sememe::RestDynamicSememeData 
-
-
-    # the json hash for this RestDynamicSememeDouble
-    def to_jaxb_json_hash
-      _h = super
-      return _h
-    end
-
-    #initializes this RestDynamicSememeDouble with a json hash
-    def init_jaxb_json_hash(_o)
-      super _o
-    end
-
-    # constructs a RestDynamicSememeDouble from a (parsed) JSON hash
-    def self.from_json(o)
-      if o.nil?
-        return nil
-      else
-        inst = new
-        inst.init_jaxb_json_hash o
-        return inst
-      end
-    end
-  end
-
-end
 
 end
 
@@ -9017,32 +9583,32 @@ module Data
 module Logic
 
   # (no documentation provided)
-  class RestLiteralNodeInstant < Gov::Vha::Isaac::Rest::Api1::Data::Logic::RestLogicNode 
+  class RestLiteralNodeFloat < Gov::Vha::Isaac::Rest::Api1::Data::Logic::RestLogicNode 
 
-    # RestLiteralNodeInstant contains a literal Instant value, literalValue
+    # RestLiteralNodeFloat contains a literal float value, literalValue
     attr_accessor :literalValue
 
-    # the json hash for this RestLiteralNodeInstant
+    # the json hash for this RestLiteralNodeFloat
     def to_jaxb_json_hash
       _h = super
       _h['literalValue'] = literalValue.to_jaxb_json_hash unless literalValue.nil?
       return _h
     end
 
-    #initializes this RestLiteralNodeInstant with a json hash
+    #initializes this RestLiteralNodeFloat with a json hash
     def init_jaxb_json_hash(_o)
       super _o
         if !_o['literalValue'].nil?
           _oa = _o['literalValue']
             if(_oa.is_a? Hash)
               @literalValue = EnunciateHelpers::LAMB_CLASS_AWARE.call(_oa) if _oa['@class']
-              @literalValue =  java.time::Instant.from_json(_oa) unless _oa['@class']
+              @literalValue =  Float.from_json(_oa) unless _oa['@class']
             elsif (_oa.is_a? Array)
               #an array(of hashes hopefully) or scalar
               @literalValue = Array.new
               _oa.each { | _item | 
                  if ((_item.nil? || _item['@class'].nil?)rescue true)
-                   @literalValue.push java.time::Instant.from_json(_item)
+                   @literalValue.push Float.from_json(_item)
                  else
                    @literalValue.push EnunciateHelpers::LAMB_CLASS_AWARE.call(_item)
                  end
@@ -9053,7 +9619,7 @@ module Logic
           end
     end
 
-    # constructs a RestLiteralNodeInstant from a (parsed) JSON hash
+    # constructs a RestLiteralNodeFloat from a (parsed) JSON hash
     def self.from_json(o)
       if o.nil?
         return nil
@@ -9094,21 +9660,43 @@ module Data
 module Logic
 
   # (no documentation provided)
-  class RestUntypedConnectorNode < Gov::Vha::Isaac::Rest::Api1::Data::Logic::RestLogicNode 
+  class RestLiteralNodeBoolean < Gov::Vha::Isaac::Rest::Api1::Data::Logic::RestLogicNode 
 
+    # RestLiteralNodeBoolean contains a literal boolean value, literalValue
+    attr_accessor :literalValue
 
-    # the json hash for this RestUntypedConnectorNode
+    # the json hash for this RestLiteralNodeBoolean
     def to_jaxb_json_hash
       _h = super
+      _h['literalValue'] = literalValue.to_jaxb_json_hash unless literalValue.nil?
       return _h
     end
 
-    #initializes this RestUntypedConnectorNode with a json hash
+    #initializes this RestLiteralNodeBoolean with a json hash
     def init_jaxb_json_hash(_o)
       super _o
+        if !_o['literalValue'].nil?
+          _oa = _o['literalValue']
+            if(_oa.is_a? Hash)
+              @literalValue = EnunciateHelpers::LAMB_CLASS_AWARE.call(_oa) if _oa['@class']
+              @literalValue =  Boolean.from_json(_oa) unless _oa['@class']
+            elsif (_oa.is_a? Array)
+              #an array(of hashes hopefully) or scalar
+              @literalValue = Array.new
+              _oa.each { | _item | 
+                 if ((_item.nil? || _item['@class'].nil?)rescue true)
+                   @literalValue.push Boolean.from_json(_item)
+                 else
+                   @literalValue.push EnunciateHelpers::LAMB_CLASS_AWARE.call(_item)
+                 end
+               }
+            else
+                @literalValue = _oa
+            end
+          end
     end
 
-    # constructs a RestUntypedConnectorNode from a (parsed) JSON hash
+    # constructs a RestLiteralNodeBoolean from a (parsed) JSON hash
     def self.from_json(o)
       if o.nil?
         return nil
@@ -9149,12 +9737,12 @@ module Data
 module Enumerations
 
   # (no documentation provided)
-  class RestStampPrecedenceType < Gov::Vha::Isaac::Rest::Api1::Data::Enumerations::Enumeration 
+  class RestSememeType < Gov::Vha::Isaac::Rest::Api1::Data::Enumerations::Enumeration 
 
     # (no documentation provided)
     attr_accessor :all
 
-    # the json hash for this RestStampPrecedenceType
+    # the json hash for this RestSememeType
     def to_jaxb_json_hash
       _h = super
       if !all.nil?
@@ -9165,20 +9753,20 @@ module Enumerations
       return _h
     end
 
-    #initializes this RestStampPrecedenceType with a json hash
+    #initializes this RestSememeType with a json hash
     def init_jaxb_json_hash(_o)
       super _o
         if !_o['all'].nil?
           _oa = _o['all']
             if(_oa.is_a? Hash)
               @all = EnunciateHelpers::LAMB_CLASS_AWARE.call(_oa) if _oa['@class']
-              @all =  Gov::Vha::Isaac::Rest::Api1::Data::Enumerations::RestStampPrecedenceType.from_json(_oa) unless _oa['@class']
+              @all =  Gov::Vha::Isaac::Rest::Api1::Data::Enumerations::RestSememeType.from_json(_oa) unless _oa['@class']
             elsif (_oa.is_a? Array)
               #an array(of hashes hopefully) or scalar
               @all = Array.new
               _oa.each { | _item | 
                  if ((_item.nil? || _item['@class'].nil?)rescue true)
-                   @all.push Gov::Vha::Isaac::Rest::Api1::Data::Enumerations::RestStampPrecedenceType.from_json(_item)
+                   @all.push Gov::Vha::Isaac::Rest::Api1::Data::Enumerations::RestSememeType.from_json(_item)
                  else
                    @all.push EnunciateHelpers::LAMB_CLASS_AWARE.call(_item)
                  end
@@ -9189,7 +9777,7 @@ module Enumerations
           end
     end
 
-    # constructs a RestStampPrecedenceType from a (parsed) JSON hash
+    # constructs a RestSememeType from a (parsed) JSON hash
     def self.from_json(o)
       if o.nil?
         return nil
@@ -9200,467 +9788,6 @@ module Enumerations
       end
     end
   end
-
-end
-
-end
-
-end
-
-end
-
-end
-
-end
-
-end
-
-module Gov
-
-module Vha
-
-module Isaac
-
-module Rest
-
-module Api1
-
-module Data
-
-module Sememe
-
-module DataTypes
-
-  # (no documentation provided)
-  class RestDynamicSememeLong < Gov::Vha::Isaac::Rest::Api1::Data::Sememe::RestDynamicSememeData 
-
-
-    # the json hash for this RestDynamicSememeLong
-    def to_jaxb_json_hash
-      _h = super
-      return _h
-    end
-
-    #initializes this RestDynamicSememeLong with a json hash
-    def init_jaxb_json_hash(_o)
-      super _o
-    end
-
-    # constructs a RestDynamicSememeLong from a (parsed) JSON hash
-    def self.from_json(o)
-      if o.nil?
-        return nil
-      else
-        inst = new
-        inst.init_jaxb_json_hash o
-        return inst
-      end
-    end
-  end
-
-end
-
-end
-
-end
-
-end
-
-end
-
-end
-
-end
-
-end
-
-module Gov
-
-module Vha
-
-module Isaac
-
-module Rest
-
-module Api1
-
-module Data
-
-module Sememe
-
-module DataTypes
-
-  # (no documentation provided)
-  class RestDynamicSememeInteger < Gov::Vha::Isaac::Rest::Api1::Data::Sememe::RestDynamicSememeData 
-
-
-    # the json hash for this RestDynamicSememeInteger
-    def to_jaxb_json_hash
-      _h = super
-      return _h
-    end
-
-    #initializes this RestDynamicSememeInteger with a json hash
-    def init_jaxb_json_hash(_o)
-      super _o
-    end
-
-    # constructs a RestDynamicSememeInteger from a (parsed) JSON hash
-    def self.from_json(o)
-      if o.nil?
-        return nil
-      else
-        inst = new
-        inst.init_jaxb_json_hash o
-        return inst
-      end
-    end
-  end
-
-end
-
-end
-
-end
-
-end
-
-end
-
-end
-
-end
-
-end
-
-module Gov
-
-module Vha
-
-module Isaac
-
-module Rest
-
-module Api1
-
-module Data
-
-module Sememe
-
-  # (no documentation provided)
-  class RestDynamicSememeBaseCreate < Gov::Vha::Isaac::Rest::Api1::Data::Sememe::RestDynamicSememeBase 
-
-    # The concept sequence, nid or UUID that identifies the concept that defined the assemblage of this sememe.
-    # This is effectively the type of the sememe being created.
-    attr_accessor :assemblageConcept
-    # The nid or UUID (may NOT be a sequence) of desired referenced component of the sememe instance.
-    attr_accessor :referencedComponent
-
-    # the json hash for this RestDynamicSememeBaseCreate
-    def to_jaxb_json_hash
-      _h = super
-      _h['assemblageConcept'] = assemblageConcept.to_jaxb_json_hash unless assemblageConcept.nil?
-      _h['referencedComponent'] = referencedComponent.to_jaxb_json_hash unless referencedComponent.nil?
-      return _h
-    end
-
-    #initializes this RestDynamicSememeBaseCreate with a json hash
-    def init_jaxb_json_hash(_o)
-      super _o
-        if !_o['assemblageConcept'].nil?
-          _oa = _o['assemblageConcept']
-            if(_oa.is_a? Hash)
-              @assemblageConcept = EnunciateHelpers::LAMB_CLASS_AWARE.call(_oa) if _oa['@class']
-              @assemblageConcept =  String.from_json(_oa) unless _oa['@class']
-            elsif (_oa.is_a? Array)
-              #an array(of hashes hopefully) or scalar
-              @assemblageConcept = Array.new
-              _oa.each { | _item | 
-                 if ((_item.nil? || _item['@class'].nil?)rescue true)
-                   @assemblageConcept.push String.from_json(_item)
-                 else
-                   @assemblageConcept.push EnunciateHelpers::LAMB_CLASS_AWARE.call(_item)
-                 end
-               }
-            else
-                @assemblageConcept = _oa
-            end
-          end
-        if !_o['referencedComponent'].nil?
-          _oa = _o['referencedComponent']
-            if(_oa.is_a? Hash)
-              @referencedComponent = EnunciateHelpers::LAMB_CLASS_AWARE.call(_oa) if _oa['@class']
-              @referencedComponent =  String.from_json(_oa) unless _oa['@class']
-            elsif (_oa.is_a? Array)
-              #an array(of hashes hopefully) or scalar
-              @referencedComponent = Array.new
-              _oa.each { | _item | 
-                 if ((_item.nil? || _item['@class'].nil?)rescue true)
-                   @referencedComponent.push String.from_json(_item)
-                 else
-                   @referencedComponent.push EnunciateHelpers::LAMB_CLASS_AWARE.call(_item)
-                 end
-               }
-            else
-                @referencedComponent = _oa
-            end
-          end
-    end
-
-    # constructs a RestDynamicSememeBaseCreate from a (parsed) JSON hash
-    def self.from_json(o)
-      if o.nil?
-        return nil
-      else
-        inst = new
-        inst.init_jaxb_json_hash o
-        return inst
-      end
-    end
-  end
-
-end
-
-end
-
-end
-
-end
-
-end
-
-end
-
-end
-
-module Gov
-
-module Vha
-
-module Isaac
-
-module Rest
-
-module Api1
-
-module Data
-
-module Enumerations
-
-  # (no documentation provided)
-  class RestSupportedIdType < Gov::Vha::Isaac::Rest::Api1::Data::Enumerations::Enumeration 
-
-    # (no documentation provided)
-    attr_accessor :all
-
-    # the json hash for this RestSupportedIdType
-    def to_jaxb_json_hash
-      _h = super
-      if !all.nil?
-        _ha = Array.new
-        all.each { | _item | _ha.push _item.to_jaxb_json_hash }
-        _h['all'] = _ha
-      end
-      return _h
-    end
-
-    #initializes this RestSupportedIdType with a json hash
-    def init_jaxb_json_hash(_o)
-      super _o
-        if !_o['all'].nil?
-          _oa = _o['all']
-            if(_oa.is_a? Hash)
-              @all = EnunciateHelpers::LAMB_CLASS_AWARE.call(_oa) if _oa['@class']
-              @all =  Gov::Vha::Isaac::Rest::Api1::Data::Enumerations::RestSupportedIdType.from_json(_oa) unless _oa['@class']
-            elsif (_oa.is_a? Array)
-              #an array(of hashes hopefully) or scalar
-              @all = Array.new
-              _oa.each { | _item | 
-                 if ((_item.nil? || _item['@class'].nil?)rescue true)
-                   @all.push Gov::Vha::Isaac::Rest::Api1::Data::Enumerations::RestSupportedIdType.from_json(_item)
-                 else
-                   @all.push EnunciateHelpers::LAMB_CLASS_AWARE.call(_item)
-                 end
-               }
-            else
-                @all = _oa
-            end
-          end
-    end
-
-    # constructs a RestSupportedIdType from a (parsed) JSON hash
-    def self.from_json(o)
-      if o.nil?
-        return nil
-      else
-        inst = new
-        inst.init_jaxb_json_hash o
-        return inst
-      end
-    end
-  end
-
-end
-
-end
-
-end
-
-end
-
-end
-
-end
-
-end
-
-module Gov
-
-module Vha
-
-module Isaac
-
-module Rest
-
-module Api1
-
-module Data
-
-module Enumerations
-
-  # (no documentation provided)
-  class RestWorkflowProcessStatusType < Gov::Vha::Isaac::Rest::Api1::Data::Enumerations::Enumeration 
-
-    # Displayable text
-    attr_accessor :text
-    # (no documentation provided)
-    attr_accessor :all
-
-    # the json hash for this RestWorkflowProcessStatusType
-    def to_jaxb_json_hash
-      _h = super
-      _h['text'] = text.to_jaxb_json_hash unless text.nil?
-      if !all.nil?
-        _ha = Array.new
-        all.each { | _item | _ha.push _item.to_jaxb_json_hash }
-        _h['all'] = _ha
-      end
-      return _h
-    end
-
-    #initializes this RestWorkflowProcessStatusType with a json hash
-    def init_jaxb_json_hash(_o)
-      super _o
-        if !_o['text'].nil?
-          _oa = _o['text']
-            if(_oa.is_a? Hash)
-              @text = EnunciateHelpers::LAMB_CLASS_AWARE.call(_oa) if _oa['@class']
-              @text =  String.from_json(_oa) unless _oa['@class']
-            elsif (_oa.is_a? Array)
-              #an array(of hashes hopefully) or scalar
-              @text = Array.new
-              _oa.each { | _item | 
-                 if ((_item.nil? || _item['@class'].nil?)rescue true)
-                   @text.push String.from_json(_item)
-                 else
-                   @text.push EnunciateHelpers::LAMB_CLASS_AWARE.call(_item)
-                 end
-               }
-            else
-                @text = _oa
-            end
-          end
-        if !_o['all'].nil?
-          _oa = _o['all']
-            if(_oa.is_a? Hash)
-              @all = EnunciateHelpers::LAMB_CLASS_AWARE.call(_oa) if _oa['@class']
-              @all =  Gov::Vha::Isaac::Rest::Api1::Data::Enumerations::RestWorkflowProcessStatusType.from_json(_oa) unless _oa['@class']
-            elsif (_oa.is_a? Array)
-              #an array(of hashes hopefully) or scalar
-              @all = Array.new
-              _oa.each { | _item | 
-                 if ((_item.nil? || _item['@class'].nil?)rescue true)
-                   @all.push Gov::Vha::Isaac::Rest::Api1::Data::Enumerations::RestWorkflowProcessStatusType.from_json(_item)
-                 else
-                   @all.push EnunciateHelpers::LAMB_CLASS_AWARE.call(_item)
-                 end
-               }
-            else
-                @all = _oa
-            end
-          end
-    end
-
-    # constructs a RestWorkflowProcessStatusType from a (parsed) JSON hash
-    def self.from_json(o)
-      if o.nil?
-        return nil
-      else
-        inst = new
-        inst.init_jaxb_json_hash o
-        return inst
-      end
-    end
-  end
-
-end
-
-end
-
-end
-
-end
-
-end
-
-end
-
-end
-
-module Gov
-
-module Vha
-
-module Isaac
-
-module Rest
-
-module Api1
-
-module Data
-
-module Sememe
-
-module DataTypes
-
-  # (no documentation provided)
-  class RestDynamicSememeBoolean < Gov::Vha::Isaac::Rest::Api1::Data::Sememe::RestDynamicSememeData 
-
-
-    # the json hash for this RestDynamicSememeBoolean
-    def to_jaxb_json_hash
-      _h = super
-      return _h
-    end
-
-    #initializes this RestDynamicSememeBoolean with a json hash
-    def init_jaxb_json_hash(_o)
-      super _o
-    end
-
-    # constructs a RestDynamicSememeBoolean from a (parsed) JSON hash
-    def self.from_json(o)
-      if o.nil?
-        return nil
-      else
-        inst = new
-        inst.init_jaxb_json_hash o
-        return inst
-      end
-    end
-  end
-
-end
 
 end
 
@@ -9810,419 +9937,26 @@ module Api1
 
 module Data
 
-module Logic
-
-  # (no documentation provided)
-  class RestLiteralNodeFloat < Gov::Vha::Isaac::Rest::Api1::Data::Logic::RestLogicNode 
-
-    # RestLiteralNodeFloat contains a literal float value, literalValue
-    attr_accessor :literalValue
-
-    # the json hash for this RestLiteralNodeFloat
-    def to_jaxb_json_hash
-      _h = super
-      _h['literalValue'] = literalValue.to_jaxb_json_hash unless literalValue.nil?
-      return _h
-    end
-
-    #initializes this RestLiteralNodeFloat with a json hash
-    def init_jaxb_json_hash(_o)
-      super _o
-        if !_o['literalValue'].nil?
-          _oa = _o['literalValue']
-            if(_oa.is_a? Hash)
-              @literalValue = EnunciateHelpers::LAMB_CLASS_AWARE.call(_oa) if _oa['@class']
-              @literalValue =  Float.from_json(_oa) unless _oa['@class']
-            elsif (_oa.is_a? Array)
-              #an array(of hashes hopefully) or scalar
-              @literalValue = Array.new
-              _oa.each { | _item | 
-                 if ((_item.nil? || _item['@class'].nil?)rescue true)
-                   @literalValue.push Float.from_json(_item)
-                 else
-                   @literalValue.push EnunciateHelpers::LAMB_CLASS_AWARE.call(_item)
-                 end
-               }
-            else
-                @literalValue = _oa
-            end
-          end
-    end
-
-    # constructs a RestLiteralNodeFloat from a (parsed) JSON hash
-    def self.from_json(o)
-      if o.nil?
-        return nil
-      else
-        inst = new
-        inst.init_jaxb_json_hash o
-        return inst
-      end
-    end
-  end
-
-end
-
-end
-
-end
-
-end
-
-end
-
-end
-
-end
-
-module Gov
-
-module Vha
-
-module Isaac
-
-module Rest
-
-module Api1
-
-module Data
-
-module Enumerations
-
-  # (no documentation provided)
-  class RestSememeType < Gov::Vha::Isaac::Rest::Api1::Data::Enumerations::Enumeration 
-
-    # (no documentation provided)
-    attr_accessor :all
-
-    # the json hash for this RestSememeType
-    def to_jaxb_json_hash
-      _h = super
-      if !all.nil?
-        _ha = Array.new
-        all.each { | _item | _ha.push _item.to_jaxb_json_hash }
-        _h['all'] = _ha
-      end
-      return _h
-    end
-
-    #initializes this RestSememeType with a json hash
-    def init_jaxb_json_hash(_o)
-      super _o
-        if !_o['all'].nil?
-          _oa = _o['all']
-            if(_oa.is_a? Hash)
-              @all = EnunciateHelpers::LAMB_CLASS_AWARE.call(_oa) if _oa['@class']
-              @all =  Gov::Vha::Isaac::Rest::Api1::Data::Enumerations::RestSememeType.from_json(_oa) unless _oa['@class']
-            elsif (_oa.is_a? Array)
-              #an array(of hashes hopefully) or scalar
-              @all = Array.new
-              _oa.each { | _item | 
-                 if ((_item.nil? || _item['@class'].nil?)rescue true)
-                   @all.push Gov::Vha::Isaac::Rest::Api1::Data::Enumerations::RestSememeType.from_json(_item)
-                 else
-                   @all.push EnunciateHelpers::LAMB_CLASS_AWARE.call(_item)
-                 end
-               }
-            else
-                @all = _oa
-            end
-          end
-    end
-
-    # constructs a RestSememeType from a (parsed) JSON hash
-    def self.from_json(o)
-      if o.nil?
-        return nil
-      else
-        inst = new
-        inst.init_jaxb_json_hash o
-        return inst
-      end
-    end
-  end
-
-end
-
-end
-
-end
-
-end
-
-end
-
-end
-
-end
-
-module Gov
-
-module Vha
-
-module Isaac
-
-module Rest
-
-module Api1
-
-module Data
-
-module Logic
-
-  # (no documentation provided)
-  class RestLiteralNodeInteger < Gov::Vha::Isaac::Rest::Api1::Data::Logic::RestLogicNode 
-
-    # RestLiteralNodeInteger contains a literal int value, literalValue
-    attr_accessor :literalValue
-
-    # the json hash for this RestLiteralNodeInteger
-    def to_jaxb_json_hash
-      _h = super
-      _h['literalValue'] = literalValue.to_jaxb_json_hash unless literalValue.nil?
-      return _h
-    end
-
-    #initializes this RestLiteralNodeInteger with a json hash
-    def init_jaxb_json_hash(_o)
-      super _o
-        if !_o['literalValue'].nil?
-          _oa = _o['literalValue']
-            if(_oa.is_a? Hash)
-              @literalValue = EnunciateHelpers::LAMB_CLASS_AWARE.call(_oa) if _oa['@class']
-              @literalValue =  Fixnum.from_json(_oa) unless _oa['@class']
-            elsif (_oa.is_a? Array)
-              #an array(of hashes hopefully) or scalar
-              @literalValue = Array.new
-              _oa.each { | _item | 
-                 if ((_item.nil? || _item['@class'].nil?)rescue true)
-                   @literalValue.push Fixnum.from_json(_item)
-                 else
-                   @literalValue.push EnunciateHelpers::LAMB_CLASS_AWARE.call(_item)
-                 end
-               }
-            else
-                @literalValue = _oa
-            end
-          end
-    end
-
-    # constructs a RestLiteralNodeInteger from a (parsed) JSON hash
-    def self.from_json(o)
-      if o.nil?
-        return nil
-      else
-        inst = new
-        inst.init_jaxb_json_hash o
-        return inst
-      end
-    end
-  end
-
-end
-
-end
-
-end
-
-end
-
-end
-
-end
-
-end
-
-module Gov
-
-module Vha
-
-module Isaac
-
-module Rest
-
-module Api1
-
-module Data
-
-module Logic
-
-  # (no documentation provided)
-  class RestLiteralNodeBoolean < Gov::Vha::Isaac::Rest::Api1::Data::Logic::RestLogicNode 
-
-    # RestLiteralNodeBoolean contains a literal boolean value, literalValue
-    attr_accessor :literalValue
-
-    # the json hash for this RestLiteralNodeBoolean
-    def to_jaxb_json_hash
-      _h = super
-      _h['literalValue'] = literalValue.to_jaxb_json_hash unless literalValue.nil?
-      return _h
-    end
-
-    #initializes this RestLiteralNodeBoolean with a json hash
-    def init_jaxb_json_hash(_o)
-      super _o
-        if !_o['literalValue'].nil?
-          _oa = _o['literalValue']
-            if(_oa.is_a? Hash)
-              @literalValue = EnunciateHelpers::LAMB_CLASS_AWARE.call(_oa) if _oa['@class']
-              @literalValue =  Boolean.from_json(_oa) unless _oa['@class']
-            elsif (_oa.is_a? Array)
-              #an array(of hashes hopefully) or scalar
-              @literalValue = Array.new
-              _oa.each { | _item | 
-                 if ((_item.nil? || _item['@class'].nil?)rescue true)
-                   @literalValue.push Boolean.from_json(_item)
-                 else
-                   @literalValue.push EnunciateHelpers::LAMB_CLASS_AWARE.call(_item)
-                 end
-               }
-            else
-                @literalValue = _oa
-            end
-          end
-    end
-
-    # constructs a RestLiteralNodeBoolean from a (parsed) JSON hash
-    def self.from_json(o)
-      if o.nil?
-        return nil
-      else
-        inst = new
-        inst.init_jaxb_json_hash o
-        return inst
-      end
-    end
-  end
-
-end
-
-end
-
-end
-
-end
-
-end
-
-end
-
-end
-
-module Gov
-
-module Vha
-
-module Isaac
-
-module Rest
-
-module Api1
-
-module Data
-
-module Enumerations
-
-  # (no documentation provided)
-  class RestNodeSemanticType < Gov::Vha::Isaac::Rest::Api1::Data::Enumerations::Enumeration 
-
-    # (no documentation provided)
-    attr_accessor :all
-
-    # the json hash for this RestNodeSemanticType
-    def to_jaxb_json_hash
-      _h = super
-      if !all.nil?
-        _ha = Array.new
-        all.each { | _item | _ha.push _item.to_jaxb_json_hash }
-        _h['all'] = _ha
-      end
-      return _h
-    end
-
-    #initializes this RestNodeSemanticType with a json hash
-    def init_jaxb_json_hash(_o)
-      super _o
-        if !_o['all'].nil?
-          _oa = _o['all']
-            if(_oa.is_a? Hash)
-              @all = EnunciateHelpers::LAMB_CLASS_AWARE.call(_oa) if _oa['@class']
-              @all =  Gov::Vha::Isaac::Rest::Api1::Data::Enumerations::RestNodeSemanticType.from_json(_oa) unless _oa['@class']
-            elsif (_oa.is_a? Array)
-              #an array(of hashes hopefully) or scalar
-              @all = Array.new
-              _oa.each { | _item | 
-                 if ((_item.nil? || _item['@class'].nil?)rescue true)
-                   @all.push Gov::Vha::Isaac::Rest::Api1::Data::Enumerations::RestNodeSemanticType.from_json(_item)
-                 else
-                   @all.push EnunciateHelpers::LAMB_CLASS_AWARE.call(_item)
-                 end
-               }
-            else
-                @all = _oa
-            end
-          end
-    end
-
-    # constructs a RestNodeSemanticType from a (parsed) JSON hash
-    def self.from_json(o)
-      if o.nil?
-        return nil
-      else
-        inst = new
-        inst.init_jaxb_json_hash o
-        return inst
-      end
-    end
-  end
-
-end
-
-end
-
-end
-
-end
-
-end
-
-end
-
-end
-
-module Gov
-
-module Vha
-
-module Isaac
-
-module Rest
-
-module Api1
-
-module Data
-
 module Sememe
 
 module DataTypes
 
   # (no documentation provided)
-  class RestDynamicSememeArray < Gov::Vha::Isaac::Rest::Api1::Data::Sememe::RestDynamicSememeData 
+  class RestDynamicSememeBoolean < Gov::Vha::Isaac::Rest::Api1::Data::Sememe::RestDynamicSememeData 
 
 
-    # the json hash for this RestDynamicSememeArray
+    # the json hash for this RestDynamicSememeBoolean
     def to_jaxb_json_hash
       _h = super
       return _h
     end
 
-    #initializes this RestDynamicSememeArray with a json hash
+    #initializes this RestDynamicSememeBoolean with a json hash
     def init_jaxb_json_hash(_o)
       super _o
     end
 
-    # constructs a RestDynamicSememeArray from a (parsed) JSON hash
+    # constructs a RestDynamicSememeBoolean from a (parsed) JSON hash
     def self.from_json(o)
       if o.nil?
         return nil
@@ -10262,311 +9996,50 @@ module Api1
 
 module Data
 
-module Workflow
+module Enumerations
 
   # (no documentation provided)
-  class RestWorkflowProcess < Gov::Vha::Isaac::Rest::Api1::Data::Workflow::RestWorkflowProcessBaseCreate 
+  class RestSupportedIdType < Gov::Vha::Isaac::Rest::Api1::Data::Enumerations::Enumeration 
 
-    # The workflow process identifier
-    attr_accessor :id
-    # The creator concept id
-    attr_accessor :creatorId
-    # The time workflow process created
-    attr_accessor :timeCreated
-    # The time workflow process launched
-    attr_accessor :timeLaunched
-    # The time workflow process cancelled or concluded
-    attr_accessor :timeCancelledOrConcluded
-    # The defining workflow process status
-    attr_accessor :processStatus
-    # The component nids associated with the workflow process and their respective stamps
-    attr_accessor :componentToStampMap
-    # The workflow process owner
-    attr_accessor :ownerId
+    # (no documentation provided)
+    attr_accessor :all
 
-    # the json hash for this RestWorkflowProcess
+    # the json hash for this RestSupportedIdType
     def to_jaxb_json_hash
       _h = super
-      _h['id'] = id.to_jaxb_json_hash unless id.nil?
-      _h['creatorId'] = creatorId.to_jaxb_json_hash unless creatorId.nil?
-      _h['timeCreated'] = timeCreated.to_jaxb_json_hash unless timeCreated.nil?
-      _h['timeLaunched'] = timeLaunched.to_jaxb_json_hash unless timeLaunched.nil?
-      _h['timeCancelledOrConcluded'] = timeCancelledOrConcluded.to_jaxb_json_hash unless timeCancelledOrConcluded.nil?
-      _h['processStatus'] = processStatus.to_jaxb_json_hash unless processStatus.nil?
-      if !componentToStampMap.nil?
+      if !all.nil?
         _ha = Array.new
-        componentToStampMap.each { | _item | _ha.push _item.to_jaxb_json_hash }
-        _h['componentToStampMap'] = _ha
-      end
-      _h['ownerId'] = ownerId.to_jaxb_json_hash unless ownerId.nil?
-      return _h
-    end
-
-    #initializes this RestWorkflowProcess with a json hash
-    def init_jaxb_json_hash(_o)
-      super _o
-        if !_o['id'].nil?
-          _oa = _o['id']
-            if(_oa.is_a? Hash)
-              @id = EnunciateHelpers::LAMB_CLASS_AWARE.call(_oa) if _oa['@class']
-              @id =  String.from_json(_oa) unless _oa['@class']
-            elsif (_oa.is_a? Array)
-              #an array(of hashes hopefully) or scalar
-              @id = Array.new
-              _oa.each { | _item | 
-                 if ((_item.nil? || _item['@class'].nil?)rescue true)
-                   @id.push String.from_json(_item)
-                 else
-                   @id.push EnunciateHelpers::LAMB_CLASS_AWARE.call(_item)
-                 end
-               }
-            else
-                @id = _oa
-            end
-          end
-        if !_o['creatorId'].nil?
-          _oa = _o['creatorId']
-            if(_oa.is_a? Hash)
-              @creatorId = EnunciateHelpers::LAMB_CLASS_AWARE.call(_oa) if _oa['@class']
-              @creatorId =  String.from_json(_oa) unless _oa['@class']
-            elsif (_oa.is_a? Array)
-              #an array(of hashes hopefully) or scalar
-              @creatorId = Array.new
-              _oa.each { | _item | 
-                 if ((_item.nil? || _item['@class'].nil?)rescue true)
-                   @creatorId.push String.from_json(_item)
-                 else
-                   @creatorId.push EnunciateHelpers::LAMB_CLASS_AWARE.call(_item)
-                 end
-               }
-            else
-                @creatorId = _oa
-            end
-          end
-        if !_o['timeCreated'].nil?
-          _oa = _o['timeCreated']
-            if(_oa.is_a? Hash)
-              @timeCreated = EnunciateHelpers::LAMB_CLASS_AWARE.call(_oa) if _oa['@class']
-              @timeCreated =  Bignum.from_json(_oa) unless _oa['@class']
-            elsif (_oa.is_a? Array)
-              #an array(of hashes hopefully) or scalar
-              @timeCreated = Array.new
-              _oa.each { | _item | 
-                 if ((_item.nil? || _item['@class'].nil?)rescue true)
-                   @timeCreated.push Bignum.from_json(_item)
-                 else
-                   @timeCreated.push EnunciateHelpers::LAMB_CLASS_AWARE.call(_item)
-                 end
-               }
-            else
-                @timeCreated = _oa
-            end
-          end
-        if !_o['timeLaunched'].nil?
-          _oa = _o['timeLaunched']
-            if(_oa.is_a? Hash)
-              @timeLaunched = EnunciateHelpers::LAMB_CLASS_AWARE.call(_oa) if _oa['@class']
-              @timeLaunched =  Bignum.from_json(_oa) unless _oa['@class']
-            elsif (_oa.is_a? Array)
-              #an array(of hashes hopefully) or scalar
-              @timeLaunched = Array.new
-              _oa.each { | _item | 
-                 if ((_item.nil? || _item['@class'].nil?)rescue true)
-                   @timeLaunched.push Bignum.from_json(_item)
-                 else
-                   @timeLaunched.push EnunciateHelpers::LAMB_CLASS_AWARE.call(_item)
-                 end
-               }
-            else
-                @timeLaunched = _oa
-            end
-          end
-        if !_o['timeCancelledOrConcluded'].nil?
-          _oa = _o['timeCancelledOrConcluded']
-            if(_oa.is_a? Hash)
-              @timeCancelledOrConcluded = EnunciateHelpers::LAMB_CLASS_AWARE.call(_oa) if _oa['@class']
-              @timeCancelledOrConcluded =  Bignum.from_json(_oa) unless _oa['@class']
-            elsif (_oa.is_a? Array)
-              #an array(of hashes hopefully) or scalar
-              @timeCancelledOrConcluded = Array.new
-              _oa.each { | _item | 
-                 if ((_item.nil? || _item['@class'].nil?)rescue true)
-                   @timeCancelledOrConcluded.push Bignum.from_json(_item)
-                 else
-                   @timeCancelledOrConcluded.push EnunciateHelpers::LAMB_CLASS_AWARE.call(_item)
-                 end
-               }
-            else
-                @timeCancelledOrConcluded = _oa
-            end
-          end
-        if !_o['processStatus'].nil?
-          _oa = _o['processStatus']
-            if(_oa.is_a? Hash)
-              @processStatus = EnunciateHelpers::LAMB_CLASS_AWARE.call(_oa) if _oa['@class']
-              @processStatus =  Gov::Vha::Isaac::Rest::Api1::Data::Enumerations::RestWorkflowProcessStatusType.from_json(_oa) unless _oa['@class']
-            elsif (_oa.is_a? Array)
-              #an array(of hashes hopefully) or scalar
-              @processStatus = Array.new
-              _oa.each { | _item | 
-                 if ((_item.nil? || _item['@class'].nil?)rescue true)
-                   @processStatus.push Gov::Vha::Isaac::Rest::Api1::Data::Enumerations::RestWorkflowProcessStatusType.from_json(_item)
-                 else
-                   @processStatus.push EnunciateHelpers::LAMB_CLASS_AWARE.call(_item)
-                 end
-               }
-            else
-                @processStatus = _oa
-            end
-          end
-        if !_o['componentToStampMap'].nil?
-          _oa = _o['componentToStampMap']
-            if(_oa.is_a? Hash)
-              @componentToStampMap = EnunciateHelpers::LAMB_CLASS_AWARE.call(_oa) if _oa['@class']
-              @componentToStampMap =  Gov::Vha::Isaac::Rest::Api1::Data::Workflow::RestWorkflowComponentToStampMapEntry.from_json(_oa) unless _oa['@class']
-            elsif (_oa.is_a? Array)
-              #an array(of hashes hopefully) or scalar
-              @componentToStampMap = Array.new
-              _oa.each { | _item | 
-                 if ((_item.nil? || _item['@class'].nil?)rescue true)
-                   @componentToStampMap.push Gov::Vha::Isaac::Rest::Api1::Data::Workflow::RestWorkflowComponentToStampMapEntry.from_json(_item)
-                 else
-                   @componentToStampMap.push EnunciateHelpers::LAMB_CLASS_AWARE.call(_item)
-                 end
-               }
-            else
-                @componentToStampMap = _oa
-            end
-          end
-        if !_o['ownerId'].nil?
-          _oa = _o['ownerId']
-            if(_oa.is_a? Hash)
-              @ownerId = EnunciateHelpers::LAMB_CLASS_AWARE.call(_oa) if _oa['@class']
-              @ownerId =  String.from_json(_oa) unless _oa['@class']
-            elsif (_oa.is_a? Array)
-              #an array(of hashes hopefully) or scalar
-              @ownerId = Array.new
-              _oa.each { | _item | 
-                 if ((_item.nil? || _item['@class'].nil?)rescue true)
-                   @ownerId.push String.from_json(_item)
-                 else
-                   @ownerId.push EnunciateHelpers::LAMB_CLASS_AWARE.call(_item)
-                 end
-               }
-            else
-                @ownerId = _oa
-            end
-          end
-    end
-
-    # constructs a RestWorkflowProcess from a (parsed) JSON hash
-    def self.from_json(o)
-      if o.nil?
-        return nil
-      else
-        inst = new
-        inst.init_jaxb_json_hash o
-        return inst
-      end
-    end
-  end
-
-end
-
-end
-
-end
-
-end
-
-end
-
-end
-
-end
-
-module Gov
-
-module Vha
-
-module Isaac
-
-module Rest
-
-module Api1
-
-module Data
-
-module Mapping
-
-  # (no documentation provided)
-  class RestMappingSetVersionBaseCreate < Gov::Vha::Isaac::Rest::Api1::Data::Mapping::RestMappingSetVersionBase 
-
-    # The (optional) extended fields which carry additional information about this map set definition.
-    attr_accessor :mapSetExtendedFields
-    # The (optional) extended fields that are declared for each map item instance that is created using this map set definition.
-    attr_accessor :mapItemExtendedFieldsDefinition
-
-    # the json hash for this RestMappingSetVersionBaseCreate
-    def to_jaxb_json_hash
-      _h = super
-      if !mapSetExtendedFields.nil?
-        _ha = Array.new
-        mapSetExtendedFields.each { | _item | _ha.push _item.to_jaxb_json_hash }
-        _h['mapSetExtendedFields'] = _ha
-      end
-      if !mapItemExtendedFieldsDefinition.nil?
-        _ha = Array.new
-        mapItemExtendedFieldsDefinition.each { | _item | _ha.push _item.to_jaxb_json_hash }
-        _h['mapItemExtendedFieldsDefinition'] = _ha
+        all.each { | _item | _ha.push _item.to_jaxb_json_hash }
+        _h['all'] = _ha
       end
       return _h
     end
 
-    #initializes this RestMappingSetVersionBaseCreate with a json hash
+    #initializes this RestSupportedIdType with a json hash
     def init_jaxb_json_hash(_o)
       super _o
-        if !_o['mapSetExtendedFields'].nil?
-          _oa = _o['mapSetExtendedFields']
+        if !_o['all'].nil?
+          _oa = _o['all']
             if(_oa.is_a? Hash)
-              @mapSetExtendedFields = EnunciateHelpers::LAMB_CLASS_AWARE.call(_oa) if _oa['@class']
-              @mapSetExtendedFields =  Gov::Vha::Isaac::Rest::Api1::Data::Mapping::RestMappingSetExtensionValueBaseCreate.from_json(_oa) unless _oa['@class']
+              @all = EnunciateHelpers::LAMB_CLASS_AWARE.call(_oa) if _oa['@class']
+              @all =  Gov::Vha::Isaac::Rest::Api1::Data::Enumerations::RestSupportedIdType.from_json(_oa) unless _oa['@class']
             elsif (_oa.is_a? Array)
               #an array(of hashes hopefully) or scalar
-              @mapSetExtendedFields = Array.new
+              @all = Array.new
               _oa.each { | _item | 
                  if ((_item.nil? || _item['@class'].nil?)rescue true)
-                   @mapSetExtendedFields.push Gov::Vha::Isaac::Rest::Api1::Data::Mapping::RestMappingSetExtensionValueBaseCreate.from_json(_item)
+                   @all.push Gov::Vha::Isaac::Rest::Api1::Data::Enumerations::RestSupportedIdType.from_json(_item)
                  else
-                   @mapSetExtendedFields.push EnunciateHelpers::LAMB_CLASS_AWARE.call(_item)
+                   @all.push EnunciateHelpers::LAMB_CLASS_AWARE.call(_item)
                  end
                }
             else
-                @mapSetExtendedFields = _oa
-            end
-          end
-        if !_o['mapItemExtendedFieldsDefinition'].nil?
-          _oa = _o['mapItemExtendedFieldsDefinition']
-            if(_oa.is_a? Hash)
-              @mapItemExtendedFieldsDefinition = EnunciateHelpers::LAMB_CLASS_AWARE.call(_oa) if _oa['@class']
-              @mapItemExtendedFieldsDefinition =  Gov::Vha::Isaac::Rest::Api1::Data::Sememe::RestDynamicSememeColumnInfoCreate.from_json(_oa) unless _oa['@class']
-            elsif (_oa.is_a? Array)
-              #an array(of hashes hopefully) or scalar
-              @mapItemExtendedFieldsDefinition = Array.new
-              _oa.each { | _item | 
-                 if ((_item.nil? || _item['@class'].nil?)rescue true)
-                   @mapItemExtendedFieldsDefinition.push Gov::Vha::Isaac::Rest::Api1::Data::Sememe::RestDynamicSememeColumnInfoCreate.from_json(_item)
-                 else
-                   @mapItemExtendedFieldsDefinition.push EnunciateHelpers::LAMB_CLASS_AWARE.call(_item)
-                 end
-               }
-            else
-                @mapItemExtendedFieldsDefinition = _oa
+                @all = _oa
             end
           end
     end
 
-    # constructs a RestMappingSetVersionBaseCreate from a (parsed) JSON hash
+    # constructs a RestSupportedIdType from a (parsed) JSON hash
     def self.from_json(o)
       if o.nil?
         return nil
@@ -10681,728 +10154,6 @@ module Api1
 
 module Data
 
-module Enumerations
-
-  # (no documentation provided)
-  class RestStateType < Gov::Vha::Isaac::Rest::Api1::Data::Enumerations::Enumeration 
-
-    # (no documentation provided)
-    attr_accessor :all
-
-    # the json hash for this RestStateType
-    def to_jaxb_json_hash
-      _h = super
-      if !all.nil?
-        _ha = Array.new
-        all.each { | _item | _ha.push _item.to_jaxb_json_hash }
-        _h['all'] = _ha
-      end
-      return _h
-    end
-
-    #initializes this RestStateType with a json hash
-    def init_jaxb_json_hash(_o)
-      super _o
-        if !_o['all'].nil?
-          _oa = _o['all']
-            if(_oa.is_a? Hash)
-              @all = EnunciateHelpers::LAMB_CLASS_AWARE.call(_oa) if _oa['@class']
-              @all =  Gov::Vha::Isaac::Rest::Api1::Data::Enumerations::RestStateType.from_json(_oa) unless _oa['@class']
-            elsif (_oa.is_a? Array)
-              #an array(of hashes hopefully) or scalar
-              @all = Array.new
-              _oa.each { | _item | 
-                 if ((_item.nil? || _item['@class'].nil?)rescue true)
-                   @all.push Gov::Vha::Isaac::Rest::Api1::Data::Enumerations::RestStateType.from_json(_item)
-                 else
-                   @all.push EnunciateHelpers::LAMB_CLASS_AWARE.call(_item)
-                 end
-               }
-            else
-                @all = _oa
-            end
-          end
-    end
-
-    # constructs a RestStateType from a (parsed) JSON hash
-    def self.from_json(o)
-      if o.nil?
-        return nil
-      else
-        inst = new
-        inst.init_jaxb_json_hash o
-        return inst
-      end
-    end
-  end
-
-end
-
-end
-
-end
-
-end
-
-end
-
-end
-
-end
-
-module Gov
-
-module Vha
-
-module Isaac
-
-module Rest
-
-module Api1
-
-module Data
-
-module Sememe
-
-  # (no documentation provided)
-  class RestSememeDescriptionVersion < Gov::Vha::Isaac::Rest::Api1::Data::Sememe::RestSememeVersion 
-
-    # The concept sequence of the concept that represents the case significance flag on the description .
-    # This should be description case sensitive, description not case sensitive or description initial character sensitive
-    attr_accessor :caseSignificanceConceptSequence
-    # The concept sequence of the concept that represents the language of the description (note, this is NOT
-    # the dialect)
-    attr_accessor :languageConceptSequence
-    # The text of the description
-    attr_accessor :text
-    # The concept sequence of the concept that represents the type of the description.
-    # This should be FSN, Synonym, or Definition.
-    attr_accessor :descriptionTypeConceptSequence
-    # The optional concept sequence of the concept that represents the extended type of the description.
-    # This should be a MetaData.DYNAMIC_SEMEME_EXTENDED_DESCRIPTION_TYPE.
-    attr_accessor :descriptionExtendedTypeConceptSequence
-    # The dialects attached to this sememe.  Not populated by default, include expand=nestedSememes to expand this.
-    attr_accessor :dialects
-
-    # the json hash for this RestSememeDescriptionVersion
-    def to_jaxb_json_hash
-      _h = super
-      _h['caseSignificanceConceptSequence'] = caseSignificanceConceptSequence.to_jaxb_json_hash unless caseSignificanceConceptSequence.nil?
-      _h['languageConceptSequence'] = languageConceptSequence.to_jaxb_json_hash unless languageConceptSequence.nil?
-      _h['text'] = text.to_jaxb_json_hash unless text.nil?
-      _h['descriptionTypeConceptSequence'] = descriptionTypeConceptSequence.to_jaxb_json_hash unless descriptionTypeConceptSequence.nil?
-      _h['descriptionExtendedTypeConceptSequence'] = descriptionExtendedTypeConceptSequence.to_jaxb_json_hash unless descriptionExtendedTypeConceptSequence.nil?
-      if !dialects.nil?
-        _ha = Array.new
-        dialects.each { | _item | _ha.push _item.to_jaxb_json_hash }
-        _h['dialects'] = _ha
-      end
-      return _h
-    end
-
-    #initializes this RestSememeDescriptionVersion with a json hash
-    def init_jaxb_json_hash(_o)
-      super _o
-        if !_o['caseSignificanceConceptSequence'].nil?
-          _oa = _o['caseSignificanceConceptSequence']
-            if(_oa.is_a? Hash)
-              @caseSignificanceConceptSequence = EnunciateHelpers::LAMB_CLASS_AWARE.call(_oa) if _oa['@class']
-              @caseSignificanceConceptSequence =  Fixnum.from_json(_oa) unless _oa['@class']
-            elsif (_oa.is_a? Array)
-              #an array(of hashes hopefully) or scalar
-              @caseSignificanceConceptSequence = Array.new
-              _oa.each { | _item | 
-                 if ((_item.nil? || _item['@class'].nil?)rescue true)
-                   @caseSignificanceConceptSequence.push Fixnum.from_json(_item)
-                 else
-                   @caseSignificanceConceptSequence.push EnunciateHelpers::LAMB_CLASS_AWARE.call(_item)
-                 end
-               }
-            else
-                @caseSignificanceConceptSequence = _oa
-            end
-          end
-        if !_o['languageConceptSequence'].nil?
-          _oa = _o['languageConceptSequence']
-            if(_oa.is_a? Hash)
-              @languageConceptSequence = EnunciateHelpers::LAMB_CLASS_AWARE.call(_oa) if _oa['@class']
-              @languageConceptSequence =  Fixnum.from_json(_oa) unless _oa['@class']
-            elsif (_oa.is_a? Array)
-              #an array(of hashes hopefully) or scalar
-              @languageConceptSequence = Array.new
-              _oa.each { | _item | 
-                 if ((_item.nil? || _item['@class'].nil?)rescue true)
-                   @languageConceptSequence.push Fixnum.from_json(_item)
-                 else
-                   @languageConceptSequence.push EnunciateHelpers::LAMB_CLASS_AWARE.call(_item)
-                 end
-               }
-            else
-                @languageConceptSequence = _oa
-            end
-          end
-        if !_o['text'].nil?
-          _oa = _o['text']
-            if(_oa.is_a? Hash)
-              @text = EnunciateHelpers::LAMB_CLASS_AWARE.call(_oa) if _oa['@class']
-              @text =  String.from_json(_oa) unless _oa['@class']
-            elsif (_oa.is_a? Array)
-              #an array(of hashes hopefully) or scalar
-              @text = Array.new
-              _oa.each { | _item | 
-                 if ((_item.nil? || _item['@class'].nil?)rescue true)
-                   @text.push String.from_json(_item)
-                 else
-                   @text.push EnunciateHelpers::LAMB_CLASS_AWARE.call(_item)
-                 end
-               }
-            else
-                @text = _oa
-            end
-          end
-        if !_o['descriptionTypeConceptSequence'].nil?
-          _oa = _o['descriptionTypeConceptSequence']
-            if(_oa.is_a? Hash)
-              @descriptionTypeConceptSequence = EnunciateHelpers::LAMB_CLASS_AWARE.call(_oa) if _oa['@class']
-              @descriptionTypeConceptSequence =  Fixnum.from_json(_oa) unless _oa['@class']
-            elsif (_oa.is_a? Array)
-              #an array(of hashes hopefully) or scalar
-              @descriptionTypeConceptSequence = Array.new
-              _oa.each { | _item | 
-                 if ((_item.nil? || _item['@class'].nil?)rescue true)
-                   @descriptionTypeConceptSequence.push Fixnum.from_json(_item)
-                 else
-                   @descriptionTypeConceptSequence.push EnunciateHelpers::LAMB_CLASS_AWARE.call(_item)
-                 end
-               }
-            else
-                @descriptionTypeConceptSequence = _oa
-            end
-          end
-        if !_o['descriptionExtendedTypeConceptSequence'].nil?
-          _oa = _o['descriptionExtendedTypeConceptSequence']
-            if(_oa.is_a? Hash)
-              @descriptionExtendedTypeConceptSequence = EnunciateHelpers::LAMB_CLASS_AWARE.call(_oa) if _oa['@class']
-              @descriptionExtendedTypeConceptSequence =  Fixnum.from_json(_oa) unless _oa['@class']
-            elsif (_oa.is_a? Array)
-              #an array(of hashes hopefully) or scalar
-              @descriptionExtendedTypeConceptSequence = Array.new
-              _oa.each { | _item | 
-                 if ((_item.nil? || _item['@class'].nil?)rescue true)
-                   @descriptionExtendedTypeConceptSequence.push Fixnum.from_json(_item)
-                 else
-                   @descriptionExtendedTypeConceptSequence.push EnunciateHelpers::LAMB_CLASS_AWARE.call(_item)
-                 end
-               }
-            else
-                @descriptionExtendedTypeConceptSequence = _oa
-            end
-          end
-        if !_o['dialects'].nil?
-          _oa = _o['dialects']
-            if(_oa.is_a? Hash)
-              @dialects = EnunciateHelpers::LAMB_CLASS_AWARE.call(_oa) if _oa['@class']
-              @dialects =  Gov::Vha::Isaac::Rest::Api1::Data::Sememe::RestDynamicSememeVersion.from_json(_oa) unless _oa['@class']
-            elsif (_oa.is_a? Array)
-              #an array(of hashes hopefully) or scalar
-              @dialects = Array.new
-              _oa.each { | _item | 
-                 if ((_item.nil? || _item['@class'].nil?)rescue true)
-                   @dialects.push Gov::Vha::Isaac::Rest::Api1::Data::Sememe::RestDynamicSememeVersion.from_json(_item)
-                 else
-                   @dialects.push EnunciateHelpers::LAMB_CLASS_AWARE.call(_item)
-                 end
-               }
-            else
-                @dialects = _oa
-            end
-          end
-    end
-
-    # constructs a RestSememeDescriptionVersion from a (parsed) JSON hash
-    def self.from_json(o)
-      if o.nil?
-        return nil
-      else
-        inst = new
-        inst.init_jaxb_json_hash o
-        return inst
-      end
-    end
-  end
-
-end
-
-end
-
-end
-
-end
-
-end
-
-end
-
-end
-
-module Gov
-
-module Vha
-
-module Isaac
-
-module Rest
-
-module Api1
-
-module Data
-
-module Association
-
-  # (no documentation provided)
-  class RestAssociationTypeVersion < Gov::Vha::Isaac::Rest::Api1::Data::Association::RestAssociationTypeVersionBaseCreate 
-
-    # The data that was not expanded as part of this call (but can be)
-    attr_accessor :expandables
-    # The concept sequence of the concept that represents the association definition.
-    attr_accessor :associationConceptSequence
-    # The concept UUID(s) of the concept that represents the association definition
-    attr_accessor :identifiers
-    # The StampedVersion details for this association type
-    attr_accessor :associationItemStamp
-    # The Concept Chronology of the concept represented by associationConceptSequence.  Typically blank, unless requested via the expand parameter
-    # &#39;referencedConcept&#39;  If &#39;referencedConcept&#39; is passed, you can also pass &#39;versionsAll&#39; or &#39;versionsLatestOnly&#39;
-    attr_accessor :associationConcept
-
-    # the json hash for this RestAssociationTypeVersion
-    def to_jaxb_json_hash
-      _h = super
-      _h['expandables'] = expandables.to_jaxb_json_hash unless expandables.nil?
-      _h['associationConceptSequence'] = associationConceptSequence.to_jaxb_json_hash unless associationConceptSequence.nil?
-      _h['identifiers'] = identifiers.to_jaxb_json_hash unless identifiers.nil?
-      _h['associationItemStamp'] = associationItemStamp.to_jaxb_json_hash unless associationItemStamp.nil?
-      _h['associationConcept'] = associationConcept.to_jaxb_json_hash unless associationConcept.nil?
-      return _h
-    end
-
-    #initializes this RestAssociationTypeVersion with a json hash
-    def init_jaxb_json_hash(_o)
-      super _o
-        if !_o['expandables'].nil?
-          _oa = _o['expandables']
-            if(_oa.is_a? Hash)
-              @expandables = EnunciateHelpers::LAMB_CLASS_AWARE.call(_oa) if _oa['@class']
-              @expandables =  Gov::Vha::Isaac::Rest::Api::Data::Expandables.from_json(_oa) unless _oa['@class']
-            elsif (_oa.is_a? Array)
-              #an array(of hashes hopefully) or scalar
-              @expandables = Array.new
-              _oa.each { | _item | 
-                 if ((_item.nil? || _item['@class'].nil?)rescue true)
-                   @expandables.push Gov::Vha::Isaac::Rest::Api::Data::Expandables.from_json(_item)
-                 else
-                   @expandables.push EnunciateHelpers::LAMB_CLASS_AWARE.call(_item)
-                 end
-               }
-            else
-                @expandables = _oa
-            end
-          end
-        if !_o['associationConceptSequence'].nil?
-          _oa = _o['associationConceptSequence']
-            if(_oa.is_a? Hash)
-              @associationConceptSequence = EnunciateHelpers::LAMB_CLASS_AWARE.call(_oa) if _oa['@class']
-              @associationConceptSequence =  Fixnum.from_json(_oa) unless _oa['@class']
-            elsif (_oa.is_a? Array)
-              #an array(of hashes hopefully) or scalar
-              @associationConceptSequence = Array.new
-              _oa.each { | _item | 
-                 if ((_item.nil? || _item['@class'].nil?)rescue true)
-                   @associationConceptSequence.push Fixnum.from_json(_item)
-                 else
-                   @associationConceptSequence.push EnunciateHelpers::LAMB_CLASS_AWARE.call(_item)
-                 end
-               }
-            else
-                @associationConceptSequence = _oa
-            end
-          end
-        if !_o['identifiers'].nil?
-          _oa = _o['identifiers']
-            if(_oa.is_a? Hash)
-              @identifiers = EnunciateHelpers::LAMB_CLASS_AWARE.call(_oa) if _oa['@class']
-              @identifiers =  Gov::Vha::Isaac::Rest::Api1::Data::RestIdentifiedObject.from_json(_oa) unless _oa['@class']
-            elsif (_oa.is_a? Array)
-              #an array(of hashes hopefully) or scalar
-              @identifiers = Array.new
-              _oa.each { | _item | 
-                 if ((_item.nil? || _item['@class'].nil?)rescue true)
-                   @identifiers.push Gov::Vha::Isaac::Rest::Api1::Data::RestIdentifiedObject.from_json(_item)
-                 else
-                   @identifiers.push EnunciateHelpers::LAMB_CLASS_AWARE.call(_item)
-                 end
-               }
-            else
-                @identifiers = _oa
-            end
-          end
-        if !_o['associationItemStamp'].nil?
-          _oa = _o['associationItemStamp']
-            if(_oa.is_a? Hash)
-              @associationItemStamp = EnunciateHelpers::LAMB_CLASS_AWARE.call(_oa) if _oa['@class']
-              @associationItemStamp =  Gov::Vha::Isaac::Rest::Api1::Data::RestStampedVersion.from_json(_oa) unless _oa['@class']
-            elsif (_oa.is_a? Array)
-              #an array(of hashes hopefully) or scalar
-              @associationItemStamp = Array.new
-              _oa.each { | _item | 
-                 if ((_item.nil? || _item['@class'].nil?)rescue true)
-                   @associationItemStamp.push Gov::Vha::Isaac::Rest::Api1::Data::RestStampedVersion.from_json(_item)
-                 else
-                   @associationItemStamp.push EnunciateHelpers::LAMB_CLASS_AWARE.call(_item)
-                 end
-               }
-            else
-                @associationItemStamp = _oa
-            end
-          end
-        if !_o['associationConcept'].nil?
-          _oa = _o['associationConcept']
-            if(_oa.is_a? Hash)
-              @associationConcept = EnunciateHelpers::LAMB_CLASS_AWARE.call(_oa) if _oa['@class']
-              @associationConcept =  Gov::Vha::Isaac::Rest::Api1::Data::Concept::RestConceptChronology.from_json(_oa) unless _oa['@class']
-            elsif (_oa.is_a? Array)
-              #an array(of hashes hopefully) or scalar
-              @associationConcept = Array.new
-              _oa.each { | _item | 
-                 if ((_item.nil? || _item['@class'].nil?)rescue true)
-                   @associationConcept.push Gov::Vha::Isaac::Rest::Api1::Data::Concept::RestConceptChronology.from_json(_item)
-                 else
-                   @associationConcept.push EnunciateHelpers::LAMB_CLASS_AWARE.call(_item)
-                 end
-               }
-            else
-                @associationConcept = _oa
-            end
-          end
-    end
-
-    # constructs a RestAssociationTypeVersion from a (parsed) JSON hash
-    def self.from_json(o)
-      if o.nil?
-        return nil
-      else
-        inst = new
-        inst.init_jaxb_json_hash o
-        return inst
-      end
-    end
-  end
-
-end
-
-end
-
-end
-
-end
-
-end
-
-end
-
-end
-
-module Gov
-
-module Vha
-
-module Isaac
-
-module Rest
-
-module Api1
-
-module Data
-
-module Mapping
-
-  # (no documentation provided)
-  class RestMappingSetExtensionValueBaseCreate < Gov::Vha::Isaac::Rest::Api1::Data::Mapping::RestMappingSetExtensionValueBase 
-
-    # The concept that describes the purpose of this extended field on a map set definition.  The descriptions from this concept
-    # will be used as the label of the extension.  On create, this accepts a nid or a sequence.  On read, it returns a concept sequence.
-    attr_accessor :extensionNameConcept
-
-    # the json hash for this RestMappingSetExtensionValueBaseCreate
-    def to_jaxb_json_hash
-      _h = super
-      _h['extensionNameConcept'] = extensionNameConcept.to_jaxb_json_hash unless extensionNameConcept.nil?
-      return _h
-    end
-
-    #initializes this RestMappingSetExtensionValueBaseCreate with a json hash
-    def init_jaxb_json_hash(_o)
-      super _o
-        if !_o['extensionNameConcept'].nil?
-          _oa = _o['extensionNameConcept']
-            if(_oa.is_a? Hash)
-              @extensionNameConcept = EnunciateHelpers::LAMB_CLASS_AWARE.call(_oa) if _oa['@class']
-              @extensionNameConcept =  Fixnum.from_json(_oa) unless _oa['@class']
-            elsif (_oa.is_a? Array)
-              #an array(of hashes hopefully) or scalar
-              @extensionNameConcept = Array.new
-              _oa.each { | _item | 
-                 if ((_item.nil? || _item['@class'].nil?)rescue true)
-                   @extensionNameConcept.push Fixnum.from_json(_item)
-                 else
-                   @extensionNameConcept.push EnunciateHelpers::LAMB_CLASS_AWARE.call(_item)
-                 end
-               }
-            else
-                @extensionNameConcept = _oa
-            end
-          end
-    end
-
-    # constructs a RestMappingSetExtensionValueBaseCreate from a (parsed) JSON hash
-    def self.from_json(o)
-      if o.nil?
-        return nil
-      else
-        inst = new
-        inst.init_jaxb_json_hash o
-        return inst
-      end
-    end
-  end
-
-end
-
-end
-
-end
-
-end
-
-end
-
-end
-
-end
-
-module Gov
-
-module Vha
-
-module Isaac
-
-module Rest
-
-module Api1
-
-module Data
-
-module Enumerations
-
-  # (no documentation provided)
-  class RestConcreteDomainOperatorsType < Gov::Vha::Isaac::Rest::Api1::Data::Enumerations::Enumeration 
-
-    # (no documentation provided)
-    attr_accessor :all
-
-    # the json hash for this RestConcreteDomainOperatorsType
-    def to_jaxb_json_hash
-      _h = super
-      if !all.nil?
-        _ha = Array.new
-        all.each { | _item | _ha.push _item.to_jaxb_json_hash }
-        _h['all'] = _ha
-      end
-      return _h
-    end
-
-    #initializes this RestConcreteDomainOperatorsType with a json hash
-    def init_jaxb_json_hash(_o)
-      super _o
-        if !_o['all'].nil?
-          _oa = _o['all']
-            if(_oa.is_a? Hash)
-              @all = EnunciateHelpers::LAMB_CLASS_AWARE.call(_oa) if _oa['@class']
-              @all =  Gov::Vha::Isaac::Rest::Api1::Data::Enumerations::RestConcreteDomainOperatorsType.from_json(_oa) unless _oa['@class']
-            elsif (_oa.is_a? Array)
-              #an array(of hashes hopefully) or scalar
-              @all = Array.new
-              _oa.each { | _item | 
-                 if ((_item.nil? || _item['@class'].nil?)rescue true)
-                   @all.push Gov::Vha::Isaac::Rest::Api1::Data::Enumerations::RestConcreteDomainOperatorsType.from_json(_item)
-                 else
-                   @all.push EnunciateHelpers::LAMB_CLASS_AWARE.call(_item)
-                 end
-               }
-            else
-                @all = _oa
-            end
-          end
-    end
-
-    # constructs a RestConcreteDomainOperatorsType from a (parsed) JSON hash
-    def self.from_json(o)
-      if o.nil?
-        return nil
-      else
-        inst = new
-        inst.init_jaxb_json_hash o
-        return inst
-      end
-    end
-  end
-
-end
-
-end
-
-end
-
-end
-
-end
-
-end
-
-end
-
-module Gov
-
-module Vha
-
-module Isaac
-
-module Rest
-
-module Api1
-
-module Data
-
-module Logic
-
-  # (no documentation provided)
-  class RestTypedConnectorNode < Gov::Vha::Isaac::Rest::Api1::Data::Logic::RestLogicNode 
-
-    # RestTypedConnectorNode contains an int connectorTypeConceptSequence identifying a connector type concept
-    attr_accessor :connectorTypeConceptSequence
-    # Optionally-populated connectorTypeConceptVersion
-    attr_accessor :connectorTypeConceptVersion
-    # RestTypedConnectorNode contains a String connectorTypeConceptDescription describing a connector type concept
-    attr_accessor :connectorTypeConceptDescription
-
-    # the json hash for this RestTypedConnectorNode
-    def to_jaxb_json_hash
-      _h = super
-      _h['connectorTypeConceptSequence'] = connectorTypeConceptSequence.to_jaxb_json_hash unless connectorTypeConceptSequence.nil?
-      _h['connectorTypeConceptVersion'] = connectorTypeConceptVersion.to_jaxb_json_hash unless connectorTypeConceptVersion.nil?
-      _h['connectorTypeConceptDescription'] = connectorTypeConceptDescription.to_jaxb_json_hash unless connectorTypeConceptDescription.nil?
-      return _h
-    end
-
-    #initializes this RestTypedConnectorNode with a json hash
-    def init_jaxb_json_hash(_o)
-      super _o
-        if !_o['connectorTypeConceptSequence'].nil?
-          _oa = _o['connectorTypeConceptSequence']
-            if(_oa.is_a? Hash)
-              @connectorTypeConceptSequence = EnunciateHelpers::LAMB_CLASS_AWARE.call(_oa) if _oa['@class']
-              @connectorTypeConceptSequence =  Fixnum.from_json(_oa) unless _oa['@class']
-            elsif (_oa.is_a? Array)
-              #an array(of hashes hopefully) or scalar
-              @connectorTypeConceptSequence = Array.new
-              _oa.each { | _item | 
-                 if ((_item.nil? || _item['@class'].nil?)rescue true)
-                   @connectorTypeConceptSequence.push Fixnum.from_json(_item)
-                 else
-                   @connectorTypeConceptSequence.push EnunciateHelpers::LAMB_CLASS_AWARE.call(_item)
-                 end
-               }
-            else
-                @connectorTypeConceptSequence = _oa
-            end
-          end
-        if !_o['connectorTypeConceptVersion'].nil?
-          _oa = _o['connectorTypeConceptVersion']
-            if(_oa.is_a? Hash)
-              @connectorTypeConceptVersion = EnunciateHelpers::LAMB_CLASS_AWARE.call(_oa) if _oa['@class']
-              @connectorTypeConceptVersion =  Gov::Vha::Isaac::Rest::Api1::Data::Concept::RestConceptVersion.from_json(_oa) unless _oa['@class']
-            elsif (_oa.is_a? Array)
-              #an array(of hashes hopefully) or scalar
-              @connectorTypeConceptVersion = Array.new
-              _oa.each { | _item | 
-                 if ((_item.nil? || _item['@class'].nil?)rescue true)
-                   @connectorTypeConceptVersion.push Gov::Vha::Isaac::Rest::Api1::Data::Concept::RestConceptVersion.from_json(_item)
-                 else
-                   @connectorTypeConceptVersion.push EnunciateHelpers::LAMB_CLASS_AWARE.call(_item)
-                 end
-               }
-            else
-                @connectorTypeConceptVersion = _oa
-            end
-          end
-        if !_o['connectorTypeConceptDescription'].nil?
-          _oa = _o['connectorTypeConceptDescription']
-            if(_oa.is_a? Hash)
-              @connectorTypeConceptDescription = EnunciateHelpers::LAMB_CLASS_AWARE.call(_oa) if _oa['@class']
-              @connectorTypeConceptDescription =  String.from_json(_oa) unless _oa['@class']
-            elsif (_oa.is_a? Array)
-              #an array(of hashes hopefully) or scalar
-              @connectorTypeConceptDescription = Array.new
-              _oa.each { | _item | 
-                 if ((_item.nil? || _item['@class'].nil?)rescue true)
-                   @connectorTypeConceptDescription.push String.from_json(_item)
-                 else
-                   @connectorTypeConceptDescription.push EnunciateHelpers::LAMB_CLASS_AWARE.call(_item)
-                 end
-               }
-            else
-                @connectorTypeConceptDescription = _oa
-            end
-          end
-    end
-
-    # constructs a RestTypedConnectorNode from a (parsed) JSON hash
-    def self.from_json(o)
-      if o.nil?
-        return nil
-      else
-        inst = new
-        inst.init_jaxb_json_hash o
-        return inst
-      end
-    end
-  end
-
-end
-
-end
-
-end
-
-end
-
-end
-
-end
-
-end
-
-module Gov
-
-module Vha
-
-module Isaac
-
-module Rest
-
-module Api1
-
-module Data
-
 module Logic
 
   # (no documentation provided)
@@ -11480,109 +10231,24 @@ module Api1
 
 module Data
 
-module Sememe
-
-module DataTypes
+module Logic
 
   # (no documentation provided)
-  class RestDynamicSememeFloat < Gov::Vha::Isaac::Rest::Api1::Data::Sememe::RestDynamicSememeData 
+  class RestUntypedConnectorNode < Gov::Vha::Isaac::Rest::Api1::Data::Logic::RestLogicNode 
 
 
-    # the json hash for this RestDynamicSememeFloat
+    # the json hash for this RestUntypedConnectorNode
     def to_jaxb_json_hash
       _h = super
       return _h
     end
 
-    #initializes this RestDynamicSememeFloat with a json hash
+    #initializes this RestUntypedConnectorNode with a json hash
     def init_jaxb_json_hash(_o)
       super _o
     end
 
-    # constructs a RestDynamicSememeFloat from a (parsed) JSON hash
-    def self.from_json(o)
-      if o.nil?
-        return nil
-      else
-        inst = new
-        inst.init_jaxb_json_hash o
-        return inst
-      end
-    end
-  end
-
-end
-
-end
-
-end
-
-end
-
-end
-
-end
-
-end
-
-end
-
-module Gov
-
-module Vha
-
-module Isaac
-
-module Rest
-
-module Api1
-
-module Data
-
-module Enumerations
-
-  # (no documentation provided)
-  class RestExternalizableObjectType < Gov::Vha::Isaac::Rest::Api1::Data::Enumerations::Enumeration 
-
-    # (no documentation provided)
-    attr_accessor :all
-
-    # the json hash for this RestExternalizableObjectType
-    def to_jaxb_json_hash
-      _h = super
-      if !all.nil?
-        _ha = Array.new
-        all.each { | _item | _ha.push _item.to_jaxb_json_hash }
-        _h['all'] = _ha
-      end
-      return _h
-    end
-
-    #initializes this RestExternalizableObjectType with a json hash
-    def init_jaxb_json_hash(_o)
-      super _o
-        if !_o['all'].nil?
-          _oa = _o['all']
-            if(_oa.is_a? Hash)
-              @all = EnunciateHelpers::LAMB_CLASS_AWARE.call(_oa) if _oa['@class']
-              @all =  Gov::Vha::Isaac::Rest::Api1::Data::Enumerations::RestExternalizableObjectType.from_json(_oa) unless _oa['@class']
-            elsif (_oa.is_a? Array)
-              #an array(of hashes hopefully) or scalar
-              @all = Array.new
-              _oa.each { | _item | 
-                 if ((_item.nil? || _item['@class'].nil?)rescue true)
-                   @all.push Gov::Vha::Isaac::Rest::Api1::Data::Enumerations::RestExternalizableObjectType.from_json(_item)
-                 else
-                   @all.push EnunciateHelpers::LAMB_CLASS_AWARE.call(_item)
-                 end
-               }
-            else
-                @all = _oa
-            end
-          end
-    end
-
-    # constructs a RestExternalizableObjectType from a (parsed) JSON hash
+    # constructs a RestUntypedConnectorNode from a (parsed) JSON hash
     def self.from_json(o)
       if o.nil?
         return nil
@@ -11652,6 +10318,110 @@ module DataTypes
   end
 
 end
+
+end
+
+end
+
+end
+
+end
+
+end
+
+end
+
+end
+
+module Gov
+
+module Vha
+
+module Isaac
+
+module Rest
+
+module Api1
+
+module Data
+
+module Enumerations
+
+  # (no documentation provided)
+  class RestDynamicSememeDataType < Gov::Vha::Isaac::Rest::Api1::Data::Enumerations::Enumeration 
+
+    # The full value of the &quot;@class&quot; annotation that needs to be passed back in when constructing a RestDynamicSememeData like
+    # RestDynamicSememeDouble.
+    attr_accessor :classType
+    # (no documentation provided)
+    attr_accessor :all
+
+    # the json hash for this RestDynamicSememeDataType
+    def to_jaxb_json_hash
+      _h = super
+      _h['classType'] = classType.to_jaxb_json_hash unless classType.nil?
+      if !all.nil?
+        _ha = Array.new
+        all.each { | _item | _ha.push _item.to_jaxb_json_hash }
+        _h['all'] = _ha
+      end
+      return _h
+    end
+
+    #initializes this RestDynamicSememeDataType with a json hash
+    def init_jaxb_json_hash(_o)
+      super _o
+        if !_o['classType'].nil?
+          _oa = _o['classType']
+            if(_oa.is_a? Hash)
+              @classType = EnunciateHelpers::LAMB_CLASS_AWARE.call(_oa) if _oa['@class']
+              @classType =  String.from_json(_oa) unless _oa['@class']
+            elsif (_oa.is_a? Array)
+              #an array(of hashes hopefully) or scalar
+              @classType = Array.new
+              _oa.each { | _item | 
+                 if ((_item.nil? || _item['@class'].nil?)rescue true)
+                   @classType.push String.from_json(_item)
+                 else
+                   @classType.push EnunciateHelpers::LAMB_CLASS_AWARE.call(_item)
+                 end
+               }
+            else
+                @classType = _oa
+            end
+          end
+        if !_o['all'].nil?
+          _oa = _o['all']
+            if(_oa.is_a? Hash)
+              @all = EnunciateHelpers::LAMB_CLASS_AWARE.call(_oa) if _oa['@class']
+              @all =  Gov::Vha::Isaac::Rest::Api1::Data::Enumerations::RestDynamicSememeDataType.from_json(_oa) unless _oa['@class']
+            elsif (_oa.is_a? Array)
+              #an array(of hashes hopefully) or scalar
+              @all = Array.new
+              _oa.each { | _item | 
+                 if ((_item.nil? || _item['@class'].nil?)rescue true)
+                   @all.push Gov::Vha::Isaac::Rest::Api1::Data::Enumerations::RestDynamicSememeDataType.from_json(_item)
+                 else
+                   @all.push EnunciateHelpers::LAMB_CLASS_AWARE.call(_item)
+                 end
+               }
+            else
+                @all = _oa
+            end
+          end
+    end
+
+    # constructs a RestDynamicSememeDataType from a (parsed) JSON hash
+    def self.from_json(o)
+      if o.nil?
+        return nil
+      else
+        inst = new
+        inst.init_jaxb_json_hash o
+        return inst
+      end
+    end
+  end
 
 end
 
@@ -11760,50 +10530,26 @@ module Api1
 
 module Data
 
-module Enumerations
+module Sememe
+
+module DataTypes
 
   # (no documentation provided)
-  class RestUserRoleType < Gov::Vha::Isaac::Rest::Api1::Data::Enumerations::Enumeration 
+  class RestDynamicSememeInteger < Gov::Vha::Isaac::Rest::Api1::Data::Sememe::RestDynamicSememeData 
 
-    # (no documentation provided)
-    attr_accessor :all
 
-    # the json hash for this RestUserRoleType
+    # the json hash for this RestDynamicSememeInteger
     def to_jaxb_json_hash
       _h = super
-      if !all.nil?
-        _ha = Array.new
-        all.each { | _item | _ha.push _item.to_jaxb_json_hash }
-        _h['all'] = _ha
-      end
       return _h
     end
 
-    #initializes this RestUserRoleType with a json hash
+    #initializes this RestDynamicSememeInteger with a json hash
     def init_jaxb_json_hash(_o)
       super _o
-        if !_o['all'].nil?
-          _oa = _o['all']
-            if(_oa.is_a? Hash)
-              @all = EnunciateHelpers::LAMB_CLASS_AWARE.call(_oa) if _oa['@class']
-              @all =  Gov::Vha::Isaac::Rest::Api1::Data::Enumerations::RestUserRoleType.from_json(_oa) unless _oa['@class']
-            elsif (_oa.is_a? Array)
-              #an array(of hashes hopefully) or scalar
-              @all = Array.new
-              _oa.each { | _item | 
-                 if ((_item.nil? || _item['@class'].nil?)rescue true)
-                   @all.push Gov::Vha::Isaac::Rest::Api1::Data::Enumerations::RestUserRoleType.from_json(_item)
-                 else
-                   @all.push EnunciateHelpers::LAMB_CLASS_AWARE.call(_item)
-                 end
-               }
-            else
-                @all = _oa
-            end
-          end
     end
 
-    # constructs a RestUserRoleType from a (parsed) JSON hash
+    # constructs a RestDynamicSememeInteger from a (parsed) JSON hash
     def self.from_json(o)
       if o.nil?
         return nil
@@ -11814,6 +10560,8 @@ module Enumerations
       end
     end
   end
+
+end
 
 end
 
@@ -11841,27 +10589,87 @@ module Api1
 
 module Data
 
-module Comment
+module Mapping
 
   # (no documentation provided)
-  class RestCommentVersion < Gov::Vha::Isaac::Rest::Api1::Data::Comment::RestCommentVersionBaseCreate 
+  class RestMappingItemVersion < Gov::Vha::Isaac::Rest::Api1::Data::Mapping::RestMappingItemVersionBaseCreate 
 
+    # The data that was not expanded as part of this call (but can be)
+    attr_accessor :expandables
+    # The sememe sequence of the sememe that represents this mapping item
+    attr_accessor :sememeSequence
     # The identifier data for the object
     attr_accessor :identifiers
-    # The StampedVersion details for this comment
-    attr_accessor :commentStamp
+    # The StampedVersion details for this mapping entry
+    attr_accessor :mappingItemStamp
+    # An (optional) description of the #sourceConcept - only populated when requested via the expandable &#39;referencedDetails&#39;
+    attr_accessor :sourceDescription
+    # An (optional) description of the #targetConcept - only populated when requested via the expandable &#39;referencedDetails&#39;
+    attr_accessor :targetDescription
+    # An (optional) description of the #qualifierConcept - only populated when requested via the expandable &#39;referencedDetails&#39;
+    attr_accessor :qualifierDescription
+    # The (optionally) populated comments attached to this map set.  This field is only populated when requested via an &#39;expand&#39; parameter.
+    attr_accessor :comments
 
-    # the json hash for this RestCommentVersion
+    # the json hash for this RestMappingItemVersion
     def to_jaxb_json_hash
       _h = super
+      _h['expandables'] = expandables.to_jaxb_json_hash unless expandables.nil?
+      _h['sememeSequence'] = sememeSequence.to_jaxb_json_hash unless sememeSequence.nil?
       _h['identifiers'] = identifiers.to_jaxb_json_hash unless identifiers.nil?
-      _h['commentStamp'] = commentStamp.to_jaxb_json_hash unless commentStamp.nil?
+      _h['mappingItemStamp'] = mappingItemStamp.to_jaxb_json_hash unless mappingItemStamp.nil?
+      _h['sourceDescription'] = sourceDescription.to_jaxb_json_hash unless sourceDescription.nil?
+      _h['targetDescription'] = targetDescription.to_jaxb_json_hash unless targetDescription.nil?
+      _h['qualifierDescription'] = qualifierDescription.to_jaxb_json_hash unless qualifierDescription.nil?
+      if !comments.nil?
+        _ha = Array.new
+        comments.each { | _item | _ha.push _item.to_jaxb_json_hash }
+        _h['comments'] = _ha
+      end
       return _h
     end
 
-    #initializes this RestCommentVersion with a json hash
+    #initializes this RestMappingItemVersion with a json hash
     def init_jaxb_json_hash(_o)
       super _o
+        if !_o['expandables'].nil?
+          _oa = _o['expandables']
+            if(_oa.is_a? Hash)
+              @expandables = EnunciateHelpers::LAMB_CLASS_AWARE.call(_oa) if _oa['@class']
+              @expandables =  Gov::Vha::Isaac::Rest::Api::Data::Expandables.from_json(_oa) unless _oa['@class']
+            elsif (_oa.is_a? Array)
+              #an array(of hashes hopefully) or scalar
+              @expandables = Array.new
+              _oa.each { | _item | 
+                 if ((_item.nil? || _item['@class'].nil?)rescue true)
+                   @expandables.push Gov::Vha::Isaac::Rest::Api::Data::Expandables.from_json(_item)
+                 else
+                   @expandables.push EnunciateHelpers::LAMB_CLASS_AWARE.call(_item)
+                 end
+               }
+            else
+                @expandables = _oa
+            end
+          end
+        if !_o['sememeSequence'].nil?
+          _oa = _o['sememeSequence']
+            if(_oa.is_a? Hash)
+              @sememeSequence = EnunciateHelpers::LAMB_CLASS_AWARE.call(_oa) if _oa['@class']
+              @sememeSequence =  Fixnum.from_json(_oa) unless _oa['@class']
+            elsif (_oa.is_a? Array)
+              #an array(of hashes hopefully) or scalar
+              @sememeSequence = Array.new
+              _oa.each { | _item | 
+                 if ((_item.nil? || _item['@class'].nil?)rescue true)
+                   @sememeSequence.push Fixnum.from_json(_item)
+                 else
+                   @sememeSequence.push EnunciateHelpers::LAMB_CLASS_AWARE.call(_item)
+                 end
+               }
+            else
+                @sememeSequence = _oa
+            end
+          end
         if !_o['identifiers'].nil?
           _oa = _o['identifiers']
             if(_oa.is_a? Hash)
@@ -11881,28 +10689,104 @@ module Comment
                 @identifiers = _oa
             end
           end
-        if !_o['commentStamp'].nil?
-          _oa = _o['commentStamp']
+        if !_o['mappingItemStamp'].nil?
+          _oa = _o['mappingItemStamp']
             if(_oa.is_a? Hash)
-              @commentStamp = EnunciateHelpers::LAMB_CLASS_AWARE.call(_oa) if _oa['@class']
-              @commentStamp =  Gov::Vha::Isaac::Rest::Api1::Data::RestStampedVersion.from_json(_oa) unless _oa['@class']
+              @mappingItemStamp = EnunciateHelpers::LAMB_CLASS_AWARE.call(_oa) if _oa['@class']
+              @mappingItemStamp =  Gov::Vha::Isaac::Rest::Api1::Data::RestStampedVersion.from_json(_oa) unless _oa['@class']
             elsif (_oa.is_a? Array)
               #an array(of hashes hopefully) or scalar
-              @commentStamp = Array.new
+              @mappingItemStamp = Array.new
               _oa.each { | _item | 
                  if ((_item.nil? || _item['@class'].nil?)rescue true)
-                   @commentStamp.push Gov::Vha::Isaac::Rest::Api1::Data::RestStampedVersion.from_json(_item)
+                   @mappingItemStamp.push Gov::Vha::Isaac::Rest::Api1::Data::RestStampedVersion.from_json(_item)
                  else
-                   @commentStamp.push EnunciateHelpers::LAMB_CLASS_AWARE.call(_item)
+                   @mappingItemStamp.push EnunciateHelpers::LAMB_CLASS_AWARE.call(_item)
                  end
                }
             else
-                @commentStamp = _oa
+                @mappingItemStamp = _oa
+            end
+          end
+        if !_o['sourceDescription'].nil?
+          _oa = _o['sourceDescription']
+            if(_oa.is_a? Hash)
+              @sourceDescription = EnunciateHelpers::LAMB_CLASS_AWARE.call(_oa) if _oa['@class']
+              @sourceDescription =  String.from_json(_oa) unless _oa['@class']
+            elsif (_oa.is_a? Array)
+              #an array(of hashes hopefully) or scalar
+              @sourceDescription = Array.new
+              _oa.each { | _item | 
+                 if ((_item.nil? || _item['@class'].nil?)rescue true)
+                   @sourceDescription.push String.from_json(_item)
+                 else
+                   @sourceDescription.push EnunciateHelpers::LAMB_CLASS_AWARE.call(_item)
+                 end
+               }
+            else
+                @sourceDescription = _oa
+            end
+          end
+        if !_o['targetDescription'].nil?
+          _oa = _o['targetDescription']
+            if(_oa.is_a? Hash)
+              @targetDescription = EnunciateHelpers::LAMB_CLASS_AWARE.call(_oa) if _oa['@class']
+              @targetDescription =  String.from_json(_oa) unless _oa['@class']
+            elsif (_oa.is_a? Array)
+              #an array(of hashes hopefully) or scalar
+              @targetDescription = Array.new
+              _oa.each { | _item | 
+                 if ((_item.nil? || _item['@class'].nil?)rescue true)
+                   @targetDescription.push String.from_json(_item)
+                 else
+                   @targetDescription.push EnunciateHelpers::LAMB_CLASS_AWARE.call(_item)
+                 end
+               }
+            else
+                @targetDescription = _oa
+            end
+          end
+        if !_o['qualifierDescription'].nil?
+          _oa = _o['qualifierDescription']
+            if(_oa.is_a? Hash)
+              @qualifierDescription = EnunciateHelpers::LAMB_CLASS_AWARE.call(_oa) if _oa['@class']
+              @qualifierDescription =  String.from_json(_oa) unless _oa['@class']
+            elsif (_oa.is_a? Array)
+              #an array(of hashes hopefully) or scalar
+              @qualifierDescription = Array.new
+              _oa.each { | _item | 
+                 if ((_item.nil? || _item['@class'].nil?)rescue true)
+                   @qualifierDescription.push String.from_json(_item)
+                 else
+                   @qualifierDescription.push EnunciateHelpers::LAMB_CLASS_AWARE.call(_item)
+                 end
+               }
+            else
+                @qualifierDescription = _oa
+            end
+          end
+        if !_o['comments'].nil?
+          _oa = _o['comments']
+            if(_oa.is_a? Hash)
+              @comments = EnunciateHelpers::LAMB_CLASS_AWARE.call(_oa) if _oa['@class']
+              @comments =  Gov::Vha::Isaac::Rest::Api1::Data::Comment::RestCommentVersion.from_json(_oa) unless _oa['@class']
+            elsif (_oa.is_a? Array)
+              #an array(of hashes hopefully) or scalar
+              @comments = Array.new
+              _oa.each { | _item | 
+                 if ((_item.nil? || _item['@class'].nil?)rescue true)
+                   @comments.push Gov::Vha::Isaac::Rest::Api1::Data::Comment::RestCommentVersion.from_json(_item)
+                 else
+                   @comments.push EnunciateHelpers::LAMB_CLASS_AWARE.call(_item)
+                 end
+               }
+            else
+                @comments = _oa
             end
           end
     end
 
-    # constructs a RestCommentVersion from a (parsed) JSON hash
+    # constructs a RestMappingItemVersion from a (parsed) JSON hash
     def self.from_json(o)
       if o.nil?
         return nil
@@ -11913,124 +10797,6 @@ module Comment
       end
     end
   end
-
-end
-
-end
-
-end
-
-end
-
-end
-
-end
-
-end
-
-module Gov
-
-module Vha
-
-module Isaac
-
-module Rest
-
-module Api1
-
-module Data
-
-module Sememe
-
-module DataTypes
-
-  # (no documentation provided)
-  class RestDynamicSememeUUID < Gov::Vha::Isaac::Rest::Api1::Data::Sememe::RestDynamicSememeTypedData 
-
-
-    # the json hash for this RestDynamicSememeUUID
-    def to_jaxb_json_hash
-      _h = super
-      return _h
-    end
-
-    #initializes this RestDynamicSememeUUID with a json hash
-    def init_jaxb_json_hash(_o)
-      super _o
-    end
-
-    # constructs a RestDynamicSememeUUID from a (parsed) JSON hash
-    def self.from_json(o)
-      if o.nil?
-        return nil
-      else
-        inst = new
-        inst.init_jaxb_json_hash o
-        return inst
-      end
-    end
-  end
-
-end
-
-end
-
-end
-
-end
-
-end
-
-end
-
-end
-
-end
-
-module Gov
-
-module Vha
-
-module Isaac
-
-module Rest
-
-module Api1
-
-module Data
-
-module Sememe
-
-module DataTypes
-
-  # (no documentation provided)
-  class RestDynamicSememeSequence < Gov::Vha::Isaac::Rest::Api1::Data::Sememe::RestDynamicSememeTypedData 
-
-
-    # the json hash for this RestDynamicSememeSequence
-    def to_jaxb_json_hash
-      _h = super
-      return _h
-    end
-
-    #initializes this RestDynamicSememeSequence with a json hash
-    def init_jaxb_json_hash(_o)
-      super _o
-    end
-
-    # constructs a RestDynamicSememeSequence from a (parsed) JSON hash
-    def self.from_json(o)
-      if o.nil?
-        return nil
-      else
-        inst = new
-        inst.init_jaxb_json_hash o
-        return inst
-      end
-    end
-  end
-
-end
 
 end
 
@@ -12145,24 +10911,26 @@ module Api1
 
 module Data
 
-module Logic
+module Sememe
+
+module DataTypes
 
   # (no documentation provided)
-  class RestRoleNode < Gov::Vha::Isaac::Rest::Api1::Data::Logic::RestTypedConnectorNode 
+  class RestDynamicSememeSequence < Gov::Vha::Isaac::Rest::Api1::Data::Sememe::RestDynamicSememeTypedData 
 
 
-    # the json hash for this RestRoleNode
+    # the json hash for this RestDynamicSememeSequence
     def to_jaxb_json_hash
       _h = super
       return _h
     end
 
-    #initializes this RestRoleNode with a json hash
+    #initializes this RestDynamicSememeSequence with a json hash
     def init_jaxb_json_hash(_o)
       super _o
     end
 
-    # constructs a RestRoleNode from a (parsed) JSON hash
+    # constructs a RestDynamicSememeSequence from a (parsed) JSON hash
     def self.from_json(o)
       if o.nil?
         return nil
@@ -12173,6 +10941,8 @@ module Logic
       end
     end
   end
+
+end
 
 end
 
@@ -12232,6 +11002,320 @@ module DataTypes
   end
 
 end
+
+end
+
+end
+
+end
+
+end
+
+end
+
+end
+
+end
+
+module Gov
+
+module Vha
+
+module Isaac
+
+module Rest
+
+module Api1
+
+module Data
+
+module Mapping
+
+  # (no documentation provided)
+  class RestMappingSetExtensionValue < Gov::Vha::Isaac::Rest::Api1::Data::Mapping::RestMappingSetExtensionValueBaseCreate 
+
+    # The selected description of the extensionNameConcept that describes the purpose of this extended field on a map set definition.
+    # This is provided as a convenience on read.
+    attr_accessor :extensionNameConceptDescription
+    # The UUID(s) of the concept that describes the purpose of this extended field on a map set definition.  The descriptions from this concept
+    # will be used as the label of the extension.
+    attr_accessor :extensionNameConceptIdentifiers
+
+    # the json hash for this RestMappingSetExtensionValue
+    def to_jaxb_json_hash
+      _h = super
+      _h['extensionNameConceptDescription'] = extensionNameConceptDescription.to_jaxb_json_hash unless extensionNameConceptDescription.nil?
+      _h['extensionNameConceptIdentifiers'] = extensionNameConceptIdentifiers.to_jaxb_json_hash unless extensionNameConceptIdentifiers.nil?
+      return _h
+    end
+
+    #initializes this RestMappingSetExtensionValue with a json hash
+    def init_jaxb_json_hash(_o)
+      super _o
+        if !_o['extensionNameConceptDescription'].nil?
+          _oa = _o['extensionNameConceptDescription']
+            if(_oa.is_a? Hash)
+              @extensionNameConceptDescription = EnunciateHelpers::LAMB_CLASS_AWARE.call(_oa) if _oa['@class']
+              @extensionNameConceptDescription =  String.from_json(_oa) unless _oa['@class']
+            elsif (_oa.is_a? Array)
+              #an array(of hashes hopefully) or scalar
+              @extensionNameConceptDescription = Array.new
+              _oa.each { | _item | 
+                 if ((_item.nil? || _item['@class'].nil?)rescue true)
+                   @extensionNameConceptDescription.push String.from_json(_item)
+                 else
+                   @extensionNameConceptDescription.push EnunciateHelpers::LAMB_CLASS_AWARE.call(_item)
+                 end
+               }
+            else
+                @extensionNameConceptDescription = _oa
+            end
+          end
+        if !_o['extensionNameConceptIdentifiers'].nil?
+          _oa = _o['extensionNameConceptIdentifiers']
+            if(_oa.is_a? Hash)
+              @extensionNameConceptIdentifiers = EnunciateHelpers::LAMB_CLASS_AWARE.call(_oa) if _oa['@class']
+              @extensionNameConceptIdentifiers =  Gov::Vha::Isaac::Rest::Api1::Data::RestIdentifiedObject.from_json(_oa) unless _oa['@class']
+            elsif (_oa.is_a? Array)
+              #an array(of hashes hopefully) or scalar
+              @extensionNameConceptIdentifiers = Array.new
+              _oa.each { | _item | 
+                 if ((_item.nil? || _item['@class'].nil?)rescue true)
+                   @extensionNameConceptIdentifiers.push Gov::Vha::Isaac::Rest::Api1::Data::RestIdentifiedObject.from_json(_item)
+                 else
+                   @extensionNameConceptIdentifiers.push EnunciateHelpers::LAMB_CLASS_AWARE.call(_item)
+                 end
+               }
+            else
+                @extensionNameConceptIdentifiers = _oa
+            end
+          end
+    end
+
+    # constructs a RestMappingSetExtensionValue from a (parsed) JSON hash
+    def self.from_json(o)
+      if o.nil?
+        return nil
+      else
+        inst = new
+        inst.init_jaxb_json_hash o
+        return inst
+      end
+    end
+  end
+
+end
+
+end
+
+end
+
+end
+
+end
+
+end
+
+end
+
+module Gov
+
+module Vha
+
+module Isaac
+
+module Rest
+
+module Api1
+
+module Data
+
+module Sememe
+
+module DataTypes
+
+  # (no documentation provided)
+  class RestDynamicSememeUUID < Gov::Vha::Isaac::Rest::Api1::Data::Sememe::RestDynamicSememeTypedData 
+
+
+    # the json hash for this RestDynamicSememeUUID
+    def to_jaxb_json_hash
+      _h = super
+      return _h
+    end
+
+    #initializes this RestDynamicSememeUUID with a json hash
+    def init_jaxb_json_hash(_o)
+      super _o
+    end
+
+    # constructs a RestDynamicSememeUUID from a (parsed) JSON hash
+    def self.from_json(o)
+      if o.nil?
+        return nil
+      else
+        inst = new
+        inst.init_jaxb_json_hash o
+        return inst
+      end
+    end
+  end
+
+end
+
+end
+
+end
+
+end
+
+end
+
+end
+
+end
+
+end
+
+module Gov
+
+module Vha
+
+module Isaac
+
+module Rest
+
+module Api1
+
+module Data
+
+module Logic
+
+  # (no documentation provided)
+  class RestRoleNode < Gov::Vha::Isaac::Rest::Api1::Data::Logic::RestTypedConnectorNode 
+
+
+    # the json hash for this RestRoleNode
+    def to_jaxb_json_hash
+      _h = super
+      return _h
+    end
+
+    #initializes this RestRoleNode with a json hash
+    def init_jaxb_json_hash(_o)
+      super _o
+    end
+
+    # constructs a RestRoleNode from a (parsed) JSON hash
+    def self.from_json(o)
+      if o.nil?
+        return nil
+      else
+        inst = new
+        inst.init_jaxb_json_hash o
+        return inst
+      end
+    end
+  end
+
+end
+
+end
+
+end
+
+end
+
+end
+
+end
+
+end
+
+module Gov
+
+module Vha
+
+module Isaac
+
+module Rest
+
+module Api1
+
+module Data
+
+module Comment
+
+  # (no documentation provided)
+  class RestCommentVersion < Gov::Vha::Isaac::Rest::Api1::Data::Comment::RestCommentVersionBaseCreate 
+
+    # The identifier data for the object
+    attr_accessor :identifiers
+    # The StampedVersion details for this comment
+    attr_accessor :commentStamp
+
+    # the json hash for this RestCommentVersion
+    def to_jaxb_json_hash
+      _h = super
+      _h['identifiers'] = identifiers.to_jaxb_json_hash unless identifiers.nil?
+      _h['commentStamp'] = commentStamp.to_jaxb_json_hash unless commentStamp.nil?
+      return _h
+    end
+
+    #initializes this RestCommentVersion with a json hash
+    def init_jaxb_json_hash(_o)
+      super _o
+        if !_o['identifiers'].nil?
+          _oa = _o['identifiers']
+            if(_oa.is_a? Hash)
+              @identifiers = EnunciateHelpers::LAMB_CLASS_AWARE.call(_oa) if _oa['@class']
+              @identifiers =  Gov::Vha::Isaac::Rest::Api1::Data::RestIdentifiedObject.from_json(_oa) unless _oa['@class']
+            elsif (_oa.is_a? Array)
+              #an array(of hashes hopefully) or scalar
+              @identifiers = Array.new
+              _oa.each { | _item | 
+                 if ((_item.nil? || _item['@class'].nil?)rescue true)
+                   @identifiers.push Gov::Vha::Isaac::Rest::Api1::Data::RestIdentifiedObject.from_json(_item)
+                 else
+                   @identifiers.push EnunciateHelpers::LAMB_CLASS_AWARE.call(_item)
+                 end
+               }
+            else
+                @identifiers = _oa
+            end
+          end
+        if !_o['commentStamp'].nil?
+          _oa = _o['commentStamp']
+            if(_oa.is_a? Hash)
+              @commentStamp = EnunciateHelpers::LAMB_CLASS_AWARE.call(_oa) if _oa['@class']
+              @commentStamp =  Gov::Vha::Isaac::Rest::Api1::Data::RestStampedVersion.from_json(_oa) unless _oa['@class']
+            elsif (_oa.is_a? Array)
+              #an array(of hashes hopefully) or scalar
+              @commentStamp = Array.new
+              _oa.each { | _item | 
+                 if ((_item.nil? || _item['@class'].nil?)rescue true)
+                   @commentStamp.push Gov::Vha::Isaac::Rest::Api1::Data::RestStampedVersion.from_json(_item)
+                 else
+                   @commentStamp.push EnunciateHelpers::LAMB_CLASS_AWARE.call(_item)
+                 end
+               }
+            else
+                @commentStamp = _oa
+            end
+          end
+    end
+
+    # constructs a RestCommentVersion from a (parsed) JSON hash
+    def self.from_json(o)
+      if o.nil?
+        return nil
+      else
+        inst = new
+        inst.init_jaxb_json_hash o
+        return inst
+      end
+    end
+  end
 
 end
 
@@ -12462,342 +11546,6 @@ module Association
     end
 
     # constructs a RestAssociationItemVersion from a (parsed) JSON hash
-    def self.from_json(o)
-      if o.nil?
-        return nil
-      else
-        inst = new
-        inst.init_jaxb_json_hash o
-        return inst
-      end
-    end
-  end
-
-end
-
-end
-
-end
-
-end
-
-end
-
-end
-
-end
-
-module Gov
-
-module Vha
-
-module Isaac
-
-module Rest
-
-module Api1
-
-module Data
-
-module Mapping
-
-  # (no documentation provided)
-  class RestMappingSetExtensionValue < Gov::Vha::Isaac::Rest::Api1::Data::Mapping::RestMappingSetExtensionValueBaseCreate 
-
-    # The selected description of the extensionNameConcept that describes the purpose of this extended field on a map set definition.
-    # This is provided as a convenience on read.
-    attr_accessor :extensionNameConceptDescription
-    # The UUID(s) of the concept that describes the purpose of this extended field on a map set definition.  The descriptions from this concept
-    # will be used as the label of the extension.
-    attr_accessor :extensionNameConceptIdentifiers
-
-    # the json hash for this RestMappingSetExtensionValue
-    def to_jaxb_json_hash
-      _h = super
-      _h['extensionNameConceptDescription'] = extensionNameConceptDescription.to_jaxb_json_hash unless extensionNameConceptDescription.nil?
-      _h['extensionNameConceptIdentifiers'] = extensionNameConceptIdentifiers.to_jaxb_json_hash unless extensionNameConceptIdentifiers.nil?
-      return _h
-    end
-
-    #initializes this RestMappingSetExtensionValue with a json hash
-    def init_jaxb_json_hash(_o)
-      super _o
-        if !_o['extensionNameConceptDescription'].nil?
-          _oa = _o['extensionNameConceptDescription']
-            if(_oa.is_a? Hash)
-              @extensionNameConceptDescription = EnunciateHelpers::LAMB_CLASS_AWARE.call(_oa) if _oa['@class']
-              @extensionNameConceptDescription =  String.from_json(_oa) unless _oa['@class']
-            elsif (_oa.is_a? Array)
-              #an array(of hashes hopefully) or scalar
-              @extensionNameConceptDescription = Array.new
-              _oa.each { | _item | 
-                 if ((_item.nil? || _item['@class'].nil?)rescue true)
-                   @extensionNameConceptDescription.push String.from_json(_item)
-                 else
-                   @extensionNameConceptDescription.push EnunciateHelpers::LAMB_CLASS_AWARE.call(_item)
-                 end
-               }
-            else
-                @extensionNameConceptDescription = _oa
-            end
-          end
-        if !_o['extensionNameConceptIdentifiers'].nil?
-          _oa = _o['extensionNameConceptIdentifiers']
-            if(_oa.is_a? Hash)
-              @extensionNameConceptIdentifiers = EnunciateHelpers::LAMB_CLASS_AWARE.call(_oa) if _oa['@class']
-              @extensionNameConceptIdentifiers =  Gov::Vha::Isaac::Rest::Api1::Data::RestIdentifiedObject.from_json(_oa) unless _oa['@class']
-            elsif (_oa.is_a? Array)
-              #an array(of hashes hopefully) or scalar
-              @extensionNameConceptIdentifiers = Array.new
-              _oa.each { | _item | 
-                 if ((_item.nil? || _item['@class'].nil?)rescue true)
-                   @extensionNameConceptIdentifiers.push Gov::Vha::Isaac::Rest::Api1::Data::RestIdentifiedObject.from_json(_item)
-                 else
-                   @extensionNameConceptIdentifiers.push EnunciateHelpers::LAMB_CLASS_AWARE.call(_item)
-                 end
-               }
-            else
-                @extensionNameConceptIdentifiers = _oa
-            end
-          end
-    end
-
-    # constructs a RestMappingSetExtensionValue from a (parsed) JSON hash
-    def self.from_json(o)
-      if o.nil?
-        return nil
-      else
-        inst = new
-        inst.init_jaxb_json_hash o
-        return inst
-      end
-    end
-  end
-
-end
-
-end
-
-end
-
-end
-
-end
-
-end
-
-end
-
-module Gov
-
-module Vha
-
-module Isaac
-
-module Rest
-
-module Api1
-
-module Data
-
-module Mapping
-
-  # (no documentation provided)
-  class RestMappingItemVersion < Gov::Vha::Isaac::Rest::Api1::Data::Mapping::RestMappingItemVersionBaseCreate 
-
-    # The data that was not expanded as part of this call (but can be)
-    attr_accessor :expandables
-    # The sememe sequence of the sememe that represents this mapping item
-    attr_accessor :sememeSequence
-    # The identifier data for the object
-    attr_accessor :identifiers
-    # The StampedVersion details for this mapping entry
-    attr_accessor :mappingItemStamp
-    # An (optional) description of the #sourceConcept - only populated when requested via the expandable &#39;referencedDetails&#39;
-    attr_accessor :sourceDescription
-    # An (optional) description of the #targetConcept - only populated when requested via the expandable &#39;referencedDetails&#39;
-    attr_accessor :targetDescription
-    # An (optional) description of the #qualifierConcept - only populated when requested via the expandable &#39;referencedDetails&#39;
-    attr_accessor :qualifierDescription
-    # The (optionally) populated comments attached to this map set.  This field is only populated when requested via an &#39;expand&#39; parameter.
-    attr_accessor :comments
-
-    # the json hash for this RestMappingItemVersion
-    def to_jaxb_json_hash
-      _h = super
-      _h['expandables'] = expandables.to_jaxb_json_hash unless expandables.nil?
-      _h['sememeSequence'] = sememeSequence.to_jaxb_json_hash unless sememeSequence.nil?
-      _h['identifiers'] = identifiers.to_jaxb_json_hash unless identifiers.nil?
-      _h['mappingItemStamp'] = mappingItemStamp.to_jaxb_json_hash unless mappingItemStamp.nil?
-      _h['sourceDescription'] = sourceDescription.to_jaxb_json_hash unless sourceDescription.nil?
-      _h['targetDescription'] = targetDescription.to_jaxb_json_hash unless targetDescription.nil?
-      _h['qualifierDescription'] = qualifierDescription.to_jaxb_json_hash unless qualifierDescription.nil?
-      if !comments.nil?
-        _ha = Array.new
-        comments.each { | _item | _ha.push _item.to_jaxb_json_hash }
-        _h['comments'] = _ha
-      end
-      return _h
-    end
-
-    #initializes this RestMappingItemVersion with a json hash
-    def init_jaxb_json_hash(_o)
-      super _o
-        if !_o['expandables'].nil?
-          _oa = _o['expandables']
-            if(_oa.is_a? Hash)
-              @expandables = EnunciateHelpers::LAMB_CLASS_AWARE.call(_oa) if _oa['@class']
-              @expandables =  Gov::Vha::Isaac::Rest::Api::Data::Expandables.from_json(_oa) unless _oa['@class']
-            elsif (_oa.is_a? Array)
-              #an array(of hashes hopefully) or scalar
-              @expandables = Array.new
-              _oa.each { | _item | 
-                 if ((_item.nil? || _item['@class'].nil?)rescue true)
-                   @expandables.push Gov::Vha::Isaac::Rest::Api::Data::Expandables.from_json(_item)
-                 else
-                   @expandables.push EnunciateHelpers::LAMB_CLASS_AWARE.call(_item)
-                 end
-               }
-            else
-                @expandables = _oa
-            end
-          end
-        if !_o['sememeSequence'].nil?
-          _oa = _o['sememeSequence']
-            if(_oa.is_a? Hash)
-              @sememeSequence = EnunciateHelpers::LAMB_CLASS_AWARE.call(_oa) if _oa['@class']
-              @sememeSequence =  Fixnum.from_json(_oa) unless _oa['@class']
-            elsif (_oa.is_a? Array)
-              #an array(of hashes hopefully) or scalar
-              @sememeSequence = Array.new
-              _oa.each { | _item | 
-                 if ((_item.nil? || _item['@class'].nil?)rescue true)
-                   @sememeSequence.push Fixnum.from_json(_item)
-                 else
-                   @sememeSequence.push EnunciateHelpers::LAMB_CLASS_AWARE.call(_item)
-                 end
-               }
-            else
-                @sememeSequence = _oa
-            end
-          end
-        if !_o['identifiers'].nil?
-          _oa = _o['identifiers']
-            if(_oa.is_a? Hash)
-              @identifiers = EnunciateHelpers::LAMB_CLASS_AWARE.call(_oa) if _oa['@class']
-              @identifiers =  Gov::Vha::Isaac::Rest::Api1::Data::RestIdentifiedObject.from_json(_oa) unless _oa['@class']
-            elsif (_oa.is_a? Array)
-              #an array(of hashes hopefully) or scalar
-              @identifiers = Array.new
-              _oa.each { | _item | 
-                 if ((_item.nil? || _item['@class'].nil?)rescue true)
-                   @identifiers.push Gov::Vha::Isaac::Rest::Api1::Data::RestIdentifiedObject.from_json(_item)
-                 else
-                   @identifiers.push EnunciateHelpers::LAMB_CLASS_AWARE.call(_item)
-                 end
-               }
-            else
-                @identifiers = _oa
-            end
-          end
-        if !_o['mappingItemStamp'].nil?
-          _oa = _o['mappingItemStamp']
-            if(_oa.is_a? Hash)
-              @mappingItemStamp = EnunciateHelpers::LAMB_CLASS_AWARE.call(_oa) if _oa['@class']
-              @mappingItemStamp =  Gov::Vha::Isaac::Rest::Api1::Data::RestStampedVersion.from_json(_oa) unless _oa['@class']
-            elsif (_oa.is_a? Array)
-              #an array(of hashes hopefully) or scalar
-              @mappingItemStamp = Array.new
-              _oa.each { | _item | 
-                 if ((_item.nil? || _item['@class'].nil?)rescue true)
-                   @mappingItemStamp.push Gov::Vha::Isaac::Rest::Api1::Data::RestStampedVersion.from_json(_item)
-                 else
-                   @mappingItemStamp.push EnunciateHelpers::LAMB_CLASS_AWARE.call(_item)
-                 end
-               }
-            else
-                @mappingItemStamp = _oa
-            end
-          end
-        if !_o['sourceDescription'].nil?
-          _oa = _o['sourceDescription']
-            if(_oa.is_a? Hash)
-              @sourceDescription = EnunciateHelpers::LAMB_CLASS_AWARE.call(_oa) if _oa['@class']
-              @sourceDescription =  String.from_json(_oa) unless _oa['@class']
-            elsif (_oa.is_a? Array)
-              #an array(of hashes hopefully) or scalar
-              @sourceDescription = Array.new
-              _oa.each { | _item | 
-                 if ((_item.nil? || _item['@class'].nil?)rescue true)
-                   @sourceDescription.push String.from_json(_item)
-                 else
-                   @sourceDescription.push EnunciateHelpers::LAMB_CLASS_AWARE.call(_item)
-                 end
-               }
-            else
-                @sourceDescription = _oa
-            end
-          end
-        if !_o['targetDescription'].nil?
-          _oa = _o['targetDescription']
-            if(_oa.is_a? Hash)
-              @targetDescription = EnunciateHelpers::LAMB_CLASS_AWARE.call(_oa) if _oa['@class']
-              @targetDescription =  String.from_json(_oa) unless _oa['@class']
-            elsif (_oa.is_a? Array)
-              #an array(of hashes hopefully) or scalar
-              @targetDescription = Array.new
-              _oa.each { | _item | 
-                 if ((_item.nil? || _item['@class'].nil?)rescue true)
-                   @targetDescription.push String.from_json(_item)
-                 else
-                   @targetDescription.push EnunciateHelpers::LAMB_CLASS_AWARE.call(_item)
-                 end
-               }
-            else
-                @targetDescription = _oa
-            end
-          end
-        if !_o['qualifierDescription'].nil?
-          _oa = _o['qualifierDescription']
-            if(_oa.is_a? Hash)
-              @qualifierDescription = EnunciateHelpers::LAMB_CLASS_AWARE.call(_oa) if _oa['@class']
-              @qualifierDescription =  String.from_json(_oa) unless _oa['@class']
-            elsif (_oa.is_a? Array)
-              #an array(of hashes hopefully) or scalar
-              @qualifierDescription = Array.new
-              _oa.each { | _item | 
-                 if ((_item.nil? || _item['@class'].nil?)rescue true)
-                   @qualifierDescription.push String.from_json(_item)
-                 else
-                   @qualifierDescription.push EnunciateHelpers::LAMB_CLASS_AWARE.call(_item)
-                 end
-               }
-            else
-                @qualifierDescription = _oa
-            end
-          end
-        if !_o['comments'].nil?
-          _oa = _o['comments']
-            if(_oa.is_a? Hash)
-              @comments = EnunciateHelpers::LAMB_CLASS_AWARE.call(_oa) if _oa['@class']
-              @comments =  Gov::Vha::Isaac::Rest::Api1::Data::Comment::RestCommentVersion.from_json(_oa) unless _oa['@class']
-            elsif (_oa.is_a? Array)
-              #an array(of hashes hopefully) or scalar
-              @comments = Array.new
-              _oa.each { | _item | 
-                 if ((_item.nil? || _item['@class'].nil?)rescue true)
-                   @comments.push Gov::Vha::Isaac::Rest::Api1::Data::Comment::RestCommentVersion.from_json(_item)
-                 else
-                   @comments.push EnunciateHelpers::LAMB_CLASS_AWARE.call(_item)
-                 end
-               }
-            else
-                @comments = _oa
-            end
-          end
-    end
-
-    # constructs a RestMappingItemVersion from a (parsed) JSON hash
     def self.from_json(o)
       if o.nil?
         return nil
