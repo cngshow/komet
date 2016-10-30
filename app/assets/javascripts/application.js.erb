@@ -97,7 +97,7 @@ $(document).ajaxSend(function (event, jqXHR, ajaxOptions) {
       if (Common.arr_diff(gon.roles, results).length != 0) {
         var time_delta = (new Date() - last_notification_time)/1000;
         if ( time_delta > time_between_role_notifications) {
-          flash_notify({message: 'Your roles have changed.<br> Please refresh your browser as soon as possible.'}, {
+          flash_notify({message: '<%=BootstrapNotifier::ROLE_CHANGE%>'}, {
             type: 'danger',
             delay: 0
           });
