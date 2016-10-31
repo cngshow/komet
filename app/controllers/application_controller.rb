@@ -179,13 +179,16 @@ class ApplicationController < ActionController::Base
   end
 
   def pundit_user
+    r_val = nil
     if (user_session_defined? && user_session(UserSession::LOGIN))
-      {user: user_session(UserSession::LOGIN),
+      r_val = {user: user_session(UserSession::LOGIN),
        roles: user_session(UserSession::ROLES),
        token: user_session(UserSession::TOKEN)}
     else
-      {user: nil, roles: [], token: 'Not Authorized'}
+      r_val = {user: nil, roles: [], token: 'Not Authorized'}
     end
+    r_val[:controller_instance] = self
+    r_val
   end
 
   ##
@@ -198,6 +201,12 @@ class ApplicationController < ActionController::Base
   def clear_rest_caches(cache_type: CACHE_TYPE_TAXONOMY)
     cache_type.each do |module_class|
       CommonRest.clear_cache(rest_module: module_class)
+    end
+  end
+
+  def flash_alert_lambda
+    -> do
+      flash_alert(message: BootstrapNotifier::INSUFFICIENT_PRIVILEGES)
     end
   end
 

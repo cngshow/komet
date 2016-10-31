@@ -55,14 +55,6 @@ module ApplicationHelper
   #dynamically add authorization methods
   #only the methods ending in '?' show up in the erb
   def add_pundit_methods
-    $log.fatal("self is #{self}")
     PunditDynamicRoles::add_action_methods self
-    PunditDynamicRoles.flash_alert_block = -> do
-      flash_alert(message: 'Insufficient privileges!<br>Please refresh your browser!')
-    end
-    PunditDynamicRoles.roles = -> do
-      pundit_user[:roles]
-    end
   end
-
 end
