@@ -62,4 +62,9 @@ class ExternalController < ApplicationController
     logout_url_string = ssoi? ? PrismeConfigConcern.logout_link : root_url
     redirect_to logout_url_string
   end
+
+  def export
+    flash_notify(message: 'export complete')
+    render json: {message: 'alrighty then...' + params[:start_date]}
+  end
 end
