@@ -64,6 +64,7 @@ class ExternalController < ApplicationController
   end
 
   def export
+    cookies['fileDownload'] = 'true'
     file_name = 'vhat.xml'
     start_time = Time.parse(params[:start_date]).to_i*1000
     end_time = Time.parse(params[:end_date]).to_i*1000
