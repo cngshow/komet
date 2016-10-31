@@ -48,7 +48,7 @@ module CommonRest
     end
   end
 
-  def rest_fetch(url_string:, params:, body_params: {}, raw_url:)
+  def rest_fetch(url_string:, params:, body_params: {}, raw_url:, enunciate: true, content_type: 'application/json')
 
     check_cache = params[CacheRequest]
     check_cache = check_cache.nil? ? true : check_cache
@@ -76,26 +76,25 @@ module CommonRest
 
       req.url url_string
       req.params = sending_params
+      req.headers['Content-Type'] = content_type
+      req.headers['Accept'] = content_type
 
       if http_method == CommonActionSyms::HTTP_METHOD_POST || http_method == CommonActionSyms::HTTP_METHOD_PUT
-
-        req.headers['Content-Type'] = 'application/json'
         body_class = ruby_classname_to_java(class_name: action_constants.fetch(action)[CommonActionSyms::BODY_CLASS])
         body_params[:@class] = body_class
         req.body = body_params.to_json
         $log.debug('Body Params: ' + body_params.to_s)
       end
-
     end
 
-    json = nil
+    return response unless enunciate
 
+    json = nil
     begin
       json = JSON.parse response.body
     rescue JSON::ParserError => ex
 
       if (http_method == CommonActionSyms::HTTP_METHOD_GET && response.status.eql?(200))
-
         $rest_cache[cache_lookup] = response.body
         return response.body
       end

@@ -4,7 +4,7 @@ Rails.application.routes.draw do
     match 'logic_graph/version/:id' => 'logic_graph#version', :as => :logic_graph_version, via: [:get]
 
     post 'external/authenticate', as: :login
-    post 'external/export', as: :export
+    get 'external/export', as: :export
     get  'external/logout', :as => :logout
 
     get 'komet_dashboard/dashboard'

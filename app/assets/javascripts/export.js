@@ -65,17 +65,9 @@ var ExportModule = (function () {
         // select the parameters to pass to the rest call
         var end_date = $("#end_date").datepicker( "getDate" );
         var params = {start_date: start_date, end_date: end_date};
-
-        $.post(gon.routes.export_path, params)
-            .done(function (data) {
-                //close the modal
-                ModalFormValidatorModule.reset_modal_form('export_modal_form');
-                ModalFormValidatorModule.hide_modal('export_modal');
-
-                //flash...
-                flash_notify(data, {type: 'success'});
-            });
-
+        window.location.href = gon.routes.export_path + '?' + jQuery.param(params)
+        ModalFormValidatorModule.reset_modal_form('export_modal_form');
+        ModalFormValidatorModule.hide_modal('export_modal');
     }
 
     return {
