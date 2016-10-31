@@ -58,6 +58,7 @@ Rails.application.routes.draw do
 
     # flash notifications route via completed ajax calls
     get 'flash_notifier/flash_notifications'
+    get 'flash_notifier/roles'
 
     # You can have the root of your site routed with "root"
     root 'external#login'

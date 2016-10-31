@@ -60,8 +60,8 @@ var KometMappingTree = function(treeID, windowType){
                 params = {'set_id': node.id};
             }
 
-            params.text_filter = $("#komet_mapping_tree_text_filter")[0].value;
-            params.set_filter = $("#komet_mapping_tree_set_filter")[0].value;
+            //params.text_filter = $("#komet_mapping_tree_text_filter")[0].value;
+            //params.set_filter = $("#komet_mapping_tree_set_filter")[0].value;
 
             return params;
         }.bind(this);

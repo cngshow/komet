@@ -6,18 +6,20 @@
 
         </span>
 
-        <div class="komet-panel-filters">
+        <div class="komet-panel-tools">
 
-            <input id="komet_mapping_tree_text_filter" name="komet_mapping_tree_text_filter" class="form-control" placeholder="Filter..."/>
+            <!--<input id="komet_mapping_tree_text_filter" name="komet_mapping_tree_text_filter" class="form-control" placeholder="Filter..."/>
 
             <select id="komet_mapping_tree_set_filter" name="komet_mapping_tree_set_filter" class="form-control">
                 <option value="">All Mapping Sets</option>
                 <option value="snomed">SNOMED Sets</option>
                 <option value="loinc">LOINC Sets</option>
                 <option value="vhat">VHAT Sets</option>
-            </select>
+            </select>-->
 
-            <div id="komet_mapping_tree_reload" title="Reload Mapping Tree" class="fa fa-refresh" onclick="MappingModule.tree.reloadTree();"></div>
+            <button type="button" class="komet-link-button" onclick="MappingModule.tree.reloadTree();" title="Reload Mapping Tree">
+                <div id="komet_mapping_tree_reload" alt="Reload Mapping Tree" class="fa fa-refresh" ></div>
+            </button>
 
         </div>
 

@@ -28,7 +28,7 @@ var MappingViewer = function(viewerID, currentSetID, viewerAction) {
         this.overviewItemsGridOptions = null;
         this.targetCandidatesGridOptions = null;
         this.showOverviewInactiveConcepts = null;
-        this.showSetsSTAMP = false;
+        this.showSTAMP = false;
         this.showItemsSTAMP = false;
         this.itemEditorWindow = null;
         this.viewerAction = viewerAction;
@@ -153,9 +153,12 @@ var MappingViewer = function(viewerID, currentSetID, viewerAction) {
             this.overviewSetsGridOptions.api.destroy();
         }
 
-        // disable map set and item specific actions
-        UIHelper.toggleFieldAvailability("#komet_mapping_overview_set_delete_" + this.viewerID, false);
-        UIHelper.toggleFieldAvailability("#komet_mapping_overview_set_edit_" + this.viewerID, false);
+        if (this.showSTAMP){
+            $("#komet_mapping_show_stamp_" + this.viewerID)[0].checked = true;
+        }
+
+        // disable map set specific actions
+        this.setOverviewSetsGridActions(null);
 
         // set the options for the result grid
         this.overviewSetsGridOptions = {
@@ -166,18 +169,18 @@ var MappingViewer = function(viewerID, currentSetID, viewerAction) {
             onSelectionChanged: this.onOverviewSetsGridSelection,
             onRowDoubleClicked: this.onOverviewSetsGridDoubleClick,
             onGridReady: this.onGridReady,
-            rowModelType: 'pagination',
+            rowModelType: 'normal',
             columnDefs: [
                 {field: "set_id", headerName: 'ID', hide: 'true'},
                 {field: "name", headerName: 'Name'},
                 {field: "description", headerName: "Description"},
                 {
                     groupId: "stamp", headerName: "STAMP Fields", children: [
-                    {field: "state", headerName: "State", hide: !this.showSetsSTAMP},
-                    {field: "time", headerName: "Time", hide: !this.showSetsSTAMP},
-                    {field: "author", headerName: "Author", hide: !this.showSetsSTAMP},
-                    {field: "module", headerName: "Module", hide: !this.showSetsSTAMP},
-                    {field: "path", headerName: "Path", hide: !this.showSetsSTAMP}
+                    {field: "state", headerName: "State", hide: !this.showSTAMP},
+                    {field: "time", headerName: "Time", hide: !this.showSTAMP},
+                    {field: "author", headerName: "Author", hide: !this.showSTAMP},
+                    {field: "module", headerName: "Module", hide: !this.showSTAMP},
+                    {field: "path", headerName: "Path", hide: !this.showSTAMP}
                 ]
                 }
             ]
@@ -224,43 +227,82 @@ var MappingViewer = function(viewerID, currentSetID, viewerAction) {
 
     MappingViewer.prototype.onOverviewSetsGridSelection = function(){
 
-        // enable map set specific actions
-        UIHelper.toggleFieldAvailability("#komet_mapping_overview_set_delete_" + this.viewerID, true);
-        UIHelper.toggleFieldAvailability("#komet_mapping_overview_set_edit_" + this.viewerID, true);
-
         var selectedRows = this.overviewSetsGridOptions.api.getSelectedRows();
 
-        selectedRows.forEach(function (selectedRow, index) {
+        // enable map set specific actions
+        selectedRows.forEach(function (selectedRow) {
+            this.setOverviewSetsGridActions(selectedRow);
+        }.bind(this));
 
-            //loadOverviewItemsGrid(selectedRow.id);
-        });
     }.bind(this);
 
     MappingViewer.prototype.onOverviewSetsGridDoubleClick = function(){
-
-        var selectedRows = this.overviewSetsGridOptions.api.getSelectedRows();
-
-        selectedRows.forEach(function (selectedRow, index) {
-            $.publish(KometChannels.Mapping.mappingTreeNodeSelectedChannel, [null, selectedRow.set_id, this.viewerID, WindowManager.INLINE]);
-        });
+        this.loadOverviewSetsGridSelectedSet();
     }.bind(this);
 
     MappingViewer.prototype.onGridReady = function(event){
         event.api.sizeColumnsToFit();
     };
 
-    MappingViewer.prototype.toggleOverviewSTAMP = function(){
+    MappingViewer.prototype.setOverviewSetsGridActions = function(selectedRow){
 
-        if (this.showSetsSTAMP) {
+        var editParent = $("#komet_mapping_overview_set_edit_" + this.viewerID).parent();
+        var stateIcon = $("#komet_mapping_overview_set_state_" + this.viewerID);
+        var stateParent = stateIcon.parent();
 
-            this.showSetsSTAMP = false;
-            $("#komet_mapping_overview_sets_stamp_" + this.viewerID).removeClass("komet-active-control");
-            this.overviewSetsGridOptions.columnApi.setColumnsVisible(["state", "time", "author", "module", "path"], false);
+        if (selectedRow != null) {
+
+            UIHelper.toggleFieldAvailability(editParent, true);
+
+            var stateTitle = "Inactivate Selected Map Set";
+            var stateClass = "glyphicon glyphicon-ban-circle";
+            var stateValue = "false";
+            var stateOnClick = "UIHelper.changeConceptState(null, '" + selectedRow.set_id + "', '" + selectedRow.name + "', 'false')()";
+
+            if (selectedRow.state.toLowerCase() == "inactive") {
+
+                stateTitle = "Activate Selected Map Set";
+                stateClass = "glyphicon glyphicon-ok-circle";
+                stateValue = "true";
+                stateOnClick = "UIHelper.changeConceptState(null, '" + selectedRow.set_id + "', '" + selectedRow.name + "', 'true')()";
+
+            }
+
+            stateIcon.css(stateClass);
+            stateIcon.attr({"title": stateTitle, "class": stateClass});
+            stateParent.attr({"title": stateTitle, "data-state": stateValue, "onclick": stateOnClick});
+            stateParent.removeClass("hide");
+
+            UIHelper.toggleFieldAvailability(stateParent, true);
+
         } else {
 
-            this.showSetsSTAMP = true;
-            $("#komet_mapping_overview_sets_stamp_" + this.viewerID).addClass("komet-active-control");
+            stateParent[0].classList.add('hide');
+            UIHelper.toggleFieldAvailability(editParent, false);
+        }
+    };
+
+    MappingViewer.prototype.loadOverviewSetsGridSelectedSet = function(action){
+
+        var selectedRows = this.overviewSetsGridOptions.api.getSelectedRows();
+
+        selectedRows.forEach(function (selectedRow) {
+            $.publish(KometChannels.Mapping.mappingTreeNodeSelectedChannel, [null, selectedRow.set_id, this.viewerID, WindowManager.INLINE, action]);
+        }.bind(this));
+    };
+
+    MappingViewer.prototype.toggleSTAMP = function(){
+
+        var stampControl = $("#komet_mapping_show_stamp_" + this.viewerID);
+
+        if (stampControl[0].checked) {
+
+            this.showSTAMP = true;
             this.overviewSetsGridOptions.columnApi.setColumnsVisible(["state", "time", "author", "module", "path"], true);
+        } else {
+
+            this.showSTAMP = false;
+            this.overviewSetsGridOptions.columnApi.setColumnsVisible(["state", "time", "author", "module", "path"], false);
         }
 
         this.overviewSetsGridOptions.api.sizeColumnsToFit();

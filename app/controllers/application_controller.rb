@@ -4,7 +4,6 @@ require 'openssl'
 require './lib/rails_common/roles/ssoi'
 require './lib/rails_common/roles/user_session'
 require './lib/rails_common/util/servlet_support'
-require './lib/rails_common/util/bootstrap_notifier'
 
 OpenSSL::SSL::VERIFY_PEER = OpenSSL::SSL::VERIFY_NONE
 
@@ -15,7 +14,6 @@ class ApplicationController < ActionController::Base
   include SSOI
   include UserSession
   include ServletSupport
-  include BootstrapNotifier
 
   CACHE_TYPE_TAXONOMY = [AssociationRest,CommentApis, ConceptRest, IdAPIsRest, LogicGraphRest, MappingApis, SearchApis, SememeRest, TaxonomyRest].freeze
   CACHE_TYPE_SYSTEM = [CoordinateRest, SystemApis].freeze
@@ -32,7 +30,7 @@ class ApplicationController < ActionController::Base
   after_action :verify_authorized
   before_action :ensure_rest_version
   before_action :ensure_roles
-  before_action :read_only? # must be after ensure_roles
+  before_action :read_only # must be after ensure_roles
   # todo tried testing with reviewer? and could not get to the login page
 
   before_action :set_render_menu, :setup_routes, :setup_constants
@@ -177,21 +175,20 @@ class ApplicationController < ActionController::Base
   def setup_constants
     ApplicationController.parse_isaac_metadata_auxiliary
     gon.IsaacMetadataAuxiliary = $isaac_metadata_auxiliary
+    gon.roles = pundit_user[:roles]
   end
 
   def pundit_user
-    if user_session_defined?
-      {user: user_session(UserSession::LOGIN),
+    r_val = nil
+    if (user_session_defined? && user_session(UserSession::LOGIN))
+      r_val = {user: user_session(UserSession::LOGIN),
        roles: user_session(UserSession::ROLES),
        token: user_session(UserSession::TOKEN)}
     else
-      {user: nil, roles: [], token: 'Not Authorized'}
+      r_val = {user: nil, roles: [], token: 'Not Authorized'}
     end
-  end
-
-  #dynamically add authorization methods
-  def add_pundit_methods
-    PunditDynamicRoles::add_controller_methods self
+    r_val[:controller_instance] = self
+    r_val
   end
 
   ##
@@ -204,6 +201,12 @@ class ApplicationController < ActionController::Base
   def clear_rest_caches(cache_type: CACHE_TYPE_TAXONOMY)
     cache_type.each do |module_class|
       CommonRest.clear_cache(rest_module: module_class)
+    end
+  end
+
+  def flash_alert_lambda
+    -> do
+      flash_alert(message: BootstrapNotifier::INSUFFICIENT_PRIVILEGES)
     end
   end
 

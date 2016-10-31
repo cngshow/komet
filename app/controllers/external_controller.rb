@@ -26,7 +26,7 @@ class ExternalController < ApplicationController
   # we cannot skip ensure roles on logout because we need to have @ssoi set to determine the redirect url
   skip_before_action :ensure_roles, only: [:login]
   skip_after_action :verify_authorized
-  skip_before_action :read_only?
+  skip_before_action :read_only
 
   def login
     user_name = ssoi_headers

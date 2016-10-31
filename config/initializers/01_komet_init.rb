@@ -61,7 +61,7 @@ end
 #in developer mode it is nice to have the rest classes fully loaded so all the registration takes place, for example:
 #register_rest(rest_module: LogicGraphRest, rest_actions: LogicGraphRestActions)
 #This ensures the rails console plays nice.
-
+require './lib/rails_common/util/bootstrap_notifier'#above roles (roles references these libs)
 require './lib/rails_common/roles/roles'
 
 $rest_cache = CachedHash.new($PROPS.fetch('KOMET.rest_cache_max').to_i)

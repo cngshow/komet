@@ -25,12 +25,14 @@
                 <span>Expand All</span>
             </button>
 
+          <% if can_edit_concept? %>
             <button type="button" class="komet-link-button komet-panel-tools-control" onclick="$.publish(KometChannels.Taxonomy.taxonomyConceptEditorChannel, ['<%= @concept_id %>', '<%= @viewer_id %>', WindowManager.INLINE]);" title="Edit Concept">
                 <div class="fa fa-pencil-square" title="Edit Concept"></div>
                 <span>Edit Concept</span>
             </button>
+          <% end %>
 
-            <div class="komet-panel-tools-control">
+          <div class="komet-panel-tools-control">
                 <div class="btn-group" data-toggle="buttons">
                     <label class="btn btn-default" for="komet_concept_stated_<%= @viewer_id %>">
                         <input type="radio" name="komet_concept_stated_inferred" id="komet_concept_stated_<%= @viewer_id %>" value="true" autocomplete="off" title="Stated View"> Stated
