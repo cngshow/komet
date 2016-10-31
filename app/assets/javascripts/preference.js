@@ -286,7 +286,7 @@ var PreferenceModule = (function () {
     function createRefsetFieldRow(){
 
         var options = "";
-        var refsetSelect = '<select style="width:270px" id="komet_preferences_refset_id">';
+        var refsetSelect = '<select style="width:270px" aria-labelledby="Select Refset" id="komet_preferences_refset_id">';
 
         Object.keys(refsetList).forEach( function(refsetID) {
             options += '<option value="' + refsetID + '">' + refsetList[refsetID] + '</option>';
