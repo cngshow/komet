@@ -26,7 +26,7 @@
             <div class="komet-mapping-set-definition-row">
 
                 <div class="komet-mapping-set-definition-header">
-                    <%= label_tag nil, 'Version:' %> <%= @map_set[:version] %>
+                    <%#= label_tag nil, 'Version:' %> <%#= @map_set[:version] %>
                 </div>
 
                 <div class="komet-mapping-set-definition-header">
@@ -65,32 +65,30 @@
 
                     <div class="komet-mapping-set-definition-row">
 
-                            <div class="komet-mapping-set-definition-item">
-                                <%= label_tag "komet_mapping_set_editor_name_#{@viewer_id}", 'Fully Specified Name:' %>
-                                <%= text_field_tag :komet_mapping_set_editor_name, @map_set[:name], id: "komet_mapping_set_editor_name_#{@viewer_id}", class: 'form-control komet-mapping-set-editor-edit' %>
-                                <div class="komet-mapping-set-editor-display"><%= @map_set[:name] %></div>
-                            </div>
+                        <div class="komet-mapping-set-definition-item">
+                            <%= label_tag "komet_mapping_set_editor_name_#{@viewer_id}", 'Fully Specified Name:' %>
+                            <%= text_field_tag :komet_mapping_set_editor_name, @map_set[:name], id: "komet_mapping_set_editor_name_#{@viewer_id}", class: 'form-control komet-mapping-set-editor-edit' %>
+                            <div class="komet-mapping-set-editor-display"><%= @map_set[:name] %></div>
+                        </div>
 
-                            <div class="komet-mapping-set-definition-item">
-                                <%= label_tag "komet_mapping_set_editor_description_#{@viewer_id}", 'Description:' %>
-                                <%= text_field_tag :komet_mapping_set_editor_description, @map_set[:description], id: "komet_mapping_set_editor_description_#{@viewer_id}", class: 'form-control komet-mapping-set-editor-edit' %>
-                                <div class="komet-mapping-set-editor-display"><%= @map_set[:description] %></div>
-                            </div>
+                        <div class="komet-mapping-set-definition-item">
+                            <%= label_tag "komet_mapping_set_editor_description_#{@viewer_id}", 'Description:' %>
+                            <%= text_field_tag :komet_mapping_set_editor_description, @map_set[:description], id: "komet_mapping_set_editor_description_#{@viewer_id}", class: 'form-control komet-mapping-set-editor-edit' %>
+                            <div class="komet-mapping-set-editor-display"><%= @map_set[:description] %></div>
+                        </div>
 
                     </div>
 
                     <div class="komet-mapping-set-definition-row">
 
-                            <div class="komet-mapping-set-definition-item">
-                                <%= label_tag "komet_mapping_set_editor_state_#{@viewer_id}", 'State:' %>
-                                <%= select_tag :komet_mapping_set_editor_state, options_for_select([['Active'], ['Inactive']], @map_set[:state]), id: "komet_mapping_set_editor_state_#{@viewer_id}", class: 'form-control komet-mapping-set-editor-edit' %>
-                                <div class="komet-mapping-set-editor-display"><%= @map_set[:state] %></div>
-                            </div>
+                        <div class="komet-mapping-set-definition-item">
+                            <%= label_tag "komet_mapping_set_editor_state_#{@viewer_id}", 'State:' %>
+                            <%= select_tag :komet_mapping_set_editor_state, options_for_select([['Active'], ['Inactive']], @map_set[:state].titlecase), id: "komet_mapping_set_editor_state_#{@viewer_id}", class: 'form-control komet-mapping-set-editor-edit' %>
+                            <div class="komet-mapping-set-editor-display"><%= @map_set[:state].titlecase %></div>
+                        </div>
 
-                            <div class="komet-mapping-set-definition-item">
-                                <%= label_tag "komet_mapping_set_editor_state_#{@viewer_id}", 'Workflow State:' %>
-                                <div><%= @map_set[:state] %></div>
-                            </div>
+                        <div class="komet-mapping-set-definition-item">
+                        </div>
 
                     </div>
 
