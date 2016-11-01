@@ -126,7 +126,7 @@ class SearchController < ApplicationController
         search_data << result_data
       end
 
-    elsif search_type == 'sememes'
+    elsif search_type.eql?('sememes') || search_type.eql?('identifiers')
 
       additional_params[:treatAsString] = params[:taxonomy_search_treat_as_string]
       assemblage = params[:taxonomy_search_assemblage_id]
