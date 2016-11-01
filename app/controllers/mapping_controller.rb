@@ -24,7 +24,7 @@ require './lib/isaac_rest/id_apis_rest'
 # MappingController -
 # handles the concept mapping screens
 class MappingController < ApplicationController
-    include ApplicationHelper, CommonController, TaxonomyHelper
+    include ApplicationHelper, CommonController, TaxonomyHelper, ConceptConcern
 
     before_filter :init_session
     skip_before_filter :set_render_menu, :only => [:map_set_editor]
@@ -155,14 +155,14 @@ class MappingController < ApplicationController
         @map_set = {id: '', name: '', description: '', version: '', vuid: '', rules: '', include_fields: [], state: '', status: 'Active', time: '', module: '', path: ''}
         @map_set[:include_fields] = ['source_system', 'source_version', 'target_system', 'target_version', 'equivalence', 'comments']
         @map_set[:item_fields] = []
-        @map_set[:source_system] = {name: 'source_system', type: 'concept', value: '', label: 'Source System', label_display: 'Source System', removable: false, display: false}
+        @map_set[:source_system] = {name: 'source_system', data_type: 'UUID', value: '', label: '32e30e80-3fac-5317-80cf-d85eab22fa9e', label_display: 'mapping source code system', removable: false, display: false, required: false}
         @map_set[:source_system_display] = ''
-        @map_set[:source_version] = {name: 'source_version', type: 'text', value: '', label: 'Source Version', label_display: 'Source Version', removable: false, display: false}
-        @map_set[:target_system] = {name: 'target_system', type: 'concept', value: '', label: 'Target System', label_display: 'Target System', removable: false, display: false}
+        @map_set[:source_version] = {name: 'source_version', data_type: 'STRING', value: '', label: '5b3479cb-25b2-5965-a031-54238588218f', label_display: 'mapping source code system version', removable: false, display: false, required: false}
+        @map_set[:target_system] = {name: 'target_system', data_type: 'UUID', value: '', label: '6b31a67a-7e6d-57c0-8609-52912076fce8', label_display: 'mapping target code system', removable: false, display: false, required: false}
         @map_set[:target_system_display] = ''
-        @map_set[:target_version] = {name: 'target_version', type: 'text', value: '', label: 'Target Version', label_display: 'Target Version', removable: false, display: false}
-        @map_set[:equivalence] = {name: 'equivalence', type: 'select', value: '', label: 'Equivalence Type', label_display: 'Equivalence Type', removable: false, display: false, options: ['No Restrictions', 'Exact', 'Broader Than', 'Narrower Than']}
-        @map_set[:comments] = {name: 'comments', type: 'textarea', value: '', label: 'Comments', label_display: 'Comments', removable: false, display: false}
+        @map_set[:target_version] = {name: 'target_version', data_type: 'STRING', value: '', label: 'b5165f68-b934-5c79-ac71-bd5375f7c809', label_display: 'mapping target code system version', removable: false, display: false, required: false}
+        @map_set[:equivalence] = {name: 'equivalence', data_type: 'STRING', value: '', label: '8e84c657-5f47-51b8-8ebf-89a9d025a9ef', label_display: 'mapping qualifier', removable: false, display: false, required: false, options: ['No Restrictions', 'Exact', 'Broader Than', 'Narrower Than']}
+        @map_set[:comments] = {name: 'comments', data_type: 'STRING', value: '', label: 'Comments', label_display: 'Comments', removable: false, display: false, required: false}
         @set_id = params[:set_id]
 
         if @set_id &&  @set_id != ''
@@ -190,23 +190,23 @@ class MappingController < ApplicationController
                 end
 
                 if field.extensionValue.class == DATA_TYPES_CLASS::RestDynamicSememeString
-                    type = 'text'
+                    type = 'STRING'
 
                 elsif field.extensionValue.class == DATA_TYPES_CLASS::RestDynamicSememeNid || field.extensionValue.class == DATA_TYPES_CLASS::RestDynamicSememeUUID
 
-                    type = 'concept'
+                    type = 'UUID'
                     @map_set[name + '_display'] = value
 
                 elsif name == '-2147483446'
 
-                    type = 'concept'
+                    type = 'UUID'
                     value = '6e60d7fd-3729-5dd3-9ce7-6d97c8f75447'
                     removable = false
                     @map_set[name + '_display'] = 'VHAT'
                 end
 
                 @map_set[:include_fields] << name
-                @map_set[name] = {name: name, type: type, value: value, label: label, label_display: label_display, removable: removable, display: display}
+                @map_set[name] = {name: name, type: type, value: value, label: label, label_display: label_display, removable: removable, display: display, required: false}
 
             end
 
@@ -229,7 +229,7 @@ class MappingController < ApplicationController
                 @map_set[:item_fields] << name
                 @map_set['item_field_' + name] = {name: name, description: description, order: order, data_type: data_type, required: required, label: label, label_display: label_display, removable: removable, display: display}
 
-                field_type = 'text'
+                field_type = 'STRING'
 
                 # if data_type == 'UUID'
                 #
@@ -260,7 +260,7 @@ class MappingController < ApplicationController
                 #     field_type = 'text'
                 # end
 
-                @map_set['item_field_' + name][:type] = field_type
+                @map_set['item_field_' + name][:type] = data_type
 
                 session[:mapset_item_definitions] << @map_set['item_field_' + name]
 
@@ -274,16 +274,6 @@ class MappingController < ApplicationController
             @map_set[:author] = get_concept_metadata(set.mappingSetStamp.authorSequence)
             @map_set[:module] = get_concept_metadata(set.mappingSetStamp.moduleSequence)
             @map_set[:path] = get_concept_metadata(set.mappingSetStamp.pathSequence)
-            @map_set[:source_system][:value] = '11'
-            @map_set[:source_system_display] = 'Source System Test'
-            @map_set[:source_version][:value] = 'Source Version Test'
-            @map_set[:target_system][:value] = '22'
-            @map_set[:target_system_display] = 'Target System Test'
-            @map_set[:target_version][:value] = 'Target Version Test'
-            @map_set[:equivalence][:value] = 'Exact'
-            @map_set[:comments][:value] = 'Comments Test'
-            @map_set[:rules] = 'Business rules test'
-            @map_set[:version] = '12.4'
             @map_set[:vuid] = '4500635'
 
             @viewer_title = @map_set[:description]
@@ -393,6 +383,43 @@ class MappingController < ApplicationController
         if set_id && set_id != ''
             MappingApis::get_mapping_api(uuid_or_id: set_id, action: MappingApiActions::ACTION_UPDATE_SET, additional_req_params: request_params, body_params: body_params)
         else
+
+            set_extended_field = []
+            item_extended_field = []
+
+            if params['komet_mapping_set_editor_include_fields'] != nil
+
+                params['komet_mapping_set_editor_include_fields'].each do |set_field|
+
+                    set_field_label = params['komet_mapping_set_editor_include_fields_' + set_field + '_label']
+                    set_field_label = IdAPIsRest.get_id(uuid_or_id: set_field_label, action: IdAPIsRestActions::ACTION_TRANSLATE, additional_req_params: {inputType: 'uuid', outputType: 'conceptSequence'}).value
+
+                    set_field_data_type = params['komet_mapping_set_editor_include_fields_' + set_field + '_data_type']
+
+                    if set_field_data_type != 'UUID'
+                        set_field_data_type.downcase!
+                        set_field_data_type[0] = params['komet_mapping_set_editor_include_fields_' + set_field + '_data_type'][0]
+                    end
+
+                    set_field_data_type = 'gov.vha.isaac.rest.api1.data.sememe.dataTypes.RestDynamicSememe' + set_field_data_type
+                    set_field_value = params['komet_mapping_set_editor_' + set_field]
+
+                    set_extended_field << {extensionNameConcept: set_field_label, extensionValue: {'@class' => set_field_data_type, columnNumber: 1, data: set_field_value}}
+                end
+            end
+
+            if params['komet_mapping_set_editor_items_include_fields'] != nil
+
+                params['komet_mapping_set_editor_items_include_fields'].each do |item_field|
+
+                    item_field_label = IdAPIsRest.get_id(uuid_or_id: item_field, action: IdAPIsRestActions::ACTION_TRANSLATE, additional_req_params: {inputType: 'uuid', outputType: 'conceptSequence'}).value
+                    item_field_data_type = params['komet_mapping_set_editor_items_include_fields_' + item_field + 'data_type']
+                    item_field_required = params['komet_mapping_set_editor_items_include_fields_' + item_field + 'required']
+
+                    item_extended_field << {columnLabelConcept: item_field_label, columnDataType: item_field_data_type, columnRequired: item_field_required}
+                end
+            end
+
 
             return_value = MappingApis::get_mapping_api(action: MappingApiActions::ACTION_CREATE_SET, additional_req_params: request_params, body_params: body_params )
 
