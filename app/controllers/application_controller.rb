@@ -92,7 +92,7 @@ class ApplicationController < ActionController::Base
 
   def ensure_roles
     # read the request headers to see if we are SSOI
-    $log.debug("Ensuring roles for #{request.fullpath}")
+    $log.trace("Ensuring roles for #{request.fullpath}")
     user_name = ssoi_headers
     @ssoi = !user_name.to_s.strip.empty? #we are using ssoi
 
@@ -115,7 +115,7 @@ class ApplicationController < ActionController::Base
 
     if refresh_roles
       user_info = nil
-      $log.debug('Refreshing the roles')
+      $log.trace('Refreshing the roles')
 
       if !ssoi? && (!FileTest.exists?("#{Rails.root}/config/props/prisme.properties") || $PROPS['PRISME.prisme_roles_user_url'].nil?)
         load './lib/roles_test/roles.rb'
@@ -156,7 +156,7 @@ class ApplicationController < ActionController::Base
         # user_session(UserSession::USER_NAME, user_info['user_name'])
       end
     end
-    $log.debug("The roles for user #{user_session(UserSession::LOGIN)} are #{user_session(UserSession::ROLES)}")
+    $log.trace("The roles for user #{user_session(UserSession::LOGIN)} are #{user_session(UserSession::ROLES)}")
     user_session(UserSession::ROLES)
   end
 
