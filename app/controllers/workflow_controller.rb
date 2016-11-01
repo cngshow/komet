@@ -16,25 +16,28 @@ Copyright Notice
  See the License for the specific language governing permissions and
  limitations under the License.
 =end
-
-
 require './lib/rails_common/util/controller_helpers'
 require './lib/isaac_rest/id_apis_rest'
 
 ##
-#WorkflowController -
+# WorkflowController -
 # handles the workflow screens
 class WorkflowController < ApplicationController
-  include ApplicationHelper, CommonController, WorkflowRest
+  include ApplicationHelper, CommonController, WorkflowRest, ConceptRest
+  include Gov::Vha::Isaac::Rest::Api1::Data::Workflow
 
   layout 'workflow'
+
 
   def create_workflow #create workflow on success it returns processID
     default_definition = get_all_definition.first.id #this makes a call to all definition rest api and get definitionID
     name = params[:name] #populated from create workflow form and passed in from javascript file workflow.js line 82 has saveworkflow function
     description = params[:description] #populated from create workflow form and passed in from javascript file workflow.js line 82 has saveworkflow function
     additional_req_params ={editToken: get_edit_token} # have to pass it to all write rest api's
-    body_params = {definitionId: default_definition, name: name, description: description} #create workflow requires body params
+    body_params = RestWorkflowProcessBaseCreate.new
+    body_params.definitionId = default_definition
+    body_params.name = name
+    body_params.description = description
     #code line below make a call to create work flow rest api
     results = WorkflowRest.get_workflow(action: WorkflowRestActions::ACTION_CREATE, body_params: body_params, additional_req_params: additional_req_params)
 
@@ -47,16 +50,22 @@ class WorkflowController < ApplicationController
     render json: {process_id: process_id}
   end
 
-  def get_all_definition #returns definition id. this id is passed in other rest api calls.  this rest api works successfully
-    @default_definition = WorkflowRest.get_workflow(action: WorkflowRestActions::ACTION_ALL_DEFINITION)
+  def get_all_definition #returns definition id. this id is passed in other rest api calls
+    @default_definition = get_workflow(action: WorkflowRestActions::ACTION_ALL_DEFINITION)
   end
 
 
-  def get_workflowLock
-    @workflowLockState = get_workflow_details(action: WorkflowRestActions::ACTION_LOCKED)
-  end
+  # def get_workflowLock
+  #   @workflowLockState = get_workflow_details(action: WorkflowRestActions::ACTION_LOCKED)
+  # end
 
   def set_user_workflow
+    process_id = params[:process_id]
+    result = WorkflowRest.get_workflow(processId_or_uuid_or_nid: process_id,action: WorkflowRestActions::ACTION_LOCK, body_params: {}, additional_req_params: {editToken: get_edit_token, acquireLock: true})
+    # if result.is_a? CommonRest::UnexpectedResponse
+    #   render json: {} #not sure
+    #   return
+    # end
     set_user_workflow_session
     render json: {}
   end
@@ -69,18 +78,37 @@ class WorkflowController < ApplicationController
   end
 
   def get_process
-    get_workflow_details(action: WorkflowRestActions::ACTION_PROCESS)
+    results = get_workflow_details_hash(action: WorkflowRestActions::ACTION_PROCESS)
+    results = results.to_jaxb_json_hash
+    u = ConceptRest::get_concept(action: ConceptRestActions::ACTION_DESCRIPTIONS, uuid: results['creatorId'])
+    results['creatorName'] = u.first.text # todo this is pulling the first description as opposed to finding the preferred name
+    render json: results.to_json
   end
 
-  def get_history #based on processID  #todo  rest api code from yesterday  10/13 has a bug. joel working on resolving error on dated 10/14
-    get_workflow_details(action: WorkflowRestActions::ACTION_HISTORY)
+  def get_history
+    results = get_workflow_details_hash(action: WorkflowRestActions::ACTION_HISTORY)
+    results = results.to_jaxb_json_hash
+
+    # iterate the results getting the name for the userId from the concept description api
+    results.each do |h|
+      # get the user name
+      u = ConceptRest::get_concept(action: ConceptRestActions::ACTION_DESCRIPTIONS, uuid: h['userId'])
+      h['userName'] = u.first.text # todo this is pulling the first description as opposed to finding the preferred name
+    end
+
+    render json: results.to_json
   end
 
-  # def modal_confirm
-  #   action = params[:id]
-  #
-  #   render partial: ''
-  # end
+  def modal_transition_metadata
+    action = params[:action_uuid]
+    if (action.eql?('e47c7651-ed0d-4d0b-a12b-4d0080864a60'))
+      t = "hello #{action}<br><br><label for=\"greg\">Greg</label><br><input type=\"text\" id=\"greg\" name=\"greg\" required=\"required\"\>"
+    else
+      t = "hello #{action}<br><br><span style=\"font-weight: bold\">nothing new here</span>"
+    end
+    render text: ''
+    # render text: t
+  end
 
   def get_advanceable_process_information #this method populated grid on dashboard workflow
     #todo search text box filter on top of workflowdashboard does not work has bug
@@ -102,13 +130,13 @@ class WorkflowController < ApplicationController
       return {total_number: 0, page_number: 1, data: []}
     end
 
-    items.each do |item| #this code  populates the grid on workflow dashboar
-
+    #this code  populates the grid on workflow dashboard
+    items.each do |item|
       item_hash = {}
       item_hash[:process_id] = item.key.id
-      item_hash[:name] = '<a  onclick=WorkflowModule.showTaxonomy("' + item.key.id + '")>' + item.key.name + '</a>'
+      item_hash[:name] = '<a onclick=WorkflowModule.showTaxonomy("' + item.key.id + '")>' + item.key.name + '</a>'
       item_hash[:description] = item.key.description
-      item_hash[:status] = "#{item.key.processStatus.name}<span class=\"fa fa-lock\" style=\"color: red\"></span>&nbsp;&nbsp;<span class=\"fa fa-unlock\" style=\"color: green\"></span>&nbsp;&nbsp;<a onclick=WorkflowModule.release('#{item.key.id}') class=\"fa fa-undo btn btn-sm btn-outline-primary\" aria-hidden=\"true\"></a>"
+      item_hash[:status] = "#{item.value.last.outcomeState}<span class=\"fa fa-lock\" style=\"color: red\"></span>&nbsp;&nbsp;<span class=\"fa fa-unlock\" style=\"color: green\"></span>&nbsp;&nbsp;<a onclick=WorkflowModule.release('#{item.key.id}') class=\"fa fa-undo btn btn-sm btn-outline-primary\" aria-hidden=\"true\"></a>"
       item_hash[:viewhistory] = '<a onclick=WorkflowModule.showHistory("' + item.key.id + '")>View History</a>'
       item_hash[:viewconcept] = '<a onclick=WorkflowModule.showConcept("' + item.key.id + '")>View Concept</a>'
       item_hash[:release] = '<a onclick=WorkflowModule.release("' + item.key.id + '") class="btn btn-primary btn-sm">Release</a>'
@@ -116,18 +144,27 @@ class WorkflowController < ApplicationController
     end
 
     results[:total_number] = items.length
-
-    # matching_items = session['work_item_data'].select { |item|
-    #  item[:set_id] == set_id.to_s
-    #}
-
     results[:data] = item_data
     render json: results
   end
 
+  def advance_workflow
+    comment = params[:wfl_modal_comment]
+    transition_action = params[:transition_action]
+    advancement = RestWorkflowProcessAdvancementData.new
+    advancement.actionRequested = transition_action
+    advancement.comment = comment
+    result = WorkflowRest.get_workflow(action: WorkflowRestActions::ACTION_ADVANCE, body_params: advancement, additional_req_params: {editToken: get_edit_token})
+    failure = result.is_a? CommonRest::UnexpectedResponse
+    $log.debug("Advanced: #{result}")
+    clear_user_workflow  unless failure
+    flash.alert = result.body if failure
+    redirect_to komet_dashboard_dashboard_path
+  end
+
   private
   def set_user_workflow_session(args = {})
-    # there is only one definition right now
+    #there is only one definition right now
     def_uuid = args.has_key?(:def_uuid) ? args[:def_uuid] : get_all_definition.first.id
     process_id = args.has_key?(:process_id) ? args[:process_id] : params[:process_id]
 
@@ -137,7 +174,7 @@ class WorkflowController < ApplicationController
     end
   end
 
-  def get_workflow_details(action:, include_token: false)
+  def get_workflow_details_hash(action:, include_token: false)
     wfl_uuid = params[:processId] ? params[:processId] : user_session(UserSession::WORKFLOW_UUID)
     results = []
 
@@ -146,9 +183,12 @@ class WorkflowController < ApplicationController
       additional_req_params[:editToken] = get_edit_token if include_token
       results = WorkflowRest.get_workflow(action: action, additional_req_params: additional_req_params)
     end
-    render json: results.to_json
+    results
   end
 
+  def get_workflow_details(action:, include_token: false)
+    render json: get_workflow_details_hash(action: action, include_token: include_token).to_json
+  end
 end
 
 

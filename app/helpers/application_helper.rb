@@ -22,31 +22,39 @@ require './lib/isaac_rest/coordinate_rest'
 require './lib/rails_common/roles/user_session'
 
 module ApplicationHelper
-    include UserSession
+  include UserSession
+  include BootstrapNotifier
 
-    def get_user_token
-        user_session(UserSession::TOKEN)
+
+  def get_user_token
+    user_session(UserSession::TOKEN)
+  end
+
+  def get_concept_metadata(id)
+
+    coordinates_token = session[:coordinatestoken].token
+    additional_req_params = {coordToken: coordinates_token}
+
+    version = ConceptRest.get_concept(action: ConceptRestActions::ACTION_DESCRIPTIONS, uuid: id, additional_req_params: additional_req_params)
+
+    if version.is_a? CommonRest::UnexpectedResponse
+      return ''
+    else
+      return version.first.text
     end
+  end
 
-    def get_concept_metadata(id)
+  def get_edit_token
+    CoordinateRest.get_coordinate(action: CoordinateRestActions::ACTION_EDIT_TOKEN, additional_req_params: {ssoToken: get_user_token, CommonRest::CacheRequest => false}).token
+  end
 
-        coordinates_token = session[:coordinatestoken].token
-        additional_req_params = {coordToken: coordinates_token}
+  def komet_user
+    user_session_defined? ? user_session(UserSession::LOGIN) : 'unknown'
+  end
 
-        version = ConceptRest.get_concept(action: ConceptRestActions::ACTION_DESCRIPTIONS, uuid: id, additional_req_params: additional_req_params)
-
-        if version.is_a? CommonRest::UnexpectedResponse
-            return ''
-        else
-            return version.first.text
-        end
-    end
-
-    def get_edit_token
-        CoordinateRest.get_coordinate(action: CoordinateRestActions::ACTION_EDIT_TOKEN, additional_req_params: {ssoToken: get_user_token, CommonRest::CacheRequest => false}).token
-    end
-
-    def komet_user
-        user_session_defined? ? user_session(UserSession::LOGIN) : 'unknown'
-    end
+  #dynamically add authorization methods
+  #only the methods ending in '?' show up in the erb
+  def add_pundit_methods
+    PunditDynamicRoles::add_action_methods self
+  end
 end

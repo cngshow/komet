@@ -62,12 +62,15 @@
             <div class="komet-add-fields-dialog-body-header">Add from Existing Code Sets</div>
 
             <div>
-                <label for="<%= id_prefix %>add_fields_type<%= id_postfix %>">Type</label>
-                <select id="<%= id_prefix %>add_fields_type<%= id_postfix %>" onchange="<%= javascript_object + '.changed' + javascript_function_qualifier + 'AddFieldsType(value)' %>" class="form-control">
-                    <option value="text">Text</option>
-                    <option value="textarea">Text Area</option>
-                    <option value="select">Select</option>
-                    <!--<option value="concept">Concept</option>-->
+                <label for="<%= id_prefix %>add_fields_data_type<%= id_postfix %>">Type</label>
+                <select id="<%= id_prefix %>add_fields_data_type<%= id_postfix %>"  class="form-control">
+                    <option value="BOOLEAN">Boolean</option>
+                    <option value="UUID">Concept</option>
+                    <option value="DOUBLE">Double</option>
+                    <option value="FLOAT">Float</option>
+                    <option value="INTEGER">Integer</option>
+                    <option value="LONG">Long</option>
+                    <option value="STRING" selected>String</option>
                 </select>
             </div>
 
@@ -75,10 +78,15 @@
                 <autosuggest id-base="<%= id_prefix %>add_fields_label" id-postfix="<%= id_postfix %>" label="Label (Alphanumeric, hypen, and dash)"></autosuggest>
             </div>
 
-            <div id="<%= id_prefix %>add_fields_options_section<%= id_postfix %>" class="hide">
-                <label for="<%= id_prefix %>add_fields_options<%= id_postfix %>">Options (Comma separated list)</label>
-                <input type="text" id="<%= id_prefix %>add_fields_options<%= id_postfix %>" class="form-control" value="">
+            <div>
+                <label for="<%= id_prefix %>add_fields_required<%= id_postfix %>">Required</label>
+                <input id="<%= id_prefix %>add_fields_required<%= id_postfix %>" type="checkbox" value="true">
             </div>
+
+            <!--<div id="<%#= id_prefix %>add_fields_options_section<%#= id_postfix %>" class="hide">
+                <label for="<%#= id_prefix %>add_fields_options<%#= id_postfix %>">Options (Comma separated list)</label>
+                <input type="text" id="<%#= id_prefix %>add_fields_options<%#= id_postfix %>" class="form-control" value="">
+            </div>-->
 
             <div>
                 <button type="button" class="btn btn-default" onclick="<%= javascript_object + '.add' + javascript_function_qualifier + 'Field()' %>">Add Field</button>

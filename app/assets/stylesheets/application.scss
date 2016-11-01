@@ -31,6 +31,7 @@ Copyright Notice
  *= require jquery-ui
  *= require jquery.enhsplitter
  *= require jquery.minicolors
+ *= require animate
  *= require_tree ../../../vendor/assets/stylesheets/contextMenu
  *= require_tree ../../../vendor/assets/stylesheets/jsTree
  */
@@ -206,27 +207,44 @@ body > header, body > footer{
 .komet-highlight-changes{
     background-color: rgba(255, 239, 0, 1);
 }
-.komet-form-warning{
+.komet-page-warning {
     background-color: rgba(255, 239, 0, 1);
 }
-.komet-form-error, .komet-form-field-error{
+.komet-page-error{
     background-color: #ff5000;
     color: white;
 }
-.komet-form-warning, .komet-form-error{
+.komet-page-success{
+    background-color: green;
+    color: white;
+}
+.komet-page-message{
     margin-bottom: 5px;
     line-height: 200%;
     width: 100%;
     padding: 5px;
     border: solid lightgrey 1px;
 }
-.komet-form-field-error {
+.komet-page-field-message {
     border: solid lightgrey 1px;
     padding-left: 5px;
     margin-top: 5px;
 }
-.komet-form-field-error .glyphicon, .komet-form-field-error .fa, .komet-form-error .glyphicon, .komet-form-error .fa, .komet-form-warning .glyphicon, .komet-form-warning .fa  {
+.komet-page-message, .komet-page-field-message{
+    display: flex;
+    align-items: center;
+}
+.komet-page-message .glyphicon, .komet-page-message .fa, .komet-page-field-message .glyphicon, .komet-page-field-message .fa {
     margin-right: 5px;
+}
+.komet-page-message .glyphicon-remove, .komet-page-field-message .glyphicon-remove {
+    cursor: pointer;
+}
+.komet-page-message-container{
+    flex: 1 1 auto;
+    display: flex;
+    flex-direction: column;
+    margin: 0px 5px;
 }
 div.komet-confirmation-dialog{
     overflow: visible;
@@ -240,6 +258,11 @@ div.komet-confirmation-dialog{
 }
 .komet-dialog-no-close-button .ui-dialog-titlebar-close{
     display: none;
+}
+.komet-link-button{
+    background: none !important;
+    border: none;
+    padding: 0 !important;
 }
 .komet-splitter{
     height: 100%;
@@ -278,6 +301,12 @@ div.komet-confirmation-dialog{
     text-decoration: none;
     color: black
 }
+.komet-navbar button{
+    height: 24px;
+    display: flex;
+    flex: 0 0 auto;
+    align-items: center;
+}
 .komet-navbar-header{
     font-size: 24px;
     flex: 0 0 auto;
@@ -286,11 +315,16 @@ div.komet-confirmation-dialog{
     display: flex;
 }
 .komet-logo-komet{
-    color:#009BFF;
+    color:#183445;
     margin-right: 4px;
 }
 .komet-logo-tooling{
-    color:rgba(0, 155, 255, 0.4);
+    color:#414199;
+}
+.komet-navbar-navigation .dropdown a:focus{
+    outline: thin dotted;
+    outline: 5px auto -webkit-focus-ring-color;
+    outline-offset: -2px;
 }
 .komet-navbar-navigation{
     margin-bottom: 0px;
@@ -309,7 +343,7 @@ div.komet-confirmation-dialog{
     align-items: center;
     cursor: pointer;
 }
-.komet-navbar-navigation > div:hover{
+.komet-navbar-navigation > div:hover, .komet-navbar-navigation > div:focus{
     border-bottom: 1px solid black;
 }
 .komet-navbar-tools{
@@ -320,7 +354,7 @@ div.komet-confirmation-dialog{
 .komet-navbar-tools > :first-child{
     border-left: 4px solid white;
 }
-.komet-navbar-tools > div{
+.komet-navbar-tools > *{
     display: flex;
     flex: 0 0 auto;
     align-items: center;
@@ -329,7 +363,7 @@ div.komet-confirmation-dialog{
     border-bottom: 1px solid transparent;
     cursor: pointer;
 }
-.komet-navbar-tools > div:hover{
+.komet-navbar-tools > div:hover, .komet-navbar-tools > div:focus{
     border-bottom: 1px solid black;
 }
 #komet_user_preference_link{
@@ -350,7 +384,7 @@ div.komet-confirmation-dialog{
 
 // KOMET Panel Styles
 .komet-panel .panel-heading {
-    background-color: #4f80d9;
+    background-color: #414cba;
     display: flex;
     flex-wrap: wrap;
     overflow-x: auto;
@@ -375,9 +409,17 @@ div.komet-confirmation-dialog{
 .komet-panel .komet-panel-tools span{
     margin-left: 4px;
 }
-.komet-panel .komet-panel-tools label{
+.komet-panel .komet-panel-tools label:not(.btn){
     margin-right: 4px;
     margin-bottom: 0px;
+}
+.komet-panel .komet-panel-tools .btn-group{
+    height: 25px;
+    font-size: smaller !important;
+}
+.komet-panel .komet-panel-tools .btn{
+    height: 25px;
+    padding: 3px 12px;
 }
 .komet-panel .komet-panel-tools-control{
     display: flex;
@@ -406,7 +448,7 @@ div.komet-confirmation-dialog{
     padding-top: 4px;
 }
 .komet-panel .panel-body {
-    background-color: #eef1f3;
+    background-color: #FFFFFF;
     padding: 5px 15px;
     //display: flex;
     //flex-direction: column;
@@ -615,10 +657,10 @@ td.komet-concept-table-nested-indicator.komet-concept-table-nested-indicator-ope
 
 // Concept Viewer Attribute Styles
 .komet-concept-attributes-panel{
-    border-left: 4px solid #5ec200;
+    border-left: 4px solid #a1000e;
 }
 .komet-concept-attributes-title{
-    color: #5ec200;
+    color: #a1000e;
 }
 .komet-concept-attributes-status{
     margin-right: 5px;
@@ -637,13 +679,13 @@ td.komet-concept-table-nested-indicator.komet-concept-table-nested-indicator-ope
 
 // Concept Viewer Description Styles
 .komet-concept-description-panel{
-    border-left: 4px solid #ff9100;
+    border-left: 4px solid #264b03;
 }
 .komet-concept-description-panel ~ .komet-concept-description-panel{
     margin-top: 10px;
 }
 .komet-concept-description-title{
-    color: #ff9100;
+    color: #264b03;
 }
 .komet-concept-description-panel-header{
     flex-wrap: nowrap;
@@ -685,10 +727,10 @@ td.komet-concept-table-nested-indicator.komet-concept-table-nested-indicator-ope
 
 // Concept Viewer Lineage Styles
 .komet-concept-lineage-panel{
-    border-left: 4px solid #009bff;
+    border-left: 4px solid #045487;
 }
 .komet-concept-lineage-title{
-    color: #009bff;
+    color: #045487;
 }
 .komet-concept-lineage-tree-container{
     margin-left: 0%;
@@ -729,18 +771,18 @@ td.komet-concept-table-nested-indicator.komet-concept-table-nested-indicator-ope
 
 // Concept Viewer Associations Styles
 .komet-concept-associations-panel{
-    border-left: 4px solid rgb(255, 80, 77);
+    border-left: 4px solid #ad0300;
 }
 .komet-concept-associations-title{
-    color: rgb(255, 80, 77);
+    color: #ad0300;
 }
 
 // Concept Viewer Sememes Styles
 .komet-concept-sememes-panel{
-    border-left: 4px solid #b59d00;
+    border-left: 4px solid #850c07;
 }
 .komet-concept-sememes-title{
-    color: #b59d00;
+    color: #850c07;
 }
 
 // Concept Viewer Diagram Styles
@@ -787,7 +829,7 @@ td.komet-concept-table-nested-indicator.komet-concept-table-nested-indicator-ope
 }
 
 // Concept Editor Viewer Styles
-.komet-concept-create .komet-concept-section-title .komet-flex-right > div, .komet-concept-edit .komet-concept-section-title .komet-flex-right > div{
+.komet-concept-create .komet-concept-section-title .komet-flex-right > button, .komet-concept-edit .komet-concept-section-title .komet-flex-right > button{
     color: green;
     cursor: pointer;
 }
@@ -830,7 +872,7 @@ td.komet-concept-table-nested-indicator.komet-concept-table-nested-indicator-ope
     font-size: small;
     padding: 3px 2px;
 }
-.komet-concept-edit button {
+.komet-concept-edit .panel-body button:not(.komet-link-button) {
     height: 26px;
     font-size: small;
     padding: 2px 8px;
@@ -972,7 +1014,7 @@ td.komet-concept-table-nested-indicator.komet-concept-table-nested-indicator-ope
 }
 .komet-mapping-section-panel-header{
     display: flex;
-    background-color: #4f80d9;
+    background-color: #414199;
     color: white;
     font-weight: bold;
     height: 26px;
@@ -1135,7 +1177,15 @@ td.komet-concept-table-nested-indicator.komet-concept-table-nested-indicator-ope
     border: 0px;
 }
 
-
+.komet-workflow-history-item{
+  margin: 4px;
+  flex: 1 1 50%;
+  height: 70px;
+}
+.komet-workflow-set-definition-row
+{
+  display:flex;
+}
 // TODO - OLD STYLES THAT SHOULD BE DELETED (Make sure not being used)
 .komet_dashboard .navbar{
     margin-bottom: 0px;
@@ -1157,7 +1207,7 @@ td.komet-concept-table-nested-indicator.komet-concept-table-nested-indicator-ope
     border-bottom: 1px solid transparent;
     color: black;
 }
-#komet_navbar_navigation .nav a:hover {
+#komet_navbar_navigation .nav a:hover, #komet_navbar_navigation .nav a:focus {
     border-bottom: 1px solid black;
 }
 #komet_navbar_tools{
@@ -1179,7 +1229,7 @@ td.komet-concept-table-nested-indicator.komet-concept-table-nested-indicator-ope
     text-decoration: none;
     color: black;
 }
-#komet_navbar_tools a:hover {
+#komet_navbar_tools a:hover, #komet_navbar_tools a:focus {
     text-decoration: none;
     color: black;
 }

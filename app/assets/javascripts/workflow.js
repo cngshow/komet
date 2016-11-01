@@ -182,24 +182,32 @@ var WorkflowModule = (function () {
     }
 
     function advance_workflow() {
-        $('#wfl_modal_form').validate({
+        validator();
+        var form = $('#wfl_modal_form');
+
+        if (form.valid()) {
+            //submit the form to transition the workflow
+            form.submit();
+            reset_modal();
+        }
+    }
+
+    // this validates the modal form setting up the error placement
+    function validator() {
+        return $('#wfl_modal_form').validate({
             errorPlacement: function (error, element) {
                 var lbl = $("label[for='" + element.attr('id') + "']");
                 error.insertAfter(lbl);
             }
         });
-
-        if ($('#wfl_modal_form').valid()) {
-            //submit the form to transition the workflow
-
-            reset_modal();
-        }
     }
 
+    //reset the dropdown in the footer
     function reset_modal() {
-        //reset the dropdown in the footer to the default and close the modal
-        $('#komet_workflow_transition').val('');
-        $('#wfl_modal').modal('toggle');
+        validator().resetForm(); //removed jquery validation errors
+        document.getElementById("wfl_modal_form").reset(); // blanks out the form
+        $('#komet_workflow_transition').val(''); // sets the transition drop down to the default
+        $('#wfl_modal').modal('hide'); //closes the modal
     }
 
     function release(uuid) {
@@ -222,25 +230,6 @@ var WorkflowModule = (function () {
 
     function showHistory(process_Id) {
 
-        //todo this call is commented out because rest api call has a bug. showhistory and showconcept pretty much same code
-        // i am using build from yesterday - 10/13 rest api call used in this function
-        // has a bug. I replicated error and showed/proved to jesse that error is on rest asp call side
-        // Joel is working on fixing it. . this function populates data when user clicks on View concept link
-        // from workflow dashboard grid
-
-        // var paramsProcess = "?processId=" + process_Id ;
-        // $.get(gon.routes.workflow_get_history_path + paramsProcess, function( results ) {
-        // $('#komet-workflow_name_display').html(results.name);
-        // $('#komet-workflow_description_display').html(results.description);
-        // $('#komet-workflow_author_display').html(results.creatorId);
-        // $('#komet-workflow_reviewer_approver_display').html("NA");
-        // });
-        // todo please remove this test data below once above rest api call works
-        // $('#komet-workflow_name_display').html(" processID for testing div onclick action" + process_Id);
-        // $('#komet-workflow_description_display').html("Need Data");
-        // $('#komet-workflow_author_display').html("Need Data");
-        // $('#komet-workflow_reviewer_approver_display').html("Need Data");
-        //
         // $("#workflow_concept_grid").html(""); // empty grid giv in concept grid (displayed on RHS of workflow dashboard page)
         //
         // //destroying the grid before rebuilding it
@@ -267,15 +256,32 @@ var WorkflowModule = (function () {
         //
         // new agGrid.Grid($("#workflow_concept_grid").get(0), this.conceptItemsGridOptions);
         //
-        // //todo need to write code to populated data once above rest api call on line 201 works. Code above this line builds empty grid with column name;
         $("#komet_workflow_overview_items").css('width', '50%');
         $('#komet_workflow_concept').css('width', '50%').show(200);
 
         // this code below is for view history or history in  view concept - dashboard workflow
         var args = arguments;
-
+        var getHistorydata = "";
         $.get(gon.routes.workflow_get_history_path, {processId: process_Id}, function (results) {
-            $('#workflow_history').text(JSON.stringify(results));
+            $.each(results, function (index, value) {
+                getHistorydata = '<div class="komet-workflow-set-definition-row">' ;
+                getHistorydata +='<div class="komet-workflow-history-item"><label for="workflow_user">Workflow User:</label><div>' + value.userName +'</div></div>';
+                getHistorydata +='<div class="komet-workflow-history-item"><label for="workflow_starting_state">Starting State:</label><div>' + value.initialState +'</div></div>';
+                getHistorydata +='<div class="komet-workflow-history-item"><label for="workflow_time">Time:</label><div>' + (new Date(value.timeAdvanced)).toLocaleString() +'</div></div>';
+                getHistorydata +='</div>';
+                getHistorydata +='<div class="komet-workflow-set-definition-row">';
+                getHistorydata +='<div class="komet-workflow-history-item"><label for="workflow_action">Action:</label><div>' + value.action +'</div></div>';
+                getHistorydata +='<div class="komet-workflow-history-item"><label for="workflow_resulting_state">Resulting State:</label><div>'+  value.outcomeState +'</div></div>';
+                getHistorydata +='<div class="komet-workflow-history-item">&nbsp;<div>&nbsp;</div></div>';
+                getHistorydata +='</div>';
+                if (value.comment.length > 0) {
+                    getHistorydata += '<div class="komet-workflow-set-definition-row">';
+                    getHistorydata += '<div class="komet-workflow-history-item"><label for="workflow_comment">Comment:</label><div>' + value.comment + '</div></div></div>';
+                    // getHistorydata = '<div class="komet-mapping-set-definition-row">' ;
+                }
+                getHistorydata +='<hr class="komet-concept-details-hr">';
+            });
+            $('#workflow_history').html (getHistorydata);
 
             if (args[1] === undefined) {
                 showConcept(process_Id, false);
@@ -286,8 +292,7 @@ var WorkflowModule = (function () {
     function set_name_and_description(results) {
         $('#komet-workflow_name_display').html(results.name);
         $('#komet-workflow_description_display').html(results.description);
-        $('#komet_history-workflow_name_display').html(results.name);
-        $('#komet_history-workflow_description_display').html(results.description);
+        $('#komet-workflow_creator_display').html(results.creatorName);
     }
 
     function showConcept(process_Id)  // this function populates data when user clicks on View concept link from workflow dashboard grid
@@ -321,8 +326,7 @@ var WorkflowModule = (function () {
         //         // todo this is an example of defining column once you have actual data to populate grid.
         //      // {field: "description", headerName: "Description"},
         //         { headerName: 'Concept name'}, //as per firefram this grid has only 2 columns
-        //         { headerName: "Timestamp"},
-        //
+        //         { headerName: "Timestamp"},        //
         //     ]
         // };
         //
@@ -331,20 +335,6 @@ var WorkflowModule = (function () {
         // //todo need to write code to populated data once above rest api call on line 268 works. Code above this line builds empty grid with column name;
         $('#komet_view_concept_form').show(200);
 
-
-        // this code below is for view history or history in  view concept - dashboard workflow
-        // var paramsProcess = "?processId=" + process_Id ;
-        // $.get(gon.routes.workflow_get_history_path + paramsProcess, function( results ) {
-        // $('#komet_history-workflow_description_display').html(results.name);
-        // $('#komet-workflow_description_display').html(results.description);
-        // // $('#komet_history-workflow_author_display').html(results.creatorId);
-        // // $('#komet_history-workflow_reviewer_approver_display').html("NA");
-        // });
-        // // todo please remove this test data below once above rest api call works
-        // // $('#komet_history-workflow_name_display').html(" processID for testing div onclick action" + process_Id);
-        // // $('#komet_history-workflow_description_display').html("Need Data");
-        // $('#komet_history-workflow_author_display').html("Need Data");
-        // $('#komet_history-workflow_reviewer_approver_display').html("Need Data");
     }
 
     return {

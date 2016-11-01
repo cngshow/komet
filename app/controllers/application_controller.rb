@@ -15,9 +15,11 @@ class ApplicationController < ActionController::Base
   include UserSession
   include ServletSupport
 
-  CACHE_TYPE_ALL = :all_caches
-  CACHE_TYPE_TAXONOMY = :taxonomy_caches
-  CACHE_TYPE_SYSTEM = :system_caches
+  CACHE_TYPE_TAXONOMY = [AssociationRest, CommentApis, ConceptRest, IdAPIsRest, LogicGraphRest, MappingApis, SearchApis, SememeRest, TaxonomyRest].freeze
+  CACHE_TYPE_SYSTEM = [CoordinateRest, SystemApis].freeze
+  #CACHE_TYPE_WORKFLOW = [WorkflowRest].freeze
+  CACHE_TYPE_ALL = [CACHE_TYPE_TAXONOMY, CACHE_TYPE_SYSTEM].flatten.freeze
+
   METADATA_DUMP_FILE = "#{Rails.root}/tmp/isaac_metadata_auxiliary.dump"
 
   # Prevent CSRF attacks by raising an exception.
@@ -28,7 +30,7 @@ class ApplicationController < ActionController::Base
   after_action :verify_authorized
   before_action :ensure_rest_version
   before_action :ensure_roles
-  before_action :read_only? # must be after ensure_roles
+  before_action :read_only # must be after ensure_roles
   # todo tried testing with reviewer? and could not get to the login page
 
   before_action :set_render_menu, :setup_routes, :setup_constants
@@ -173,54 +175,43 @@ class ApplicationController < ActionController::Base
   def setup_constants
     ApplicationController.parse_isaac_metadata_auxiliary
     gon.IsaacMetadataAuxiliary = $isaac_metadata_auxiliary
+    gon.roles = pundit_user[:roles]
   end
 
   def pundit_user
-    if user_session_defined?
-      {user: user_session(UserSession::LOGIN),
-       roles: user_session(UserSession::ROLES),
-       token: user_session(UserSession::TOKEN)}
+    r_val = nil
+    if (user_session_defined? && user_session(UserSession::LOGIN))
+      r_val = {user: user_session(UserSession::LOGIN),
+               roles: user_session(UserSession::ROLES),
+               token: user_session(UserSession::TOKEN)}
     else
-      {user: nil, roles: [], token: 'Not Authorized'}
+      r_val = {user: nil, roles: [], token: 'Not Authorized'}
     end
-  end
-
-  #dynamically add authorization methods
-  def add_pundit_methods
-    PunditDynamicRoles::add_controller_methods self
+    r_val[:controller_instance] = self
+    r_val
   end
 
   ##
   # clear_rest_caches - Clear all relevant REST caches
   # @param [String] cache_type - An ApplicationController constant representing the types of caches to clear:
   #                               CACHE_TYPE_TAXONOMY - (default) clears all taxonomy related caches, anything that would be displayed in the GUI
-  #                               CACHE_TYPE_SYSTEM - clears all caches that deal with internal system data (ie: metadata, coordinate tokens, ect.). Should very rarely be used
+  #                               CACHE_TYPE_WORKFLOW - clears all workflow related caches, anything that would be displayed in the GUI (not used currently)
+  #                               CACHE_TYPE_SYSTEM -   clears all caches that deal with internal system data (ie: metadata, coordinate tokens, ect.). Should very rarely be used
   #                               CACHE_TYPE_ALL - clears all caches. Should very rarely be used
   def clear_rest_caches(cache_type: CACHE_TYPE_TAXONOMY)
-
-    if cache_type == CACHE_TYPE_TAXONOMY || cache_type == CACHE_TYPE_ALL
-
-      CommonRest.clear_cache(rest_module: AssociationRest)
-      CommonRest.clear_cache(rest_module: CommentApis)
-      CommonRest.clear_cache(rest_module: ConceptRest)
-      CommonRest.clear_cache(rest_module: IdAPIsRest)
-      CommonRest.clear_cache(rest_module: LogicGraphRest)
-      CommonRest.clear_cache(rest_module: MappingApis)
-      CommonRest.clear_cache(rest_module: SearchApis)
-      CommonRest.clear_cache(rest_module: SememeRest)
-      CommonRest.clear_cache(rest_module: TaxonomyRest)
-
-    elsif cache_type == CACHE_TYPE_SYSTEM || cache_type == CACHE_TYPE_ALL
-
-      CommonRest.clear_cache(rest_module: CoordinateRest)
-      CommonRest.clear_cache(rest_module: SystemApis)
+    cache_type.each do |module_class|
+      CommonRest.clear_cache(rest_module: module_class)
     end
+  end
+
+  def flash_alert_insufficient_privileges
+    flash_alert(message: BootstrapNotifier::INSUFFICIENT_PRIVILEGES)
   end
 
   private
 
   def self.check_for_metadata_auxiliary_dump
-    return if(!$isaac_metadata_auxiliary.nil? || $rake)
+    return if (!$isaac_metadata_auxiliary.nil? || $rake)
     begin
       return unless File.exists? METADATA_DUMP_FILE
       File.open(METADATA_DUMP_FILE) do |f|

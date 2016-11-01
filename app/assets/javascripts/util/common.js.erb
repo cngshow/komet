@@ -16,6 +16,9 @@ Copyright Notice
  See the License for the specific language governing permissions and
  limitations under the License.
  */
+Array.prototype.diff = function(a) {
+  return this.filter(function(i) {return a.indexOf(i) < 0;});
+};
 
 var Common = new function () {
   //public functions
@@ -38,6 +41,24 @@ var Common = new function () {
         break;
       }
     }
-  }
+  };
+
+  this.in_array = function(array, value) {
+    var i = array.length;
+
+    while (i--) {
+      if (array[i] == value) {
+        return true;
+      }
+    }
+    return false;
+  };
+
+  this.arr_diff = function(a1, a2) {
+    var diff = a1.diff(a2);
+    diff = diff.concat(a2.diff(a1));
+    return diff;
+  };
+
 };
 

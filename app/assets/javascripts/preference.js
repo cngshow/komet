@@ -286,7 +286,7 @@ var PreferenceModule = (function () {
     function createRefsetFieldRow(){
 
         var options = "";
-        var refsetSelect = '<select style="width:270px" id="komet_preferences_refset_id">';
+        var refsetSelect = '<select style="width:270px" aria-labelledby="Select Refset" id="komet_preferences_refset_id">';
 
         Object.keys(refsetList).forEach( function(refsetID) {
             options += '<option value="' + refsetID + '">' + refsetList[refsetID] + '</option>';
@@ -360,8 +360,8 @@ var PreferenceModule = (function () {
                 refsetCell.innerHTML ="&nbsp;&nbsp;" + refset;
                 refsetColorCell.setAttribute("style", "border:outset 1px black;width:15px;background-color:" + colorid );
                 refsetDeleteCell.setAttribute("style", "text-align: center" );
-                refsetDeleteCell.innerHTML='<a name="removeRow" onclick="PreferenceModule.deleteRefsetFieldRow(' + rowCount + ')">X</a>';
-                refsetColorCell.innerHTML = '<input name="colorrefsets"  type="hidden" id="' + refset + '~' + refsetsid + '" size="6" style="height:40px" data-control="hue" value=" ' + colorid + ' "  />';
+                refsetDeleteCell.innerHTML='<a tooltip="remove refset" name="removeRow" onclick="PreferenceModule.deleteRefsetFieldRow(' + rowCount + ')">X</a>';
+                refsetColorCell.innerHTML = '<input name="colorrefsets"  type="hidden" id="' + refset + '~' + refsetsid + '" size="6" style="height:30px" data-control="hue" value=" ' + colorid + ' "  />';
 
                 refsetRow.appendChild(refsetIDCell);
                 refsetRow.appendChild(refsetColorCell);
@@ -427,8 +427,10 @@ var PreferenceModule = (function () {
                     td2.innerHTML = value.conChronology.description;
                     document.getElementById("colorpathtr" + value.conChronology.conceptSequence).appendChild(td2);
 
+                    var colorrowid = "'" + value.conChronology.description + "~" + value.conChronology.conceptSequence + "','colorpathtr" + value.conChronology.conceptSequence + "'";
+
                     var td3 = document.createElement("TD");
-                    td3.innerHTML = '<input name="colorpath" class="pathcolordemo" title="Click here to change color"  type="hidden" id="' + value.conChronology.description + '~' + value.conChronology.conceptSequence + '" size="6" style="height:40px" data-control="hue" value="" />';
+                    td3.innerHTML = '<input name="colorpath" class="pathcolordemo" title="Click here to change color"  type="text" id="' + value.conChronology.description + '~' + value.conChronology.conceptSequence + '" size="6" style="height:30px" data-control="hue" value="" />&nbsp;<a title="remove color" onclick="PreferenceModule.removecolor(' + colorrowid + ')">X</a>';
 
                     document.getElementById("colorpathtr" + value.conChronology.conceptSequence).appendChild(td3);
                     $('.pathcolordemo').minicolors();
@@ -458,8 +460,10 @@ var PreferenceModule = (function () {
                 td2.innerHTML = value.path_name;
                 document.getElementById("colorpathtr" + value.pathid).appendChild(td2);
 
+                var colorrowid = "'" + value.path_name + "~" + value.pathid + "','colorpathtr" + value.pathid + "'";
+
                 var td3 = document.createElement("TD");
-                td3.innerHTML = '<input name="colorpath" class="pathcolordemo" title="Click here to change path color"  type="hidden" id="' + value.path_name + '~' + value.pathid + '" size="6" style="height:40px" data-control="hue" value="' + value.colorid + '" />';
+                td3.innerHTML = '<input name="colorpath" class="pathcolordemo" title="Click here to change path color"  type="text" id="' + value.path_name + '~' + value.pathid + '" size="6" style="height:30px" data-control="hue" value="' + value.colorid + '" />&nbsp;<a title="remove color" onclick="PreferenceModule.removecolor(' + colorrowid + ')">X</a>';
 
                 document.getElementById("colorpathtr" + value.pathid).appendChild(td3);
                 $('.pathcolordemo').minicolors();
@@ -500,9 +504,9 @@ var PreferenceModule = (function () {
                     var td2 = document.createElement("TD");
                     td2.innerHTML = value.conChronology.description;
                     document.getElementById("colorTr" + value.conChronology.conceptSequence).appendChild(td2);
-
+                    var colorrowid = "'" + value.conChronology.description + "~" + value.conChronology.conceptSequence + "','colorTr" + value.conChronology.conceptSequence + "'";
                     var td3 = document.createElement("TD");
-                    td3.innerHTML = '<input name="color_id" class="demo" title="Click here to change color"  type="hidden" id="' + value.conChronology.description + '~' + value.conChronology.conceptSequence + '" size="6" style="height:40px" data-control="hue" value="" />';
+                    td3.innerHTML = '<input name="color_id" class="demo" title="Click here to change color"  type="text" id="' + value.conChronology.description + '~' + value.conChronology.conceptSequence + '" size="6" style="height:30px" data-control="hue" value="" />&nbsp;<a title="remove color" onclick="PreferenceModule.removecolor(' + colorrowid + ')">X</a>';
 
                     document.getElementById("colorTr" + value.conChronology.conceptSequence).appendChild(td3);
                     $('.demo').minicolors();
@@ -534,8 +538,9 @@ var PreferenceModule = (function () {
                 td2.innerHTML = value.module_name;
                 document.getElementById("colorTr" + value.moduleid).appendChild(td2);
 
+                var colorrowid = "'" + value.module_name + "~" + value.moduleid + "','colorTr" + value.moduleid + "'";
                 var td3 = document.createElement("TD");
-                td3.innerHTML = '<input name="color_id" class="demo" title="Click here to change color"  type="hidden" id="' + value.module_name + '~' + value.moduleid + '" size="6" style="height:40px" data-control="hue" value="' + value.colorid + '" />';
+                td3.innerHTML = '<input name="color_id" class="demo" title="Click here to change color"  type="text" id="' + value.module_name + '~' + value.moduleid + '" size="6" style="height:30px" data-control="hue" value="' + value.colorid + '" />&nbsp;<a title="remove color" onclick="PreferenceModule.removecolor(' + colorrowid + ')">X</a>';
 
                 document.getElementById("colorTr" + value.moduleid).appendChild(td3);
                 $('.demo').minicolors();
@@ -545,6 +550,15 @@ var PreferenceModule = (function () {
 
     }
 
+
+function removecolor(controlid,rowid)
+{
+    console.log(controlid);
+    var colorid = "#" + controlid;
+    document.getElementById(controlid).value="";
+    document.getElementById(controlid).style.backgroundColor ="";
+    $("#" + rowid ).find('.minicolors-swatch-color').css("background-color","");
+}
     // creates table of description type and dialect
     function populateControls(tablename,uuid,arrya_ids)    {
         var counter =0;
@@ -635,7 +649,8 @@ var PreferenceModule = (function () {
         selectItemByValue: selectItemByValue,
         createRefsetFieldRow:createRefsetFieldRow,
         addRefsetRow: addRefsetRow,
-        deleteRefsetFieldRow: deleteRefsetFieldRow
+        deleteRefsetFieldRow: deleteRefsetFieldRow,
+        removecolor:removecolor
 
 
     };

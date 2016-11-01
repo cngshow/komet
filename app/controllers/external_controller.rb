@@ -26,7 +26,7 @@ class ExternalController < ApplicationController
   # we cannot skip ensure roles on logout because we need to have @ssoi set to determine the redirect url
   skip_before_action :ensure_roles, only: [:login]
   skip_after_action :verify_authorized
-  skip_before_action :read_only?
+  skip_before_action :read_only
 
   def login
     user_name = ssoi_headers
@@ -57,8 +57,19 @@ class ExternalController < ApplicationController
 
   def logout
     clear_user_session
+    clear_user_workflow
     flash[:notice] = 'You have been logged out.'
     logout_url_string = ssoi? ? PrismeConfigConcern.logout_link : root_url
     redirect_to logout_url_string
+  end
+
+  def export
+    cookies['fileDownload'] = 'true'
+    file_name = 'vhat.xml'
+    start_time = Time.parse(params[:start_date]).to_i*1000
+    end_time = Time.parse(params[:end_date]).to_i*1000
+    xml =  ExportRest.get_workflow(action: ExportRest::ACTION_EXPORT, additional_req_params: {changedAfter: start_time, changedBefore: end_time})
+    #sleep 20 #Greg try uncommenting this to simulate long running isaac rest.  Can we make the modal dialog stay up?
+    send_data(xml, filename: file_name)
   end
 end

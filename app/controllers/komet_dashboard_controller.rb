@@ -26,13 +26,14 @@ require './lib/isaac_rest/search_apis_rest'
 # handles the loading of the taxonomy tree
 class KometDashboardController < ApplicationController
     include TaxonomyConcern, ConceptConcern, InstrumentationConcern, SearchApis
-    include CommonController
+    include CommonController, TaxonomyHelper
 
     before_action :setup_routes, :setup_constants, :only => [:dashboard]
     after_filter :byte_size unless Rails.env.production?
     skip_before_action :ensure_roles, only: [:version]
     skip_after_action :verify_authorized, only: [:version]
-    skip_before_action :read_only?, only: [:version]
+    skip_before_action :read_only, only: [:version]
+    before_action :can_edit_concept, only: [:get_concept_create_info, :create_concept, :get_concept_edit_info, :edit_concept, :clone_concept, :change_concept_state  ]
 
     ##
     # load_tree_data - RESTful route for populating the taxonomy tree using an http :GET
@@ -102,10 +103,17 @@ class KometDashboardController < ApplicationController
                 return []
             end
 
+            inactive_class = ''
+
+            # if the node is inactive apply the correct class
+            if isaac_concept.conVersion.state.enumName && isaac_concept.conVersion.state.enumName.downcase.eql?('inactive')
+                inactive_class = ' komet-inactive-tree-node'
+            end
+
             # load the root node into our return variable
             # TODO - remove the hard-coding of type to 'vhat' when the type flags are implemented in the REST APIs
-            root_anchor_attributes = { class: 'komet-context-menu', 'data-menu-type' => 'concept', 'data-menu-uuid' => isaac_concept.conChronology.identifiers.uuids.first,
-                                       'data-menu-state' => 'ACTIVE', 'data-menu-concept-text' => isaac_concept.conChronology.description,
+            root_anchor_attributes = { class: 'komet-context-menu' + inactive_class, 'data-menu-type' => 'concept', 'data-menu-uuid' => isaac_concept.conChronology.identifiers.uuids.first,
+                                       'data-menu-state' => isaac_concept.conVersion.state.enumName, 'data-menu-concept-text' => isaac_concept.conChronology.description,
                                        'data-menu-concept-terminology-type' => 'vhat'}
             root_node = {id: 0, concept_id: isaac_concept.conChronology.identifiers.uuids.first, text: isaac_concept.conChronology.description, parent_reversed: false, parent_search: parent_search, icon: 'komet-tree-node-icon komet-tree-node-primitive', a_attr: root_anchor_attributes, state: {opened: 'true'}}
         else
@@ -138,7 +146,7 @@ class KometDashboardController < ApplicationController
         node[:text] = concept.conChronology.description
         node[:has_children] = !concept.children.nil? && concept.children.length > 0
         node[:defined] = concept.isConceptDefined
-        node[:state] = concept.conVersion.state.name
+        node[:state] = concept.conVersion.state.enumName
         node[:author] = concept.conVersion.authorSequence
         node[:module] = concept.conVersion.moduleSequence
         node[:path] = concept.conVersion.pathSequence
@@ -208,7 +216,7 @@ class KometDashboardController < ApplicationController
                 parent_node[:id] = parent.conChronology.identifiers.uuids.first
                 parent_node[:text] = parent.conChronology.description
                 parent_node[:defined] = parent.isConceptDefined
-                parent_node[:state] = parent.conVersion.state.name
+                parent_node[:state] = parent.conVersion.state.enumName
                 parent_node[:author] = parent.conVersion.authorSequence
                 parent_node[:module] = parent.conVersion.moduleSequence
                 parent_node[:path] = parent.conVersion.pathSequence
@@ -344,24 +352,6 @@ class KometDashboardController < ApplicationController
         end
 
         tree_nodes
-    end
-
-    def get_tree_node_flag(flag_name, ids_to_match)
-
-        flag = ''
-
-        if session['color' + flag_name]
-
-            colors = session['color' + flag_name].find_all{|key, hash|
-                hash[flag_name + 'id'].to_i.in?(ids_to_match) && hash['colorid'] != ''
-            }
-
-            colors.each do |color|
-                flag = ' <span class="komet-node-' + flag_name + '-flag" style="border-color: ' + color[1]['colorid'] + ';"></span>'
-            end
-        end
-
-        flag
     end
 
     ##
@@ -946,11 +936,7 @@ class KometDashboardController < ApplicationController
         concept_id = params[:concept_id]
         newState = params[:newState]
 
-        if newState == 'active'
-            results = ConceptRest::get_concept(action: ConceptRestActions::ACTION_UPDATE_ACTIVATE, uuid: concept_id)
-        else
-            results = ConceptRest::get_concept(action: ConceptRestActions::ACTION_UPDATE_DEACTIVATE, uuid: concept_id)
-        end
+        results = ComponentRest::get_component(action: ComponentRestActions::ACTION_UPDATE_STATE, uuid_or_id: concept_id, additional_req_params: {editToken: get_edit_token, active: newState})
 
         if results.is_a? CommonRest::UnexpectedResponse
             render json: {state: nil} and return
@@ -959,7 +945,7 @@ class KometDashboardController < ApplicationController
         # clear taxonomy caches after writing data
         clear_rest_caches
 
-        render json: {state: state}
+        render json: {state: newState}
     end
 
     ##

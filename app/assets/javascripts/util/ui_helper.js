@@ -46,15 +46,43 @@ var UIHelper = (function () {
         return (tabpage !== undefined ? (tabpage === tabpageId) : false);
     }
 
-    function generateFormErrorMessage(message, formLevelError){
+    function generatePageMessage(message, isPageLevelMessage, messageType) {
 
-        var classLevel = "komet-form-field-error";
-
-        if (formLevelError != undefined && formLevelError){
-            classLevel = "komet-form-error";
+        if (messageType == undefined || messageType == null || !(messageType == "success" || messageType == "warning")) {
+            messageType = "error";
         }
 
-        return '<div class="' + classLevel + '"><div class="glyphicon glyphicon-alert"></div>' + message + '</div>';
+        var icon = '<div class="glyphicon glyphicon-alert" title="alert message"></div>';
+
+        if (messageType == "success") {
+            icon = '<div class="glyphicon glyphicon-ok-circle" title="success message"></div>';
+        }
+
+        var messageType = "komet-page-" + messageType;
+        var classLevel = "komet-page-field-message";
+
+        if (isPageLevelMessage != undefined && isPageLevelMessage) {
+            classLevel = "komet-page-message";
+        }
+
+        var id = window.performance.now().toString().replace(".", "");
+
+        return '<div id="komet_' + id + '" class="' + classLevel + ' ' + messageType + '">' + icon + '<div class="komet-page-message-container">' + message + '</div>'
+            + '<div class="komet-flex-right"><div class="glyphicon glyphicon-remove" onclick="$(\'#komet_' + id + '\').remove();" title="Remove message"></div></div></div>';
+    }
+
+    function removePageMessages(containerElementOrSelector) {
+
+        var element;
+
+        // If the type of the first parameter is a string, then use it as a jquery selector, otherwise use as is
+        if (typeof containerElementOrSelector === "string") {
+            element = $(containerElementOrSelector);
+        } else {
+            element = containerElementOrSelector;
+        }
+
+        element.find(".komet-page-message, .komet-page-field-message").remove();
     }
 
     function generateConfirmationDialog(title, message, closeCallback, buttonText, positioningElementOrSelector, formID) {
@@ -84,7 +112,7 @@ var UIHelper = (function () {
             position = {my: "right bottom", at: "left bottom", of: element};
         }
 
-        if (formID == undefined){
+        if (formID == undefined) {
             formID = null;
         } else {
             buttonType = "submit";
@@ -95,7 +123,10 @@ var UIHelper = (function () {
         var dialog = $("#" + dialogID);
 
         dialog.dialog({
-            beforeClose: function(e) { closeCallback(buttonClicked); dialog.remove();},
+            beforeClose: function (e) {
+                closeCallback(buttonClicked);
+                dialog.remove();
+            },
             title: title,
             resizable: false,
             height: "auto",
@@ -103,7 +134,7 @@ var UIHelper = (function () {
             modal: true,
             position: position,
             dialogClass: "komet-confirmation-dialog komet-dialog-no-close-button",
-            buttons:{
+            buttons: {
                 Cancel: {
                     "class": "btn btn-default",
                     text: "Cancel",
@@ -133,7 +164,7 @@ var UIHelper = (function () {
         var element;
 
         // If the type of the first parameter is a string, then use it as a jquery selector, otherwise use as is
-        if (typeof containerElementOrSelector === "string"){
+        if (typeof containerElementOrSelector === "string") {
             element = $(containerElementOrSelector);
         } else {
             element = containerElementOrSelector;
@@ -141,7 +172,7 @@ var UIHelper = (function () {
 
         var tags = element.find(".komet-changeable");
 
-        if (showChanges){
+        if (showChanges) {
             tags.addClass("komet-highlight-changes");
         } else {
             tags.removeClass("komet-highlight-changes");
@@ -149,25 +180,27 @@ var UIHelper = (function () {
     }
 
     // function to switch a field between enabled and disabled
-    function toggleFieldAvailability(elementOrSelector, enable){
+    function toggleFieldAvailability(elementOrSelector, enable) {
 
         var element;
 
         // If the type of the first parameter is a string, then use it as a jquery selector, otherwise use as is
-        if (typeof elementOrSelector === "string"){
+        if (typeof elementOrSelector === "string") {
             element = $(elementOrSelector);
         } else {
             element = elementOrSelector;
         }
 
-        if (enable){
+        if (enable) {
 
             element.removeClass("ui-state-disabled");
             element.addClass("ui-state-enabled");
+            element.prop("disabled", false);
         } else {
 
             element.removeClass("ui-state-enabled");
             element.addClass("ui-state-disabled");
+            element.prop("disabled", true);
         }
     }
 
@@ -185,17 +218,17 @@ var UIHelper = (function () {
         var element;
 
         // set the default value if this optional parameter wasn't passed in
-        if (returnChanges == undefined){
+        if (returnChanges == undefined) {
             returnChanges = false;
         }
 
         // set the default value if this optional parameter wasn't passed in
-        if (highlightChanges == undefined){
+        if (highlightChanges == undefined) {
             highlightChanges = false;
         }
 
         // If the type of the first parameter is a string, then use it as a jquery selector, otherwise use as is
-        if (typeof formElementOrSelector === "string"){
+        if (typeof formElementOrSelector === "string") {
             element = $(formElementOrSelector);
         } else {
             element = formElementOrSelector;
@@ -231,17 +264,17 @@ var UIHelper = (function () {
                     if (this.options[i].selected != this.options[i].defaultSelected) {
 
                         // if this is a single selection select box
-                        if (this.type == "select-one"){
+                        if (this.type == "select-one") {
 
                             // if the old selected value was true then this is the old value, otherwise it's the new value
-                            if (this.options[i].defaultSelected){
+                            if (this.options[i].defaultSelected) {
                                 field.oldValue = this.options[i].value;
                             } else {
 
                                 field.newValue = this.options[i].value;
 
                                 // if the old value is still an empty array, set it to an empty string, because it may have never had a value selected
-                                if (typeof field.oldValue == "object"){
+                                if (typeof field.oldValue == "object") {
                                     field.oldValue = "";
                                 }
                             }
@@ -250,7 +283,7 @@ var UIHelper = (function () {
 
                             // if this is a multi selection select box then we need to store values as an array
                             // if the old selected value was true then this is the old value, otherwise it's the new value
-                            if (this.options[i].defaultSelected){
+                            if (this.options[i].defaultSelected) {
                                 field.oldValue.push(this.options[i].value);
                             } else {
                                 field.newValue.push(this.options[i].value);
@@ -264,7 +297,7 @@ var UIHelper = (function () {
             if (!(typeof field.oldValue == "object" && field.oldValue.length === 0 && typeof field.newValue == "object" && field.newValue.length === 0)) {
 
                 // if we are not returning the array of changes or highlighting them, then we can stop looping and return true
-                if (!returnChanges && !highlightChanges){
+                if (!returnChanges && !highlightChanges) {
                     return true;
                 }
 
@@ -272,16 +305,16 @@ var UIHelper = (function () {
                 changes.push(field);
 
                 // if we are highlighting changes then find the nearest element with the changeable class, and add the hightlight class
-                if (highlightChanges){
+                if (highlightChanges) {
                     $(this).closest(".komet-changeable").addClass("komet-highlight-changes");
                 }
             }
         });
 
         // if we are not returning the array of changes then check to see if there were changes
-        if (!returnChanges){
+        if (!returnChanges) {
 
-            if (changes.length > 0){
+            if (changes.length > 0) {
                 return true;
             } else {
                 return false;
@@ -297,7 +330,7 @@ var UIHelper = (function () {
         $(formIdOrClass + " :input:not(:button):not([type=hidden])").each(function () {
 
             if (this.type == "text" || this.type == "textarea" || this.type == "hidden") {
-                 this.value = this.defaultValue;
+                this.value = this.defaultValue;
 
             } else if (this.type == "radio" || this.type == "checkbox") {
                 this.checked = this.defaultChecked;
@@ -316,7 +349,7 @@ var UIHelper = (function () {
         var element;
 
         // If the type of the first parameter is a string, then use it as a jquery selector, otherwise use as is
-        if (typeof formElementOrSelector === "string"){
+        if (typeof formElementOrSelector === "string") {
             element = $(formElementOrSelector);
         } else {
             element = formElementOrSelector;
@@ -346,23 +379,23 @@ var UIHelper = (function () {
 
     var createAutoSuggestField = function (fieldIDBase, fieldIDPostfix, label, name, nameFormat, idValue, displayValue, typeValue, fieldClasses, tabIndex) {
 
-        if (fieldIDPostfix == null){
+        if (fieldIDPostfix == null) {
             fieldIDPostfix = "";
         }
 
-        if (label == null){
+        if (label == null) {
             label = "";
         } else {
-            label = '<label for="' + fieldIDBase + fieldIDPostfix + '">' + label + '</label>';
+            label = '<label for="' + fieldIDBase + '_display' + fieldIDPostfix + '">' + label + '</label>';
         }
 
         var idName = fieldIDBase;
         var typeName = fieldIDBase + "_type";
         var displayName = fieldIDBase + "_display";
 
-        if (name != null){
+        if (name != null) {
 
-            if (nameFormat == "array"){
+            if (nameFormat == "array") {
 
                 idName = name + "]";
                 typeName = name + "_type]";
@@ -376,26 +409,26 @@ var UIHelper = (function () {
             }
         }
 
-        if (idValue == null){
+        if (idValue == null) {
             idValue = "";
         }
 
-        if (displayValue == null){
+        if (displayValue == null) {
             displayValue = "";
         }
 
-        if (typeValue == null){
+        if (typeValue == null) {
             typeValue = "";
         }
 
-        if (fieldClasses == null){
+        if (fieldClasses == null) {
             fieldClasses = "";
         }
 
         var fieldTabIndex = ""
         var recentsTabIndex = ""
 
-        if (tabIndex != null){
+        if (tabIndex != null) {
 
             fieldTabIndex = ' tabindex="' + tabIndex + '"';
             recentsTabIndex = ' tabindex="' + (tabIndex + 1) + '"';
@@ -417,12 +450,12 @@ var UIHelper = (function () {
         return document.createRange().createContextualFragment(fieldString);
     };
 
-    var processAutoSuggestTags = function(containerElementOrSelector){
+    var processAutoSuggestTags = function (containerElementOrSelector) {
 
         var element;
 
         // If the type of the first parameter is a string, then use it as a jquery selector, otherwise use as is
-        if (typeof containerElementOrSelector === "string"){
+        if (typeof containerElementOrSelector === "string") {
             element = $(containerElementOrSelector);
         } else {
             element = containerElementOrSelector;
@@ -430,7 +463,7 @@ var UIHelper = (function () {
 
         var tags = $(element).find("autosuggest");
 
-        tags.each(function(i, tag){
+        tags.each(function (i, tag) {
 
             var fieldIDBase = tag.getAttribute("id-base");
             var fieldIDPostfix = tag.getAttribute("id-postfix");
@@ -446,15 +479,15 @@ var UIHelper = (function () {
             var suggestionRestVariable = tag.getAttribute("suggestion-rest-variable");
             var recentsRestVariable = tag.getAttribute("recents-rest-variable");
 
-            if (fieldIDPostfix == null){
+            if (fieldIDPostfix == null) {
                 fieldIDPostfix = "";
             }
 
-            if (suggestionRestVariable == null){
+            if (suggestionRestVariable == null) {
                 suggestionRestVariable = "komet_dashboard_get_concept_suggestions_path";
             }
 
-            if (suggestionOnChangeFunction == null){
+            if (suggestionOnChangeFunction == null) {
                 suggestionOnChangeFunction = "";
             }
 
@@ -466,7 +499,7 @@ var UIHelper = (function () {
 
             var asOnChange = function (suggestionOnChangeFunction) {
 
-                return function(){
+                return function () {
                     setTimeout(suggestionOnChangeFunction, 0);
                 };
             };
@@ -477,7 +510,7 @@ var UIHelper = (function () {
                 source: gon.routes[suggestionRestVariable],
                 minLength: 3,
                 select: onAutoSuggestSelection
-                ,change: onAutoSuggestChange(suggestionOnChangeFunction)
+                , change: onAutoSuggestChange(suggestionOnChangeFunction)
             });
 
             var recentsButton = $("#" + fieldIDBase + "_recents_button" + fieldIDPostfix);
@@ -494,7 +527,7 @@ var UIHelper = (function () {
         });
     };
 
-    var onAutoSuggestSelection = function(event, ui){
+    var onAutoSuggestSelection = function (event, ui) {
 
         var labelField = $(this);
         labelField.val(ui.item.label);
@@ -511,9 +544,9 @@ var UIHelper = (function () {
         return false;
     };
 
-    var onAutoSuggestChange = function(suggestionOnChangeFunction){
+    var onAutoSuggestChange = function (suggestionOnChangeFunction) {
 
-        return function(event, ui) {
+        return function (event, ui) {
 
             if (!ui.item) {
 
@@ -537,9 +570,9 @@ var UIHelper = (function () {
         };
     };
 
-    var loadAutoSuggestRecents = function(recentsID, restVariable, suggestionOnChangeFunction){
+    var loadAutoSuggestRecents = function (recentsID, restVariable, suggestionOnChangeFunction) {
 
-        if (restVariable == null){
+        if (restVariable == null) {
             restVariable = "komet_dashboard_get_concept_recents_path";
         }
 
@@ -567,7 +600,7 @@ var UIHelper = (function () {
         });
     };
 
-    var useAutoSuggestRecent = function(autoSuggestID, autoSuggestDisplayField, autoSuggestTypeField, id, text, type, suggestionOnChangeFunction){
+    var useAutoSuggestRecent = function (autoSuggestID, autoSuggestDisplayField, autoSuggestTypeField, id, text, type, suggestionOnChangeFunction) {
 
         var idField = $("#" + autoSuggestID);
         idField.val(id);
@@ -587,19 +620,48 @@ var UIHelper = (function () {
         //setTimeout(suggestionOnChangeFunction, 0);
     };
 
+    var createSelectFieldString = function(selectID, selectName, classes, options, selectedItem) {
+
+        var fieldString = '<select id="' + selectID + '" name="' + selectName + '" class="form-control ' + classes + '">';
+
+        for (var i = 0; i < options.length; i++) {
+
+            fieldString += '<option ';
+
+            if (selectedItem != null && selectedItem.toString().toLowerCase() == options[i].value.toString().toLowerCase()) {
+                fieldString += 'selected="selected" ';
+            }
+
+            fieldString += 'value="' + options[i].value + '">' + options[i].label + '</option>';
+        }
+
+        fieldString += '</select>';
+
+        return fieldString;
+    };
+
+    var getPreDefinedOptionsForSelect = function(type){
+
+        if (type == "yes_no"){
+            return [{value: "yes", label: "Yes"}, {value: "no", label: "No"}];
+        } else if (type == "true_false") {
+            return [{value: "true", label: "True"}, {value: "false", label: "False"}];
+        }
+    };
+
     var getElementRightFromWindow = function(elementOrSelector){
 
         var element;
 
         // If the type of the first parameter is a string, then use it as a jquery selector, otherwise use as is
-        if (typeof elementOrSelector === "string"){
+        if (typeof elementOrSelector === "string") {
             element = $(elementOrSelector);
         } else {
             element = elementOrSelector;
         }
 
-        if (element.length > 0){
-            return($(window).width() - (element.offset().left + element.outerWidth()));
+        if (element.length > 0) {
+            return ($(window).width() - (element.offset().left + element.outerWidth()));
         } else {
             return null;
         }
@@ -610,12 +672,22 @@ var UIHelper = (function () {
 
         $.contextMenu({
             selector: '.komet-context-menu',
-            build: function($triggerElement, e){
+            events: {
+                show: function (opt) {
+                    // show event is executed every time the menu is shown!
+                    // find all clickable commands and set their title-attribute
+                    // to their textContent value
+                    opt.$menu.find('.context-menu-item > span').attr('title', function () {
+                        return $(this).text();
+                    });
+                }
+            },
+            build: function ($triggerElement, e) {
 
                 var items = {};
                 var menuType = $triggerElement.attr("data-menu-type");
 
-                if (menuType == "sememe" || menuType == "concept" || menuType == "map_set"){
+                if (menuType == "sememe" || menuType == "concept" || menuType == "map_set") {
 
                     var uuid = $triggerElement.attr("data-menu-uuid");
                     var conceptText = $triggerElement.attr("data-menu-concept-text");
@@ -623,19 +695,23 @@ var UIHelper = (function () {
                     var conceptState = $triggerElement.attr("data-menu-state");
                     var unlinkedViewerID = WindowManager.getUnlinkedViewerID();
 
-                    if (conceptText == undefined || conceptText == ""){
+                    if (conceptText == undefined || conceptText == "") {
                         conceptText = null;
                     }
 
-                    if (conceptState == undefined || conceptState == ""){
+                    if (conceptState == undefined || conceptState == "") {
                         conceptState = null;
                     }
 
-                    if (conceptTerminologyType == undefined || conceptTerminologyType == ""){
+                    if (conceptTerminologyType == undefined || conceptTerminologyType == "") {
                         conceptTerminologyType = null;
                     }
 
-                    items.openConcept = {name:"Open Concept", icon: "context-menu-icon glyphicon-list-alt", callback: openConcept($triggerElement, uuid)};
+                    items.openConcept = {
+                        name: "Open Concept",
+                        icon: "context-menu-icon glyphicon-list-alt",
+                        callback: openConcept($triggerElement, uuid)
+                    };
 
                     if (WindowManager.viewers.inlineViewers.length < WindowManager.viewers.maxInlineViewers) {
 
@@ -657,11 +733,15 @@ var UIHelper = (function () {
 
                     //items.openConceptNewWindow = {name:"Open in New Window", icon: "context-menu-icon glyphicon-list-alt", callback: openConcept($triggerElement, uuid, "popup")};
 
-                    if (menuType == "map_set"){
+                    if (menuType == "map_set") {
 
                         items.separatorMapping = {type: "cm_separator"};
 
-                        items.openMapSet = {name:"Open Mapping", icon: "context-menu-icon glyphicon-list-alt", callback: openMapSet($triggerElement, uuid)};
+                        items.openMapSet = {
+                            name: "Open Mapping",
+                            icon: "context-menu-icon glyphicon-list-alt",
+                            callback: openMapSet($triggerElement, uuid)
+                        };
 
                         if (WindowManager.viewers.inlineViewers.length < WindowManager.viewers.maxInlineViewers) {
 
@@ -685,100 +765,129 @@ var UIHelper = (function () {
                     items.separatorCopy = {type: "cm_separator"};
 
                     if (conceptText != null && conceptTerminologyType != null) {
-                        items.copyConcept = {name:"Copy Concept", icon: "context-menu-icon glyphicon-copy", callback: copyConcept(uuid, conceptText, conceptTerminologyType)};
-                    }
-
-                    items.copyUuid = {name: "Copy UUID", icon: "context-menu-icon glyphicon-copy", callback: copyToClipboard(uuid)};
-
-                    items.separatorConceptEditor = {type: "cm_separator"};
-
-                    items.editConcept = {name:"Edit Concept", icon: "context-menu-icon glyphicon-pencil", callback:  openConceptEditor($triggerElement, uuid)};
-
-                    if (WindowManager.viewers.inlineViewers.length < WindowManager.viewers.maxInlineViewers) {
-
-                        items.editConceptNewViewer = {
-                            name:"Edit Concept in New Viewer",
-                            icon: "context-menu-icon glyphicon-pencil",
-                            callback:  openConceptEditor($triggerElement, uuid, WindowManager.NEW, WindowManager.NEW)
+                        items.copyConcept = {
+                            name: "Copy Concept",
+                            icon: "context-menu-icon glyphicon-copy",
+                            callback: copyConcept(uuid, conceptText, conceptTerminologyType)
                         };
                     }
 
-                    if (WindowManager.viewers.inlineViewers.length > 1) {
+                    items.copyUuid = {
+                        name: "Copy UUID",
+                        icon: "context-menu-icon glyphicon-copy",
+                        callback: copyToClipboard(uuid)
+                    };
 
-                        items.editConceptUnlinkedViewer = {
-                            name:"Edit Concept in Unlinked Viewer",
+                    // check the dynaimc role methods to see if the user can edit concepts
+                    if (RolesModule.can_edit_concept()) {
+
+                        items.separatorConceptEditor = {type: "cm_separator"};
+
+                        items.editConcept = {
+                            name: "Edit Concept",
                             icon: "context-menu-icon glyphicon-pencil",
-                            callback:  openConceptEditor($triggerElement, uuid, unlinkedViewerID)
-                        };
-                    }
-
-                    items.cloneConcept = {name:"Clone Concept", icon: "context-menu-icon glyphicon-share", callback:  cloneConcept(uuid)};
-
-                    if (conceptText != null && conceptTerminologyType != null) {
-
-                        items.createChildConcept = {
-                            name:"Create Child Concept",
-                            icon: "context-menu-icon glyphicon-plus",
-                            callback:  openConceptEditor($triggerElement, null, WindowManager.getLinkedViewerID(), WindowManager.INLINE, uuid, conceptText, conceptTerminologyType)
+                            callback: openConceptEditor($triggerElement, uuid)
                         };
 
                         if (WindowManager.viewers.inlineViewers.length < WindowManager.viewers.maxInlineViewers) {
 
-                            items.createChildConceptNewViewer = {
-                                name:"Create Child Concept in New Viewer",
-                                icon: "context-menu-icon glyphicon-plus",
-                                callback:  openConceptEditor($triggerElement, null, WindowManager.NEW, WindowManager.NEW, uuid, conceptText, conceptTerminologyType)
+                            items.editConceptNewViewer = {
+                                name: "Edit Concept in New Viewer",
+                                icon: "context-menu-icon glyphicon-pencil",
+                                callback: openConceptEditor($triggerElement, uuid, WindowManager.NEW, WindowManager.NEW)
                             };
                         }
 
                         if (WindowManager.viewers.inlineViewers.length > 1) {
 
-                            items.createChildConceptUnlinkedViewer = {
-                                name:"Create Child Concept in Unlinked Viewer",
+                            items.editConceptUnlinkedViewer = {
+                                name: "Edit Concept in Unlinked Viewer",
+                                icon: "context-menu-icon glyphicon-pencil",
+                                callback: openConceptEditor($triggerElement, uuid, unlinkedViewerID)
+                            };
+                        }
+
+                        items.cloneConcept = {
+                            name: "Clone Concept",
+                            icon: "context-menu-icon glyphicon-share",
+                            callback: cloneConcept(uuid)
+                        };
+
+                        if (conceptText != null && conceptTerminologyType != null) {
+
+                            items.createChildConcept = {
+                                name: "Create Child Concept",
                                 icon: "context-menu-icon glyphicon-plus",
-                                callback:  openConceptEditor($triggerElement, null, unlinkedViewerID, WindowManager.INLINE, uuid, conceptText, conceptTerminologyType)
+                                callback: openConceptEditor($triggerElement, null, WindowManager.getLinkedViewerID(), WindowManager.INLINE, uuid, conceptText, conceptTerminologyType)
                             };
+
+                            if (WindowManager.viewers.inlineViewers.length < WindowManager.viewers.maxInlineViewers) {
+
+                                items.createChildConceptNewViewer = {
+                                    name: "Create Child Concept in New Viewer",
+                                    icon: "context-menu-icon glyphicon-plus",
+                                    callback: openConceptEditor($triggerElement, null, WindowManager.NEW, WindowManager.NEW, uuid, conceptText, conceptTerminologyType)
+                                };
+                            }
+
+                            if (WindowManager.viewers.inlineViewers.length > 1) {
+
+                                items.createChildConceptUnlinkedViewer = {
+                                    name: "Create Child Concept in Unlinked Viewer",
+                                    icon: "context-menu-icon glyphicon-plus",
+                                    callback: openConceptEditor($triggerElement, null, unlinkedViewerID, WindowManager.INLINE, uuid, conceptText, conceptTerminologyType)
+                                };
+                            }
+                        }
+
+                        if (conceptState != null) {
+
+                            items.separatorState = {type: "cm_separator"};
+
+                            if (conceptState.toLowerCase() == 'active') {
+                                items.activeInactiveUuid = {
+                                    name: "Inactivate Concept",
+                                    icon: "context-menu-icon glyphicon-ban-circle",
+                                    callback: changeConceptState($triggerElement, uuid, conceptText, 'false')
+                                };
+                            } else {
+                                items.activeInactiveUuid = {
+                                    name: "Activate Concept",
+                                    icon: "context-menu-icon glyphicon-ok-circle",
+                                    callback: changeConceptState($triggerElement, uuid, conceptText, 'true')
+                                };
+                            }
                         }
                     }
-
-                    if (conceptState != null) {
-
-                        items.separatorState = {type: "cm_separator"};
-
-                        if (conceptState == 'Active') {
-                            items.activeInactiveUuid = {
-                                name: "Inactivate Concept",
-                                icon: "context-menu-icon glyphicon-ban-circle",
-                                callback: changeConceptState(uuid, 'InActive')
-                            };
-                        } else {
-                            items.activeInactiveUuid = {
-                                name: "Activate Concept",
-                                icon: "context-menu-icon glyphicon-ok-circle",
-                                callback: changeConceptState(uuid, 'Active')
-                            };
-                        }
-                    }
-
                 } else if (menuType == "paste_target") {
 
                     var idField = $triggerElement.attr("data-menu-id-field");
                     var displayField = $triggerElement.attr("data-menu-display-field");
                     var typeField = $triggerElement.attr("data-menu-taxonomy-type-field");
 
-                    if (conceptClipboard.id != undefined){
-                        items.pasteConcept = {name: "Paste Concept: " + conceptClipboard.conceptText, isHtmlName: true, icon: "context-menu-icon glyphicon-paste", callback: pasteConcept(idField, displayField, typeField)}
+                    if (conceptClipboard.id != undefined) {
+                        items.pasteConcept = {
+                            name: "Paste Concept: " + conceptClipboard.conceptText,
+                            isHtmlName: true,
+                            icon: "context-menu-icon glyphicon-paste",
+                            callback: pasteConcept(idField, displayField, typeField)
+                        }
                     }
 
                 } else {
-                    items.copy = {name:"Copy", icon: "context-menu-icon glyphicon-copy", callback: copyToClipboard($triggerElement.attr("data-menu-copy-value"))};
+                    items.copy = {
+                        name: "Copy",
+                        icon: "context-menu-icon glyphicon-copy",
+                        callback: copyToClipboard($triggerElement.attr("data-menu-copy-value"))
+                    };
                 }
 
                 return {
-                    callback: function(){},
+                    callback: function () {
+                    },
                     items: items
                 };
-            },
+            }
         });
     }
 
@@ -801,9 +910,9 @@ var UIHelper = (function () {
                 }
             }
 
-            if (viewerPanel.length > 0){
+            if (viewerPanel.length > 0) {
                 stated = WindowManager.viewers[viewerID].getStatedView();
-            } else{
+            } else {
                 stated = TaxonomyModule.getStatedView();
             }
 
@@ -831,9 +940,9 @@ var UIHelper = (function () {
         };
     }
 
-    function copyConcept(id, conceptText, conceptType){
+    function copyConcept(id, conceptText, conceptType) {
 
-        return function(){
+        return function () {
             conceptClipboard = {id: id, conceptText: conceptText, conceptType: conceptType};
         };
     }
@@ -843,7 +952,7 @@ var UIHelper = (function () {
         return function () {
             // have to create a fake element with the value on the page to get copy to work
             var textArea = document.createElement('textarea');
-            textArea.setAttribute('style','width:1px;border:0;opacity:0;');
+            textArea.setAttribute('style', 'width:1px;border:0;opacity:0;');
             document.body.appendChild(textArea);
             textArea.value = text;
             textArea.select();
@@ -868,37 +977,66 @@ var UIHelper = (function () {
                 }
             }
 
-            $.publish(KometChannels.Taxonomy.taxonomyConceptEditorChannel, [id, viewerID, windowType, {parentID: parentID, parentText: parentText, parentType: parentType}]);
+            $.publish(KometChannels.Taxonomy.taxonomyConceptEditorChannel, [id, viewerID, windowType, {
+                parentID: parentID,
+                parentText: parentText,
+                parentType: parentType
+            }]);
         };
     }
 
     function cloneConcept(id) {
 
-        return function (){
+        return function () {
 
-            params = {id: id} ;
+            params = {id: id};
 
-            $.get( gon.routes.taxonomy_clone_concept_path , params, function( results ) {
+            $.get(gon.routes.taxonomy_clone_concept_path, params, function (results) {
                 console.log("Clone Concept " + uuid);
             });
         };
     }
 
-    function changeConceptState(id, newState) {
+    function changeConceptState(element, concept_id, conceptText, newState) {
 
-        return function (){
+        return function () {
 
-            params = {id: id, newState: newState } ;
+            var params = {concept_id: concept_id, newState: newState};
 
-            $.get( gon.routes.taxonomy_change_concept_state_path , params, function( results ) {
-                TaxonomyModule.tree.reloadTreeStatedView($("#komet_taxonomy_stated_inferred")[0].value);
+            $.get(gon.routes.taxonomy_change_concept_state_path, params, function (results) {
+
+                var splitter = $("#komet_west_pane");
+
+                UIHelper.removePageMessages(splitter);
+
+                //var viewerPanel = element.parents("div[id^=komet_viewer_]");
+                //
+                //// if the viewerID was not passed it (but not if it is null), look up what it should be
+                //if (viewerPanel.length > 0) {
+                //    splitter = viewerPanel;
+                //}
+
+                if (conceptText == null) {
+                    conceptText = "";
+                } else {
+                    conceptText = " '" + conceptText + "'";
+                }
+
+                if (results.state != null) {
+
+                    splitter.prepend(UIHelper.generatePageMessage("The concept" + conceptText + " state was successfully updated.", true, "success"));
+                    TaxonomyModule.tree.reloadTreeStatedView($("#komet_taxonomy_stated_inferred")[0].value);
+                } else {
+
+                    splitter.prepend(UIHelper.generatePageMessage("The concept state was not updated."));
+                }
             });
         };
     }
 
-    function pasteConcept(idField, displayField, typeField){
+    function pasteConcept(idField, displayField, typeField) {
 
-        return function(){
+        return function () {
 
             $("#" + idField).val(conceptClipboard.id);
             $("#" + displayField).val(conceptClipboard.conceptText);
@@ -910,7 +1048,8 @@ var UIHelper = (function () {
         getActiveTabId: getActiveTabId,
         isTabActive: isTabActive,
         initializeContextMenus: initializeContextMenus,
-        generateFormErrorMessage: generateFormErrorMessage,
+        generatePageMessage: generatePageMessage,
+        removePageMessages: removePageMessages,
         generateConfirmationDialog: generateConfirmationDialog,
         toggleChangeHighlights: toggleChangeHighlights,
         toggleFieldAvailability: toggleFieldAvailability,
@@ -922,6 +1061,8 @@ var UIHelper = (function () {
         processAutoSuggestTags: processAutoSuggestTags,
         loadAutoSuggestRecents: loadAutoSuggestRecents,
         useAutoSuggestRecent: useAutoSuggestRecent,
+        createSelectFieldString: createSelectFieldString,
+        getPreDefinedOptionsForSelect: getPreDefinedOptionsForSelect,
         getElementRightFromWindow: getElementRightFromWindow,
         VHAT: VHAT,
         SNOMED: SNOMED,
