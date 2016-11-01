@@ -23,8 +23,8 @@ require './lib/isaac_rest/id_apis_rest'
 # WorkflowController -
 # handles the workflow screens
 class WorkflowController < ApplicationController
-  include ApplicationHelper, CommonController, WorkflowRest, ConceptRest
-  include Gov::Vha::Isaac::Rest::Api1::Data::Workflow
+  #include ApplicationHelper, CommonController, WorkflowRest, ConceptRest
+  #include Gov::Vha::Isaac::Rest::Api1::Data::Workflow
 
   layout 'workflow'
 

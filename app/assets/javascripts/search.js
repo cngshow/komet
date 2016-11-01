@@ -17,8 +17,8 @@ var TaxonomySearchModule = (function () {
 
         form.submit(function () {
 
-            TaxonomySearchModule.loadResultGrid()
-            return false
+            TaxonomySearchModule.loadResultGrid();
+            return false;
         });
 
         // load any previous assemblage queries into a menu for the user to select from
@@ -150,8 +150,17 @@ var TaxonomySearchModule = (function () {
          }
          */
 
-        $("#taxonomy_search_option_description_type_fields").toggle();
-        $("#taxonomy_search_sememe_fields").toggle();
+
+        if (field.value === "descriptions") {
+            $("#taxonomy_search_option_description_type_fields").show();
+            $("#taxonomy_search_sememe_fields").hide();
+        } else {
+            $("#taxonomy_search_option_description_type_fields").hide();
+            var is_identifier = (field.value === "identifiers");
+            $('#taxonomy_search_treat_as_string').prop('disabled', is_identifier).val(is_identifier ? 'true' : 'false');
+            $("#taxonomy_search_sememe_fields").show();
+            $("#taxonomy_search_assemblage_display").val(is_identifier ? 'VUID' : '');
+        }
     }
 
     function onAssemblageSuggestionSelection(event, ui){

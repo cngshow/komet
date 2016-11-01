@@ -620,7 +620,36 @@ var UIHelper = (function () {
         //setTimeout(suggestionOnChangeFunction, 0);
     };
 
-    var getElementRightFromWindow = function (elementOrSelector) {
+    var createSelectFieldString = function(selectID, selectName, classes, options, selectedItem) {
+
+        var fieldString = '<select id="' + selectID + '" name="' + selectName + '" class="form-control ' + classes + '">';
+
+        for (var i = 0; i < options.length; i++) {
+
+            fieldString += '<option ';
+
+            if (selectedItem != null && selectedItem.toString().toLowerCase() == options[i].value.toString().toLowerCase()) {
+                fieldString += 'selected="selected" ';
+            }
+
+            fieldString += 'value="' + options[i].value + '">' + options[i].label + '</option>';
+        }
+
+        fieldString += '</select>';
+
+        return fieldString;
+    };
+
+    var getPreDefinedOptionsForSelect = function(type){
+
+        if (type == "yes_no"){
+            return [{value: "yes", label: "Yes"}, {value: "no", label: "No"}];
+        } else if (type == "true_false") {
+            return [{value: "true", label: "True"}, {value: "false", label: "False"}];
+        }
+    };
+
+    var getElementRightFromWindow = function(elementOrSelector){
 
         var element;
 
@@ -1032,6 +1061,8 @@ var UIHelper = (function () {
         processAutoSuggestTags: processAutoSuggestTags,
         loadAutoSuggestRecents: loadAutoSuggestRecents,
         useAutoSuggestRecent: useAutoSuggestRecent,
+        createSelectFieldString: createSelectFieldString,
+        getPreDefinedOptionsForSelect: getPreDefinedOptionsForSelect,
         getElementRightFromWindow: getElementRightFromWindow,
         VHAT: VHAT,
         SNOMED: SNOMED,

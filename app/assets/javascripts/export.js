@@ -30,7 +30,7 @@ var ExportModule = (function () {
         $("#end_date").datepicker("option", "minDate", null);
 
         $("#start_date").change(function (eventObject) {
-            $("#end_date").datepicker("option", "minDate", $(this).datepicker( "getDate" ));
+            $("#end_date").datepicker("option", "minDate", $(this).datepicker("getDate"));
             $("#end_date").prop('disabled', false);
         });
         $('#processing_msg').hide();
@@ -46,11 +46,11 @@ var ExportModule = (function () {
         // ModalFormValidatorModule.validator('export_modal_form');
         // var form = $('#export_modal');
         // var start_date = $('#start_date').val();
-        var start_date = $("#start_date").datepicker( "getDate" );
+        var start_date = $("#start_date").datepicker("getDate");
 
         // if (form.valid()) {
-            //submit the form to transition the workflow
-            // form.submit();
+        //submit the form to transition the workflow
+        // form.submit();
 
         if (start_date == null) {
             alert('please select a start date for this export');
@@ -63,19 +63,22 @@ var ExportModule = (function () {
         $('#processing_msg').show();
 
         // select the parameters to pass to the rest call
-        var end_date = $("#end_date").datepicker( "getDate" );
+        var end_date = $("#end_date").datepicker("getDate");
         var params = {start_date: start_date, end_date: end_date};
-
-        $.post(gon.routes.export_path, params)
-            .done(function (data) {
-                //close the modal
+        var link = gon.routes.export_path + '?' + jQuery.param(params);
+        $.fileDownload(link).done(function () {
+                    ModalFormValidatorModule.reset_modal_form('export_modal_form');
+                    ModalFormValidatorModule.hide_modal('export_modal');
+                    flash_notify({message: "Download complete!"}, {type: 'success'});})
+            .fail(function () {
+                flash_notify({message: "Download failed!"}, {type: 'danger'});
                 ModalFormValidatorModule.reset_modal_form('export_modal_form');
                 ModalFormValidatorModule.hide_modal('export_modal');
-
-                //flash...
-                flash_notify(data, {type: 'success'});
             });
-
+        //window.open(gon.routes.export_path + '?' + jQuery.param(params));
+        // window.location.href = gon.routes.export_path + '?' + jQuery.param(params);
+        // ModalFormValidatorModule.reset_modal_form('export_modal_form');
+        // ModalFormValidatorModule.hide_modal('export_modal');
     }
 
     return {

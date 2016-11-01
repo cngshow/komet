@@ -15,10 +15,10 @@ class ApplicationController < ActionController::Base
   include UserSession
   include ServletSupport
 
-  CACHE_TYPE_TAXONOMY = [AssociationRest,CommentApis, ConceptRest, IdAPIsRest, LogicGraphRest, MappingApis, SearchApis, SememeRest, TaxonomyRest].freeze
+  CACHE_TYPE_TAXONOMY = [AssociationRest, CommentApis, ConceptRest, IdAPIsRest, LogicGraphRest, MappingApis, SearchApis, SememeRest, TaxonomyRest].freeze
   CACHE_TYPE_SYSTEM = [CoordinateRest, SystemApis].freeze
-  CACHE_TYPE_WORKFLOW = [WorkflowRest].freeze
-  CACHE_TYPE_ALL = [CACHE_TYPE_TAXONOMY, CACHE_TYPE_SYSTEM, CACHE_TYPE_WORKFLOW].flatten.freeze
+  #CACHE_TYPE_WORKFLOW = [WorkflowRest].freeze
+  CACHE_TYPE_ALL = [CACHE_TYPE_TAXONOMY, CACHE_TYPE_SYSTEM].flatten.freeze
 
   METADATA_DUMP_FILE = "#{Rails.root}/tmp/isaac_metadata_auxiliary.dump"
 
@@ -182,8 +182,8 @@ class ApplicationController < ActionController::Base
     r_val = nil
     if (user_session_defined? && user_session(UserSession::LOGIN))
       r_val = {user: user_session(UserSession::LOGIN),
-       roles: user_session(UserSession::ROLES),
-       token: user_session(UserSession::TOKEN)}
+               roles: user_session(UserSession::ROLES),
+               token: user_session(UserSession::TOKEN)}
     else
       r_val = {user: nil, roles: [], token: 'Not Authorized'}
     end
@@ -195,7 +195,7 @@ class ApplicationController < ActionController::Base
   # clear_rest_caches - Clear all relevant REST caches
   # @param [String] cache_type - An ApplicationController constant representing the types of caches to clear:
   #                               CACHE_TYPE_TAXONOMY - (default) clears all taxonomy related caches, anything that would be displayed in the GUI
-  #                               CACHE_TYPE_WORKFLOW - clears all workflow related caches, anything that would be displayed in the GUI
+  #                               CACHE_TYPE_WORKFLOW - clears all workflow related caches, anything that would be displayed in the GUI (not used currently)
   #                               CACHE_TYPE_SYSTEM -   clears all caches that deal with internal system data (ie: metadata, coordinate tokens, ect.). Should very rarely be used
   #                               CACHE_TYPE_ALL - clears all caches. Should very rarely be used
   def clear_rest_caches(cache_type: CACHE_TYPE_TAXONOMY)
@@ -204,16 +204,14 @@ class ApplicationController < ActionController::Base
     end
   end
 
-  def flash_alert_lambda
-    -> do
-      flash_alert(message: BootstrapNotifier::INSUFFICIENT_PRIVILEGES)
-    end
+  def flash_alert_insufficient_privileges
+    flash_alert(message: BootstrapNotifier::INSUFFICIENT_PRIVILEGES)
   end
 
   private
 
   def self.check_for_metadata_auxiliary_dump
-    return if(!$isaac_metadata_auxiliary.nil? || $rake)
+    return if (!$isaac_metadata_auxiliary.nil? || $rake)
     begin
       return unless File.exists? METADATA_DUMP_FILE
       File.open(METADATA_DUMP_FILE) do |f|
