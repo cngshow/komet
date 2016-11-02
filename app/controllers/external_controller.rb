@@ -71,10 +71,9 @@ class ExternalController < ApplicationController
     start_time = Time.parse(params[:start_date]).to_i*1000
     end_time = Time.parse(params[:end_date]).to_i*1000
     xml = ExportRest.get_workflow(action: ExportRest::ACTION_EXPORT, additional_req_params: {changedAfter: start_time, changedBefore: end_time})
-    #sleep 10 #Greg try uncommenting this to simulate long running isaac rest.  Can we make the modal dialog stay up?
+    #sleep 10 #uncommenting this simulates a long running isaac rest
     if file_download
       $log.info("Sending #{file_name} to the server, and file download is #{file_download}...")
-      $log.info("xml =" + xml[0..20])
       send_data(xml, filename: file_name)
       return
     end

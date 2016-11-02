@@ -42,7 +42,7 @@ var ExportModule = (function () {
     ModalFormValidatorModule.hide_modal('export_modal');
   }
 
-  function submit_export() { 
+  function submit_export() {
 
     var file_download = <%= $PROPS['KOMET.vhat_export_as_file']%>;
     // ModalFormValidatorModule.validator('export_modal_form');
@@ -68,29 +68,36 @@ var ExportModule = (function () {
     var end_date = $("#end_date").datepicker("getDate");
     var params = {start_date: start_date, end_date: end_date};
     var link = gon.routes.export_path + '?' + jQuery.param(params);
+    var export_rest = null;
+
     if (file_download === true) {
-      $.fileDownload(link).done(function () {
-        ModalFormValidatorModule.reset_modal_form('export_modal_form');
-        ModalFormValidatorModule.hide_modal('export_modal');
-        flash_notify({message: "Download complete!"}, {type: 'success'});
-      })
+      export_rest = $.fileDownload(link)
+          .done(function () {
+            flash_notify({message: "Download complete!"}, {type: 'success'});
+          })
           .fail(function () {
             flash_notify({message: "Download failed!"}, {type: 'danger'});
-            ModalFormValidatorModule.reset_modal_form('export_modal_form');
-            ModalFormValidatorModule.hide_modal('export_modal');
-    });
+          });
     } else {
-      $.get(link,function(vhat_xml) {
-        console.log(vhat_xml);
-        ModalFormValidatorModule.reset_modal_form('export_modal_form');
-        ModalFormValidatorModule.hide_modal('export_modal');
+      export_rest = $.get(link, function (xml) {
+        $('#export_xml').html(xml);
+        downloadInnerHtml('vhat_export', 'export_xml');
       });
     }
+    export_rest.always(function () {
+      ModalFormValidatorModule.reset_modal_form('export_modal_form');
+      ModalFormValidatorModule.hide_modal('export_modal');
+    });
+  }
 
-    //window.open(gon.routes.export_path + '?' + jQuery.param(params));
-    // window.location.href = gon.routes.export_path + '?' + jQuery.param(params);
-    // ModalFormValidatorModule.reset_modal_form('export_modal_form');
-    // ModalFormValidatorModule.hide_modal('export_modal');
+  function downloadInnerHtml(filename, elId) {
+    var elHtml = document.getElementById(elId).innerHTML;
+    var link = document.createElement('a');
+    var mimeType = 'text/xml';
+
+    link.setAttribute('download', filename);
+    link.setAttribute('href', 'data:' + mimeType + ';charset=utf-8,' + encodeURIComponent(elHtml));
+    link.click();
   }
 
   return {
