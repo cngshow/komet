@@ -19,7 +19,7 @@ append_stdout = true
    case environment
      when :development
        #log levels are DEBUG,INFO, WARN, ERROR, FATAL
-       env_hash[:level] = 'DEBUG'
+       env_hash[:level] = 'INFO'
        #valid values for age are daily and weekly. This determines how often we roll our log.
        env_hash[:age] = 'daily'
        #how many rolled log files we keep

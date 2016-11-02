@@ -64,14 +64,16 @@ class ExternalController < ApplicationController
   end
 
   def export
-    cookies['fileDownload'] = 'true' # do not delete.  Needed to detect completion of file upload.
+    file_download = boolean $PROPS['KOMET.vhat_export_as_file']
+    cookies['fileDownload'] = 'true' if file_download# do not delete.  Needed to detect completion of file upload.
     # gem version https://github.com/rcook/jquery_file_download-rails
     file_name = 'vhat.xml'
-    start_time = Time.parse(params[:start_date]).to_i*1000
-    end_time = Time.parse(params[:end_date]).to_i*1000
+    start_time =Time.now.to_i*1000 #Time.parse(params[:start_date]).to_i*1000
+    end_time = Time.now.to_i*1000 ##Time.parse(params[:end_date]).to_i*1000
     xml =  ExportRest.get_workflow(action: ExportRest::ACTION_EXPORT, additional_req_params: {changedAfter: start_time, changedBefore: end_time})
     #sleep 10 #Greg try uncommenting this to simulate long running isaac rest.  Can we make the modal dialog stay up?
-    $log.info("Sending #{file_name} to the server...")
-    send_data(xml, filename: file_name)
+    $log.info("Sending #{file_name} to the server, file download is #{file_download}...")
+    send_data(xml, filename: file_name) if file_download
+    render xml: xml unless file_download
   end
 end
