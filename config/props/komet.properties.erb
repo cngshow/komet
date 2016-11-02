@@ -5,7 +5,7 @@
 #rest_cache_max = 1000
 <%= "rest_cache_max = " + (ENV['REST_CACHE_SIZE'].nil? ? "1000" : ENV['REST_CACHE_SIZE'].to_s) %>
 roles_recheck_in_seconds = 1
-#if set to true standard file download applies, if false we render vhat as xml and javascript does the save
+#if set to true standard file download applies, if false we render vhat as xml and javascript does the save (must be 'true or 'false')
 vhat_export_as_file = false
 
 #in the land of javascript this parameter tells us how many seconds between a role change warning notification
