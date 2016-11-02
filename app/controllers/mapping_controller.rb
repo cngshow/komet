@@ -184,33 +184,35 @@ class MappingController < ApplicationController
                 value = field.extensionValue.data
                 removable = true
                 display = true
+                data_type = field.extensionValue.class.to_s.remove('Gov::Vha::Isaac::Rest::Api1::Data::Sememe::DataTypes::RestDynamicSememe')
 
                 if value == nil && value == ''
                     display = false
                 end
 
-                if field.extensionValue.class == DATA_TYPES_CLASS::RestDynamicSememeString
-                    type = 'STRING'
-
-                elsif field.extensionValue.class == DATA_TYPES_CLASS::RestDynamicSememeNid || field.extensionValue.class == DATA_TYPES_CLASS::RestDynamicSememeUUID
-
-                    type = 'UUID'
-                    @map_set[name + '_display'] = value
-
-                elsif name == '-2147483446'
-
-                    type = 'UUID'
-                    value = '6e60d7fd-3729-5dd3-9ce7-6d97c8f75447'
-                    removable = false
-                    @map_set[name + '_display'] = 'VHAT'
-                end
-
                 @map_set[:include_fields] << name
-                @map_set[name] = {name: name, type: type, value: value, label: label, label_display: label_display, removable: removable, display: display, required: false}
+                @map_set[name] = {name: name, data_type: data_type, value: value, label: label, label_display: label_display, removable: removable, display: display, required: false}
+
+                if field.extensionValue.class == DATA_TYPES_CLASS::RestDynamicSememeNid || field.extensionValue.class == DATA_TYPES_CLASS::RestDynamicSememeUUID
+
+                    @map_set[name][:data_type] = 'UUID'
+
+                    if display
+
+                        if field.extensionValue.class == DATA_TYPES_CLASS::RestDynamicSememeNid
+                            @map_set[name][:value] = IdAPIsRest.get_id(uuid_or_id: value, action: IdAPIsRestActions::ACTION_TRANSLATE, additional_req_params: {inputType: 'nid', outputType: 'uuid'}).value
+                        end
+
+                        @map_set[name.to_s + '_display'] = field.extensionValue.conceptDescription
+                    end
+                end
 
             end
 
             item_fields = set.mapItemFieldsDefinition
+
+            # add the definitions for the static item fields
+            #@map_set['item_field_' + name] = {name: '1009096', description: 'Map source concept', order: order, data_type: data_type, required: true, label: 'c2af804c-bb05-3436-9f21-d37feb6a3ce4', label_display: 'Map source concept', removable: false, display: true}
 
             item_fields.each do |field|
 
@@ -319,8 +321,6 @@ class MappingController < ApplicationController
             item_hash[:source_concept_display] = item.sourceDescription
             item_hash[:target_concept] = item.targetConcept
             item_hash[:target_concept_display] = item.targetDescription
-            item_hash[:qualifier] = item.qualifierConcept
-            item_hash[:qualifier_display] = item.qualifierDescription
             item_hash[:comments] = ''
             item_hash[:state] = item.mappingItemStamp.state.enumName
             item_hash[:time] = DateTime.strptime((item.mappingItemStamp.time / 1000).to_s, '%s').strftime('%m/%d/%Y')
@@ -384,8 +384,8 @@ class MappingController < ApplicationController
             MappingApis::get_mapping_api(uuid_or_id: set_id, action: MappingApiActions::ACTION_UPDATE_SET, additional_req_params: request_params, body_params: body_params)
         else
 
-            set_extended_field = []
-            item_extended_field = []
+            set_extended_fields = []
+            item_extended_fields = []
 
             if params['komet_mapping_set_editor_include_fields'] != nil
 
@@ -397,15 +397,17 @@ class MappingController < ApplicationController
                     set_field_data_type = params['komet_mapping_set_editor_include_fields_' + set_field + '_data_type']
 
                     if set_field_data_type != 'UUID'
-                        set_field_data_type.downcase!
+                        set_field_data_type = set_field_data_type.downcase
                         set_field_data_type[0] = params['komet_mapping_set_editor_include_fields_' + set_field + '_data_type'][0]
                     end
 
                     set_field_data_type = 'gov.vha.isaac.rest.api1.data.sememe.dataTypes.RestDynamicSememe' + set_field_data_type
                     set_field_value = params['komet_mapping_set_editor_' + set_field]
 
-                    set_extended_field << {extensionNameConcept: set_field_label, extensionValue: {'@class' => set_field_data_type, columnNumber: 1, data: set_field_value}}
+                    set_extended_fields << {extensionNameConcept: set_field_label, extensionValue: {'@class' => set_field_data_type, columnNumber: 1, data: set_field_value}}
                 end
+
+                body_params[:mapSetExtendedFields] = set_extended_fields
             end
 
             if params['komet_mapping_set_editor_items_include_fields'] != nil
@@ -413,13 +415,14 @@ class MappingController < ApplicationController
                 params['komet_mapping_set_editor_items_include_fields'].each do |item_field|
 
                     item_field_label = IdAPIsRest.get_id(uuid_or_id: item_field, action: IdAPIsRestActions::ACTION_TRANSLATE, additional_req_params: {inputType: 'uuid', outputType: 'conceptSequence'}).value
-                    item_field_data_type = params['komet_mapping_set_editor_items_include_fields_' + item_field + 'data_type']
-                    item_field_required = params['komet_mapping_set_editor_items_include_fields_' + item_field + 'required']
+                    item_field_data_type = params['komet_mapping_set_editor_items_include_fields_' + item_field + '_data_type']
+                    item_field_required = params['komet_mapping_set_editor_items_include_fields_' + item_field + '_required']
 
-                    item_extended_field << {columnLabelConcept: item_field_label, columnDataType: item_field_data_type, columnRequired: item_field_required}
+                    item_extended_fields << {columnLabelConcept: item_field_label, columnDataType: item_field_data_type, columnRequired: item_field_required}
                 end
-            end
 
+                body_params[:mapItemExtendedFieldsDefinition] = item_extended_fields
+            end
 
             return_value = MappingApis::get_mapping_api(action: MappingApiActions::ACTION_CREATE_SET, additional_req_params: request_params, body_params: body_params )
 
