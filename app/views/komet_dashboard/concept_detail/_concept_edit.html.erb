@@ -28,7 +28,7 @@
                     <input type="checkbox" id="komet_concept_editor_properties_<%= @viewer_id %>" checked onclick="WindowManager.viewers[<%= @viewer_id %>].toggleProperties()">
                 </div>
 
-                <button type="button" class="komet-link-button" onclick="WindowManager.closeViewer('<%= @viewer_id %>')" title="Close Viewer">
+                <button type="button" class="komet-link-button" onclick="WindowManager.closeViewer('<%= @viewer_id %>')" aria-label="Close Viewer" title="Close Viewer">
                     <div class="glyphicon glyphicon-remove"></div>
                 </button>
             </div>

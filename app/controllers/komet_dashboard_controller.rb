@@ -265,7 +265,8 @@ class KometDashboardController < ApplicationController
 
             concept_nodes.concat(processed_related_concepts)
         else
-            $log.debug('*** data process: ' + node[:text].to_s)
+
+            $log.trace('*** data process: ' + node[:text].to_s)
             node[relation] = processed_related_concepts
             concept_nodes << node
         end
@@ -741,8 +742,6 @@ class KometDashboardController < ApplicationController
                 additional_req_params = {editToken: get_edit_token}
 
                 sememe.each do |field_id, field|
-
-                    $log.debug('Description Property: ' + sememe_instance_id + ' - Field ID: ' + field_id + ' - Field Value: ' + field['value'])
                     body_params[:columnData] << {columnNumber: field['column_number'], data: field['value'], '@class' => field['data_type_class']}
                 end
 
@@ -957,8 +956,6 @@ class KometDashboardController < ApplicationController
         coordinates_token = session[:coordinatestoken].token
         search_term = params[:term]
         concept_suggestions_data = []
-
-        $log.debug(search_term)
 
         results = SearchApis.get_search_api(action: ACTION_PREFIX, additional_req_params: {coordToken: coordinates_token, query: search_term, maxPageSize: 25, expand: 'referencedConcept'})
 

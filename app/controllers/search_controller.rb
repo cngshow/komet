@@ -38,8 +38,6 @@ class SearchController < ApplicationController
     search_term = params[:term]
     assemblage_suggestions_data = []
 
-    $log.debug(search_term)
-
     results = SearchApis.get_search_api(action: ACTION_PREFIX, additional_req_params: {coordToken: coordinates_token, query: search_term, maxPageSize: 25, expand: 'referencedConcept'})
 
     results.results.each do |result|
@@ -126,7 +124,7 @@ class SearchController < ApplicationController
         search_data << result_data
       end
 
-    elsif search_type == 'sememes'
+    elsif search_type.eql?('sememes') || search_type.eql?('identifiers')
 
       additional_params[:treatAsString] = params[:taxonomy_search_treat_as_string]
       assemblage = params[:taxonomy_search_assemblage_id]

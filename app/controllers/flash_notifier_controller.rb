@@ -7,16 +7,16 @@ class FlashNotifierController < ApplicationController
   all_filters = self._process_action_callbacks.map(&:filter)
   all_filters.each {|sym| skip_action_callback(sym)}
   before_filter :ensure_roles, only: [:roles]
-  $log.debug(all_filters)
+  $log.trace(all_filters)
 
   # this is called from application.js when ajax calls are completed to flash messages
   def flash_notifications
-    $log.debug('calling flash notifications')
+    $log.trace('calling flash notifications')
     render json: show_flash
   end
 
   def roles
-    $log.debug("#{pundit_user}")
+    $log.trace("#{pundit_user}")
     render json: pundit_user[:roles]
   end
 
