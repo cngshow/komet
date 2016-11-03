@@ -17,17 +17,21 @@
  limitations under the License.
  */
 
-var KometMappingTree = function(treeID, windowType){
+var KometMappingTree = function(treeID, viewParams, windowType){
 
-    KometMappingTree.prototype.init = function(treeID, windowType){
+    KometMappingTree.prototype.init = function(treeID, viewParams, windowType){
 
         this.treeID = treeID;
         this.windowType = windowType;
 
-        this.buildMappingTree();
+        this.buildMappingTree(viewParams);
     };
 
-    KometMappingTree.prototype.buildMappingTree = function(selectItem) {
+    KometMappingTree.prototype.buildMappingTree = function(viewParams, selectItem) {
+
+        if (viewParams === undefined || viewParams === null) {
+            viewParams = {statesToView: MappingModule.getTreeStatesToView()};
+        }
 
         if (selectItem == null){
             selectItem = false;
@@ -60,12 +64,15 @@ var KometMappingTree = function(treeID, windowType){
                 params = {'set_id': node.id};
             }
 
+            params.view_params = viewParams;
+
             //params.text_filter = $("#komet_mapping_tree_text_filter")[0].value;
             //params.set_filter = $("#komet_mapping_tree_set_filter")[0].value;
 
             return params;
         }.bind(this);
-        
+
+        this.viewParams = viewParams;
         this.tree = $("#" + this.treeID).jstree(settings);
         this.tree.on('changed.jstree', onChanged.bind(this));
 
@@ -93,18 +100,18 @@ var KometMappingTree = function(treeID, windowType){
 
             this.selectedSetID = setID;
 
-            $.publish(KometChannels.Mapping.mappingTreeNodeSelectedChannel, [this.treeID, setID, viewerID, this.windowType]);
+            $.publish(KometChannels.Mapping.mappingTreeNodeSelectedChannel, [this.treeID, setID, this.viewParams, viewerID, this.windowType]);
         }
     };
 
     // destroy the current tree and reload it
-    KometMappingTree.prototype.reloadTree = function(selectItem, setID) {
+    KometMappingTree.prototype.reloadTree = function(viewParams, selectItem, setID) {
 
         if (selectItem == null){
             selectItem = false;
         }
         this.tree.jstree(true).destroy();
-        this.buildMappingTree(selectItem);
+        this.buildMappingTree(viewParams, selectItem);
 
         if (setID != null){
             this.findNodeInTree(setID, true, false)
@@ -176,5 +183,5 @@ var KometMappingTree = function(treeID, windowType){
     };
 
     // call our constructor function
-    this.init(treeID, windowType);
+    this.init(treeID, viewParams, windowType);
 };

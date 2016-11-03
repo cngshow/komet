@@ -98,12 +98,12 @@
             statesToView.change(function(){
 
                 statesToView.parent().toggleClass("btn-primary btn-default");
-                MappingModule.setStatesToView("<%= @viewer_id %>", this);
+                MappingModule.setViewerStatesToView("<%= @viewer_id %>", this);
             });
 
             statesToView.each(function(index, button){
 
-                if (button.value == "<%= @states_to_view %>"){
+                if (button.value == "<%= @view_params[:statesToView] %>"){
 
                     var buttonParent = button.parentElement;
 

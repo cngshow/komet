@@ -1094,6 +1094,7 @@ td.komet-concept-table-nested-indicator.komet-concept-table-nested-indicator-ope
     align-items: stretch;
     border-right: 1px solid black;
     border-bottom: 1px solid black;
+    overflow: auto;
 }
 .komet-mapping-items-grid .form-control{
     font-size: small;

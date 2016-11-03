@@ -146,6 +146,14 @@ var MappingViewer = function(viewerID, currentSetID, viewerAction) {
         $('#komet_mapping_panel_tree_show_' + this.viewerID).toggle();
     };
 
+    MappingViewer.prototype.getStatesToView = function(){
+        return $("#komet_viewer_" + this.viewerID).find("input[name='komet_mapping_states_to_view']:checked").val();
+    };
+
+    MappingViewer.prototype.getViewParams = function(){
+        return {statesToView: this.getStatesToView()};
+    };
+
     MappingViewer.prototype.loadOverviewSetsGrid = function(){
 
         // If a grid already exists destroy it or it will create a second grid
@@ -213,7 +221,7 @@ var MappingViewer = function(viewerID, currentSetID, viewerAction) {
 
                 var pageNumber = params.endRow / pageSize;
 
-                searchParams += "&overview_sets_page_number=" + pageNumber + "&show_inactive=" + this.showOverviewInactiveConcepts;
+                searchParams += "&overview_sets_page_number=" + pageNumber + "&view_params=" + this.getViewParams();
 
                 // make an ajax call to get the data
                 $.get(gon.routes.mapping_get_overview_sets_results_path + searchParams, function (search_results) {
@@ -287,7 +295,7 @@ var MappingViewer = function(viewerID, currentSetID, viewerAction) {
         var selectedRows = this.overviewSetsGridOptions.api.getSelectedRows();
 
         selectedRows.forEach(function (selectedRow) {
-            $.publish(KometChannels.Mapping.mappingTreeNodeSelectedChannel, [null, selectedRow.set_id, this.viewerID, WindowManager.INLINE, action]);
+            $.publish(KometChannels.Mapping.mappingTreeNodeSelectedChannel, [null, selectedRow.set_id, this.getViewParams(), this.viewerID, WindowManager.INLINE, action]);
         }.bind(this));
     };
 
@@ -426,8 +434,8 @@ var MappingViewer = function(viewerID, currentSetID, viewerAction) {
                 data: $(this).serialize(), //new FormData($(this)[0]),
                 success: function (data) {
 
-                    MappingModule.tree.reloadTree();
-                    MappingModule.callLoadViewerData(data.set_id, MappingModule.SET_DETAILS, thisViewer.viewerID);
+                    MappingModule.tree.reloadTree(thisViewer.getViewParams());
+                    $.publish(KometChannels.Mapping.mappingTreeNodeSelectedChannel, ["", data.set_id, thisViewer.getViewParams(), thisViewer.viewerID, WindowManager.INLINE, MappingModule.SET_DETAILS]);
                 }
             });
 
@@ -935,7 +943,7 @@ var MappingViewer = function(viewerID, currentSetID, viewerAction) {
             var value = "";
             var dataType = field.data_type;
 
-            if (!isNew && rowData[field.name]){
+            if (!isNew && rowData[field.name] != undefined){
                 value = rowData[field.name];
             }
 
@@ -1025,193 +1033,6 @@ var MappingViewer = function(viewerID, currentSetID, viewerAction) {
         UIHelper.generateConfirmationDialog("Delete Map Item?", "Are you sure you want to remove this map item?", confirmCallback, "Yes", closeElement);
     };
 
-
-    // ###########################################################################
-    MappingViewer.prototype.itemsGridCellRenderer = function(params){
-        
-        var fieldInfo = this.overviewItemsGridOptions.column_definitions[params.colDef.field];
-
-        var idPrefix = "komet_mapping_set_editor_item_";
-        var name = 'name="' + idPrefix + fieldInfo.item_id + '_' + fieldInfo.name+ ' ';
-        var id = 'id="' + idPrefix + fieldInfo.item_id + '_' + fieldInfo.name + '_' + this.viewerID + ' ';
-        var classes = "form-control komet-mapping-set-editor-edit";
-        var value = params.value;
-        var dataType = fieldInfo.data_type;
-        var cellContents = "";
-
-        if (dataType == "UUID"){
-
-            var displayValue = "";
-
-            if (params.data[fieldInfo.name + "_display"] != undefined){
-                displayValue = params.data[fieldInfo.name + "_display"];
-            }
-
-            cellContents += '<autosuggest '
-                + 'id-base="' + idPrefix + fieldInfo.name + '" '
-                + 'id-postfix="_' + this.viewerID + '" '
-                + 'value="' + value + '" '
-                + 'display-value="' + displayValue + '" '
-                + 'classes="komet-mapping-set-editor-edit" '
-                + '></autosuggest>';
-
-            value = displayValue;
-
-        } else if (dataType == "BOOLEAN"){
-
-            cellContents += UIHelper.createSelectFieldString(id, name, classes, UIHelper.getPreDefinedOptionsForSelect("true_false"), value);
-        } else {
-            cellContents += '<input ' + name + id + 'class="' + classes + '" value="' + value + '">';
-        }
-
-       // cellContents += '<div class="komet-mapping-set-editor-display">' + value + '</div>';
-
-        return cellContents;
-
-    }.bind(this);
-
-    MappingViewer.prototype.loadOverviewItemsGrid = function(){
-
-        // If a grid already exists destroy it or it will create a second grid
-        if (this.overviewItemsGridOptions) {
-            this.overviewItemsGridOptions.api.destroy();
-        }
-
-        // disable item specific actions
-        UIHelper.toggleFieldAvailability("#komet_mapping_overview_item_delete_" + this.viewerID, false);
-        UIHelper.toggleFieldAvailability("#komet_mapping_overview_item_edit_" + this.viewerID, false);
-        UIHelper.toggleFieldAvailability("#komet_mapping_overview_item_comment_" + this.viewerID, false);
-
-        // set the options for the result grid
-        this.overviewItemsGridOptions = {
-            enableColResize: true,
-            enableSorting: false,
-            suppressCellSelection: true,
-            rowSelection: "single",
-            onRowSelected: this.onOverviewItemsGridSelection,
-            onRowDoubleClicked: this.onOverviewItemsGridDoubleClick,
-            onGridReady: this.onGridReady,
-            rowModelType: 'normal',
-            rowHeight: 30,
-            columnDefs: [
-                {field: "item_id", headerName: "id", hide: "true"},
-                {field: "source_concept", headerName: 'Source ID', hide: "false"},
-                {field: "source_concept_display", headerName: "Source Concept"},
-                {field: "target_concept", headerName: "Target ID", hide: "false"},
-                {field: "target_concept_display", headerName: "Target Concept"}, //, cellRenderer: this.itemsGridCellRenderer
-                {field: "comments", headerName: "Comments"},
-                {
-                    groupId: "stamp", headerName: "STAMP Fields", children: [
-                        {field: "status", headerName: "Status", hide: !this.showItemsSTAMP},
-                        {field: "time", headerName: "Time", hide: !this.showItemsSTAMP},
-                        {field: "author", headerName: "Author", hide: !this.showItemsSTAMP},
-                        {field: "module", headerName: "Module", hide: !this.showItemsSTAMP},
-                        {field: "path", headerName: "Path", hide: !this.showItemsSTAMP}
-                    ]
-                }
-            ]
-        };
-
-        new agGrid.Grid($("#komet_mapping_overview_items_" + this.viewerID).get(0), this.overviewItemsGridOptions);
-
-        this.getOverviewItemsData();
-    };
-
-    MappingViewer.prototype.getOverviewItemsData = function(){
-
-        // load the parameters from the form to add to the query string sent in the ajax data call
-        var page_size = $("#komet_mapping_item_page_size_" + this.viewerID).val();
-        var filter = $("#komet_mapping_item_filter_" + this.viewerID).val();
-        var filterBy = $("#komet_mapping_item_filter_by_" + this.viewerID).val();
-        var showActive = $("#komet_mapping_item_active_" + this.viewerID)[0].checked;
-        var showInactive = $("#komet_mapping_item_inactive_" + this.viewerID)[0].checked;
-
-        var searchParams = "?overview_set_id=" + this.currentSetID + "&overview_page_size=" + page_size + "&show_active=" + showActive + "&show_inactive=" + showInactive;
-
-        if (filter != "") {
-            searchParams += "&overview_items_filter=" + filter + "&filter_by=" + filterBy;
-        }
-
-        var pageSize = Number(page_size);
-
-        // set the grid datasource options, including processing the data rows
-        var dataSource = {
-
-            pageSize: pageSize,
-            getRows: function (params) {
-
-                var pageNumber = params.endRow / pageSize;
-
-                searchParams += "&overview_items_page_number=" + pageNumber;
-
-                // make an ajax call to get the data
-                $.get(gon.routes.mapping_get_overview_items_results_path + searchParams, function (search_results) {
-
-                    this.overviewItemsGridOptions.column_definitions = search_results.column_definitions;
-
-                    $.each(search_results.column_definitions, function(index, column){
-
-                        this.overviewItemsGridOptions.columnDefs.push({field: column.name, headerName: column.label_display, cellRenderer: this.itemsGridCellRenderer});
-                    }.bind(this));
-
-                    this.overviewItemsGridOptions.api.setColumnDefs(this.overviewItemsGridOptions.columnDefs);
-
-                    params.successCallback(search_results.data, search_results.total_number);
-
-                    //$("#komet_mapping_overview_items_" + this.viewerID).find(".komet-mapping-set-editor-edit").hide();
-                    UIHelper.toggleFieldAvailability($("#komet_mapping_overview_items_" + this.viewerID).find(".komet-mapping-set-editor-edit"), false);
-                }.bind(this));
-            }.bind(this)
-        };
-
-        this.overviewItemsGridOptions.api.setDatasource(dataSource);
-
-        // reload the recents menu
-        //loadAssemblageRecents();
-    };
-
-    MappingViewer.prototype.onOverviewItemsGridSelection = function(event){
-
-        // enable item specific actions
-        UIHelper.toggleFieldAvailability("#komet_mapping_overview_item_delete_" + this.viewerID, true);
-        UIHelper.toggleFieldAvailability("#komet_mapping_overview_item_edit_" + this.viewerID, true);
-        UIHelper.toggleFieldAvailability("#komet_mapping_overview_item_comment_" + this.viewerID, true);
-
-        var rowNumber = this.overviewItemsGridOptions.api.getSelectedNodes()[0].id;
-        var grid = $("#komet_mapping_overview_items_" + this.viewerID);
-        var editRow = grid.find("div.komet-grid-editing");
-
-        if (editRow.length > 0 && editRow.attr("row") != rowNumber){
-
-            //editRow.find(".komet-mapping-set-editor-display").show();
-            UIHelper.toggleFieldAvailability(editRow.find(".komet-mapping-set-editor-edit"), false);
-            editRow.removeClass("komet-grid-editing");
-
-            var selectedRow = grid.find("div[row='" + rowNumber + "'].ag-row");
-
-
-        }
-
-        //selectedRows.forEach(function (selectedRow, index) {});
-    }.bind(this);
-
-    MappingViewer.prototype.onOverviewItemsGridDoubleClick = function(){
-
-       // var selectedRows = this.overviewItemsGridOptions.api.getSelectedRows();
-        var rowNumber = this.overviewItemsGridOptions.api.getSelectedNodes()[0].id;
-
-       // selectedRows.forEach(function (selectedRow, index) {
-
-            var row = $("#komet_mapping_overview_items_" + this.viewerID).find("div[row='" + rowNumber + "'].ag-row");
-            row.addClass("komet-grid-editing");
-            UIHelper.toggleFieldAvailability(row.find(".komet-mapping-set-editor-edit"), true);
-            //row.find(".komet-mapping-set-editor-edit").show();
-            //row.find(".komet-mapping-set-editor-display").hide();
-
-           // console.log("Editing map item " + selectedRow.id);
-       // }.bind(this));
-    }.bind(this);
-
     MappingViewer.prototype.toggleItemsSTAMP = function(){
 
         if (this.showItemsSTAMP) {
@@ -1241,9 +1062,9 @@ var MappingViewer = function(viewerID, currentSetID, viewerAction) {
         if (this.viewerAction == MappingModule.CREATE_SET){
 
             if (previousSetID != ""){
-                MappingModule.callLoadViewerData(previousSetID, MappingModule.SET_DETAILS, this.viewerID);
+                $.publish(KometChannels.Mapping.mappingTreeNodeSelectedChannel, ["", previousSetID, this.getViewParams(), this.viewerID, WindowManager.INLINE, MappingModule.SET_DETAILS]);
             } else {
-                MappingModule.callLoadViewerData(null, MappingModule.SET_LIST, this.viewerID);
+                $.publish(KometChannels.Mapping.mappingTreeNodeSelectedChannel, ["", null, this.getViewParams(), this.viewerID, WindowManager.INLINE, MappingModule.SET_LIST]);
             }
 
             return;
@@ -1274,95 +1095,6 @@ var MappingViewer = function(viewerID, currentSetID, viewerAction) {
             this.generateSetEditorItemsAdditionalFields();
         }
     };
-
-    MappingViewer.prototype.addItem = function() {
-
-        this.overviewItemsGridOptions.api.addItems([{}]);
-    };
-
-    MappingViewer.prototype.enterItemEditMode = function(){
-
-    };
-
-
-   /* var thisViewer = this;
-
-    // function to act as a class
-    function MyCellEditor () {}
-
-    // gets called once before the renderer is used
-    MyCellEditor.prototype.init = function(params) {
-        // create the cell
-        this.eInput = document.createElement('input');
-        this.eInput.value = params.value;
-
-        var fieldInfo = thisViewer.overviewItemsGridOptions.column_definitions[params.colDef.field];
-
-        var idPrefix = "komet_mapping_set_editor_item_";
-        var name = 'name="' + idPrefix + fieldInfo.name+ ' ';
-        var id = 'id="' + idPrefix + fieldInfo.name + '_' + thisViewer.viewerID + ' ';
-        var classes = "form-control komet-mapping-set-editor-edit";
-        var value = params.value;
-        var dataType = fieldInfo.data_type;
-        var cellContents = "";
-
-        if (dataType == "UUID"){
-
-            var displayValue = "";
-
-            if (params.data[fieldInfo.name + "_display"] != undefined){
-                displayValue = params.data[fieldInfo.name + "_display"];
-            }
-
-            cellContents += '<autosuggest '
-                + 'id-base="' + idPrefix + fieldInfo.name + '" '
-                + 'id-postfix="_' + thisViewer.viewerID + '" '
-                + 'value="' + value + '" '
-                + 'display-value="' + displayValue + '" '
-                + 'classes="komet-mapping-set-editor-edit" '
-                + '></autosuggest>';
-
-            value = displayValue;
-
-        } else if (dataType == "BOOLEAN"){
-
-            cellContents += UIHelper.createSelectFieldString(id, name, classes, UIHelper.getPreDefinedOptionsForSelect("true_false"), value);
-        } else {
-            cellContents += '<input ' + name + id + 'class="' + classes + '" value="' + value + '">';
-        }
-
-        this.cellContents = cellContents;
-
-    };
-
-    // gets called once when grid ready to insert the element
-    MyCellEditor.prototype.getGui = function() {
-        return this.eInput;
-    };
-
-    // focus and select can be done after the gui is attached
-    MyCellEditor.prototype.afterGuiAttached = function() {
-        this.eInput.focus();
-        this.eInput.select();
-    };
-
-    // returns the new value after editing
-    MyCellEditor.prototype.getValue = function() {
-        return this.eInput.value;
-    };
-
-    // any cleanup we need to be done here
-    MyCellEditor.prototype.destroy = function() {
-        // but this example is simple, no cleanup, we could
-        // even leave this method out as it's optional
-    };
-
-    // if true, then this editor will appear in a popup
-    MyCellEditor.prototype.isPopup = function() {
-        //and we could leave this method out also, false is the default
-        return false;
-    };*/
-
 
     // call our constructor function
     this.init(viewerID, currentSetID, viewerAction)

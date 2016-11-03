@@ -322,7 +322,7 @@ var ConceptViewer = function(viewerID, currentConceptID, viewerAction) {
     };
 
     ConceptViewer.prototype.getStatedView = function(){
-        return $('#komet_concept_stated_' + this.viewerID).prop("checked");;
+        return $('#komet_concept_stated_' + this.viewerID).prop("checked");
     };
 
     ConceptViewer.prototype.exportCSV  = function(){
@@ -1218,7 +1218,7 @@ var ConceptViewer = function(viewerID, currentConceptID, viewerAction) {
                 $.publish(KometChannels.Taxonomy.taxonomyTreeNodeSelectedChannel, ["", previous_id, TaxonomyModule.getStatedView(), this.viewerID, WindowManager.INLINE]);
 
             } else if (previous_type == "MappingViewer"){
-                $.publish(KometChannels.Mapping.mappingTreeNodeSelectedChannel, ["", previous_id, this.viewerID, WindowManager.INLINE]);
+                $.publish(KometChannels.Mapping.mappingTreeNodeSelectedChannel, ["", previous_id, MappingModule.getTreeViewParams(), this.viewerID, WindowManager.INLINE]);
             }
             WindowManager.closeViewer(this.viewerID.toString());
             return false;

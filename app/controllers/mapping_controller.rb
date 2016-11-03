@@ -34,19 +34,6 @@ class MappingController < ApplicationController
 
     def init_session
 
-        if true #!session['map_set_data']
-
-            session['map_tree_data'] = [{id: '1', set_id: '1', text: 'Set 1', icon: 'komet-tree-node-icon fa fa-folder', a_attr: {class: 'komet-context-menu', 'data-menu-type' => 'map_set', 'data-menu-uuid' => '1'}},
-                                        {id: '2', set_id: '2', text: 'Set 2', icon: 'komet-tree-node-icon fa fa-folder', a_attr: {class: 'komet-context-menu', 'data-menu-type' => 'map_set', 'data-menu-uuid' => '2'}}]
-
-            session['map_set_data'] = [{id: '1', name: 'Set 1', purpose: 'Test 1', description: 'Set 1 Description', version: '111', vuid: '1111', source: '1', source_display: 'Source 1', source_version: '111', target: '1', target_display: 'Target 1', target_version: '111', rules: 'Here are rules...', state: 'Pending', status: 'Active', time: '10/10/2016', module: 'Development', path: 'Path'},
-                                       {id: '2', name: 'Set 2', purpose: 'Test 2', description: 'Set 2 Description', version: '222', vuid: '2222', source: '2', source_display: 'Source 2', source_version: '222', target: '2', target_display: 'Target 2', target_version: '222', rules: 'Here are rules...', state: 'Pending', status: 'Active', time: '02/02/2022', module: 'Development', path: 'Path'}]
-
-            session['map_item_data'] = [{id: '1', set_id: '1', source: '11', source_display: 'Source 11', target: 'Target 11', target_display: 'Target 11', qualifier: 'No Qualifier', comments: 'This is a comment', review_state: 'Pending', status: 'Active', time: '10/10/2016', module: 'Development', path: 'Path'},
-                                        {id: '2', set_id: '1', source: '12', source_display: 'Source 12', target: 'Target 12', target_display: 'Target 12', qualifier: 'No Qualifier', comments: 'This is a comment', review_state: 'Pending', status: 'Active', time: '10/10/2016', module: 'Development', path: 'Path'},
-                                        {id: '3', set_id: '2', source: '21', source_display: 'Source 21', target: 'Target 21', target_display: 'Target 21', qualifier: 'No Qualifier', comments: 'This is a comment', review_state: 'Pending', status: 'Active', time: '10/10/2016', module: 'Development', path: 'Path'},
-                                        {id: '4', set_id: '2', source: '22', source_display: 'Source 22', target: 'Target 22', target_display: 'Target 22', qualifier: 'No Qualifier', comments: 'This is a comment', review_state: 'Pending', status: 'Active', time: '10/10/2016', module: 'Development', path: 'Path'}]
-        end
     end
 
     def load_tree_data
@@ -54,6 +41,7 @@ class MappingController < ApplicationController
         coordinates_token = session[:coordinatestoken].token
         text_filter = params[:text_filter]
         set_filter = params[:set_filter]
+        view_params = params[:view_params]
         mapping_tree = []
 
         map_sets_results = MappingApis::get_mapping_api(action: MappingApiActions::ACTION_SETS,  additional_req_params: {coordToken: coordinates_token, CommonRest::CacheRequest => false} )
@@ -101,6 +89,11 @@ class MappingController < ApplicationController
         @mapping_action = params[:mapping_action]
         @viewer_id =  params[:viewer_id]
         @previous_set_id = params[:previous_set_id]
+        @view_params = params[:view_params]
+
+        if @view_params == nil
+            @view_params = {statesToView: 'both'}
+        end
 
         if @viewer_id == nil || @viewer_id == '' || @viewer_id == 'new'
             @viewer_id = get_next_id.to_s
@@ -122,6 +115,7 @@ class MappingController < ApplicationController
         show_inactive = params[:show_inactive]
         page_size = 1000 #params[:overview_sets_page_size]
         page_number = 1 #params[:overview_sets_page_number]
+        view_params = params[:view_params]
 
         map_sets_results = MappingApis::get_mapping_api(action: MappingApiActions::ACTION_SETS,  additional_req_params: {coordToken: coordinates_token, CommonRest::CacheRequest => false} )
 
@@ -221,7 +215,7 @@ class MappingController < ApplicationController
                 label = name
                 label_display = field.columnName
                 description = field.columnDescription
-                order = (field.columnOrder.to_i + 2).to_s
+                order = field.columnOrder.to_s
                 data_type = field.columnDataType.enumName
                 required = field.columnRequired
                 validator_types = field.columnValidatorTypes
@@ -294,6 +288,7 @@ class MappingController < ApplicationController
         coordinates_token = session[:coordinatestoken].token
         column_definitions = session[:mapset_item_definitions]
         render_return = false
+        view_params = params[:view_params]
 
 
         if set_id == nil && params[:set_id]
@@ -336,7 +331,14 @@ class MappingController < ApplicationController
             item.mapItemExtendedFields.each_with_index do |field, index|
 
                 if field != nil
-                    item_hash[session[:mapset_item_definitions][index][:name]] = field.data
+
+                    field_info = session[:mapset_item_definitions][field.columnNumber]
+
+                    if (field_info[:data_type] == 'UUID')
+                        item_hash[field_info[:name] + '_display'] = field.conceptDescription
+                    end
+
+                    item_hash[field_info[:name]] = field.data
                 end
             end
 
@@ -344,11 +346,6 @@ class MappingController < ApplicationController
         end
 
         results[:total_number] = items.length
-
-        matching_items = session['map_item_data'].select { |item|
-            item[:set_id] == set_id.to_s
-        }
-
         results[:data] = item_data
 
         if render_return
@@ -437,33 +434,6 @@ class MappingController < ApplicationController
         clear_rest_caches
 
         render json: {set_id: set_id}
-    end
-
-    def map_item_editor
-
-        set_id = params[:set_id]
-        item_id = params[:item_id]
-        @viewer_id = params[:viewer_id]
-
-        if item_id
-
-            @map_item = session['map_item_data'].select { |item|
-                item[:id] == item_id
-            }.first
-        else
-            @map_item = {id: nil, set_id: set_id, source: nil, source_display: nil, target: nil, target_display: nil, qualifier: 'No Qualifier', comments: nil, review_state: nil, status: 'Active', time: nil, module: nil, path: nil}
-        end
-
-        # get the list of advanced descriptions code_system
-        @advanced_descriptions = [['No Restrictions', ''], ['Abbreviation', 'abbreviation']]
-
-        # get the list of code systems
-        @code_systems = [['No Restrictions', ''], ['SNOMED CT']]
-
-        # get the list of assemblages
-        @assemblages = [['No Restrictions', ''], ['SNOMED CT']]
-
-        render 'komet_dashboard/mapping/map_item_editor'
     end
 
     def process_map_item

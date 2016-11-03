@@ -54,7 +54,6 @@ Rails.application.routes.draw do
     get 'mapping/get_overview_items_results'
     get 'mapping/map_set_editor'
     post 'mapping/process_map_set'
-    get 'mapping/map_item_editor'
     post 'mapping/process_map_item'
 
     # flash notifications route via completed ajax calls

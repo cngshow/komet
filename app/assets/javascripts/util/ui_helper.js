@@ -923,18 +923,23 @@ var UIHelper = (function () {
         return function () {
 
             var viewerPanel = element.parents("div[id^=komet_viewer_]");
+            var viewParams;
 
             // if the viewerID was not passed it (but not if it is null), look up what it should be
             if (viewerID === undefined) {
 
                 if (viewerPanel.length > 0) {
+
                     viewerID = viewerPanel.first().attr("data-komet-viewer-id");
+                    viewParams = WindowManager.viewers[viewerID].getViewParams();
                 } else {
+
                     viewerID = WindowManager.getLinkedViewerID();
+                    viewParams =  MappingModule.getTreeViewParams();
                 }
             }
 
-            $.publish(KometChannels.Mapping.mappingTreeNodeSelectedChannel, ["", id, viewerID, windowType]);
+            $.publish(KometChannels.Mapping.mappingTreeNodeSelectedChannel, ["", id, viewParams, viewerID, windowType]);
         };
     }
 
@@ -1020,7 +1025,7 @@ var UIHelper = (function () {
 
                     // if the mapping module has been loaded then refresh the mapping tree
                     if (MappingModule.tree){
-                        MappingModule.tree.reloadTree();
+                        MappingModule.tree.reloadTree(MappingModule.getTreeViewParams());
                     }
 
                 } else {

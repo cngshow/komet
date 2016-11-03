@@ -9,7 +9,7 @@ var MappingModule = (function () {
     function init() {
 
         // listen for the onChange event broadcast by any of the taxonomy this.trees.
-        $.subscribe(KometChannels.Mapping.mappingTreeNodeSelectedChannel, function (e, treeID, setID, viewerID, windowType, action) {
+        $.subscribe(KometChannels.Mapping.mappingTreeNodeSelectedChannel, function (e, treeID, setID, viewParams, viewerID, windowType, action) {
 
             if (action == undefined || action == null) {
 
@@ -20,30 +20,29 @@ var MappingModule = (function () {
                 }
             }
 
-            callLoadViewerData(setID, action, viewerID, windowType);
+            callLoadViewerData(setID, viewParams, action, viewerID, windowType);
         });
 
-        this.tree = new KometMappingTree("komet_mapping_tree", null);
+        this.tree = new KometMappingTree("komet_mapping_tree", getTreeViewParams(), null);
     }
 
-
-    function callLoadViewerData(setID, viewerAction, viewerID, windowType) {
+    function callLoadViewerData(setID, viewParams, viewerAction, viewerID, windowType) {
 
         if (WindowManager.deferred && WindowManager.deferred.state() == "pending"){
             WindowManager.deferred.done(function(){
-                loadViewerData(setID, viewerAction, WindowManager.getLinkedViewerID(), windowType)
+                loadViewerData(setID, viewParams, viewerAction, WindowManager.getLinkedViewerID(), windowType)
             }.bind(this));
         } else {
-            loadViewerData(setID, viewerAction, viewerID, windowType);
+            loadViewerData(setID, viewParams, viewerAction, viewerID, windowType);
         }
     }
 
     // the path to a javascript partial file that will re-render all the appropriate partials once the ajax call returns
-    function loadViewerData(setID, viewerAction, viewerID, windowType) {
+    function loadViewerData(setID, viewParams, viewerAction, viewerID, windowType) {
 
         WindowManager.deferred = $.Deferred();
 
-        var params = {partial: 'komet_dashboard/mapping/mapping_viewer', mapping_action: viewerAction, viewer_id: viewerID, set_id: setID};
+        var params = {partial: 'komet_dashboard/mapping/mapping_viewer', mapping_action: viewerAction, viewer_id: viewerID, set_id: setID, view_params: viewParams};
         var url = gon.routes.mapping_load_mapping_viewer_path;
 
         if (viewerAction == CREATE_SET && WindowManager.viewers.inlineViewers.length > 0 && WindowManager.viewers[viewerID].currentSetID != 0 && (windowType == null || windowType == WindowManager.INLINE)){
@@ -100,11 +99,29 @@ var MappingModule = (function () {
             $("#komet_dashboard_tabs").tabs({active:1});
         }
 
-        callLoadViewerData(null, MappingModule.CREATE_SET, WindowManager.getLinkedViewerID());
+        $.publish(KometChannels.Mapping.mappingTreeNodeSelectedChannel, ["", null, MappingModule.getTreeViewParams(), WindowManager.getLinkedViewerID(), WindowManager.INLINE, MappingModule.CREATE_SET]);
     }
 
-    function setStatesToView(viewerID, field) {
-        loadViewerData(WindowManager.viewers[viewerID].currentSetID, field.value, WindowManager.viewers[viewerID].mapping_action, viewerID, WindowManager.INLINE);
+    function setViewerStatesToView(viewerID, field) {
+
+        var viewParams = WindowManager.viewers[viewerID].getViewParams();
+        viewParams.statesToView = field.value;
+        $.publish(KometChannels.Mapping.mappingTreeNodeSelectedChannel, ["", WindowManager.viewers[viewerID].currentSetID, viewParams, viewerID, WindowManager.INLINE, WindowManager.viewers[viewerID].mapping_action]);
+    }
+
+    function setTreeStatesToView(field) {
+
+        var viewParams = getTreeViewParams();
+        viewParams.statesToView = field.value;
+        this.tree.reloadTreeStatedView(viewParams);
+    }
+
+    function getTreeStatesToView (){
+        return $("#komet_mapping_tree_panel").find("input[name='komet_mapping_tree_states_to_view']:checked").val();
+    }
+
+    function getTreeViewParams (){
+        return {statesToView: getTreeStatesToView()};
     }
 
     return {
@@ -113,7 +130,10 @@ var MappingModule = (function () {
         createViewer: createViewer,
         openSetEditor: openSetEditor,
         createNewMapSet: createNewMapSet,
-        setStatesToView: setStatesToView,
+        setViewerStatesToView: setViewerStatesToView,
+        setTreeStatesToView: setTreeStatesToView,
+        getTreeStatesToView: getTreeStatesToView,
+        getTreeViewParams: getTreeViewParams,
         SET_LIST: SET_LIST,
         SET_DETAILS: SET_DETAILS,
         SET_EDITOR: SET_EDITOR,
