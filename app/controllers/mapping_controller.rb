@@ -29,6 +29,7 @@ class MappingController < ApplicationController
 
     before_filter :init_session
     skip_before_filter :set_render_menu, :only => [:map_set_editor]
+    skip_after_action :verify_authorized
 
     DATA_TYPES_CLASS = Gov::Vha::Isaac::Rest::Api1::Data::Sememe::DataTypes
 
