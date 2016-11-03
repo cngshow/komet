@@ -323,9 +323,10 @@ var MappingViewer = function(viewerID, currentSetID, viewerAction) {
         this.loadOverviewSetsGrid();
     };
 
-    MappingViewer.prototype.initializeSetEditor = function(viewerAction){
+    MappingViewer.prototype.initializeSetEditor = function(viewerAction, mapItems){
 
         var form = $("#komet_mapping_set_editor_form_" + this.viewerID);
+        var thisViewer = this;
 
         this.viewerAction = viewerAction;
         this.setEditorOriginalIncludedFields = null;
@@ -359,8 +360,56 @@ var MappingViewer = function(viewerID, currentSetID, viewerAction) {
 
             if (this.currentSetID != null && this.currentSetID != ""){
 
-                this.loadOverviewItemsGrid();
-                UIHelper.toggleFieldAvailability("#komet_mapping_overview_item_create_" + this.viewerID, true);
+                var itemGrid = $("#komet_mapping_items_" + this.viewerID);
+                this.itemFieldInfo = mapItems.column_definitions;
+
+                var itemSectionString = "";
+
+                if (mapItems.data.length == 0){
+                    itemSectionString += this.createItemNoDataRowString();
+                } else {
+
+                    for (var i = 0; i < mapItems.data.length; i++){
+                        itemSectionString += this.createItemRowString(mapItems.data[i]);
+                    }
+                }
+
+                // create a dom fragment from our items structure
+                var itemSection = document.createRange().createContextualFragment(itemSectionString);
+                itemGrid.append(itemSection);
+
+                UIHelper.processAutoSuggestTags(itemGrid);
+
+                $("#komet_mapping_set_editor_items_form_" + this.viewerID).submit(function () {
+
+                    $.ajax({
+                        type: "POST",
+                        url: $(this).attr("action"),
+                        data: $(this).serialize(), //new FormData($(this)[0]),
+                        success: function (data) {
+
+                            var editorSection = $("#komet_mapping_items_section_" + thisViewer.viewerID);
+
+                            if (data.failed.length > 0){
+
+                                editorSection.prepend(UIHelper.generatePageMessage("Errors occurred, all changes not listed were processed. See below for the errors."));
+
+                                for (var i = 0; i < data.failed.length; i++) {
+
+                                    editorSection.find("#komet_mapping_item_row_" + data.failed[i].id + "_" + thisViewer.viewerID).before(UIHelper.generatePageMessage("The map item below was not processed."));
+                                }
+
+                            } else {
+                                editorSection.prepend(UIHelper.generatePageMessage("All changes were processed successfully."));
+                            }
+                        }
+                    });
+
+                    // have to return false to stop the form from posting twice.
+                    return false;
+                });
+
+                //UIHelper.toggleFieldAvailability("#komet_mapping_overview_item_create_" + this.viewerID, true);
             }
         } else {
 
@@ -368,8 +417,6 @@ var MappingViewer = function(viewerID, currentSetID, viewerAction) {
         }
 
         $("#komet_mapping_set_tabs_" + this.viewerID).tabs();
-
-        var thisViewer = this;
 
         form.submit(function () {
 
@@ -828,6 +875,158 @@ var MappingViewer = function(viewerID, currentSetID, viewerAction) {
         requiredField[0].checked = false;
     };
 
+    MappingViewer.prototype.createItemNoDataRowString = function () {
+        return '<div id="komet_mapping_item_edit_no_data_row_' + this.viewerID + '" class="komet-mapping-item-edit-row"><div>There are no items for this map set.</div></div>';
+    };
+
+    MappingViewer.prototype.createItemRowString = function (rowData) {
+
+        var itemID = "";
+        var targetConcepID = "";
+        var targetConceptDisplay = "";
+        //var state = "";
+        var isNew = false;
+        var rowID = "";
+        var rowString = null;
+        var idPrefix = "komet_mapping_item_" + itemID;
+
+
+        if (rowData != null){
+
+            itemID = rowData.item_id;
+            rowID = 'komet_mapping_item_row_' + itemID + '_' + this.viewerID;
+            idPrefix = "komet_mapping_item_" + itemID;
+            targetConcepID = rowData.target_concept;
+            targetConceptDisplay = rowData.target_concept_display;
+
+
+            rowString = '<div id="' + rowID + '" class="komet-mapping-item-edit-row">'
+                + '<div>' + rowData.source_concept_display + '</div>';
+        } else {
+
+            isNew = true;
+            itemID = window.performance.now().toString().replace(".", "");
+            rowID = 'komet_mapping_item_row_' + itemID + '_' + this.viewerID;
+            idPrefix = "komet_mapping_item_" + itemID;
+
+            rowString = '<div id="' + rowID + '" class="komet-mapping-item-edit-row">'
+                + '<div><autosuggest id-base="' + idPrefix + '_source_concept" '
+                + 'id-postfix="_' + this.viewerID + '" '
+                + 'name="items[' + itemID + '][source_concept" '
+                + 'name-format="array" '
+                + 'classes="komet-mapping-item-source-concept">'
+                + '</autosuggest></div>';
+        }
+
+        rowString += '<div><autosuggest id-base="' + idPrefix + '_target_concept" '
+            + 'id-postfix="_' + this.viewerID + '" '
+            + 'name="items[' + itemID + '][target_concept" '
+            + 'name-format="array" '
+            + 'value="' + targetConcepID + '" '
+            + 'display-value="' + targetConceptDisplay + '" '
+            + 'classes="komet-mapping-item-target-concept">'
+            + '</autosuggest></div>';
+
+        $.each(this.itemFieldInfo, function (fieldID, field) {
+
+            var name = 'items[' + itemID + '][' + field.name + ']'
+            var id = idPrefix + "_" + field.name + '_' + this.viewerID;
+            var classes = "form-control komet-mapping-set-editor-edit";
+            var value = "";
+            var dataType = field.data_type;
+
+            if (!isNew && rowData[field.name]){
+                value = rowData[field.name];
+            }
+
+            rowString += '<div>';
+
+            if (dataType == "UUID"){
+
+                var displayValue = "";
+
+                if (!isNew && rowData[field.name + "_display"] != undefined){
+                    displayValue = rowData[field.name + "_display"];
+                }
+
+                rowString += '<autosuggest '
+                    + 'id-base="' + idPrefix + "_" + field.name + '" '
+                    + 'id-postfix="_' + this.viewerID + '" '
+                    + 'name="items[' + itemID + '][' + field.name + '" '
+                    + 'name-format="array" '
+                    + 'value="' + value + '" '
+                    + 'display-value="' + displayValue + '" '
+                    + 'classes="komet-mapping-set-editor-edit" '
+                    + '></autosuggest>';
+
+                value = displayValue;
+
+            } else if (dataType == "BOOLEAN"){
+                rowString += UIHelper.createSelectFieldString(id, name, classes, UIHelper.getPreDefinedOptionsForSelect("true_false"), value);
+            } else {
+                rowString += '<input name="' + name + '" id="' + id + '" class="' + classes + '" value="' + value + '">';
+            }
+
+            rowString += '</div>';
+
+        }.bind(this));
+
+        //rowString += '<div>' + this.createSelectField("descriptions", descriptionID, "properties", rowData.sememe_instance_id, "state", this.selectFieldOptions.state, rowData.state) + '</div>';
+        rowString += '<div class="komet-mapping-item-edit-row-tools">';
+
+        if (isNew){
+            rowString += '<button type="button" class="komet-link-button" onclick="WindowManager.viewers[' + this.viewerID + '].removeItemRow(\'' + rowID + '\', this)" title="Remove row"><div class="glyphicon glyphicon-remove"></div></button>';
+        }
+
+        rowString += '<!-- end edit-row-tools --></div><!-- end edit-row --></div>';
+
+        return rowString;
+    };
+
+    MappingViewer.prototype.addItemRow = function () {
+
+        var section = $("#komet_mapping_items_" + this.viewerID);
+
+        // generate the new row string and create a dom fragment it
+        var rowString = this.createItemRowString(null);
+        var row = document.createRange().createContextualFragment(rowString);
+
+        section.append(row);
+        UIHelper.processAutoSuggestTags(section);
+
+        // if there is a "No Data" row, remove it.
+        var noDataRow = $("#komet_mapping_item_edit_no_data_row_" + this.viewerID);
+
+        if (noDataRow.length > 0){
+            noDataRow.remove();
+        }
+
+    };
+
+    MappingViewer.prototype.removeItemRow = function (rowID, closeElement) {
+
+        var confirmCallback = function(buttonClicked){
+
+            if (buttonClicked != 'cancel') {
+
+                var row = $("#" + rowID);
+                row.remove();
+
+                // if there's only the header row left in the items section, display a "No Data" row
+                var section = $("#komet_mapping_items_" + this.viewerID);
+
+                if (section.find("> div").length <= 1){
+                    section.append(this.createItemNoDataRowString());
+                }
+            }
+
+        }.bind(this);
+
+        UIHelper.generateConfirmationDialog("Delete Map Item?", "Are you sure you want to remove this map item?", confirmCallback, "Yes", closeElement);
+    };
+
+
+    // ###########################################################################
     MappingViewer.prototype.itemsGridCellRenderer = function(params){
         
         var fieldInfo = this.overviewItemsGridOptions.column_definitions[params.colDef.field];

@@ -19,6 +19,7 @@ Copyright Notice
 
 require './lib/rails_common/util/controller_helpers'
 require './lib/isaac_rest/id_apis_rest'
+require 'bigdecimal'
 
 ##
 # MappingController -
@@ -220,7 +221,7 @@ class MappingController < ApplicationController
                 label = name
                 label_display = field.columnName
                 description = field.columnDescription
-                order = field.columnOrder.to_s
+                order = (field.columnOrder.to_i + 2).to_s
                 data_type = field.columnDataType.enumName
                 required = field.columnRequired
                 validator_types = field.columnValidatorTypes
@@ -279,6 +280,8 @@ class MappingController < ApplicationController
             @map_set[:vuid] = '4500635'
 
             @viewer_title = @map_set[:description]
+
+            @map_items = get_overview_items_results(@map_set[:set_id])
         else
 
             @mapping_action = 'create_set'
@@ -286,40 +289,42 @@ class MappingController < ApplicationController
         end
     end
 
-    def get_overview_items_results
+    def get_overview_items_results(set_id = nil)
 
         coordinates_token = session[:coordinatestoken].token
-        column_definitions = {}
+        column_definitions = session[:mapset_item_definitions]
+        render_return = false
 
-        session[:mapset_item_definitions].each do |definition|
-            column_definitions[definition[:name]] = definition
+
+        if set_id == nil && params[:set_id]
+            render_return = true
+            set_id = params[:set_id]
         end
 
-        set_id = params[:overview_set_id]
-        filter = params[:overview_sets_filter]
-        show_inactive = params[:show_inactive]
-        page_size = 1000 #params[:overview_items_page_size]
-        page_number = 1 #params[:overview_items_page_number]
-        results = {column_definitions: column_definitions, page_number: page_number}
+        #filter = params[:overview_sets_filter]
+        #show_inactive = params[:show_inactive]
+        results = {column_definitions: column_definitions}
         item_data = []
-        extended_columns = []
 
         items = MappingApis::get_mapping_api(action: MappingApiActions::ACTION_ITEMS, uuid_or_id: set_id,  additional_req_params: {coordToken: coordinates_token, expand: 'referencedDetails,comments '}) # CommonRest::CacheRequest => false
 
         if items.is_a? CommonRest::UnexpectedResponse
-            return {total_number: 0, page_number: 1, data: []}
+            return {total_number: 0, data: []}
         end
-
-        #{id: '1', set_id: '1', source: '11', source_display: 'Source 11', target: 'Target 11', target_display: 'Target 11', qualifier: 'No Qualifier', comments: 'This is a comment', review_state: 'Pending', status: 'Active', time: '10/10/2016', module: 'Development', path: 'Path'},
 
         items.each do |item|
 
             item_hash = {}
 
             item_hash[:item_id] = item.identifiers.uuids.first
-            item_hash[:source_concept] = item.sourceConcept
+            item_hash[:source_concept] = target_concept = IdAPIsRest.get_id(uuid_or_id: item.sourceConcept, action: IdAPIsRestActions::ACTION_TRANSLATE, additional_req_params: {inputType: 'conceptSequence', outputType: 'uuid'}).value
             item_hash[:source_concept_display] = item.sourceDescription
             item_hash[:target_concept] = item.targetConcept
+
+            if item_hash[:target_concept] != nil || item_hash[:target_concept] != ''
+                item_hash[:target_concept] = target_concept = IdAPIsRest.get_id(uuid_or_id: item_hash[:target_concept], action: IdAPIsRestActions::ACTION_TRANSLATE, additional_req_params: {inputType: 'conceptSequence', outputType: 'uuid'}).value
+            end
+
             item_hash[:target_concept_display] = item.targetDescription
             item_hash[:comments] = ''
             item_hash[:state] = item.mappingItemStamp.state.enumName
@@ -328,22 +333,10 @@ class MappingController < ApplicationController
             item_hash[:module] = get_concept_metadata(item.mappingItemStamp.moduleSequence)
             item_hash[:path] = get_concept_metadata(item.mappingItemStamp.pathSequence)
 
-            # session[:mapset_item_definitions].each do |column|
-            #
-            #     if column.name == '231'
-            #
-            #
-            #     elsif column.name == '231'
-            #
-            #     elsif column.name == '231'
-            #
-            #     end
-            # end
-
-            item.mapItemExtendedFields.each do |field|
+            item.mapItemExtendedFields.each_with_index do |field, index|
 
                 if field != nil
-                    item_hash[session[:mapset_item_definitions][field.columnNumber][:name]] = field.data
+                    item_hash[session[:mapset_item_definitions][index][:name]] = field.data
                 end
             end
 
@@ -357,7 +350,12 @@ class MappingController < ApplicationController
         }
 
         results[:data] = item_data
-        render json: results
+
+        if render_return
+            render json: results and return
+        else
+            return results
+        end
     end
 
     def process_map_set
@@ -470,45 +468,81 @@ class MappingController < ApplicationController
 
     def process_map_item
 
-        item_id = params[:komet_mapping_item_editor_item_id]
-        set_id = params[:komet_mapping_item_editor_set_id]
-        source = params[:komet_mapping_item_editor_source]
-        source_display = params[:komet_mapping_item_editor_source_display]
-        target = params[:komet_mapping_item_editor_target]
-        target_display = params[:komet_mapping_item_editor_target_display]
-        qualifier = params[:komet_mapping_item_editor_qualifier]
-        comments = params[:komet_mapping_item_editor_comments]
-        review_state = params[:komet_mapping_item_editor_review_state]
+        set_id = params[:set_id]
+        field_info = session[:mapset_item_definitions]
+        failed_writes = []
 
-        item = {set_id: set_id, source: source, source_display: source_display, target: target, target_display: target_display, qualifier: qualifier, comments: comments, review_state: review_state, status: 'Active', time: Time.now.strftime('%m/%d/%Y %H:%M'), module: 'Development', path: 'Path'}
+        if params[:items]
 
-        if item_id && item_id != ''
+            params[:items].each do |item_id, item|
 
-            array_id = session['map_item_data'].each_index.select { |index|
-                session['map_item_data'][index][:id] == item_id.to_s
-            }.first
+                target_concept = nil
 
-            item[:id] = item_id
+                if item['target_concept'] != nil || item['target_concept'] != ''
+                    target_concept = IdAPIsRest.get_id(uuid_or_id: item['target_concept'], action: IdAPIsRestActions::ACTION_TRANSLATE, additional_req_params: {inputType: 'uuid', outputType: 'conceptSequence'}).value
+                end
 
-            session['map_item_data'][array_id] = item
-        else
+                body_params = {targetConcept: target_concept, qualifierConcept: 230}
 
-            item[:id] = (session['map_item_data'].last[:id].to_i + 1).to_s
+                extended_fields = []
 
-            session['map_item_data'] << item
-        end
+                field_info.each do |field|
 
-        if source && source != ''
-            #add_to_recents(:mapping_item_source_recents, source, source_display)
-        end
+                    data_type = field[:data_type]
+                    data = item[field[:name]]
 
-        if target && target != ''
-            #add_to_recents(:mapping_item_target_recents, target, target_display)
+                    if data_type != 'UUID'
+
+                        if ['FLOAT', 'DOUBLE'].include?(data_type)
+                            data = BigDecimal.new(data);
+                        elsif ['LONG', 'INTEGER'].include?(data_type)
+                            data =data.to_i;
+                        elsif data_type == 'BOOLEAN'
+
+                            if data == 'true'
+                                data = true
+                            else
+                                data = false
+                            end
+                        end
+
+                        data_type = data_type.downcase
+                        data_type[0] = field[:data_type][0]
+                    end
+
+                    data_type = 'gov.vha.isaac.rest.api1.data.sememe.dataTypes.RestDynamicSememe' + data_type
+
+                    extended_fields << {columnNumber: field[:order], data: data, '@class' => data_type}
+                end
+
+                body_params[:mapItemExtendedFields] = extended_fields
+
+                # if the item ID is a UUID, then it is an existing item to be updated, otherwise it is a new item to be created
+                if is_id?(item_id)
+
+                    return_value = MappingApis::get_mapping_api(action: MappingApiActions::ACTION_UPDATE_ITEM, uuid_or_id: item_id, additional_req_params: {editToken: get_edit_token}, body_params: body_params)
+
+                    if return_value.is_a? CommonRest::UnexpectedResponse
+                        failed_writes << {id: item_id}
+                    end
+                else
+
+                    body_params[:mapSetConcept] = IdAPIsRest.get_id(uuid_or_id: set_id, action: IdAPIsRestActions::ACTION_TRANSLATE, additional_req_params: {inputType: 'uuid', outputType: 'conceptSequence'}).value
+                    body_params[:sourceConcept] = IdAPIsRest.get_id(uuid_or_id: item['source_concept'], action: IdAPIsRestActions::ACTION_TRANSLATE, additional_req_params: {inputType: 'uuid', outputType: 'conceptSequence'}).value
+
+                    return_value = MappingApis::get_mapping_api(action: MappingApiActions::ACTION_CREATE_ITEM, additional_req_params: {editToken: get_edit_token}, body_params: body_params)
+
+                    if return_value.is_a? CommonRest::UnexpectedResponse
+                        failed_writes << {id: item_id}
+                    end
+                end
+
+            end
         end
 
         # clear taxonomy caches after writing data
         clear_rest_caches
 
-        head :ok, content_type: 'text/html'
+        render json: {set_id: set_id, failed: failed_writes}
     end
 end

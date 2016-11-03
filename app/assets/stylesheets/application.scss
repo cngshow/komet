@@ -1069,7 +1069,10 @@ td.komet-concept-table-nested-indicator.komet-concept-table-nested-indicator-ope
     font-size: small;
     display: flex;
     align-items: center;
-    height: 32px;
+    height: 40px;
+}
+.komet-mapping-item-tools button{
+    margin-left: 5px;
 }
 .komet-mapping-item-tools .komet-mapping-item-page-size{
     width: 80px;
@@ -1082,6 +1085,66 @@ td.komet-concept-table-nested-indicator.komet-concept-table-nested-indicator-ope
 .komet-mapping-item-tools .fa{
     font-size: medium;
     margin-right: 10px;
+}
+.komet-mapping-items-grid{
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    justify-content: space-between;
+    align-items: stretch;
+    border-right: 1px solid black;
+    border-bottom: 1px solid black;
+}
+.komet-mapping-items-grid .form-control{
+    font-size: small;
+    height: 26px;
+    padding: 3px 5px;
+}
+.komet-mapping-items-grid button.btn {
+    padding: 2px 8px;
+    height: 26px;
+}
+.komet-mapping-item-edit-header-row{
+    display: flex;
+    justify-content: space-between;
+    //align-items: center;
+    font-weight: bold;
+    height: 30px;
+}
+.komet-mapping-item-edit-header-row > div{
+    display: flex;
+    flex: 1 0 auto;
+    width: 200px;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1px;
+    font-weight: bold;
+    border-left: 1px solid black;
+    border-top: 1px solid black;
+}
+.komet-mapping-item-edit-header-row > div:last-child{
+    width: 20px;
+    flex: 0 0 auto;
+}
+.komet-mapping-item-edit-row{
+    display: flex;
+    justify-content: space-between;
+    //align-items: center;
+    height: 30px;
+}
+.komet-mapping-item-edit-row > div{
+    display: flex;
+    flex: 1 0 auto;
+    width: 200px;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1px;
+    border-left: 1px solid black;
+    border-top: 1px solid black;
+}
+.komet-mapping-item-edit-row .komet-mapping-item-edit-row-tools{
+    width: 20px;
+    flex: 0 0 auto;
 }
 .komet-add-fields-dialog{
     position: absolute;
@@ -1158,9 +1221,6 @@ td.komet-concept-table-nested-indicator.komet-concept-table-nested-indicator-ope
     font-size: small;
     height: 26px;
     padding: 3px 5px;
-}
-.komet-add-fields-dialog-right-column button{
-    margin-top: -1px;
 }
 .komet-add-fields-dialog-footer{
     display: flex;

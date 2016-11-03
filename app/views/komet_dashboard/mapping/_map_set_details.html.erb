@@ -125,6 +125,8 @@
 
         <%= form_tag(mapping_process_map_item_path, method: 'post', id: "komet_mapping_set_editor_items_form_#{@viewer_id}") do %>
 
+            <%= hidden_field_tag :set_id, @map_set[:set_id], id: "komet_mapping_set_editor_items_set_id_#{@viewer_id}" %>
+
             <div id="komet_mapping_item_panel_<%= @viewer_id %>" class="komet-mapping-section-panel">
 
                 <!-- main header block - always visible -->
@@ -144,14 +146,14 @@
 
                 <div class="komet-mapping-section-panel-header-shelf">
 
-                    <div>
+                    <!--<div>
                         <div class="input-group">
                             <span class="input-group-addon" ><span class="fa fa-search"></span></span>
-                            <input id="komet_mapping_item_filter_<%= @viewer_id %>" class="form-control" placeholder="Type to Search Map Items...">
+                            <input id="komet_mapping_item_filter_<%#= @viewer_id %>" class="form-control" placeholder="Type to Search Map Items...">
                         </div>
                     </div>
 
-                    <select id="komet_mapping_item_filter_by_<%= @viewer_id %>" class="form-control komet-mapping-item-filter-by">
+                    <select id="komet_mapping_item_filter_by_<%#= @viewer_id %>" class="form-control komet-mapping-item-filter-by">
                         <option value="">Filter By:</option>
                         <option value="source_code">Source Code</option>
                         <option value="source_description">Source Description</option>
@@ -160,39 +162,18 @@
                         <option value="vuid">VUID</option>
                     </select>
 
-                    <button class="btn btn-default form-control komet-mapping-item-filter-button">Filter</button>
+                    <button class="btn btn-default form-control komet-mapping-item-filter-button">Filter</button>-->
 
                     <div class="komet-flex-right">
 
-                        <input type="checkbox" id="komet_mapping_item_stamp_<%= @viewer_id %>" onclick="WindowManager.viewers[<%= @viewer_id %>].toggleItemsSTAMP()">
-                        <label for="komet_mapping_item_stamp_<%= @viewer_id %>">STAMP</label>
-
-                        <input type="checkbox" id="komet_mapping_item_active_<%= @viewer_id %>" checked onclick="WindowManager.viewers[<%= @viewer_id %>].loadOverviewItemsGrid()">
-                        <label for="komet_mapping_item_active_<%= @viewer_id %>">Active</label>
-
-                        <input type="checkbox" id="komet_mapping_item_inactive_<%= @viewer_id %>" onclick="WindowManager.viewers[<%= @viewer_id %>].loadOverviewItemsGrid()">
-                        <label for="komet_mapping_item_inactive_<%= @viewer_id %>">Inactive</label>
                     </div>
                 </div>
 
-                <div class="komet-mapping-section-panel-details">
+                <div class="komet-mapping-section-panel-details" id="komet_mapping_items_section_<%= @viewer_id %>">
 
                     <div class="komet-mapping-item-tools">
 
-                        Page Size:
-                        <select id="komet_mapping_item_page_size_<%= @viewer_id %>" class="form-control komet-mapping-item-page-size">
-                            <option selected>25</option>
-                            <option>50</option>
-                            <option>100</option>
-                            <option>250</option>
-                            <option>500</option>
-                            <option>1000</option>
-                        </select>
-
-                        <div id="komet_mapping_overview_item_create_<%= @viewer_id %>" class="fa fa-plus ui-state-disabled" title="Create New Map Item" onclick="WindowManager.viewers[<%= @viewer_id %>].addItem(true);"></div>
-                        <div id="komet_mapping_overview_item_delete_<%= @viewer_id %>" class="fa fa-minus ui-state-disabled" title="Delete Selected Map Item"></div>
-                        <div id="komet_mapping_overview_item_edit_<%= @viewer_id %>" class="fa fa-pencil ui-state-disabled" title="Edit Selected Map Item" onclick="WindowManager.viewers[<%= @viewer_id %>].onOverviewItemsGridDoubleClick();"></div>
-                        <div id="komet_mapping_overview_item_comment_<%= @viewer_id %>" class="fa fa-comment ui-state-disabled" title="Edit Comments for Selected Map Item"></div>
+                        <div id="komet_mapping_overview_item_create_<%= @viewer_id %>" class="fa fa-plus" title="Create New Map Item" onclick="WindowManager.viewers[<%= @viewer_id %>].addItemRow();"></div>
 
                         <div class="komet-flex-right">
                             <button class="btn btn-default" type="button" onclick="WindowManager.viewers[<%= @viewer_id %>].cancelSetItemEdit()">Cancel</button>
@@ -200,7 +181,23 @@
                         </div>
                     </div>
 
-                    <div id="komet_mapping_overview_items_<%= @viewer_id %>" style="height: 450px;" class="ag-fresh komet-data-grid"></div>
+                    <div id="komet_mapping_items_<%= @viewer_id %>" class="komet-mapping-items-grid">
+
+                        <div class="komet-mapping-item-edit-header-row">
+
+                            <div>Mapping Source Concept</div>
+                            <div>Mapping Target Concept</div>
+
+                            <% Array(@map_items[:column_definitions]).each do |column| %>
+
+                                <div><%= column[:label_display] %></div>
+
+                            <% end %>
+
+                            <div></div>
+
+                        </div>
+                    </div>
 
                 </div>
 
@@ -215,7 +212,7 @@
         $(document).ready(function () {
 
             WindowManager.viewers[<%= @viewer_id %>].setEditorMapSet = <%= raw @map_set.to_json %>;
-            WindowManager.viewers[<%= @viewer_id %>].initializeSetEditor("<%= @mapping_action %>");
+            WindowManager.viewers[<%= @viewer_id %>].initializeSetEditor("<%= @mapping_action %>", <%= raw @map_items.to_json %>);
         });
 
     </script>

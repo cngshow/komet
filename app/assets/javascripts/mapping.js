@@ -8,28 +8,6 @@ var MappingModule = (function () {
 
     function init() {
 
-        subscribeToMappingTree();
-
-        var windowType;
-
-        /*if (WindowManager.viewers.inlineViewers.length == 0){
-            windowType = WindowManager.NEW;
-        }*/
-
-        this.tree = new KometMappingTree("komet_mapping_tree", null);
-
-        /*
-        showOverviewSTAMP = false;
-        showOverviewInactiveConcepts = false;
-
-        loadOverviewSetsGrid();
-
-        */
-
-    }
-
-    function subscribeToMappingTree() {
-
         // listen for the onChange event broadcast by any of the taxonomy this.trees.
         $.subscribe(KometChannels.Mapping.mappingTreeNodeSelectedChannel, function (e, treeID, setID, viewerID, windowType, action) {
 
@@ -44,7 +22,10 @@ var MappingModule = (function () {
 
             callLoadViewerData(setID, action, viewerID, windowType);
         });
+
+        this.tree = new KometMappingTree("komet_mapping_tree", null);
     }
+
 
     function callLoadViewerData(setID, viewerAction, viewerID, windowType) {
 
@@ -122,12 +103,17 @@ var MappingModule = (function () {
         callLoadViewerData(null, MappingModule.CREATE_SET, WindowManager.getLinkedViewerID());
     }
 
+    function setStatesToView(viewerID, field) {
+        loadViewerData(WindowManager.viewers[viewerID].currentSetID, field.value, WindowManager.viewers[viewerID].mapping_action, viewerID, WindowManager.INLINE);
+    }
+
     return {
         initialize: init,
         callLoadViewerData: callLoadViewerData,
         createViewer: createViewer,
         openSetEditor: openSetEditor,
         createNewMapSet: createNewMapSet,
+        setStatesToView: setStatesToView,
         SET_LIST: SET_LIST,
         SET_DETAILS: SET_DETAILS,
         SET_EDITOR: SET_EDITOR,
