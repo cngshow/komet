@@ -322,7 +322,7 @@ var ConceptViewer = function(viewerID, currentConceptID, viewerAction) {
     };
 
     ConceptViewer.prototype.getStatedView = function(){
-        return $('#komet_concept_stated_' + this.viewerID).prop("checked");;
+        return $('#komet_concept_stated_' + this.viewerID).prop("checked");
     };
 
     ConceptViewer.prototype.exportCSV  = function(){
@@ -647,7 +647,7 @@ var ConceptViewer = function(viewerID, currentConceptID, viewerAction) {
         rowString +=  '<div>' + this.createSelectField("properties", rowData.sememe_instance_id, null, null, "state", this.selectFieldOptions.state, rowData.state) + '</div></div>';
 
         if (rowData.new) {
-            rowString += '<div class="komet-concept-edit-row-tools"><button type="button" class="komet-link-button" onclick="WindowManager.viewers[' + this.viewerID + '].removeRow(\'' + rowData.sememe_instance_id + '\', \'' + rowID + '\', \'concept property\', ' + rowData.new + ', this)" title="Remove row"><div class="glyphicon glyphicon-remove"></div></button></div>';
+            rowString += '<div class="komet-concept-edit-row-tools"><button type="button" class="komet-link-button" onclick="WindowManager.viewers[' + this.viewerID + '].removeItemRow(\'' + rowData.sememe_instance_id + '\', \'' + rowID + '\', \'concept property\', ' + rowData.new + ', this)" title="Remove row"><div class="glyphicon glyphicon-remove"></div></button></div>';
         }
 
         rowString += '<!-- end komet-concept-edit-concept-properties-row --></div>';
@@ -697,7 +697,7 @@ var ConceptViewer = function(viewerID, currentConceptID, viewerAction) {
             + '<div>' + this.createSelectField("descriptions", descriptionID, null, null, "description_state", this.selectFieldOptions.state, state) + '</div>';
 
         if (isNew){
-            rowString += '<div class="komet-concept-edit-row-tools"><button type="button" class="komet-link-button" onclick="WindowManager.viewers[' + this.viewerID + '].removeRow(\'' + descriptionID + '\', \'' + rowID + '\', \'description\', ' + isNew + ', this)" title="Remove row"><div class="glyphicon glyphicon-remove"></div></button></div>';
+            rowString += '<div class="komet-concept-edit-row-tools"><button type="button" class="komet-link-button" onclick="WindowManager.viewers[' + this.viewerID + '].removeItemRow(\'' + descriptionID + '\', \'' + rowID + '\', \'description\', ' + isNew + ', this)" title="Remove row"><div class="glyphicon glyphicon-remove"></div></button></div>';
         }
 
         rowString += '</div>'
@@ -770,7 +770,7 @@ var ConceptViewer = function(viewerID, currentConceptID, viewerAction) {
             + '</div>';
 
         if (rowData.new){
-            rowString += '<div class="komet-concept-edit-row-tools"><button type="button" class="komet-link-button" onclick="WindowManager.viewers[' + this.viewerID + '].removeRow(\'' + rowData.sememe_instance_id + '\', \'' + rowID + '\', \'description property\', ' + rowData.new + ', this)" title="Remove row"><div class="glyphicon glyphicon-remove"></div></button></div>';
+            rowString += '<div class="komet-concept-edit-row-tools"><button type="button" class="komet-link-button" onclick="WindowManager.viewers[' + this.viewerID + '].removeItemRow(\'' + rowData.sememe_instance_id + '\', \'' + rowID + '\', \'description property\', ' + rowData.new + ', this)" title="Remove row"><div class="glyphicon glyphicon-remove"></div></button></div>';
         }
 
         rowString += '<!-- end komet-concept-edit-description-properties-row --></div>';
@@ -810,7 +810,7 @@ var ConceptViewer = function(viewerID, currentConceptID, viewerAction) {
             rowString = '<div id="' + rowID + '" class="komet-concept-edit-row komet-concept-edit-description-dialect-row">'
                 + '<div>' + this.createSelectField("descriptions", descriptionID, "dialects", dialectID, "dialect", this.selectFieldOptions.dialect, dialect) + '</div>'
                 + '<div>' + this.createSelectField("descriptions", descriptionID, "dialects", dialectID, "acceptability", this.selectFieldOptions.acceptability, acceptability) + '</div>'
-                + '<div class="komet-concept-edit-row-tools"><button type="button" class="komet-link-button" onclick="WindowManager.viewers[' + this.viewerID + '].removeRow(\'' + dialectID + '\', \'' + rowID + '\', \'dialect\', ' + isNew + ', this)" title="Remove row"><div class="glyphicon glyphicon-remove"></div></button></div>'
+                + '<div class="komet-concept-edit-row-tools"><button type="button" class="komet-link-button" onclick="WindowManager.viewers[' + this.viewerID + '].removeItemRow(\'' + dialectID + '\', \'' + rowID + '\', \'dialect\', ' + isNew + ', this)" title="Remove row"><div class="glyphicon glyphicon-remove"></div></button></div>'
                 + '</div>';
         }
 
@@ -867,7 +867,7 @@ var ConceptViewer = function(viewerID, currentConceptID, viewerAction) {
             + '<div>' + this.createSelectField("associations", associationID, null, null, "association_state", this.selectFieldOptions.state, state) + '</div>';
 
         if (isNew){
-            rowString += '<div class="komet-concept-edit-row-tools"><button type="button" class="komet-link-button" onclick="WindowManager.viewers[' + this.viewerID + '].removeRow(\'' + associationID + '\', \'' + rowID + '\', \'association\', ' + isNew + ', this)" title="Remove row"><div class="glyphicon glyphicon-remove"></div></button></div>';
+            rowString += '<div class="komet-concept-edit-row-tools"><button type="button" class="komet-link-button" onclick="WindowManager.viewers[' + this.viewerID + '].removeItemRow(\'' + associationID + '\', \'' + rowID + '\', \'association\', ' + isNew + ', this)" title="Remove row"><div class="glyphicon glyphicon-remove"></div></button></div>';
         }
 
         rowString += '</div>';
@@ -1010,7 +1010,7 @@ var ConceptViewer = function(viewerID, currentConceptID, viewerAction) {
         }
     };
 
-    ConceptViewer.prototype.removeRow = function (conceptID, rowID, type, isNew, closeElement) {
+    ConceptViewer.prototype.removeItemRow = function (conceptID, rowID, type, isNew, closeElement) {
 
         var confirmCallback = function(buttonClicked){
 
@@ -1218,7 +1218,7 @@ var ConceptViewer = function(viewerID, currentConceptID, viewerAction) {
                 $.publish(KometChannels.Taxonomy.taxonomyTreeNodeSelectedChannel, ["", previous_id, TaxonomyModule.getStatedView(), this.viewerID, WindowManager.INLINE]);
 
             } else if (previous_type == "MappingViewer"){
-                $.publish(KometChannels.Mapping.mappingTreeNodeSelectedChannel, ["", previous_id, this.viewerID, WindowManager.INLINE]);
+                $.publish(KometChannels.Mapping.mappingTreeNodeSelectedChannel, ["", previous_id, MappingModule.getTreeViewParams(), this.viewerID, WindowManager.INLINE]);
             }
             WindowManager.closeViewer(this.viewerID.toString());
             return false;

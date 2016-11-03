@@ -17,7 +17,21 @@
                 <option value="vhat">VHAT Sets</option>
             </select>-->
 
-            <button type="button" class="komet-link-button" onclick="MappingModule.tree.reloadTree();" title="Reload Mapping Tree">
+            <div class="komet-panel-tools-control">
+                <div class="btn-group" data-toggle="buttons">
+                    <label class="btn btn-default" for="komet_mapping_tree_state_active">
+                        <input type="radio" name="komet_mapping_tree_states_to_view" id="komet_mapping_tree_state_active" value="active" autocomplete="off" title="Show Only Active Concepts"> Active
+                    </label>
+                    <label class="btn btn-default" for="komet_mapping_tree_state_inactive">
+                        <input type="radio" name="komet_mapping_tree_states_to_view" id="komet_mapping_tree_state_inactive" value="inactive" autocomplete="off" title="Show Only Inactive Concepts"> Inactive
+                    </label>
+                    <label class="btn btn-default" for="komet_mapping_tree_state_both">
+                        <input type="radio" name="komet_mapping_tree_states_to_view" id="komet_mapping_tree_state_both" value="both" autocomplete="off" title="Show Active and Inactive Concepts"> Both
+                    </label>
+                </div>
+            </div>
+
+            <button type="button" class="komet-link-button" onclick="MappingModule.tree.reloadTree(MappingModule.getTreeViewParams());" title="Reload Mapping Tree">
                 <div id="komet_mapping_tree_reload" alt="Reload Mapping Tree" class="fa fa-refresh" ></div>
             </button>
 
@@ -36,6 +50,27 @@
 <script>
 
     $(document).ready(function () {
+
+        var statesToView = $("#komet_mapping_tree_panel").find("input[name='komet_mapping_states_to_view']");
+
+        statesToView.change(function(){
+
+            statesToView.parent().toggleClass("btn-primary btn-default");
+            MappingModule.setViewerStatesToView(this);
+        });
+
+        statesToView.each(function(index, button){
+
+            if (button.value == "<%= @view_params[:statesToView] %>"){
+
+                var buttonParent = button.parentElement;
+
+                button.checked = true;
+                buttonParent.classList.add('btn-primary');
+                $(buttonParent).removeClass("btn-default");
+            }
+        });
+
         MappingModule.initialize();
     });
 

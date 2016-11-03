@@ -19,6 +19,7 @@ Copyright Notice
 
 require './lib/rails_common/util/controller_helpers'
 require './lib/isaac_rest/id_apis_rest'
+require 'bigdecimal'
 
 ##
 # MappingController -
@@ -33,19 +34,6 @@ class MappingController < ApplicationController
 
     def init_session
 
-        if true #!session['map_set_data']
-
-            session['map_tree_data'] = [{id: '1', set_id: '1', text: 'Set 1', icon: 'komet-tree-node-icon fa fa-folder', a_attr: {class: 'komet-context-menu', 'data-menu-type' => 'map_set', 'data-menu-uuid' => '1'}},
-                                        {id: '2', set_id: '2', text: 'Set 2', icon: 'komet-tree-node-icon fa fa-folder', a_attr: {class: 'komet-context-menu', 'data-menu-type' => 'map_set', 'data-menu-uuid' => '2'}}]
-
-            session['map_set_data'] = [{id: '1', name: 'Set 1', purpose: 'Test 1', description: 'Set 1 Description', version: '111', vuid: '1111', source: '1', source_display: 'Source 1', source_version: '111', target: '1', target_display: 'Target 1', target_version: '111', rules: 'Here are rules...', state: 'Pending', status: 'Active', time: '10/10/2016', module: 'Development', path: 'Path'},
-                                       {id: '2', name: 'Set 2', purpose: 'Test 2', description: 'Set 2 Description', version: '222', vuid: '2222', source: '2', source_display: 'Source 2', source_version: '222', target: '2', target_display: 'Target 2', target_version: '222', rules: 'Here are rules...', state: 'Pending', status: 'Active', time: '02/02/2022', module: 'Development', path: 'Path'}]
-
-            session['map_item_data'] = [{id: '1', set_id: '1', source: '11', source_display: 'Source 11', target: 'Target 11', target_display: 'Target 11', qualifier: 'No Qualifier', comments: 'This is a comment', review_state: 'Pending', status: 'Active', time: '10/10/2016', module: 'Development', path: 'Path'},
-                                        {id: '2', set_id: '1', source: '12', source_display: 'Source 12', target: 'Target 12', target_display: 'Target 12', qualifier: 'No Qualifier', comments: 'This is a comment', review_state: 'Pending', status: 'Active', time: '10/10/2016', module: 'Development', path: 'Path'},
-                                        {id: '3', set_id: '2', source: '21', source_display: 'Source 21', target: 'Target 21', target_display: 'Target 21', qualifier: 'No Qualifier', comments: 'This is a comment', review_state: 'Pending', status: 'Active', time: '10/10/2016', module: 'Development', path: 'Path'},
-                                        {id: '4', set_id: '2', source: '22', source_display: 'Source 22', target: 'Target 22', target_display: 'Target 22', qualifier: 'No Qualifier', comments: 'This is a comment', review_state: 'Pending', status: 'Active', time: '10/10/2016', module: 'Development', path: 'Path'}]
-        end
     end
 
     def load_tree_data
@@ -53,6 +41,7 @@ class MappingController < ApplicationController
         coordinates_token = session[:coordinatestoken].token
         text_filter = params[:text_filter]
         set_filter = params[:set_filter]
+        view_params = params[:view_params]
         mapping_tree = []
 
         map_sets_results = MappingApis::get_mapping_api(action: MappingApiActions::ACTION_SETS,  additional_req_params: {coordToken: coordinates_token, CommonRest::CacheRequest => false} )
@@ -100,6 +89,11 @@ class MappingController < ApplicationController
         @mapping_action = params[:mapping_action]
         @viewer_id =  params[:viewer_id]
         @previous_set_id = params[:previous_set_id]
+        @view_params = params[:view_params]
+
+        if @view_params == nil
+            @view_params = {statesToView: 'both'}
+        end
 
         if @viewer_id == nil || @viewer_id == '' || @viewer_id == 'new'
             @viewer_id = get_next_id.to_s
@@ -121,6 +115,7 @@ class MappingController < ApplicationController
         show_inactive = params[:show_inactive]
         page_size = 1000 #params[:overview_sets_page_size]
         page_number = 1 #params[:overview_sets_page_number]
+        view_params = params[:view_params]
 
         map_sets_results = MappingApis::get_mapping_api(action: MappingApiActions::ACTION_SETS,  additional_req_params: {coordToken: coordinates_token, CommonRest::CacheRequest => false} )
 
@@ -184,33 +179,35 @@ class MappingController < ApplicationController
                 value = field.extensionValue.data
                 removable = true
                 display = true
+                data_type = field.extensionValue.class.to_s.remove('Gov::Vha::Isaac::Rest::Api1::Data::Sememe::DataTypes::RestDynamicSememe')
 
                 if value == nil && value == ''
                     display = false
                 end
 
-                if field.extensionValue.class == DATA_TYPES_CLASS::RestDynamicSememeString
-                    type = 'STRING'
-
-                elsif field.extensionValue.class == DATA_TYPES_CLASS::RestDynamicSememeNid || field.extensionValue.class == DATA_TYPES_CLASS::RestDynamicSememeUUID
-
-                    type = 'UUID'
-                    @map_set[name + '_display'] = value
-
-                elsif name == '-2147483446'
-
-                    type = 'UUID'
-                    value = '6e60d7fd-3729-5dd3-9ce7-6d97c8f75447'
-                    removable = false
-                    @map_set[name + '_display'] = 'VHAT'
-                end
-
                 @map_set[:include_fields] << name
-                @map_set[name] = {name: name, type: type, value: value, label: label, label_display: label_display, removable: removable, display: display, required: false}
+                @map_set[name] = {name: name, data_type: data_type, value: value, label: label, label_display: label_display, removable: removable, display: display, required: false}
+
+                if field.extensionValue.class == DATA_TYPES_CLASS::RestDynamicSememeNid || field.extensionValue.class == DATA_TYPES_CLASS::RestDynamicSememeUUID
+
+                    @map_set[name][:data_type] = 'UUID'
+
+                    if display
+
+                        if field.extensionValue.class == DATA_TYPES_CLASS::RestDynamicSememeNid
+                            @map_set[name][:value] = IdAPIsRest.get_id(uuid_or_id: value, action: IdAPIsRestActions::ACTION_TRANSLATE, additional_req_params: {inputType: 'nid', outputType: 'uuid'}).value
+                        end
+
+                        @map_set[name.to_s + '_display'] = field.extensionValue.conceptDescription
+                    end
+                end
 
             end
 
             item_fields = set.mapItemFieldsDefinition
+
+            # add the definitions for the static item fields
+            #@map_set['item_field_' + name] = {name: '1009096', description: 'Map source concept', order: order, data_type: data_type, required: true, label: 'c2af804c-bb05-3436-9f21-d37feb6a3ce4', label_display: 'Map source concept', removable: false, display: true}
 
             item_fields.each do |field|
 
@@ -277,6 +274,8 @@ class MappingController < ApplicationController
             @map_set[:vuid] = '4500635'
 
             @viewer_title = @map_set[:description]
+
+            @map_items = get_overview_items_results(@map_set[:set_id])
         else
 
             @mapping_action = 'create_set'
@@ -284,43 +283,44 @@ class MappingController < ApplicationController
         end
     end
 
-    def get_overview_items_results
+    def get_overview_items_results(set_id = nil)
 
         coordinates_token = session[:coordinatestoken].token
-        column_definitions = {}
+        column_definitions = session[:mapset_item_definitions]
+        render_return = false
+        view_params = params[:view_params]
 
-        session[:mapset_item_definitions].each do |definition|
-            column_definitions[definition[:name]] = definition
+
+        if set_id == nil && params[:set_id]
+            render_return = true
+            set_id = params[:set_id]
         end
 
-        set_id = params[:overview_set_id]
-        filter = params[:overview_sets_filter]
-        show_inactive = params[:show_inactive]
-        page_size = 1000 #params[:overview_items_page_size]
-        page_number = 1 #params[:overview_items_page_number]
-        results = {column_definitions: column_definitions, page_number: page_number}
+        #filter = params[:overview_sets_filter]
+        #show_inactive = params[:show_inactive]
+        results = {column_definitions: column_definitions}
         item_data = []
-        extended_columns = []
 
         items = MappingApis::get_mapping_api(action: MappingApiActions::ACTION_ITEMS, uuid_or_id: set_id,  additional_req_params: {coordToken: coordinates_token, expand: 'referencedDetails,comments '}) # CommonRest::CacheRequest => false
 
         if items.is_a? CommonRest::UnexpectedResponse
-            return {total_number: 0, page_number: 1, data: []}
+            return {total_number: 0, data: []}
         end
-
-        #{id: '1', set_id: '1', source: '11', source_display: 'Source 11', target: 'Target 11', target_display: 'Target 11', qualifier: 'No Qualifier', comments: 'This is a comment', review_state: 'Pending', status: 'Active', time: '10/10/2016', module: 'Development', path: 'Path'},
 
         items.each do |item|
 
             item_hash = {}
 
             item_hash[:item_id] = item.identifiers.uuids.first
-            item_hash[:source_concept] = item.sourceConcept
+            item_hash[:source_concept] = target_concept = IdAPIsRest.get_id(uuid_or_id: item.sourceConcept, action: IdAPIsRestActions::ACTION_TRANSLATE, additional_req_params: {inputType: 'conceptSequence', outputType: 'uuid'}).value
             item_hash[:source_concept_display] = item.sourceDescription
             item_hash[:target_concept] = item.targetConcept
+
+            if item_hash[:target_concept] != nil || item_hash[:target_concept] != ''
+                item_hash[:target_concept] = target_concept = IdAPIsRest.get_id(uuid_or_id: item_hash[:target_concept], action: IdAPIsRestActions::ACTION_TRANSLATE, additional_req_params: {inputType: 'conceptSequence', outputType: 'uuid'}).value
+            end
+
             item_hash[:target_concept_display] = item.targetDescription
-            item_hash[:qualifier] = item.qualifierConcept
-            item_hash[:qualifier_display] = item.qualifierDescription
             item_hash[:comments] = ''
             item_hash[:state] = item.mappingItemStamp.state.enumName
             item_hash[:time] = DateTime.strptime((item.mappingItemStamp.time / 1000).to_s, '%s').strftime('%m/%d/%Y')
@@ -328,22 +328,17 @@ class MappingController < ApplicationController
             item_hash[:module] = get_concept_metadata(item.mappingItemStamp.moduleSequence)
             item_hash[:path] = get_concept_metadata(item.mappingItemStamp.pathSequence)
 
-            # session[:mapset_item_definitions].each do |column|
-            #
-            #     if column.name == '231'
-            #
-            #
-            #     elsif column.name == '231'
-            #
-            #     elsif column.name == '231'
-            #
-            #     end
-            # end
-
-            item.mapItemExtendedFields.each do |field|
+            item.mapItemExtendedFields.each_with_index do |field, index|
 
                 if field != nil
-                    item_hash[session[:mapset_item_definitions][field.columnNumber][:name]] = field.data
+
+                    field_info = session[:mapset_item_definitions][field.columnNumber]
+
+                    if (field_info[:data_type] == 'UUID')
+                        item_hash[field_info[:name] + '_display'] = field.conceptDescription
+                    end
+
+                    item_hash[field_info[:name]] = field.data
                 end
             end
 
@@ -351,13 +346,13 @@ class MappingController < ApplicationController
         end
 
         results[:total_number] = items.length
-
-        matching_items = session['map_item_data'].select { |item|
-            item[:set_id] == set_id.to_s
-        }
-
         results[:data] = item_data
-        render json: results
+
+        if render_return
+            render json: results and return
+        else
+            return results
+        end
     end
 
     def process_map_set
@@ -384,8 +379,8 @@ class MappingController < ApplicationController
             MappingApis::get_mapping_api(uuid_or_id: set_id, action: MappingApiActions::ACTION_UPDATE_SET, additional_req_params: request_params, body_params: body_params)
         else
 
-            set_extended_field = []
-            item_extended_field = []
+            set_extended_fields = []
+            item_extended_fields = []
 
             if params['komet_mapping_set_editor_include_fields'] != nil
 
@@ -397,15 +392,17 @@ class MappingController < ApplicationController
                     set_field_data_type = params['komet_mapping_set_editor_include_fields_' + set_field + '_data_type']
 
                     if set_field_data_type != 'UUID'
-                        set_field_data_type.downcase!
+                        set_field_data_type = set_field_data_type.downcase
                         set_field_data_type[0] = params['komet_mapping_set_editor_include_fields_' + set_field + '_data_type'][0]
                     end
 
                     set_field_data_type = 'gov.vha.isaac.rest.api1.data.sememe.dataTypes.RestDynamicSememe' + set_field_data_type
                     set_field_value = params['komet_mapping_set_editor_' + set_field]
 
-                    set_extended_field << {extensionNameConcept: set_field_label, extensionValue: {'@class' => set_field_data_type, columnNumber: 1, data: set_field_value}}
+                    set_extended_fields << {extensionNameConcept: set_field_label, extensionValue: {'@class' => set_field_data_type, columnNumber: 1, data: set_field_value}}
                 end
+
+                body_params[:mapSetExtendedFields] = set_extended_fields
             end
 
             if params['komet_mapping_set_editor_items_include_fields'] != nil
@@ -413,13 +410,14 @@ class MappingController < ApplicationController
                 params['komet_mapping_set_editor_items_include_fields'].each do |item_field|
 
                     item_field_label = IdAPIsRest.get_id(uuid_or_id: item_field, action: IdAPIsRestActions::ACTION_TRANSLATE, additional_req_params: {inputType: 'uuid', outputType: 'conceptSequence'}).value
-                    item_field_data_type = params['komet_mapping_set_editor_items_include_fields_' + item_field + 'data_type']
-                    item_field_required = params['komet_mapping_set_editor_items_include_fields_' + item_field + 'required']
+                    item_field_data_type = params['komet_mapping_set_editor_items_include_fields_' + item_field + '_data_type']
+                    item_field_required = params['komet_mapping_set_editor_items_include_fields_' + item_field + '_required']
 
-                    item_extended_field << {columnLabelConcept: item_field_label, columnDataType: item_field_data_type, columnRequired: item_field_required}
+                    item_extended_fields << {columnLabelConcept: item_field_label, columnDataType: item_field_data_type, columnRequired: item_field_required}
                 end
-            end
 
+                body_params[:mapItemExtendedFieldsDefinition] = item_extended_fields
+            end
 
             return_value = MappingApis::get_mapping_api(action: MappingApiActions::ACTION_CREATE_SET, additional_req_params: request_params, body_params: body_params )
 
@@ -438,74 +436,83 @@ class MappingController < ApplicationController
         render json: {set_id: set_id}
     end
 
-    def map_item_editor
-
-        set_id = params[:set_id]
-        item_id = params[:item_id]
-        @viewer_id = params[:viewer_id]
-
-        if item_id
-
-            @map_item = session['map_item_data'].select { |item|
-                item[:id] == item_id
-            }.first
-        else
-            @map_item = {id: nil, set_id: set_id, source: nil, source_display: nil, target: nil, target_display: nil, qualifier: 'No Qualifier', comments: nil, review_state: nil, status: 'Active', time: nil, module: nil, path: nil}
-        end
-
-        # get the list of advanced descriptions code_system
-        @advanced_descriptions = [['No Restrictions', ''], ['Abbreviation', 'abbreviation']]
-
-        # get the list of code systems
-        @code_systems = [['No Restrictions', ''], ['SNOMED CT']]
-
-        # get the list of assemblages
-        @assemblages = [['No Restrictions', ''], ['SNOMED CT']]
-
-        render 'komet_dashboard/mapping/map_item_editor'
-    end
-
     def process_map_item
 
-        item_id = params[:komet_mapping_item_editor_item_id]
-        set_id = params[:komet_mapping_item_editor_set_id]
-        source = params[:komet_mapping_item_editor_source]
-        source_display = params[:komet_mapping_item_editor_source_display]
-        target = params[:komet_mapping_item_editor_target]
-        target_display = params[:komet_mapping_item_editor_target_display]
-        qualifier = params[:komet_mapping_item_editor_qualifier]
-        comments = params[:komet_mapping_item_editor_comments]
-        review_state = params[:komet_mapping_item_editor_review_state]
+        set_id = params[:set_id]
+        field_info = session[:mapset_item_definitions]
+        failed_writes = []
 
-        item = {set_id: set_id, source: source, source_display: source_display, target: target, target_display: target_display, qualifier: qualifier, comments: comments, review_state: review_state, status: 'Active', time: Time.now.strftime('%m/%d/%Y %H:%M'), module: 'Development', path: 'Path'}
+        if params[:items]
 
-        if item_id && item_id != ''
+            params[:items].each do |item_id, item|
 
-            array_id = session['map_item_data'].each_index.select { |index|
-                session['map_item_data'][index][:id] == item_id.to_s
-            }.first
+                target_concept = nil
 
-            item[:id] = item_id
+                if item['target_concept'] != nil || item['target_concept'] != ''
+                    target_concept = IdAPIsRest.get_id(uuid_or_id: item['target_concept'], action: IdAPIsRestActions::ACTION_TRANSLATE, additional_req_params: {inputType: 'uuid', outputType: 'conceptSequence'}).value
+                end
 
-            session['map_item_data'][array_id] = item
-        else
+                body_params = {targetConcept: target_concept, qualifierConcept: 230}
 
-            item[:id] = (session['map_item_data'].last[:id].to_i + 1).to_s
+                extended_fields = []
 
-            session['map_item_data'] << item
-        end
+                field_info.each do |field|
 
-        if source && source != ''
-            #add_to_recents(:mapping_item_source_recents, source, source_display)
-        end
+                    data_type = field[:data_type]
+                    data = item[field[:name]]
 
-        if target && target != ''
-            #add_to_recents(:mapping_item_target_recents, target, target_display)
+                    if data_type != 'UUID'
+
+                        if ['FLOAT', 'DOUBLE'].include?(data_type)
+                            data = BigDecimal.new(data);
+                        elsif ['LONG', 'INTEGER'].include?(data_type)
+                            data =data.to_i;
+                        elsif data_type == 'BOOLEAN'
+
+                            if data == 'true'
+                                data = true
+                            else
+                                data = false
+                            end
+                        end
+
+                        data_type = data_type.downcase
+                        data_type[0] = field[:data_type][0]
+                    end
+
+                    data_type = 'gov.vha.isaac.rest.api1.data.sememe.dataTypes.RestDynamicSememe' + data_type
+
+                    extended_fields << {columnNumber: field[:order], data: data, '@class' => data_type}
+                end
+
+                body_params[:mapItemExtendedFields] = extended_fields
+
+                # if the item ID is a UUID, then it is an existing item to be updated, otherwise it is a new item to be created
+                if is_id?(item_id)
+
+                    return_value = MappingApis::get_mapping_api(action: MappingApiActions::ACTION_UPDATE_ITEM, uuid_or_id: item_id, additional_req_params: {editToken: get_edit_token}, body_params: body_params)
+
+                    if return_value.is_a? CommonRest::UnexpectedResponse
+                        failed_writes << {id: item_id}
+                    end
+                else
+
+                    body_params[:mapSetConcept] = IdAPIsRest.get_id(uuid_or_id: set_id, action: IdAPIsRestActions::ACTION_TRANSLATE, additional_req_params: {inputType: 'uuid', outputType: 'conceptSequence'}).value
+                    body_params[:sourceConcept] = IdAPIsRest.get_id(uuid_or_id: item['source_concept'], action: IdAPIsRestActions::ACTION_TRANSLATE, additional_req_params: {inputType: 'uuid', outputType: 'conceptSequence'}).value
+
+                    return_value = MappingApis::get_mapping_api(action: MappingApiActions::ACTION_CREATE_ITEM, additional_req_params: {editToken: get_edit_token}, body_params: body_params)
+
+                    if return_value.is_a? CommonRest::UnexpectedResponse
+                        failed_writes << {id: item_id}
+                    end
+                end
+
+            end
         end
 
         # clear taxonomy caches after writing data
         clear_rest_caches
 
-        head :ok, content_type: 'text/html'
+        render json: {set_id: set_id, failed: failed_writes}
     end
 end

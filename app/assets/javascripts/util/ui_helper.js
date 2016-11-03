@@ -194,11 +194,9 @@ var UIHelper = (function () {
         if (enable) {
 
             element.removeClass("ui-state-disabled");
-            element.addClass("ui-state-enabled");
             element.prop("disabled", false);
         } else {
 
-            element.removeClass("ui-state-enabled");
             element.addClass("ui-state-disabled");
             element.prop("disabled", true);
         }
@@ -925,18 +923,23 @@ var UIHelper = (function () {
         return function () {
 
             var viewerPanel = element.parents("div[id^=komet_viewer_]");
+            var viewParams;
 
             // if the viewerID was not passed it (but not if it is null), look up what it should be
             if (viewerID === undefined) {
 
                 if (viewerPanel.length > 0) {
+
                     viewerID = viewerPanel.first().attr("data-komet-viewer-id");
+                    viewParams = WindowManager.viewers[viewerID].getViewParams();
                 } else {
+
                     viewerID = WindowManager.getLinkedViewerID();
+                    viewParams =  MappingModule.getTreeViewParams();
                 }
             }
 
-            $.publish(KometChannels.Mapping.mappingTreeNodeSelectedChannel, ["", id, viewerID, windowType]);
+            $.publish(KometChannels.Mapping.mappingTreeNodeSelectedChannel, ["", id, viewParams, viewerID, windowType]);
         };
     }
 
@@ -999,24 +1002,17 @@ var UIHelper = (function () {
 
     function changeConceptState(element, concept_id, conceptText, newState) {
 
-        return function () {
+        return function (){
 
-            var params = {concept_id: concept_id, newState: newState};
+            var params = {concept_id: concept_id, newState: newState } ;
 
-            $.get(gon.routes.taxonomy_change_concept_state_path, params, function (results) {
+            $.get( gon.routes.taxonomy_change_concept_state_path , params, function( results ) {
 
                 var splitter = $("#komet_west_pane");
 
                 UIHelper.removePageMessages(splitter);
 
-                //var viewerPanel = element.parents("div[id^=komet_viewer_]");
-                //
-                //// if the viewerID was not passed it (but not if it is null), look up what it should be
-                //if (viewerPanel.length > 0) {
-                //    splitter = viewerPanel;
-                //}
-
-                if (conceptText == null) {
+                if (conceptText == null){
                     conceptText = "";
                 } else {
                     conceptText = " '" + conceptText + "'";
@@ -1024,8 +1020,14 @@ var UIHelper = (function () {
 
                 if (results.state != null) {
 
-                    splitter.prepend(UIHelper.generatePageMessage("The concept" + conceptText + " state was successfully updated.", true, "success"));
-                    TaxonomyModule.tree.reloadTreeStatedView($("#komet_taxonomy_stated_inferred")[0].value);
+                    splitter.prepend(UIHelper.generatePageMessage("The state of concept " + conceptText + " was successfully updated.", true, "success"));
+                    TaxonomyModule.tree.reloadTreeStatedView(TaxonomyModule.getStatedView(), false);
+
+                    // if the mapping module has been loaded then refresh the mapping tree
+                    if (MappingModule.tree){
+                        MappingModule.tree.reloadTree(MappingModule.getTreeViewParams());
+                    }
+
                 } else {
 
                     splitter.prepend(UIHelper.generatePageMessage("The concept state was not updated."));

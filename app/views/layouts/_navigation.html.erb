@@ -152,6 +152,7 @@
           <span class="btn btn-default" onclick=ExportModule.submit_export();>Submit</span>
         </div>
         <div id="processing_msg">Processing Request...Please Wait</div>
+        <div id="export_xml" style="display: none"></div>
       </div>
     </div>
   </div>
@@ -159,7 +160,6 @@
 
 
 <script>
-
   $(document).ready(function () {
     $("#komet_preferences_tabs").tabs();
     PreferenceModule.initialize();

@@ -32,6 +32,19 @@
                 <input type="checkbox" id="komet_mapping_show_stamp_<%= @viewer_id %>" onclick="WindowManager.viewers[<%= @viewer_id %>].toggleSTAMP();" value="true">
             </div>
 
+            <div class="komet-panel-tools-control">
+                <div class="btn-group" data-toggle="buttons">
+                    <label class="btn btn-default" for="komet_mapping_state_active_<%= @viewer_id %>">
+                        <input type="radio" name="komet_mapping_states_to_view" id="komet_mapping_state_active_<%= @viewer_id %>" value="active" autocomplete="off" title="Show Only Active Concepts"> Active
+                    </label>
+                    <label class="btn btn-default" for="komet_mapping_state_inactive_<%= @viewer_id %>">
+                        <input type="radio" name="komet_mapping_states_to_view" id="komet_mapping_state_inactive_<%= @viewer_id %>" value="inactive" autocomplete="off" title="Show Only Inactive Concepts"> Inactive
+                    </label>
+                    <label class="btn btn-default" for="komet_mapping_state_both_<%= @viewer_id %>">
+                        <input type="radio" name="komet_mapping_states_to_view" id="komet_mapping_state_both_<%= @viewer_id %>" value="both" autocomplete="off" title="Show Active and Inactive Concepts"> Both
+                    </label>
+                </div>
+            </div>
             <!--<div id="komet_mapping_overview_sets_inactive_<%#= @viewer_id %>" title="Toggle Inactive Concepts" class="fa-stack small" onclick="WindowManager.viewers[<%#= @viewer_id %>].toggleOverviewInactiveConcepts();">
             <div class="fa fa-square fa-stack-2x"></div>
             <div class="fa fa-code-fork fa-stack-1x fa-inverse"></div>
@@ -79,6 +92,26 @@
         $('#komet_mapping_viewer_body_<%= @viewer_id %>').html("<%= j(render(:partial => partial)) %>");
 
         $(document).ready(function () {
+
+            var statesToView = $("#komet_viewer_<%= @viewer_id %>").find("input[name='komet_mapping_states_to_view']");
+
+            statesToView.change(function(){
+
+                statesToView.parent().toggleClass("btn-primary btn-default");
+                MappingModule.setViewerStatesToView("<%= @viewer_id %>", this);
+            });
+
+            statesToView.each(function(index, button){
+
+                if (button.value == "<%= @view_params[:statesToView] %>"){
+
+                    var buttonParent = button.parentElement;
+
+                    button.checked = true;
+                    buttonParent.classList.add('btn-primary');
+                    $(buttonParent).removeClass("btn-default");
+                }
+            });
 
             WindowManager.viewers[<%= @viewer_id %>].restorePanelStates();
             UIHelper.initializeContextMenus();
