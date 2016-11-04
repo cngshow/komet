@@ -590,7 +590,7 @@ var UIHelper = (function () {
                 // TODO - remove this reassignment when the type flags are implemented in the REST APIs
                 value.type = UIHelper.VHAT;
 
-                options += '<li><a href="#" onclick=\'UIHelper.useAutoSuggestRecent("' + autoSuggestIDField + '", "' + autoSuggestDisplayField + '", "' + autoSuggestTypeField + '"'
+                options += '<li><a style="cursor: default"  onclick=\'UIHelper.useAutoSuggestRecent("' + autoSuggestIDField + '", "' + autoSuggestDisplayField + '", "' + autoSuggestTypeField + '"'
                     + ', "' + value.id + '", "' + valueText + '", "' + value.type + '", "' + suggestionOnChangeFunction + '")\'>' + valueText + '</a></li>';
             });
 

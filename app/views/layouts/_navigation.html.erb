@@ -21,14 +21,14 @@
 
     <% if can_edit_concept? %>
         <div class="dropdown" role="presentation">
-          <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false" title="Actions">Actions
+          <a style="cursor: default"  class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false" title="Actions">Actions
             <span class="caret"></span></a>
           <ul class="dropdown-menu" aria-hidden="true" aria-label="submenu">
             <li>
-              <a href="#" onclick="$.publish(KometChannels.Taxonomy.taxonomyConceptEditorChannel, [null, WindowManager.getLinkedViewerID(), WindowManager.INLINE]); return false;" title="Create New Concept">Create
+              <a style="cursor: default"  onclick="$.publish(KometChannels.Taxonomy.taxonomyConceptEditorChannel, [null, WindowManager.getLinkedViewerID(), WindowManager.INLINE]); return false;" title="Create New Concept">Create
                 New Concept</a></li>
             <li>
-              <a href="#" onclick="MappingModule.createNewMapSet(true); return false;" title="Create New Map">Create New
+              <a style="cursor: default"  onclick="MappingModule.createNewMapSet(true); return false;" title="Create New Map">Create New
                 Map</a></li>
           </ul>
         </div>
@@ -37,13 +37,13 @@
 
   <div class="komet-navbar-tools" role="navigation">
     <div>
-      <button type="button" class="komet-link-button" title="VHAT XML Export" id="komet_export_link" role="navigation">
+      <button type="button" class="komet-link-button" role="button"   title="VHAT XML Export" id="komet_export_link" role="navigation">
         <div class="glyphicon glyphicon-export"></div>
       </button>
     </div>
 
     <div>
-      <button type="button" class="komet-link-button" title="Settings" id="komet_user_preference_link" role="navigation">
+      <button type="button" class="komet-link-button" role="button"   title="Settings" id="komet_user_preference_link" role="navigation">
         <div class="glyphicon glyphicon-cog"></div>
       </button>
     </div>
