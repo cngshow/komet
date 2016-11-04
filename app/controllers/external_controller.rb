@@ -64,20 +64,6 @@ class ExternalController < ApplicationController
   end
 
   def export
-    file_download = boolean $PROPS['KOMET.vhat_export_as_file']
-    cookies['fileDownload'] = 'true' if file_download # do not delete.  Needed to detect completion of file upload.
-    # gem version https://github.com/rcook/jquery_file_download-rails
-    file_name = 'vhat.xml'
-    start_time = Time.parse(params[:start_date]).to_i*1000
-    end_time = Time.parse(params[:end_date]).to_i*1000
-    xml = ExportRest.get_workflow(action: ExportRest::ACTION_EXPORT, additional_req_params: {changedAfter: start_time, changedBefore: end_time})
-    #sleep 10 #uncommenting this simulates a long running isaac rest
-    if file_download
-      $log.info("Sending #{file_name} to the server, and file download is #{file_download}...")
-      send_data(xml, filename: file_name)
-      return
-    end
-    $log.info("rendering #{file_name} as xml, and file download is #{file_download}...")
-    render xml: xml
+  #   here for form validation?! - which is not yet working
   end
 end
