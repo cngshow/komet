@@ -31,6 +31,8 @@ module ExportRest
   ROOT_PATH = ISAAC_ROOT + 'rest/1/export/'
   PATH_EXPORT_VETS = ROOT_PATH + 'vetsXML'
 
+  #this is only used on the javascript side by export.js.erb.
+  VHAT_EXPORT_PATH ={path: 'rest/1/export/vetsXML', start_date: 'changedAfter', end_date: 'changedBefore'}
 
   PARAMS_EMPTY = {}
   PARAMS_NO_CACHE = CommonRest::CacheRequest::PARAMS_NO_CACHE

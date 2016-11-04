@@ -176,6 +176,10 @@ class ApplicationController < ActionController::Base
     ApplicationController.parse_isaac_metadata_auxiliary
     gon.IsaacMetadataAuxiliary = $isaac_metadata_auxiliary
     gon.roles = pundit_user[:roles]
+    behind_proxy = !root_url.eql?(non_proxy_url(path_string: root_path))
+    gon.behind_proxy = behind_proxy
+    gon.vhat_export_params=ExportRest::VHAT_EXPORT_PATH
+    gon.isaac_root = $PROPS['PRISME.isaac_root'] unless behind_proxy #we cannot leak the aitc server unless you already exist behind the firewall.
   end
 
   def pundit_user

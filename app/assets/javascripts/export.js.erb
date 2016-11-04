@@ -38,8 +38,6 @@ var ExportModule = (function () {
       end_date.datepicker("option", "minDate", $(this).datepicker("getDate"));
       end_date.prop('disabled', false);
     });
-    $('#processing_msg').hide();
-    $('#buttons_div').show();
 
     // wire the modal for exporting
     $('#komet_export_link').on('click', function () {
@@ -71,16 +69,19 @@ var ExportModule = (function () {
       return false;
     }
 
-    // hide the cancel and submit buttons
-    $('#buttons_div').hide();
-    $('#processing_msg').show();
-
     // select the parameters to pass to the rest call
     var _endDate = $("#end_date");
     var end_dt = _endDate.datepicker("getDate");
-    var params = {changedAfter: new Date(start).getTime(), changedBefore: new Date(end_dt).getTime()};
-    var url = 'http://localhost:8180/rest/1/export/vetsXML' + '?' + jQuery.param(params);
-
+    var sd = gon.vhat_export_params.start_date;
+    var ed = gon.vhat_export_params.end_date;
+    var params = {};
+    params[sd] = new Date(start).getTime();
+    params[ed] =  new Date(end_dt).getTime();
+    //   gon.behind_proxy=false;
+    //   gon.vhat_export_params={"path":"rest/1/export/vetsXML","start_date":"changedBefore","end_date":"changedAfter","port":8180};
+    //   gon.isaac_root="http://localhost:8180/";
+    var url = (gon.behind_proxy ? gon.routes.root_url : gon.isaac_root) + gon.vhat_export_params.path + '?' + jQuery.param(params);
+    console.log(url);
     $.fileDownload(url)
         .done(function () {
           flash_notify({message: "VHAT export is complete! Check your browser's download directory."}, {
@@ -103,7 +104,7 @@ var ExportModule = (function () {
   }
 
   function export_click(enabled) {
-    $("#komet_export_link").prop("disabled", ! enabled).prop("title", enabled ? 'VHAT XML Export' : 'VHAT export is in progress...please wait');
+    $("#komet_export_link").prop("disabled", !enabled).prop("title", enabled ? 'VHAT XML Export' : 'VHAT export is in progress...please wait');
 
   }
 
