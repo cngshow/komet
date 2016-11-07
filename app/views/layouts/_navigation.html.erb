@@ -19,7 +19,7 @@
     <!--<button type="button" class="komet-link-button" onclick="location.replace('<%#= workflow_dashboard_path %>')" title="Workflows" role="navigation">Workflows</button>-->
     <!--</div>-->
 
-    <% if can_edit_concept? %>
+    <% if controller.can_edit_concept? %>
         <div class="dropdown" role="presentation">
           <a style="cursor: default"  class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false" title="Actions">Actions
             <span class="caret"></span></a>

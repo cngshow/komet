@@ -143,8 +143,6 @@ class ApplicationController < ActionController::Base
         end
       end
 
-      # clear out the user session and reset it based on the refreshing of the roles
-      clear_user_session
       user_session(UserSession::LOGIN, user_login)
       user_session(UserSession::PWD, user_pwd) if user_pwd
 
@@ -244,6 +242,10 @@ class ApplicationController < ActionController::Base
     end
     #json_to_yaml_file(translated_hash,'reema')
     translated_hash
+  end
+
+  def add_pundit_methods
+    PunditDynamicRoles::add_action_methods self
   end
 
 end

@@ -52,9 +52,4 @@ module ApplicationHelper
     user_session_defined? ? user_session(UserSession::LOGIN) : 'unknown'
   end
 
-  #dynamically add authorization methods
-  #only the methods ending in '?' show up in the erb
-  def add_pundit_methods
-    PunditDynamicRoles::add_action_methods self
-  end
 end
