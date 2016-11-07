@@ -127,7 +127,6 @@
   </div>
 </div>
 
-
 <!--modal window for exporting new and updated concepts -->
 <div id="export_modal" class="modal fade modal-wide" data-backdrop="static" role="dialog">
   <div class="modal-dialog">
@@ -151,23 +150,15 @@
           <span class="btn btn-default" onclick=ExportModule.cancel_export();>Cancel</span>
           <span class="btn btn-default" onclick=ExportModule.submit_export();>Submit</span>
         </div>
-        <div id="processing_msg">Processing Request...Please Wait</div>
-        <div id="export_xml" style="display: none"></div>
       </div>
     </div>
   </div>
 </div>
 
-
 <script>
   $(document).ready(function () {
     $("#komet_preferences_tabs").tabs();
     PreferenceModule.initialize();
-
-    // wire the modal for exporting
-    $('#komet_export_link').on('click', function () {
-      ExportModule.initialize();
-      ModalFormValidatorModule.show_modal('export_modal');
-    });
+    ExportModule.initialize();
   });
 </script>

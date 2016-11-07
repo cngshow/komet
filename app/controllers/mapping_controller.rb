@@ -334,8 +334,15 @@ class MappingController < ApplicationController
 
                     field_info = session[:mapset_item_definitions][field.columnNumber]
 
-                    if (field_info[:data_type] == 'UUID')
-                        item_hash[field_info[:name] + '_display'] = field.conceptDescription
+                    # TODO - look into GEM mappings having data type and field data that doesn't match (GEM PCS ICD-10 to ICD-9)
+                    if field_info[:data_type] == 'UUID'
+
+                        if field.respond_to? :conceptDescription
+                            item_hash[field_info[:name] + '_display'] = field.conceptDescription
+                        else
+                            item_hash[field_info[:name] + '_display'] = field.data
+                        end
+
                     end
 
                     item_hash[field_info[:name]] = field.data
