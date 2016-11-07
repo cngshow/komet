@@ -5,19 +5,19 @@
 
 <div id="komet_dashboard_splitter">
     <div id="komet_west_pane">
-        <div id="komet_dashboard_tabs">
-            <ul>
-                <li><a href='#komet_taxonomy_tab' title="Taxonomy">Taxonomy</a></li>
-                <li><a href='#komet_mapping_tab' title="Map Set">Map Sets</a></li>
-                <li><a href='#komet_refsets_tab' title="Ref Sets">Ref Sets</a></li>
-                <li><a href='#komet_search_tab' title="Search">Search</a></li>
-                <li><a href='#komet_inbox_tab' title="Inbox">Inbox</a></li>
+        <div id="komet_dashboard_tabs"  >
+            <ul role="tablist">
+                <li id="tab1" aria-controls="komet_taxonomy_tab"  aria-selected="true" role="tab"   tabindex="0"><a id="komet_taxonomy_tab"   href='#komet_taxonomy_tab' alt="Taxonomy" >Taxonomy</a></li>
+                <li id="tab2" aria-controls="komet_mapping_tab"   aria-selected="false" role="tab"  tabindex="-1"><a id="komet_mapping_tab_link"  href='#komet_mapping_tab'  alt="Map Sets">Map Sets</a></li>
+                <li id="tab3" aria-controls="komet_refsets_tab"    aria-selected="false" role="tab"  tabindex="-1"><a id="komet_refsets_tab_link"   href='#komet_refsets_tab' alt="Ref Sets" >Ref Sets</a></li>
+                <li id="tab4" aria-controls="komet_search_tab"    aria-selected="false" role="tab"  tabindex="-1"><a id="komet_search_tab_link" href='#komet_search_tab'   alt="Search">Search</a></li>
+                <li id="tab5" aria-controls="komet_inbox_tab"    aria-selected="false" role="tab"  tabindex="-1"><a id="komet_inbox_tab_link" href='#komet_inbox_tab'    alt="Inbox">Inbox</a></li>
             </ul>
-            <div id="komet_taxonomy_tab"></div>
-            <div id="komet_mapping_tab"></div>
-            <div id="komet_refsets_tab"></div>
-            <div id="komet_search_tab"></div>
-            <div id="komet_inbox_tab"></div>
+            <div id="komet_taxonomy_tab" aria-hidden="true" aria-labelledby="tab1" role="tabpanel"></div>
+            <div id="komet_mapping_tab" aria-hidden="false" aria-labelledby="tab2" role="tabpanel"></div>
+            <div id="komet_refsets_tab" aria-hidden="false" aria-labelledby="tab3" role="tabpanel"></div>
+            <div id="komet_search_tab"  aria-hidden="false" aria-labelledby="tab4" role="tabpanel"></div>
+            <div id="komet_inbox_tab" aria-hidden="false" aria-labelledby="tab5" role="tabpanel"></div>
         </div>
     </div>
     <div id="komet_east_pane"></div>
@@ -51,6 +51,8 @@
                 }
             }
         });
+
+
 
         //$("#komet_dashboard_tabs").tabs({active:0});
 
