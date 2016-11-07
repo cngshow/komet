@@ -7,5 +7,5 @@ where provided, and the git commit history.
     * Updates to cache clearing code for clearing after a call to a /write method
     * Updates to the VHAT export code to try to get through the reverse proxy
 
-* 2016/10/27 - 1.33: 
+* 2016/11/03 - 1.33: 
     * See the GIT changelog for updates prior to this release.
