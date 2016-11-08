@@ -98,7 +98,7 @@ class SearchController < ApplicationController
 
       description_type = params[:taxonomy_search_description_type]
 
-      if description_type != nil
+      unless description_type.nil? || description_type.eql?('all')
         additional_params[:descriptionType] =  description_type
       end
 
