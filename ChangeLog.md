@@ -4,6 +4,7 @@ This changelog summarizes changes and fixes which are a part of each revision.  
 where provided, and the git commit history.
 
 * 2016/11/?? - 1.34: 
+    * 508 code fixed on 11/4/2016 added code for missing label and removed empty link and added code to show default cursor. Added aria-labelledby as needed
     * Updates to cache clearing code for clearing after a call to a /write method
     * Updates to the VHAT export code to try to get through the reverse proxy
     * Added mapping qualifier as standard map item field.
