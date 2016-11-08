@@ -19,16 +19,16 @@
     <!--<button type="button" class="komet-link-button" onclick="location.replace('<%#= workflow_dashboard_path %>')" title="Workflows" role="navigation">Workflows</button>-->
     <!--</div>-->
 
-    <% if can_edit_concept? %>
+    <% if controller.can_edit_concept? %>
         <div class="dropdown" role="presentation">
-          <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false" title="Actions">Actions
+          <a style="cursor: default"  class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false" title="Actions">Actions
             <span class="caret"></span></a>
           <ul class="dropdown-menu" aria-hidden="true" aria-label="submenu">
             <li>
-              <a href="#" onclick="$.publish(KometChannels.Taxonomy.taxonomyConceptEditorChannel, [null, WindowManager.getLinkedViewerID(), WindowManager.INLINE]); return false;" title="Create New Concept">Create
+              <a style="cursor: default"  onclick="$.publish(KometChannels.Taxonomy.taxonomyConceptEditorChannel, [null, WindowManager.getLinkedViewerID(), WindowManager.INLINE]); return false;" title="Create New Concept">Create
                 New Concept</a></li>
             <li>
-              <a href="#" onclick="MappingModule.createNewMapSet(true); return false;" title="Create New Map">Create New
+              <a style="cursor: default"  onclick="MappingModule.createNewMapSet(true); return false;" title="Create New Map">Create New
                 Map</a></li>
           </ul>
         </div>
@@ -37,13 +37,13 @@
 
   <div class="komet-navbar-tools" role="navigation">
     <div>
-      <button type="button" class="komet-link-button" title="VHAT XML Export" id="komet_export_link" role="navigation">
+      <button type="button" class="komet-link-button" role="button"   aria-label="VHAT XML Export"  title="VHAT XML Export" id="komet_export_link" role="navigation">
         <div class="glyphicon glyphicon-export"></div>
       </button>
     </div>
 
     <div>
-      <button type="button" class="komet-link-button" title="Settings" id="komet_user_preference_link" role="navigation">
+      <button type="button" class="komet-link-button" role="button"  aria-label="Settings"  title="Settings" id="komet_user_preference_link" role="navigation">
         <div class="glyphicon glyphicon-cog"></div>
       </button>
     </div>
@@ -75,7 +75,7 @@
           <table>
             <tr>
               <td>Select Language:&nbsp;&nbsp;</td>
-              <td><select id="komet_concept_language" aria-labelledby="Select Language">
+              <td><select id="komet_concept_language" aria-label="Select Language" tabindex="1" aria-expanded="true" role="listbox">
               </select></td>
             </tr>
           </table>
@@ -93,9 +93,9 @@
 
         <div>
           <div width='60%' style="background-color: #4f80d9;color:white;z-index:990">Status</div>
-          <input type="radio" name="status" aria-labelledby="Active" value="Active">Active<br>
-          <input type="radio" name="status" aria-labelledby="Inactive" value="Inactive">InActive<br>
-          <input type="radio" name="status" aria-labelledby="Active,Inactive" checked="checked" value="Active,Inactive">Both<br>
+          <input type="radio" name="status" aria-checked="false" aria-label="Active" role="radio" value="Active">Active<br>
+          <input type="radio" name="status" aria-checked="false" aria-label="Inactive" role="radio" value="Inactive">InActive<br>
+          <input type="radio" name="status" aria-checked="false" aria-label="Active,Inactive" role="radio" checked="checked" value="Active,Inactive">Both<br>
         </div>
       </form>
     </div>
@@ -127,7 +127,6 @@
   </div>
 </div>
 
-
 <!--modal window for exporting new and updated concepts -->
 <div id="export_modal" class="modal fade modal-wide" data-backdrop="static" role="dialog">
   <div class="modal-dialog">
@@ -145,29 +144,21 @@
             <br>
         <% end %>
       </div>
-      <hr>
+      <hr>bun
       <div align="center" style="padding-bottom: 10px">
         <div id="buttons_div">
           <span class="btn btn-default" onclick=ExportModule.cancel_export();>Cancel</span>
           <span class="btn btn-default" onclick=ExportModule.submit_export();>Submit</span>
         </div>
-        <div id="processing_msg">Processing Request...Please Wait</div>
-        <div id="export_xml" style="display: none"></div>
       </div>
     </div>
   </div>
 </div>
 
-
 <script>
   $(document).ready(function () {
     $("#komet_preferences_tabs").tabs();
     PreferenceModule.initialize();
-
-    // wire the modal for exporting
-    $('#komet_export_link').on('click', function () {
-      ExportModule.initialize();
-      ModalFormValidatorModule.show_modal('export_modal');
-    });
+    ExportModule.initialize();
   });
 </script>

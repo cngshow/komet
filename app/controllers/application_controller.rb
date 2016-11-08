@@ -143,8 +143,6 @@ class ApplicationController < ActionController::Base
         end
       end
 
-      # clear out the user session and reset it based on the refreshing of the roles
-      clear_user_session
       user_session(UserSession::LOGIN, user_login)
       user_session(UserSession::PWD, user_pwd) if user_pwd
 
@@ -176,6 +174,10 @@ class ApplicationController < ActionController::Base
     ApplicationController.parse_isaac_metadata_auxiliary
     gon.IsaacMetadataAuxiliary = $isaac_metadata_auxiliary
     gon.roles = pundit_user[:roles]
+    behind_proxy = !root_url.eql?(non_proxy_url(path_string: root_path))
+    gon.behind_proxy = behind_proxy
+    gon.vhat_export_params=ExportRest::VHAT_EXPORT_PATH
+    gon.isaac_root = $PROPS['PRISME.isaac_root'] unless behind_proxy #we cannot leak the aitc server unless you already exist behind the firewall.
   end
 
   def pundit_user
@@ -240,6 +242,10 @@ class ApplicationController < ActionController::Base
     end
     #json_to_yaml_file(translated_hash,'reema')
     translated_hash
+  end
+
+  def add_pundit_methods
+    PunditDynamicRoles::add_action_methods self
   end
 
 end

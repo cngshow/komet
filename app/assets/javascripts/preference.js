@@ -286,7 +286,7 @@ var PreferenceModule = (function () {
     function createRefsetFieldRow(){
 
         var options = "";
-        var refsetSelect = '<select style="width:270px" aria-labelledby="Select Refset" id="komet_preferences_refset_id">';
+        var refsetSelect = '<label  for="komet_preferences_refset_id">Select Refset: </label><select style="width:270px"  id="komet_preferences_refset_id">';
 
         Object.keys(refsetList).forEach( function(refsetID) {
             options += '<option value="' + refsetID + '">' + refsetList[refsetID] + '</option>';
@@ -624,7 +624,7 @@ function removecolor(controlid,rowid)
         document.getElementById(tblname).appendChild(tr);
 
         var td1 = document.createElement("TD");
-        td1.innerHTML ='<a  href="#"  class="change-rank up" data-icon="&#9650;"></a>&nbsp<a  href="#"  class="change-rank down" data-icon="&#9660;"></a>';
+        td1.innerHTML ='<a style="cursor: default"  class="change-rank up" data-icon="&#9650;"></a>&nbsp<a  style="cursor: default"   class="change-rank down" data-icon="&#9660;"></a>';
         document.getElementById("Tr" + counter).appendChild(td1);
 
         var td2 = document.createElement("TD");

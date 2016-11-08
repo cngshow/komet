@@ -996,6 +996,7 @@ td.komet-concept-table-nested-indicator.komet-concept-table-nested-indicator-ope
 }
 .komet-mapping-set-definition-row{
     display:flex;
+    margin-bottom: 5px;
 }
 .komet-mapping-set-definition-header{
     margin: 4px;
@@ -1009,7 +1010,7 @@ td.komet-concept-table-nested-indicator.komet-concept-table-nested-indicator-ope
 .komet-mapping-set-definition-item{
     margin: 4px;
     flex: 1 1 50%;
-    height: 70px;
+    min-height: 70px;
 }
 .komet-mapping-set-definition-section > div{
     height: 70px;
@@ -1236,6 +1237,7 @@ td.komet-concept-table-nested-indicator.komet-concept-table-nested-indicator-ope
 .komet-workflow-action-bar{
     height: 40px;
     background-color: black;
+  color: #ececec;
     border: 1px solid rgba(0, 155, 255, 1);
 }
 .komet-workflow-action-bar .navbar{
