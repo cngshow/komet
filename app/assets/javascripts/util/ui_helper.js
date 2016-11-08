@@ -22,6 +22,7 @@
 var UIHelper = (function () {
 
     var conceptClipboard = {};
+    var autoSuggestRecentCache = null;
     const VHAT = "vhat";
     const SNOMED = "snomed";
     const LOINC = "loinc";
@@ -476,6 +477,7 @@ var UIHelper = (function () {
             var suggestionOnChangeFunction = tag.getAttribute("suggestion-onchange-function");
             var suggestionRestVariable = tag.getAttribute("suggestion-rest-variable");
             var recentsRestVariable = tag.getAttribute("recents-rest-variable");
+            var useRecentsCache = tag.getAttribute("use-recents-cache");
 
             if (fieldIDPostfix == null) {
                 fieldIDPostfix = "";
@@ -521,7 +523,7 @@ var UIHelper = (function () {
                 menu.css("right", getElementRightFromWindow(recentsButton));
             }.bind(this));
 
-            loadAutoSuggestRecents(fieldIDBase + "_recents" + fieldIDPostfix, recentsRestVariable, suggestionOnChangeFunction);
+            loadAutoSuggestRecents(fieldIDBase + "_recents" + fieldIDPostfix, recentsRestVariable, suggestionOnChangeFunction, useRecentsCache);
         });
     };
 
@@ -568,7 +570,18 @@ var UIHelper = (function () {
         };
     };
 
-    var loadAutoSuggestRecents = function (recentsID, restVariable, suggestionOnChangeFunction) {
+    var loadAutoSuggestRecents = function (recentsID, restVariable, suggestionOnChangeFunction, useRecentsCache) {
+
+        if (useRecentsCache == null){
+            useRecentsCache = true;
+        }
+
+        // use the recents cache if it exists
+        if (useRecentsCache && autoSuggestRecentCache != null){
+
+            $("#" + recentsID).html(autoSuggestRecentCache);
+            return;
+        }
 
         if (restVariable == null) {
             restVariable = "komet_dashboard_get_concept_recents_path";
@@ -595,7 +608,16 @@ var UIHelper = (function () {
             });
 
             $("#" + recentsID).html(options);
+
+            if (useRecentsCache) {
+                autoSuggestRecentCache = options;
+            }
+
         });
+    };
+
+    var clearAutoSuggestRecentCache = function (){
+        autoSuggestRecentCache = null;
     };
 
     var useAutoSuggestRecent = function (autoSuggestID, autoSuggestDisplayField, autoSuggestTypeField, id, text, type, suggestionOnChangeFunction) {
@@ -1063,6 +1085,7 @@ var UIHelper = (function () {
         processAutoSuggestTags: processAutoSuggestTags,
         loadAutoSuggestRecents: loadAutoSuggestRecents,
         useAutoSuggestRecent: useAutoSuggestRecent,
+        clearAutoSuggestRecentCache: clearAutoSuggestRecentCache,
         createSelectFieldString: createSelectFieldString,
         getPreDefinedOptionsForSelect: getPreDefinedOptionsForSelect,
         getElementRightFromWindow: getElementRightFromWindow,

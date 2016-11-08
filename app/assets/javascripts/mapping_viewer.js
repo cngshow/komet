@@ -339,6 +339,7 @@ var MappingViewer = function(viewerID, currentSetID, viewerAction) {
         this.viewerAction = viewerAction;
         this.setEditorOriginalIncludedFields = null;
         this.setEditorOriginalItemsIncludedFields = null;
+        this.setEditorMapItemsCopy = null;
 
         var includeFields = "";
 
@@ -388,6 +389,9 @@ var MappingViewer = function(viewerID, currentSetID, viewerAction) {
 
                 UIHelper.processAutoSuggestTags(itemGrid);
 
+                // make a copy of the items grid so we can restore it if the user cancels changes
+                this.setEditorMapItemsCopy = itemGrid.html();
+
                 $("#komet_mapping_set_editor_items_form_" + this.viewerID).submit(function () {
 
                     $.ajax({
@@ -408,7 +412,11 @@ var MappingViewer = function(viewerID, currentSetID, viewerAction) {
                                 }
 
                             } else {
+
                                 editorSection.prepend(UIHelper.generatePageMessage("All changes were processed successfully."));
+
+                                // make a copy of the items grid so we can restore it if the user cancels changes
+                                thisViewer.setEditorMapItemsCopy = itemGrid.html();
                             }
                         }
                     });
@@ -749,22 +757,39 @@ var MappingViewer = function(viewerID, currentSetID, viewerAction) {
             var idPrefix = "komet_mapping_set_editor_items_";
             var name = 'name="' + idPrefix + fieldsToInclude[i]+ ' ';
             var id = 'id="' + idPrefix + fieldsToInclude[i] + '_' + this.viewerID + ' ';
-            var data_type = "STRING";
+            var dataType = "STRING";
             var labelValue = fieldsToInclude[i];
             var labelDisplayValue = fieldsToInclude[i];
             var required = false;
 
             if (fieldInfo != undefined){
 
-                data_type = fieldInfo.type;
+                dataType = fieldInfo.data_type;
                 labelValue = fieldInfo.label;
                 labelDisplayValue = fieldInfo.label_display;
                 required = fieldInfo.required;
             }
 
-            includedFields +=  '<div><b>Name:</b> ' + labelDisplayValue + '</div>';
-            includedFields +=  '<div><b>Data Type:</b> ' + data_type + '</div>';
-            includedFields +=  '<div><b>Required:</b> ' + required + '</div>';
+            includedFields += '<div><b>Name:</b> ' + labelDisplayValue + '</div>';
+            includedFields += '<div><b>Data Type:</b> ' + dataType + '</div>';
+
+            if (dataType == "SELECT"){
+
+                includedFields += '<div><b>Options:</b> ';
+
+                for (var i = 0; i < fieldInfo.options.length; i++){
+
+                    if (i > 0){
+                        includedFields += ',';
+                    }
+
+                    includedFields += ' ' + fieldInfo.options[i].label;
+                }
+
+                includedFields += '</div>';
+            }
+
+            includedFields += '<div><b>Required:</b> ' + required + '</div>';
 
             // close the definition-item
             includedFields += '</div>';
@@ -892,6 +917,7 @@ var MappingViewer = function(viewerID, currentSetID, viewerAction) {
         var itemID = "";
         var targetConcepID = "";
         var targetConceptDisplay = "";
+        var qualifierConcept = "";
         //var state = "";
         var isNew = false;
         var rowID = "";
@@ -906,6 +932,7 @@ var MappingViewer = function(viewerID, currentSetID, viewerAction) {
             idPrefix = "komet_mapping_item_" + itemID;
             targetConcepID = rowData.target_concept;
             targetConceptDisplay = rowData.target_concept_display;
+            qualifierConcept = rowData.qualifier_concept;
 
 
             rowString = '<div id="' + rowID + '" class="komet-mapping-item-edit-row">'
@@ -934,6 +961,9 @@ var MappingViewer = function(viewerID, currentSetID, viewerAction) {
             + 'display-value="' + targetConceptDisplay + '" '
             + 'classes="komet-mapping-item-target-concept">'
             + '</autosuggest></div>';
+
+        var qualifierOptions = [{value: '', label: 'No Restrictions'}, {value: '8aa6421d-4966-5230-ae5f-aca96ee9c2c1', label: 'Exact'}, {value: 'c1068428-a986-5c12-9583-9b2d3a24fdc6', label: 'Broader Than'}, {value: '250d3a08-4f28-5127-8758-e8df4947f89c', label: 'Narrower Than'}];
+        rowString += '<div>' + UIHelper.createSelectFieldString(idPrefix + '_qualifier_concept', 'items[' + itemID + '][qualifier_concept]', 'form-control', qualifierOptions, qualifierConcept) + '</div>';
 
         $.each(this.itemFieldInfo, function (fieldID, field) {
 
@@ -971,6 +1001,8 @@ var MappingViewer = function(viewerID, currentSetID, viewerAction) {
 
             } else if (dataType == "BOOLEAN"){
                 rowString += UIHelper.createSelectFieldString(id, name, classes, UIHelper.getPreDefinedOptionsForSelect("true_false"), value);
+            } else if (dataType == "SELECT"){
+                rowString += UIHelper.createSelectFieldString(id, name, classes, field.options, value);
             } else {
                 rowString += '<input name="' + name + '" id="' + id + '" class="' + classes + '" value="' + value + '">';
             }
@@ -1031,6 +1063,24 @@ var MappingViewer = function(viewerID, currentSetID, viewerAction) {
         }.bind(this);
 
         UIHelper.generateConfirmationDialog("Delete Map Item?", "Are you sure you want to remove this map item?", confirmCallback, "Yes", closeElement);
+    };
+
+    MappingViewer.prototype.cancelSetItemEdit = function(triggerElement){
+
+        var confirmCallback = function(buttonClicked){
+
+            if (buttonClicked != 'cancel') {
+
+                var itemGrid = $("#komet_mapping_items_" + this.viewerID);
+
+                if (this.setEditorMapItemsCopy != null){
+                    itemGrid.html(this.setEditorMapItemsCopy);
+                }
+            }
+
+        }.bind(this);
+
+        UIHelper.generateConfirmationDialog("Cancel Edits?", "Are you sure you want to discard all unsaved changes?", confirmCallback, "Yes", triggerElement);
     };
 
     MappingViewer.prototype.toggleItemsSTAMP = function(){

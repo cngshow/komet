@@ -145,19 +145,23 @@ class MappingController < ApplicationController
     def map_set_editor
 
         session[:mapset_item_definitions] = []
-
         coordinates_token = session[:coordinatestoken].token
         @map_set = {id: '', name: '', description: '', version: '', vuid: '', rules: '', include_fields: [], state: '', status: 'Active', time: '', module: '', path: ''}
-        @map_set[:include_fields] = ['source_system', 'source_version', 'target_system', 'target_version', 'equivalence', 'comments']
-        @map_set[:item_fields] = []
+
+        # add the definitions for the template map fields
+        @map_set[:include_fields] = ['source_system', 'source_version', 'target_system', 'target_version', 'comments']
         @map_set[:source_system] = {name: 'source_system', data_type: 'UUID', value: '', label: '32e30e80-3fac-5317-80cf-d85eab22fa9e', label_display: 'mapping source code system', removable: false, display: false, required: false}
         @map_set[:source_system_display] = ''
         @map_set[:source_version] = {name: 'source_version', data_type: 'STRING', value: '', label: '5b3479cb-25b2-5965-a031-54238588218f', label_display: 'mapping source code system version', removable: false, display: false, required: false}
         @map_set[:target_system] = {name: 'target_system', data_type: 'UUID', value: '', label: '6b31a67a-7e6d-57c0-8609-52912076fce8', label_display: 'mapping target code system', removable: false, display: false, required: false}
         @map_set[:target_system_display] = ''
         @map_set[:target_version] = {name: 'target_version', data_type: 'STRING', value: '', label: 'b5165f68-b934-5c79-ac71-bd5375f7c809', label_display: 'mapping target code system version', removable: false, display: false, required: false}
-        @map_set[:equivalence] = {name: 'equivalence', data_type: 'STRING', value: '', label: '8e84c657-5f47-51b8-8ebf-89a9d025a9ef', label_display: 'mapping qualifier', removable: false, display: false, required: false, options: ['No Restrictions', 'Exact', 'Broader Than', 'Narrower Than']}
         @map_set[:comments] = {name: 'comments', data_type: 'STRING', value: '', label: 'Comments', label_display: 'Comments', removable: false, display: false, required: false}
+
+        # add the definitions for the template item fields
+        @map_set[:item_fields] = []
+        # @map_set[:item_field_equivalence] = {name: 'qualifier', data_type: 'SELECT', value: '', label: '8e84c657-5f47-51b8-8ebf-89a9d025a9ef', label_display: 'mapping qualifier', removable: false, display: false, required: false, options: [{value: '', label: 'No Restrictions'}, {value: '8aa6421d-4966-5230-ae5f-aca96ee9c2c1', label: 'Exact'}, {value: 'c1068428-a986-5c12-9583-9b2d3a24fdc6', label: 'Broader Than'}, {value: '250d3a08-4f28-5127-8758-e8df4947f89c', label: 'Narrower Than'}]}
+
         @set_id = params[:set_id]
 
         if @set_id &&  @set_id != ''
@@ -205,9 +209,6 @@ class MappingController < ApplicationController
             end
 
             item_fields = set.mapItemFieldsDefinition
-
-            # add the definitions for the static item fields
-            #@map_set['item_field_' + name] = {name: '1009096', description: 'Map source concept', order: order, data_type: data_type, required: true, label: 'c2af804c-bb05-3436-9f21-d37feb6a3ce4', label_display: 'Map source concept', removable: false, display: true}
 
             item_fields.each do |field|
 
@@ -271,7 +272,7 @@ class MappingController < ApplicationController
             @map_set[:author] = get_concept_metadata(set.mappingSetStamp.authorSequence)
             @map_set[:module] = get_concept_metadata(set.mappingSetStamp.moduleSequence)
             @map_set[:path] = get_concept_metadata(set.mappingSetStamp.pathSequence)
-            @map_set[:vuid] = '4500635'
+            @map_set[:vuid] = ''
 
             @viewer_title = @map_set[:description]
 
@@ -312,12 +313,18 @@ class MappingController < ApplicationController
             item_hash = {}
 
             item_hash[:item_id] = item.identifiers.uuids.first
-            item_hash[:source_concept] = target_concept = IdAPIsRest.get_id(uuid_or_id: item.sourceConcept, action: IdAPIsRestActions::ACTION_TRANSLATE, additional_req_params: {inputType: 'conceptSequence', outputType: 'uuid'}).value
+            item_hash[:source_concept] = IdAPIsRest.get_id(uuid_or_id: item.sourceConcept, action: IdAPIsRestActions::ACTION_TRANSLATE, additional_req_params: {inputType: 'conceptSequence', outputType: 'uuid'}).value
             item_hash[:source_concept_display] = item.sourceDescription
             item_hash[:target_concept] = item.targetConcept
 
             if item_hash[:target_concept] != nil || item_hash[:target_concept] != ''
-                item_hash[:target_concept] = target_concept = IdAPIsRest.get_id(uuid_or_id: item_hash[:target_concept], action: IdAPIsRestActions::ACTION_TRANSLATE, additional_req_params: {inputType: 'conceptSequence', outputType: 'uuid'}).value
+                item_hash[:target_concept] = IdAPIsRest.get_id(uuid_or_id: item_hash[:target_concept], action: IdAPIsRestActions::ACTION_TRANSLATE, additional_req_params: {inputType: 'conceptSequence', outputType: 'uuid'}).value
+            end
+
+            item_hash[:qualifier_concept] = item.qualifierConcept
+
+            if item_hash[:qualifier_concept] != nil && item_hash[:qualifier_concept] != ''
+                item_hash[:qualifier_concept] = IdAPIsRest.get_id(uuid_or_id: item_hash[:qualifier_concept], action: IdAPIsRestActions::ACTION_TRANSLATE, additional_req_params: {inputType: 'conceptSequence', outputType: 'uuid'}).value
             end
 
             item_hash[:target_concept_display] = item.targetDescription
@@ -342,7 +349,6 @@ class MappingController < ApplicationController
                         else
                             item_hash[field_info[:name] + '_display'] = field.data
                         end
-
                     end
 
                     item_hash[field_info[:name]] = field.data
@@ -416,7 +422,8 @@ class MappingController < ApplicationController
 
                 params['komet_mapping_set_editor_items_include_fields'].each do |item_field|
 
-                    item_field_label = IdAPIsRest.get_id(uuid_or_id: item_field, action: IdAPIsRestActions::ACTION_TRANSLATE, additional_req_params: {inputType: 'uuid', outputType: 'conceptSequence'}).value
+                    item_field_label = params['komet_mapping_set_editor_items_include_fields_' + item_field + '_label']
+                    item_field_label = IdAPIsRest.get_id(uuid_or_id: item_field_label, action: IdAPIsRestActions::ACTION_TRANSLATE, additional_req_params: {inputType: 'uuid', outputType: 'conceptSequence'}).value
                     item_field_data_type = params['komet_mapping_set_editor_items_include_fields_' + item_field + '_data_type']
                     item_field_required = params['komet_mapping_set_editor_items_include_fields_' + item_field + '_required']
 
@@ -459,7 +466,13 @@ class MappingController < ApplicationController
                     target_concept = IdAPIsRest.get_id(uuid_or_id: item['target_concept'], action: IdAPIsRestActions::ACTION_TRANSLATE, additional_req_params: {inputType: 'uuid', outputType: 'conceptSequence'}).value
                 end
 
-                body_params = {targetConcept: target_concept, qualifierConcept: 230}
+                qualifier_concept = nil
+
+                if item['qualifier_concept'] != nil && item['qualifier_concept'] != ''
+                    qualifier_concept = IdAPIsRest.get_id(uuid_or_id: item['qualifier_concept'], action: IdAPIsRestActions::ACTION_TRANSLATE, additional_req_params: {inputType: 'uuid', outputType: 'conceptSequence'}).value
+                end
+
+                body_params = {targetConcept: target_concept, qualifierConcept: qualifier_concept}
 
                 extended_fields = []
 
