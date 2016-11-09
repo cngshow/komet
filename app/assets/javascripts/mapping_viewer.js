@@ -918,6 +918,8 @@ var MappingViewer = function(viewerID, currentSetID, viewerAction) {
         var targetConcepID = "";
         var targetConceptDisplay = "";
         var qualifierConcept = "";
+        var commentID = "0";
+        var comment = "";
         //var state = "";
         var isNew = false;
         var rowID = "";
@@ -933,7 +935,8 @@ var MappingViewer = function(viewerID, currentSetID, viewerAction) {
             targetConcepID = rowData.target_concept;
             targetConceptDisplay = rowData.target_concept_display;
             qualifierConcept = rowData.qualifier_concept;
-
+            commentID = rowData.comment_id;
+            comment = rowData.comment;
 
             rowString = '<div id="' + rowID + '" class="komet-mapping-item-edit-row">'
                 + '<div>' + rowData.source_concept_display + '</div>';
@@ -1011,8 +1014,17 @@ var MappingViewer = function(viewerID, currentSetID, viewerAction) {
 
         }.bind(this));
 
-        //rowString += '<div>' + this.createSelectField("descriptions", descriptionID, "properties", rowData.sememe_instance_id, "state", this.selectFieldOptions.state, rowData.state) + '</div>';
-        rowString += '<div class="komet-mapping-item-edit-row-tools">';
+        rowString += '<div class="komet-mapping-item-edit-row-comments"><input type="hidden" name="items[' + itemID + '][comment_id]" value="' + commentID + '">'
+            + '<input type="hidden" id="komet_mapping_item_' + itemID + '_comment" name="items[' + itemID + '][comment]" value="' + comment + '">'
+            + '<a href="#" title="Select to edit comments" onclick="WindowManager.viewers[' + this.viewerID + '].editItemComments(\'' + itemID + '\', this);return false;">';
+
+        if (comment == "") {
+            rowString += "Click to add comment";
+        } else {
+            rowString +=  comment;
+        }
+
+        rowString += '</a></div><div class="komet-mapping-item-edit-row-tools">';
 
         if (isNew){
             rowString += '<button type="button" class="komet-link-button" onclick="WindowManager.viewers[' + this.viewerID + '].removeItemRow(\'' + rowID + '\', this)" title="Remove row"><div class="glyphicon glyphicon-remove"></div></button>';
@@ -1021,6 +1033,31 @@ var MappingViewer = function(viewerID, currentSetID, viewerAction) {
         rowString += '<!-- end edit-row-tools --></div><!-- end edit-row --></div>';
 
         return rowString;
+    };
+
+    MappingViewer.prototype.editItemComments = function (itemID, commentLink) {
+
+        var comment = $("#komet_mapping_item_" + itemID + "_comment");
+
+        var commentFieldString = '<textarea class="form-control" id="komet_mapping_item_edit_comment_' + this.viewerID + '">' + comment.val() + '</textarea>';
+
+        var confirmCallback = function(buttonClicked){
+
+            if (buttonClicked != 'cancel') {
+
+                var editComment = $("#komet_mapping_item_edit_comment_" + this.viewerID).val();
+                comment.val(editComment);
+
+                if (editComment == ""){
+                    $(commentLink).html("Click to add comment");
+                } else {
+                    $(commentLink).html(editComment);
+                }
+            }
+
+        }.bind(this);
+
+        UIHelper.generateConfirmationDialog("Edit Item Comment", commentFieldString, confirmCallback, "Save", commentLink);
     };
 
     MappingViewer.prototype.addItemRow = function () {
