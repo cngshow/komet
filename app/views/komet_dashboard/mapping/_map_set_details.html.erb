@@ -26,11 +26,11 @@
             <div class="komet-mapping-set-definition-row">
 
                 <div class="komet-mapping-set-definition-header">
-                    <%#= label_tag nil, 'Version:' %> <%#= @map_set[:version] %>
+                    <b>VUID:</b> <%= @map_set[:vuid] %>
                 </div>
 
                 <div class="komet-mapping-set-definition-header">
-                    <%= label_tag nil, 'VUID:' %> <%= @map_set[:vuid] %>
+                    <%#= label_tag nil, 'Version:' %> <%#= @map_set[:version] %>
                 </div>
 
                 <div class="komet-mapping-set-definition-controls">
@@ -88,6 +88,10 @@
                         </div>
 
                         <div class="komet-mapping-set-definition-item">
+                            <%= label_tag "komet_mapping_set_editor_comment_#{@viewer_id}", 'Comments:' %>
+                            <%= hidden_field_tag :komet_mapping_set_editor_comment_id, @map_set[:comment_id], id: "komet_mapping_set_editor_comment_id_#{@viewer_id}" %>
+                            <%= text_area_tag :komet_mapping_set_editor_comment, @map_set[:comment], id: "komet_mapping_set_editor_comment_#{@viewer_id}", class: 'form-control komet-mapping-set-editor-edit' %>
+                            <div class="komet-mapping-set-editor-display"><%= @map_set[:comment] %></div>
                         </div>
 
                     </div>
@@ -203,6 +207,7 @@
 
                             <% end %>
 
+                            <div>Comments</div>
                             <div></div>
 
                         </div>

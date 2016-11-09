@@ -30,12 +30,12 @@ module CommentApis
     include CommonActionSyms
     extend self
 
-    PATH_COMMENT_API = ISAAC_ROOT + 'rest/1/comment/'
+    ROOT_PATH = ISAAC_ROOT + 'rest/1/comment/'
     PATH_COMMENT_WRITE_API = ISAAC_ROOT + 'rest/write/1/comment/'
-    PATH_VERSION = PATH_COMMENT_API + 'version/{id}'
-    PATH_BY_REFERENCED_COMPONENT = PATH_COMMENT_API + 'version/byReferencedComponent/{id}'
+    PATH_VERSION = ROOT_PATH + 'version/{id}'
+    PATH_BY_REFERENCED_COMPONENT = ROOT_PATH + 'version/byReferencedComponent/{id}'
     PATH_CREATE = PATH_COMMENT_WRITE_API + 'create'
-    PATH_UPDATE = PATH_COMMENT_WRITE_API + 'update'
+    PATH_UPDATE = PATH_COMMENT_WRITE_API + 'update/{id}'
 
     # these are not used!!
     PARAMS_EMPTY = {}
