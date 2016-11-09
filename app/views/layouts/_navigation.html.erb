@@ -1,6 +1,6 @@
 <link rel="stylesheet" href="//code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css">
 
-<nav class="komet-navbar" role="navigation">
+<nav class="komet-navbar" role="navigation aria-label="Main menu">
 
   <div class="komet-navbar-header" role="navigation">
     <div class="komet-logo-komet" title="KOMET">KOMET</div>
@@ -21,14 +21,14 @@
 
     <% if controller.can_edit_concept? %>
         <div class="dropdown" role="presentation">
-          <a style="cursor: default"  class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false" title="Actions">Actions
+          <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false" title="Actions">Actions
             <span class="caret"></span></a>
           <ul class="dropdown-menu" aria-hidden="true" aria-label="submenu">
-            <li>
-              <a style="cursor: default"  onclick="$.publish(KometChannels.Taxonomy.taxonomyConceptEditorChannel, [null, WindowManager.getLinkedViewerID(), WindowManager.INLINE]); return false;" title="Create New Concept">Create
+            <li role="menuitem">
+              <a href="#"  onclick="$.publish(KometChannels.Taxonomy.taxonomyConceptEditorChannel, [null, WindowManager.getLinkedViewerID(), WindowManager.INLINE]); return false;" title="Create New Concept">Create
                 New Concept</a></li>
-            <li>
-              <a style="cursor: default"  onclick="MappingModule.createNewMapSet(true); return false;" title="Create New Map">Create New
+            <li role="menuitem">
+              <a href="#"  onclick="MappingModule.createNewMapSet(true); return false;" title="Create New Map">Create New
                 Map</a></li>
           </ul>
         </div>
