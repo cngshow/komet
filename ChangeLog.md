@@ -4,10 +4,10 @@ This changelog summarizes changes and fixes which are a part of each revision.  
 where provided, and the git commit history.
 
 * 2016/11/08 - 1.36:
-    * 
+    * added comments to map sets and items.
+    
 * 2016/11/08 - 1.35: 
     * Added an "All Description Types" option to the search panel.
-    * added comments to map sets and items.
 
 * 2016/11/08 - 1.34: 
     * 508 code fixed - added code for missing label and removed empty link and added code to show default cursor. Added aria-labelledby as needed
