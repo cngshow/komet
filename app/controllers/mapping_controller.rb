@@ -149,14 +149,14 @@ class MappingController < ApplicationController
         @map_set = {id: '', name: '', description: '', version: '', vuid: '', rules: '', include_fields: [], state: '', status: 'Active', time: '', module: '', path: ''}
 
         # add the definitions for the template map fields
-        @map_set[:include_fields] = ['source_system', 'source_version', 'target_system', 'target_version', 'comments']
+        @map_set[:include_fields] = ['source_system', 'source_version', 'target_system', 'target_version']
         @map_set[:source_system] = {name: 'source_system', data_type: 'UUID', value: '', label: '32e30e80-3fac-5317-80cf-d85eab22fa9e', label_display: 'mapping source code system', removable: false, display: false, required: false}
         @map_set[:source_system_display] = ''
         @map_set[:source_version] = {name: 'source_version', data_type: 'STRING', value: '', label: '5b3479cb-25b2-5965-a031-54238588218f', label_display: 'mapping source code system version', removable: false, display: false, required: false}
         @map_set[:target_system] = {name: 'target_system', data_type: 'UUID', value: '', label: '6b31a67a-7e6d-57c0-8609-52912076fce8', label_display: 'mapping target code system', removable: false, display: false, required: false}
         @map_set[:target_system_display] = ''
         @map_set[:target_version] = {name: 'target_version', data_type: 'STRING', value: '', label: 'b5165f68-b934-5c79-ac71-bd5375f7c809', label_display: 'mapping target code system version', removable: false, display: false, required: false}
-        @map_set[:comments] = {name: 'comments', data_type: 'STRING', value: '', label: 'Comments', label_display: 'Comments', removable: false, display: false, required: false}
+        # @map_set[:comments] = {name: 'comments', data_type: 'STRING', value: '', label: 'Comments', label_display: 'Comments', removable: false, display: false, required: false}
 
         # add the definitions for the template item fields
         @map_set[:item_fields] = []
@@ -166,11 +166,16 @@ class MappingController < ApplicationController
 
         if @set_id &&  @set_id != ''
 
-            set = MappingApis::get_mapping_api(action: MappingApiActions::ACTION_SET, uuid_or_id: @set_id,  additional_req_params: {coordToken: coordinates_token, CommonRest::CacheRequest => false})
+            set = MappingApis::get_mapping_api(action: MappingApiActions::ACTION_SET, uuid_or_id: @set_id,  additional_req_params: {coordToken: coordinates_token, expand: 'comments'})
 
-            Gov::Vha::Isaac::Rest::Api1::Data::Sememe::RestDynamicSememeData
             if set.is_a? CommonRest::UnexpectedResponse
                 return @map_set
+            end
+
+            vuid = IdAPIsRest.get_id(uuid_or_id: @set_id, action: IdAPIsRestActions::ACTION_TRANSLATE, additional_req_params: {outputType: 'vuid'})
+
+            if vuid.respond_to?(:value)
+                @map_set[:vuid] = vuid.value
             end
 
             extended_fields = set.mapSetExtendedFields
@@ -274,6 +279,14 @@ class MappingController < ApplicationController
             @map_set[:path] = get_concept_metadata(set.mappingSetStamp.pathSequence)
             @map_set[:vuid] = ''
 
+            if set.comments.length == 0
+                @map_set[:comment] = ''
+                @map_set[:comment_id] = '0'
+            else
+                @map_set[:comment] = set.comments.first.comment
+                @map_set[:comment_id] = set.comments.first.identifiers.uuids.first
+            end
+
             @viewer_title = @map_set[:description]
 
             @map_items = get_overview_items_results(@map_set[:set_id])
@@ -328,12 +341,19 @@ class MappingController < ApplicationController
             end
 
             item_hash[:target_concept_display] = item.targetDescription
-            item_hash[:comments] = ''
             item_hash[:state] = item.mappingItemStamp.state.enumName
             item_hash[:time] = DateTime.strptime((item.mappingItemStamp.time / 1000).to_s, '%s').strftime('%m/%d/%Y')
             item_hash[:author] = get_concept_metadata(item.mappingItemStamp.authorSequence)
             item_hash[:module] = get_concept_metadata(item.mappingItemStamp.moduleSequence)
             item_hash[:path] = get_concept_metadata(item.mappingItemStamp.pathSequence)
+
+            if item.comments.length == 0
+                item_hash[:comment] = ''
+                item_hash[:comment_id] = '0'
+            else
+                item_hash[:comment] = item.comments.first.comment
+                item_hash[:comment_id] = item.comments.first.identifiers.uuids.first
+            end
 
             item.mapItemExtendedFields.each_with_index do |field, index|
 
@@ -383,13 +403,19 @@ class MappingController < ApplicationController
             active = false
         end
 
-
         # source_system: source_system, source_system_display: source_system_display, source_version: source_version, target_system: target_system, target_system_display: target_system_display, target_version: target_version
         body_params = {name: set_name, description: description, active: active}
         request_params = {editToken: get_edit_token}
 
         if set_id && set_id != ''
-            MappingApis::get_mapping_api(uuid_or_id: set_id, action: MappingApiActions::ACTION_UPDATE_SET, additional_req_params: request_params, body_params: body_params)
+
+            return_value =  MappingApis::get_mapping_api(uuid_or_id: set_id, action: MappingApiActions::ACTION_UPDATE_SET, additional_req_params: request_params, body_params: body_params)
+
+            if return_value.is_a? CommonRest::UnexpectedResponse
+
+                render json: {set_id: nil}
+                return
+            end
         else
 
             set_extended_fields = []
@@ -444,10 +470,30 @@ class MappingController < ApplicationController
             set_id = return_value.uuid
         end
 
+        comment = params[:komet_mapping_set_editor_comment]
+        comment_id = params[:komet_mapping_set_editor_comment_id]
+        comment_return = ''
+
+        if comment_id == '0' && comment != ''
+
+            set_concept_sequence = IdAPIsRest.get_id(uuid_or_id: set_id, action: IdAPIsRestActions::ACTION_TRANSLATE, additional_req_params: {inputType: 'uuid', outputType: 'conceptSequence'}).value
+            comment_return = CommentApis.get_comment_api(action: CommentApiActions::ACTION_CREATE, additional_req_params: {editToken: get_edit_token}, body_params: {comment: comment, commentedItem: set_concept_sequence})
+
+        elsif comment_id != '0'
+
+            comment_return = CommentApis.get_comment_api(uuid_or_id: comment_id, action: CommentApiActions::ACTION_UPDATE, additional_req_params: {editToken: get_edit_token}, body_params: {comment: comment})
+        end
+
+        if comment_return.is_a? CommonRest::UnexpectedResponse
+            comment_return = 'fail'
+        else
+            comment_return = 'pass'
+        end
+
         # clear taxonomy caches after writing data
         clear_rest_caches
 
-        render json: {set_id: set_id}
+        render json: {set_id: set_id, comment_status: comment_return}
     end
 
     def process_map_item
@@ -525,8 +571,30 @@ class MappingController < ApplicationController
                     if return_value.is_a? CommonRest::UnexpectedResponse
                         failed_writes << {id: item_id}
                     end
+
+                    item_id = return_value.uuid
                 end
 
+                if !return_value.is_a? CommonRest::UnexpectedResponse
+
+                    comment = item[:comment]
+                    comment_id = item[:comment_id]
+                    comment_return = ''
+
+                    if comment_id == '0' && comment != ''
+
+                        # item_concept_sequence = IdAPIsRest.get_id(uuid_or_id: item_id, action: IdAPIsRestActions::ACTION_TRANSLATE, additional_req_params: {inputType: 'uuid', outputType: 'sememeSequence'}).value
+                        comment_return = CommentApis.get_comment_api(action: CommentApiActions::ACTION_CREATE, additional_req_params: {editToken: get_edit_token}, body_params: {comment: comment, commentedItem: return_value.sequence})
+
+                    elsif comment_id != '0'
+
+                        comment_return = CommentApis.get_comment_api(uuid_or_id: comment_id, action: CommentApiActions::ACTION_UPDATE, additional_req_params: {editToken: get_edit_token}, body_params: {comment: comment})
+                    end
+
+                    if comment_return.is_a? CommonRest::UnexpectedResponse
+                        failed_writes << {id: item_id, type: 'comment'}
+                    end
+                end
             end
         end
 
