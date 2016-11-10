@@ -704,7 +704,7 @@ class KometDashboardController < ApplicationController
         end
 
         # add the parent concept to the concept recents array in the session
-        add_to_recents(CONCEPT_RECENTS, sememe_id, sememe_text, sememe_type)
+        add_to_recents(CONCEPT_RECENTS + CONCEPT_RECENTS_SEMEME, sememe_id, sememe_text, sememe_type)
 
         render json: sememe
 
@@ -874,6 +874,8 @@ class KometDashboardController < ApplicationController
 
                     if return_value.is_a? CommonRest::UnexpectedResponse
                         failed_writes << {id: association_id, text: association['target_display'], type: 'association'}
+                    else
+                        add_to_recents(CONCEPT_RECENTS + CONCEPT_RECENTS_ASSOCIATION, association['target'], association['target_display'], association['target_type'])
                     end
                 else
 
@@ -884,6 +886,8 @@ class KometDashboardController < ApplicationController
 
                     if return_value.is_a? CommonRest::UnexpectedResponse
                         failed_writes << {id: association_id, text: association['target_display'], type: 'association'}
+                    else
+                        add_to_recents(CONCEPT_RECENTS + CONCEPT_RECENTS_ASSOCIATION, association['target'], association['target_display'], association['target_type'])
                     end
                 end
 
@@ -956,8 +960,14 @@ class KometDashboardController < ApplicationController
         coordinates_token = session[:coordinatestoken].token
         search_term = params[:term]
         concept_suggestions_data = []
+        additional_req_params = {coordToken: coordinates_token, query: search_term, maxPageSize: 25, expand: 'referencedConcept', mergeOnConcept: true}
+        restrict_search = params[:restrict_search]
 
-        results = SearchApis.get_search_api(action: ACTION_PREFIX, additional_req_params: {coordToken: coordinates_token, query: search_term, maxPageSize: 25, expand: 'referencedConcept'})
+        if search_term.length >= 3 && restrict_search != nil && restrict_search != ''
+            additional_req_params[:restrictTo] = restrict_search;
+        end
+
+        results = SearchApis.get_search_api(action: ACTION_PREFIX, additional_req_params: additional_req_params)
 
         results.results.each do |result|
 
@@ -974,9 +984,14 @@ class KometDashboardController < ApplicationController
     def get_concept_recents
 
         recents_array = []
+        recents_name = params[:recents_name]
 
-        if session[CONCEPT_RECENTS]
-            recents_array = session[CONCEPT_RECENTS]
+        if recents_name == nil
+            recents_name = '';
+        end
+
+        if session[CONCEPT_RECENTS + recents_name]
+            recents_array = session[CONCEPT_RECENTS + recents_name]
         end
 
         render json: recents_array
