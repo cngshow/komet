@@ -91,6 +91,7 @@ var ExportModule = (function () {
           export_click(true);
         })
         .fail(function () {
+          export_click(true);
           flash_notify({message: "Download failed!"}, {type: 'danger'});
         });
 
