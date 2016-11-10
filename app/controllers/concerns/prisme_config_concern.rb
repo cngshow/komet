@@ -25,11 +25,15 @@ module PrismeConfigConcern
   def self.get_isaac_proxy_context
     return PrismeConfigConcern.isaac_proxy_context unless PrismeConfigConcern.isaac_proxy_context.nil?
     get_config
-    PrismeConfigConcern.config['proxy_config_root']['proxy_urls'].each do |e|
-      if (((URI e['incoming_url_path']).eql_ignore_trailing_slash? ISAAC_ROOT))
-        PrismeConfigConcern.isaac_proxy_context= e['proxy_location']
-        break
+    begin
+      PrismeConfigConcern.config['proxy_config_root']['proxy_urls'].each do |e|
+        if (((URI e['incoming_url_path']).eql_ignore_trailing_slash? ISAAC_ROOT))
+          PrismeConfigConcern.isaac_proxy_context= e['proxy_location']
+          break
+        end
       end
+    rescue => ex
+      $log.error("I could not parse the isaac proxy data. #{ex}")
     end
     if PrismeConfigConcern.isaac_proxy_context.nil?
       context = (URI ISAAC_ROOT).path
