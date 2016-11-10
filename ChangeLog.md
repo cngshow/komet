@@ -3,13 +3,17 @@ Komet Changelog
 This changelog summarizes changes and fixes which are a part of each revision.  For more details on the fixes, refer tracking numbers 
 where provided, and the git commit history.
 
-* 2016/11/10 - 1.36:
-    * Hid refset and inbox tabs
+
+* 2016/11/10 - 1.37:
+    * Hide refset and inbox tabs
     * Added mergeConcept flag to autosuggest searches
     * Added restrict flag to autosuggest searches
     * Fixed map item cell height
+    * Fix more SSO issues
+    * Refix 508 issue to add href="#' back to navigation so that user 'tab' keying through nav works again
+    * Fix a role cache timeout issue
 
-* 2016/11/09 - 1.35:
+* 2016/11/09 - 1.36:
     * added comments to map sets and items.
 
 * 2016/11/08 - 1.35:
