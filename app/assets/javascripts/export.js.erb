@@ -77,10 +77,7 @@ var ExportModule = (function () {
     var params = {};
     params[sd] = new Date(start).getTime();
     params[ed] =  new Date(end_dt).getTime();
-    //   gon.behind_proxy=false;
-    //   gon.vhat_export_params={"path":"rest/1/export/vetsXML","start_date":"changedBefore","end_date":"changedAfter","port":8180};
-    //   gon.isaac_root="http://localhost:8180/";
-    var url = (gon.behind_proxy ? gon.routes.root_url : gon.isaac_root) + gon.vhat_export_params.path + '?' + jQuery.param(params);
+    var url = gon.export_url + gon.vhat_export_params.path + '?' + jQuery.param(params);
     console.log(url);
     $.fileDownload(url)
         .done(function () {
