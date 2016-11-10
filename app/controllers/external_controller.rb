@@ -46,7 +46,7 @@ class ExternalController < ApplicationController
   end
 
   def authenticate
-    if user_session(UserSession::ROLES)
+    if (read_only?)
       redirect_to komet_dashboard_dashboard_url
     else
       #not authenticated - redirect to the naughty page
