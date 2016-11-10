@@ -7,6 +7,7 @@ where provided, and the git commit history.
     * Hid refset and inbox tabs
     * Added mergeConcept flag to autosuggest searches
     * Added restrict flag to autosuggest searches
+    * Fixed map item cell height
 
 * 2016/11/09 - 1.35:
     * added comments to map sets and items.
