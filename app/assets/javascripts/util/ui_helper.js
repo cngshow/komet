@@ -22,13 +22,17 @@
 var UIHelper = (function () {
 
     var conceptClipboard = {};
-    var autoSuggestRecentCache = null;
+    var autoSuggestRecentCache = {};
     const VHAT = "vhat";
     const SNOMED = "snomed";
     const LOINC = "loinc";
     const RXNORM = "rxnorm";
     const CHANGEABLE_CLASS = "komet-changeable";
     const CHANGE_HIGHLIGHT_CLASS = "komet-highlight-changes";
+    const RECENTS_ASSOCIATION = 'association';
+    const RECENTS_MAPSET = 'mapset';
+    const RECENTS_SEMEME = 'sememe';
+    const RECENTS_METADATA = 'metadata';
 
     function getActiveTabId(tabControlId) {
         var id = "#" + tabControlId;
@@ -474,10 +478,11 @@ var UIHelper = (function () {
             var typeValue = tag.getAttribute("type-value");
             var fieldClasses = tag.getAttribute("classes");
             var tabIndex = tag.getAttribute("tab-index");
-            var suggestionOnChangeFunction = tag.getAttribute("suggestion-onchange-function");
             var suggestionRestVariable = tag.getAttribute("suggestion-rest-variable");
             var recentsRestVariable = tag.getAttribute("recents-rest-variable");
             var useRecentsCache = tag.getAttribute("use-recents-cache");
+            var characterTriggerLimit = tag.getAttribute("character-trigger-limit");
+            var restrictSearch = tag.getAttribute("restrict-search");
 
             if (fieldIDPostfix == null) {
                 fieldIDPostfix = "";
@@ -487,8 +492,12 @@ var UIHelper = (function () {
                 suggestionRestVariable = "komet_dashboard_get_concept_suggestions_path";
             }
 
-            if (suggestionOnChangeFunction == null) {
-                suggestionOnChangeFunction = "";
+            if (characterTriggerLimit == null) {
+                characterTriggerLimit = 1;
+            }
+
+            if (restrictSearch == null) {
+                restrictSearch = "";
             }
 
             var autoSuggest = UIHelper.createAutoSuggestField(fieldIDBase, fieldIDPostfix, label, name, nameFormat, idValue, displayValue, typeValue, fieldClasses, tabIndex);
@@ -497,20 +506,12 @@ var UIHelper = (function () {
 
             var displayField = $("#" + fieldIDBase + "_display" + fieldIDPostfix);
 
-            var asOnChange = function (suggestionOnChangeFunction) {
-
-                return function () {
-                    setTimeout(suggestionOnChangeFunction, 0);
-                };
-            };
-
-            //displayField.change(asOnChange(suggestionOnChangeFunction));
 
             displayField.autocomplete({
-                source: gon.routes[suggestionRestVariable],
-                minLength: 3,
+                source: gon.routes[suggestionRestVariable] + '?restrict_search=' + restrictSearch,
+                minLength: characterTriggerLimit,
                 select: onAutoSuggestSelection
-                , change: onAutoSuggestChange(suggestionOnChangeFunction)
+                , change: onAutoSuggestChange(characterTriggerLimit)
             });
 
             var recentsButton = $("#" + fieldIDBase + "_recents_button" + fieldIDPostfix);
@@ -523,7 +524,59 @@ var UIHelper = (function () {
                 menu.css("right", getElementRightFromWindow(recentsButton));
             }.bind(this));
 
-            loadAutoSuggestRecents(fieldIDBase + "_recents" + fieldIDPostfix, recentsRestVariable, suggestionOnChangeFunction, useRecentsCache);
+            var thisHelper = this;
+
+            recentsDropdown = $("#" + fieldIDBase + "_recents" + fieldIDPostfix);
+
+            // TODO - Switch to using this event so we can trigger menu reloading easily
+            recentsDropdown.on("recents:load", {restVariable: recentsRestVariable, useRecentsCache: useRecentsCache, recentsName: restrictSearch}, function(event) {
+
+                if (event.data.useRecentsCache == null){
+                    event.data.useRecentsCache = true;
+                }
+
+                // use the recents cache if it exists
+                if (event.data.useRecentsCache && thisHelper.autoSuggestRecentCache[event.data.recentsName] != null){
+
+                    $(this).html(thisHelper.autoSuggestRecentCache[event.data.recentsName]);
+                    return;
+                }
+
+                if (event.data.restVariable == null) {
+                    event.data.restVariable = "komet_dashboard_get_concept_recents_path";
+                }
+
+                $.get(gon.routes[event.data.restVariable] + '?recents_name=' + event.data.recentsName, function (data) {
+
+                    var options = "";
+
+                    $.each(data, function (index, value) {
+
+                        var autoSuggestIDField = this.id.replace("_recents", "");
+                        var autoSuggestDisplayField = this.id.replace("_recents", "_display");
+                        var autoSuggestTypeField = this.id.replace("_recents", "_type");
+
+                        // use the html function to escape any html that may have been entered by the user
+                        var valueText = $("<li>").text(value.text).html();
+
+                        // TODO - remove this reassignment when the type flags are implemented in the REST APIs
+                        value.type = UIHelper.VHAT;
+
+                        options += '<li><a style="cursor: default"  onclick=\'UIHelper.useAutoSuggestRecent("' + autoSuggestIDField + '", "' + autoSuggestDisplayField + '", "' + autoSuggestTypeField + '"'
+                            + ', "' + value.id + '", "' + valueText + '", "' + value.type + '")\'>' + valueText + '</a></li>';
+                    }.bind(this));
+
+                    $(this).html(options);
+
+                    if (event.data.useRecentsCache) {
+                        thisHelper.autoSuggestRecentCache[event.data.recentsName] = options;
+                    }
+
+                }.bind(this));
+            });
+
+            // recentsDropdown.trigger("recents:load");
+             loadAutoSuggestRecents(fieldIDBase + "_recents" + fieldIDPostfix, recentsRestVariable, useRecentsCache, restrictSearch);
         });
     };
 
@@ -544,11 +597,11 @@ var UIHelper = (function () {
         return false;
     };
 
-    var onAutoSuggestChange = function (suggestionOnChangeFunction) {
+    var onAutoSuggestChange = function (characterTriggerLimit) {
 
         return function (event, ui) {
 
-            if (!ui.item) {
+            if (this.value.length >= characterTriggerLimit && !ui.item) {
 
                 var idField = $("#" + this.id.replace("_display", ""));
                 idField.val("");
@@ -559,27 +612,23 @@ var UIHelper = (function () {
                 typeField.change();
 
                 // make sure this is last, as there may be an onchange event on the display field that requires the other fields to be set.
-                // though since onchange events for this field run before the autosuggest finishes updating all fields, also run the user supplied change function
                 var labelField = $(this);
                 labelField.val("");
                 labelField.change();
             }
-
-            // run the user supplied onchange function if there is one
-            //setTimeout(suggestionOnChangeFunction, 0);
         };
     };
 
-    var loadAutoSuggestRecents = function (recentsID, restVariable, suggestionOnChangeFunction, useRecentsCache) {
+    var loadAutoSuggestRecents = function (recentsID, restVariable, useRecentsCache, recentsName) {
 
         if (useRecentsCache == null){
             useRecentsCache = true;
         }
 
         // use the recents cache if it exists
-        if (useRecentsCache && autoSuggestRecentCache != null){
+        if (useRecentsCache && autoSuggestRecentCache[recentsName] != null){
 
-            $("#" + recentsID).html(autoSuggestRecentCache);
+            $("#" + recentsID).html(autoSuggestRecentCache[recentsName]);
             return;
         }
 
@@ -587,7 +636,7 @@ var UIHelper = (function () {
             restVariable = "komet_dashboard_get_concept_recents_path";
         }
 
-        $.get(gon.routes[restVariable], function (data) {
+        $.get(gon.routes[restVariable] + '?recents_name=' + recentsName, function (data) {
 
             var options = "";
 
@@ -604,23 +653,28 @@ var UIHelper = (function () {
                 value.type = UIHelper.VHAT;
 
                 options += '<li><a style="cursor: default"  onclick=\'UIHelper.useAutoSuggestRecent("' + autoSuggestIDField + '", "' + autoSuggestDisplayField + '", "' + autoSuggestTypeField + '"'
-                    + ', "' + value.id + '", "' + valueText + '", "' + value.type + '", "' + suggestionOnChangeFunction + '")\'>' + valueText + '</a></li>';
+                    + ', "' + value.id + '", "' + valueText + '", "' + value.type + '")\'>' + valueText + '</a></li>';
             });
 
             $("#" + recentsID).html(options);
 
             if (useRecentsCache) {
-                autoSuggestRecentCache = options;
+                autoSuggestRecentCache[recentsName] = options;
             }
 
         });
     };
 
-    var clearAutoSuggestRecentCache = function (){
-        autoSuggestRecentCache = null;
+    var clearAutoSuggestRecentCache = function (name){
+
+        if (name == undefined || name == null){
+            autoSuggestRecentCache = {};
+        } else {
+            delete autoSuggestRecentCache[name];
+        }
     };
 
-    var useAutoSuggestRecent = function (autoSuggestID, autoSuggestDisplayField, autoSuggestTypeField, id, text, type, suggestionOnChangeFunction) {
+    var useAutoSuggestRecent = function (autoSuggestID, autoSuggestDisplayField, autoSuggestTypeField, id, text, type) {
 
         var idField = $("#" + autoSuggestID);
         idField.val(id);
@@ -631,13 +685,10 @@ var UIHelper = (function () {
         typeField.change();
 
         // make sure this is last, as there may be an onchange event on the display field that requires the other fields to be set.
-        // though since onchange events for this field run before the autosuggest finishes updating all fields, also run the user supplied change function
         var displayField = $("#" + autoSuggestDisplayField);
         displayField.val(text);
         displayField.change();
 
-        // run the user supplied onchange function if there is one
-        //setTimeout(suggestionOnChangeFunction, 0);
     };
 
     var createSelectFieldString = function(selectID, selectName, classes, options, selectedItem) {
@@ -1094,7 +1145,11 @@ var UIHelper = (function () {
         LOINC: LOINC,
         RXNORM: RXNORM,
         CHANGEABLE_CLASS: CHANGEABLE_CLASS,
-        CHANGE_HIGHLIGHT_CLASS: CHANGE_HIGHLIGHT_CLASS
+        CHANGE_HIGHLIGHT_CLASS: CHANGE_HIGHLIGHT_CLASS,
+        RECENTS_ASSOCIATION: RECENTS_ASSOCIATION,
+        RECENTS_MAPSET: RECENTS_MAPSET,
+        RECENTS_SEMEME: RECENTS_SEMEME,
+        RECENTS_METADATA: RECENTS_METADATA
     };
 })();
 

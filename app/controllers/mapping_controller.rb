@@ -583,8 +583,8 @@ class MappingController < ApplicationController
 
                     if comment_id == '0' && comment != ''
 
-                        # item_concept_sequence = IdAPIsRest.get_id(uuid_or_id: item_id, action: IdAPIsRestActions::ACTION_TRANSLATE, additional_req_params: {inputType: 'uuid', outputType: 'sememeSequence'}).value
-                        comment_return = CommentApis.get_comment_api(action: CommentApiActions::ACTION_CREATE, additional_req_params: {editToken: get_edit_token}, body_params: {comment: comment, commentedItem: return_value.sequence})
+                        item_concept_sequence = IdAPIsRest.get_id(uuid_or_id: item_id, action: IdAPIsRestActions::ACTION_TRANSLATE, additional_req_params: {inputType: 'uuid', outputType: 'sememeSequence'}).value
+                        comment_return = CommentApis.get_comment_api(action: CommentApiActions::ACTION_CREATE, additional_req_params: {editToken: get_edit_token}, body_params: {comment: comment, commentedItem: item_concept_sequence})
 
                     elsif comment_id != '0'
 

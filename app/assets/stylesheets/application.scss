@@ -1111,7 +1111,7 @@ td.komet-concept-table-nested-indicator.komet-concept-table-nested-indicator-ope
     justify-content: space-between;
     //align-items: center;
     font-weight: bold;
-    height: 30px;
+    min-height: 30px;
 }
 .komet-mapping-item-edit-header-row > div{
     display: flex;
@@ -1132,7 +1132,7 @@ td.komet-concept-table-nested-indicator.komet-concept-table-nested-indicator-ope
     display: flex;
     justify-content: space-between;
     //align-items: center;
-    height: 30px;
+    min-height: 30px;
 }
 .komet-mapping-item-edit-row > div{
     display: flex;
@@ -1140,7 +1140,7 @@ td.komet-concept-table-nested-indicator.komet-concept-table-nested-indicator-ope
     width: 200px;
     justify-content: space-between;
     align-items: center;
-    padding: 1px;
+    padding: 2px;
     border-left: 1px solid black;
     border-top: 1px solid black;
 }
