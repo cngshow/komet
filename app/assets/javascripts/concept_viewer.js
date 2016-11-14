@@ -593,6 +593,8 @@ var ConceptViewer = function(viewerID, currentConceptID, viewerAction) {
                         }
 
                         editorSection.prepend(UIHelper.generatePageMessage(errorString));
+                        UIHelper.clearAutoSuggestRecentCache();
+
                     } else {
 
                         TaxonomyModule.tree.reloadTreeStatedView(TaxonomyModule.getStatedView(), false);
@@ -862,6 +864,7 @@ var ConceptViewer = function(viewerID, currentConceptID, viewerAction) {
             + 'value="' + targetID + '" '
             + 'display-value="' + targetText + '" '
             + 'type-value="' + targetTaxonomyType + '" '
+            + 'restrict-search="' + UIHelper.RECENTS_ASSOCIATION + '"'
             + 'classes="komet-concept-edit-association-value">'
             + '</autosuggest></div>'
             + '<div>' + this.createSelectField("associations", associationID, null, null, "association_state", this.selectFieldOptions.state, state) + '</div>';
@@ -904,7 +907,8 @@ var ConceptViewer = function(viewerID, currentConceptID, viewerAction) {
             + '<autosuggest id-base="komet_concept_add_property_sememe" '
             + 'id-postfix="_' + this.viewerID + '" '
             + 'name="sememe" '
-            + 'label: "Search for a concept to use as a ' + property_type + ' property" '
+            + 'label="Search for a concept to use as a ' + property_type + ' property" '
+            + 'restrict-search="' + UIHelper.RECENTS_SEMEME + '"'
             + 'classes="komet-concept-add-property-sememe">'
             + '</autosuggest></form>';
 
