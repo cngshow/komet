@@ -1,11 +1,19 @@
 Rails.application.routes.draw do
+    class OnlyAjaxRequest
+        def matches?(request)
+            request.xhr?
+        end
+    end
 
     match 'logic_graph/chronology/:id' => 'logic_graph#chronology', :as => :logic_graph_chronology, via: [:get]
     match 'logic_graph/version/:id' => 'logic_graph#version', :as => :logic_graph_version, via: [:get]
 
     post 'external/authenticate', as: :login
     get 'external/export', as: :export
-    get  'external/logout', :as => :logout
+    get 'external/logout', :as => :logout
+
+    get 'komet_dashboard/session_timeout', as: :session_timeout
+    get 'komet_dashboard/renew_session', as: :renew_session, :constraints => OnlyAjaxRequest.new
 
     get 'komet_dashboard/dashboard'
     get 'komet_dashboard/metadata'

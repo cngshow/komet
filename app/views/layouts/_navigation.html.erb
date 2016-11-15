@@ -156,6 +156,10 @@
   </div>
 </div>
 
+<% if controller.ssoi? %>
+  <%= render 'session_timeout/session_timeout_notification' %>
+<% end %>
+
 <script>
   $(document).ready(function () {
     $("#komet_preferences_tabs").tabs();
