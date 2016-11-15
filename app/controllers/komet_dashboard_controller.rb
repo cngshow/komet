@@ -1023,7 +1023,7 @@ class KometDashboardController < ApplicationController
         @version[:isaac_version] = system_info_isaac.to_jaxb_json_hash
       rescue => ex
         $log.warn("I failed to obtain the isaac version information and it was expressly asked for.  The data will not be sent to prisme. #{ex}")
-        $log.war(ex.backtrace.join("\n"))
+        $log.warn(ex.backtrace.join("\n"))
       end
     end
     render json: @version
