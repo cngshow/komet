@@ -11,7 +11,12 @@ module TaxonomyHelper
             }
 
             colors.each do |color|
-                flag = ' <span class="komet-node-' + flag_name + '-flag" style="border-color: ' + color[1]['colorid'] + ';"></span>'
+                var colorshape = ''
+                if color[1]['colorshape'] != 'none'
+                  colorshape= color[1]['colorshape']
+                end
+
+                  flag = ' <span class="komet-node-' + flag_name + '-flag ' + colorshape  + '" style="border-color: ' + color[1]['colorid'] + ';"></span>'
             end
         end
 

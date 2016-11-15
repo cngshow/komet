@@ -225,6 +225,7 @@ var PreferenceModule = (function () {
             var allowedStates=$('input[type=radio]:checked').val();
             var colormodule=[];
             var colorpath=[];
+          //  var colormoduleshapes=[];
             var params = "";
             var moduleid="";
             var colorrefsets = [];
@@ -238,8 +239,8 @@ var PreferenceModule = (function () {
             $('input[name=color_id]').each(function() {
                 var splitvalue = this.id.split('~');
                 if (splitvalue[0] != "color_id")
-                {
-                    colormodule.push({module_name:splitvalue[0],moduleid:splitvalue[1] ,colorid:this.value }) ;
+                { var getshapecntlID= "colormoduleshape" + splitvalue[1];
+                    colormodule.push({module_name:splitvalue[0],moduleid:splitvalue[1] ,colorid:this.value,colorshape:document.getElementById(getshapecntlID).value}) ;
                 }
 
             });
@@ -252,7 +253,10 @@ var PreferenceModule = (function () {
                 var splitvalue = this.id.split('~');
                 colorrefsets.push({refsets_name:splitvalue[0],refsetsid:splitvalue[1],colorid:this.value}) ;
             });
-
+           // $('input[name=colormodule_shape]').each(function() {
+             //   var splitvalue = this.id.split('~');
+               // colormoduleshapes.push({moduleid:splitvalue[1] ,shapeclass:this.value }) ;
+            //});
 
             dialect_values = dialect_values.substring(0  ,dialect_values.length -1); // removing comma from end of the string
             description_values = description_values.substring(0  ,description_values.length -1);// removing comma from end of the string
@@ -341,9 +345,7 @@ var PreferenceModule = (function () {
             }
             else
             {
-
                 founditem='false';
-
             }
         });
             if (founditem === 'false')
@@ -370,8 +372,6 @@ var PreferenceModule = (function () {
 
                 $("#komet_preferences_refsets_table").append(refsetRow);
             }
-
-
 
     }
 
@@ -430,7 +430,7 @@ var PreferenceModule = (function () {
                     var colorrowid = "'" + value.conChronology.description + "~" + value.conChronology.conceptSequence + "','colorpathtr" + value.conChronology.conceptSequence + "'";
 
                     var td3 = document.createElement("TD");
-                    td3.innerHTML = '<input name="colorpath" class="pathcolordemo" title="Click here to change color"  type="text" id="' + value.conChronology.description + '~' + value.conChronology.conceptSequence + '" size="6" style="height:30px" data-control="hue" value="" />&nbsp;<a title="remove color" onclick="PreferenceModule.removecolor(' + colorrowid + ')">X</a>';
+                    td3.innerHTML = '<input name="colorpath" class="pathcolordemo" title="Click here to change color"  type="text" id="' + value.conChronology.description + '~' + value.conChronology.conceptSequence + '" size="6" style="height:30px" data-control="hue" value="" />&nbsp;<a title="remove color" onclick="PreferenceModule.removecolor(' + colorrowid + ')">Remove color</a>';
 
                     document.getElementById("colorpathtr" + value.conChronology.conceptSequence).appendChild(td3);
                     $('.pathcolordemo').minicolors();
@@ -463,7 +463,7 @@ var PreferenceModule = (function () {
                 var colorrowid = "'" + value.path_name + "~" + value.pathid + "','colorpathtr" + value.pathid + "'";
 
                 var td3 = document.createElement("TD");
-                td3.innerHTML = '<input name="colorpath" class="pathcolordemo" title="Click here to change path color"  type="text" id="' + value.path_name + '~' + value.pathid + '" size="6" style="height:30px" data-control="hue" value="' + value.colorid + '" />&nbsp;<a title="remove color" onclick="PreferenceModule.removecolor(' + colorrowid + ')">X</a>';
+                td3.innerHTML = '<input name="colorpath" class="pathcolordemo" title="Click here to change path color"  type="text" id="' + value.path_name + '~' + value.pathid + '" size="6" style="height:30px" data-control="hue" value="' + value.colorid + '" />&nbsp;<a title="remove color" onclick="PreferenceModule.removecolor(' + colorrowid + ')">Remove color</a>';
 
                 document.getElementById("colorpathtr" + value.pathid).appendChild(td3);
                 $('.pathcolordemo').minicolors();
@@ -487,11 +487,17 @@ var PreferenceModule = (function () {
 
             var colorheadingtd1 = document.createElement("TD");
             colorheadingtd1.innerHTML ='Module';
+            colorheadingtd1.setAttribute("style", "width:40%")
             document.getElementById("colorheading").appendChild(colorheadingtd1);
 
             var colorheadingtd2 = document.createElement("TD");
             colorheadingtd2.innerHTML = 'Color';
+            colorheadingtd2.setAttribute("style", "width:25%")
             document.getElementById("colorheading").appendChild(colorheadingtd2);
+            var colorheadingtd3 = document.createElement("TD");
+            colorheadingtd3.innerHTML = 'Shape';
+            colorheadingtd3.setAttribute("style", "width:30%")
+            document.getElementById("colorheading").appendChild(colorheadingtd3);
             //Gets list of all the module.creating color module table from rest api call by passing constant uuid
             var uuidParams =  "?uuid=" +  gon.IsaacMetadataAuxiliary.MODULE.uuids[0].uuid;
             // make an ajax call to get the data for module color list
@@ -506,9 +512,13 @@ var PreferenceModule = (function () {
                     document.getElementById("colorTr" + value.conChronology.conceptSequence).appendChild(td2);
                     var colorrowid = "'" + value.conChronology.description + "~" + value.conChronology.conceptSequence + "','colorTr" + value.conChronology.conceptSequence + "'";
                     var td3 = document.createElement("TD");
-                    td3.innerHTML = '<input name="color_id" class="demo" title="Click here to change color"  type="text" id="' + value.conChronology.description + '~' + value.conChronology.conceptSequence + '" size="6" style="height:30px" data-control="hue" value="" />&nbsp;<a title="remove color" onclick="PreferenceModule.removecolor(' + colorrowid + ')">X</a>';
-
+                    td3.innerHTML = '<a title="clear color" style="padding:2px;color:red" onclick="PreferenceModule.removecolor(' + colorrowid + ')">X</a><input name="color_id" class="demo" title="Click here to change color"  type="text" id="' + value.conChronology.description + '~' + value.conChronology.conceptSequence + '" size="6" style="height:30px" data-control="hue" value="" />&nbsp;';
                     document.getElementById("colorTr" + value.conChronology.conceptSequence).appendChild(td3);
+                    var td4 = document.createElement("TD");
+                    var shapeCntlId =  "'colormoduleshape" + value.conChronology.conceptSequence + "'" ;
+                    td4.innerHTML = '<div class="dropdown" ><div style="display: inline-block" id="cshape_' +  value.conChronology.conceptSequence + '">select</div><input name="colormodule_shape" value="none"  type="hidden" id=' + shapeCntlId + '  /><span  class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" id="shapeid" aria-expanded="false"><span class="caret"></span></span><ul class="dropdown-menu"   aria-label="select shape"><li  class="glyphicon glyphicon-stop" ><a style="display: inline-block" onclick="PreferenceModule.setShape(' + "'square'" + "," +  value.conChronology.conceptSequence  + "," + shapeCntlId + ')" href="#">Square</a></li><li  class="glyphicon glyphicon-star"><a href="#" style="display: inline-block" onclick="PreferenceModule.setShape(' + "'star'" +  "," +  value.conChronology.conceptSequence + "," + shapeCntlId + ')">Star</a></li></ul></div>';
+
+                    document.getElementById("colorTr" + value.conChronology.conceptSequence).appendChild(td4);
                     $('.demo').minicolors();
                 });
 
@@ -524,11 +534,17 @@ var PreferenceModule = (function () {
 
             var colorheadingtd1 = document.createElement("TD");
             colorheadingtd1.innerHTML ='Module';
+            colorheadingtd1.setAttribute("style", "width:40%")
             document.getElementById("colorheading").appendChild(colorheadingtd1);
 
             var colorheadingtd2 = document.createElement("TD");
             colorheadingtd2.innerHTML = 'Color';
+            colorheadingtd2.setAttribute("style", "width:25%")
             document.getElementById("colorheading").appendChild(colorheadingtd2);
+            var colorheadingtd3 = document.createElement("TD");
+            colorheadingtd3.innerHTML = 'Shape';
+            colorheadingtd3.setAttribute("style", "width:30%")
+
             $.each(colormodule, function (index, value) {
                 var tr = document.createElement("TR");
                 tr.setAttribute("id", "colorTr" + value.moduleid);
@@ -540,9 +556,14 @@ var PreferenceModule = (function () {
 
                 var colorrowid = "'" + value.module_name + "~" + value.moduleid + "','colorTr" + value.moduleid + "'";
                 var td3 = document.createElement("TD");
-                td3.innerHTML = '<input name="color_id" class="demo" title="Click here to change color"  type="text" id="' + value.module_name + '~' + value.moduleid + '" size="6" style="height:30px" data-control="hue" value="' + value.colorid + '" />&nbsp;<a title="remove color" onclick="PreferenceModule.removecolor(' + colorrowid + ')">X</a>';
+                td3.innerHTML = '<a title="clear color"  style="padding:2px;color:red" onclick="PreferenceModule.removecolor(' + colorrowid + ')">X</a>&nbsp;<input name="color_id" class="demo" title="Click here to change color"  type="text" id="' + value.module_name + '~' + value.moduleid + '" size="6" style="height:30px" data-control="hue" value="' + value.colorid + '" />';
 
                 document.getElementById("colorTr" + value.moduleid).appendChild(td3);
+                var td4 = document.createElement("TD");
+                var shapeCntlId =  "'colormoduleshape" + value.moduleid + "'" ;
+                td4.innerHTML = '<div class="dropdown" ><div style="display: inline-block" id="cshape_' +  value.moduleid + '">select</div><input name="colormodule_shape" value="none"  type="hidden" id=' + shapeCntlId + '  /><span  class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" id="shapeid" aria-expanded="false"><span class="caret"></span></span><ul class="dropdown-menu"   aria-label="select shape"><li  class="glyphicon glyphicon-stop" ><a style="display: inline-block" onclick="PreferenceModule.setShape(' + "'square'" + "," +  value.moduleid  + "," + shapeCntlId + ')" href="#">Square</a></li><li  class="glyphicon glyphicon-star"><a href="#" style="display: inline-block" onclick="PreferenceModule.setShape(' + "'star'" +  "," +  value.moduleid + "," + shapeCntlId + ')">Star</a></li></ul></div>';
+
+                document.getElementById("colorTr" + value.conChronology.conceptSequence).appendChild(td4);
                 $('.demo').minicolors();
             });
 
@@ -551,15 +572,33 @@ var PreferenceModule = (function () {
     }
 
 
-function removecolor(controlid,rowid)
-{
-    console.log(controlid);
-    var colorid = "#" + controlid;
-    document.getElementById(controlid).value="";
-    document.getElementById(controlid).style.backgroundColor ="";
-    $("#" + rowid ).find('.minicolors-swatch-color').css("background-color","");
-}
-    // creates table of description type and dialect
+    function setShape(v,id,inputid)
+    {
+        var selectedshape = '#cshape_' + id ;
+        var inputids='#' + inputid;
+      if (v == 'square')
+      {
+          $(selectedshape).html("Square");
+          $(selectedshape).addClass("glyphicon glyphicon-stop" )
+          document.getElementById(inputid).value ="glyphicon glyphicon-stop";
+      }
+        if (v == 'star')
+        {
+            $(selectedshape).html("Star");
+            $(selectedshape).removeClass("glyphicon glyphicon-stop")
+            $(selectedshape).addClass( "glyphicon glyphicon-star")
+            document.getElementById(inputid).value ="glyphicon glyphicon-stop";
+        }
+    }
+
+    function removecolor(controlid,rowid)    {
+        console.log(controlid);
+        var colorid = "#" + controlid;
+        document.getElementById(controlid).value="";
+        document.getElementById(controlid).style.backgroundColor ="";
+        $("#" + rowid ).find('.minicolors-swatch-color').css("background-color","");
+    }
+        // creates table of description type and dialect
     function populateControls(tablename,uuid,arrya_ids)    {
         var counter =0;
         var get_default_ids =[];
@@ -650,7 +689,8 @@ function removecolor(controlid,rowid)
         createRefsetFieldRow:createRefsetFieldRow,
         addRefsetRow: addRefsetRow,
         deleteRefsetFieldRow: deleteRefsetFieldRow,
-        removecolor:removecolor
+        removecolor:removecolor,
+        setShape:setShape
 
 
     };
