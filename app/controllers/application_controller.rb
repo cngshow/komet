@@ -14,6 +14,7 @@ class ApplicationController < ActionController::Base
   include SSOI
   include UserSession
   include ServletSupport
+  append_view_path 'lib/rails_common/views'
 
   CACHE_TYPE_TAXONOMY = [AssociationRest, CommentApis, ConceptRest, IdAPIsRest, LogicGraphRest, MappingApis, SearchApis, SememeRest, TaxonomyRest].freeze
   CACHE_TYPE_SYSTEM = [CoordinateRest, SystemApis].freeze
@@ -180,11 +181,14 @@ class ApplicationController < ActionController::Base
     clone_hash[:path] = (PrismeConfigConcern.get_isaac_proxy_context + '/' + clone_hash[:path]).gsub('//','/') if behind_proxy
     gon.vhat_export_params= clone_hash
     gon.export_url = behind_proxy ? URI(root_url).base_url(true, false) : $PROPS['PRISME.isaac_root']
+    gon.last_round_trip = Time.now.to_i
+    gon.start_countdown_in = $PROPS['SSOI_TIMEOUT.start_countdown_in']
+    gon.countdown_mins = $PROPS['SSOI_TIMEOUT.countdown_mins']
   end
 
   def pundit_user
     r_val = nil
-    if (user_session_defined? && user_session(UserSession::LOGIN))
+    if user_session_defined? && user_session(UserSession::LOGIN)
       r_val = {user: user_session(UserSession::LOGIN),
                roles: user_session(UserSession::ROLES),
                token: user_session(UserSession::TOKEN)}

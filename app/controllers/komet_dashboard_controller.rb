@@ -1010,6 +1010,13 @@ class KometDashboardController < ApplicationController
     $log.debug("token initial #{session[:coordinatestoken].token}")
   end
 
+  # this action is called via javascript if/when the user's session has timed out
+  def session_timeout
+    clear_user_session
+    logout_url_string = ssoi? ? PrismeConfigConcern.logout_link : root_url
+    redirect_to logout_url_string
+  end
+
   def metadata
   end
 
