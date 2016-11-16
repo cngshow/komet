@@ -540,7 +540,7 @@ class KometDashboardController < ApplicationController
 
         node = {}
         node[concept.conChronology.identifiers.sequence] = concept.conChronology.description
-        has_children = !concept.children.nil?
+        has_children = concept.children.length > 0
 
         # get the children
         if has_children
