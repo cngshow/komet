@@ -76,10 +76,8 @@ var ExportModule = (function () {
     var params = {};
     params[sd] = new Date(start).getTime();
 
-    if (end_dt !== null) {
-      var ed = gon.vhat_export_params.end_date;
-      params[ed] = new Date(end_dt).getTime();
-    }
+    var ed = gon.vhat_export_params.end_date;
+    params[ed] = (end_dt == null) ? gon.vhat_export_params.max_end_date : new Date(end_dt).getTime();
 
     var url = gon.export_url + gon.vhat_export_params.path + '?' + jQuery.param(params);
     console.log(url);
