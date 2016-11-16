@@ -180,7 +180,7 @@ class ApplicationController < ActionController::Base
     clone_hash = ExportRest::VHAT_EXPORT_PATH.clone
     clone_hash[:path] = (PrismeConfigConcern.get_isaac_proxy_context + '/' + clone_hash[:path]).gsub('//','/') if behind_proxy
     gon.vhat_export_params= clone_hash
-    gon.export_url = behind_proxy ? URI(root_url).base_url(true, false) : $PROPS['PRISME.isaac_root']
+    gon.export_url = behind_proxy ? URI(root_url).base_url(true, false) : ISAAC_ROOT
     gon.last_round_trip = Time.now.to_i
     gon.start_countdown_in = $PROPS['SSOI_TIMEOUT.start_countdown_in']
     gon.countdown_mins = $PROPS['SSOI_TIMEOUT.countdown_mins']

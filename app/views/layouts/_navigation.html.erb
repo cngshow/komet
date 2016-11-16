@@ -100,25 +100,31 @@
       </form>
     </div>
     <div id="color-module" style="height: 3500px;">
-      <table id="listofmodule" width='90%' cellpadding='2' cellspacing='3'>
+      <div>Please click on <font color="red">X</font> to clear color</div>
+      <table id="listofmodule" width='90%' cellpadding='2' border='0' cellspacing='3'>
       </table>
 
     </div>
     <div id="colorpath-module" style="height: 450px;">
+      <div>Please click on <font color="red">X</font> to clear color</div>
       <table id="listofpath" width='90%' cellpadding='2' cellspacing='3'>
       </table>
     </div>
 
     <div id="komet_preferences_refsets_colors" style="height: 450px;">
-      <table>
+      <table border="0" style="display: inline-block ">
+
         <tr>
-          <td>
+          <td style="width: 35%">
             <div id="getdd"></div>
           </td>
-          <td>
+          <td style="width: 20%" style="padding-left: 5px;text-align: center;margin-left: 2px">
             &nbsp;&nbsp;<input name="color_id" class="demo" title="Click here to change color" type="hidden" id="color_id" size="1" style="height:25px" data-control="hue" value=""/>
           </td>
-          <td>&nbsp;&nbsp;<input name="applybtn" id="applybtn" type="button" value="Apply"/></td>
+          <td style="width: 30%">
+            <div id="getrefsetshape"></div>
+          </td>
+          <td><input name="applybtn" id="applybtn" type="button" value="Apply"/></td>
         </tr>
       </table>
       <BR><BR>

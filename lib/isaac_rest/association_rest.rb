@@ -77,19 +77,19 @@ module AssociationRest
             STARTING_PARAMS_SYM => PARAMS_EMPTY,
             CLAZZ_SYM => Gov::Vha::Isaac::Rest::Api::Data::Wrappers::RestWriteResponse,
             HTTP_METHOD_KEY => HTTP_METHOD_POST,
-            BODY_CLASS => Gov::Vha::Isaac::Rest::Api1::Data::Association::RestAssociationTypeVersionBaseCreate},
+            BODY_CLASS => Gov::Vha::Isaac::Rest::Api1::Data::Association::RestAssociationTypeVersionCreate},
         ACTION_ITEM_CREATE => {
             PATH_SYM => PATH_ITEM_CREATE ,
             STARTING_PARAMS_SYM => PARAMS_EMPTY,
             CLAZZ_SYM => Gov::Vha::Isaac::Rest::Api::Data::Wrappers::RestWriteResponse,
             HTTP_METHOD_KEY => HTTP_METHOD_POST,
-            BODY_CLASS => Gov::Vha::Isaac::Rest::Api1::Data::Association::RestAssociationItemVersionBaseCreate},
+            BODY_CLASS => Gov::Vha::Isaac::Rest::Api1::Data::Association::RestAssociationItemVersionCreate},
         ACTION_ITEM_UPDATE => {
             PATH_SYM => PATH_ITEM_UPDATE, 
             STARTING_PARAMS_SYM => PARAMS_EMPTY,
             CLAZZ_SYM => Gov::Vha::Isaac::Rest::Api::Data::Wrappers::RestWriteResponse,
             HTTP_METHOD_KEY => HTTP_METHOD_PUT,
-            BODY_CLASS => Gov::Vha::Isaac::Rest::Api1::Data::Association::RestAssociationItemVersionBase}
+            BODY_CLASS => Gov::Vha::Isaac::Rest::Api1::Data::Association::RestAssociationItemVersionUpdate}
     }
 
     class << self
