@@ -516,8 +516,9 @@ var PreferenceModule = (function () {
                     document.getElementById("colorTr" + value.conChronology.conceptSequence).appendChild(td3);
                     var td4 = document.createElement("TD");
                     var shapeCntlId =  "'colormoduleshape" + value.conChronology.conceptSequence + "'" ;
-                    td4.innerHTML = '<div class="dropdown" ><div style="display: inline-block" id="cshape_' +  value.conChronology.conceptSequence + '">select</div><input name="colormodule_shape" value="none"  type="hidden" id=' + shapeCntlId + '  /><span  class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" id="shapeid" aria-expanded="false"><span class="caret"></span></span><ul class="dropdown-menu"   aria-label="select shape"><li  class="glyphicon glyphicon-stop" ><a style="display: inline-block" onclick="PreferenceModule.setShape(' + "'square'" + "," +  value.conChronology.conceptSequence  + "," + shapeCntlId + ')" href="#">Square</a></li><li  class="glyphicon glyphicon-star"><a href="#" style="display: inline-block" onclick="PreferenceModule.setShape(' + "'star'" +  "," +  value.conChronology.conceptSequence + "," + shapeCntlId + ')">Star</a></li></ul></div>';
-
+                    var displayShapeDiv =  "cshape_" + value.conChronology.conceptSequence  ;
+                   // td4.innerHTML = '<div class="dropdown" ><div style="display: inline-block" id="cshape_' +  value.conChronology.conceptSequence + '">No shape</div><input name="colormodule_shape" value="none"  type="hidden" id=' + shapeCntlId + '  /><span  class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" id="shapeid" aria-expanded="false"><span class="caret"></span></span><ul class="dropdown-menu"   aria-label="select shape"><li  class="glyphicon glyphicon-stop" ><a style="display: inline-block" onclick="PreferenceModule.setShape(' + "'square'" + "," +  value.conChronology.conceptSequence  + "," + shapeCntlId + ')" href="#">Square</a></li><li  class="glyphicon glyphicon-star"><a href="#" style="display: inline-block" onclick="PreferenceModule.setShape(' + "'star'" +  "," +  value.conChronology.conceptSequence + "," + shapeCntlId + ')">Star</a></li></ul></div>';
+                    td4.innerHTML = PreferenceModule.createShapedropdown(displayShapeDiv , value.conChronology.conceptSequence , shapeCntlId,'No shape');
                     document.getElementById("colorTr" + value.conChronology.conceptSequence).appendChild(td4);
                     $('.demo').minicolors();
                 });
@@ -526,7 +527,6 @@ var PreferenceModule = (function () {
         }
         else {
             document.getElementById('listofmodule').innerHTML ="";
-
             var colorheadingtr = document.createElement("TR");
             colorheadingtr.setAttribute("id", "colorheading");
             colorheadingtr.setAttribute("style", "background-color: #4f80d9;color:white")
@@ -561,7 +561,9 @@ var PreferenceModule = (function () {
                 document.getElementById("colorTr" + value.moduleid).appendChild(td3);
                 var td4 = document.createElement("TD");
                 var shapeCntlId =  "'colormoduleshape" + value.moduleid + "'" ;
-                td4.innerHTML = '<div class="dropdown" ><div style="display: inline-block" id="cshape_' +  value.moduleid + '">select</div><input name="colormodule_shape" value="none"  type="hidden" id=' + shapeCntlId + '  /><span  class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" id="shapeid" aria-expanded="false"><span class="caret"></span></span><ul class="dropdown-menu"   aria-label="select shape"><li  class="glyphicon glyphicon-stop" ><a style="display: inline-block" onclick="PreferenceModule.setShape(' + "'square'" + "," +  value.moduleid  + "," + shapeCntlId + ')" href="#">Square</a></li><li  class="glyphicon glyphicon-star"><a href="#" style="display: inline-block" onclick="PreferenceModule.setShape(' + "'star'" +  "," +  value.moduleid + "," + shapeCntlId + ')">Star</a></li></ul></div>';
+                var displayShapeDiv =  "cshape_" + value.moduleid  ;
+               // td4.innerHTML = '<div class="dropdown" ><div style="display: inline-block" class="' + value.colorshape + '" id="cshape_' +  value.moduleid + '">existing shape</div><input name="colormodule_shape" value="' + value.colorshape + '"  type="hidden" id=' + shapeCntlId + '  /><span  class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" id="shapeid" aria-expanded="false"><span class="caret"></span></span><ul class="dropdown-menu"   aria-label="select shape"><li  class="glyphicon glyphicon-stop" ><a style="display: inline-block" onclick="PreferenceModule.setShape(' + "'square'" + "," +  value.moduleid  + "," + shapeCntlId + ')" href="#">Square</a></li><li  class="glyphicon glyphicon-star"><a href="#" style="display: inline-block" onclick="PreferenceModule.setShape(' + "'star'" +  "," +  value.moduleid + "," + shapeCntlId + ')">Star</a></li></ul></div>';
+                td4.innerHTML = PreferenceModule.createShapedropdown(displayShapeDiv , value.moduleid , shapeCntlId,value.colorshape);
 
                 document.getElementById("colorTr" + value.conChronology.conceptSequence).appendChild(td4);
                 $('.demo').minicolors();
@@ -572,25 +574,38 @@ var PreferenceModule = (function () {
     }
 
 
-    function setShape(v,id,inputid)
-    {
+    function setShape(classname,shapes,id,inputid)    {
         var selectedshape = '#cshape_' + id ;
         var inputids='#' + inputid;
-      if (v == 'square')
-      {
-          $(selectedshape).html("Square");
-          $(selectedshape).addClass("glyphicon glyphicon-stop" )
-          document.getElementById(inputid).value ="glyphicon glyphicon-stop";
-      }
-        if (v == 'star')
-        {
-            $(selectedshape).html("Star");
-            $(selectedshape).removeClass("glyphicon glyphicon-stop")
-            $(selectedshape).addClass( "glyphicon glyphicon-star")
-            document.getElementById(inputid).value ="glyphicon glyphicon-stop";
-        }
+
+        $(selectedshape).removeClass("noshape")
+        $(selectedshape).removeClass("glyphicon glyphicon-stop")
+        $(selectedshape).removeClass( "glyphicon glyphicon-star")
+
+        $(selectedshape).html(shapes);
+        $(selectedshape).addClass(classname);
+        document.getElementById(inputid).value =classname;
+
+
     }
 
+    function createShapedropdown(displayShapeDiv,conceptSequence,shapeCntlId,value)
+    {
+        var shapedd='';
+       shapedd ='<div class="dropdown" ><div style="display: inline-block" id="' +  displayShapeDiv + '">' +  value + '</div>';
+        shapedd = shapedd + '<input name="colormodule_shape" value="none"  type="hidden" id=' + shapeCntlId + '  />';
+        shapedd = shapedd + '<span  class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" id="shapeid" aria-expanded="false">';
+        shapedd = shapedd + '<span class="caret"></span></span><ul class="dropdown-menu"   aria-label="select shape">';
+        shapedd = shapedd + '<li>';
+        shapedd = shapedd + '<a style="display: inline-block" onclick="PreferenceModule.setShape(' + "'noclass'" + "," + "'none'" + "," +  conceptSequence  + "," + shapeCntlId + ')" href="#">No Shape</a></li>';
+        shapedd = shapedd + '<li  class="glyphicon glyphicon-stop" >';
+        shapedd = shapedd + '<a style="display: inline-block" onclick="PreferenceModule.setShape(' + "'glyphicon glyphicon-stop'" + "," + "'square'" + "," +  conceptSequence  + "," + shapeCntlId + ')" href="#">Square</a></li>';
+        shapedd = shapedd + '<li  class="glyphicon glyphicon-star">';
+        shapedd = shapedd + '<a href="#" style="display: inline-block" onclick="PreferenceModule.setShape(' + "'glyphicon glyphicon-star'" + "," + "'star'" +  "," +  conceptSequence + "," + shapeCntlId + ')">Star</a></li>';
+        shapedd = shapedd + '</ul></div>';
+
+        return shapedd;
+    }
     function removecolor(controlid,rowid)    {
         console.log(controlid);
         var colorid = "#" + controlid;
@@ -690,7 +705,8 @@ var PreferenceModule = (function () {
         addRefsetRow: addRefsetRow,
         deleteRefsetFieldRow: deleteRefsetFieldRow,
         removecolor:removecolor,
-        setShape:setShape
+        setShape:setShape,
+        createShapedropdown:createShapedropdown
 
 
     };

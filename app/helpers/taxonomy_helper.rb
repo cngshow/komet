@@ -11,7 +11,7 @@ module TaxonomyHelper
             }
 
             colors.each do |color|
-                var colorshape = ''
+                colorshape = ''
                 if color[1]['colorshape'] != 'none'
                   colorshape= color[1]['colorshape']
                 end
