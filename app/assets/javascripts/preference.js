@@ -578,10 +578,12 @@ var PreferenceModule = (function () {
         var selectedshape = '#cshape_' + id ;
         var inputids='#' + inputid;
 
-        $(selectedshape).removeClass("noshape")
-        $(selectedshape).removeClass("glyphicon glyphicon-stop")
-        $(selectedshape).removeClass( "glyphicon glyphicon-star")
-
+        $(selectedshape).removeClass("noshape");
+        $(selectedshape).removeClass("glyphicon glyphicon-stop");
+        $(selectedshape).removeClass( "glyphicon glyphicon-star");
+        $(selectedshape).removeClass( "fa fa-circle");
+        $(selectedshape).removeClass( "glyphicon glyphicon-triangle-top");
+        $(selectedshape).removeClass( "glyphicon glyphicon-asterisk");
         $(selectedshape).html(shapes);
         $(selectedshape).addClass(classname);
         document.getElementById(inputid).value =classname;
@@ -597,12 +599,23 @@ var PreferenceModule = (function () {
         shapedd = shapedd + '<span  class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" id="shapeid" aria-expanded="false">';
         shapedd = shapedd + '<span class="caret"></span></span><ul class="dropdown-menu"   aria-label="select shape">';
         shapedd = shapedd + '<li>';
-        shapedd = shapedd + '<a style="display: inline-block" onclick="PreferenceModule.setShape(' + "'noclass'" + "," + "'none'" + "," +  conceptSequence  + "," + shapeCntlId + ')" href="#">No Shape</a></li>';
-        shapedd = shapedd + '<li  class="glyphicon glyphicon-stop" >';
-        shapedd = shapedd + '<a style="display: inline-block" onclick="PreferenceModule.setShape(' + "'glyphicon glyphicon-stop'" + "," + "'square'" + "," +  conceptSequence  + "," + shapeCntlId + ')" href="#">Square</a></li>';
-        shapedd = shapedd + '<li  class="glyphicon glyphicon-star">';
-        shapedd = shapedd + '<a href="#" style="display: inline-block" onclick="PreferenceModule.setShape(' + "'glyphicon glyphicon-star'" + "," + "'star'" +  "," +  conceptSequence + "," + shapeCntlId + ')">Star</a></li>';
+        shapedd = shapedd + '<a style="display: inline-block" onclick="PreferenceModule.setShape(' + "'noclass'" + "," + "'None'" + "," +  conceptSequence  + "," + shapeCntlId + ')" href="#">No Shape</a></li>';
+        shapedd = shapedd + '<li aria-hidden="true"  class="glyphicon glyphicon-stop" >';
+        shapedd = shapedd + '<a style="display: inline-block" onclick="PreferenceModule.setShape(' + "'glyphicon glyphicon-stop'" + "," + "'Square'" + "," +  conceptSequence  + "," + shapeCntlId + ')" href="#">Square</a></li>';
+        shapedd = shapedd + '<li aria-hidden="true" class="glyphicon glyphicon-star">';
+        shapedd = shapedd + '<a href="#" style="display: inline-block" onclick="PreferenceModule.setShape(' + "'glyphicon glyphicon-star'" + "," + "'Star'" +  "," +  conceptSequence + "," + shapeCntlId + ')">Star</a></li>';
+
+        shapedd = shapedd + '<li aria-hidden="true" class="glyphicon glyphicon-triangle-top">';
+        shapedd = shapedd + '<a href="#" style="display: inline-block" onclick="PreferenceModule.setShape(' + "'glyphicon glyphicon-triangle-top'" + "," + "'Triangle'" +  "," +  conceptSequence + "," + shapeCntlId + ')">Triangle</a></li>';
+        shapedd = shapedd + '<li aria-hidden="true" class="glyphicon glyphicon-asterisk">';
+        shapedd = shapedd + '<a href="#" style="display: inline-block" onclick="PreferenceModule.setShape(' + "'glyphicon glyphicon-asterisk'" + "," + "'Asterisk'" +  "," +  conceptSequence + "," + shapeCntlId + ')">Asterisk</a></li>';
+        shapedd = shapedd + '<li aria-hidden="true" class="fa fa-circle">';
+        shapedd = shapedd + '<a href="#" style="display: inline-block" onclick="PreferenceModule.setShape(' + "'fa fa-circle'" + "," + "'Circle'" +  "," +  conceptSequence + "," + shapeCntlId + ')">Circle</a></li>';
+
         shapedd = shapedd + '</ul></div>';
+
+
+
 
         return shapedd;
     }
