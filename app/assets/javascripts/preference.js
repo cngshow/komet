@@ -245,8 +245,9 @@ var PreferenceModule = (function () {
 
             });
             $('input[name=colorpath]').each(function() {
+                var getshapecntlID= "colorpathshape" + splitvalue[1];
                 var splitvalue = this.id.split('~');
-                colorpath.push({path_name:splitvalue[0],pathid:splitvalue[1] ,colorid:this.value }) ;
+                colorpath.push({path_name:splitvalue[0],pathid:splitvalue[1] ,colorid:this.value,colorshape:document.getElementById(getshapecntlID).value}) ;
             });
 
             $('input[name=colorrefsets]').each(function() {
@@ -413,11 +414,19 @@ var PreferenceModule = (function () {
 
                 var colorpathheadingtd1 = document.createElement("TD");
                 colorpathheadingtd1.innerHTML ='Path';
+                colorpathheadingtd1.setAttribute("style", "width:40%")
                 document.getElementById("colorpathheading").appendChild(colorpathheadingtd1);
 
                 var colorpathheadingtd2 = document.createElement("TD");
                 colorpathheadingtd2.innerHTML = 'Color';
+                colorpathheadingtd2.setAttribute("style", "width:25%")
                 document.getElementById("colorpathheading").appendChild(colorpathheadingtd2);
+
+                var colorpathheadingtd3 = document.createElement("TD");
+                colorpathheadingtd3.innerHTML = 'Shape';
+                colorpathheadingtd3.setAttribute("style", "width:30%")
+                document.getElementById("colorpathheading").appendChild(colorpathheadingtd3);
+
                 $.each(results,function(index,value) {
                     var tr = document.createElement("TR");
                     tr.setAttribute("id", "colorpathtr" + value.conChronology.conceptSequence);
@@ -430,9 +439,15 @@ var PreferenceModule = (function () {
                     var colorrowid = "'" + value.conChronology.description + "~" + value.conChronology.conceptSequence + "','colorpathtr" + value.conChronology.conceptSequence + "'";
 
                     var td3 = document.createElement("TD");
-                    td3.innerHTML = '<input name="colorpath" class="pathcolordemo" title="Click here to change color"  type="text" id="' + value.conChronology.description + '~' + value.conChronology.conceptSequence + '" size="6" style="height:30px" data-control="hue" value="" />&nbsp;<a title="remove color" onclick="PreferenceModule.removecolor(' + colorrowid + ')">Remove color</a>';
-
+                    td3.innerHTML = '<a title="clear color" style="padding:2px;color:red" onclick="PreferenceModule.removecolor(' + colorrowid + ')">X</a>&nbsp;<input name="colorpath" class="pathcolordemo" title="Click here to change color"  type="text" id="' + value.conChronology.description + '~' + value.conChronology.conceptSequence + '" size="6" style="height:30px" data-control="hue" value="" />';
                     document.getElementById("colorpathtr" + value.conChronology.conceptSequence).appendChild(td3);
+
+                    var td4 = document.createElement("TD");
+                    var shapeCntlId =  "'colorpathshape" + value.conChronology.conceptSequence + "'" ;
+                    var displayShapeDiv =  "cpathshape_" + value.conChronology.conceptSequence  ;
+                    td4.innerHTML = PreferenceModule.createShapedropdown(displayShapeDiv , value.conChronology.conceptSequence , shapeCntlId,'No shape');
+                    document.getElementById("colorpathtr" + value.conChronology.conceptSequence).appendChild(td4);
+
                     $('.pathcolordemo').minicolors();
                 });
             });
@@ -446,11 +461,19 @@ var PreferenceModule = (function () {
 
             var colorpathheadingtd1 = document.createElement("TD");
             colorpathheadingtd1.innerHTML ='Path';
+            colorpathheadingtd1.setAttribute("style", "width:40%")
             document.getElementById("colorpathheading").appendChild(colorpathheadingtd1);
 
             var colorpathheadingtd2 = document.createElement("TD");
             colorpathheadingtd2.innerHTML = 'Color';
+            colorpathheadingtd2.setAttribute("style", "width:25%")
             document.getElementById("colorpathheading").appendChild(colorpathheadingtd2);
+
+           var colorpathheadingtd3 = document.createElement("TD");
+           colorpathheadingtd3.innerHTML = 'Shape';
+           colorpathheadingtd3.setAttribute("style", "width:30%")
+           document.getElementById("colorpathheading").appendChild(colorpathheadingtd3);
+
             $.each(pathvalue, function (index, value) {
                 var tr = document.createElement("TR");
                 tr.setAttribute("id", "colorpathtr" + value.pathid);
@@ -463,9 +486,16 @@ var PreferenceModule = (function () {
                 var colorrowid = "'" + value.path_name + "~" + value.pathid + "','colorpathtr" + value.pathid + "'";
 
                 var td3 = document.createElement("TD");
-                td3.innerHTML = '<input name="colorpath" class="pathcolordemo" title="Click here to change path color"  type="text" id="' + value.path_name + '~' + value.pathid + '" size="6" style="height:30px" data-control="hue" value="' + value.colorid + '" />&nbsp;<a title="remove color" onclick="PreferenceModule.removecolor(' + colorrowid + ')">Remove color</a>';
-
+                td3.innerHTML = '<a title="clear color" style="padding:2px;color:red" onclick="PreferenceModule.removecolor(' + colorrowid + ')">X</a>&nbsp;<input name="colorpath" class="pathcolordemo" title="Click here to change path color"  type="text" id="' + value.path_name + '~' + value.pathid + '" size="6" style="height:30px" data-control="hue" value="' + value.colorid + '" />';
                 document.getElementById("colorpathtr" + value.pathid).appendChild(td3);
+
+                var td4 = document.createElement("TD");
+                var shapeCntlId =  "'colorpathshape" + value.pathid + "'" ;
+                var displayShapeDiv =  "cpathshape_" + value.pathid  ;
+                td4.innerHTML = PreferenceModule.createShapedropdown(displayShapeDiv , value.pathid , shapeCntlId,'No shape');
+                document.getElementById("colorpathtr" + value.pathid).appendChild(td4);
+
+
                 $('.pathcolordemo').minicolors();
             });
         }
@@ -514,10 +544,10 @@ var PreferenceModule = (function () {
                     var td3 = document.createElement("TD");
                     td3.innerHTML = '<a title="clear color" style="padding:2px;color:red" onclick="PreferenceModule.removecolor(' + colorrowid + ')">X</a><input name="color_id" class="demo" title="Click here to change color"  type="text" id="' + value.conChronology.description + '~' + value.conChronology.conceptSequence + '" size="6" style="height:30px" data-control="hue" value="" />&nbsp;';
                     document.getElementById("colorTr" + value.conChronology.conceptSequence).appendChild(td3);
+
                     var td4 = document.createElement("TD");
                     var shapeCntlId =  "'colormoduleshape" + value.conChronology.conceptSequence + "'" ;
                     var displayShapeDiv =  "cshape_" + value.conChronology.conceptSequence  ;
-                   // td4.innerHTML = '<div class="dropdown" ><div style="display: inline-block" id="cshape_' +  value.conChronology.conceptSequence + '">No shape</div><input name="colormodule_shape" value="none"  type="hidden" id=' + shapeCntlId + '  /><span  class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" id="shapeid" aria-expanded="false"><span class="caret"></span></span><ul class="dropdown-menu"   aria-label="select shape"><li  class="glyphicon glyphicon-stop" ><a style="display: inline-block" onclick="PreferenceModule.setShape(' + "'square'" + "," +  value.conChronology.conceptSequence  + "," + shapeCntlId + ')" href="#">Square</a></li><li  class="glyphicon glyphicon-star"><a href="#" style="display: inline-block" onclick="PreferenceModule.setShape(' + "'star'" +  "," +  value.conChronology.conceptSequence + "," + shapeCntlId + ')">Star</a></li></ul></div>';
                     td4.innerHTML = PreferenceModule.createShapedropdown(displayShapeDiv , value.conChronology.conceptSequence , shapeCntlId,'No shape');
                     document.getElementById("colorTr" + value.conChronology.conceptSequence).appendChild(td4);
                     $('.demo').minicolors();
@@ -557,15 +587,13 @@ var PreferenceModule = (function () {
                 var colorrowid = "'" + value.module_name + "~" + value.moduleid + "','colorTr" + value.moduleid + "'";
                 var td3 = document.createElement("TD");
                 td3.innerHTML = '<a title="clear color"  style="padding:2px;color:red" onclick="PreferenceModule.removecolor(' + colorrowid + ')">X</a>&nbsp;<input name="color_id" class="demo" title="Click here to change color"  type="text" id="' + value.module_name + '~' + value.moduleid + '" size="6" style="height:30px" data-control="hue" value="' + value.colorid + '" />';
-
                 document.getElementById("colorTr" + value.moduleid).appendChild(td3);
+
                 var td4 = document.createElement("TD");
                 var shapeCntlId =  "'colormoduleshape" + value.moduleid + "'" ;
                 var displayShapeDiv =  "cshape_" + value.moduleid  ;
-               // td4.innerHTML = '<div class="dropdown" ><div style="display: inline-block" class="' + value.colorshape + '" id="cshape_' +  value.moduleid + '">existing shape</div><input name="colormodule_shape" value="' + value.colorshape + '"  type="hidden" id=' + shapeCntlId + '  /><span  class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" id="shapeid" aria-expanded="false"><span class="caret"></span></span><ul class="dropdown-menu"   aria-label="select shape"><li  class="glyphicon glyphicon-stop" ><a style="display: inline-block" onclick="PreferenceModule.setShape(' + "'square'" + "," +  value.moduleid  + "," + shapeCntlId + ')" href="#">Square</a></li><li  class="glyphicon glyphicon-star"><a href="#" style="display: inline-block" onclick="PreferenceModule.setShape(' + "'star'" +  "," +  value.moduleid + "," + shapeCntlId + ')">Star</a></li></ul></div>';
                 td4.innerHTML = PreferenceModule.createShapedropdown(displayShapeDiv , value.moduleid , shapeCntlId,value.colorshape);
-
-                document.getElementById("colorTr" + value.conChronology.conceptSequence).appendChild(td4);
+                document.getElementById("colorTr" + value.moduleid).appendChild(td4);
                 $('.demo').minicolors();
             });
 
@@ -573,9 +601,9 @@ var PreferenceModule = (function () {
 
     }
 
-
+    // sets selected shape into div tag
     function setShape(classname,shapes,id,inputid)    {
-        var selectedshape = '#cshape_' + id ;
+        var selectedshape = '#' + id ;
         var inputids='#' + inputid;
 
         $(selectedshape).removeClass("noshape");
@@ -591,34 +619,31 @@ var PreferenceModule = (function () {
 
     }
 
-    function createShapedropdown(displayShapeDiv,conceptSequence,shapeCntlId,value)
-    {
+    /// creates shape dropdown
+    function createShapedropdown(displayShapeDiv,conceptSequence,shapeCntlId,value)    {
         var shapedd='';
-       shapedd ='<div class="dropdown" ><div style="display: inline-block" id="' +  displayShapeDiv + '">' +  value + '</div>';
+        shapedd ='<div class="dropdown" ><div style="display: inline-block" id="' +  displayShapeDiv + '">' +  value + '</div>';
         shapedd = shapedd + '<input name="colormodule_shape" value="none"  type="hidden" id=' + shapeCntlId + '  />';
         shapedd = shapedd + '<span  class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" id="shapeid" aria-expanded="false">';
         shapedd = shapedd + '<span class="caret"></span></span><ul class="dropdown-menu"   aria-label="select shape">';
         shapedd = shapedd + '<li>';
-        shapedd = shapedd + '<a style="display: inline-block" onclick="PreferenceModule.setShape(' + "'noclass'" + "," + "'None'" + "," +  conceptSequence  + "," + shapeCntlId + ')" href="#">No Shape</a></li>';
+        shapedd = shapedd + '<a style="display: inline-block" onclick="PreferenceModule.setShape(' + "'noclass'" + "," + "'None'" + ",'" +  displayShapeDiv  + "'," + shapeCntlId + ')" href="#">No Shape</a></li>';
         shapedd = shapedd + '<li aria-hidden="true"  class="glyphicon glyphicon-stop" >';
-        shapedd = shapedd + '<a style="display: inline-block" onclick="PreferenceModule.setShape(' + "'glyphicon glyphicon-stop'" + "," + "'Square'" + "," +  conceptSequence  + "," + shapeCntlId + ')" href="#">Square</a></li>';
+        shapedd = shapedd + '<a style="display: inline-block" onclick="PreferenceModule.setShape(' + "'glyphicon glyphicon-stop'" + "," + "'Square'" + ",'" +  displayShapeDiv  + "'," + shapeCntlId + ')" href="#">Square</a></li>';
         shapedd = shapedd + '<li aria-hidden="true" class="glyphicon glyphicon-star">';
-        shapedd = shapedd + '<a href="#" style="display: inline-block" onclick="PreferenceModule.setShape(' + "'glyphicon glyphicon-star'" + "," + "'Star'" +  "," +  conceptSequence + "," + shapeCntlId + ')">Star</a></li>';
-
+        shapedd = shapedd + '<a href="#" style="display: inline-block" onclick="PreferenceModule.setShape(' + "'glyphicon glyphicon-star'" + "," + "'Star'" +  ",'" +  displayShapeDiv  + "'," + shapeCntlId + ')">Star</a></li>';
         shapedd = shapedd + '<li aria-hidden="true" class="glyphicon glyphicon-triangle-top">';
-        shapedd = shapedd + '<a href="#" style="display: inline-block" onclick="PreferenceModule.setShape(' + "'glyphicon glyphicon-triangle-top'" + "," + "'Triangle'" +  "," +  conceptSequence + "," + shapeCntlId + ')">Triangle</a></li>';
+        shapedd = shapedd + '<a href="#" style="display: inline-block" onclick="PreferenceModule.setShape(' + "'glyphicon glyphicon-triangle-top'" + "," + "'Triangle'" +  ",'" +  displayShapeDiv  + "'," + shapeCntlId + ')">Triangle</a></li>';
         shapedd = shapedd + '<li aria-hidden="true" class="glyphicon glyphicon-asterisk">';
-        shapedd = shapedd + '<a href="#" style="display: inline-block" onclick="PreferenceModule.setShape(' + "'glyphicon glyphicon-asterisk'" + "," + "'Asterisk'" +  "," +  conceptSequence + "," + shapeCntlId + ')">Asterisk</a></li>';
+        shapedd = shapedd + '<a href="#" style="display: inline-block" onclick="PreferenceModule.setShape(' + "'glyphicon glyphicon-asterisk'" + "," + "'Asterisk'" +  ",'" +  displayShapeDiv  + "'," + shapeCntlId + ')">Asterisk</a></li>';
         shapedd = shapedd + '<li aria-hidden="true" class="fa fa-circle">';
-        shapedd = shapedd + '<a href="#" style="display: inline-block" onclick="PreferenceModule.setShape(' + "'fa fa-circle'" + "," + "'Circle'" +  "," +  conceptSequence + "," + shapeCntlId + ')">Circle</a></li>';
-
+        shapedd = shapedd + '<a href="#" style="display: inline-block" onclick="PreferenceModule.setShape(' + "'fa fa-circle'" + "," + "'Circle'" +  ",'" +  displayShapeDiv  + "'," + shapeCntlId + ')">Circle</a></li>';
         shapedd = shapedd + '</ul></div>';
-
-
-
 
         return shapedd;
     }
+
+    //clear color value
     function removecolor(controlid,rowid)    {
         console.log(controlid);
         var colorid = "#" + controlid;
@@ -626,7 +651,8 @@ var PreferenceModule = (function () {
         document.getElementById(controlid).style.backgroundColor ="";
         $("#" + rowid ).find('.minicolors-swatch-color').css("background-color","");
     }
-        // creates table of description type and dialect
+
+    // creates table of description type and dialect
     function populateControls(tablename,uuid,arrya_ids)    {
         var counter =0;
         var get_default_ids =[];
@@ -676,6 +702,7 @@ var PreferenceModule = (function () {
 
         });
     }
+
     function selectItemByValue(elmnt, value){
        for(var i=0; i < elmnt.options.length; i++)
         {
@@ -683,7 +710,8 @@ var PreferenceModule = (function () {
                 elmnt.selectedIndex = i;
         }
     }
-// add row to description type and dialect table
+
+    // add row to description type and dialect table
     function renderTbl(value,counter,tblname,index)    {
         var tr = document.createElement("TR");
         tr.setAttribute("id", "Tr" + counter);
