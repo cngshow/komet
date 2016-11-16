@@ -61,7 +61,7 @@ var PreferenceModule = (function () {
         // make an ajax call to get the data for language on option tab
         $.get(gon.routes.taxonomy_get_concept_children_path + uuidParams, function( results ) {
             $.each(results,function(index,value) {
-                $("#komet_concept_language").append($("<option />").val(value.conChronology.conceptSequence).text(value.conChronology.description));
+                $("#komet_concept_language").append($("<option />").val(value.conChronology.identifiers.sequence).text(value.conChronology.description));
             });
         });
 
@@ -448,24 +448,24 @@ var PreferenceModule = (function () {
 
                 $.each(results,function(index,value) {
                     var tr = document.createElement("TR");
-                    tr.setAttribute("id", "colorpathtr" + value.conChronology.conceptSequence);
+                    tr.setAttribute("id", "colorpathtr" + value.conChronology.identifiers.sequence);
                     document.getElementById('listofpath').appendChild(tr);
 
                     var td2 = document.createElement("TD");
                     td2.innerHTML = value.conChronology.description;
-                    document.getElementById("colorpathtr" + value.conChronology.conceptSequence).appendChild(td2);
+                    document.getElementById("colorpathtr" + value.conChronology.identifiers.sequence).appendChild(td2);
 
-                    var colorrowid = "'" + value.conChronology.description + "~" + value.conChronology.conceptSequence + "','colorpathtr" + value.conChronology.conceptSequence + "'";
+                    var colorrowid = "'" + value.conChronology.description + "~" + value.conChronology.identifiers.sequence + "','colorpathtr" + value.conChronology.identifiers.sequence + "'";
 
                     var td3 = document.createElement("TD");
-                    td3.innerHTML = '<a title="clear color" style="padding:2px;color:red" onclick="PreferenceModule.removecolor(' + colorrowid + ')">X</a>&nbsp;<input name="colorpath" class="pathcolordemo" title="Click here to change color"  type="text" id="' + value.conChronology.description + '~' + value.conChronology.conceptSequence + '" size="6" style="height:30px" data-control="hue" value="" />';
-                    document.getElementById("colorpathtr" + value.conChronology.conceptSequence).appendChild(td3);
+                    td3.innerHTML = '<a title="clear color" style="padding:2px;color:red" onclick="PreferenceModule.removecolor(' + colorrowid + ')">X</a>&nbsp;<input name="colorpath" class="pathcolordemo" title="Click here to change color"  type="text" id="' + value.conChronology.description + '~' + value.conChronology.identifiers.sequence + '" size="6" style="height:30px" data-control="hue" value="" />';
+                    document.getElementById("colorpathtr" + value.conChronology.identifiers.sequence).appendChild(td3);
 
                     var td4 = document.createElement("TD");
-                    var shapeCntlId =  "'colorpathshape" + value.conChronology.conceptSequence + "'" ;
-                    var displayShapeDiv =  "cpathshape_" + value.conChronology.conceptSequence  ;
-                    td4.innerHTML = PreferenceModule.createShapedropdown(displayShapeDiv , value.conChronology.conceptSequence , shapeCntlId,'No shape');
-                    document.getElementById("colorpathtr" + value.conChronology.conceptSequence).appendChild(td4);
+                    var shapeCntlId =  "'colorpathshape" + value.conChronology.identifiers.sequence + "'" ;
+                    var displayShapeDiv =  "cpathshape_" + value.conChronology.identifiers.sequence  ;
+                    td4.innerHTML = PreferenceModule.createShapedropdown(displayShapeDiv , value.conChronology.identifiers.sequence , shapeCntlId,'No shape');
+                    document.getElementById("colorpathtr" + value.conChronology.identifiers.sequence).appendChild(td4);
 
                     $('.pathcolordemo').minicolors();
                 });
@@ -553,22 +553,22 @@ var PreferenceModule = (function () {
             $.get(gon.routes.taxonomy_get_concept_children_path + uuidParams, function( results ) {
                 $.each(results,function(index,value) {
                     var tr = document.createElement("TR");
-                    tr.setAttribute("id", "colorTr" + value.conChronology.conceptSequence);
+                    tr.setAttribute("id", "colorTr" + value.conChronology.identifiers.sequence);
                     document.getElementById('listofmodule').appendChild(tr);
 
                     var td2 = document.createElement("TD");
                     td2.innerHTML = value.conChronology.description;
-                    document.getElementById("colorTr" + value.conChronology.conceptSequence).appendChild(td2);
-                    var colorrowid = "'" + value.conChronology.description + "~" + value.conChronology.conceptSequence + "','colorTr" + value.conChronology.conceptSequence + "'";
+                    document.getElementById("colorTr" + value.conChronology.identifiers.sequence).appendChild(td2);
+                    var colorrowid = "'" + value.conChronology.description + "~" + value.conChronology.identifiers.sequence + "','colorTr" + value.conChronology.identifiers.sequence + "'";
                     var td3 = document.createElement("TD");
-                    td3.innerHTML = '<a title="clear color" style="padding:2px;color:red" onclick="PreferenceModule.removecolor(' + colorrowid + ')">X</a><input name="color_id" class="demo" title="Click here to change color"  type="text" id="' + value.conChronology.description + '~' + value.conChronology.conceptSequence + '" size="6" style="height:30px" data-control="hue" value="" />&nbsp;';
-                    document.getElementById("colorTr" + value.conChronology.conceptSequence).appendChild(td3);
+                    td3.innerHTML = '<a title="clear color" style="padding:2px;color:red" onclick="PreferenceModule.removecolor(' + colorrowid + ')">X</a><input name="color_id" class="demo" title="Click here to change color"  type="text" id="' + value.conChronology.description + '~' + value.conChronology.identifiers.sequence + '" size="6" style="height:30px" data-control="hue" value="" />&nbsp;';
+                    document.getElementById("colorTr" + value.conChronology.identifiers.sequence).appendChild(td3);
 
                     var td4 = document.createElement("TD");
-                    var shapeCntlId =  "'colormoduleshape" + value.conChronology.conceptSequence + "'" ;
-                    var displayShapeDiv =  "cshape_" + value.conChronology.conceptSequence  ;
-                    td4.innerHTML = PreferenceModule.createShapedropdown(displayShapeDiv , value.conChronology.conceptSequence , shapeCntlId,'No shape');
-                    document.getElementById("colorTr" + value.conChronology.conceptSequence).appendChild(td4);
+                    var shapeCntlId =  "'colormoduleshape" + value.conChronology.identifiers.sequence + "'" ;
+                    var displayShapeDiv =  "cshape_" + value.conChronology.identifiers.sequence  ;
+                    td4.innerHTML = PreferenceModule.createShapedropdown(displayShapeDiv , value.conChronology.identifiers.sequence , shapeCntlId,'No shape');
+                    document.getElementById("colorTr" + value.conChronology.identifiers.sequence).appendChild(td4);
                     $('.demo').minicolors();
                 });
 
@@ -683,8 +683,8 @@ var PreferenceModule = (function () {
         uuidParams =  "?uuid=" + uuid;
         $.get( gon.routes.taxonomy_get_concept_children_path + uuidParams, function( results ) {
             $.each(results,function(index,value) {
-                get_default_ids.push(value.conChronology.conceptSequence);
-                get_default_values_id.push({id:value.conChronology.conceptSequence,description:value.conChronology.description})
+                get_default_ids.push(value.conChronology.identifiers.sequence);
+                get_default_values_id.push({id:value.conChronology.identifiers.sequence,description:value.conChronology.description})
             });
 
             var items = get_default_ids;
