@@ -35,7 +35,7 @@ module SearchApis
   PATH_DESCRIPTIONS = ROOT_PATH + 'descriptions'
   PATH_PREFIX = ROOT_PATH + 'prefix'
   PATH_SEMEMES = ROOT_PATH + 'sememes'
-  PATH_BY_REFERENCED_COMPONENT = ROOT_PATH + 'byReferencedComponent'
+  PATH_BY_REFERENCED_COMPONENT = ROOT_PATH + 'forReferencedComponent'
 
   # these are not used!!
   PARAMS_DESCRIPTIONS = {}

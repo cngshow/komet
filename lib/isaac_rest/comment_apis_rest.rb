@@ -33,7 +33,7 @@ module CommentApis
     ROOT_PATH = ISAAC_ROOT + 'rest/1/comment/'
     PATH_COMMENT_WRITE_API = ISAAC_ROOT + 'rest/write/1/comment/'
     PATH_VERSION = ROOT_PATH + 'version/{id}'
-    PATH_BY_REFERENCED_COMPONENT = ROOT_PATH + 'version/byReferencedComponent/{id}'
+    PATH_BY_REFERENCED_COMPONENT = ROOT_PATH + 'version/forReferencedComponent/{id}'
     PATH_CREATE = PATH_COMMENT_WRITE_API + 'create'
     PATH_UPDATE = PATH_COMMENT_WRITE_API + 'update/{id}'
 
@@ -54,7 +54,7 @@ module CommentApis
             STARTING_PARAMS_SYM => PARAMS_EMPTY,
             CLAZZ_SYM => Gov::Vha::Isaac::Rest::Api::Data::Wrappers::RestWriteResponse,
             HTTP_METHOD_KEY => HTTP_METHOD_POST,
-            BODY_CLASS => Gov::Vha::Isaac::Rest::Api1::Data::Comment::RestCommentVersionBaseCreate},
+            BODY_CLASS => Gov::Vha::Isaac::Rest::Api1::Data::Comment::RestCommentVersionCreate},
         ACTION_UPDATE => {
             PATH_SYM => PATH_UPDATE,
             STARTING_PARAMS_SYM => PARAMS_EMPTY,

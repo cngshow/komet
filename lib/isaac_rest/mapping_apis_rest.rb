@@ -63,32 +63,28 @@ module MappingApis
             CLAZZ_SYM => Gov::Vha::Isaac::Rest::Api1::Data::Mapping::RestMappingSetVersion},
         ACTION_CREATE_SET => {
             PATH_SYM => PATH_CREATE_SET,
-            STARTING_PARAMS_SYM => CommonRest::CacheRequest::PARAMS_NO_CACHE,
+            STARTING_PARAMS_SYM => PARAMS_EMPTY,
             CLAZZ_SYM => Gov::Vha::Isaac::Rest::Api::Data::Wrappers::RestWriteResponse,
             HTTP_METHOD_KEY => HTTP_METHOD_POST,
-            BODY_CLASS => Gov::Vha::Isaac::Rest::Api1::Data::Mapping::RestMappingSetVersionBaseCreate,
-            CALLBACKS => [MappingApis.clear_lambda]},
+            BODY_CLASS => Gov::Vha::Isaac::Rest::Api1::Data::Mapping::RestMappingSetVersionBaseCreate},
         ACTION_CREATE_ITEM => {
             PATH_SYM => PATH_CREATE_ITEM,
-            STARTING_PARAMS_SYM => CommonRest::CacheRequest::PARAMS_NO_CACHE,
+            STARTING_PARAMS_SYM => PARAMS_EMPTY,
             CLAZZ_SYM => Gov::Vha::Isaac::Rest::Api::Data::Wrappers::RestWriteResponse,
             HTTP_METHOD_KEY => HTTP_METHOD_POST,
-            BODY_CLASS => Gov::Vha::Isaac::Rest::Api1::Data::Mapping::RestMappingItemVersionBaseCreate,
-            CALLBACKS => [MappingApis.clear_lambda]},
+            BODY_CLASS => Gov::Vha::Isaac::Rest::Api1::Data::Mapping::RestMappingItemVersionCreate},
         ACTION_UPDATE_SET => {
             PATH_SYM => PATH_UPDATE_SET,
-            STARTING_PARAMS_SYM => CommonRest::CacheRequest::PARAMS_NO_CACHE,
+            STARTING_PARAMS_SYM => PARAMS_EMPTY,
             CLAZZ_SYM => Gov::Vha::Isaac::Rest::Api::Data::Wrappers::RestWriteResponse,
             HTTP_METHOD_KEY => HTTP_METHOD_PUT,
-            BODY_CLASS => Gov::Vha::Isaac::Rest::Api1::Data::Mapping::RestMappingSetVersionBase,
-            CALLBACKS => [MappingApis.clear_lambda]},
+            BODY_CLASS => Gov::Vha::Isaac::Rest::Api1::Data::Mapping::RestMappingSetVersionBase},
         ACTION_UPDATE_ITEM => {
             PATH_SYM => PATH_UPDATE_ITEM,
-            STARTING_PARAMS_SYM => CommonRest::CacheRequest::PARAMS_NO_CACHE,
+            STARTING_PARAMS_SYM => PARAMS_EMPTY,
             CLAZZ_SYM => Gov::Vha::Isaac::Rest::Api::Data::Wrappers::RestWriteResponse,
             HTTP_METHOD_KEY => HTTP_METHOD_PUT,
-            BODY_CLASS => Gov::Vha::Isaac::Rest::Api1::Data::Mapping::RestMappingItemVersionBase,
-            CALLBACKS => [MappingApis.clear_lambda]},
+            BODY_CLASS => Gov::Vha::Isaac::Rest::Api1::Data::Mapping::RestMappingItemVersionUpdate}
     }
 
     class << self
