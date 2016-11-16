@@ -182,8 +182,9 @@ var PreferenceModule = (function () {
             $(document).on("click", "#applybtn", function (ev) {
                 var refsetname=$("#komet_preferences_refset_id option:selected").text();
                 var refsetsid=$("#komet_preferences_refset_id option:selected").val();
-                    var colorid=$("#color_id").val();
-                addRefsetRow(refsetname,colorid,refsetsid);
+                var colorid=$("#color_id").val();
+                var colorrefsetshape = $("#colorrefsetshape").val();
+                addRefsetRow(refsetname,colorid,refsetsid,colorrefsetshape);
             });
 
 
@@ -300,6 +301,14 @@ var PreferenceModule = (function () {
         refsetSelect += options + '</select>';
         document.getElementById('getdd').innerHTML =refsetSelect;
 
+        var refsetShape='';
+        var td4 = document.createElement("TD");
+        var shapeCntlId =  "'colorrefsetshape'"  ;
+        var displayShapeDiv =  "crefsetshape_0"  ;
+        refsetShape = PreferenceModule.createShapedropdown(displayShapeDiv , 0 , shapeCntlId,'Select Shape');
+
+        document.getElementById('getrefsetshape').innerHTML =refsetShape;
+
         //  refsetRows.push(rowID);
         document.getElementById('komet_preferences_refsets_table').innerHTML ="";
 
@@ -317,16 +326,20 @@ var PreferenceModule = (function () {
         document.getElementById("colorrefset").appendChild(colorheadingtd1);
 
         var colorheadingtd2 = document.createElement("TD");
-        colorheadingtd2.innerHTML = 'Refset';
+        colorheadingtd2.innerHTML ='Shape';
         document.getElementById("colorrefset").appendChild(colorheadingtd2);
 
         var colorheadingtd3 = document.createElement("TD");
-        colorheadingtd3.innerHTML = 'Delete';
+        colorheadingtd3.innerHTML = 'Refset';
         document.getElementById("colorrefset").appendChild(colorheadingtd3);
+
+        var colorheadingtd4 = document.createElement("TD");
+        colorheadingtd4.innerHTML = 'Delete';
+        document.getElementById("colorrefset").appendChild(colorheadingtd4);
 
     }
 
-    function addRefsetRow(refset,colorid,refsetsid)    {
+    function addRefsetRow(refset,colorid,refsetsid,colorrefsetshape)    {
         rowCount = rowCount + 1;
        // var rowID = window.performance.now();
         var tblrowcount = 0;
@@ -335,13 +348,15 @@ var PreferenceModule = (function () {
             var $tds = $(this).find('td');
             var    refsetsIds = $tds.eq(0).text();
             var    colorids = $tds.eq(1).text();
-            var   refsetss = $tds.eq(2).text();
+            var   colorrefsetshape = $tds.eq(2).text();
+            var   refsetss = $tds.eq(3).text();
             tblrowcount = tblrowcount + 1
             if (parseInt(refsetsIds) === parseInt(refsetsid) && tblrowcount > 1)
             {
                // $tds.eq(1).setAttribute("style", "border:outset 1px black;width:15px;background-color:" + colorid );
                 founditem='true';
                 $tds.eq(1).css("background-color", "#" + colorid);
+                $tds.eq(2).addClass(colorrefsetshape);
                 return false;
             }
             else
@@ -355,19 +370,23 @@ var PreferenceModule = (function () {
                 var refsetRow = document.createElement("tr");
                 var refsetDeleteCell = document.createElement("td");
                 var refsetColorCell = document.createElement("td");
+                var refsetColorShapeCell = document.createElement("td");
                 var refsetIDCell = document.createElement("td");
                 var refsetCell = document.createElement("td");
                 refsetRow.setAttribute("id", "tr" + rowCount);
 
                 refsetIDCell.innerHTML = refsetsid;
                 refsetCell.innerHTML ="&nbsp;&nbsp;" + refset;
+                refsetColorShapeCell.innerHTML='<div class="' +  colorrefsetshape + '" ></div>';
                 refsetColorCell.setAttribute("style", "border:outset 1px black;width:15px;background-color:" + colorid );
+                refsetColorShapeCell.setAttribute("style", "text-align: center" );
                 refsetDeleteCell.setAttribute("style", "text-align: center" );
                 refsetDeleteCell.innerHTML='<a tooltip="remove refset" name="removeRow" onclick="PreferenceModule.deleteRefsetFieldRow(' + rowCount + ')">X</a>';
                 refsetColorCell.innerHTML = '<input name="colorrefsets"  type="hidden" id="' + refset + '~' + refsetsid + '" size="6" style="height:30px" data-control="hue" value=" ' + colorid + ' "  />';
 
                 refsetRow.appendChild(refsetIDCell);
                 refsetRow.appendChild(refsetColorCell);
+                refsetRow.appendChild(refsetColorShapeCell);
                 refsetRow.appendChild(refsetCell);
                 refsetRow.appendChild(refsetDeleteCell);
 
