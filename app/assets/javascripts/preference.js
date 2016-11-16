@@ -223,7 +223,7 @@ var PreferenceModule = (function () {
             var description_values ="";
             var dialect_values ="";
             var language_values=$( "#komet_concept_language" ).val();
-            var allowedStates=$('input[type=radio]:checked').val();
+            var allowedStates=$('input[name=status]:checked').val();
             var colormodule=[];
             var colorpath=[];
           //  var colormoduleshapes=[];
@@ -246,14 +246,14 @@ var PreferenceModule = (function () {
 
             });
             $('input[name=colorpath]').each(function() {
-                var getshapecntlID= "colorpathshape" + splitvalue[1];
                 var splitvalue = this.id.split('~');
+                var getshapecntlID= "colorpathshape" + splitvalue[1];
                 colorpath.push({path_name:splitvalue[0],pathid:splitvalue[1] ,colorid:this.value,colorshape:document.getElementById(getshapecntlID).value}) ;
             });
 
             $('input[name=colorrefsets]').each(function() {
                 var splitvalue = this.id.split('~');
-                colorrefsets.push({refsets_name:splitvalue[0],refsetsid:splitvalue[1],colorid:this.value}) ;
+                colorrefsets.push({refsets_name:splitvalue[0],refsetsid:splitvalue[1],colorid:this.value,colorshape:splitvalue[2]}) ;
             });
            // $('input[name=colormodule_shape]').each(function() {
              //   var splitvalue = this.id.split('~');
@@ -382,7 +382,7 @@ var PreferenceModule = (function () {
                 refsetColorShapeCell.setAttribute("style", "text-align: center" );
                 refsetDeleteCell.setAttribute("style", "text-align: center" );
                 refsetDeleteCell.innerHTML='<a tooltip="remove refset" name="removeRow" onclick="PreferenceModule.deleteRefsetFieldRow(' + rowCount + ')">X</a>';
-                refsetColorCell.innerHTML = '<input name="colorrefsets"  type="hidden" id="' + refset + '~' + refsetsid + '" size="6" style="height:30px" data-control="hue" value=" ' + colorid + ' "  />';
+                refsetColorCell.innerHTML = '<input name="colorrefsets"  type="hidden" id="' + refset + '~' + refsetsid + '~' + colorrefsetshape + '" size="6" style="height:30px" data-control="hue" value=" ' + colorid + ' "  />';
 
                 refsetRow.appendChild(refsetIDCell);
                 refsetRow.appendChild(refsetColorCell);
