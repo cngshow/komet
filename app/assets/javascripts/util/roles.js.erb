@@ -22,7 +22,7 @@ var RolesModule = (function() {
     public_methods = []
 
     Roles::ALL_ROLES.each do |func_name|
-      method_bodies << "function #{func_name}() {\n\treturn inArray(gon.roles, '#{func_name}');\n}\n\n"
+      method_bodies << "function #{func_name}() {\n\treturn Common.in_array(gon.roles, '#{func_name}');\n}\n\n"
       public_methods << "#{func_name}: #{func_name}\n"
     end
   %>

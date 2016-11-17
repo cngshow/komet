@@ -27,14 +27,10 @@ require 'bigdecimal'
 class MappingController < ApplicationController
     include ApplicationHelper, CommonController, TaxonomyHelper, ConceptConcern
 
-    before_filter :init_session
     skip_before_filter :set_render_menu, :only => [:map_set_editor]
+    before_action :can_edit_concept, only: [:process_map_set, :process_map_item]
 
     DATA_TYPES_CLASS = Gov::Vha::Isaac::Rest::Api1::Data::Sememe::DataTypes
-
-    def init_session
-
-    end
 
     def load_tree_data
 
