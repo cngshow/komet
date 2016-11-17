@@ -367,8 +367,6 @@ class KometDashboardController < ApplicationController
         @stated = params[:stated]
         @viewer_id =  params[:viewer_id]
         @viewer_action = params[:viewer_action]
-        @viewer_previous_content_id = params[:viewer_previous_content_id]
-        @viewer_previous_content_type = params[:viewer_previous_content_type]
 
         if @viewer_id == nil || @viewer_id == '' || @viewer_id == 'new'
             @viewer_id = get_next_id

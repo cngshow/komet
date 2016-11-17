@@ -1205,21 +1205,6 @@ var ConceptViewer = function(viewerID, currentConceptID, viewerAction) {
         }
     };
 
-    ConceptViewer.prototype.cancelAction = function(previous_type, previous_id){
-
-        if (previous_type && previous_id){
-
-            if (previous_type == "ConceptViewer"){
-                $.publish(KometChannels.Taxonomy.taxonomyTreeNodeSelectedChannel, ["", previous_id, TaxonomyModule.getStatedView(), this.viewerID, WindowManager.INLINE]);
-
-            } else if (previous_type == "MappingViewer"){
-                $.publish(KometChannels.Mapping.mappingTreeNodeSelectedChannel, ["", previous_id, MappingModule.getTreeViewParams(), this.viewerID, WindowManager.INLINE]);
-            }
-            WindowManager.closeViewer(this.viewerID.toString());
-            return false;
-        }
-    };
-
     // call our constructor function
     this.init(viewerID, currentConceptID, viewerAction);
 };

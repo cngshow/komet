@@ -35,7 +35,7 @@
 
                 <div class="komet-mapping-set-definition-controls">
                     <button class="btn btn-primary komet-mapping-set-editor-display" type="button" onclick="WindowManager.viewers[<%= @viewer_id %>].enterSetEditMode()">Edit</button>
-                    <button class="btn btn-default komet-mapping-set-editor-edit" type="button" onclick="WindowManager.viewers[<%= @viewer_id %>].cancelSetEditMode('<%= @previous_set_id %>')">Cancel</button>
+                    <button class="btn btn-default komet-mapping-set-editor-edit" type="button" onclick="WindowManager.viewers[<%= @viewer_id %>].cancelSetEditMode()">Cancel</button>
                     <button class="btn btn-primary komet-mapping-set-editor-edit" id="komet_mapping_set_editor_save_<%= @viewer_id %>">Save</button>
                 </div>
             </div>

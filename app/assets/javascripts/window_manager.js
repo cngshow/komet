@@ -62,6 +62,12 @@ var WindowManager = (function () {
 
         var viewerExists = WindowManager.viewers.hasOwnProperty(viewer.viewerID);
 
+        if (viewerExists) {
+
+            viewer.viewer_previous_content_id = viewers[viewer.viewerID].viewer_previous_content_id;
+            viewer.viewer_previous_content_type = viewers[viewer.viewerID].viewer_previous_content_type;
+        }
+
         viewers[viewer.viewerID] = viewer;
 
         // if the new viewer is not a popup
@@ -73,6 +79,40 @@ var WindowManager = (function () {
 
             toggleViewerLinkage(viewer.viewerID, true);
         }
+    }
+
+    function registerPreviousViewerContent(viewerID) {
+
+        if (WindowManager.viewers[viewerID].constructor.name = "ConceptViewer" && WindowManager.viewers[viewerID].viewerAction == ConceptsModule.VIEW){
+
+            WindowManager.viewers[viewerID].viewer_previous_content_id = WindowManager.viewers[viewerID].currentConceptID;
+
+        } else if (WindowManager.viewers[viewerID].constructor.name = "MappingViewer" && (WindowManager.viewers[viewerID].viewerAction == MappingModule.SET_LIST || WindowManager.viewers[viewerID].viewerAction == MappingModule.SET_DETAILS)){
+
+            WindowManager.viewers[viewerID].viewer_previous_content_id = WindowManager.viewers[viewerID].currentSetID;
+        }
+
+        WindowManager.viewers[viewerID].viewer_previous_content_type = WindowManager.viewers[viewerID].constructor.name
+    }
+
+    function cancelEditMode(viewerID) {
+
+        if (WindowManager.viewers[viewerID].viewer_previous_content_type && WindowManager.viewers[viewerID].viewer_previous_content_id){
+
+            if (WindowManager.viewers[viewerID].viewer_previous_content_type == "ConceptViewer"){
+
+                $.publish(KometChannels.Taxonomy.taxonomyTreeNodeSelectedChannel, ["", WindowManager.viewers[viewerID].viewer_previous_content_id, TaxonomyModule.getStatedView(), viewerID, WindowManager.INLINE]);
+                return false;
+
+            } else if (WindowManager.viewers[viewerID].viewer_previous_content_type == "MappingViewer"){
+
+                $.publish(KometChannels.Mapping.mappingTreeNodeSelectedChannel, ["", WindowManager.viewers[viewerID].viewer_previous_content_id, MappingModule.getTreeViewParams(), viewerID, WindowManager.INLINE]);
+                return false;
+            }
+        }
+
+        WindowManager.closeViewer(viewerID.toString());
+        return false;
     }
 
     function closeViewer(viewerID) {
@@ -197,6 +237,8 @@ var WindowManager = (function () {
         initialize: init,
         createViewer: createViewer,
         loadViewerData: loadViewerData,
+        registerPreviousViewerContent: registerPreviousViewerContent,
+        cancelEditMode: cancelEditMode,
         closeViewer: closeViewer,
         toggleViewerLinkage: toggleViewerLinkage,
         setLinkedViewerID: setLinkedViewerID,

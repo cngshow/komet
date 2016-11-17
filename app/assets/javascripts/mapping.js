@@ -45,8 +45,8 @@ var MappingModule = (function () {
         var params = {partial: 'komet_dashboard/mapping/mapping_viewer', mapping_action: viewerAction, viewer_id: viewerID, set_id: setID, view_params: viewParams};
         var url = gon.routes.mapping_load_mapping_viewer_path;
 
-        if (viewerAction == CREATE_SET && WindowManager.viewers.inlineViewers.length > 0 && WindowManager.viewers[viewerID].currentSetID != 0 && (windowType == null || windowType == WindowManager.INLINE)){
-            params.previous_set_id = WindowManager.viewers[viewerID].currentSetID;
+        if (viewerAction == CREATE_SET && WindowManager.viewers.inlineViewers.length > 0  && (windowType == null || windowType == WindowManager.INLINE)){
+            WindowManager.registerPreviousViewerContent(viewerID);
         }
 
         if (WindowManager.viewers.inlineViewers.length == 0 || WindowManager.getLinkedViewerID() == WindowManager.NEW){

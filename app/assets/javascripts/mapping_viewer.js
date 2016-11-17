@@ -1144,17 +1144,10 @@ var MappingViewer = function(viewerID, currentSetID, viewerAction) {
         this.setEditorMapSetCopy = jQuery.extend({}, this.setEditorMapSet);
     };
 
-    MappingViewer.prototype.cancelSetEditMode = function(previousSetID){
+    MappingViewer.prototype.cancelSetEditMode = function(){
 
         if (this.viewerAction == MappingModule.CREATE_SET){
-
-            if (previousSetID != ""){
-                $.publish(KometChannels.Mapping.mappingTreeNodeSelectedChannel, ["", previousSetID, this.getViewParams(), this.viewerID, WindowManager.INLINE, MappingModule.SET_DETAILS]);
-            } else {
-                $.publish(KometChannels.Mapping.mappingTreeNodeSelectedChannel, ["", null, this.getViewParams(), this.viewerID, WindowManager.INLINE, MappingModule.SET_LIST]);
-            }
-
-            return;
+            WindowManager.cancelEditMode(this.viewerID.toString());
         }
 
         $(".komet-mapping-set-editor-display").show();

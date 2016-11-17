@@ -22,7 +22,7 @@
 
             <div id="komet_concept_save_section_<%= @viewer_id %>">
                 All fields required except where noted as Optional.
-                <button type="button" class="btn btn-default" onclick="WindowManager.viewers[<%= @viewer_id %>].cancelAction('<%= @viewer_previous_content_type %>', '<%= @viewer_previous_content_id %>')">Cancel</button>
+                <button type="button" class="btn btn-default" onclick="WindowManager.cancelEditMode('<%= @viewer_id %>')">Cancel</button>
                 <button type="button" class="btn btn-primary ui-state-disabled" disabled id="komet_concept_save_<%= @viewer_id %>" onclick="WindowManager.viewers[<%= @viewer_id %>].showSaveSection('confirm')">Save</button>
             </div>
 

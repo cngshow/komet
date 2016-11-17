@@ -88,7 +88,6 @@ class MappingController < ApplicationController
         @viewer_title = 'Mapping Sets'
         @mapping_action = params[:mapping_action]
         @viewer_id =  params[:viewer_id]
-        @previous_set_id = params[:previous_set_id]
         @view_params = params[:view_params]
 
         if @view_params == nil
