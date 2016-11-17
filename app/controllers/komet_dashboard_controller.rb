@@ -47,13 +47,13 @@ class KometDashboardController < ApplicationController
 #    if(roles.include?(Roles::DEV_SUPER_USER))
 #      #do something
 #    end
-      #CRIS, test flash code
+#        CRIS, test flash code
 #         resp = CoordinateRest.get_coordinate(action: CoordinateRestActions::ACTION_COORDINATES_TOKEN, additional_req_params: {foo: 'faa'})
 #         # if resp.is_a? RestExceptionResponse
 #         #     resp.flash_error
 #         # end
 
-        resp.flash_error if resp.respond_to? :flash_error
+        #resp.flash_error if resp.respond_to? :flash_error
 
         selected_concept_id = params[:concept_id]
         parent_search = params[:parent_search]
