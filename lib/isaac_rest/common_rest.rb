@@ -140,7 +140,9 @@ module CommonRestBase
 
     def invoke_callbacks
       begin
-        @action_constants[action][CALLBACKS].each do |c| c.call end  if (@action_constants.key?(action) && @action_constants[action].key?(CALLBACKS))
+        @action_constants[action][CALLBACKS].each do |c|
+          c.call
+        end if (@action_constants.key?(action) && @action_constants[action].key?(CALLBACKS))
       rescue => ex
         $log.error("Could not execute a callback.  The remaining callbacks will not be attempted. #{ex}")
         $log.error(ex.backtrace.join("\n"))
@@ -335,6 +337,26 @@ module CommonRestBase
   end
 end
 
+module Gov
+  module Vha
+    module Isaac
+      module Rest
+        module Api
+          module Exceptions
+            class RestExceptionResponse
+              include BootstrapNotifier
+              def flash_error
+                $log.warn("Flashing the error #{self.conciseMessage}")
+                flash_alert(message: self.conciseMessage)
+              end
+            end
+          end
+        end
+      end
+    end
+  end
+end
+
 module CommonRestCallbacks
   def clear_lambda
     -> do
@@ -394,3 +416,4 @@ i = SystemApis::get_system_api(action: SystemApiActions::ACTION_SYSTEM_INFO)
 CommonRest.clear_cache(rest_module: SystemApis)
 
 =end
+
