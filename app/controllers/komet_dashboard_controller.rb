@@ -506,7 +506,8 @@ class KometDashboardController < ApplicationController
         results =  CoordinateRest.get_coordinate(action: CoordinateRestActions::ACTION_COORDINATES_TOKEN,  additional_req_params: hash)
         session[:coordinatestoken] = results
         $log.debug("token get_coordinatestoken #{results.token}" )
-        render json:  results.to_json
+
+        render json: results.to_json
 
     end
 
@@ -988,6 +989,7 @@ class KometDashboardController < ApplicationController
 
     def dashboard
         # user_session(UserSession::WORKFLOW_UUID, '6457fb1f-b67b-4679-8f56-fa811e1e2a6b')
+
         @stated = 'true'
         @view_params = {statesToView: 'both'}
 

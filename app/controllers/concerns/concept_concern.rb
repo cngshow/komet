@@ -406,13 +406,8 @@ module ConceptConcern
         if sememe_definition.class == Gov::Vha::Isaac::Rest::Api1::Data::Sememe::RestDynamicSememeDefinition
 
             # TODO switch to using only uuids once REST APIs support it, and then no need for description call below
-            assemblage_sequence = sememe_definition.assemblageConceptId
-            sememe_name = sememe_definition.sememeUsageDescription
-
-            # use the assemblage sequence to do a concept_description call to get assemblage UUID
-            assemblage_descriptions = ConceptRest.get_concept(action: ConceptRestActions::ACTION_DESCRIPTIONS, uuid: assemblage_sequence, additional_req_params: additional_req_params)
-            sememe_name = assemblage_descriptions.first.text
-            assemblage_id = assemblage_descriptions.first.sememeChronology.referencedComponent.uuids.first
+            assemblage_id = sememe_definition.assemblageConceptId.uuids.first
+            sememe_name = sememe_definition.assemblageConceptDescription
 
             # start loading the row of sememe data with everything besides the columns
             data_row = {sememe_name: sememe_name, sememe_description: sememe_definition.sememeUsageDescription, sememe_instance_id: get_next_id, sememe_definition_id: assemblage_id, state: 'Active', level: 1, has_nested: false, columns: {}}
@@ -426,14 +421,14 @@ module ConceptConcern
                 if row_column && ! field_info[assemblage_id + '_' + column_id]
 
                     # get the column data type from the validator data if it exists, otherwise use string
-                    if row_column.columnValidatorData && row_column.columnValidatorData.length > 0
-                        data_type_class = ruby_classname_to_java(class_name: row_column.columnValidatorData[0].class)
+                    if row_column.columnDataType.classType
+                        data_type_class = row_column.columnDataType.classType
                     else
                         data_type_class = 'gov.vha.isaac.rest.api1.data.sememe.dataTypes.RestDynamicSememeString'
                     end
 
                     field_info[assemblage_id + '_' + column_id] = {
-                        sememe_definition_id: assemblage_sequence,
+                        sememe_definition_id: assemblage_id,
                         column_id: column_id,
                         name: row_column.columnName,
                         description: row_column.columnDescription,
@@ -476,7 +471,6 @@ module ConceptConcern
                 uuid = sememe.sememeChronology.identifiers.uuids.first
 
                 # use the assemblage to do a sememe_sememeDefinition call to get the columns that sememe has.
-                sememe_name = ConceptRest.get_concept(action: ConceptRestActions::ACTION_DESCRIPTIONS, uuid: assemblage_id, additional_req_params: additional_req_params).first.text
                 sememe_definition = SememeRest.get_sememe(action: SememeRestActions::ACTION_SEMEME_DEFINITION, uuid_or_id: assemblage_id, additional_req_params: additional_req_params)
 
                 has_nested = false
@@ -486,7 +480,7 @@ module ConceptConcern
                 end
 
                 # start loading the row of sememe data with everything besides the data columns
-                data_row = {sememe_name: sememe_name, sememe_description: sememe_definition.sememeUsageDescription, sememe_instance_id: uuid, sememe_definition_id: assemblage_id, state: sememe.sememeVersion.state.enumName, level: level, has_nested: has_nested, columns: {}}
+                data_row = {sememe_name: sememe_definition.assemblageConceptDescription, sememe_description: sememe_definition.sememeUsageDescription, sememe_instance_id: uuid, sememe_definition_id: assemblage_id, state: sememe.sememeVersion.state.enumName, level: level, has_nested: has_nested, columns: {}}
 
                 # loop through all of the sememe's data columns
                 sememe_definition.columnInfo.each{ |row_column|
