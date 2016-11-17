@@ -172,7 +172,7 @@ var PreferenceModule = (function () {
                     document.getElementById("colorrefset").appendChild(colorheadingtd3);
 
                     $.each(getcoordinates_results.colorrefsets, function (index, value) {
-                        addRefsetRow(value.refsets_name,value.colorid,value.refsetsid)
+                        addRefsetRow(value.refsets_name,value.colorid,value.refsetsid,value.colorshape)
                     });
 
                 }
@@ -305,7 +305,7 @@ var PreferenceModule = (function () {
         var td4 = document.createElement("TD");
         var shapeCntlId =  "'colorrefsetshape'"  ;
         var displayShapeDiv =  "crefsetshape_0"  ;
-        refsetShape = PreferenceModule.createShapedropdown(displayShapeDiv , 0 , shapeCntlId,'Select Shape');
+        refsetShape = PreferenceModule.createShapedropdown(displayShapeDiv , 0 , shapeCntlId,'none');
 
         document.getElementById('getrefsetshape').innerHTML =refsetShape;
 
@@ -511,7 +511,7 @@ var PreferenceModule = (function () {
                 var td4 = document.createElement("TD");
                 var shapeCntlId =  "'colorpathshape" + value.pathid + "'" ;
                 var displayShapeDiv =  "cpathshape_" + value.pathid  ;
-                td4.innerHTML = PreferenceModule.createShapedropdown(displayShapeDiv , value.pathid , shapeCntlId,'No shape');
+                td4.innerHTML = PreferenceModule.createShapedropdown(displayShapeDiv , value.pathid , shapeCntlId,value.colorshape);
                 document.getElementById("colorpathtr" + value.pathid).appendChild(td4);
 
 
@@ -541,7 +541,7 @@ var PreferenceModule = (function () {
 
             var colorheadingtd2 = document.createElement("TD");
             colorheadingtd2.innerHTML = 'Color';
-            colorheadingtd2.setAttribute("style", "width:25%")
+            colorheadingtd2.setAttribute("style", "width:30%")
             document.getElementById("colorheading").appendChild(colorheadingtd2);
             var colorheadingtd3 = document.createElement("TD");
             colorheadingtd3.innerHTML = 'Shape';
@@ -588,11 +588,13 @@ var PreferenceModule = (function () {
 
             var colorheadingtd2 = document.createElement("TD");
             colorheadingtd2.innerHTML = 'Color';
-            colorheadingtd2.setAttribute("style", "width:25%")
+            colorheadingtd2.setAttribute("style", "width:30%")
             document.getElementById("colorheading").appendChild(colorheadingtd2);
+
             var colorheadingtd3 = document.createElement("TD");
             colorheadingtd3.innerHTML = 'Shape';
             colorheadingtd3.setAttribute("style", "width:30%")
+            document.getElementById("colorheading").appendChild(colorheadingtd3);
 
             $.each(colormodule, function (index, value) {
                 var tr = document.createElement("TR");
@@ -641,7 +643,7 @@ var PreferenceModule = (function () {
     /// creates shape dropdown
     function createShapedropdown(displayShapeDiv,conceptSequence,shapeCntlId,value)    {
         var shapedd='';
-        shapedd ='<div class="dropdown" ><div style="display: inline-block" id="' +  displayShapeDiv + '">' +  value + '</div>';
+        shapedd ='<div class="dropdown" ><div class="' +  value + '" style="display: inline-block" id="' +  displayShapeDiv + '">' + PreferenceModule.getShapeName(value) + '</div>';
         shapedd = shapedd + '<input name="colormodule_shape" value="none"  type="hidden" id=' + shapeCntlId + '  />';
         shapedd = shapedd + '<span  class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" id="shapeid" aria-expanded="false">';
         shapedd = shapedd + '<span class="caret"></span></span><ul class="dropdown-menu"   aria-label="select shape">';
@@ -661,10 +663,32 @@ var PreferenceModule = (function () {
 
         return shapedd;
     }
+     function getShapeName(classname)
+     {
+         console.log(classname)
+         if (classname == 'none')
+             return 'No shape';
+         else if (classname == 'glyphicon glyphicon-stop')
+             return 'Square';
+         else
+         if (classname == 'glyphicon glyphicon-star')
+             return 'Star';
+         else
+         if (classname == 'fa fa-circle')
+             return 'Circle';
+         else
+         if (classname == 'glyphicon glyphicon-triangle-top')
+             return 'Triangle';
+         else
+         if (classname == 'glyphicon glyphicon-asterisk')
+             return 'Asterisk';
 
+
+        // return 'Square';
+     }
     //clear color value
     function removecolor(controlid,rowid)    {
-        console.log(controlid);
+
         var colorid = "#" + controlid;
         document.getElementById(controlid).value="";
         document.getElementById(controlid).style.backgroundColor ="";
@@ -766,7 +790,8 @@ var PreferenceModule = (function () {
         deleteRefsetFieldRow: deleteRefsetFieldRow,
         removecolor:removecolor,
         setShape:setShape,
-        createShapedropdown:createShapedropdown
+        createShapedropdown:createShapedropdown,
+        getShapeName:getShapeName
 
 
     };
