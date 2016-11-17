@@ -175,6 +175,8 @@ class MappingController < ApplicationController
 
             if vuid.respond_to?(:value)
                 @map_set[:vuid] = vuid.value
+            else
+                @map_set[:vuid] = ''
             end
 
             extended_fields = set.mapSetExtendedFields
@@ -276,7 +278,6 @@ class MappingController < ApplicationController
             @map_set[:author] = get_concept_metadata(set.mappingSetStamp.authorSequence)
             @map_set[:module] = get_concept_metadata(set.mappingSetStamp.moduleSequence)
             @map_set[:path] = get_concept_metadata(set.mappingSetStamp.pathSequence)
-            @map_set[:vuid] = ''
 
             if set.comments.length == 0
                 @map_set[:comment] = ''
