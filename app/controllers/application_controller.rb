@@ -14,6 +14,7 @@ class ApplicationController < ActionController::Base
   include SSOI
   include UserSession
   include ServletSupport
+  include Gov::Vha::Isaac::Rest::Api::Exceptions
   append_view_path 'lib/rails_common/views'
 
   CACHE_TYPE_TAXONOMY = [AssociationRest, CommentApis, ConceptRest, IdAPIsRest, LogicGraphRest, MappingApis, SearchApis, SememeRest, TaxonomyRest].freeze
@@ -29,6 +30,8 @@ class ApplicationController < ActionController::Base
 
   prepend_before_action :add_pundit_methods
   after_action :verify_authorized
+  after_action :clear_thread_locals
+  before_action :set_up_thread_locals
   before_action :ensure_rest_version
   before_action :ensure_roles
   before_action :read_only # must be after ensure_roles
@@ -252,6 +255,14 @@ class ApplicationController < ActionController::Base
 
   def add_pundit_methods
     PunditDynamicRoles::add_action_methods self
+  end
+
+  def set_up_thread_locals
+    Thread.current.thread_variable_set(:komet_user_session, session)
+  end
+
+  def clear_thread_locals
+    Thread.current.thread_variable_set(:komet_user_session, nil)
   end
 
 end

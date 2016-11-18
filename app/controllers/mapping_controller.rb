@@ -27,14 +27,10 @@ require 'bigdecimal'
 class MappingController < ApplicationController
     include ApplicationHelper, CommonController, TaxonomyHelper, ConceptConcern
 
-    before_filter :init_session
     skip_before_filter :set_render_menu, :only => [:map_set_editor]
+    before_action :can_edit_concept, only: [:process_map_set, :process_map_item]
 
     DATA_TYPES_CLASS = Gov::Vha::Isaac::Rest::Api1::Data::Sememe::DataTypes
-
-    def init_session
-
-    end
 
     def load_tree_data
 
@@ -145,7 +141,7 @@ class MappingController < ApplicationController
 
         session[:mapset_item_definitions] = []
         coordinates_token = session[:coordinatestoken].token
-        @map_set = {id: '', name: '', description: '', version: '', vuid: '', rules: '', include_fields: [], state: '', status: 'Active', time: '', module: '', path: ''}
+        @map_set = {id: '', name: '', description: '', version: '', vuid: '', rules: '', include_fields: [], state: '', status: 'Active', time: '', module: '', path: '', comment_id: 0, comment: ''}
 
         # add the definitions for the template map fields
         @map_set[:include_fields] = ['source_system', 'source_version', 'target_system', 'target_version']
