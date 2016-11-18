@@ -21,22 +21,30 @@ var ExportModule = (function () {
     var start_date = $("#start_date");
     var end_date = $("#end_date");
 
-    start_date.datepicker({
-      constrainInput: true,
-      maxDate: -1
+    start_date.datetimepicker({
+      showClear: true,
+      allowInputToggle: true,
+      format: 'MM/DD/YYYY',
+      maxDate: moment().subtract(1, "days"),
+      icons: {
+        date: "fa fa-calendar"
+      }
     });
+    start_date.data("DateTimePicker").clear();
 
-    end_date.datepicker({
-      constrainInput: true,
-      maxDate: 0
+    end_date.datetimepicker({
+      showClear: true,
+      allowInputToggle: true,
+      format: 'MM/DD/YYYY',
+      maxDate: moment(),
+      icons: {
+        date: "fa fa-calendar"
+      }
     });
+    end_date.data("DateTimePicker").clear();
 
-    end_date.prop('disabled', true);
-    end_date.datepicker("option", "minDate", null);
-
-    start_date.change(function (eventObject) {
-      end_date.datepicker("option", "minDate", $(this).datepicker("getDate"));
-      end_date.prop('disabled', false);
+    start_date.on("dp.change", function(e) {
+      $('#end_date').data("DateTimePicker").minDate(moment(e.date).add(1, "days"));
     });
 
     // wire the modal for exporting
@@ -54,31 +62,26 @@ var ExportModule = (function () {
 
   function submit_export() {
     var file_download = <%= $PROPS['KOMET.vhat_export_as_file']%>;
-    // ModalFormValidatorModule.validator('export_modal_form');
-    // var form = $('#export_modal');
-    // var start_date = $('#start_date').val();
     var _startDate = $("#start_date");
-    var start = _startDate.datepicker("getDate");
+    var start = _startDate.data("DateTimePicker").date();
 
-    // if (form.valid()) {
-    // form.submit();
-
-    if (start == null) {
-      alert('please select a start date for this export');
-      _startDate.focus();
+    if (start == null || ! start.isValid()) {
+      flash_notify({message: 'Please select a start date for this export.'},{type: 'danger', element: document.getElementById('start_date')});
       return false;
     }
 
     // select the parameters to pass to the rest call
-    var _endDate = $("#end_date");
-    var end_dt = _endDate.datepicker("getDate");
-    var sd = gon.vhat_export_params.start_date;
     var params = {};
-    params[sd] = new Date(start).getTime();
+    var sd = gon.vhat_export_params.start_date;
+    params[sd] = start.startOf('day').format('x');
 
+    // get the end date
+    var _endDate = $("#end_date");
+    var end_dt = _endDate.data("DateTimePicker").date();
     var ed = gon.vhat_export_params.end_date;
-    params[ed] = (end_dt == null) ? gon.vhat_export_params.max_end_date : new Date(end_dt).getTime();
+    params[ed] = (end_dt == null) ? gon.vhat_export_params.max_end_date : end_dt.endOf('day').format('x');
 
+    // issue the file download
     var url = gon.export_url + gon.vhat_export_params.path + '?' + jQuery.param(params);
     console.log(url);
     $.fileDownload(url)
