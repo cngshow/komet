@@ -14,10 +14,12 @@ module TaxonomyHelper
                 colorshape = ''
                 if color[1]['colorshape'] != 'none'
                   colorshape= color[1]['colorshape']
+                  flag = ' <span class="' + colorshape  + '" style="color: ' + color[1]['colorid'] + ';"></span>'
+                else
+                    flag = ' <span class="komet-node-' + flag_name + '-flag ' + colorshape  + '" style="border-color: ' + color[1]['colorid'] + ';"></span>'
                 end
 
-                  flag = ' <span class="komet-node-' + flag_name + '-flag ' + colorshape  + '" style="border-color: ' + color[1]['colorid'] + ';"></span>'
-            end
+                           end
         end
 
         flag
