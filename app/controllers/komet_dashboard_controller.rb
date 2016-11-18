@@ -48,10 +48,12 @@ class KometDashboardController < ApplicationController
 #      #do something
 #    end
 #        CRIS, test flash code
-#         resp = CoordinateRest.get_coordinate(action: CoordinateRestActions::ACTION_COORDINATES_TOKEN, additional_req_params: {foo: 'faa'})
-#         # if resp.is_a? RestExceptionResponse
-#         #     resp.flash_error
-#         # end
+#        resp = CoordinateRest.get_coordinate(action: CoordinateRestActions::ACTION_COORDINATES_TOKEN, additional_req_params: {foo: 'faa'})
+        #resp.rest_exception.flash_error
+        #resp.flash_error   (both work)
+        # if resp.is_a? CommonRest::UnexpectedResponse
+        #     resp.flash_error
+        # end
 
         #resp.flash_error if resp.respond_to? :flash_error
 
