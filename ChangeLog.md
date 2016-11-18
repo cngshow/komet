@@ -3,8 +3,22 @@ Komet Changelog
 This changelog summarizes changes and fixes which are a part of each revision.  For more details on the fixes, refer tracking numbers 
 where provided, and the git commit history.
 
-* 2016/11/?? - 1.38:
+* 2016/11/?? - 1.40:
     *
+
+* 2016/11/18 - 1.39:
+    * Fixed refset grid not reloading when new inline concept is shown and refset section is already expanded
+    * Fixed refset grid to actually show data
+
+* 2016/11/18 - 1.38:
+    * Fixed a bug where logging into komet A would break an existing Komet B session
+    * Adding better session timeout management (provide a notice of an upcoming timeout)
+    * Added shapes to the refsets prefs screen
+    * Fixed window cancel bug
+    * Fixed 418367 - missing vuid on mapset
+    * Fixed 418373 Added UUID to mapset display
+    * Fixed comment issues on mapsets
+    * Fixed a bug with mapping and roles
     
 * 2016/11/10 - 1.37:
     * Hide refset and inbox tabs

@@ -25,10 +25,10 @@
             <span class="caret"></span></a>
           <ul class="dropdown-menu" aria-hidden="true" aria-label="submenu">
             <li role="menuitem">
-              <a href="#"  onclick="$.publish(KometChannels.Taxonomy.taxonomyConceptEditorChannel, [null, WindowManager.getLinkedViewerID(), WindowManager.INLINE]); return false;" title="Create New Concept">Create
+              <a href="#" onclick="$.publish(KometChannels.Taxonomy.taxonomyConceptEditorChannel, [null, WindowManager.getLinkedViewerID(), WindowManager.INLINE]); return false;" title="Create New Concept">Create
                 New Concept</a></li>
             <li role="menuitem">
-              <a href="#"  onclick="MappingModule.createNewMapSet(true); return false;" title="Create New Map">Create New
+              <a href="#" onclick="MappingModule.createNewMapSet(true); return false;" title="Create New Map">Create New
                 Map</a></li>
           </ul>
         </div>
@@ -37,13 +37,13 @@
 
   <div class="komet-navbar-tools" role="navigation">
     <div>
-      <button type="button" class="komet-link-button" role="button"   aria-label="VHAT XML Export"  title="VHAT XML Export" id="komet_export_link" role="navigation">
+      <button type="button" class="komet-link-button" role="button" aria-label="VHAT XML Export" title="VHAT XML Export" id="komet_export_link" role="navigation">
         <div class="glyphicon glyphicon-export"></div>
       </button>
     </div>
 
     <div>
-      <button type="button" class="komet-link-button" role="button"  aria-label="Settings"  title="Settings" id="komet_user_preference_link" role="navigation">
+      <button type="button" class="komet-link-button" role="button" aria-label="Settings" title="Settings" id="komet_user_preference_link" role="navigation">
         <div class="glyphicon glyphicon-cog"></div>
       </button>
     </div>
@@ -71,14 +71,22 @@
     </ul>
     <div id="useroptions">
       <form>
-        <div>
-          <table>
-            <tr>
-              <td>Select Language:&nbsp;&nbsp;</td>
-              <td><select id="komet_concept_language" aria-label="Select Language" tabindex="1" aria-expanded="true" role="listbox">
-              </select></td>
-            </tr>
-          </table>
+        <div style="height: 45px">
+          <div style="font-weight: bold; width: 40%; text-align: right; vertical-align: middle; float: left">Select Language:&nbsp;&nbsp;</div>
+          <div style="width: 60%; float: right">
+            <select id="komet_concept_language" class="form-control" aria-label="Select Language" aria-expanded="true" role="listbox"></select>
+          </div>
+        </div>
+        <div style="height: 45px">
+          <div style="font-weight: bold; width: 40%; text-align: right; vertical-align: middle; float: left">STAMP as of Date:&nbsp;&nbsp;</div>
+          <div style="width: 60%; float: right">
+            <div class='input-group date' id='stamp_date'>
+              <input type='text' class="form-control"/>
+              <span class="input-group-addon">
+                <span class="fa fa-calendar"></span>
+              </span>
+            </div>
+          </div>
         </div>
         <br><br>
 
@@ -100,13 +108,13 @@
       </form>
     </div>
     <div id="color-module" style="height: 3500px;">
-      <div>Please click on <font color="red">X</font> to clear color</div>
+      <div>Please click on <span style="color: red; ">X</span> to clear color</div>
       <table id="listofmodule" width='90%' cellpadding='2' border='0' cellspacing='3'>
       </table>
 
     </div>
     <div id="colorpath-module" style="height: 450px;">
-      <div>Please click on <font color="red">X</font> to clear color</div>
+      <div>Please click on <span style="color: red; ">X</span> to clear color</div>
       <table id="listofpath" width='90%' cellpadding='2' cellspacing='3'>
       </table>
     </div>
@@ -162,7 +170,7 @@
 </div>
 
 <% if controller.ssoi? %>
-  <%= render 'session_timeout/session_timeout_notification' %>
+    <%= render 'session_timeout/session_timeout_notification' %>
 <% end %>
 
 <script>
@@ -170,5 +178,16 @@
     $("#komet_preferences_tabs").tabs();
     PreferenceModule.initialize();
     ExportModule.initialize();
+
+    $('#stamp_date').datetimepicker({
+      showClear: true,
+      showTodayButton: true,
+      icons: {
+        time: "fa fa-clock-o",
+        date: "fa fa-calendar",
+        up: "fa fa-arrow-up",
+        down: "fa fa-arrow-down"
+      }
+    });
   });
 </script>
