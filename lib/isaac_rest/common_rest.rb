@@ -225,6 +225,7 @@ module CommonRestBase
         r_val = clazz.send(:from_json, json)
       end
       if (r_val.is_a? RestExceptionResponse)
+        $log.warn("A RestExceptionResponse response was sent from ISAAC. Concise message is #{r_val.conciseMessage}, status was #{r_val.status}")
         r_val = CommonRest::UnexpectedResponse.new(r_val.conciseMessage, r_val.status, r_val )
       end
       r_val
