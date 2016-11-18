@@ -99,9 +99,9 @@ var ConceptsModule = (function () {
 
             try {
 
-                WindowManager.loadViewerData(data, viewerID, "concept", windowType);
-
                 onSuccess();
+
+                WindowManager.loadViewerData(data, viewerID, "concept", windowType);
 
                 // only resolve waiting requests if this is an inline viewer. New and popup viewers still have more processing.
                 if (windowType != WindowManager.NEW && windowType != WindowManager.POPUP) {
