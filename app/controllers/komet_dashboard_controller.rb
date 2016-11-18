@@ -33,7 +33,7 @@ class KometDashboardController < ApplicationController
     skip_before_action :ensure_roles, only: [:version]
     skip_after_action :verify_authorized, only: [:version]
     skip_before_action :read_only, only: [:version]
-    before_action :can_edit_concept, only: [:get_concept_create_info, :create_concept, :get_concept_edit_info, :edit_concept, :clone_concept, :change_concept_state  ]
+    before_action :can_edit_concept, only: [:get_concept_create_info, :create_concept, :get_concept_edit_info, :edit_concept, :clone_concept, :change_concept_state]
 
     ##
     # load_tree_data - RESTful route for populating the taxonomy tree using an http :GET
@@ -47,6 +47,13 @@ class KometDashboardController < ApplicationController
 #    if(roles.include?(Roles::DEV_SUPER_USER))
 #      #do something
 #    end
+#        CRIS, test flash code
+#         resp = CoordinateRest.get_coordinate(action: CoordinateRestActions::ACTION_COORDINATES_TOKEN, additional_req_params: {foo: 'faa'})
+#         # if resp.is_a? RestExceptionResponse
+#         #     resp.flash_error
+#         # end
+
+        #resp.flash_error if resp.respond_to? :flash_error
 
         selected_concept_id = params[:concept_id]
         parent_search = params[:parent_search]
@@ -367,8 +374,6 @@ class KometDashboardController < ApplicationController
         @stated = params[:stated]
         @viewer_id =  params[:viewer_id]
         @viewer_action = params[:viewer_action]
-        @viewer_previous_content_id = params[:viewer_previous_content_id]
-        @viewer_previous_content_type = params[:viewer_previous_content_type]
 
         if @viewer_id == nil || @viewer_id == '' || @viewer_id == 'new'
             @viewer_id = get_next_id
@@ -378,8 +383,8 @@ class KometDashboardController < ApplicationController
         get_concept_descriptions(@concept_id, @stated)
         get_concept_sememes(@concept_id, @stated)
         render partial: params[:partial]
-
     end
+
     ##
     # get_concept_attributes - RESTful route for populating concept attribute tab using an http :GET
     # The current tree node representing the concept is identified in the request params with the key :concept_id
@@ -387,7 +392,7 @@ class KometDashboardController < ApplicationController
     def get_concept_attributes(concept_id = nil, stated = nil)
 
         if concept_id == nil && params[:concept_id]
-            concept_id = params[:concept_id].to_i
+            concept_id = params[:concept_id]
         end
 
         if stated == nil && params[:stated]
@@ -395,7 +400,6 @@ class KometDashboardController < ApplicationController
         end
 
         @attributes =  get_attributes(concept_id, stated)
-
     end
 
     ##
@@ -405,7 +409,7 @@ class KometDashboardController < ApplicationController
     def get_concept_descriptions(concept_id = nil, stated = nil)
 
         if concept_id == nil && params[:concept_id]
-            concept_id = params[:concept_id].to_i
+            concept_id = params[:concept_id]
         end
 
         if stated == nil && params[:stated]
@@ -413,7 +417,6 @@ class KometDashboardController < ApplicationController
         end
 
         @descriptions =  get_descriptions(concept_id, stated)
-
     end
 
     ##
@@ -423,7 +426,7 @@ class KometDashboardController < ApplicationController
     def get_concept_associations(concept_id = nil, stated = nil)
 
         if concept_id == nil && params[:concept_id]
-            concept_id = params[:concept_id].to_i
+            concept_id = params[:concept_id]
         end
 
         if stated == nil && params[:stated]
@@ -431,7 +434,6 @@ class KometDashboardController < ApplicationController
         end
 
         @associations =  get_associations(concept_id, stated)
-
     end
 
     ##
@@ -441,15 +443,14 @@ class KometDashboardController < ApplicationController
     def get_concept_sememes(concept_id = nil, stated = nil)
 
         if concept_id == nil && params[:concept_id]
-            concept_id = params[:concept_id].to_i
+            concept_id = params[:concept_id]
         end
 
         if stated == nil && params[:stated]
             stated = params[:stated]
         end
 
-        @concept_sememes = get_attached_sememes(concept_id, stated) # descriptions(concept_id)
-
+        @concept_sememes = get_attached_sememes(concept_id, stated)
     end
 
     def get_concept_children(concept_id: nil, returnJSON: true, removeSemanticTag: false)
@@ -475,7 +476,7 @@ class KometDashboardController < ApplicationController
                     text.slice!(' (ISAAC)')
                 end
 
-                child_array << {concept_id: child.conChronology.identifiers.uuids.first, concept_sequence: child.conChronology.conceptSequence, text: text}
+                child_array << {concept_id: child.conChronology.identifiers.uuids.first, concept_sequence: child.conChronology.identifiers.sequence, text: text}
             end
 
             return child_array
@@ -510,7 +511,8 @@ class KometDashboardController < ApplicationController
         results =  CoordinateRest.get_coordinate(action: CoordinateRestActions::ACTION_COORDINATES_TOKEN,  additional_req_params: hash)
         session[:coordinatestoken] = results
         $log.debug("token get_coordinatestoken #{results.token}" )
-        render json:  results.to_json
+
+        render json: results.to_json
 
     end
 
@@ -543,8 +545,8 @@ class KometDashboardController < ApplicationController
         refset_nodes = {}
 
         node = {}
-        node[concept.conChronology.conceptSequence] = concept.conChronology.description
-        has_children = !concept.children.nil?
+        node[concept.conChronology.identifiers.sequence] = concept.conChronology.description
+        has_children = concept.children.length > 0
 
         # get the children
         if has_children
@@ -569,7 +571,7 @@ class KometDashboardController < ApplicationController
     def get_concept_refsets()
         concept_id = params[:concept_id]
         stated = params[:stated]
-        refsets = get_refsets(concept_id, stated) # descriptions(concept_id)
+        refsets = get_refsets(concept_id, stated)
         render json: refsets
     end
 
@@ -592,8 +594,6 @@ class KometDashboardController < ApplicationController
     end
 
     def get_concept_create_info
-
-        $isaac_metadata_auxiliary
 
         @concept_id = params[:concept_id]
         @viewer_id = params[:viewer_id]
@@ -628,21 +628,17 @@ class KometDashboardController < ApplicationController
         parent_concept_text = params[:komet_create_concept_parent_display]
         parent_concept_type = params[:komet_create_concept_parent_type]
 
-        # get the parent concept sequence from the uuid
-        parent_concept_sequence = IdAPIsRest.get_id(uuid_or_id: parent_concept_id, action: IdAPIsRestActions::ACTION_TRANSLATE, additional_req_params: {inputType: 'uuid', outputType: 'conceptSequence'}).value
 
         body_params = {
             fsn: preferred_term, # + ' (' + parent_concept_text + ')',
             #preferredTerm: preferred_term,
-            parentConceptIds: [parent_concept_sequence.to_i],
+            parentConceptIds: [parent_concept_id],
             descriptionLanguageConceptId: 8
         }
 
         # if it is present get the description type concept sequence from the uuid
         if description_type != ''
-
-            description_type = IdAPIsRest.get_id(uuid_or_id: description_type, action: IdAPIsRestActions::ACTION_TRANSLATE, additional_req_params: {inputType: 'uuid', outputType: 'conceptSequence'}).value
-            body_params[:descriptionExtendedTypeConceptId] = description_type.to_i
+            body_params[:extendedDescriptionTypeConcept] = description_type
         end
 
         new_concept_id = ConceptRest::get_concept(action: ConceptRestActions::ACTION_CREATE, additional_req_params: {editToken: get_edit_token}, body_params: body_params )
@@ -688,7 +684,6 @@ class KometDashboardController < ApplicationController
         @association_type_options = get_association_types
 
         render partial: params[:partial]
-
     end
 
     def get_new_property_info
@@ -707,13 +702,10 @@ class KometDashboardController < ApplicationController
         add_to_recents(CONCEPT_RECENTS + CONCEPT_RECENTS_SEMEME, sememe_id, sememe_text, sememe_type)
 
         render json: sememe
-
     end
 
     def edit_concept
-
         concept_id =  params[:concept_id]
-        concept_nid = IdAPIsRest.get_id(uuid_or_id: concept_id, action: IdAPIsRestActions::ACTION_TRANSLATE, additional_req_params: {inputType: 'uuid', outputType: 'nid'}).value
         failed_writes = []
 
         # this is a lambda to be used to process sememes nested under the concept and descriptions
@@ -724,6 +716,10 @@ class KometDashboardController < ApplicationController
                 # get the sememe definition ID  and name
                 sememe_definition_id = sememe['sememe']
                 sememe_name = sememe['sememe_name']
+
+                if sememe_name == nil
+                    sememe_name = ''
+                end
 
                 # remove the sememe and sememe name properties
                 sememe.delete('sememe')
@@ -796,10 +792,10 @@ class KometDashboardController < ApplicationController
                 end
 
                 body_params = {
-                    caseSignificanceConceptSequence: description['description_case_significance'],
-                    languageConceptSequence: description['description_language'],
+                    caseSignificanceConcept: description['description_case_significance'],
+                    languageConcept: description['description_language'],
                     text: description['text'],
-                    descriptionTypeConceptSequence: description['description_type'],
+                    descriptionTypeConcept: description['description_type'],
                     active: active
                 }
 
@@ -816,7 +812,7 @@ class KometDashboardController < ApplicationController
 
                         description[:dialects].each do |dialect_id, dialect|
 
-                            if find_metadata_by_id(dialect['acceptability'], id_type: 'sequence').downcase == 'preferred'
+                            if find_metadata_by_id(dialect['acceptability']).downcase == 'preferred'
                                 preferred << dialect['dialect']
                             else
                                 acceptable << dialect['dialect']
@@ -832,7 +828,7 @@ class KometDashboardController < ApplicationController
                         body_params[:acceptableInDialectAssemblagesIds] = acceptable
                     end
 
-                    body_params[:referencedComponentNid] = concept_nid
+                    body_params[:referencedComponentId] = concept_id
 
                     return_value = SememeRest::get_sememe(action: SememeRestActions::ACTION_DESCRIPTION_CREATE, additional_req_params: additional_req_params, body_params: body_params)
                 end
@@ -857,9 +853,7 @@ class KometDashboardController < ApplicationController
 
             params[:associations].each do |association_id, association|
 
-                target_nid = IdAPIsRest.get_id(uuid_or_id: association['target'], action: IdAPIsRestActions::ACTION_TRANSLATE, additional_req_params: {inputType: 'uuid', outputType: 'nid'}).value
-
-                body_params = {targetNid: target_nid}
+                body_params = {targetId: association['target']}
 
                 if association['association_state'].downcase == 'active'
                     body_params[:active] = true
@@ -879,8 +873,8 @@ class KometDashboardController < ApplicationController
                     end
                 else
 
-                    body_params[:associationTypeSequence] = association['association_type'] #IdAPIsRest.get_id(uuid_or_id: association['association_type'], action: IdAPIsRestActions::ACTION_TRANSLATE, additional_req_params: {inputType: 'uuid', outputType: 'sememeSequence'}).value
-                    body_params[:sourceNid] = concept_nid
+                    body_params[:associationType] = association['association_type']
+                    body_params[:sourceId] = concept_id
 
                     return_value = AssociationRest::get_association(action: AssociationRestActions::ACTION_ITEM_CREATE, additional_req_params: {editToken: get_edit_token}, body_params: body_params)
 
@@ -999,14 +993,21 @@ class KometDashboardController < ApplicationController
 
     def dashboard
         # user_session(UserSession::WORKFLOW_UUID, '6457fb1f-b67b-4679-8f56-fa811e1e2a6b')
+
         @stated = 'true'
         @view_params = {statesToView: 'both'}
 
         if !session[:coordinatestoken]
             session[:coordinatestoken] = CoordinateRest.get_coordinate(action: CoordinateRestActions::ACTION_COORDINATES_TOKEN)
         end
-
         $log.debug("token initial #{session[:coordinatestoken].token}" )
+    end
+
+    # this action is called via javascript if/when the user's session has timed out
+    def session_timeout
+        clear_user_session
+        logout_url_string = ssoi? ? PrismeConfigConcern.logout_link : root_url
+        redirect_to logout_url_string
     end
 
     def metadata
@@ -1016,6 +1017,15 @@ class KometDashboardController < ApplicationController
         @version = $PROPS['PRISME.war_version']
         @version = 'Unversioned by PRISME.' if @version.nil?
         @version = {version: @version}
+        if (params[:include_isaac])
+            begin
+                system_info_isaac = SystemApis::get_system_api(action: SystemApiActions::ACTION_SYSTEM_INFO)
+                @version[:isaac_version] = system_info_isaac.to_jaxb_json_hash
+            rescue => ex
+                $log.warn("I failed to obtain the isaac version information and it was expressly asked for.  The data will not be sent to prisme. #{ex}")
+                $log.warn(ex.backtrace.join("\n"))
+            end
+        end
         render json: @version
     end
 

@@ -38,7 +38,7 @@
 
             <div id="komet_concept_save_section_<%= @viewer_id %>">
                 All fields required except where noted as Optional.
-                <button type="button" class="btn btn-default" onclick="WindowManager.viewers[<%= @viewer_id %>].cancelAction('<%= @viewer_previous_content_type %>', '<%= @viewer_previous_content_id %>')">Cancel</button>
+                <button type="button" class="btn btn-default" onclick="WindowManager.cancelEditMode('<%= @viewer_id %>')">Cancel</button>
                 <button type="button" class="btn btn-primary" id="komet_concept_save_<%= @viewer_id %>" onclick="WindowManager.viewers[<%= @viewer_id %>].showSaveSection('confirm')">Save</button>
             </div>
 
@@ -50,9 +50,27 @@
 
                     <div id="komet_concept_edit_concept_row_<%= @viewer_id %>" class="komet-concept-edit-row komet-concept-edit-attributes-row komet-changeable">
 
-                        <div class="komet-concept-attributes-details-name">
-                            <b>UUID:</b> <%= @concept_id %>
-                        </div>
+                        <% if @viewer_action == 'clone' %>
+
+                            <div class="komet-concept-attributes-details-name">
+                                <autosuggest
+                                id-base="komet_create_concept_parent"
+                                id-postfix="_<%= @viewer_id %>"
+                                label="Parent"
+                                value="<%= @parent_id %>"
+                                display-value="<%= @parent_text %>"
+                                type-value="<%= @parent_type %>"
+                                suggestion-onchange-function="WindowManager.viewers[<%= @viewer_id %>].conceptEditorParentOnChange()"
+                                ></autosuggest>
+                            </div>
+
+                        <% else %>
+
+                            <div class="komet-concept-attributes-details-name">
+                                <b>UUID:</b> <%= @concept_id %>
+                            </div>
+
+                        <% end %>
 
                         <!-- Defined -->
                         <div>

@@ -14,6 +14,8 @@ class ApplicationController < ActionController::Base
   include SSOI
   include UserSession
   include ServletSupport
+  include Gov::Vha::Isaac::Rest::Api::Exceptions
+  append_view_path 'lib/rails_common/views'
 
   CACHE_TYPE_TAXONOMY = [AssociationRest, CommentApis, ConceptRest, IdAPIsRest, LogicGraphRest, MappingApis, SearchApis, SememeRest, TaxonomyRest].freeze
   CACHE_TYPE_SYSTEM = [CoordinateRest, SystemApis].freeze
@@ -28,6 +30,8 @@ class ApplicationController < ActionController::Base
 
   prepend_before_action :add_pundit_methods
   after_action :verify_authorized
+  after_action :clear_thread_locals
+  before_action :set_up_thread_locals
   before_action :ensure_rest_version
   before_action :ensure_roles
   before_action :read_only # must be after ensure_roles
@@ -179,12 +183,15 @@ class ApplicationController < ActionController::Base
     clone_hash = ExportRest::VHAT_EXPORT_PATH.clone
     clone_hash[:path] = (PrismeConfigConcern.get_isaac_proxy_context + '/' + clone_hash[:path]).gsub('//','/') if behind_proxy
     gon.vhat_export_params= clone_hash
-    gon.isaac_root = $PROPS['PRISME.isaac_root'] unless behind_proxy #we cannot leak the aitc server unless you already exist behind the firewall.
+    gon.export_url = behind_proxy ? URI(root_url).base_url(true, false) : ISAAC_ROOT
+    gon.last_round_trip = Time.now.to_i
+    gon.start_countdown_in = $PROPS['SSOI_TIMEOUT.start_countdown_in']
+    gon.countdown_mins = $PROPS['SSOI_TIMEOUT.countdown_mins']
   end
 
   def pundit_user
     r_val = nil
-    if (user_session_defined? && user_session(UserSession::LOGIN))
+    if user_session_defined? && user_session(UserSession::LOGIN)
       r_val = {user: user_session(UserSession::LOGIN),
                roles: user_session(UserSession::ROLES),
                token: user_session(UserSession::TOKEN)}
@@ -248,6 +255,14 @@ class ApplicationController < ActionController::Base
 
   def add_pundit_methods
     PunditDynamicRoles::add_action_methods self
+  end
+
+  def set_up_thread_locals
+    Thread.current.thread_variable_set(:komet_user_session, session)
+  end
+
+  def clear_thread_locals
+    Thread.current.thread_variable_set(:komet_user_session, nil)
   end
 
 end

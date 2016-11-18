@@ -29,10 +29,6 @@ include KOMETUtilities
 module ConceptConcern
     include ApplicationHelper
 
-    METADATA_HASH = {description_type: 'descriptionTypeConceptSequence',
-                     language: 'languageConceptSequence',
-                     case_significance: 'caseSignificanceConceptSequence'}
-
     ##
     # descriptions - takes a uuid and returns all of the description concepts attached to it.
     # @param [String] uuid - The UUID to look up descriptions for
@@ -146,20 +142,14 @@ module ConceptConcern
             # loop thru the dialects array, and add them to the attributes array
             description.dialects.each do |dialect|
 
-                dialect_sememe_sequence = dialect.sememeChronology.sememeSequence
                 dialect_sememe_id = dialect.sememeChronology.identifiers.uuids.first
                 dialect_state = dialect.sememeVersion.state.enumName
                 dialect_time = DateTime.strptime((dialect.sememeVersion.time / 1000).to_s, '%s').strftime('%m/%d/%Y')
                 dialect_author = get_concept_metadata(dialect.sememeVersion.authorSequence)
                 dialect_module = get_concept_metadata(dialect.sememeVersion.moduleSequence)
                 dialect_path = get_concept_metadata(dialect.sememeVersion.pathSequence)
-                acceptability_sequence = IdAPIsRest.get_id(uuid_or_id: dialect.dataColumns.first.data, action: IdAPIsRestActions::ACTION_TRANSLATE, additional_req_params: {inputType: 'nid', outputType: 'conceptSequence'}).value
-
-                # TODO switch to using only uuids once REST APIs support it
-                dialect_sequence = dialect.sememeChronology.assemblageSequence
-                dialect_metadata = find_metadata_by_id(dialect.sememeChronology.assemblageSequence, id_type: 'sequence', return_description: false)
-                dialect_id = dialect_metadata['uuids'].first[:uuid]
-                dialect_name = dialect_metadata['fsn']
+                dialect_id = dialect.sememeChronology.assemblage.uuids.first
+                dialect_name = find_metadata_by_id(dialect_id)
 
                 if dialect_author == 'user'
                     dialect_author = 'System User'
@@ -171,6 +161,8 @@ module ConceptConcern
 
                 header_dialects += dialect_name
 
+                # TODO switch to using only uuids once REST APIs support it
+                acceptability_sequence = IdAPIsRest.get_id(uuid_or_id: dialect.dataColumns.first.data, action: IdAPIsRestActions::ACTION_TRANSLATE, additional_req_params: {inputType: 'nid', outputType: 'conceptSequence'}).value
                 acceptability_metadata = find_metadata_by_id(acceptability_sequence, id_type: 'sequence', return_description: false)
                 acceptability_id = acceptability_metadata['uuids'].first[:uuid]
                 acceptability_text = acceptability_metadata['fsn']
@@ -179,9 +171,7 @@ module ConceptConcern
                 attributes << {
                     label: 'Dialect',
                     sememe_id: dialect_sememe_id,
-                    sememe_sequence: dialect_sememe_sequence,
                     id: dialect_id,
-                    sequence: dialect_sequence,
                     text: dialect_name,
                     acceptability_sequence: acceptability_sequence,
                     acceptability_id: acceptability_id,
@@ -197,93 +187,58 @@ module ConceptConcern
             description_info[:attributes] = attributes
             description_info[:header_dialects] = header_dialects
 
-            METADATA_HASH.each_pair do |key, value|
+            # process descriptions types
+            description_info[:description_type_id] = description.descriptionTypeConcept.uuids.first
+            description_info[:description_type] = get_concept_metadata(description_info[:description_type_id])
 
+            case description_info[:description_type]
 
-                converted_value = get_concept_metadata(description.send(value).to_s)
-                description_info[key] = converted_value
+                when 'fully specified name'
+                    description_info[:description_type_short] = 'FSN'
 
-                case key
+                when 'preferred'
+                    description_info[:description_type_short] = 'PRE'
 
-                    when :description_type
+                when 'synonym'
+                    description_info[:description_type_short] = 'SYN'
 
-                        # get the concept uuid from the sequence
-                        description_type_id = IdAPIsRest.get_id(uuid_or_id: description.send(value), action: IdAPIsRestActions::ACTION_TRANSLATE, additional_req_params: {inputType: 'conceptSequence', outputType: 'uuid'}).value
+                when 'definition description type', 'description'
+                    description_info[:description_type_short] = 'DEF'
 
-                        # make sure the id exits, otherwise just send the sequence
-                        if description_type_id.is_a? CommonRest::UnexpectedResponse
-                            description_type_id = description.send(value)
-                        end
+                else
+                    description_info[:description_type_short] = description_info[:description_type]
+            end
 
-                        description_info[:description_type_sequence] = description.send(value)
-                        description_info[:description_type_id] = description_type_id
+            # process languages
+            description_info[:language_id] = description.languageConcept.uuids.first
+            description_info[:language] = get_concept_metadata(description_info[:language_id])
 
-                        case converted_value
+            case description_info[:language]
 
-                            when 'fully specified name'
-                                description_info[:description_type_short] = 'FSN'
+                when 'English language'
+                    description_info[:language_short] = 'EN'
 
-                            when 'preferred'
-                                description_info[:description_type_short] = 'PRE'
+                else
+                    description_info[:language_short] = description_info[:language]
+            end
 
-                            when 'synonym'
-                                description_info[:description_type_short] = 'SYN'
+            # process case
+            description_info[:case_significance_id] = description.caseSignificanceConcept.uuids.first
+            description_info[:case_significance] = get_concept_metadata(description_info[:case_significance_id])
 
-                            when 'definition description type', 'description'
-                                description_info[:description_type_short] = 'DEF'
+            case description_info[:case_significance]
 
-                            else
-                                description_info[:description_type_short] = converted_value
-                        end
+                when 'description initial character sensitive'
+                    description_info[:case_significance_short] = 'true'
 
-                    when :language
+                when 'description case sensitive'
+                    description_info[:case_significance_short] = 'true'
 
-                        # get the concept uuid from the sequence
-                        language_id = IdAPIsRest.get_id(uuid_or_id: description.send(value), action: IdAPIsRestActions::ACTION_TRANSLATE, additional_req_params: {inputType: 'conceptSequence', outputType: 'uuid'}).value
+                when 'description not case sensitive'
+                    description_info[:case_significance_short] = 'false'
 
-                        # make sure the id exits, otherwise just send the sequence
-                        if language_id.is_a? CommonRest::UnexpectedResponse
-                            language_id = description.send(value)
-                        end
-
-                        description_info[:language_sequence] = description.send(value)
-                        description_info[:language_id] = language_id
-
-                        case converted_value
-
-                            when 'English language'
-                                description_info[:language_short] = 'EN'
-
-                        end
-
-                    when :case_significance
-
-                        # get the concept uuid from the sequence
-                        case_significance_id = IdAPIsRest.get_id(uuid_or_id: description.send(value), action: IdAPIsRestActions::ACTION_TRANSLATE, additional_req_params: {inputType: 'conceptSequence', outputType: 'uuid'}).value
-
-                        # make sure the id exits, otherwise just send the sequence
-                        if case_significance_id.is_a? CommonRest::UnexpectedResponse
-                            case_significance_id = description.send(value)
-                        end
-
-                        description_info[:case_significance_sequence] = description.send(value)
-                        description_info[:case_significance_id] = case_significance_id
-
-                        case converted_value
-
-                            when 'description initial character sensitive'
-                                description_info[:case_significance_short] = 'true'
-
-                            when 'description case sensitive'
-                                description_info[:case_significance_short] = 'true'
-
-                            when 'description not case sensitive'
-                                description_info[:case_significance_short] = 'false'
-
-                            else
-                                description_info[:case_significance_short] = 'false'
-                        end
-                end
+                else
+                    description_info[:case_significance_short] = 'false'
             end
 
             # process nested properties
@@ -320,15 +275,13 @@ module ConceptConcern
         associations.each do |association|
 
             id = association.identifiers.uuids.first
-            type_id = association.associationTypeSequence
-
+            type_id = association.associationType.uuids.first
             type = AssociationRest.get_association(action: AssociationRestActions::ACTION_TYPE, uuid_or_id: type_id, additional_req_params: {coordToken: coordinates_token, stated: stated})
 
             if type.is_a? CommonRest::UnexpectedResponse
                 return return_associations
             end
 
-            #type_id = type.identifiers.uuids.first
             type_text = type.description
 
             target_id = association.targetConcept.identifiers.uuids.first
@@ -364,7 +317,7 @@ module ConceptConcern
 
         # iterate over the array of restAssociationTypeVersion returned
         types.each do |type|
-            return_types << {concept_id: type.identifiers.uuids.first, concept_sequence: type.associationConceptSequence, text: type.description}
+            return_types << {concept_id: type.identifiers.uuids.first, concept_sequence: type.identifiers.sequence, text: type.description}
         end
 
         return return_types
@@ -378,11 +331,6 @@ module ConceptConcern
     def get_attached_sememes(uuid, stated)
 
         coordinates_token = session[:coordinatestoken].token
-
-        # see if the sememe types object already exists in the session
-        if session[:concept_sememe_types]
-            #sememe_types = session[:concept_sememe_types]
-        end
 
         sememes = SememeRest.get_sememe(action: SememeRestActions::ACTION_BY_REFERENCED_COMPONENT, uuid_or_id: uuid, additional_req_params: {coordToken: coordinates_token, expand: 'chronology,nestedSememes', stated: stated})
 
@@ -457,30 +405,31 @@ module ConceptConcern
         # process dynamic sememe definition types
         if sememe_definition.class == Gov::Vha::Isaac::Rest::Api1::Data::Sememe::RestDynamicSememeDefinition
 
-            assemblage_sequence = sememe_definition.assemblageConceptId
-
-            # use the assemblage sequence to do a concept_description call to get sememe name
-            sememe_name = ConceptRest.get_concept(action: ConceptRestActions::ACTION_DESCRIPTIONS, uuid: assemblage_sequence, additional_req_params: additional_req_params).first.text
+            # TODO switch to using only uuids once REST APIs support it, and then no need for description call below
+            assemblage_id = sememe_definition.assemblageConceptId.uuids.first
+            sememe_name = sememe_definition.assemblageConceptDescription
 
             # start loading the row of sememe data with everything besides the columns
-            data_row = {sememe_name: sememe_name, sememe_description: sememe_definition.sememeUsageDescription, sememe_instance_id: get_next_id, sememe_definition_id: assemblage_sequence, state: 'Active', level: 1, has_nested: false, columns: {}}
+            data_row = {sememe_name: sememe_name, sememe_description: sememe_definition.sememeUsageDescription, sememe_instance_id: get_next_id, sememe_definition_id: assemblage_id, state: 'Active', level: 1, has_nested: false, columns: {}}
 
             # loop through all of the sememe's columns
             sememe_definition.columnInfo.each{ |row_column|
 
+                column_id = row_column.columnLabelConcept.uuids.first
+
                 # If not added to our hash of columns then add it
-                if row_column && ! field_info[assemblage_sequence.to_s + '_' + row_column.columnConceptSequence.to_s]
+                if row_column && ! field_info[assemblage_id + '_' + column_id]
 
                     # get the column data type from the validator data if it exists, otherwise use string
-                    if row_column.columnValidatorData && row_column.columnValidatorData.length > 0
-                        data_type_class = ruby_classname_to_java(class_name: row_column.columnValidatorData[0].class)
+                    if row_column.columnDataType.classType
+                        data_type_class = row_column.columnDataType.classType
                     else
                         data_type_class = 'gov.vha.isaac.rest.api1.data.sememe.dataTypes.RestDynamicSememeString'
                     end
 
-                    field_info[assemblage_sequence.to_s + '_' + row_column.columnConceptSequence.to_s] = {
-                        sememe_definition_id: assemblage_sequence,
-                        column_id: row_column.columnConceptSequence,
+                    field_info[assemblage_id + '_' + column_id] = {
+                        sememe_definition_id: assemblage_id,
+                        column_id: column_id,
                         name: row_column.columnName,
                         description: row_column.columnDescription,
                         data_type: row_column.columnDataType.enumName,
@@ -490,7 +439,7 @@ module ConceptConcern
                         column_used: false
                     }
 
-                    data_row[:columns][row_column.columnConceptSequence] = {}
+                    data_row[:columns][column_id] = {}
                 end
             }
         end
@@ -518,12 +467,11 @@ module ConceptConcern
             # process dynamic sememe version types
             if sememe.class == Gov::Vha::Isaac::Rest::Api1::Data::Sememe::RestDynamicSememeVersion
 
-                assemblage_sequence = sememe.sememeChronology.assemblageSequence
+                assemblage_id = sememe.sememeChronology.assemblage.uuids.first
                 uuid = sememe.sememeChronology.identifiers.uuids.first
 
-                # use the assemblage sequence to do a concept_description call to get sememe name, then a sememe_sememeDefinition call to get the columns that sememe has.
-                sememe_info = {sememe_name: ConceptRest.get_concept(action: ConceptRestActions::ACTION_DESCRIPTIONS, uuid: assemblage_sequence, additional_req_params: additional_req_params).first.text}
-                sememe_definition = SememeRest.get_sememe(action: SememeRestActions::ACTION_SEMEME_DEFINITION, uuid_or_id: assemblage_sequence, additional_req_params: additional_req_params)
+                # use the assemblage to do a sememe_sememeDefinition call to get the columns that sememe has.
+                sememe_definition = SememeRest.get_sememe(action: SememeRestActions::ACTION_SEMEME_DEFINITION, uuid_or_id: assemblage_id, additional_req_params: additional_req_params)
 
                 has_nested = false
 
@@ -532,14 +480,16 @@ module ConceptConcern
                 end
 
                 # start loading the row of sememe data with everything besides the data columns
-                data_row = {sememe_name: sememe_info[:sememe_name], sememe_description: sememe_definition.sememeUsageDescription, sememe_instance_id: uuid, sememe_definition_id: assemblage_sequence, state: sememe.sememeVersion.state.enumName, level: level, has_nested: has_nested, columns: {}}
+                data_row = {sememe_name: sememe_definition.assemblageConceptDescription, sememe_description: sememe_definition.sememeUsageDescription, sememe_instance_id: uuid, sememe_definition_id: assemblage_id, state: sememe.sememeVersion.state.enumName, level: level, has_nested: has_nested, columns: {}}
 
                 # loop through all of the sememe's data columns
                 sememe_definition.columnInfo.each{ |row_column|
 
+                    column_id = row_column.columnLabelConcept.uuids.first
+
                     # search to see if we have already added this column to our list of used columns.
                     list_index = used_column_list.find_index {|list_column|
-                        list_column[:sememe_definition_id] == assemblage_sequence && list_column[:column_id] == row_column.columnConceptSequence
+                        list_column[:sememe_definition_id] == assemblage_id && list_column[:column_id] == column_id
                     }
 
                     # If not added to our list of used columns add it to the end of the list
@@ -553,8 +503,8 @@ module ConceptConcern
                         end
 
                         used_column_data = {
-                            sememe_definition_id: assemblage_sequence,
-                            column_id: row_column.columnConceptSequence,
+                            sememe_definition_id: assemblage_id,
+                            column_id: column_id,
                             name: row_column.columnName,
                             description: row_column.columnDescription,
                             data_type: row_column.columnDataType.enumName,
@@ -565,7 +515,7 @@ module ConceptConcern
                         }
 
                         used_column_list << used_column_data
-                        used_column_hash[assemblage_sequence.to_s + '_' + row_column.columnConceptSequence.to_s] = used_column_data
+                        used_column_hash[assemblage_id + '_' + column_id] = used_column_data
                         list_index = (used_column_list.length) - 1
                     end
 
@@ -577,7 +527,7 @@ module ConceptConcern
 
                         # mark in our column lists that this column has data in at least one row
                         used_column_list[list_index][:column_used] = true
-                        used_column_hash[assemblage_sequence.to_s + '_' + row_column.columnConceptSequence.to_s][:column_used] = true
+                        used_column_hash[assemblage_id + '_' + column_id][:column_used] = true
 
                         data = data_column.data
                         converted_value = ''
@@ -615,7 +565,7 @@ module ConceptConcern
                     end
 
                     # add the sememe column id and data to the sememe data row
-                    data_row[:columns][row_column.columnConceptSequence] = column_data
+                    data_row[:columns][column_id] = column_data
                 }
 
             end
@@ -658,7 +608,7 @@ module ConceptConcern
             # process dynamic sememe version types
             if sememe.class == Gov::Vha::Isaac::Rest::Api1::Data::Sememe::RestDynamicSememeVersion
 
-                assemblage_sequence = sememe.sememeChronology.assemblageSequence
+                assemblage_sequence = sememe.sememeChronology.assemblage.sequence
                 uuid = sememe.sememeChronology.identifiers.uuids.first
 
                 # check to see if our cache already has this sememe type, if not add its info to the cache so we only have to look up once
@@ -680,6 +630,8 @@ module ConceptConcern
                 # loop through all of the sememe's data columns
                 sememe.dataColumns.each{|row_column|
 
+                    column_id = sememe_column.columnLabelConcept.sequence
+
                     # make sure the column is not empty
                     if row_column != nil && sememe_types[assemblage_sequence][:columns][row_column.columnNumber] != nil
 
@@ -687,12 +639,12 @@ module ConceptConcern
 
                         # search to see if we have already added this column to our list of used columns.
                         is_column_used = used_column_list.find_index {|list_column|
-                            list_column[:id] == sememe_column.columnConceptSequence
+                            list_column[:id] == column_id
                         }
 
                         # If not added to our list of used columns add it to the end of the list
                         if sememe_column && !is_column_used
-                            used_column_list << {id:sememe_column.columnConceptSequence, field: sememe_column.columnName, headerName: sememe_column.columnName, data_type: sememe_column.columnDataType.enumName}
+                            used_column_list << {id: column_id, field: sememe_column.columnName, headerName: sememe_column.columnName, data_type: sememe_column.columnDataType.enumName}
                         end
 
                         data = row_column.data

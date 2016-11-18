@@ -32,7 +32,7 @@ module ExportRest
   PATH_EXPORT_VETS = ROOT_PATH + 'vetsXML'
 
   #this is only used on the javascript side by export.js.erb.
-  VHAT_EXPORT_PATH ={path: 'rest/1/export/vetsXML', start_date: 'changedAfter', end_date: 'changedBefore'}
+  VHAT_EXPORT_PATH ={path: 'rest/1/export/vetsXML', start_date: 'changedAfter', end_date: 'changedBefore', max_end_date: java.lang.Long::MAX_VALUE.to_s} #note tha max_end_date is a string.  JavaScript cannot handle numbers that big.  JavaScript sucks.
 
   PARAMS_EMPTY = {}
   PARAMS_NO_CACHE = CommonRest::CacheRequest::PARAMS_NO_CACHE

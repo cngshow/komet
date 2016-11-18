@@ -608,15 +608,6 @@ var ConceptViewer = function(viewerID, currentConceptID, viewerAction) {
         });
     };
 
-    ConceptViewer.prototype.selectItemByValue = function(elmnt, value) {
-
-        for (var i=0; i < elmnt.options.length; i++)
-        {
-            if (elmnt.options[i].value.toUpperCase() == value)
-                elmnt.selectedIndex = i;
-        }
-    };
-
     ConceptViewer.prototype.createConceptPropertyRowString = function (rowData, fieldInfo) {
 
         var rowID = 'komet_concept_edit_concept_properties_row_' + rowData.sememe_instance_id + '_' + this.viewerID;
@@ -672,11 +663,11 @@ var ConceptViewer = function(viewerID, currentConceptID, viewerAction) {
         if (rowData != null){
 
             descriptionID = rowData.uuid;
-            type = rowData.description_type_sequence;
+            type = rowData.description_type_id;
             text = rowData.text;
             state = rowData.attributes[0].state;
-            language = rowData.language_sequence;
-            caseSignificance = rowData.case_significance_sequence;
+            language = rowData.language_id;
+            caseSignificance = rowData.case_significance_id;
         } else {
 
             isNew = true;
@@ -1093,7 +1084,7 @@ var ConceptViewer = function(viewerID, currentConceptID, viewerAction) {
             var optionArray = [];
 
             for (var i = 0; i < options.length; i++){
-                optionArray.push({value: options[i].concept_sequence, label: options[i].text});
+                optionArray.push({value: options[i].concept_id, label: options[i].text});
             }
 
             return optionArray;
@@ -1211,21 +1202,6 @@ var ConceptViewer = function(viewerID, currentConceptID, viewerAction) {
 
             editorSection.off("change");
             UIHelper.toggleChangeHighlights(editorSection, false);
-        }
-    };
-
-    ConceptViewer.prototype.cancelAction = function(previous_type, previous_id){
-
-        if (previous_type && previous_id){
-
-            if (previous_type == "ConceptViewer"){
-                $.publish(KometChannels.Taxonomy.taxonomyTreeNodeSelectedChannel, ["", previous_id, TaxonomyModule.getStatedView(), this.viewerID, WindowManager.INLINE]);
-
-            } else if (previous_type == "MappingViewer"){
-                $.publish(KometChannels.Mapping.mappingTreeNodeSelectedChannel, ["", previous_id, MappingModule.getTreeViewParams(), this.viewerID, WindowManager.INLINE]);
-            }
-            WindowManager.closeViewer(this.viewerID.toString());
-            return false;
         }
     };
 

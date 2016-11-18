@@ -91,18 +91,7 @@ var ConceptsModule = (function () {
         }
 
         if ((viewerAction == EDIT || viewerAction == CREATE) && WindowManager.viewers.inlineViewers.length > 0  && (windowType == null || windowType == WindowManager.INLINE)){
-
-            if (WindowManager.viewers[viewerID].constructor.name = "ConceptViewer" && WindowManager.viewers[viewerID].viewerAction == VIEW){
-
-                restParameters.viewer_previous_content_id = WindowManager.viewers[viewerID].currentConceptID;
-
-            } else if (WindowManager.viewers[viewerID].constructor.name = "MappingViewer" && (WindowManager.viewers[viewerID].viewerAction == MappingModule.SET_LIST || WindowManager.viewers[viewerID].viewerAction == MappingModule.SET_DETAILS)){
-
-                restParameters.viewer_previous_content_id = WindowManager.viewers[viewerID].currentSetID;
-            }
-
-            restParameters.viewer_previous_content_type = WindowManager.viewers[viewerID].constructor.name
-
+            WindowManager.registerPreviousViewerContent(viewerID);
         }
 
         // make an ajax call to get the concept for the current concept and pass it the currently selected concept id and the name of a partial file to render

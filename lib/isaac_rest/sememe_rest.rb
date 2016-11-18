@@ -42,8 +42,8 @@ module SememeRest
     
     PATH_CHRONOLOGY_SEMEME = ROOT_PATH + 'chronology/{id}'
     PATH_VERSION_SEMEME = ROOT_PATH + 'version/{id}'
-    PATH_BY_REFERENCED_COMPONENT_SEMEME = ROOT_PATH + 'byReferencedComponent/{id}'
-    PATH_BY_ASSEMBLAGE_SEMEME = ROOT_PATH + 'byAssemblage/{id}'
+    PATH_BY_REFERENCED_COMPONENT_SEMEME = ROOT_PATH + 'forReferencedComponent/{id}'
+    PATH_BY_ASSEMBLAGE_SEMEME = ROOT_PATH + 'forAssemblage/{id}'
     PATH_DEFINITION_SEMEME = ROOT_PATH + 'sememeDefinition/{id}'
     PATH_TYPE_SEMEME = ROOT_PATH + 'sememeType/{id}'
 
@@ -90,13 +90,13 @@ module SememeRest
             STARTING_PARAMS_SYM => PARAMS_EMPTY,
             CLAZZ_SYM => Gov::Vha::Isaac::Rest::Api::Data::Wrappers::RestWriteResponse,
             HTTP_METHOD_KEY => HTTP_METHOD_POST,
-            BODY_CLASS => Gov::Vha::Isaac::Rest::Api1::Data::Sememe::RestSememeDescriptionCreateData},
+            BODY_CLASS => Gov::Vha::Isaac::Rest::Api1::Data::Sememe::RestSememeDescriptionCreate},
         ACTION_DESCRIPTION_UPDATE => {
             PATH_SYM => PATH_DESCRIPTION_UPDATE, 
             STARTING_PARAMS_SYM => PARAMS_EMPTY,
             CLAZZ_SYM => Gov::Vha::Isaac::Rest::Api::Data::Wrappers::RestWriteResponse,
             HTTP_METHOD_KEY => HTTP_METHOD_PUT,
-            BODY_CLASS => Gov::Vha::Isaac::Rest::Api1::Data::Sememe::RestSememeDescriptionUpdateData},
+            BODY_CLASS => Gov::Vha::Isaac::Rest::Api1::Data::Sememe::RestSememeDescriptionUpdate},
         ACTION_SEMEME_CREATE => {
             PATH_SYM => PATH_SEMEME_CREATE,
             STARTING_PARAMS_SYM => PARAMS_EMPTY,

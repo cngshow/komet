@@ -1,7 +1,9 @@
 ##
 # Do common initialization tasks in komet tooling
 #
-REST_API_VERSIONS = [:"1.7"].freeze
+
+# Only add one number after the decimal for the API version match
+REST_API_VERSIONS = [:"1.9"].freeze
 
 require './lib/rails_common/props/prop_loader'
 require './lib/rails_common/logging/open_logging'

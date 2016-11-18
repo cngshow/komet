@@ -27,14 +27,10 @@ require 'bigdecimal'
 class MappingController < ApplicationController
     include ApplicationHelper, CommonController, TaxonomyHelper, ConceptConcern
 
-    before_filter :init_session
     skip_before_filter :set_render_menu, :only => [:map_set_editor]
+    before_action :can_edit_concept, only: [:process_map_set, :process_map_item]
 
     DATA_TYPES_CLASS = Gov::Vha::Isaac::Rest::Api1::Data::Sememe::DataTypes
-
-    def init_session
-
-    end
 
     def load_tree_data
 
@@ -88,7 +84,6 @@ class MappingController < ApplicationController
         @viewer_title = 'Mapping Sets'
         @mapping_action = params[:mapping_action]
         @viewer_id =  params[:viewer_id]
-        @previous_set_id = params[:previous_set_id]
         @view_params = params[:view_params]
 
         if @view_params == nil
@@ -146,7 +141,7 @@ class MappingController < ApplicationController
 
         session[:mapset_item_definitions] = []
         coordinates_token = session[:coordinatestoken].token
-        @map_set = {id: '', name: '', description: '', version: '', vuid: '', rules: '', include_fields: [], state: '', status: 'Active', time: '', module: '', path: ''}
+        @map_set = {id: '', name: '', description: '', version: '', vuid: '', rules: '', include_fields: [], state: '', status: 'Active', time: '', module: '', path: '', comment_id: 0, comment: ''}
 
         # add the definitions for the template map fields
         @map_set[:include_fields] = ['source_system', 'source_version', 'target_system', 'target_version']
@@ -176,14 +171,16 @@ class MappingController < ApplicationController
 
             if vuid.respond_to?(:value)
                 @map_set[:vuid] = vuid.value
+            else
+                @map_set[:vuid] = ''
             end
 
             extended_fields = set.mapSetExtendedFields
 
             extended_fields.each do |field|
 
-                name = field.extensionNameConcept
-                label = name
+                name = field.extensionNameConceptIdentifiers.uuids.first
+                label = field.extensionNameConceptIdentifiers.uuids.first
                 label_display = field.extensionNameConceptDescription
                 value = field.extensionValue.data
                 removable = true
@@ -217,7 +214,7 @@ class MappingController < ApplicationController
 
             item_fields.each do |field|
 
-                name = field.columnConceptSequence.to_s
+                name = field.columnLabelConcept.uuids.first
                 label = name
                 label_display = field.columnName
                 description = field.columnDescription
@@ -277,7 +274,6 @@ class MappingController < ApplicationController
             @map_set[:author] = get_concept_metadata(set.mappingSetStamp.authorSequence)
             @map_set[:module] = get_concept_metadata(set.mappingSetStamp.moduleSequence)
             @map_set[:path] = get_concept_metadata(set.mappingSetStamp.pathSequence)
-            @map_set[:vuid] = ''
 
             if set.comments.length == 0
                 @map_set[:comment] = ''
@@ -326,18 +322,18 @@ class MappingController < ApplicationController
             item_hash = {}
 
             item_hash[:item_id] = item.identifiers.uuids.first
-            item_hash[:source_concept] = IdAPIsRest.get_id(uuid_or_id: item.sourceConcept, action: IdAPIsRestActions::ACTION_TRANSLATE, additional_req_params: {inputType: 'conceptSequence', outputType: 'uuid'}).value
+            item_hash[:source_concept] = item.sourceConcept.uuids.first
             item_hash[:source_concept_display] = item.sourceDescription
             item_hash[:target_concept] = item.targetConcept
 
             if item_hash[:target_concept] != nil || item_hash[:target_concept] != ''
-                item_hash[:target_concept] = IdAPIsRest.get_id(uuid_or_id: item_hash[:target_concept], action: IdAPIsRestActions::ACTION_TRANSLATE, additional_req_params: {inputType: 'conceptSequence', outputType: 'uuid'}).value
+                item_hash[:target_concept] = item_hash[:target_concept].uuids.first
             end
 
             item_hash[:qualifier_concept] = item.qualifierConcept
 
             if item_hash[:qualifier_concept] != nil && item_hash[:qualifier_concept] != ''
-                item_hash[:qualifier_concept] = IdAPIsRest.get_id(uuid_or_id: item_hash[:qualifier_concept], action: IdAPIsRestActions::ACTION_TRANSLATE, additional_req_params: {inputType: 'conceptSequence', outputType: 'uuid'}).value
+                item_hash[:qualifier_concept] = item_hash[:qualifier_concept].uuids.first
             end
 
             item_hash[:target_concept_display] = item.targetDescription
@@ -390,9 +386,6 @@ class MappingController < ApplicationController
 
     def process_map_set
 
-        # post_test = MappingApis::get_mapping_api(action: MappingApiActions::ACTION_CREATE_SET,  body_params: {name: "Map Set Test 1", description: "The first test of creating a mapset.", purpose: "The first test of creating a mapset using the rest APIs." } )
-        # put_test = MappingApis::get_mapping_api(uuid_or_id: '1ebfe2e3-4a9d-4cbe-ae21-0986e89ad9f1', action: MappingApiActions::ACTION_UPDATE_SET, additional_req_params: {state: "Active"},  body_params: {name: "Map Set Test 1.1", description: "The second test of updating a mapset.", purpose: "The second test of updating a mapset using the rest APIs." } )
-
         set_id = params[:komet_mapping_set_editor_set_id]
         set_name = params[:komet_mapping_set_editor_name]
         description = params[:komet_mapping_set_editor_description]
@@ -403,7 +396,6 @@ class MappingController < ApplicationController
             active = false
         end
 
-        # source_system: source_system, source_system_display: source_system_display, source_version: source_version, target_system: target_system, target_system_display: target_system_display, target_version: target_version
         body_params = {name: set_name, description: description, active: active}
         request_params = {editToken: get_edit_token}
 
@@ -426,8 +418,6 @@ class MappingController < ApplicationController
                 params['komet_mapping_set_editor_include_fields'].each do |set_field|
 
                     set_field_label = params['komet_mapping_set_editor_include_fields_' + set_field + '_label']
-                    set_field_label = IdAPIsRest.get_id(uuid_or_id: set_field_label, action: IdAPIsRestActions::ACTION_TRANSLATE, additional_req_params: {inputType: 'uuid', outputType: 'conceptSequence'}).value
-
                     set_field_data_type = params['komet_mapping_set_editor_include_fields_' + set_field + '_data_type']
 
                     if set_field_data_type != 'UUID'
@@ -449,7 +439,6 @@ class MappingController < ApplicationController
                 params['komet_mapping_set_editor_items_include_fields'].each do |item_field|
 
                     item_field_label = params['komet_mapping_set_editor_items_include_fields_' + item_field + '_label']
-                    item_field_label = IdAPIsRest.get_id(uuid_or_id: item_field_label, action: IdAPIsRestActions::ACTION_TRANSLATE, additional_req_params: {inputType: 'uuid', outputType: 'conceptSequence'}).value
                     item_field_data_type = params['komet_mapping_set_editor_items_include_fields_' + item_field + '_data_type']
                     item_field_required = params['komet_mapping_set_editor_items_include_fields_' + item_field + '_required']
 
@@ -476,8 +465,7 @@ class MappingController < ApplicationController
 
         if comment_id == '0' && comment != ''
 
-            set_concept_sequence = IdAPIsRest.get_id(uuid_or_id: set_id, action: IdAPIsRestActions::ACTION_TRANSLATE, additional_req_params: {inputType: 'uuid', outputType: 'conceptSequence'}).value
-            comment_return = CommentApis.get_comment_api(action: CommentApiActions::ACTION_CREATE, additional_req_params: {editToken: get_edit_token}, body_params: {comment: comment, commentedItem: set_concept_sequence})
+            comment_return = CommentApis.get_comment_api(action: CommentApiActions::ACTION_CREATE, additional_req_params: {editToken: get_edit_token}, body_params: {comment: comment, commentedItem: set_id})
 
         elsif comment_id != '0'
 
@@ -509,13 +497,13 @@ class MappingController < ApplicationController
                 target_concept = nil
 
                 if item['target_concept'] != nil || item['target_concept'] != ''
-                    target_concept = IdAPIsRest.get_id(uuid_or_id: item['target_concept'], action: IdAPIsRestActions::ACTION_TRANSLATE, additional_req_params: {inputType: 'uuid', outputType: 'conceptSequence'}).value
+                    target_concept = item['target_concept']
                 end
 
                 qualifier_concept = nil
 
                 if item['qualifier_concept'] != nil && item['qualifier_concept'] != ''
-                    qualifier_concept = IdAPIsRest.get_id(uuid_or_id: item['qualifier_concept'], action: IdAPIsRestActions::ACTION_TRANSLATE, additional_req_params: {inputType: 'uuid', outputType: 'conceptSequence'}).value
+                    qualifier_concept = item['qualifier_concept']
                 end
 
                 body_params = {targetConcept: target_concept, qualifierConcept: qualifier_concept}
@@ -563,8 +551,8 @@ class MappingController < ApplicationController
                     end
                 else
 
-                    body_params[:mapSetConcept] = IdAPIsRest.get_id(uuid_or_id: set_id, action: IdAPIsRestActions::ACTION_TRANSLATE, additional_req_params: {inputType: 'uuid', outputType: 'conceptSequence'}).value
-                    body_params[:sourceConcept] = IdAPIsRest.get_id(uuid_or_id: item['source_concept'], action: IdAPIsRestActions::ACTION_TRANSLATE, additional_req_params: {inputType: 'uuid', outputType: 'conceptSequence'}).value
+                    body_params[:mapSetConcept] = set_id
+                    body_params[:sourceConcept] = item['source_concept']
 
                     return_value = MappingApis::get_mapping_api(action: MappingApiActions::ACTION_CREATE_ITEM, additional_req_params: {editToken: get_edit_token}, body_params: body_params)
 
@@ -583,8 +571,7 @@ class MappingController < ApplicationController
 
                     if comment_id == '0' && comment != ''
 
-                        item_concept_sequence = IdAPIsRest.get_id(uuid_or_id: item_id, action: IdAPIsRestActions::ACTION_TRANSLATE, additional_req_params: {inputType: 'uuid', outputType: 'sememeSequence'}).value
-                        comment_return = CommentApis.get_comment_api(action: CommentApiActions::ACTION_CREATE, additional_req_params: {editToken: get_edit_token}, body_params: {comment: comment, commentedItem: item_concept_sequence})
+                        comment_return = CommentApis.get_comment_api(action: CommentApiActions::ACTION_CREATE, additional_req_params: {editToken: get_edit_token}, body_params: {comment: comment, commentedItem: item_id})
 
                     elsif comment_id != '0'
 
