@@ -493,15 +493,19 @@ class KometDashboardController < ApplicationController
     end
 
     def get_coordinatestoken
-        hash = { }
+        hash = {}
         hash[:language] = params[:language]
+        hash[:time] = params[:stamp_date]
         hash[:dialectPrefs] = params[:dialectPrefs]
         hash[:descriptionTypePrefs] = params[:descriptionTypePrefs]
         hash[:allowedStates]= params[:allowedStates]
-        session[:colormodule] =params[:colormodule]
-        session[:colorpath] =params[:colorpath]
-        session[:colorrefsets] =params[:colorrefsets]
-        results =  CoordinateRest.get_coordinate(action: CoordinateRestActions::ACTION_COORDINATES_TOKEN,  additional_req_params: hash)
+        session[:colormodule] = params[:colormodule]
+        session[:colorpath] = params[:colorpath]
+        session[:colorrefsets] = params[:colorrefsets]
+
+        hash.merge!(CommonRest::CacheRequest::PARAMS_NO_CACHE)
+
+        results = CoordinateRest.get_coordinate(action: CoordinateRestActions::ACTION_COORDINATES_TOKEN, additional_req_params: hash)
         session[:coordinatestoken] = results
         $log.debug("token get_coordinatestoken #{results.token}" )
 
