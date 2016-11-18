@@ -48,10 +48,12 @@ class KometDashboardController < ApplicationController
 #      #do something
 #    end
 #        CRIS, test flash code
-#         resp = CoordinateRest.get_coordinate(action: CoordinateRestActions::ACTION_COORDINATES_TOKEN, additional_req_params: {foo: 'faa'})
-#         # if resp.is_a? RestExceptionResponse
-#         #     resp.flash_error
-#         # end
+#        resp = CoordinateRest.get_coordinate(action: CoordinateRestActions::ACTION_COORDINATES_TOKEN, additional_req_params: {foo: 'faa'})
+        #resp.rest_exception.flash_error
+        #resp.flash_error   (both work)
+        # if resp.is_a? CommonRest::UnexpectedResponse
+        #     resp.flash_error
+        # end
 
         #resp.flash_error if resp.respond_to? :flash_error
 
@@ -500,15 +502,19 @@ class KometDashboardController < ApplicationController
     end
 
     def get_coordinatestoken
-        hash = { }
+        hash = {}
         hash[:language] = params[:language]
+        hash[:time] = params[:stamp_date]
         hash[:dialectPrefs] = params[:dialectPrefs]
         hash[:descriptionTypePrefs] = params[:descriptionTypePrefs]
         hash[:allowedStates]= params[:allowedStates]
-        session[:colormodule] =params[:colormodule]
-        session[:colorpath] =params[:colorpath]
-        session[:colorrefsets] =params[:colorrefsets]
-        results =  CoordinateRest.get_coordinate(action: CoordinateRestActions::ACTION_COORDINATES_TOKEN,  additional_req_params: hash)
+        session[:colormodule] = params[:colormodule]
+        session[:colorpath] = params[:colorpath]
+        session[:colorrefsets] = params[:colorrefsets]
+
+        hash.merge!(CommonRest::CacheRequest::PARAMS_NO_CACHE)
+
+        results = CoordinateRest.get_coordinate(action: CoordinateRestActions::ACTION_COORDINATES_TOKEN, additional_req_params: hash)
         session[:coordinatestoken] = results
         $log.debug("token get_coordinatestoken #{results.token}" )
 

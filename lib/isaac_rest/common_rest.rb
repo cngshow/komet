@@ -6,7 +6,13 @@ require 'uri'
 module CommonRest
   include KOMETUtilities, CommonController
 
-  UnexpectedResponse = Struct.new(:body, :status) do
+  #make body have the conciseMessage if we have it, otherwise we might have html
+  UnexpectedResponse = Struct.new(:body, :status, :rest_exception) do
+    include BootstrapNotifier
+    def flash_error
+      $log.warn("Flashing the error #{self.body}")
+      flash_alert(message: self.body)
+    end
   end
 
   #used as your key in the req params to indicate if this request is cached
@@ -103,7 +109,7 @@ module CommonRest
       $log.warn('Result is ' + response.body)
       $log.warn('Status is ' + response.status.to_s)
 
-      return UnexpectedResponse.new(response.body, response.status)
+      return UnexpectedResponse.new(response.body, response.status, nil)
     end
     invoke_callbacks if self.respond_to? :invoke_callbacks #if I have been mixed into an instance of common rest base I will respond to this
     json.freeze
@@ -129,6 +135,7 @@ module CommonRestBase
   class RestBase
     include CommonActionSyms
     attr_accessor :params, :body_params, :action, :action_constants
+    include Gov::Vha::Isaac::Rest::Api::Exceptions
 
     def initialize(params:, body_params: {}, action:, action_constants:)
       body_params = body_params.to_jaxb_json_hash if body_params.respond_to? :to_jaxb_json_hash
@@ -217,7 +224,10 @@ module CommonRestBase
         clazz = get_rest_class(json)
         r_val = clazz.send(:from_json, json)
       end
-
+      if (r_val.is_a? RestExceptionResponse)
+        $log.warn("A RestExceptionResponse response was sent from ISAAC. Concise message is #{r_val.conciseMessage}, status was #{r_val.status}")
+        r_val = CommonRest::UnexpectedResponse.new(r_val.conciseMessage, r_val.status, r_val )
+      end
       r_val
     end
 

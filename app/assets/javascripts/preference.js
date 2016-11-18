@@ -26,13 +26,13 @@ var PreferenceModule = (function () {
         refsetList = {};
         refsetRows = [];
         $.minicolors.defaults.position = 'bottom right';
-        var dialog, form
+        var dialog, form;
 
         dialog = $("#komet_user_preference_form").dialog({
             autoOpen: false,
             closeOnEscape: false,
             position: { my: "right top", at: "left bottom", of: "#komet_user_preference_link" },
-            height: 600,
+            height: 700,
             width: 650,
             dialogClass: "no-close",
             show: {
@@ -120,16 +120,22 @@ var PreferenceModule = (function () {
             document.getElementById("heading2").appendChild(td3);
 
             $.get( gon.routes.taxonomy_get_coordinates_path, function( getcoordinates_results ) {
+                var stamp_date = getcoordinates_results.taxonomyCoordinate.stampCoordinate.time;
+
+                if (stamp_date !== gon.vhat_export_params.max_end_date) {
+                    $('#stamp_date').data("DateTimePicker").date(moment(stamp_date));
+                }
+
                 selectItemByValue(document.getElementById('komet_concept_language'),getcoordinates_results.languageCoordinate.language);
                 $("#komet_concept_language").val(getcoordinates_results.languageCoordinate.language);
                 descriptiontypepreferences = getcoordinates_results.languageCoordinate.descriptionTypePreferences;
                 dialectassemblagepreferences= getcoordinates_results.languageCoordinate.dialectAssemblagePreferences;
                 allowedstates =getcoordinates_results.stampCoordinate.allowedStates;
                 // Gets list of all the dialect based on constant uuid value
-                populateControls('dialecttbl',gon.IsaacMetadataAuxiliary.DIALECT_ASSEMBLAGE.uuids[0].uuid,dialectassemblagepreferences)
+                populateControls('dialecttbl',gon.IsaacMetadataAuxiliary.DIALECT_ASSEMBLAGE.uuids[0].uuid,dialectassemblagepreferences);
 
                 // Gets list of all the description type based on constant uuid value
-                populateControls('description_type',gon.IsaacMetadataAuxiliary.DESCRIPTION_TYPE.uuids[0].uuid,descriptiontypepreferences)
+                populateControls('description_type',gon.IsaacMetadataAuxiliary.DESCRIPTION_TYPE.uuids[0].uuid,descriptiontypepreferences);
 
                 //checked selected  values in status list
                 selectAllowedstates(allowedstates);
@@ -137,7 +143,7 @@ var PreferenceModule = (function () {
                 // this recreating color module table from session
                 if (getcoordinates_results.colormodule != null)
                 {
-                    document.getElementById('listofmodule').innerHTML ="";
+                    document.getElementById('listofmodule').innerHTML = "";
                     populateColormodule(getcoordinates_results.colormodule);
                 }
 
@@ -223,6 +229,15 @@ var PreferenceModule = (function () {
             var description_values ="";
             var dialect_values ="";
             var language_values=$( "#komet_concept_language" ).val();
+
+            // get the stamp_date and if it is not set then use the max long in gon
+            var stamp_date = $("#stamp_date").find("input").val();
+            if (stamp_date == '') {
+                stamp_date = 'latest';
+            } else {
+                stamp_date = new Date(stamp_date).getTime().toString();
+            }
+
             var allowedStates=$('input[name=status]:checked').val();
             var colormodule=[];
             var colorpath=[];
@@ -260,12 +275,20 @@ var PreferenceModule = (function () {
                // colormoduleshapes.push({moduleid:splitvalue[1] ,shapeclass:this.value }) ;
             //});
 
-            dialect_values = dialect_values.substring(0  ,dialect_values.length -1); // removing comma from end of the string
-            description_values = description_values.substring(0  ,description_values.length -1);// removing comma from end of the string
+            dialect_values = dialect_values.substring(0, dialect_values.length -1); // removing comma from end of the string
+            description_values = description_values.substring(0, description_values.length -1);// removing comma from end of the string
 
-            params = {language: language_values , dialectPrefs: dialect_values ,descriptionTypePrefs:description_values, allowedStates:allowedStates ,colormodule:colormodule,colorpath:colorpath,colorrefsets:colorrefsets} ;
-
-            $.get( gon.routes.taxonomy_get_coordinatestoken_path , params, function( results ) {
+            params = {
+                language: language_values,
+                stamp_date: stamp_date,
+                dialectPrefs: dialect_values,
+                descriptionTypePrefs: description_values,
+                allowedStates: allowedStates,
+                colormodule: colormodule,
+                colorpath: colorpath,
+                colorrefsets: colorrefsets
+            };
+            $.get( gon.routes.taxonomy_get_coordinatestoken_path, params, function( results ) {
                 console.log(results);
             });
 

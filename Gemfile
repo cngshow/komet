@@ -55,3 +55,7 @@ gem 'ci_reporter_test_unit'
 gem 'jquery-minicolors-rails'
 gem 'pundit'
 gem 'bootstrap-growl-rails'
+
+# http://eonasdan.github.io/bootstrap-datetimepicker/
+gem 'momentjs-rails', '>= 2.9.0'
+gem 'bootstrap3-datetimepicker-rails', '~> 4.17.43'

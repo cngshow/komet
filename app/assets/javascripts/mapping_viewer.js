@@ -254,14 +254,17 @@ var MappingViewer = function(viewerID, currentSetID, viewerAction) {
 
     MappingViewer.prototype.setOverviewSetsGridActions = function(selectedRow){
 
-        var editParent = $("#komet_mapping_overview_set_edit_" + this.viewerID).parent();
+        var editParent = null;
+        if (RolesModule.can_edit_concept()) {
+            editParent = $("#komet_mapping_overview_set_edit_" + this.viewerID).parent(); //EDIT
+        }
         var stateIcon = $("#komet_mapping_overview_set_state_" + this.viewerID);
         var stateParent = stateIcon.parent();
 
         if (selectedRow != null) {
-
-            UIHelper.toggleFieldAvailability(editParent, true);
-
+            if (RolesModule.can_edit_concept()) {
+                UIHelper.toggleFieldAvailability(editParent, true);//EDIT
+            }
             var stateTitle = "Inactivate Selected Map Set";
             var stateClass = "glyphicon glyphicon-ban-circle";
             var stateValue = "false";
@@ -286,7 +289,9 @@ var MappingViewer = function(viewerID, currentSetID, viewerAction) {
         } else {
 
             stateParent[0].classList.add('hide');
-            UIHelper.toggleFieldAvailability(editParent, false);
+            if (RolesModule.can_edit_concept()) {
+                UIHelper.toggleFieldAvailability(editParent, false);//EDIT
+            }
         }
     };
 
