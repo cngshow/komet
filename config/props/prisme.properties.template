@@ -15,3 +15,15 @@
 #war_classifier=a
 #war_package=war
 #isaac_root=https://vadev.mantech.com:4848/isaac-rest/
+#below used by isaac only (that I know of)
+#db_group_id=gov.vha.isaac.db
+#db_artifact_id=vhat
+#db_version=2016.08.18-1.2
+#db_repo=termdata
+#db_classifier=all
+#db_package=cradle.zip
+#nexus_repository_url=https://vaauscttweb83.aac.va.gov:8443/nexus/content/groups/public
+#nexus_publication_url=https://vaauscttweb83.aac.va.gov:8443/nexus/content/repositories/termdata/
+#nexus_user=devtest
+#nexus_pwd=devtesthardtoguess
+#nexus_root=https://vaauscttweb83.aac.va.gov:8443
