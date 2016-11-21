@@ -3,6 +3,9 @@ Komet Changelog
 This changelog summarizes changes and fixes which are a part of each revision.  For more details on the fixes, refer tracking numbers 
 where provided, and the git commit history.
 
+* 2016/11/?? - 1.41:
+    *
+
 * 2016/11/18 - 1.40:
     * Added STAMP time to preferences page
     * fix a bug on mapping roles
