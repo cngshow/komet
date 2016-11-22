@@ -2,13 +2,13 @@
 
 <% @descriptions.each do |description| %>
 
-    <div id="komet_concept_description_panel_<%= @viewer_id %>_<%= description[:uuid] %>" class="komet-concept-section-panel komet-concept-description-panel">
+    <div id="komet_concept_description_panel_<%= @viewer_id %>_<%= description[:description_id] %>" class="komet-concept-section-panel komet-concept-description-panel">
 
         <!-- main header block - always visible -->
         <div class="komet-concept-section-panel-header komet-concept-description-panel-header">
 
             <!-- expand/collapse icon - controls details drawer -->
-            <button type="button" class="komet-link-button" onclick="WindowManager.viewers[<%= @viewer_id %>].togglePanelDetails('komet_concept_description_panel_<%= @viewer_id %>_<%= description[:uuid] %>')" aria-label="Expand" title="Expand">
+            <button type="button" class="komet-link-button" onclick="WindowManager.viewers[<%= @viewer_id %>].togglePanelDetails('komet_concept_description_panel_<%= @viewer_id %>_<%= description[:description_id] %>')" aria-label="Expand" title="Expand">
                 <div class="glyphicon glyphicon-plus-sign"></div>
             </button>
 
@@ -17,7 +17,7 @@
                 <!-- description text -->
                 <div class="komet-concept-description-text komet-context-menu"
                      data-menu-type="concept"
-                     data-menu-uuid="<%= description[:uuid] %>"
+                     data-menu-uuid="<%= description[:description_id] %>"
                      data-menu-concept-text="<%= description[:text] %>"
                      data-menu-concept-terminology-type="<%= description[:terminology_type] %>"
                      data-menu-state="<%= description[:state] %>"
@@ -69,7 +69,7 @@
 
                     <%
                        if attribute[:label] == 'UUID'
-                           tag_details = 'class="komet-concept-description-details-name komet-context-menu" data-menu-type="concept" data-menu-uuid="' + description[:uuid] + '"'
+                           tag_details = 'class="komet-concept-description-details-name komet-context-menu" data-menu-type="concept" data-menu-uuid="' + description[:description_id] + '"'
                        else
                            tag_details = 'class="komet-concept-description-details-name"'
                        end

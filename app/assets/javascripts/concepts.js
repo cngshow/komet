@@ -3,6 +3,7 @@ var ConceptsModule = (function () {
     const VIEW = 'view_concept';
     const CREATE = 'create_concept';
     const EDIT = 'edit_concept';
+    const CLONE = 'clone_concept';
 
     function init() {
 
@@ -19,14 +20,7 @@ var ConceptsModule = (function () {
         });
 
         // listen for the onChange event broadcast for creating or editing a concept.
-        $.subscribe(KometChannels.Taxonomy.taxonomyConceptEditorChannel, function (e, conceptID, viewerID, windowType, params) {
-
-            var viewerAction = EDIT;
-
-            if (conceptID === null || conceptID === ""){
-                viewerAction = CREATE;
-            }
-
+        $.subscribe(KometChannels.Taxonomy.taxonomyConceptEditorChannel, function (e, viewerAction, conceptID, viewerID, windowType, params) {
             callLoadViewerData(conceptID, TaxonomyModule.defaultStatedView, viewerAction, viewerID, windowType, params);
         });
     }
@@ -84,13 +78,13 @@ var ConceptsModule = (function () {
                 restParameters.parent_type = params.parentType;
             }
         }
-        else if (viewerAction == EDIT) {
+        else if (viewerAction == EDIT || viewerAction == CLONE) {
 
             restPath = gon.routes.taxonomy_get_concept_edit_info_path;
             restParameters.partial = 'komet_dashboard/concept_detail/concept_edit';
         }
 
-        if ((viewerAction == EDIT || viewerAction == CREATE) && WindowManager.viewers.inlineViewers.length > 0  && (windowType == null || windowType == WindowManager.INLINE)){
+        if ((viewerAction == EDIT || viewerAction == CREATE || viewerAction == CLONE) && WindowManager.viewers.inlineViewers.length > 0  && (windowType == null || windowType == WindowManager.INLINE)){
             WindowManager.registerPreviousViewerContent(viewerID);
         }
 
@@ -136,7 +130,8 @@ var ConceptsModule = (function () {
         setStatedView: setStatedView,
         VIEW: VIEW,
         EDIT: EDIT,
-        CREATE: CREATE
+        CREATE: CREATE,
+        CLONE: CLONE
     };
 
 })();
