@@ -4,7 +4,10 @@ This changelog summarizes changes and fixes which are a part of each revision.  
 where provided, and the git commit history.
 
 * 2016/11/?? - 1.41:
-    *
+    * fixed bugs on User pref screen -  correct color and shape will show on taxonomy .
+    * added time picker to date pickers
+    * 
+    
 
 * 2016/11/18 - 1.40:
     * Added STAMP time to preferences page
