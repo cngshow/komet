@@ -187,6 +187,15 @@ class MappingController < ApplicationController
                 display = true
                 data_type = field.extensionValue.class.to_s.remove('Gov::Vha::Isaac::Rest::Api1::Data::Sememe::DataTypes::RestDynamicSememe')
 
+                # if the field is buiness rules then pull it out and handle it specially
+                # use the first line when it is implemented in the DB
+                # if label == $isaac_metadata_auxiliary['DYNAMIC_SEMEME_COLUMN_BUSINESS_RULES']['uuids'].first[:uuid]
+                if label == '12fd37c2-e9fe-58ed-992d-5ad13bf4e110'
+
+                    @map_set[:rules] = value
+                    next
+                end
+
                 if value == nil && value == ''
                     display = false
                 end
@@ -431,8 +440,19 @@ class MappingController < ApplicationController
                     set_extended_fields << {extensionNameConcept: set_field_label, extensionValue: {'@class' => set_field_data_type, columnNumber: 1, data: set_field_value}}
                 end
 
-                body_params[:mapSetExtendedFields] = set_extended_fields
+
             end
+
+            if params[:komet_mapping_set_editor_rules] != ''
+
+                # use the first line when implemented in the DB
+                #rules_id = $isaac_metadata_auxiliary['DYNAMIC_SEMEME_COLUMN_BUSINESS_RULES']['uuids'].first[:uuid]
+                rules_id = '12fd37c2-e9fe-58ed-992d-5ad13bf4e110'
+
+                set_extended_fields << {extensionNameConcept: rules_id, extensionValue: {'@class' => 'gov.vha.isaac.rest.api1.data.sememe.dataTypes.RestDynamicSememeString', columnNumber: 1, data: params[:komet_mapping_set_editor_rules]}}
+            end
+
+            body_params[:mapSetExtendedFields] = set_extended_fields
 
             if params['komet_mapping_set_editor_items_include_fields'] != nil
 

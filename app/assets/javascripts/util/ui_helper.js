@@ -857,7 +857,7 @@ var UIHelper = (function () {
                         items.editConcept = {
                             name: "Edit Concept",
                             icon: "context-menu-icon glyphicon-pencil",
-                            callback: openConceptEditor($triggerElement, uuid)
+                            callback: openConceptEditor($triggerElement, ConceptsModule.EDIT, uuid)
                         };
 
                         if (WindowManager.viewers.inlineViewers.length < WindowManager.viewers.maxInlineViewers) {
@@ -865,7 +865,7 @@ var UIHelper = (function () {
                             items.editConceptNewViewer = {
                                 name: "Edit Concept in New Viewer",
                                 icon: "context-menu-icon glyphicon-pencil",
-                                callback: openConceptEditor($triggerElement, uuid, WindowManager.NEW, WindowManager.NEW)
+                                callback: openConceptEditor($triggerElement, ConceptsModule.EDIT, uuid, WindowManager.NEW, WindowManager.NEW)
                             };
                         }
 
@@ -874,22 +874,40 @@ var UIHelper = (function () {
                             items.editConceptUnlinkedViewer = {
                                 name: "Edit Concept in Unlinked Viewer",
                                 icon: "context-menu-icon glyphicon-pencil",
-                                callback: openConceptEditor($triggerElement, uuid, unlinkedViewerID)
+                                callback: openConceptEditor($triggerElement, ConceptsModule.EDIT, uuid, unlinkedViewerID)
                             };
                         }
 
                         items.cloneConcept = {
                             name: "Clone Concept",
                             icon: "context-menu-icon glyphicon-share",
-                            callback: cloneConcept(uuid)
+                            callback: openConceptEditor($triggerElement, ConceptsModule.CLONE, uuid)
                         };
+
+                        if (WindowManager.viewers.inlineViewers.length < WindowManager.viewers.maxInlineViewers) {
+
+                            items.cloneConceptNewViewer = {
+                                name: "Clone Concept in New Viewer",
+                                icon: "context-menu-icon glyphicon-share",
+                                callback: openConceptEditor($triggerElement, ConceptsModule.CLONE, uuid, WindowManager.NEW, WindowManager.NEW)
+                            };
+                        }
+
+                        if (WindowManager.viewers.inlineViewers.length > 1) {
+
+                            items.cloneConceptUnlinkedViewer = {
+                                name: "Clone Concept in Unlinked Viewer",
+                                icon: "context-menu-icon glyphicon-share",
+                                callback: openConceptEditor($triggerElement, ConceptsModule.CLONE, uuid, unlinkedViewerID)
+                            };
+                        }
 
                         if (conceptText != null && conceptTerminologyType != null) {
 
                             items.createChildConcept = {
                                 name: "Create Child Concept",
                                 icon: "context-menu-icon glyphicon-plus",
-                                callback: openConceptEditor($triggerElement, null, WindowManager.getLinkedViewerID(), WindowManager.INLINE, uuid, conceptText, conceptTerminologyType)
+                                callback: openConceptEditor($triggerElement, ConceptsModule.CREATE, null, WindowManager.getLinkedViewerID(), WindowManager.INLINE, uuid, conceptText, conceptTerminologyType)
                             };
 
                             if (WindowManager.viewers.inlineViewers.length < WindowManager.viewers.maxInlineViewers) {
@@ -897,7 +915,7 @@ var UIHelper = (function () {
                                 items.createChildConceptNewViewer = {
                                     name: "Create Child Concept in New Viewer",
                                     icon: "context-menu-icon glyphicon-plus",
-                                    callback: openConceptEditor($triggerElement, null, WindowManager.NEW, WindowManager.NEW, uuid, conceptText, conceptTerminologyType)
+                                    callback: openConceptEditor($triggerElement, ConceptsModule.CREATE, null, WindowManager.NEW, WindowManager.NEW, uuid, conceptText, conceptTerminologyType)
                                 };
                             }
 
@@ -906,7 +924,7 @@ var UIHelper = (function () {
                                 items.createChildConceptUnlinkedViewer = {
                                     name: "Create Child Concept in Unlinked Viewer",
                                     icon: "context-menu-icon glyphicon-plus",
-                                    callback: openConceptEditor($triggerElement, null, unlinkedViewerID, WindowManager.INLINE, uuid, conceptText, conceptTerminologyType)
+                                    callback: openConceptEditor($triggerElement, ConceptsModule.CREATE, null, unlinkedViewerID, WindowManager.INLINE, uuid, conceptText, conceptTerminologyType)
                                 };
                             }
                         }
@@ -1037,7 +1055,7 @@ var UIHelper = (function () {
         };
     }
 
-    function openConceptEditor(element, id, viewerID, windowType, parentID, parentText, parentType) {
+    function openConceptEditor(element, action, id, viewerID, windowType, parentID, parentText, parentType) {
 
         return function () {
 
@@ -1053,7 +1071,7 @@ var UIHelper = (function () {
                 }
             }
 
-            $.publish(KometChannels.Taxonomy.taxonomyConceptEditorChannel, [id, viewerID, windowType, {
+            $.publish(KometChannels.Taxonomy.taxonomyConceptEditorChannel, [action, id, viewerID, windowType, {
                 parentID: parentID,
                 parentText: parentText,
                 parentType: parentType

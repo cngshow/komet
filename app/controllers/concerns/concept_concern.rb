@@ -33,8 +33,9 @@ module ConceptConcern
     # descriptions - takes a uuid and returns all of the description concepts attached to it.
     # @param [String] uuid - The UUID to look up descriptions for
     # @param [Boolean] stated - Whether to display the stated (true) or inferred view of concepts
+    # @param [Boolean] clone - Are we cloning a concept, if so we will not return the terminology IDs
     # @return [object] an array of hashes that contains the attributes
-    def get_attributes(uuid, stated)
+    def get_attributes(uuid, stated, clone = false)
 
         coordinates_token = session[:coordinatestoken].token
         return_attributes = []
@@ -59,18 +60,21 @@ module ConceptConcern
 
         @concept_defined = defined
 
-        # get the concept SCTID information if there is one
-        coding_id = IdAPIsRest.get_id(uuid_or_id: uuid, action: IdAPIsRestActions::ACTION_TRANSLATE, additional_req_params: {outputType: 'sctid'})
+        if !clone
 
-        if coding_id.respond_to?(:value)
-            @terminology_id = {label: 'SCTID', value: coding_id.value}
-        else
-
-            # else get the concept VUID information if there is one
-            coding_id = IdAPIsRest.get_id(uuid_or_id: uuid, action: IdAPIsRestActions::ACTION_TRANSLATE, additional_req_params: {outputType: 'vuid'})
+            # get the concept SCTID information if there is one
+            coding_id = IdAPIsRest.get_id(uuid_or_id: uuid, action: IdAPIsRestActions::ACTION_TRANSLATE, additional_req_params: {outputType: 'sctid'})
 
             if coding_id.respond_to?(:value)
-                @terminology_id = {label: 'VUID', value: coding_id.value}
+                @terminology_id = {label: 'SCTID', value: coding_id.value}
+            else
+
+                # else get the concept VUID information if there is one
+                coding_id = IdAPIsRest.get_id(uuid_or_id: uuid, action: IdAPIsRestActions::ACTION_TRANSLATE, additional_req_params: {outputType: 'vuid'})
+
+                if coding_id.respond_to?(:value)
+                    @terminology_id = {label: 'VUID', value: coding_id.value}
+                end
             end
         end
 
@@ -94,8 +98,9 @@ module ConceptConcern
     # get_descriptions - takes a uuid and returns all of the description concepts attached to it.
     # @param [String] uuid - The UUID to look up descriptions for
     # @param [Boolean] stated - Whether to display the stated (true) or inferred view of concepts
+    # @param [Boolean] clone - Are we cloning a concept, if so we will replace the description and other sememe IDs with placeholders
     # @return [object] a hash that contains an array of all the descriptions
-    def get_descriptions(uuid, stated)
+    def get_descriptions(uuid, stated, clone = false)
 
         coordinates_token = session[:coordinatestoken].token
         return_descriptions = []
@@ -116,7 +121,7 @@ module ConceptConcern
             attributes = []
 
             # get the description UUID information and add it to the attributes array
-            description_uuid = description.sememeChronology.identifiers.uuids.first
+            description_id = description.sememeChronology.identifiers.uuids.first
             description_state = description.sememeVersion.state.enumName
             description_time = DateTime.strptime((description.sememeVersion.time / 1000).to_s, '%s').strftime('%m/%d/%Y')
             description_author = get_concept_metadata(description.sememeVersion.authorSequence)
@@ -127,14 +132,22 @@ module ConceptConcern
                 description_author = 'System User'
             end
 
-            description_info[:uuid] = description_uuid
-            attributes << {label: 'UUID', text: description_uuid, state: description_state, time: description_time, author: description_author, module: description_module, path: description_path}
+            if clone
+                description_info[:description_id] = get_next_id
+            else
+                description_info[:description_id] = description_id
+            end
 
-            # get the description SCTID information if there is one and add it to the attributes array
-            sctid = IdAPIsRest.get_id(uuid_or_id: description_uuid, action: IdAPIsRestActions::ACTION_TRANSLATE, additional_req_params: {outputType: 'sctid'})
+            if !clone
 
-            if sctid.respond_to?(:value)
-                attributes << {label: 'SCTID', text: sctid.value, state: description_state, time: description_time, author: description_author, module: description_module, path: description_path}
+                attributes << {label: 'UUID', text: description_id, state: description_state, time: description_time, author: description_author, module: description_module, path: description_path}
+
+                # get the description SCTID information if there is one and add it to the attributes array
+                sctid = IdAPIsRest.get_id(uuid_or_id: description_id, action: IdAPIsRestActions::ACTION_TRANSLATE, additional_req_params: {outputType: 'sctid'})
+
+                if sctid.respond_to?(:value)
+                    attributes << {label: 'SCTID', text: sctid.value, state: description_state, time: description_time, author: description_author, module: description_module, path: description_path}
+                end
             end
 
             header_dialects = ''
@@ -142,14 +155,19 @@ module ConceptConcern
             # loop thru the dialects array, and add them to the attributes array
             description.dialects.each do |dialect|
 
-                dialect_sememe_id = dialect.sememeChronology.identifiers.uuids.first
+                if clone
+                    dialect_instance_id = get_next_id
+                else
+                    dialect_instance_id = dialect.sememeChronology.identifiers.uuids.first
+                end
+
                 dialect_state = dialect.sememeVersion.state.enumName
                 dialect_time = DateTime.strptime((dialect.sememeVersion.time / 1000).to_s, '%s').strftime('%m/%d/%Y')
                 dialect_author = get_concept_metadata(dialect.sememeVersion.authorSequence)
                 dialect_module = get_concept_metadata(dialect.sememeVersion.moduleSequence)
                 dialect_path = get_concept_metadata(dialect.sememeVersion.pathSequence)
-                dialect_id = dialect.sememeChronology.assemblage.uuids.first
-                dialect_name = find_metadata_by_id(dialect_id)
+                dialect_definition_id = dialect.sememeChronology.assemblage.uuids.first
+                dialect_name = find_metadata_by_id(dialect_definition_id)
 
                 if dialect_author == 'user'
                     dialect_author = 'System User'
@@ -162,18 +180,16 @@ module ConceptConcern
                 header_dialects += dialect_name
 
                 # TODO switch to using only uuids once REST APIs support it
-                acceptability_sequence = IdAPIsRest.get_id(uuid_or_id: dialect.dataColumns.first.data, action: IdAPIsRestActions::ACTION_TRANSLATE, additional_req_params: {inputType: 'nid', outputType: 'conceptSequence'}).value
-                acceptability_metadata = find_metadata_by_id(acceptability_sequence, id_type: 'sequence', return_description: false)
-                acceptability_id = acceptability_metadata['uuids'].first[:uuid]
-                acceptability_text = acceptability_metadata['fsn']
+                acceptability_id = dialect.dataColumns.first.dataIdentified.uuids.first
+                acceptability_text = dialect.dataColumns.first.conceptDescription
+                acceptability_text.slice!(' (ISAAC)')
                 header_dialects += ' (' + acceptability_text + ')'
 
                 attributes << {
                     label: 'Dialect',
-                    sememe_id: dialect_sememe_id,
-                    id: dialect_id,
+                    dialect_instance_id: dialect_instance_id,
+                    dialect_definition_id: dialect_definition_id,
                     text: dialect_name,
-                    acceptability_sequence: acceptability_sequence,
                     acceptability_id: acceptability_id,
                     acceptability_text: acceptability_text,
                     state: dialect_state,
@@ -244,7 +260,7 @@ module ConceptConcern
             # process nested properties
             if description.nestedSememes.length > 0
 
-                nested_properties = process_attached_sememes(stated, description.nestedSememes, [], {}, 1)
+                nested_properties = process_attached_sememes(stated, description.nestedSememes, [], {}, 1, clone)
                 description_info[:nested_properties] = {field_info: nested_properties[:used_column_hash], data: nested_properties[:data_rows]}
             end
 
@@ -258,8 +274,9 @@ module ConceptConcern
     # get_associations - takes a uuid and returns all associations related to it.
     # @param [String] uuid - The UUID to look up associations for
     # @param [Boolean] stated - Whether to display the stated (true) or inferred view of concepts
+    # @param [Boolean] clone - Are we cloning a concept, if so we will replace the association IDs with placeholders
     # @return [object] a hash that contains an array of all the associations
-    def get_associations(uuid, stated)
+    def get_associations(uuid, stated, clone = false)
 
         coordinates_token = session[:coordinatestoken].token
         return_associations = []
@@ -274,7 +291,12 @@ module ConceptConcern
         # iterate over the array of RestAssociationItemVersion returned
         associations.each do |association|
 
-            id = association.identifiers.uuids.first
+            if clone
+                id = get_next_id
+            else
+                id = association.identifiers.uuids.first
+            end
+
             type_id = association.associationType.uuids.first
             type = AssociationRest.get_association(action: AssociationRestActions::ACTION_TYPE, uuid_or_id: type_id, additional_req_params: {coordToken: coordinates_token, stated: stated})
 
@@ -327,14 +349,15 @@ module ConceptConcern
     # get_attached_sememes - takes a uuid and returns all of the non-description sememes attached to it.
     # @param [String] uuid - The UUID to look up attached sememes for
     # @param [Boolean] stated - Whether to display the stated (true) or inferred view of concepts
+    # @param [Boolean] clone - Are we cloning a concept, if so we will replace the sememe IDs with placeholders
     # @return [object] a hash that contains an array of all the columns to be displayed and an array of all the sememes
-    def get_attached_sememes(uuid, stated)
+    def get_attached_sememes(uuid, stated, clone = false)
 
         coordinates_token = session[:coordinatestoken].token
 
         sememes = SememeRest.get_sememe(action: SememeRestActions::ACTION_BY_REFERENCED_COMPONENT, uuid_or_id: uuid, additional_req_params: {coordToken: coordinates_token, expand: 'chronology,nestedSememes', stated: stated})
 
-        display_data = process_attached_sememes(stated, sememes, [], {}, 1)
+        display_data = process_attached_sememes(stated, sememes, [], {}, 1, clone)
 
         return {columns: display_data[:used_column_list], rows: display_data[:data_rows], field_info: display_data[:used_column_hash]}
 
@@ -388,7 +411,7 @@ module ConceptConcern
     end
 
     ##
-    # get_sememe_definition_details - takes a uuid and returns all of the description concepts attached to it.
+    # get_sememe_definition_details - takes a sememe uuid and returns all of the description concepts attached to it.
     # @param [String] uuid - The UUID to look up descriptions for
     # @return [object] a RestSememeVersion object
     def get_sememe_definition_details(uuid)
@@ -454,8 +477,9 @@ module ConceptConcern
     # @param [Array] used_column_list - an array of data columns for display (for easier sequential access)
     # @param [Hash] used_column_hash - a hash of data columns for display (for easier random access)
     # @param [Number] level - the level of recursion we are at.
+    # @param [Boolean] clone - Are we cloning a concept, if so we will replace the sememe IDs with placeholders
     # @return [object] a hash that contains an array of all the columns to be displayed and an array of all the data
-    def process_attached_sememes(stated, sememes, used_column_list, used_column_hash, level)
+    def process_attached_sememes(stated, sememes, used_column_list, used_column_hash, level, clone = false)
 
         coordinates_token = session[:coordinatestoken].token
         additional_req_params = {coordToken: coordinates_token, stated: stated}
@@ -468,10 +492,15 @@ module ConceptConcern
             if sememe.class == Gov::Vha::Isaac::Rest::Api1::Data::Sememe::RestDynamicSememeVersion
 
                 assemblage_id = sememe.sememeChronology.assemblage.uuids.first
-                uuid = sememe.sememeChronology.identifiers.uuids.first
+                sememe_instance_id = sememe.sememeChronology.identifiers.uuids.first
 
                 # use the assemblage to do a sememe_sememeDefinition call to get the columns that sememe has.
                 sememe_definition = SememeRest.get_sememe(action: SememeRestActions::ACTION_SEMEME_DEFINITION, uuid_or_id: assemblage_id, additional_req_params: additional_req_params)
+
+                # if we are cloning a concept then put in a placeholder for the instance ID
+                if clone
+                    sememe_instance_id = get_next_id
+                end
 
                 has_nested = false
 
@@ -480,7 +509,7 @@ module ConceptConcern
                 end
 
                 # start loading the row of sememe data with everything besides the data columns
-                data_row = {sememe_name: sememe_definition.assemblageConceptDescription, sememe_description: sememe_definition.sememeUsageDescription, sememe_instance_id: uuid, sememe_definition_id: assemblage_id, state: sememe.sememeVersion.state.enumName, level: level, has_nested: has_nested, columns: {}}
+                data_row = {sememe_name: sememe_definition.assemblageConceptDescription, sememe_description: sememe_definition.sememeUsageDescription, sememe_instance_id: sememe_instance_id, sememe_definition_id: assemblage_id, state: sememe.sememeVersion.state.enumName, level: level, has_nested: has_nested, columns: {}}
 
                 # loop through all of the sememe's data columns
                 sememe_definition.columnInfo.each{ |row_column|
@@ -574,7 +603,7 @@ module ConceptConcern
             if has_nested
 
                 sememes = sememe.nestedSememes
-                nested_sememe_data = process_attached_sememes(stated, sememes, used_column_list, used_column_hash, level + 1)
+                nested_sememe_data = process_attached_sememes(stated, sememes, used_column_list, used_column_hash, level + 1, clone)
 
                 data_row[:nested_rows] = nested_sememe_data[:data_rows]
 

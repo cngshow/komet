@@ -32,7 +32,7 @@ var PreferenceModule = (function () {
             autoOpen: false,
             closeOnEscape: false,
             position: { my: "right top", at: "left bottom", of: "#komet_user_preference_link" },
-            height: 700,
+            height: 650,
             width: 650,
             dialogClass: "no-close",
             show: {
@@ -423,6 +423,7 @@ var PreferenceModule = (function () {
     function selectAllowedstates(values)    {
         var statues ="";
         var inactive ="";
+        console.log(values);
         for (var i = 0, count = values.length; i < count; i++) {
             if (values[i].name === 'Active')
             {
@@ -430,7 +431,7 @@ var PreferenceModule = (function () {
             }
             if (values[i].name === 'Inactive' &&  statues === 'Active')
             {
-                statues += ',Inactive'
+                statues = statues +  ',Inactive'
             }
             if (values[i].name === 'Inactive' &&  statues === "")
             {
@@ -487,7 +488,7 @@ var PreferenceModule = (function () {
                     var td4 = document.createElement("TD");
                     var shapeCntlId =  "'colorpathshape" + value.conChronology.identifiers.sequence + "'" ;
                     var displayShapeDiv =  "cpathshape_" + value.conChronology.identifiers.sequence  ;
-                    td4.innerHTML = PreferenceModule.createShapedropdown(displayShapeDiv , value.conChronology.identifiers.sequence , shapeCntlId,'No shape');
+                    td4.innerHTML = PreferenceModule.createShapedropdown(displayShapeDiv , value.conChronology.identifiers.sequence , shapeCntlId,'none');
                     document.getElementById("colorpathtr" + value.conChronology.identifiers.sequence).appendChild(td4);
 
                     $('.pathcolordemo').minicolors();
@@ -590,7 +591,7 @@ var PreferenceModule = (function () {
                     var td4 = document.createElement("TD");
                     var shapeCntlId =  "'colormoduleshape" + value.conChronology.identifiers.sequence + "'" ;
                     var displayShapeDiv =  "cshape_" + value.conChronology.identifiers.sequence  ;
-                    td4.innerHTML = PreferenceModule.createShapedropdown(displayShapeDiv , value.conChronology.identifiers.sequence , shapeCntlId,'No shape');
+                    td4.innerHTML = PreferenceModule.createShapedropdown(displayShapeDiv , value.conChronology.identifiers.sequence , shapeCntlId,'none');
                     document.getElementById("colorTr" + value.conChronology.identifiers.sequence).appendChild(td4);
                     $('.demo').minicolors();
                 });
@@ -667,11 +668,11 @@ var PreferenceModule = (function () {
     function createShapedropdown(displayShapeDiv,conceptSequence,shapeCntlId,value)    {
         var shapedd='';
         shapedd ='<div class="dropdown" ><div class="' +  value + '" style="display: inline-block" id="' +  displayShapeDiv + '">' + PreferenceModule.getShapeName(value) + '</div>';
-        shapedd = shapedd + '<input name="colormodule_shape" value="none"  type="hidden" id=' + shapeCntlId + '  />';
+        shapedd = shapedd + '<input name="colormodule_shape" value="' +  value + '"  type="hidden" id=' + shapeCntlId + '  />';
         shapedd = shapedd + '<span  class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" id="shapeid" aria-expanded="false">';
         shapedd = shapedd + '<span class="caret"></span></span><ul class="dropdown-menu"   aria-label="select shape">';
         shapedd = shapedd + '<li>';
-        shapedd = shapedd + '<a style="display: inline-block" onclick="PreferenceModule.setShape(' + "'noclass'" + "," + "'None'" + ",'" +  displayShapeDiv  + "'," + shapeCntlId + ')" href="#">No Shape</a></li>';
+        shapedd = shapedd + '<a style="display: inline-block" onclick="PreferenceModule.setShape(' + "'none'" + "," + "'None'" + ",'" +  displayShapeDiv  + "'," + shapeCntlId + ')" href="#">No Shape</a></li>';
         shapedd = shapedd + '<li aria-hidden="true"  class="glyphicon glyphicon-stop" >';
         shapedd = shapedd + '<a style="display: inline-block" onclick="PreferenceModule.setShape(' + "'glyphicon glyphicon-stop'" + "," + "'Square'" + ",'" +  displayShapeDiv  + "'," + shapeCntlId + ')" href="#">Square</a></li>';
         shapedd = shapedd + '<li aria-hidden="true" class="glyphicon glyphicon-star">';

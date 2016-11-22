@@ -13,7 +13,12 @@
                 <button type="button" id="komet_concept_panel_tree_show_<%= @viewer_id %>" class="komet-link-button" onclick="WindowManager.viewers[<%= @viewer_id %>].showInTaxonomyTree();" title="Show in Taxonomy Tree">
                     <span class="fa fa-tree"></span>
                 </button>
-                Edit: <%= @concept_text %>
+
+                <% if @viewer_action == 'edit_concept' %>
+                    Edit: <%= @concept_text %>
+                <% else %>
+                    Clone Concept: <%= @concept_text %>
+                <% end %>
             </span>
 
             <div class="komet-panel-tools">
@@ -50,17 +55,19 @@
 
                     <div id="komet_concept_edit_concept_row_<%= @viewer_id %>" class="komet-concept-edit-row komet-concept-edit-attributes-row komet-changeable">
 
-                        <% if @viewer_action == 'clone' %>
+                        <% if @viewer_action == 'clone_concept' %>
 
-                            <div class="komet-concept-attributes-details-name">
+                            <div>
+
                                 <autosuggest
-                                id-base="komet_create_concept_parent"
+                                id-base="komet_concept_edit_parent"
                                 id-postfix="_<%= @viewer_id %>"
                                 label="Parent"
                                 value="<%= @parent_id %>"
                                 display-value="<%= @parent_text %>"
                                 type-value="<%= @parent_type %>"
                                 suggestion-onchange-function="WindowManager.viewers[<%= @viewer_id %>].conceptEditorParentOnChange()"
+                                classes="komet-concept-edit-parent"
                                 ></autosuggest>
                             </div>
 
