@@ -3,6 +3,9 @@ Komet Changelog
 This changelog summarizes changes and fixes which are a part of each revision.  For more details on the fixes, refer tracking numbers 
 where provided, and the git commit history.
 
+* 2016/11/?? - 1.42:
+    * 
+
 * 2016/11/22 - 1.41:
     * Added clone concept functionality. Some parts are still not working correctly; any properties on the original FSN description are not copied over, 
       and adding new dialects to an existing description does not work.
