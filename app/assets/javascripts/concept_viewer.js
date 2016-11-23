@@ -422,7 +422,7 @@ var ConceptViewer = function(viewerID, currentConceptID, viewerAction) {
                     } else {
 
                         TaxonomyModule.tree.reloadTreeStatedView(TaxonomyModule.getStatedView(), false);
-                        $.publish(KometChannels.Taxonomy.taxonomyConceptEditorChannel, [data.concept_id, thisViewer.viewerID, WindowManager.INLINE]);
+                        $.publish(KometChannels.Taxonomy.taxonomyConceptEditorChannel, [ConceptsModule.EDIT, data.concept_id, thisViewer.viewerID, WindowManager.INLINE]);
                     }
                 }
             });
@@ -512,11 +512,11 @@ var ConceptViewer = function(viewerID, currentConceptID, viewerAction) {
         $("#komet_concept_attributes_panel_" + this.viewerID).find(".komet-concept-properties-section").append(conceptPropertiesSection);
 
         var descriptionSectionsString = "";
-        //var descriptionIDs = []; // see if we will ever allow updating of dialects before removing
+        var descriptionIDs = [];
 
         for (var i = 0; i < descriptions.length; i++){
 
-            //descriptionIDs.push(descriptions[i].uuid); // see if we will ever allow updating of dialects before removing
+            descriptionIDs.push(descriptions[i].description_id);
             descriptionSectionsString += this.createDescriptionRowString(descriptions[i]);
         }
 
@@ -536,9 +536,9 @@ var ConceptViewer = function(viewerID, currentConceptID, viewerAction) {
 
         UIHelper.processAutoSuggestTags("#komet_concept_editor_form_" + this.viewerID);
 
-        //for (var i = 0; i < descriptionIDs.length; i++){ // see if we will ever allow updating of dialects before removing
-        //    this.setAddDialectLinkState(descriptionIDs[i]);
-        //}
+        for (var i = 0; i < descriptionIDs.length; i++){
+            this.setAddDialectLinkState(descriptionIDs[i]);
+        }
 
         var thisViewer = this;
 
@@ -662,7 +662,7 @@ var ConceptViewer = function(viewerID, currentConceptID, viewerAction) {
 
         if (rowData != null){
 
-            descriptionID = rowData.uuid;
+            descriptionID = rowData.description_id;
             type = rowData.description_type_id;
             text = rowData.text;
             state = rowData.attributes[0].state;
@@ -694,11 +694,8 @@ var ConceptViewer = function(viewerID, currentConceptID, viewerAction) {
         }
 
         rowString += '</div>'
-            + '<div class="komet-indent-block komet-concept-description-dialect-section"><div class="komet-concept-section-title komet-concept-description-title">Dialects';
-
-        if (isNew){
-            rowString += '<div class="komet-flex-right"><button type="button" class="komet-link-button komet-concept-add-description-dialect" onclick="WindowManager.viewers[' + this.viewerID + '].addDialectRow(\'' + descriptionID + '\')">Add Dialect <div class="glyphicon glyphicon-plus-sign"></div></button></div>';
-        }
+            + '<div class="komet-indent-block komet-concept-description-dialect-section"><div class="komet-concept-section-title komet-concept-description-title">Dialects'
+            + '<div class="komet-flex-right"><button type="button" class="komet-link-button komet-concept-add-description-dialect" onclick="WindowManager.viewers[' + this.viewerID + '].addDialectRow(\'' + descriptionID + '\')">Add Dialect <div class="glyphicon glyphicon-plus-sign"></div></button></div>';
 
         rowString += '</div>';
 
@@ -777,35 +774,41 @@ var ConceptViewer = function(viewerID, currentConceptID, viewerAction) {
         var dialectID = "";
         var dialect = "";
         var acceptability = "";
-        //var state = "";
+        var state = "";
         var isNew = false;
         var rowString = null;
 
         if (rowData != null){
 
-            //conceptID = rowData.sememe_id;
-            //dialect = rowData.sequence;
-            //acceptability = rowData.acceptability_sequence;
-            //state = rowData.state;
+            dialectID = rowData.dialect_instance_id;
+            dialect = rowData.dialect_definition_id
+            acceptability = rowData.acceptability_id;
+            state = rowData.state;
 
             rowString = '<div class="komet-concept-edit-row komet-concept-edit-description-dialect-row">'
+                + '<input type="hidden" name="descriptions[' + descriptionID + '][dialects][' + dialectID + '][dialect]" value="' + dialect + '">'
+                + '<input type="hidden" name="descriptions[' + descriptionID + '][dialects][' + dialectID + '][acceptability]" value="' + acceptability + '">'
                 + '<div>' + rowData.text + '</div>'
-                + '<div>' + rowData.acceptability_text + '</div>'
-                + '</div>';
+                + '<div>' + rowData.acceptability_text + '</div>';
         } else {
 
             isNew = true;
             dialectID = window.performance.now().toString().replace(".", "");
-            var dialectID = descriptionID + '_' + dialectID;
             var viewerDialectID = dialectID + '_' + this.viewerID;
             var rowID = 'komet_concept_edit_description_dialect_row_' + viewerDialectID;
 
             rowString = '<div id="' + rowID + '" class="komet-concept-edit-row komet-concept-edit-description-dialect-row">'
                 + '<div>' + this.createSelectField("descriptions", descriptionID, "dialects", dialectID, "dialect", this.selectFieldOptions.dialect, dialect) + '</div>'
-                + '<div>' + this.createSelectField("descriptions", descriptionID, "dialects", dialectID, "acceptability", this.selectFieldOptions.acceptability, acceptability) + '</div>'
-                + '<div class="komet-concept-edit-row-tools"><button type="button" class="komet-link-button" onclick="WindowManager.viewers[' + this.viewerID + '].removeItemRow(\'' + dialectID + '\', \'' + rowID + '\', \'dialect\', ' + isNew + ', this)" title="Remove row"><div class="glyphicon glyphicon-remove"></div></button></div>'
-                + '</div>';
+                + '<div>' + this.createSelectField("descriptions", descriptionID, "dialects", dialectID, "acceptability", this.selectFieldOptions.acceptability, acceptability) + '</div>';
         }
+
+        if (isNew){
+            rowString += '<div class="komet-concept-edit-row-tools"><button type="button" class="komet-link-button" onclick="WindowManager.viewers[' + this.viewerID + '].removeItemRow(\'' + dialectID + '\', \'' + rowID + '\', \'dialect\', ' + isNew + ', this)" title="Remove row"><div class="glyphicon glyphicon-remove"></div></button></div>';
+        } else {
+            rowString += '<div>' + this.createSelectField("descriptions", descriptionID, "dialects", dialectID, "state", this.selectFieldOptions.state, state) + '</div>'
+        }
+
+        rowString += '</div>';
 
         return rowString;
     };

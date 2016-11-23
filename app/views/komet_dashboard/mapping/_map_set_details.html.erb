@@ -134,8 +134,8 @@
           </div>
 
           <div id="komet_mapping_set_rules_tab_<%= @viewer_id %>" class="komet-mapping-set-tab-body">
-            <%= text_area_tag :komet_mapping_set_editor_rules, @map_set[:rules], id: "komet_mapping_set_editor_rules_#{@viewer_id}", class: 'form-control komet-mapping-set-editor-edit' %>
-            <div class="komet-mapping-set-editor-display"><%= @map_set[:rules] %></div>
+            <%= text_area_tag :komet_mapping_set_editor_rules, @map_set[:rules], id: "komet_mapping_set_editor_rules_#{@viewer_id}", class: 'form-control komet-mapping-set-editor-edit komet-mapping-set-editor-create-only' %>
+            <div><%= @map_set[:rules] %></div>
           </div>
 
         </div>

@@ -390,8 +390,9 @@ class KometDashboardController < ApplicationController
     ##
     # get_concept_attributes - RESTful route for populating concept attribute tab using an http :GET
     # The current tree node representing the concept is identified in the request params with the key :concept_id
+    # @param [Boolean] clone - Are we cloning a concept
     # @return none - setting the @attributes variable
-    def get_concept_attributes(concept_id = nil, stated = nil)
+    def get_concept_attributes(concept_id = nil, stated = nil, clone = false)
 
         if concept_id == nil && params[:concept_id]
             concept_id = params[:concept_id]
@@ -401,14 +402,15 @@ class KometDashboardController < ApplicationController
             stated = params[:stated]
         end
 
-        @attributes =  get_attributes(concept_id, stated)
+        @attributes =  get_attributes(concept_id, stated, clone)
     end
 
     ##
     # get_concept_descriptions - RESTful route for populating concept summary tab using an http :GET
     # The current tree node representing the concept is identified in the request params with the key :concept_id
+    # @param [Boolean] clone - Are we cloning a concept
     # @return none - setting the @descriptions variable
-    def get_concept_descriptions(concept_id = nil, stated = nil)
+    def get_concept_descriptions(concept_id = nil, stated = nil, clone = false)
 
         if concept_id == nil && params[:concept_id]
             concept_id = params[:concept_id]
@@ -418,14 +420,15 @@ class KometDashboardController < ApplicationController
             stated = params[:stated]
         end
 
-        @descriptions =  get_descriptions(concept_id, stated)
+        @descriptions =  get_descriptions(concept_id, stated, clone)
     end
 
     ##
     # get_concept_associations - RESTful route for populating concept association tab using an http :GET
     # The current tree node representing the concept is identified in the request params with the key :concept_id
+    # @param [Boolean] clone - Are we cloning a concept
     # @return none - setting the @associations variable
-    def get_concept_associations(concept_id = nil, stated = nil)
+    def get_concept_associations(concept_id = nil, stated = nil, clone = false)
 
         if concept_id == nil && params[:concept_id]
             concept_id = params[:concept_id]
@@ -435,14 +438,15 @@ class KometDashboardController < ApplicationController
             stated = params[:stated]
         end
 
-        @associations =  get_associations(concept_id, stated)
+        @associations =  get_associations(concept_id, stated, clone)
     end
 
     ##
     # get_concept_sememes - RESTful route for populating concept sememes section using an http :GET
     # The current tree node representing the concept is identified in the request params with the key :concept_id
+    # @param [Boolean] clone - Are we cloning a concept
     # @return none - setting the @concept_sememes variable
-    def get_concept_sememes(concept_id = nil, stated = nil)
+    def get_concept_sememes(concept_id = nil, stated = nil, clone = false)
 
         if concept_id == nil && params[:concept_id]
             concept_id = params[:concept_id]
@@ -452,7 +456,7 @@ class KometDashboardController < ApplicationController
             stated = params[:stated]
         end
 
-        @concept_sememes = get_attached_sememes(concept_id, stated)
+        @concept_sememes = get_attached_sememes(concept_id, stated, clone)
     end
 
     def get_concept_children(concept_id: nil, returnJSON: true, removeSemanticTag: false)
@@ -669,15 +673,20 @@ class KometDashboardController < ApplicationController
         @viewer_action = params[:viewer_action]
         @viewer_previous_content_id = params[:viewer_previous_content_id]
         @viewer_previous_content_type = params[:viewer_previous_content_type]
+        clone = false
 
         if @viewer_id == nil || @viewer_id == '' || @viewer_id == 'new'
             @viewer_id = get_next_id
         end
 
-        get_concept_attributes(@concept_id, true)
-        get_concept_sememes(@concept_id, true)
-        get_concept_descriptions(@concept_id, true)
-        get_concept_associations(@concept_id, true)
+        if @viewer_action == 'clone_concept'
+            clone = true
+        end
+
+        get_concept_attributes(@concept_id, true, clone)
+        get_concept_sememes(@concept_id, true, clone)
+        get_concept_descriptions(@concept_id, true, clone)
+        get_concept_associations(@concept_id, true, clone)
 
         @language_options = get_concept_children(concept_id: $isaac_metadata_auxiliary['LANGUAGE']['uuids'].first[:uuid], returnJSON: false, removeSemanticTag: true)
         # TODO - Change get_concept_children function to pull all leaf nodes so we can stop hardcoding this uuid
@@ -688,6 +697,10 @@ class KometDashboardController < ApplicationController
         # TODO - Change get_concept_children function to pull all leaf nodes so we can stop hardcoding this uuid
         @description_extended_type_options = get_concept_children(concept_id: '09c43aa9-eaed-5217-bc5f-23cacca4df38', returnJSON: false, removeSemanticTag: true)
         @association_type_options = get_association_types
+
+        if clone
+            @concept_id = get_next_id
+        end
 
         render partial: params[:partial]
     end
@@ -765,6 +778,48 @@ class KometDashboardController < ApplicationController
             end
         }
 
+        # if the parent field exists then we are cloning a concept
+        if params[:komet_concept_edit_parent]
+
+            create_success = false
+            new_concept_id = nil
+
+            if params[:descriptions]
+
+                fsn_id = $isaac_metadata_auxiliary['FULLY_SPECIFIED_NAME']['uuids'].first[:uuid]
+
+                params[:descriptions].each do |description_id, description|
+
+                    if description['description_type'] == fsn_id
+
+                        body_params = {
+                            fsn: description['text'],
+                            parentConceptIds: [params[:komet_concept_edit_parent]],
+                            descriptionLanguageConceptId: description['description_language']
+                        }
+
+                        new_concept_id = ConceptRest::get_concept(action: ConceptRestActions::ACTION_CREATE, additional_req_params: {editToken: get_edit_token}, body_params: body_params )
+
+                        # if the concept create failed, break out of the loop
+                        if new_concept_id.is_a? CommonRest::UnexpectedResponse
+                            break
+                        end
+
+                        params[:descriptions].delete(description_id)
+                        create_success = true
+                        break;
+                    end
+                end
+            end
+
+            # if the concept create did not happen, return with a failed message, otherwise copy the new concept ID into the concept_id field to continue with the edit
+            if create_success
+                concept_id = new_concept_id.uuid
+            else
+                render json: {concept_id: concept_id, failed: {id: concept_id, text: 'Clone Concept: The new concept was unable to be created.' , type: 'clone'}}
+            end
+        end
+
         if params[:concept_state]
 
             if params[:concept_state].downcase == 'active'
@@ -807,7 +862,48 @@ class KometDashboardController < ApplicationController
 
                 # if the description ID is a UUID, then it is an existing description to be updated, otherwise it is a new description to be created
                 if is_id?(description_id)
+
                     return_value = SememeRest::get_sememe(action: SememeRestActions::ACTION_DESCRIPTION_UPDATE, uuid_or_id: description_id, additional_req_params: additional_req_params, body_params: body_params)
+
+                    # if the description create or update failed, mark it and skip to the next description. Do not process its dialects or properties.
+                    if return_value.is_a? CommonRest::UnexpectedResponse
+
+                        failed_writes << {id: description_id, text: description['text'], type: 'description'}
+                        next
+                    end
+
+                    # process the dialects
+                    if description[:dialects]
+
+                        description[:dialects].each do |dialect_id, dialect|
+
+                            if is_id?(dialect_id)
+
+                                if dialect['state'].downcase == 'active'
+                                    active = true
+                                else
+                                    active = false
+                                end
+
+                                return_value = ComponentRest::get_component(action: ComponentRestActions::ACTION_UPDATE_STATE, uuid_or_id: dialect_id, additional_req_params: {editToken: get_edit_token, active: false})
+                            else
+
+                                body_params = {
+                                    assemblageConcept: dialect['dialect'],
+                                    referencedComponent: description_id,
+                                    columnData: [{columnNumber: 0, data: dialect['acceptability'], '@class' => 'gov.vha.isaac.rest.api1.data.sememe.dataTypes.RestDynamicSememeUUID'}]
+                                }
+
+                                #return_value = SememeRest::get_sememe(action: SememeRestActions::ACTION_SEMEME_CREATE, additional_req_params: {editToken: get_edit_token}, body_params: body_params)
+                            end
+
+                            # if the dialect create or update failed, mark it.
+                            if return_value.is_a? CommonRest::UnexpectedResponse
+                                failed_writes << {id: description_id + '_' + dialect_id, text: 'Description: ' + description['text'] + ' : dialect', type: 'dialect'}
+                            end
+                        end
+                    end
+
                 else
 
                     preferred = []
@@ -895,7 +991,6 @@ class KometDashboardController < ApplicationController
             end
         end
 
-        # TODO - this should never actually get called, remove if it stays that way
         if params[:remove]
 
             params[:remove].each do |remove_concept_id, value|
