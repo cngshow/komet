@@ -787,6 +787,7 @@ class KometDashboardController < ApplicationController
             if params[:descriptions]
 
                 fsn_id = $isaac_metadata_auxiliary['FULLY_SPECIFIED_NAME']['uuids'].first[:uuid]
+                fsn = nil
 
                 params[:descriptions].each do |description_id, description|
 
@@ -805,9 +806,10 @@ class KometDashboardController < ApplicationController
                             break
                         end
 
-                        params[:descriptions].delete(description_id)
+                        fsn = description
+                        fsn_id = description_id
                         create_success = true
-                        break;
+                        break
                     end
                 end
             end
@@ -815,6 +817,10 @@ class KometDashboardController < ApplicationController
             # if the concept create did not happen, return with a failed message, otherwise copy the new concept ID into the concept_id field to continue with the edit
             if create_success
                 concept_id = new_concept_id.uuid
+
+                # Copy the FSN into a new hash entry using the returned ID from the newly created FSN, then delete the old key
+                params[:descriptions][new_concept_id.fsnDescriptionSememe.uuids.first] = fsn
+                params[:descriptions].delete(fsn_id)
             else
                 render json: {concept_id: concept_id, failed: {id: concept_id, text: 'Clone Concept: The new concept was unable to be created.' , type: 'clone'}}
             end
