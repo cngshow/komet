@@ -473,7 +473,8 @@ var MappingViewer = function(viewerID, currentSetID, viewerAction) {
         sectionString += '><label for="' + this.SET_INCLUDE_FIELD_PREFIX + fieldName + '_' + this.viewerID + '">' + fieldInfo.label_display + '</label>';
 
         if (fieldInfo.removable){
-            sectionString += '<div class="glyphicon glyphicon-remove komet-flex-right" title="Remove Field" onclick="WindowManager.viewers[' + this.viewerID + '].removeSetIncludedField(\'' + fieldName + '\');"></div>';
+            sectionString += '<button type="button" class="komet-link-button komet-flex-right" onclick="WindowManager.viewers[' + this.viewerID + '].removeSetIncludedField(\'' + fieldName + '\');" aria-label="Remove">'
+                + '<div class="glyphicon glyphicon-remove"></div></button>';
         }
 
         sectionString += '<input type="hidden" name="' + this.SET_INCLUDE_FIELD_PREFIX + fieldName + '_label" value="' + fieldInfo.label + '">'
@@ -542,7 +543,7 @@ var MappingViewer = function(viewerID, currentSetID, viewerAction) {
                 required = this.setEditorMapSet[fieldsToInclude[i]].required;
             }
 
-            var label = '<label for="' + fieldsToInclude[i] + '_' + this.viewerID + '">' + labelDisplayValue + ':</label>';
+            var label = '<label for="' + idPrefix + fieldsToInclude[i] + '_' + this.viewerID + '">' + labelDisplayValue + ':</label>';
 
             if (dataType == "UUID"){
 
@@ -706,7 +707,8 @@ var MappingViewer = function(viewerID, currentSetID, viewerAction) {
         sectionString += '><label for="' + this.ITEMS_INCLUDE_FIELD_PREFIX + fieldName + '_' + this.viewerID + '">' + fieldInfo.label_display + '</label>';
 
         if (fieldInfo.removable){
-            sectionString += '<div class="glyphicon glyphicon-remove komet-flex-right" title="Remove Field" onclick="WindowManager.viewers[' + this.viewerID + '].removeSetItemsIncludedField(\'' + fieldName + '\');"></div>';
+            sectionString += '<button type="button" class="komet-link-button komet-flex-right" onclick="WindowManager.viewers[' + this.viewerID + '].removeSetItemsIncludedField(\'' + fieldName + '\');" title="Remove Field" aria-label="Remove Field">'
+                + '<div class="glyphicon glyphicon-remove"></div></button>';
         }
 
         sectionString += '<input type="hidden" name="' + this.ITEMS_INCLUDE_FIELD_PREFIX + fieldName + '_label" value="' + fieldInfo.label + '">'
@@ -930,6 +932,7 @@ var MappingViewer = function(viewerID, currentSetID, viewerAction) {
         var rowID = "";
         var rowString = null;
         var idPrefix = "komet_mapping_item_" + itemID;
+        var ariaLabel = "";
 
 
         if (rowData != null){
@@ -942,6 +945,7 @@ var MappingViewer = function(viewerID, currentSetID, viewerAction) {
             qualifierConcept = rowData.qualifier_concept;
             commentID = rowData.comment_id;
             comment = rowData.comment;
+            ariaLabel = rowData.source_concept_display;
 
             rowString = '<div id="' + rowID + '" class="komet-mapping-item-edit-row">'
                 + '<div>' + rowData.source_concept_display + '</div>';
@@ -971,7 +975,7 @@ var MappingViewer = function(viewerID, currentSetID, viewerAction) {
             + '</autosuggest></div>';
 
         var qualifierOptions = [{value: '', label: 'No Restrictions'}, {value: '8aa6421d-4966-5230-ae5f-aca96ee9c2c1', label: 'Exact'}, {value: 'c1068428-a986-5c12-9583-9b2d3a24fdc6', label: 'Broader Than'}, {value: '250d3a08-4f28-5127-8758-e8df4947f89c', label: 'Narrower Than'}];
-        rowString += '<div>' + UIHelper.createSelectFieldString(idPrefix + '_qualifier_concept', 'items[' + itemID + '][qualifier_concept]', 'form-control', qualifierOptions, qualifierConcept) + '</div>';
+        rowString += '<div>' + UIHelper.createSelectFieldString(idPrefix + '_qualifier_concept', 'items[' + itemID + '][qualifier_concept]', 'form-control', qualifierOptions, qualifierConcept, ariaLabel) + '</div>';
 
         $.each(this.itemFieldInfo, function (fieldID, field) {
 
@@ -981,9 +985,12 @@ var MappingViewer = function(viewerID, currentSetID, viewerAction) {
             var value = "";
             var dataType = field.data_type;
 
+
             if (!isNew && rowData[field.name] != undefined){
                 value = rowData[field.name];
             }
+
+            var ariaLabel = field.name;
 
             rowString += '<div>';
 
@@ -1008,11 +1015,13 @@ var MappingViewer = function(viewerID, currentSetID, viewerAction) {
                 value = displayValue;
 
             } else if (dataType == "BOOLEAN"){
-                rowString += UIHelper.createSelectFieldString(id, name, classes, UIHelper.getPreDefinedOptionsForSelect("true_false"), value);
+                console.log("mapping BOOLEAN aria-label", ariaLabel );
+                rowString += UIHelper.createSelectFieldString(id, name, classes, UIHelper.getPreDefinedOptionsForSelect("true_false"), value, ariaLabel);
             } else if (dataType == "SELECT"){
-                rowString += UIHelper.createSelectFieldString(id, name, classes, field.options, value);
+                console.log("mapping SELECT aria-label", ariaLabel );
+                rowString += UIHelper.createSelectFieldString(id, name, classes, field.options, value, ariaLabel);
             } else {
-                rowString += '<input name="' + name + '" id="' + id + '" class="' + classes + '" value="' + value + '">';
+                rowString += '<input name="' + name + '" id="' + id + '" class="' + classes + '" value="' + value + '" aria-label="' + ariaLabel + '">';
             }
 
             rowString += '</div>';
@@ -1021,10 +1030,10 @@ var MappingViewer = function(viewerID, currentSetID, viewerAction) {
 
         rowString += '<div class="komet-mapping-item-edit-row-comments"><input type="hidden" name="items[' + itemID + '][comment_id]" value="' + commentID + '">'
             + '<input type="hidden" id="komet_mapping_item_' + itemID + '_comment" name="items[' + itemID + '][comment]" value="' + comment + '">'
-            + '<a href="#" title="Select to edit comments" onclick="WindowManager.viewers[' + this.viewerID + '].editItemComments(\'' + itemID + '\', this);return false;">';
+            + '<a href="#" title="Add/Edit comment" onclick="WindowManager.viewers[' + this.viewerID + '].editItemComments(\'' + itemID + '\', this);return false;">';
 
         if (comment == "") {
-            rowString += "Click to add comment";
+            rowString += "Add comment";
         } else {
             rowString +=  comment;
         }
@@ -1032,7 +1041,7 @@ var MappingViewer = function(viewerID, currentSetID, viewerAction) {
         rowString += '</a></div><div class="komet-mapping-item-edit-row-tools">';
 
         if (isNew){
-            rowString += '<button type="button" class="komet-link-button" onclick="WindowManager.viewers[' + this.viewerID + '].removeItemRow(\'' + rowID + '\', this)" title="Remove row"><div class="glyphicon glyphicon-remove"></div></button>';
+            rowString += '<button type="button" class="komet-link-button" onclick="WindowManager.viewers[' + this.viewerID + '].removeItemRow(\'' + rowID + '\', this)" title="Remove row" aria-label="Remove row"><div class="glyphicon glyphicon-remove"></div></button>';
         }
 
         rowString += '<!-- end edit-row-tools --></div><!-- end edit-row --></div>';

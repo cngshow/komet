@@ -438,14 +438,16 @@ var UIHelper = (function () {
         }
 
         // use the hide class to hide the ID and Type fields so that the hasFormChanged() function can pick up the changed values.
-        var fieldString = label + '<input id="' + fieldIDBase + fieldIDPostfix + '" name="' + idName + '" class="hide" value="' + idValue + '">'
-            + '<input id="' + fieldIDBase + '_type' + fieldIDPostfix + '" name="' + typeName + '" class="hide" value="' + typeValue + '">'
+        // add type=hidden to inputs with class=hidden.
+        var fieldString = label
+            + '<input type="hidden" id="' + fieldIDBase + fieldIDPostfix + '" name="' + idName + '" class="hide" value="' + idValue + '">'
+            + '<input type="hidden" id="' + fieldIDBase + '_type' + fieldIDPostfix + '" name="' + typeName + '" class="hide" value="' + typeValue + '">'
             + '<div id="' + fieldIDBase + '_fields' + fieldIDPostfix + '" class="komet-autosuggest input-group ' + fieldClasses + '">'
-            + '<input id="' + fieldIDBase + '_display' + fieldIDPostfix + '" name="' + displayName + '" class="form-control komet-context-menu" '
+            + '<input id="' + fieldIDBase + '_display' + fieldIDPostfix + '" name="' + displayName + '" aria-label="'+ displayName +'" class="form-control komet-context-menu" '
             + 'data-menu-type="paste_target" data-menu-id-field="' + fieldIDBase + fieldIDPostfix + '" data-menu-display-field="' + fieldIDBase + '_display' + fieldIDPostfix + '" '
             + 'data-menu-taxonomy-type-field="' + fieldIDBase + '_type' + fieldIDPostfix + '" value="' + displayValue + '"' + fieldTabIndex + '>'
             + '<div id="' + fieldIDBase + '_recents_button' + fieldIDPostfix + '"  class="input-group-btn komet-search-combo-field">'
-            + '<button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><span class="caret"></span></button>'
+            + '<button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-label="Select ' + displayName + '" aria-haspopup="true" aria-expanded="false"><span class="caret"></span></button>'
             + '<ul id="' + fieldIDBase + '_recents' + fieldIDPostfix + '" class="dropdown-menu dropdown-menu-right"' + recentsTabIndex + '></ul>'
             + '</div></div>';
 
@@ -691,9 +693,13 @@ var UIHelper = (function () {
 
     };
 
-    var createSelectFieldString = function(selectID, selectName, classes, options, selectedItem) {
+    var createSelectFieldString = function(selectID, selectName, classes, options, selectedItem, ariaLabel) {
 
-        var fieldString = '<select id="' + selectID + '" name="' + selectName + '" class="form-control ' + classes + '">';
+        var fieldString = '<select id="' + selectID + '"'
+            + ' name="' + selectName + '"'
+            + ' class="form-control ' + classes + '"'
+            + ((ariaLabel) ? (' aria-label="' + ariaLabel) + '"' : '')
+            + '>';
 
         for (var i = 0; i < options.length; i++) {
 

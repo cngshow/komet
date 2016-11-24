@@ -452,7 +452,7 @@ var PreferenceModule = (function () {
                 document.getElementById('listofpath').innerHTML ="";
                 var colorpathheadingtr = document.createElement("TR");
                 colorpathheadingtr.setAttribute("id", "colorpathheading");
-                colorpathheadingtr.setAttribute("style", "background-color: #4f80d9;color:white")
+                colorpathheadingtr.setAttribute("style", "background-color: #4f80d9;color:white");
                 document.getElementById('listofpath').appendChild(colorpathheadingtr);
 
                 var colorpathheadingtd1 = document.createElement("TD");
@@ -475,14 +475,19 @@ var PreferenceModule = (function () {
                     tr.setAttribute("id", "colorpathtr" + value.conChronology.identifiers.sequence);
                     document.getElementById('listofpath').appendChild(tr);
 
+                    var label = 'lbl_colorpathtr_' + value.conChronology.identifiers.sequence;
                     var td2 = document.createElement("TD");
+                    td2.setAttribute("id", label);
                     td2.innerHTML = value.conChronology.description;
+
                     document.getElementById("colorpathtr" + value.conChronology.identifiers.sequence).appendChild(td2);
 
                     var colorrowid = "'" + value.conChronology.description + "~" + value.conChronology.identifiers.sequence + "','colorpathtr" + value.conChronology.identifiers.sequence + "'";
 
                     var td3 = document.createElement("TD");
-                    td3.innerHTML = '<a title="clear color" style="padding:2px;color:red" onclick="PreferenceModule.removecolor(' + colorrowid + ')">X</a>&nbsp;<input name="colorpath" class="pathcolordemo" title="Click here to change color"  type="text" id="' + value.conChronology.description + '~' + value.conChronology.identifiers.sequence + '" size="6" style="height:30px" data-control="hue" value="" />';
+                    td3.innerHTML = '<a title="clear color" style="padding:2px;color:red" aria-labelledby="' + label + '" onclick="PreferenceModule.removecolor(' + colorrowid + ')">X</a>&nbsp;'
+                        +'<input name="colorpath" class="pathcolordemo" title="Click here to change color" aria-labelledby="' + label +'" type="text" '
+                        + 'id="' + value.conChronology.description + '~' + value.conChronology.identifiers.sequence + '" size="6" style="height:30px" data-control="hue" value="" />';
                     document.getElementById("colorpathtr" + value.conChronology.identifiers.sequence).appendChild(td3);
 
                     var td4 = document.createElement("TD");
@@ -522,14 +527,18 @@ var PreferenceModule = (function () {
                 tr.setAttribute("id", "colorpathtr" + value.pathid);
                 document.getElementById('listofpath').appendChild(tr);
 
+                var label = 'lbl_colorpathtr_' + value.pathid;
                 var td2 = document.createElement("TD");
                 td2.innerHTML = value.path_name;
+                td2.setAttribute("id", label);
                 document.getElementById("colorpathtr" + value.pathid).appendChild(td2);
 
                 var colorrowid = "'" + value.path_name + "~" + value.pathid + "','colorpathtr" + value.pathid + "'";
 
                 var td3 = document.createElement("TD");
-                td3.innerHTML = '<a title="clear color" style="padding:2px;color:red" onclick="PreferenceModule.removecolor(' + colorrowid + ')">X</a>&nbsp;<input name="colorpath" class="pathcolordemo" title="Click here to change path color"  type="text" id="' + value.path_name + '~' + value.pathid + '" size="6" style="height:30px" data-control="hue" value="' + value.colorid + '" />';
+                td3.innerHTML = '<a title="clear color" style="padding:2px;color:red" aria-labelledby="' + label + '" onclick="PreferenceModule.removecolor(' + colorrowid + ')">X</a>&nbsp;'
+                    +'<input name="colorpath" class="pathcolordemo" title="Click here to change path color"  aria-labelledby="' + label +'" type="text" '
+                    + 'id="' + value.path_name + '~' + value.pathid + '" size="6" style="height:30px" data-control="hue" value="' + value.colorid + '" />';
                 document.getElementById("colorpathtr" + value.pathid).appendChild(td3);
 
                 var td4 = document.createElement("TD");
@@ -580,12 +589,17 @@ var PreferenceModule = (function () {
                     tr.setAttribute("id", "colorTr" + value.conChronology.identifiers.sequence);
                     document.getElementById('listofmodule').appendChild(tr);
 
+                    var label = 'lbl_colorTr_' + value.conChronology.identifiers.sequence;
                     var td2 = document.createElement("TD");
                     td2.innerHTML = value.conChronology.description;
+                    td2.setAttribute("id", label);
                     document.getElementById("colorTr" + value.conChronology.identifiers.sequence).appendChild(td2);
+
                     var colorrowid = "'" + value.conChronology.description + "~" + value.conChronology.identifiers.sequence + "','colorTr" + value.conChronology.identifiers.sequence + "'";
                     var td3 = document.createElement("TD");
-                    td3.innerHTML = '<a title="clear color" style="padding:2px;color:red" onclick="PreferenceModule.removecolor(' + colorrowid + ')">X</a><input name="color_id" class="demo" title="Click here to change color"  type="text" id="' + value.conChronology.description + '~' + value.conChronology.identifiers.sequence + '" size="6" style="height:30px" data-control="hue" value="" />&nbsp;';
+                    td3.innerHTML = '<a title="clear color" style="padding:2px;color:red" aria-labelledby="' + label + '" onclick="PreferenceModule.removecolor(' + colorrowid + ')">X</a>'
+                        + '<input name="color_id" class="demo" title="Click here to change color"  aria-labelledby="' + label + '" type="text" '
+                        + 'id="' + value.conChronology.description + '~' + value.conChronology.identifiers.sequence + '" size="6" style="height:30px" data-control="hue" value="" />&nbsp;';
                     document.getElementById("colorTr" + value.conChronology.identifiers.sequence).appendChild(td3);
 
                     var td4 = document.createElement("TD");
@@ -625,13 +639,17 @@ var PreferenceModule = (function () {
                 tr.setAttribute("id", "colorTr" + value.moduleid);
                 document.getElementById('listofmodule').appendChild(tr);
 
+                var label = 'lbl_colorTr_' + value.moduleid;
                 var td2 = document.createElement("TD");
                 td2.innerHTML = value.module_name;
+                td2.setAttribute("id", label);
                 document.getElementById("colorTr" + value.moduleid).appendChild(td2);
 
                 var colorrowid = "'" + value.module_name + "~" + value.moduleid + "','colorTr" + value.moduleid + "'";
                 var td3 = document.createElement("TD");
-                td3.innerHTML = '<a title="clear color"  style="padding:2px;color:red" onclick="PreferenceModule.removecolor(' + colorrowid + ')">X</a>&nbsp;<input name="color_id" class="demo" title="Click here to change color"  type="text" id="' + value.module_name + '~' + value.moduleid + '" size="6" style="height:30px" data-control="hue" value="' + value.colorid + '" />';
+                td3.innerHTML = '<a title="clear color"  style="padding:2px;color:red" aria-labelledby="' + label + '" onclick="PreferenceModule.removecolor(' + colorrowid + ')">X</a>&nbsp;'
+                    + '<input name="color_id" class="demo" title="Click here to change color" aria-labelledby="' + label + '" type="text" '
+                    + 'id="' + value.module_name + '~' + value.moduleid + '" size="6" style="height:30px" data-control="hue" value="' + value.colorid + '" />';
                 document.getElementById("colorTr" + value.moduleid).appendChild(td3);
 
                 var td4 = document.createElement("TD");

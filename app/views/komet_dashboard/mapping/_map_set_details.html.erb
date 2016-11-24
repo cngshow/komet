@@ -13,7 +13,9 @@
       <div class="komet-mapping-section-panel-tools komet-flex-right">
 
         <!-- expand/collapse icon - controls details drawer -->
-        <div class="glyphicon glyphicon-minus-sign" onclick="WindowManager.viewers[<%= @viewer_id %>].togglePanelDetails('komet_mapping_set_panel_<%= @viewer_id %>', null, true)"></div>
+        <button type="button" class="komet-link-button" onclick="WindowManager.viewers[<%= @viewer_id %>].togglePanelDetails('komet_mapping_set_panel_<%= @viewer_id %>', null, true)" aria-label="Expand/Collapse map set details section">
+          <div class="glyphicon glyphicon-minus-sign"></div>
+        </button>
       </div>
 
     </div>
@@ -48,9 +50,9 @@
         <div id="komet_mapping_set_tabs_<%= @viewer_id %>" class="komet-mapping-set-tabs">
 
           <ul>
-            <li><a href='#komet_mapping_set_definition_tab_<%= @viewer_id %>' title="Definition">Definition</a></li>
-            <li><a href='#komet_mapping_set_items_tab_<%= @viewer_id %>' title="Item Fields">Item Fields</a></li>
-            <li><a href='#komet_mapping_set_rules_tab_<%= @viewer_id %>' title="Business Rules">Business Rules</a></li>
+            <li><a href='#komet_mapping_set_definition_tab_<%= @viewer_id %>' title="Definition Tab">Definition</a></li>
+            <li><a href='#komet_mapping_set_items_tab_<%= @viewer_id %>' title="Item Fields Tab">Item Fields</a></li>
+            <li><a href='#komet_mapping_set_rules_tab_<%= @viewer_id %>' title="Business Rules Tab">Business Rules</a></li>
           </ul>
 
           <div id="komet_mapping_set_definition_tab_<%= @viewer_id %>" class="komet-mapping-set-tab-body">
@@ -162,7 +164,9 @@
               <div class="komet-mapping-section-panel-tools komet-flex-right">
 
                 <!-- expand/collapse icon - controls details drawer -->
-                <div class="glyphicon glyphicon-minus-sign" onclick="WindowManager.viewers[<%= @viewer_id %>].togglePanelDetails('komet_mapping_item_panel_<%= @viewer_id %>', null, true)"></div>
+                <button type="button" class="komet-link-button" onclick="WindowManager.viewers[<%= @viewer_id %>].togglePanelDetails('komet_mapping_set_panel_<%= @viewer_id %>', null, true)" aria-label="Expand/Collapse mapping items section">
+                  <div class="glyphicon glyphicon-minus-sign"></div>
+                </button>
               </div>
             </div>
 
@@ -195,7 +199,11 @@
 
               <div class="komet-mapping-item-tools">
                 <% if controller.can_edit_concept? %>
-                    <div id="komet_mapping_overview_item_create_<%= @viewer_id %>" class="fa fa-plus" title="Create New Map Item" onclick="WindowManager.viewers[<%= @viewer_id %>].addItemRow();"></div>
+                    <button type="button" class="komet-link-button" id="komet_mapping_overview_item_create_<%= @viewer_id %>" class="fa fa-plus" title="Create New Map Item" onclick="WindowManager.viewers[<%= @viewer_id %>].addItemRow();" aria-label="Create New Map Item">
+                      <div class="fa fa-plus"></div>
+                    </button>
+
+
                     <div class="komet-flex-right">
                       <button class="btn btn-default" type="button" onclick="WindowManager.viewers[<%= @viewer_id %>].cancelSetItemEdit(this)">Cancel</button>
                       <button class="btn btn-primary" id="komet_mapping_set_editor_items_save_<%= @viewer_id %>">Save</button>

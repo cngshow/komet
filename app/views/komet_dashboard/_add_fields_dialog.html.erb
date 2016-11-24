@@ -36,7 +36,11 @@
 
         <div></div>
         <div class="komet-add-fields-dialog-title"><%= dialog_title %></div>
-        <div class="glyphicon glyphicon-remove" onclick="<%= javascript_object + '.cancelInclude' + javascript_function_qualifier + 'FieldsDialog()' %>"></div>
+
+      <button type="button" class="komet-link-button" onclick="<%= javascript_object + '.cancelInclude' + javascript_function_qualifier + 'FieldsDialog()' %>" aria-label="Remove" title="Remove">
+        <div class="glyphicon glyphicon-remove"></div>
+      </button>
+
     </div>
 
     <div class="komet-add-fields-dialog-body">
@@ -89,7 +93,7 @@
             </div>-->
 
             <div>
-                <button type="button" class="btn btn-default" aria-labelledby="Add field" onclick="<%= javascript_object + '.add' + javascript_function_qualifier + 'Field()' %>">Add Field</button>
+                <button type="button" class="btn btn-default" aria-label="Add field" onclick="<%= javascript_object + '.add' + javascript_function_qualifier + 'Field()' %>">Add Field</button>
             </div>
         </div>
 
@@ -97,8 +101,8 @@
 
     <div class="komet-add-fields-dialog-footer">
 
-        <button class="btn btn-default" type="button" aria-labelledby="Save button" onclick="<%= javascript_object + '.cancelInclude' + javascript_function_qualifier + 'FieldsDialog()' %>">Cancel</button>
-        <button class="btn btn-primary" type="button" aria-labelledby="Cancel button" onclick="<%= javascript_object + '.saveInclude' + javascript_function_qualifier + 'FieldsDialog()' %>">Save</button>
+        <button class="btn btn-default" type="button" aria-label="Save button" onclick="<%= javascript_object + '.cancelInclude' + javascript_function_qualifier + 'FieldsDialog()' %>">Cancel</button>
+        <button class="btn btn-primary" type="button" aria-label="Cancel button" onclick="<%= javascript_object + '.saveInclude' + javascript_function_qualifier + 'FieldsDialog()' %>">Save</button>
 
     </div>
 </div>
