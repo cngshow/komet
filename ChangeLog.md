@@ -3,15 +3,15 @@ Komet Changelog
 This changelog summarizes changes and fixes which are a part of each revision.  For more details on the fixes, refer tracking numbers 
 where provided, and the git commit history.
 
-* 2016/11/?? - 1.43:
-    * 
+* 2016/11/25 - 1.43:
+    * Fixed bug adding a property to a description when editing a concept
 
-* 2016/11/23 - 1.42:
-    * Fixed 508 errors and alerts for Map Set details and items, User Preferences, and Export related to missing form labels, 
+* 2016/11/23 - 1.43:
+    * Fixed 508 errors and alerts for Map Set details and items, User Preferences, and Export related to missing form labels,
       empty buttons, broken Aria references, unlabeled form elements, device dependent event handlers and redundant titles.
     * Updated to latest enunicate file.
     * Made changes to match latest REST API changes
-    * Fixed clone concept to incorporate latest API changes so the the FSN and all it's properties get copied over to the new concept correctly.
+
 
 * 2016/11/22 - 1.41:
     * Added clone concept functionality. Some parts are still not working correctly; any properties on the original FSN description are not copied over, 

@@ -939,16 +939,16 @@ class KometDashboardController < ApplicationController
                     body_params[:referencedComponentId] = concept_id
 
                     return_value = SememeRest::get_sememe(action: SememeRestActions::ACTION_DESCRIPTION_CREATE, additional_req_params: additional_req_params, body_params: body_params)
+
+                    # if the description create or update failed, mark it and skip to the next description. Do not process its properties.
+                    if return_value.is_a? CommonRest::UnexpectedResponse
+
+                        failed_writes << {id: description_id, text: description['text'], type: 'description'}
+                        next
+                    end
+
+                    description_id = return_value.uuid
                 end
-
-                # if the description create or update failed, mark it and skip to the next description. Do not process its dialects or properties.
-                if return_value.is_a? CommonRest::UnexpectedResponse
-
-                    failed_writes << {id: description_id, text: description['text'], type: 'description'}
-                    next
-                end
-
-                description_id = return_value.uuid
 
                 if description[:properties]
                     process_sememes.call(description_id, description[:properties], 'description property', 'Description: ' + description['text'] + ' : ')
