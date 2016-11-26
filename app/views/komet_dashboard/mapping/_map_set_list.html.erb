@@ -8,15 +8,15 @@
   <div id="komet_mapping_overview_sets_<%= @viewer_id %>" style="height: 450px;" class="ag-fresh"></div>
 
   <div>
-    <button type="button" class="komet-link-button" onclick="MappingModule.createNewMapSet(false);" title="Create New Map Set">
+    <button type="button" class="komet-link-button" onclick="MappingModule.createNewMapSet(false);" title="Create New Map Set" aria-label="Create New Map Set">
       <div class="fa fa-plus" title="Create New Map Set"></div>
     </button>
     <% if controller.can_edit_concept? %>
-        <button type="button" class="komet-link-button" disabled onclick="WindowManager.viewers[<%= @viewer_id %>].loadOverviewSetsGridSelectedSet(MappingModule.SET_EDITOR);" title="Edit Selected Map Set">
+        <button type="button" class="komet-link-button" disabled onclick="WindowManager.viewers[<%= @viewer_id %>].loadOverviewSetsGridSelectedSet(MappingModule.SET_EDITOR);" title="Edit Selected Map Set" aria-label="Edit Selected Map Set">
           <div id="komet_mapping_overview_set_edit_<%= @viewer_id %>" class="fa fa-pencil " title="Edit Selected Map Set"></div>
         </button>
     <% end %>
-    <button type="button" class="komet-link-button hide" disabled data-state="false" title="Inactivate Selected Map Set">
+    <button type="button" class="komet-link-button hide" disabled data-state="false" title="Inactivate Selected Map Set" aria-label="Inactive Selected Map Set">
       <div id="komet_mapping_overview_set_state_<%= @viewer_id %>" class="glyphicon glyphicon-ban-circle" title="Inactivate Selected Map Set"></div>
     </button>
 

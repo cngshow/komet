@@ -161,6 +161,8 @@ var UIHelper = (function () {
                 }
             }
         });
+
+        dialog.parent().children().children(".ui-dialog-titlebar-close").remove();
     }
 
     // TODO - Not very useful if showChanges is true
@@ -693,12 +695,12 @@ var UIHelper = (function () {
 
     };
 
-    var createSelectFieldString = function(selectID, selectName, classes, options, selectedItem, ariaLabel) {
+    var createSelectFieldString = function(selectID, selectName, classes, options, selectedItem, label) {
 
         var fieldString = '<select id="' + selectID + '"'
             + ' name="' + selectName + '"'
             + ' class="form-control ' + classes + '"'
-            + ((ariaLabel) ? (' aria-label="' + ariaLabel) + '"' : '')
+            + ((label) ? (' aria-label="' + label) + '"' : '')
             + '>';
 
         for (var i = 0; i < options.length; i++) {

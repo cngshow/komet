@@ -1053,7 +1053,7 @@ var MappingViewer = function(viewerID, currentSetID, viewerAction) {
 
         var comment = $("#komet_mapping_item_" + itemID + "_comment");
 
-        var commentFieldString = '<textarea class="form-control" id="komet_mapping_item_edit_comment_' + this.viewerID + '">' + comment.val() + '</textarea>';
+        var commentFieldString = '<textarea class="form-control" id="komet_mapping_item_edit_comment_' + this.viewerID + '" aria-label="Enter or edit comment" >' + comment.val() + '</textarea>';
 
         var confirmCallback = function(buttonClicked){
 
@@ -1063,7 +1063,7 @@ var MappingViewer = function(viewerID, currentSetID, viewerAction) {
                 comment.val(editComment);
 
                 if (editComment == ""){
-                    $(commentLink).html("Click to add comment");
+                    $(commentLink).html("Add comment");
                 } else {
                     $(commentLink).html(editComment);
                 }

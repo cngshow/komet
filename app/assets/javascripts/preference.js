@@ -56,6 +56,8 @@ var PreferenceModule = (function () {
             }
         });
 
+        dialog.parent().children().children(".ui-dialog-titlebar-close").remove();
+
         // Gets list of all the languages based on constant uuid value
         var uuidParams =  "?uuid=" +  gon.IsaacMetadataAuxiliary.LANGUAGE.uuids[0].uuid;
         // make an ajax call to get the data for language on option tab

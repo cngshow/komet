@@ -631,16 +631,18 @@ var ConceptViewer = function(viewerID, currentConceptID, viewerAction) {
 
             rowString += '<input type="hidden" name="[properties][' + rowData.sememe_instance_id + '][' + fieldID + '][column_number]" value="' + fieldInfo[fieldInfoKey].column_number + '">'
                 + '<input type="hidden" name="[properties][' + rowData.sememe_instance_id + '][' + fieldID + '][data_type_class]" value="' + fieldInfo[fieldInfoKey].data_type_class + '">'
-                + '<div class="input-group"><label for="komet_concept_edit_concept_properties_' + viewerFieldID + '" class="input-group-addon" title="' + fieldLabel + '">' + fieldLabel + '</label>'
+                + '<div class="input-group"><label for="komet_concept_edit_concept_properties_' + viewerFieldID + '" class="input-group-addon">' + fieldLabel + '</label>'
                 + '<input type="text" id="komet_concept_edit_concept_properties_' + viewerFieldID + '" name="[properties][' + rowData.sememe_instance_id + '][' + fieldID + '][value]" value="' + data + '" class="form-control komet_concept_edit_concept_properties_field">'
                 + '</div>';
 
         }.bind(this));
 
-        rowString +=  '<div>' + this.createSelectField("properties", rowData.sememe_instance_id, null, null, "state", this.selectFieldOptions.state, rowData.state) + '</div></div>';
+        rowString +=  '<div>' + this.createSelectField("properties", rowData.sememe_instance_id, null, null, "state", this.selectFieldOptions.state, rowData.state, "Property state") + '</div></div>';
 
         if (rowData.new) {
-            rowString += '<div class="komet-concept-edit-row-tools"><button type="button" class="komet-link-button" onclick="WindowManager.viewers[' + this.viewerID + '].removeItemRow(\'' + rowData.sememe_instance_id + '\', \'' + rowID + '\', \'concept property\', ' + rowData.new + ', this)" title="Remove row"><div class="glyphicon glyphicon-remove"></div></button></div>';
+            rowString += '<div class="komet-concept-edit-row-tools"><button type="button" class="komet-link-button"'
+            + ' onclick="WindowManager.viewers[' + this.viewerID + '].removeItemRow(\'' + rowData.sememe_instance_id + '\', \'' + rowID + '\', \'concept property\', ' + rowData.new + ', this)"'
+            + ' title="Remove row"><div class="glyphicon glyphicon-remove"></div></button></div>';
         }
 
         rowString += '<!-- end komet-concept-edit-concept-properties-row --></div>';
@@ -683,19 +685,24 @@ var ConceptViewer = function(viewerID, currentConceptID, viewerAction) {
         rowString += '<div id="' + rowID + '" class="komet-concept-section-panel komet-concept-description-panel">'
             + '<div class="komet-concept-section-panel-details">'
             + '<div class="komet-concept-edit-row komet-concept-edit-description-row komet-changeable">'
-            + '<div>' + this.createSelectField("descriptions", descriptionID, null, null, "description_type", this.selectFieldOptions.descriptionType, type) + '</div>'
-            + '<div><input type="text" id="komet_concept_edit_description_type_' + descriptionID + '_' + this.viewerID + '" name="descriptions[' + descriptionID + '][text]" value="' + text + '" class="form-control komet_concept_edit_description_type"></div>'
-            + '<div>' + this.createSelectField("descriptions", descriptionID, null, null, "description_language", this.selectFieldOptions.language, language) + '</div>'
-            + '<div>' + this.createSelectField("descriptions", descriptionID, null, null, "description_case_significance", this.selectFieldOptions.caseSignificance, caseSignificance) + '</div>'
-            + '<div>' + this.createSelectField("descriptions", descriptionID, null, null, "description_state", this.selectFieldOptions.state, state) + '</div>';
+            + '<div>' + this.createSelectField("descriptions", descriptionID, null, null, "description_type", this.selectFieldOptions.descriptionType, type, "Description Type") + '</div>'
+            + '<div><input type="text" id="komet_concept_edit_description_type_' + descriptionID + '_' + this.viewerID + '" name="descriptions[' + descriptionID + '][text]" value="' + text + '" class="form-control komet_concept_edit_description_type" aria-label="Description Type"></div>'
+            + '<div>' + this.createSelectField("descriptions", descriptionID, null, null, "description_language", this.selectFieldOptions.language, language, "Description Language") + '</div>'
+            + '<div>' + this.createSelectField("descriptions", descriptionID, null, null, "description_case_significance", this.selectFieldOptions.caseSignificance, caseSignificance, "Description Case Significance") + '</div>'
+            + '<div>' + this.createSelectField("descriptions", descriptionID, null, null, "description_state", this.selectFieldOptions.state, state, "Description State") + '</div>';
 
         if (isNew){
-            rowString += '<div class="komet-concept-edit-row-tools"><button type="button" class="komet-link-button" onclick="WindowManager.viewers[' + this.viewerID + '].removeItemRow(\'' + descriptionID + '\', \'' + rowID + '\', \'description\', ' + isNew + ', this)" title="Remove row"><div class="glyphicon glyphicon-remove"></div></button></div>';
+            rowString += '<div class="komet-concept-edit-row-tools">'
+                + '<button type="button" class="komet-link-button" onclick="WindowManager.viewers[' + this.viewerID + '].removeItemRow(\'' + descriptionID + '\', \'' + rowID + '\', \'description\', ' + isNew + ', this)" title="Remove row" aria-label="Remove row">'
+                + '<div class="glyphicon glyphicon-remove"></div></button></div>';
         }
 
         rowString += '</div>'
-            + '<div class="komet-indent-block komet-concept-description-dialect-section"><div class="komet-concept-section-title komet-concept-description-title">Dialects'
-            + '<div class="komet-flex-right"><button type="button" class="komet-link-button komet-concept-add-description-dialect" onclick="WindowManager.viewers[' + this.viewerID + '].addDialectRow(\'' + descriptionID + '\')">Add Dialect <div class="glyphicon glyphicon-plus-sign"></div></button></div>';
+            + '<div class="komet-indent-block komet-concept-description-dialect-section">'
+            + '<div class="komet-concept-section-title komet-concept-description-title">Dialects'
+            + '<div class="komet-flex-right">'
+            + '<button type="button" class="komet-link-button komet-concept-add-description-dialect" onclick="WindowManager.viewers[' + this.viewerID + '].addDialectRow(\'' + descriptionID + '\')">Add Dialect'
+            + '<div class="glyphicon glyphicon-plus-sign"></div></button></div>';
 
         rowString += '</div>';
 
@@ -750,17 +757,19 @@ var ConceptViewer = function(viewerID, currentConceptID, viewerAction) {
 
             rowString += '<input type="hidden" name="descriptions[' + descriptionID + '][properties][' + rowData.sememe_instance_id + '][' + fieldID + '][column_number]" value="' + fieldInfo[fieldInfoKey].column_number + '">'
                 + '<input type="hidden" name="descriptions[' + descriptionID + '][properties][' + rowData.sememe_instance_id + '][' + fieldID + '][data_type_class]" value="' + fieldInfo[fieldInfoKey].data_type_class + '">'
-                + '<div class="input-group"><label for="komet_concept_edit_description_properties_' + viewerFieldID + '" class="input-group-addon" title="' + fieldLabel + '">' + fieldLabel + '</label>'
+                + '<div class="input-group"><label for="komet_concept_edit_description_properties_' + viewerFieldID + '" class="input-group-addon">' + fieldLabel + '</label>'
                 + '<input type="text" id="komet_concept_edit_description_properties_' + viewerFieldID + '" name="descriptions[' + descriptionID + '][properties][' + rowData.sememe_instance_id + '][' + fieldID + '][value]" value="' + data + '" class="form-control komet_concept_edit_description_properties_field">'
                 + '</div>';
 
         }.bind(this));
 
-        rowString += '<div>' + this.createSelectField("descriptions", descriptionID, "properties", rowData.sememe_instance_id, "state", this.selectFieldOptions.state, rowData.state) + '</div>'
+        rowString += '<div>' + this.createSelectField("descriptions", descriptionID, "properties", rowData.sememe_instance_id, "state", this.selectFieldOptions.state, rowData.state, "state") + '</div>'
             + '</div>';
 
         if (rowData.new){
-            rowString += '<div class="komet-concept-edit-row-tools"><button type="button" class="komet-link-button" onclick="WindowManager.viewers[' + this.viewerID + '].removeItemRow(\'' + rowData.sememe_instance_id + '\', \'' + rowID + '\', \'description property\', ' + rowData.new + ', this)" title="Remove row"><div class="glyphicon glyphicon-remove"></div></button></div>';
+            rowString += '<div class="komet-concept-edit-row-tools">'
+                + '<button type="button" class="komet-link-button" onclick="WindowManager.viewers[' + this.viewerID + '].removeItemRow(\'' + rowData.sememe_instance_id + '\', \'' + rowID + '\', \'description property\', ' + rowData.new + ', this)" title="Remove row" aria-label="Remove row">'
+                + '<div class="glyphicon glyphicon-remove"></div></button></div>';
         }
 
         rowString += '<!-- end komet-concept-edit-description-properties-row --></div>';
@@ -798,14 +807,17 @@ var ConceptViewer = function(viewerID, currentConceptID, viewerAction) {
             var rowID = 'komet_concept_edit_description_dialect_row_' + viewerDialectID;
 
             rowString = '<div id="' + rowID + '" class="komet-concept-edit-row komet-concept-edit-description-dialect-row">'
-                + '<div>' + this.createSelectField("descriptions", descriptionID, "dialects", dialectID, "dialect", this.selectFieldOptions.dialect, dialect) + '</div>'
-                + '<div>' + this.createSelectField("descriptions", descriptionID, "dialects", dialectID, "acceptability", this.selectFieldOptions.acceptability, acceptability) + '</div>';
+                + '<div>' + this.createSelectField("descriptions", descriptionID, "dialects", dialectID, "dialect", this.selectFieldOptions.dialect, dialect, "dialect", "Dialect State") + '</div>'
+                + '<div>' + this.createSelectField("descriptions", descriptionID, "dialects", dialectID, "acceptability", this.selectFieldOptions.acceptability, acceptability, "acceptability", "Dialect Acceptability") + '</div>';
         }
 
         if (isNew){
-            rowString += '<div class="komet-concept-edit-row-tools"><button type="button" class="komet-link-button" onclick="WindowManager.viewers[' + this.viewerID + '].removeItemRow(\'' + dialectID + '\', \'' + rowID + '\', \'dialect\', ' + isNew + ', this)" title="Remove row"><div class="glyphicon glyphicon-remove"></div></button></div>';
+            rowString += '<div class="komet-concept-edit-row-tools">'
+                + '<button type="button" class="komet-link-button" onclick="WindowManager.viewers[' + this.viewerID + '].removeItemRow(\'' + dialectID + '\', \'' + rowID + '\', \'dialect\', ' + isNew + ', this)" title="Remove row" aria-label="Remove row">' +
+                + '<div class="glyphicon glyphicon-remove"></div>'
+                + '</button></div>';
         } else {
-            rowString += '<div>' + this.createSelectField("descriptions", descriptionID, "dialects", dialectID, "state", this.selectFieldOptions.state, state) + '</div>'
+            rowString += '<div>' + this.createSelectField("descriptions", descriptionID, "dialects", dialectID, "state", this.selectFieldOptions.state, state, "Dialect State") + '</div>'
         }
 
         rowString += '</div>';
@@ -843,7 +855,7 @@ var ConceptViewer = function(viewerID, currentConceptID, viewerAction) {
 
             isNew = true;
             associationID = window.performance.now().toString().replace(".", "");
-            typeDisplay = this.createSelectField("associations", associationID, null, null, "association_type", this.selectFieldOptions.associationType, "");
+            typeDisplay = this.createSelectField("associations", associationID, null, null, "association_type", this.selectFieldOptions.associationType, "", "Association type");
 
         }
 
@@ -861,10 +873,13 @@ var ConceptViewer = function(viewerID, currentConceptID, viewerAction) {
             + 'restrict-search="' + UIHelper.RECENTS_ASSOCIATION + '"'
             + 'classes="komet-concept-edit-association-value">'
             + '</autosuggest></div>'
-            + '<div>' + this.createSelectField("associations", associationID, null, null, "association_state", this.selectFieldOptions.state, state) + '</div>';
+            + '<div>' + this.createSelectField("associations", associationID, null, null, "association_state", this.selectFieldOptions.state, state, "Association State") + '</div>';
 
         if (isNew){
-            rowString += '<div class="komet-concept-edit-row-tools"><button type="button" class="komet-link-button" onclick="WindowManager.viewers[' + this.viewerID + '].removeItemRow(\'' + associationID + '\', \'' + rowID + '\', \'association\', ' + isNew + ', this)" title="Remove row"><div class="glyphicon glyphicon-remove"></div></button></div>';
+            rowString += '<div class="komet-concept-edit-row-tools">'
+                + '<button type="button" class="komet-link-button" onclick="WindowManager.viewers[' + this.viewerID + '].removeItemRow(\'' + associationID + '\', \'' + rowID + '\', \'association\', ' + isNew + ', this)" title="Remove row" aria-label="Remove row">'
+                + '<div class="glyphicon glyphicon-remove"></div>'
+                + '</button></div>';
         }
 
         rowString += '</div>';
@@ -1046,7 +1061,7 @@ var ConceptViewer = function(viewerID, currentConceptID, viewerAction) {
         UIHelper.generateConfirmationDialog("Delete " + type + "?", "Are you sure you want to remove this " + type + "?", confirmCallback, "Yes", closeElement);
     };
 
-    ConceptViewer.prototype.createSelectField = function (type, typeID, subtype, subtypeID, fieldName, options, selectedItem) {
+    ConceptViewer.prototype.createSelectField = function (type, typeID, subtype, subtypeID, fieldName, options, selectedItem, label) {
 
         var idSubtypeID = "";
         var nameSubtype = "";
@@ -1062,7 +1077,11 @@ var ConceptViewer = function(viewerID, currentConceptID, viewerAction) {
         var id = "komet_concept_edit_" + typeID + "_" + idSubtypeID + fieldName + '_' + this.viewerID;
         var name = type + '[' + typeID + ']' + nameSubtype + nameSubtypeID + '[' + fieldName + ']';
 
-        var fieldString = '<select id="' + id + '" name="' + name + '" class="form-control komet_concept_edit_' + fieldName + '">';
+        var fieldString = '<select id="' + id + '"'
+            + ' name="' + name + '"'
+            + ' class="form-control komet_concept_edit_' + fieldName + '"'
+            + ((label) ? (' aria-label="' + label) + '"' : '')
+            + '>';
 
         for (var i = 0; i < options.length; i++) {
 
