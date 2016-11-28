@@ -5,11 +5,11 @@
 
         <span class="panel-title komet-section-title">
 
-            <button type="button" class="komet-link-button" onclick="WindowManager.toggleViewerLinkage('<%= @viewer_id %>', WindowManager.getLinkedViewerID() != '<%= @viewer_id %>');" title="Viewer linked to Mapping Tree. Click to unlink.">
+            <button type="button" class="komet-link-button" onclick="WindowManager.toggleViewerLinkage('<%= @viewer_id %>', WindowManager.getLinkedViewerID() != '<%= @viewer_id %>');" title="Viewer linked to Mapping Tree. Click to unlink." aria-label="Viewer to linked Mapping Tree. Click to unlink.">
                 <span id="komet_mapping_panel_tree_link_<%= @viewer_id %>" class="fa fa-chain-broken"></span>
             </button>
 
-            <button type="button" class="komet-link-button" id="komet_mapping_panel_tree_show_<%= @viewer_id %>" onclick="WindowManager.viewers[<%= @viewer_id %>].showInMappingTree();" title="Show in Mapping Tree">
+            <button type="button" class="komet-link-button" id="komet_mapping_panel_tree_show_<%= @viewer_id %>" onclick="WindowManager.viewers[<%= @viewer_id %>].showInMappingTree();" title="Show in Mapping Tree" aria-label="Show in Mapping Tree">
                 <span class="fa fa-tree"></span>
             </button>
             
@@ -23,7 +23,7 @@
                 <%= select_tag "komet_mapping_overview_page_size_#{@viewer_id}", options_for_select([['25'], ['50'], ['100'], ['250'], ['500'], ['1000']], '25'), style: 'display: none'  %>
             </div>
 
-            <button type="button" id="komet_mapping_overview_sets_refresh_<%= @viewer_id %>" class="komet-link-button komet-panel-tools-control" onclick="WindowManager.viewers[<%= @viewer_id %>].loadOverviewSetsGrid();" title="Reload Mapping Set Grid">
+            <button type="button" id="komet_mapping_overview_sets_refresh_<%= @viewer_id %>" class="komet-link-button komet-panel-tools-control" onclick="WindowManager.viewers[<%= @viewer_id %>].loadOverviewSetsGrid();" title="Reload Mapping Set Grid" aria-label="Reload Mapping Set Grid">
                 <div title="Reload Mapping Set Grid" class="fa fa-refresh"></div>
             </button>
 

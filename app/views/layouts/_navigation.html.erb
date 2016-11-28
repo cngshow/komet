@@ -1,10 +1,10 @@
 <link rel="stylesheet" href="//code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css">
-
+<h1 class="hide">KOMET Tooling</h1>
 <nav class="komet-navbar" role="navigation" aria-label="Main menu">
 
   <div class="komet-navbar-header" role="navigation">
-    <div class="komet-logo-komet" title="KOMET">KOMET</div>
-    <div class="komet-logo-tooling" title="Tooling">Tooling</div>
+    <div class="komet-logo-komet">KOMET</div>
+    <div class="komet-logo-tooling">Tooling</div>
   </div>
 
   <div class="komet-navbar-navigation" role="navigation">
@@ -49,7 +49,8 @@
     </div>
 
     <div>
-      <div class="glyphicon glyphicon-user" title="User ID"></div> <%= raw komet_user %></div>
+      <div class="glyphicon glyphicon-user" title="User ID"></div> <%= raw komet_user %>
+    </div>
 
     <div>
       <button type="button" class="komet-link-button" id="logout" onclick="location.replace('<%= logout_path %>')" title="Logout" role="navigation">
@@ -64,10 +65,10 @@
 <div id="komet_user_preference_form" title="User's Preference">
   <div id="komet_preferences_tabs" role="tab">
     <ul>
-      <li><a href='#useroptions' title="Options">Options</a></li>
-      <li><a href='#color-module' title="Color Module">Color Module</a></li>
-      <li><a href='#colorpath-module' title="Color Path">Color Path</a></li>
-      <li><a href='#komet_preferences_refsets_colors' title="Color Refsets">Color Refsets</a></li>
+      <li><a href='#useroptions'>Options</a></li>
+      <li><a href='#color-module'>Color Module</a></li>
+      <li><a href='#colorpath-module'>Color Path</a></li>
+      <li><a href='#komet_preferences_refsets_colors'>Color Refsets</a></li>
     </ul>
     <div id="useroptions">
       <form>
@@ -78,10 +79,10 @@
           </div>
         </div>
         <div style="height: 45px">
-          <div style="font-weight: bold; width: 40%; text-align: right; vertical-align: middle; float: left">STAMP as of Date:&nbsp;&nbsp;</div>
+          <div id="stamp_date_label" style="font-weight: bold; width: 40%; text-align: right; vertical-align: middle; float: left">STAMP as of Date:&nbsp;&nbsp;</div>
           <div style="width: 60%; float: right">
             <div class='input-group date' id='stamp_date'>
-              <input type='text' class="form-control"/>
+              <input type='text' class="form-control" aria-labelledby="stamp_date_label">
               <span class="input-group-addon">
                 <span class="fa fa-calendar"></span>
               </span>
@@ -127,7 +128,7 @@
             <div id="getdd"></div>
           </td>
           <td style="width: 20%" style="padding-left: 5px;text-align: center;margin-left: 2px">
-            &nbsp;&nbsp;<input name="color_id" class="demo" title="Click here to change color" type="hidden" id="color_id" size="1" style="height:25px" data-control="hue" value=""/>
+            &nbsp;&nbsp;<input name="color_id" class="demo" title="Click here to change color" aria-label="Change color" type="hidden" id="color_id" size="1" style="height:25px" data-control="hue" value=""/>
           </td>
           <td style="width: 30%">
             <div id="getrefsetshape"></div>
@@ -152,7 +153,7 @@
         <%= form_tag(export_path, method: :post, id: 'export_modal_form', name: 'export_modal_form') do %>
             <%= label_tag 'start_date_input', 'Start Date' %>
             <div class='input-group date' id='start_date'>
-              <input name="start_date_input" type='text' class="form-control" placeholder="Enter the start date for this export" required/>
+              <input id='start_date_input' name="start_date_input" type='text' class="form-control" placeholder="Enter the start date for this export" required/>
               <span class="input-group-addon">
                 <span class="fa fa-calendar"></span>
               </span>
@@ -160,7 +161,7 @@
             <br>
             <%= label_tag 'end_date_input', 'End Date' %>
             <div class='input-group date' id='end_date'>
-              <input name="end_date_input" type='text' class="form-control" placeholder="Enter the end date for this export (Optional)"/>
+              <input id="end_date_input" name="end_date_input" type='text' class="form-control" placeholder="Enter the end date for this export (Optional)"/>
               <span class="input-group-addon">
                 <span class="fa fa-calendar"></span>
               </span>
@@ -171,8 +172,8 @@
       <hr>
       <div align="center" style="padding-bottom: 10px">
         <div id="buttons_div">
-          <span class="btn btn-default" onclick=ExportModule.cancel_export();>Cancel</span>
-          <span class="btn btn-default" onclick=ExportModule.submit_export();>Submit</span>
+          <button type="button" class="btn btn-default" onclick="ExportModule.cancel_export();">Cancel</button>
+          <button type="button" class="btn btn-default" onclick="ExportModule.submit_export();">Submit</button>
         </div>
       </div>
     </div>

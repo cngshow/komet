@@ -787,6 +787,7 @@ class KometDashboardController < ApplicationController
             if params[:descriptions]
 
                 fsn_id = $isaac_metadata_auxiliary['FULLY_SPECIFIED_NAME']['uuids'].first[:uuid]
+                fsn = nil
 
                 params[:descriptions].each do |description_id, description|
 
@@ -805,9 +806,10 @@ class KometDashboardController < ApplicationController
                             break
                         end
 
-                        params[:descriptions].delete(description_id)
+                        fsn = description
+                        fsn_id = description_id
                         create_success = true
-                        break;
+                        break
                     end
                 end
             end
@@ -815,6 +817,10 @@ class KometDashboardController < ApplicationController
             # if the concept create did not happen, return with a failed message, otherwise copy the new concept ID into the concept_id field to continue with the edit
             if create_success
                 concept_id = new_concept_id.uuid
+
+                # Copy the FSN into a new hash entry using the returned ID from the newly created FSN, then delete the old key
+                params[:descriptions][new_concept_id.fsnDescriptionSememe.uuids.first] = fsn
+                params[:descriptions].delete(fsn_id)
             else
                 render json: {concept_id: concept_id, failed: {id: concept_id, text: 'Clone Concept: The new concept was unable to be created.' , type: 'clone'}}
             end
@@ -933,16 +939,16 @@ class KometDashboardController < ApplicationController
                     body_params[:referencedComponentId] = concept_id
 
                     return_value = SememeRest::get_sememe(action: SememeRestActions::ACTION_DESCRIPTION_CREATE, additional_req_params: additional_req_params, body_params: body_params)
+
+                    # if the description create or update failed, mark it and skip to the next description. Do not process its properties.
+                    if return_value.is_a? CommonRest::UnexpectedResponse
+
+                        failed_writes << {id: description_id, text: description['text'], type: 'description'}
+                        next
+                    end
+
+                    description_id = return_value.uuid
                 end
-
-                # if the description create or update failed, mark it and skip to the next description. Do not process its dialects or properties.
-                if return_value.is_a? CommonRest::UnexpectedResponse
-
-                    failed_writes << {id: description_id, text: description['text'], type: 'description'}
-                    next
-                end
-
-                description_id = return_value.uuid
 
                 if description[:properties]
                     process_sememes.call(description_id, description[:properties], 'description property', 'Description: ' + description['text'] + ' : ')

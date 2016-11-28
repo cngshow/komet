@@ -5,7 +5,7 @@
 
         <div class="panel-heading">
             <span class="panel-title komet-section-title">
-                <button type="button" class="komet-link-button" onclick="WindowManager.toggleViewerLinkage('<%= @viewer_id %>', WindowManager.getLinkedViewerID() != '<%= @viewer_id %>');" title="Viewer linked to Taxonomy Tree. Click to unlink.">
+                <button type="button" class="komet-link-button" onclick="WindowManager.toggleViewerLinkage('<%= @viewer_id %>', WindowManager.getLinkedViewerID() != '<%= @viewer_id %>');" aria-label="Viewer linked to Taxonomy Tree. Click to unlink." title="Viewer linked to Taxonomy Tree. Click to unlink.">
                     <span id="komet_concept_panel_tree_link_<%= @viewer_id %>" class="fa fa-chain-broken" ></span>
                 </button>
                 New Concept
@@ -49,17 +49,19 @@
                 <div class="komet-concept-section-panel-details">
 
                     <div class="komet-changeable">
-                        <div>
+                        <div id="lbl_komet_create_concept_description_<%= @viewer_id %>">
                             <b>Preferred Name</b>
                             <span id="komet_create_concept_fsn_note_<%= @viewer_id %>"> (also used as FSN)</span>
                         </div>
-                        <input name="komet_create_concept_description" id="komet_create_concept_description_<%= @viewer_id %>" class="form-control">
+                        <input name="komet_create_concept_description" id="komet_create_concept_description_<%= @viewer_id %>" class="form-control" aria-labelledby="lbl_komet_create_concept_description_<%= @viewer_id %>">
                     </div>
 
                     <div id="komet_create_concept_description_type_section_<%= @viewer_id %>" class="komet-changeable hide">
-                        <div><b>Extended Description Type: (optional)</b></div>
+                        <div id="lbl_komet_create_concept_description_type_<%= @viewer_id %>">
+                          <b>Extended Description Type: (optional)</b>
+                        </div>
 
-                        <select name="komet_create_concept_description_type" id="komet_create_concept_description_type_<%= @viewer_id %>" class="form-control">
+                        <select name="komet_create_concept_description_type" id="komet_create_concept_description_type_<%= @viewer_id %>" class="form-control" aria-labelledby="lbl_komet_create_concept_description_type_<%= @viewer_id %>">
 
                             <option selected value=""></option>
 
