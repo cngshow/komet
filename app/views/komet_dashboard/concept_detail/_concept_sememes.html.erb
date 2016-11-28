@@ -32,8 +32,8 @@
                 <thead>
                     <tr>
 
-                        <th></th>
-                        <th title="Status Markers - for Active/Inactive and Current/Historical and Uncommitted">Status</th>
+
+                        <th colspan="2"  title="Status Markers - for Active/Inactive and Current/Historical and Uncommitted">Status</th>
                         <th title="The assemblage concept that defines this sememe.">Assemblage</th>
 
                         <!-- loop through and print out all the column headers -->
@@ -44,7 +44,7 @@
                                 next
                             end
                         %>
-                            <th title="<%= column[:description] %>"><%= column[:name] %></th>
+                            <th title="title <%= column[:description] %>"><%= column[:name] %></th>
                         <% end %>
 
                     </tr>
