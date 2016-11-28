@@ -3,8 +3,10 @@ Komet Changelog
 This changelog summarizes changes and fixes which are a part of each revision.  For more details on the fixes, refer tracking numbers 
 where provided, and the git commit history.
 
-* 2016/11/28 - 1.44:
-    * No changes
+* 2016/11/28 - 1.44:   
+    * 508 fix - Navigation with JAWS not reading the user id - reads labels but preference is for Jaws to actually read the actual user id,
+          for now fix is just stating user id region.  Also a few other title tags missing on nav region that were not being read with JAWS.
+
 
 * 2016/11/28 - 1.43:
     * Fixed bug adding a property to a description when editing a concept
