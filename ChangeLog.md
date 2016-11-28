@@ -3,10 +3,7 @@ Komet Changelog
 This changelog summarizes changes and fixes which are a part of each revision.  For more details on the fixes, refer tracking numbers 
 where provided, and the git commit history.
 
-* 2016/11/? - 1.44:
-    *
-
-* 2016/11/25 - 1.43:
+* 2016/11/28 - 1.43:
     * Fixed bug adding a property to a description when editing a concept
     * Fixed 508 errors in concept edit, user preferences, and map sets for missing labels and unlabeled form elements,
       unused hidden buttons (X) in dialog boxes.
