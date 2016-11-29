@@ -462,7 +462,7 @@ var MappingViewer = function(viewerID, currentSetID, viewerAction) {
 
     MappingViewer.prototype.generateSetEditorDialogIncludeSection = function(fieldName, fieldInfo){
 
-        var sectionString = '<div class="' + this.INCLUDE_FIELD_CLASS_PREFIX + fieldName + '">'
+        var sectionString = '<fieldset><legend style="width: 0px;height:0px">&nbsp;</legend><div class="' + this.INCLUDE_FIELD_CLASS_PREFIX + fieldName + '">'
             + '<input type="checkbox" name="' + this.SET_INCLUDE_FIELD_PREFIX.slice(0, -1) + '[]" class="form-control" '
             + 'id="' + this.SET_INCLUDE_FIELD_PREFIX + fieldName + '_' + this.viewerID + '" value="' + fieldName + '" ';
 
@@ -481,7 +481,7 @@ var MappingViewer = function(viewerID, currentSetID, viewerAction) {
             + '<input type="hidden" name="' + this.SET_INCLUDE_FIELD_PREFIX + fieldName + '_data_type" value="' + fieldInfo.data_type + '">'
             + '<input type="hidden" name="' + this.SET_INCLUDE_FIELD_PREFIX + fieldName + '_required" value="' + fieldInfo.required + '">'
             + '<input type="hidden" name="' + this.SET_INCLUDE_FIELD_PREFIX + fieldName + '_removable" value="' + fieldInfo.removable + '">'
-            + '</div>';
+            + '</div></fieldset>';
 
         return sectionString;
     };
@@ -932,7 +932,7 @@ var MappingViewer = function(viewerID, currentSetID, viewerAction) {
         var rowID = "";
         var rowString = null;
         var idPrefix = "komet_mapping_item_" + itemID;
-        var ariaLabel = "";
+        var ariaLabel = "komet_mapping_item";
 
 
         if (rowData != null){
