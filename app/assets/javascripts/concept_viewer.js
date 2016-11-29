@@ -813,7 +813,7 @@ var ConceptViewer = function(viewerID, currentConceptID, viewerAction) {
 
         if (isNew){
             rowString += '<div class="komet-concept-edit-row-tools">'
-                + '<button type="button" class="komet-link-button" onclick="WindowManager.viewers[' + this.viewerID + '].removeItemRow(\'' + dialectID + '\', \'' + rowID + '\', \'dialect\', ' + isNew + ', this)" title="Remove row" aria-label="Remove row">' +
+                + '<button type="button" class="komet-link-button" onclick="WindowManager.viewers[' + this.viewerID + '].removeItemRow(\'' + dialectID + '\', \'' + rowID + '\', \'dialect\', ' + isNew + ', this)" title="Remove row" aria-label="Remove row">'
                 + '<div class="glyphicon glyphicon-remove"></div>'
                 + '</button></div>';
         } else {

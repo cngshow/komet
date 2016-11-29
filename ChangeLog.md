@@ -5,6 +5,9 @@ where provided, and the git commit history.
 * 2016/11/29 - 1.46:
    * Fixed NAN text showing when adding new concept dialects
    * Fixed to allow all concepts to show in the associations target field
+   * Mapping business rules are stored under the correct concept ID
+   * New dialects will now be created
+   * Fixed bug causing dialects to always be set to inactive
 
 * 2016/11/29 - 1.45:
     * Edit Concept Screen various 508 fixes.  Contrast on assoc value labels (Mod css)  Labels, header and titles added to text not being read by JAWS.
