@@ -870,7 +870,6 @@ var ConceptViewer = function(viewerID, currentConceptID, viewerAction) {
             + 'value="' + targetID + '" '
             + 'display-value="' + targetText + '" '
             + 'type-value="' + targetTaxonomyType + '" '
-            + 'restrict-search="' + UIHelper.RECENTS_ASSOCIATION + '"'
             + 'classes="komet-concept-edit-association-value">'
             + '</autosuggest></div>'
             + '<div>' + this.createSelectField("associations", associationID, null, null, "association_state", this.selectFieldOptions.state, state, "Association State") + '</div>';
