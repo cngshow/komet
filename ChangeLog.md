@@ -5,6 +5,17 @@ where provided, and the git commit history.
 
 * 2016/11/?? - 1.45:
     * Edit Concept Screen various 508 fixes.  Contrast on assoc value labels (Mod css)  Labels, header and titles added to text not being read by JAWS.
+    * Fixed 508 error and alert - Concept details - Attached Sememes	before status column - removed empty th from table
+    * Fixed 508 error and alert - Concept details - Attached Sememes- dynamic columns	added word prefix with word title  - dynamic column header names
+    * Fixed 508 error and alert - Above taxonomy -stated & inferred button 	added fieldset and legend to radio button
+    * Fixed 508 error and alert - Concept detail - navigation on blue bar -stated & inferred button 	added fieldset and legend to radio button
+    * Fixed 508 error and alert - Users preference screen -stated & inferred button 	added fieldset and legend to radio button
+    * Fixed 508 error and alert - Mapping tab - mapping detail page - blue bar navigation	added fieldset and legend to radio button
+    * Fixed 508 error and alert - Mapping detail page - fixed all the check box and radio button	added fieldset and legend to radio button
+    * Fixed 508 error and alert - Concept edit page - fixed all the check box and radio button	added fieldset and legend to radio button
+    * Fixed 508 error and alert - Mapping tab - blue bar above tree - blue bar navigation	added fieldset and legend to radio button
+    * Fixed 508 error and alert - Mapping detail page- click on plus sign to add row in grid	added label to dropdown
+    * Users preference screen removed console.log 
 
 * 2016/11/28 - 1.44:
     * No changes
