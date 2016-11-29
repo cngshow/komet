@@ -690,7 +690,7 @@ class KometDashboardController < ApplicationController
 
         @language_options = get_concept_children(concept_id: $isaac_metadata_auxiliary['LANGUAGE']['uuids'].first[:uuid], returnJSON: false, removeSemanticTag: true)
         # TODO - Change get_concept_children function to pull all leaf nodes so we can stop hardcoding this uuid
-        @dialect_options = get_concept_children(concept_id: 'c0836284-f631-3c86-8cfc-56a67814efab', returnJSON: false, removeSemanticTag: true)
+        @dialect_options = get_concept_children(concept_id: $isaac_metadata_auxiliary['DIALECT_ASSEMBLAGE']['uuids'].first[:uuid], returnJSON: false, removeSemanticTag: true)
         @case_options = get_concept_children(concept_id: $isaac_metadata_auxiliary['DESCRIPTION_CASE_SIGNIFICANCE']['uuids'].first[:uuid], returnJSON: false, removeSemanticTag: true)
         @acceptability_options = get_concept_children(concept_id: $isaac_metadata_auxiliary['DESCRIPTION_ACCEPTABILITY']['uuids'].first[:uuid], returnJSON: false, removeSemanticTag: true)
         @description_type_options = get_concept_children(concept_id: $isaac_metadata_auxiliary['DESCRIPTION_TYPE']['uuids'].first[:uuid], returnJSON: false, removeSemanticTag: true)

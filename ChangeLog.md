@@ -2,7 +2,9 @@ Komet Changelog
 
 This changelog summarizes changes and fixes which are a part of each revision.  For more details on the fixes, refer tracking numbers 
 where provided, and the git commit history.
- 
+* 2016/11/29 - 1.46:
+   * Fixed NAN text showing when adding new concept dialects
+
 * 2016/11/29 - 1.45:
     * Edit Concept Screen various 508 fixes.  Contrast on assoc value labels (Mod css)  Labels, header and titles added to text not being read by JAWS.
     * Fixed 508 error and alert - Concept details - Attached Sememes	before status column - removed empty th from table
