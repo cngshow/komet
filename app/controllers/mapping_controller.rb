@@ -40,7 +40,7 @@ class MappingController < ApplicationController
         view_params = params[:view_params]
         mapping_tree = []
 
-        map_sets_results = MappingApis::get_mapping_api(action: MappingApiActions::ACTION_SETS,  additional_req_params: {coordToken: coordinates_token, CommonRest::CacheRequest => false} )
+        map_sets_results = MappingApis::get_mapping_api(action: MappingApiActions::ACTION_SETS,  additional_req_params: {coordToken: coordinates_token, allowedStates: view_params['statesToView'], CommonRest::CacheRequest => false} )
 
         map_sets_results.each do |set|
 
@@ -87,7 +87,7 @@ class MappingController < ApplicationController
         @view_params = params[:view_params]
 
         if @view_params == nil
-            @view_params = {statesToView: 'both'}
+            @view_params = {statesToView: 'active,inactive'}
         end
 
         if @viewer_id == nil || @viewer_id == '' || @viewer_id == 'new'
@@ -112,7 +112,7 @@ class MappingController < ApplicationController
         page_number = 1 #params[:overview_sets_page_number]
         view_params = params[:view_params]
 
-        map_sets_results = MappingApis::get_mapping_api(action: MappingApiActions::ACTION_SETS,  additional_req_params: {coordToken: coordinates_token, CommonRest::CacheRequest => false} )
+        map_sets_results = MappingApis::get_mapping_api(action: MappingApiActions::ACTION_SETS,  additional_req_params: {coordToken: coordinates_token, allowedStates: view_params['statesToView'], CommonRest::CacheRequest => false} )
 
         map_sets_results.each do |set|
 
@@ -188,9 +188,9 @@ class MappingController < ApplicationController
                 data_type = field.extensionValue.class.to_s.remove('Gov::Vha::Isaac::Rest::Api1::Data::Sememe::DataTypes::RestDynamicSememe')
 
                 # if the field is buiness rules then pull it out and handle it specially
-                # use the first line when it is implemented in the DB
+                # TODO - use the first line when implemented in the metadata
                 # if label == $isaac_metadata_auxiliary['DYNAMIC_SEMEME_COLUMN_BUSINESS_RULES']['uuids'].first[:uuid]
-                if label == '12fd37c2-e9fe-58ed-992d-5ad13bf4e110'
+                if label == '7ebc6742-8586-58c3-b49d-765fb5a93f35'
 
                     @map_set[:rules] = value
                     next
@@ -320,7 +320,7 @@ class MappingController < ApplicationController
         results = {column_definitions: column_definitions}
         item_data = []
 
-        items = MappingApis::get_mapping_api(action: MappingApiActions::ACTION_ITEMS, uuid_or_id: set_id,  additional_req_params: {coordToken: coordinates_token, expand: 'referencedDetails,comments '}) # CommonRest::CacheRequest => false
+        items = MappingApis::get_mapping_api(action: MappingApiActions::ACTION_ITEMS, uuid_or_id: set_id,  additional_req_params: {coordToken: coordinates_token, allowedStates: view_params['statesToView'], expand: 'referencedDetails,comments '}) # CommonRest::CacheRequest => false
 
         if items.is_a? CommonRest::UnexpectedResponse
             return {total_number: 0, data: []}
@@ -445,9 +445,9 @@ class MappingController < ApplicationController
 
             if params[:komet_mapping_set_editor_rules] != ''
 
-                # use the first line when implemented in the DB
+                # TODO - use the first line when implemented in the metadata
                 #rules_id = $isaac_metadata_auxiliary['DYNAMIC_SEMEME_COLUMN_BUSINESS_RULES']['uuids'].first[:uuid]
-                rules_id = '12fd37c2-e9fe-58ed-992d-5ad13bf4e110'
+                rules_id = '7ebc6742-8586-58c3-b49d-765fb5a93f35'
 
                 set_extended_fields << {extensionNameConcept: rules_id, extensionValue: {'@class' => 'gov.vha.isaac.rest.api1.data.sememe.dataTypes.RestDynamicSememeString', columnNumber: 1, data: params[:komet_mapping_set_editor_rules]}}
             end

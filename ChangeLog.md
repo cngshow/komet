@@ -8,6 +8,7 @@ where provided, and the git commit history.
    * Mapping business rules are stored under the correct concept ID
    * New dialects will now be created
    * Fixed bug causing dialects to always be set to inactive
+   * Active/Inactive filter control now works to change the state filter in queries, and the control css updates correctly. However, inactive items are not showing in when the filter is set to 'inactive'. It looks to be a bug on the ISAAC REST side.
 
 * 2016/11/29 - 1.45:
     * Edit Concept Screen various 508 fixes.  Contrast on assoc value labels (Mod css)  Labels, header and titles added to text not being read by JAWS.
