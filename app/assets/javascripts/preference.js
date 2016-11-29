@@ -425,7 +425,7 @@ var PreferenceModule = (function () {
     function selectAllowedstates(values)    {
         var statues ="";
         var inactive ="";
-        console.log(values);
+
         for (var i = 0, count = values.length; i < count; i++) {
             if (values[i].name === 'Active')
             {
@@ -709,7 +709,7 @@ var PreferenceModule = (function () {
     }
      function getShapeName(classname)
      {
-         console.log(classname)
+
          if (classname == 'none')
              return 'No shape';
          else if (classname == 'glyphicon glyphicon-stop')

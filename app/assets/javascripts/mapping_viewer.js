@@ -932,7 +932,7 @@ var MappingViewer = function(viewerID, currentSetID, viewerAction) {
         var rowID = "";
         var rowString = null;
         var idPrefix = "komet_mapping_item_" + itemID;
-        var ariaLabel = "";
+        var ariaLabel = "komet_mapping_item";
 
 
         if (rowData != null){
