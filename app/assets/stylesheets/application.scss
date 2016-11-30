@@ -98,7 +98,7 @@ html, body{
     color: white;
     width: 100%;
     height: 5em;
-    background-color: #4f80d9;
+    background-color: #0000a2;
     justify-content: center;
     align-items: center;
 }
@@ -251,7 +251,7 @@ div.komet-confirmation-dialog{
     overflow: visible;
 }
 .komet-confirmation-dialog .ui-dialog-titlebar{
-    background: #4f80d9;
+    background: #0000a2;
     color: white
 }
 .komet-confirmation-dialog div.ui-dialog-buttonpane{
@@ -540,7 +540,7 @@ div.komet-confirmation-dialog{
 
 // Concept Viewer Styles
 .komet-concept-panel .panel-heading {
-    background-color: #4f80d9;
+    background-color: #0000a2;
     display: flex;
 }
 .komet-concept-panel .panel-title{
@@ -754,9 +754,9 @@ td.komet-concept-table-nested-indicator.komet-concept-table-nested-indicator-ope
     margin-bottom: 10px;
 }
 .komet-concept-lineage-summary-details{
-    border: 2px solid #357ebd;
+    border: 2px solid #0000a2;
     border-radius: 4px;
-    background-color: #357ebd;
+    background-color: #0000a2;
     color: white;
     width: 100%;
     display: inline-block;
@@ -1038,7 +1038,7 @@ td.komet-concept-table-nested-indicator.komet-concept-table-nested-indicator-ope
 }
 .komet-mapping-section-panel-header-shelf{
     display: flex;
-    background-color: #4f80d9;
+    background-color: #0000a2;
     padding: 0px 15px;
     height: 30px;
 }

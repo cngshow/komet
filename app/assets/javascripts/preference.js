@@ -97,12 +97,12 @@ var PreferenceModule = (function () {
 
             var tr = document.createElement("TR");
             tr.setAttribute("id", "heading1");
-            tr.setAttribute("style", "background-color: #4f80d9;color:white");
+            tr.setAttribute("style", "background-color: #0000a2;color:white");
             document.getElementById('description_type').appendChild(tr);
 
             var tr1 = document.createElement("TR");
             tr1.setAttribute("id", "heading2");
-            tr1.setAttribute("style", "background-color: #4f80d9;color:white");
+            tr1.setAttribute("style", "background-color: #0000a2;color:white");
             document.getElementById('dialecttbl').appendChild(tr1);
 
             var td1 = document.createElement("TD");
@@ -160,7 +160,7 @@ var PreferenceModule = (function () {
 
                     var colorheadingtr = document.createElement("TR");
                     colorheadingtr.setAttribute("id", "colorrefset");
-                    colorheadingtr.setAttribute("style", "background-color: #4f80d9;color:white;text-align: center")
+                    colorheadingtr.setAttribute("style", "background-color: #0000a2;color:white;text-align: center")
                     document.getElementById('komet_preferences_refsets_table').appendChild(colorheadingtr);
 
                     var colorheadingtd0 = document.createElement("TD");
@@ -339,7 +339,7 @@ var PreferenceModule = (function () {
 
         var colorheadingtr = document.createElement("TR");
         colorheadingtr.setAttribute("id", "colorrefset");
-        colorheadingtr.setAttribute("style", "background-color: #4f80d9;color:white;text-align: center")
+        colorheadingtr.setAttribute("style", "background-color: #0000a2;color:white;text-align: center")
         document.getElementById('komet_preferences_refsets_table').appendChild(colorheadingtr);
 
         var colorheadingtd0 = document.createElement("TD");
@@ -454,7 +454,7 @@ var PreferenceModule = (function () {
                 document.getElementById('listofpath').innerHTML ="";
                 var colorpathheadingtr = document.createElement("TR");
                 colorpathheadingtr.setAttribute("id", "colorpathheading");
-                colorpathheadingtr.setAttribute("style", "background-color: #4f80d9;color:white");
+                colorpathheadingtr.setAttribute("style", "background-color: #0000a2;color:white");
                 document.getElementById('listofpath').appendChild(colorpathheadingtr);
 
                 var colorpathheadingtd1 = document.createElement("TD");
@@ -506,7 +506,7 @@ var PreferenceModule = (function () {
             document.getElementById('listofpath').innerHTML ="";
             var colorpathheadingtr = document.createElement("TR");
             colorpathheadingtr.setAttribute("id", "colorpathheading");
-            colorpathheadingtr.setAttribute("style", "background-color: #4f80d9;color:white")
+            colorpathheadingtr.setAttribute("style", "background-color: #0000a2;color:white")
             document.getElementById('listofpath').appendChild(colorpathheadingtr);
 
             var colorpathheadingtd1 = document.createElement("TD");
@@ -566,7 +566,7 @@ var PreferenceModule = (function () {
 
             var colorheadingtr = document.createElement("TR");
             colorheadingtr.setAttribute("id", "colorheading");
-            colorheadingtr.setAttribute("style", "background-color: #4f80d9;color:white")
+            colorheadingtr.setAttribute("style", "background-color: #0000a2;color:white")
             document.getElementById('listofmodule').appendChild(colorheadingtr);
 
             var colorheadingtd1 = document.createElement("TD");
@@ -618,7 +618,7 @@ var PreferenceModule = (function () {
             document.getElementById('listofmodule').innerHTML ="";
             var colorheadingtr = document.createElement("TR");
             colorheadingtr.setAttribute("id", "colorheading");
-            colorheadingtr.setAttribute("style", "background-color: #4f80d9;color:white")
+            colorheadingtr.setAttribute("style", "background-color: #0000a2;color:white")
             document.getElementById('listofmodule').appendChild(colorheadingtr);
 
             var colorheadingtd1 = document.createElement("TD");
