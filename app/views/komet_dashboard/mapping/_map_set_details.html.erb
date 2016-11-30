@@ -137,7 +137,7 @@
 
           <div id="komet_mapping_set_rules_tab_<%= @viewer_id %>" class="komet-mapping-set-tab-body">
             <%= text_area_tag :komet_mapping_set_editor_rules, @map_set[:rules], id: "komet_mapping_set_editor_rules_#{@viewer_id}", class: 'form-control komet-mapping-set-editor-edit komet-mapping-set-editor-create-only', 'aria-label': "Business Rules" %>
-            <div><%= @map_set[:rules] %></div>
+            <div class="komet-mapping-set-editor-display"><%= @map_set[:rules] %></div>
           </div>
 
         </div>
@@ -164,7 +164,7 @@
               <div class="komet-mapping-section-panel-tools komet-flex-right">
 
                 <!-- expand/collapse icon - controls details drawer -->
-                <button type="button" class="komet-link-button" onclick="WindowManager.viewers[<%= @viewer_id %>].togglePanelDetails('komet_mapping_set_panel_<%= @viewer_id %>', null, true)" aria-label="Expand/Collapse mapping items section">
+                <button type="button" class="komet-link-button" onclick="WindowManager.viewers[<%= @viewer_id %>].togglePanelDetails('komet_mapping_item_panel_<%= @viewer_id %>', null, true)" aria-label="Expand/Collapse mapping items section">
                   <div class="glyphicon glyphicon-minus-sign"></div>
                 </button>
               </div>

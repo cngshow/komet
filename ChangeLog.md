@@ -2,8 +2,13 @@ Komet Changelog
 
 This changelog summarizes changes and fixes which are a part of each revision.  For more details on the fixes, refer tracking numbers 
 where provided, and the git commit history.
-* 2016/11/29 - 1.46:
+* 2016/11/30 - 1.46:
    * Fixed NAN text showing when adding new concept dialects
+   * Fixed to allow all concepts to show in the associations target field
+   * Mapping business rules are stored under the correct concept ID
+   * New dialects will now be created
+   * Fixed bug causing dialects to always be set to inactive
+   * Active/Inactive filter control now works to change the state filter in queries, and the control css updates correctly. However, inactive items are not showing in when the filter is set to 'inactive'. It looks to be a bug on the ISAAC REST side.
 
 * 2016/11/29 - 1.45:
     * Edit Concept Screen various 508 fixes.  Contrast on assoc value labels (Mod css)  Labels, header and titles added to text not being read by JAWS.
