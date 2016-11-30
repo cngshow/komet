@@ -690,7 +690,7 @@ class KometDashboardController < ApplicationController
 
         @language_options = get_concept_children(concept_id: $isaac_metadata_auxiliary['LANGUAGE']['uuids'].first[:uuid], returnJSON: false, removeSemanticTag: true)
         # TODO - Change get_concept_children function to pull all leaf nodes so we can stop hardcoding this uuid
-        @dialect_options = get_concept_children(concept_id: 'c0836284-f631-3c86-8cfc-56a67814efab', returnJSON: false, removeSemanticTag: true)
+        @dialect_options = get_concept_children(concept_id: $isaac_metadata_auxiliary['DIALECT_ASSEMBLAGE']['uuids'].first[:uuid], returnJSON: false, removeSemanticTag: true)
         @case_options = get_concept_children(concept_id: $isaac_metadata_auxiliary['DESCRIPTION_CASE_SIGNIFICANCE']['uuids'].first[:uuid], returnJSON: false, removeSemanticTag: true)
         @acceptability_options = get_concept_children(concept_id: $isaac_metadata_auxiliary['DESCRIPTION_ACCEPTABILITY']['uuids'].first[:uuid], returnJSON: false, removeSemanticTag: true)
         @description_type_options = get_concept_children(concept_id: $isaac_metadata_auxiliary['DESCRIPTION_TYPE']['uuids'].first[:uuid], returnJSON: false, removeSemanticTag: true)
@@ -891,7 +891,7 @@ class KometDashboardController < ApplicationController
                                     active = false
                                 end
 
-                                return_value = ComponentRest::get_component(action: ComponentRestActions::ACTION_UPDATE_STATE, uuid_or_id: dialect_id, additional_req_params: {editToken: get_edit_token, active: false})
+                                return_value = ComponentRest::get_component(action: ComponentRestActions::ACTION_UPDATE_STATE, uuid_or_id: dialect_id, additional_req_params: {editToken: get_edit_token, active: active})
                             else
 
                                 body_params = {
@@ -900,7 +900,7 @@ class KometDashboardController < ApplicationController
                                     columnData: [{columnNumber: 0, data: dialect['acceptability'], '@class' => 'gov.vha.isaac.rest.api1.data.sememe.dataTypes.RestDynamicSememeUUID'}]
                                 }
 
-                                #return_value = SememeRest::get_sememe(action: SememeRestActions::ACTION_SEMEME_CREATE, additional_req_params: {editToken: get_edit_token}, body_params: body_params)
+                                return_value = SememeRest::get_sememe(action: SememeRestActions::ACTION_SEMEME_CREATE, additional_req_params: {editToken: get_edit_token}, body_params: body_params)
                             end
 
                             # if the dialect create or update failed, mark it.
@@ -1102,7 +1102,7 @@ class KometDashboardController < ApplicationController
         # user_session(UserSession::WORKFLOW_UUID, '6457fb1f-b67b-4679-8f56-fa811e1e2a6b')
 
         @stated = 'true'
-        @view_params = {statesToView: 'both'}
+        @view_params = {statesToView: 'active,inactive'}
 
         if !session[:coordinatestoken]
             session[:coordinatestoken] = CoordinateRest.get_coordinate(action: CoordinateRestActions::ACTION_COORDINATES_TOKEN)

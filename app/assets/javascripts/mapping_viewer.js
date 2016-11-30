@@ -221,7 +221,7 @@ var MappingViewer = function(viewerID, currentSetID, viewerAction) {
 
                 var pageNumber = params.endRow / pageSize;
 
-                searchParams += "&overview_sets_page_number=" + pageNumber + "&view_params=" + this.getViewParams();
+                searchParams += "&overview_sets_page_number=" + pageNumber + "&" + jQuery.param({view_params: this.getViewParams()});
 
                 // make an ajax call to get the data
                 $.get(gon.routes.mapping_get_overview_sets_results_path + searchParams, function (search_results) {
