@@ -1,7 +1,7 @@
 <div class="panel panel-default komet-no-margins komet-panel" id="komet_viewer_<%= @viewer_id %>" data-komet-viewer-id="<%= @viewer_id %>">
     <!-- DO NOT PUT ANYTHING ABOVE THE KOMET VIEWER DIV - IT WILL BREAK WINDOWING WHEN CLOSING VIEWERS AND BE REPEATED EVERY TIME NEW CONTENT IS LOADED TO INLINE VIEWER -->
 
-    <div class="panel-heading">
+  <fieldset><div class="panel-heading">
         <span class="panel-title komet-section-title komet-context-menu"
               data-menu-type="concept"
               data-menu-uuid="<%= @concept_id %>"
@@ -18,6 +18,7 @@
             <%= @concept_text %>
         </span>
 
+      <legend style="width: 0px;height:0px">&nbsp;</legend>
         <div class="komet-panel-tools">
 
             <button type="button" class="komet-link-button komet-panel-tools-control" onclick="WindowManager.viewers[<%= @viewer_id %>].togglePanelDetails('komet_viewer_<%= @viewer_id %>')"  title="Expand All">
@@ -47,7 +48,9 @@
                 <div class="glyphicon glyphicon-remove"></div>
             </button>
         </div>
-    </div>
+
+
+    </div> </fieldset>
 
     <div class="panel-body">
 

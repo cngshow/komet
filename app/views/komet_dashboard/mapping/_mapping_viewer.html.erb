@@ -1,6 +1,7 @@
 <div class="panel panel-default komet-no-margins komet-panel" id="komet_viewer_<%= @viewer_id %>" data-komet-viewer-id="<%= @viewer_id %>">
     <!-- DO NOT PUT ANYTHING ABOVE THE KOMET VIEWER DIV - IT WILL BREAK WINDOWING WHEN CLOSING VIEWERS AND BE REPEATED EVERY TIME NEW CONTENT IS LOADED TO INLINE VIEWER -->
-
+  <fieldset>
+    <legend style="width: 0px;height:0px">&nbsp;</legend>
     <div class="panel-heading">
 
         <span class="panel-title komet-section-title">
@@ -41,7 +42,7 @@
                         <input type="radio" name="komet_mapping_states_to_view" id="komet_mapping_state_inactive_<%= @viewer_id %>" value="inactive" autocomplete="off" title="Show Only Inactive Concepts"> Inactive
                     </label>
                     <label class="btn btn-default" for="komet_mapping_state_both_<%= @viewer_id %>">
-                        <input type="radio" name="komet_mapping_states_to_view" id="komet_mapping_state_both_<%= @viewer_id %>" value="both" autocomplete="off" title="Show Active and Inactive Concepts"> Both
+                        <input type="radio" name="komet_mapping_states_to_view" id="komet_mapping_state_both_<%= @viewer_id %>" value="active,inactive" autocomplete="off" title="Show Active and Inactive Concepts"> Both
                     </label>
                 </div>
             </div>
@@ -58,8 +59,18 @@
     </div>
 
     <div id="komet_mapping_viewer_body_<%= @viewer_id %>" class="komet-mapping-viewer-body panel-body"></div>
-
+  </fieldset>
     <script>
+
+        var statesToView = $("#komet_viewer_<%= @viewer_id %>").find("input[name='komet_mapping_states_to_view']");
+
+        statesToView.change(function(){
+
+            MappingModule.toggleTreeStatesToView(statesToView, this.value);
+            MappingModule.setViewerStatesToView("<%= @viewer_id %>", this);
+        });
+
+        MappingModule.toggleTreeStatesToView(statesToView, "<%= @view_params[:statesToView] %>");
 
         if (!WindowManager.viewers.hasOwnProperty('<%= @viewer_id %>') || !(WindowManager.viewers[<%= @viewer_id %>] instanceof MappingViewer)) {
             MappingModule.createViewer("<%= @viewer_id %>", "<%= @set_id %>", "<%= @mapping_action %>");
@@ -92,26 +103,6 @@
         $('#komet_mapping_viewer_body_<%= @viewer_id %>').html("<%= j(render(:partial => partial)) %>");
 
         $(document).ready(function () {
-
-            var statesToView = $("#komet_viewer_<%= @viewer_id %>").find("input[name='komet_mapping_states_to_view']");
-
-            statesToView.change(function(){
-
-                statesToView.parent().toggleClass("btn-primary btn-default");
-                MappingModule.setViewerStatesToView("<%= @viewer_id %>", this);
-            });
-
-            statesToView.each(function(index, button){
-
-                if (button.value == "<%= @view_params[:statesToView] %>"){
-
-                    var buttonParent = button.parentElement;
-
-                    button.checked = true;
-                    buttonParent.classList.add('btn-primary');
-                    $(buttonParent).removeClass("btn-default");
-                }
-            });
 
             WindowManager.viewers[<%= @viewer_id %>].restorePanelStates();
             UIHelper.initializeContextMenus();

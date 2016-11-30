@@ -4,7 +4,7 @@
     <%= form_tag(taxonomy_edit_concept_path, method: 'post', id: "komet_concept_editor_form_#{@viewer_id}") do %>
 
         <input type="hidden" name="concept_id" value="<%= @concept_id %>">
-
+      <fieldset><legend style="width: 0px;height:0px">&nbsp;</legend>
         <div class="panel-heading">
             <span class="panel-title komet-section-title">
                 <button type="button" class="komet-link-button" onclick="WindowManager.toggleViewerLinkage('<%= @viewer_id %>', WindowManager.getLinkedViewerID() != '<%= @viewer_id %>');" aria-label="Viewer linked to Taxonomy Tree. Click to unlink." title="Viewer linked to Taxonomy Tree. Click to unlink.">
@@ -38,16 +38,16 @@
                 </button>
             </div>
         </div>
-
+        </fieldset>
         <div class="panel-body" id="komet_concept_editor_section_<%= @viewer_id %>">
 
             <div id="komet_concept_save_section_<%= @viewer_id %>">
-                All fields required except where noted as Optional.
-                <button type="button" class="btn btn-default" onclick="WindowManager.cancelEditMode('<%= @viewer_id %>')">Cancel</button>
-                <button type="button" class="btn btn-primary" id="komet_concept_save_<%= @viewer_id %>" onclick="WindowManager.viewers[<%= @viewer_id %>].showSaveSection('confirm')">Save</button>
+                <h5 title="All Fields Required except if noted as Optional">All fields required except where noted as Optional.</h5>
+                <button type="button" class="btn btn-default" aria-label="Cancel Edit Mode" title="Cancel Editing Concept" id="komet_concept_edit_<%= @viewer_id %>" onclick="WindowManager.cancelEditMode('<%= @viewer_id %>')">Cancel</button>
+                <button type="button" class="btn btn-primary" aria-label="Save Edited Concept" title="Save Edited Concept" id="komet_concept_save_<%= @viewer_id %>" onclick="WindowManager.viewers[<%= @viewer_id %>].showSaveSection('confirm')">Save</button>
             </div>
 
-            <div class="komet-concept-section-title komet-concept-attributes-title">Concept</div>
+            <div class="komet-concept-section-title komet-concept-attributes-title" title="Concept Details" aria-label="Concept Details">CONCEPT</div>
 
             <div id="komet_concept_attributes_panel_<%= @viewer_id %>" class="komet-concept-section-panel komet-concept-attributes-panel">
 
@@ -74,7 +74,7 @@
                         <% else %>
 
                             <div class="komet-concept-attributes-details-name">
-                                <b>UUID:</b> <%= @concept_id %>
+                              <caption title='UUID: <%= @concept_id %>'><b>UUID:</b>&nbsp;&nbsp;<%= @concept_id %></caption>
                             </div>
 
                         <% end %>
@@ -99,7 +99,7 @@
                     </div>
 
                     <div class="komet-indent-block komet-concept-properties-section">
-                        <div class="komet-concept-section-title komet-concept-attributes-title">
+                        <div class="komet-concept-section-title komet-concept-attributes-title" title="Properties">
                             Properties
                             <div class="komet-flex-right">
                                 <button type="button" class="komet-link-button komet-concept-add-concept-property" onclick="WindowManager.viewers[<%= @viewer_id %>].addPropertyRow('<%= @concept_id %>', this, 'concept')">
@@ -112,7 +112,7 @@
                 </div>
             </div>
 
-            <div class="komet-concept-section-title komet-concept-description-title">
+            <div class="komet-concept-section-title komet-concept-description-title" title="Descriptions" aria-label="Descriptions">
                 DESCRIPTIONS
                 <div class="komet-flex-right">
                     <button type="button" class="komet-link-button komet-concept-add-description" onclick="WindowManager.viewers[<%= @viewer_id %>].addDescriptionRow()">
@@ -122,7 +122,7 @@
                 </div>
             </div>
 
-            <div class="komet-concept-section-title komet-concept-associations-title">
+            <div class="komet-concept-section-title komet-concept-associations-title" title="Associations" aria-label="Associations">
                 ASSOCIATIONS
                 <div class="komet-flex-right">
                     <button type="button" class="komet-link-button komet-concept-add-association" onclick="WindowManager.viewers[<%= @viewer_id %>].addAssociationRow()">

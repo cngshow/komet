@@ -3,19 +3,44 @@ Komet Changelog
 This changelog summarizes changes and fixes which are a part of each revision.  For more details on the fixes, refer tracking numbers 
 where provided, and the git commit history.
 
-* 2016/11/? - 1.44:
-    *
+* 2016/11/??
+   * fixed 508 contrast error on mapset,concept detail and user perference page
+* 2016/11/30 - 1.46:
+   * Fixed NAN text showing when adding new concept dialects
+   * Fixed to allow all concepts to show in the associations target field
+   * Mapping business rules are stored under the correct concept ID
+   * New dialects will now be created
+   * Fixed bug causing dialects to always be set to inactive
+   * Active/Inactive filter control now works to change the state filter in queries, and the control css updates correctly. However, inactive items are not showing in when the filter is set to 'inactive'. It looks to be a bug on the ISAAC REST side.
 
-* 2016/11/25 - 1.43:
+* 2016/11/29 - 1.45:
+    * Edit Concept Screen various 508 fixes.  Contrast on assoc value labels (Mod css)  Labels, header and titles added to text not being read by JAWS.
+    * Fixed 508 error and alert - Concept details - Attached Sememes	before status column - removed empty th from table
+    * Fixed 508 error and alert - Concept details - Attached Sememes- dynamic columns	added word prefix with word title  - dynamic column header names
+    * Fixed 508 error and alert - Above taxonomy -stated & inferred button 	added fieldset and legend to radio button
+    * Fixed 508 error and alert - Concept detail - navigation on blue bar -stated & inferred button 	added fieldset and legend to radio button
+    * Fixed 508 error and alert - Users preference screen -stated & inferred button 	added fieldset and legend to radio button
+    * Fixed 508 error and alert - Mapping tab - mapping detail page - blue bar navigation	added fieldset and legend to radio button
+    * Fixed 508 error and alert - Mapping detail page - fixed all the check box and radio button	added fieldset and legend to radio button
+    * Fixed 508 error and alert - Concept edit page - fixed all the check box and radio button	added fieldset and legend to radio button
+    * Fixed 508 error and alert - Mapping tab - blue bar above tree - blue bar navigation	added fieldset and legend to radio button
+    * Fixed 508 error and alert - Mapping detail page- click on plus sign to add row in grid	added label to dropdown
+    * Users preference screen removed console.log 
+
+* 2016/11/28 - 1.44:
+    * No changes
+
+* 2016/11/28 - 1.43:
     * Fixed bug adding a property to a description when editing a concept
     * Fixed 508 errors in concept edit, user preferences, and map sets for missing labels and unlabeled form elements,
       unused hidden buttons (X) in dialog boxes.
-
-* 2016/11/23 - 1.43:
     * Fixed 508 errors and alerts for Map Set details and items, User Preferences, and Export related to missing form labels,
       empty buttons, broken Aria references, unlabeled form elements, device dependent event handlers and redundant titles.
     * Updated to latest enunicate file.
     * Made changes to match latest REST API changes
+
+* 2016/11/23 - 1.42:
+    * No changes
 
 * 2016/11/22 - 1.41:
     * Added clone concept functionality. Some parts are still not working correctly; any properties on the original FSN description are not copied over, 

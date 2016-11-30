@@ -8,12 +8,12 @@
 	<parent>
 		<groupId>gov.vha.isaac.ochre</groupId>
 		<artifactId>isaac-parent</artifactId>
-		<version>3.20-SNAPSHOT</version><!--TODO Eliminate Snapshot (and 3.12-snapshot goes to 3.11 for example) if present -->
+		<version>3.23</version><!--TODO Eliminate Snapshot (and 3.12-snapshot goes to 3.11 for example) if present -->
 	</parent>
 
 	<groupId>gov.vha.isaac.gui.rails</groupId>
 	<artifactId>rails_komet</artifactId>
-	<version>1.43-SNAPSHOT</version> <!--TODO THIS IS THE ONLY PLACE SNAPSHOT CAN EXIST BEFORE MAKING A RELEASE!!-->
+	<version>1.47-SNAPSHOT</version> <!--TODO THIS IS THE ONLY PLACE SNAPSHOT CAN EXIST BEFORE MAKING A RELEASE!!-->
 	<packaging>pom</packaging>
 
 	<name>ISAAC Rails Komet Tooling</name>
@@ -23,7 +23,7 @@
 	</description>
 
 	<properties>
-		<rails_common.version>1.46-SNAPSHOT</rails_common.version><!--TODO Put new rails common version here if it has been changed, move to non snapshot if releasing  -->
+		<rails_common.version>1.46</rails_common.version><!--TODO Put new rails common version here if it has been changed, move to non snapshot if releasing  -->
 		<!--Open up the assembly.xml file in rails common if new directories are added. -->
 		<isaac.version>${project.parent.version}</isaac.version>
 		<!-- railsMode is automatically set to 'test' or 'production' - 'test' if the version number ends with '-SNAPSHOT'

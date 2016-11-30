@@ -38,18 +38,23 @@
   <div class="komet-navbar-tools" role="navigation">
     <div>
       <button type="button" class="komet-link-button" role="button" aria-label="VHAT XML Export" title="VHAT XML Export" id="komet_export_link" role="navigation">
-        <div class="glyphicon glyphicon-export"></div>
+        <div class="glyphicon glyphicon-export" title="VHAT XML Export"></div>
       </button>
     </div>
 
     <div>
       <button type="button" class="komet-link-button" role="button" aria-label="Settings" title="Settings" id="komet_user_preference_link" role="navigation">
-        <div class="glyphicon glyphicon-cog"></div>
+        <div class="glyphicon glyphicon-cog" title="Settings"></div>
       </button>
     </div>
 
+<!--    508 fix - states the title or labels but preference would be for Jaws to actually read the actual user id is possible -->
+
     <div>
-      <div class="glyphicon glyphicon-user" title="User ID"></div> <%= raw komet_user %>
+      <a href="#userid" class="komet-link-button" id="userid" title="You are Logged In" role="navigation">
+        <div class="glyphicon glyphicon-user" title="You are Logged In"></div>
+        <%= raw komet_user %>
+      </a>
     </div>
 
     <div>
@@ -101,10 +106,14 @@
         <br><br>
 
         <div>
-          <div width='60%' style="background-color: #4f80d9;color:white;z-index:990">Status</div>
+          <fieldset  width='60%'>
+          <div width='60%' style="background-color: #0000a2;color:white;z-index:990">Status</div>
+
+            <legend style="width: 0px;height:0px">&nbsp;</legend>
           <input type="radio" name="status" aria-checked="false" aria-label="Active" role="radio" value="Active">Active<br>
           <input type="radio" name="status" aria-checked="false" aria-label="Inactive" role="radio" value="Inactive">InActive<br>
           <input type="radio" name="status" aria-checked="false" aria-label="Active,Inactive" role="radio" checked="checked" value="Active,Inactive">Both<br>
+          </fieldset>
         </div>
       </form>
     </div>
@@ -112,7 +121,6 @@
       <div>Please click on <span style="color: red; ">X</span> to clear color</div>
       <table id="listofmodule" width='90%' cellpadding='2' border='0' cellspacing='3'>
       </table>
-
     </div>
     <div id="colorpath-module" style="height: 450px;">
       <div>Please click on <span style="color: red; ">X</span> to clear color</div>
