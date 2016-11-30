@@ -2,6 +2,9 @@ Komet Changelog
 
 This changelog summarizes changes and fixes which are a part of each revision.  For more details on the fixes, refer tracking numbers 
 where provided, and the git commit history.
+
+* 2016/11/??
+   * fixed 508 contrast error on mapset,concept detail and user perference page
 * 2016/11/30 - 1.46:
    * Fixed NAN text showing when adding new concept dialects
    * Fixed to allow all concepts to show in the associations target field
