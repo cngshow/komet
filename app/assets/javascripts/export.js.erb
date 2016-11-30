@@ -25,7 +25,7 @@ var ExportModule = (function () {
       showClear: true,
       allowInputToggle: true,
       format: 'MM/DD/YYYY',
-      maxDate: moment().subtract(1, "days"),
+      maxDate: moment().startOf('day'),
       icons: {
         date: "fa fa-calendar"
       }
@@ -36,7 +36,7 @@ var ExportModule = (function () {
       showClear: true,
       allowInputToggle: true,
       format: 'MM/DD/YYYY',
-      maxDate: moment(),
+      maxDate: moment().endOf('day'),
       icons: {
         date: "fa fa-calendar"
       }
@@ -44,7 +44,7 @@ var ExportModule = (function () {
     end_date.data("DateTimePicker").clear();
 
     start_date.on("dp.change", function(e) {
-      $('#end_date').data("DateTimePicker").minDate(moment(e.date).add(1, "days"));
+      $('#end_date').data("DateTimePicker").minDate(moment(e.date).add(1, "second"));
     });
 
     // wire the modal for exporting
