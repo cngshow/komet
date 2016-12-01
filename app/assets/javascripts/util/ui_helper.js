@@ -725,6 +725,8 @@ var UIHelper = (function () {
             return [{value: "yes", label: "Yes"}, {value: "no", label: "No"}];
         } else if (type == "true_false") {
             return [{value: "true", label: "True"}, {value: "false", label: "False"}];
+        } else if (type == "active_inactive") {
+            return [{value: "active", label: "Active"}, {value: "inactive", label: "Inactive"}];
         }
     };
 

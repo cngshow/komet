@@ -221,7 +221,7 @@ var MappingViewer = function(viewerID, currentSetID, viewerAction) {
 
                 var pageNumber = params.endRow / pageSize;
 
-                searchParams += "&overview_sets_page_number=" + pageNumber + "&view_params=" + this.getViewParams();
+                searchParams += "&overview_sets_page_number=" + pageNumber + "&" + jQuery.param({view_params: this.getViewParams()});
 
                 // make an ajax call to get the data
                 $.get(gon.routes.mapping_get_overview_sets_results_path + searchParams, function (search_results) {
@@ -924,6 +924,7 @@ var MappingViewer = function(viewerID, currentSetID, viewerAction) {
         var itemID = "";
         var targetConcepID = "";
         var targetConceptDisplay = "";
+        var state = "";
         var qualifierConcept = "";
         var commentID = "0";
         var comment = "";
@@ -942,6 +943,7 @@ var MappingViewer = function(viewerID, currentSetID, viewerAction) {
             idPrefix = "komet_mapping_item_" + itemID;
             targetConcepID = rowData.target_concept;
             targetConceptDisplay = rowData.target_concept_display;
+            state = rowData.state;
             qualifierConcept = rowData.qualifier_concept;
             commentID = rowData.comment_id;
             comment = rowData.comment;
@@ -974,12 +976,14 @@ var MappingViewer = function(viewerID, currentSetID, viewerAction) {
             + 'classes="komet-mapping-item-target-concept">'
             + '</autosuggest></div>';
 
+        rowString += '<div>' + UIHelper.createSelectFieldString(idPrefix + '_state', 'items[' + itemID + '][state]', 'form-control', UIHelper.getPreDefinedOptionsForSelect("active_inactive"), state, 'Item State') + '</div>';
+
         var qualifierOptions = [{value: '', label: 'No Restrictions'}, {value: '8aa6421d-4966-5230-ae5f-aca96ee9c2c1', label: 'Exact'}, {value: 'c1068428-a986-5c12-9583-9b2d3a24fdc6', label: 'Broader Than'}, {value: '250d3a08-4f28-5127-8758-e8df4947f89c', label: 'Narrower Than'}];
         rowString += '<div>' + UIHelper.createSelectFieldString(idPrefix + '_qualifier_concept', 'items[' + itemID + '][qualifier_concept]', 'form-control', qualifierOptions, qualifierConcept, ariaLabel) + '</div>';
 
         $.each(this.itemFieldInfo, function (fieldID, field) {
 
-            var name = 'items[' + itemID + '][' + field.name + ']'
+            var name = 'items[' + itemID + '][' + field.name + ']';
             var id = idPrefix + "_" + field.name + '_' + this.viewerID;
             var classes = "form-control komet-mapping-set-editor-edit";
             var value = "";

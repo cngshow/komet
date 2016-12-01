@@ -113,11 +113,38 @@ var MappingModule = (function () {
 
         var viewParams = getTreeViewParams();
         viewParams.statesToView = field.value;
-        this.tree.reloadTreeStatedView(viewParams);
+        var selectedSetID = null;
+        var linkedViewerID = WindowManager.getLinkedViewerID();
+
+        if (linkedViewerID != null && linkedViewerID != WindowManager.NEW && WindowManager.viewers[linkedViewerID].currentSetID){
+            selectedSetID = WindowManager.viewers[linkedViewerID].currentSetID;
+        }
+
+        this.tree.reloadTree(viewParams, false, selectedSetID);
     }
 
     function getTreeStatesToView (){
         return $("#komet_mapping_tree_panel").find("input[name='komet_mapping_tree_states_to_view']:checked").val();
+    }
+
+    function toggleTreeStatesToView(statesToViewField, value){
+
+        statesToViewField.each(function(index, button) {
+
+            var buttonParent = button.parentElement;
+
+            if (button.value == value) {
+
+                button.checked = true;
+                buttonParent.classList.add('btn-primary');
+                $(buttonParent).removeClass("btn-default");
+            } else {
+
+                button.checked = false;
+                buttonParent.classList.add("btn-default");
+                $(buttonParent).removeClass("btn-primary");
+            }
+        });
     }
 
     function getTreeViewParams (){
@@ -133,6 +160,7 @@ var MappingModule = (function () {
         setViewerStatesToView: setViewerStatesToView,
         setTreeStatesToView: setTreeStatesToView,
         getTreeStatesToView: getTreeStatesToView,
+        toggleTreeStatesToView: toggleTreeStatesToView,
         getTreeViewParams: getTreeViewParams,
         SET_LIST: SET_LIST,
         SET_DETAILS: SET_DETAILS,

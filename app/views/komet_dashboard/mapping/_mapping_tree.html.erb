@@ -27,7 +27,7 @@
                         <input type="radio" name="komet_mapping_tree_states_to_view" id="komet_mapping_tree_state_inactive" value="inactive" autocomplete="off" title="Show Only Inactive Concepts"> Inactive
                     </label>
                     <label class="btn btn-default" for="komet_mapping_tree_state_both">
-                        <input type="radio" name="komet_mapping_tree_states_to_view" id="komet_mapping_tree_state_both" value="both" autocomplete="off" title="Show Active and Inactive Concepts"> Both
+                        <input type="radio" name="komet_mapping_tree_states_to_view" id="komet_mapping_tree_state_both" value="active,inactive" autocomplete="off" title="Show Active and Inactive Concepts"> Both
                     </label>
                 </div>
             </div>
@@ -52,26 +52,15 @@
 
     $(document).ready(function () {
 
-        var statesToView = $("#komet_mapping_tree_panel").find("input[name='komet_mapping_states_to_view']");
+        var statesToView = $("#komet_mapping_tree_panel").find("input[name='komet_mapping_tree_states_to_view']");
 
         statesToView.change(function(){
 
-            statesToView.parent().toggleClass("btn-primary btn-default");
-            MappingModule.setViewerStatesToView(this);
+            MappingModule.toggleTreeStatesToView(statesToView, this.value);
+            MappingModule.setTreeStatesToView(this);
         });
 
-        statesToView.each(function(index, button){
-
-            if (button.value == "<%= @view_params[:statesToView] %>"){
-
-                var buttonParent = button.parentElement;
-
-                button.checked = true;
-                buttonParent.classList.add('btn-primary');
-                $(buttonParent).removeClass("btn-default");
-            }
-        });
-
+        MappingModule.toggleTreeStatesToView(statesToView, "<%= @view_params[:statesToView] %>");
         MappingModule.initialize();
     });
 
