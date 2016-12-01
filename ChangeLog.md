@@ -3,6 +3,9 @@ Komet Changelog
 This changelog summarizes changes and fixes which are a part of each revision.  For more details on the fixes, refer tracking numbers 
 where provided, and the git commit history.
 
+* 2016/12/?? - 1.48
+    *
+
 * 2016/12/01 - 1.47
     * fixed 508 contrast error on mapset,concept detail and user perference page
     * Added state field to map items
