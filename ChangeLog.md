@@ -4,7 +4,7 @@ This changelog summarizes changes and fixes which are a part of each revision.  
 where provided, and the git commit history.
 
 * 2016/12/?? - 1.48
-    *
+    * Check in for color shapes.  When a user logs out, his/her choices will not impact the next user that logs in.
 
 * 2016/12/01 - 1.47
     * fixed 508 contrast error on mapset,concept detail and user perference page
