@@ -339,6 +339,8 @@ class MappingController < ApplicationController
                 item_hash[:target_concept] = item_hash[:target_concept].uuids.first
             end
 
+            item_hash[:state] = item.mappingItemStamp.state.enumName
+
             item_hash[:qualifier_concept] = item.qualifierConcept
 
             if item_hash[:qualifier_concept] != nil && item_hash[:qualifier_concept] != ''
@@ -520,13 +522,19 @@ class MappingController < ApplicationController
                     target_concept = item['target_concept']
                 end
 
+                if item['state'].downcase == 'active'
+                    active = true
+                else
+                    active = false
+                end
+
                 qualifier_concept = nil
 
                 if item['qualifier_concept'] != nil && item['qualifier_concept'] != ''
                     qualifier_concept = item['qualifier_concept']
                 end
 
-                body_params = {targetConcept: target_concept, qualifierConcept: qualifier_concept}
+                body_params = {targetConcept: target_concept, qualifierConcept: qualifier_concept, active: active}
 
                 extended_fields = []
 
