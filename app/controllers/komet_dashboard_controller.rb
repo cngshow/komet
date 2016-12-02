@@ -499,9 +499,16 @@ class KometDashboardController < ApplicationController
         getcoordinates_results = CoordinateRest.get_coordinate(action: CoordinateRestActions::ACTION_COORDINATES,additional_req_params: additional_req_params)
         value = getcoordinates_results.languageCoordinate.to_json
         getcoordinates_results = JSON.parse(getcoordinates_results.to_json)
-        getcoordinates_results[:colormodule]= session[:colormodule]
-        getcoordinates_results[:colorpath]= session[:colorpath]
-        getcoordinates_results[:colorrefsets]= session[:colorrefsets]
+        # getcoordinates_results[:colormodule]= session[:colormodule]
+        # getcoordinates_results[:colorpath]= session[:colorpath]
+        # getcoordinates_results[:colorrefsets]= session[:colorrefsets]
+        user_prefs = user_session(UserSession::USER_PREFERENCES)
+        unless user_prefs.nil?
+            user_prefs = user_session(UserSession::USER_PREFERENCES)
+            getcoordinates_results[:colormodule]= user_prefs[:colormodule]
+            getcoordinates_results[:colorpath]= user_prefs[:colorpath]
+            getcoordinates_results[:colorrefsets]= user_prefs[:colorrefsets]
+        end
         render json:  getcoordinates_results.to_json
     end
 
@@ -512,9 +519,14 @@ class KometDashboardController < ApplicationController
         hash[:dialectPrefs] = params[:dialectPrefs]
         hash[:descriptionTypePrefs] = params[:descriptionTypePrefs]
         hash[:allowedStates]= params[:allowedStates]
-        session[:colormodule] = params[:colormodule]
-        session[:colorpath] = params[:colorpath]
-        session[:colorrefsets] = params[:colorrefsets]
+        # session[:colormodule] = params[:colormodule]
+        # session[:colorpath] = params[:colorpath]
+        # session[:colorrefsets] = params[:colorrefsets]
+        user_prefs = HashWithIndifferentAccess.new
+        user_prefs[:colormodule] = params[:colormodule]
+        user_prefs[:colorpath] = params[:colorpath]
+        user_prefs[:colorrefsets] = params[:colorrefsets]
+        user_session(UserSession::USER_PREFERENCES, user_prefs)
 
         hash.merge!(CommonRest::CacheRequest::PARAMS_NO_CACHE)
 
@@ -538,7 +550,7 @@ class KometDashboardController < ApplicationController
 
         additional_req_params = {coordToken: coordinates_token, stated: @stated, childDepth: 50}
 
-        refsets = TaxonomyRest.get_isaac_concept(uuid: $PROPS['KOMET.assemblage_concept_id'], additional_req_params: additional_req_params)
+        refsets = TaxonomyRest.get_isaac_concept(uuid: $isaac_metadata_auxiliary['ASSEMBLAGE']['uuids'].first[:uuid], additional_req_params: additional_req_params)
 
         if refsets.is_a? CommonRest::UnexpectedResponse
             render json: [] and return

@@ -1,12 +1,11 @@
 module TaxonomyHelper
 
     def get_tree_node_flag(flag_name, ids_to_match)
-
         flag = ''
+        user_prefs = user_session(UserSession::USER_PREFERENCES).nil? ? {} : user_session(UserSession::USER_PREFERENCES)
+        if user_prefs['color' + flag_name]
 
-        if session['color' + flag_name]
-
-            colors = session['color' + flag_name].find_all{|key, hash|
+            colors = user_prefs['color' + flag_name].find_all{|key, hash|
                 hash[flag_name + 'id'].to_i.in?(ids_to_match) && hash['colorid'] != ''
             }
 

@@ -3,8 +3,21 @@ Komet Changelog
 This changelog summarizes changes and fixes which are a part of each revision.  For more details on the fixes, refer tracking numbers 
 where provided, and the git commit history.
 
-* 2016/11/??
-   * fixed 508 contrast error on mapset,concept detail and user perference page
+* 2016/12/02 - 1.49
+    * Changed get_refset_list to use metadata variable instead of property file
+
+* 2016/12/02 - 1.48
+    * Map items save with map set. Only one save button.
+    * Map items display as read only unless in edit mode
+    * Dates in map items now display and save correctly
+    * Check in for color shapes.  When a user logs out, his/her choices will not impact the next user that logs in.
+
+* 2016/12/01 - 1.47
+    * fixed 508 contrast error on mapset,concept detail and user perference page
+    * Added state field to map items
+    * Added a fix for selecting the start date as today for VHAT export
+
+
 * 2016/11/30 - 1.46:
    * Fixed NAN text showing when adding new concept dialects
    * Fixed to allow all concepts to show in the associations target field

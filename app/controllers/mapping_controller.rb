@@ -292,7 +292,7 @@ class MappingController < ApplicationController
                 @map_set[:comment_id] = set.comments.first.identifiers.uuids.first
             end
 
-            @viewer_title = @map_set[:description]
+            @viewer_title = @map_set[:name]
 
             @map_items = get_overview_items_results(@map_set[:set_id])
         else
@@ -339,6 +339,8 @@ class MappingController < ApplicationController
                 item_hash[:target_concept] = item_hash[:target_concept].uuids.first
             end
 
+            item_hash[:state] = item.mappingItemStamp.state.enumName
+
             item_hash[:qualifier_concept] = item.qualifierConcept
 
             if item_hash[:qualifier_concept] != nil && item_hash[:qualifier_concept] != ''
@@ -376,7 +378,11 @@ class MappingController < ApplicationController
                         end
                     end
 
-                    item_hash[field_info[:name]] = field.data
+                    if field_info[:data_type] == 'LONG' && field_info[:label_display].downcase.include?('date')
+                        item_hash[field_info[:name]] = DateTime.strptime(field.data.to_s, '%Q').strftime('%m/%d/%Y %H:%M:%S:%L')
+                    else
+                        item_hash[field_info[:name]] = field.data
+                    end
                 end
             end
 
@@ -398,6 +404,9 @@ class MappingController < ApplicationController
         set_id = params[:komet_mapping_set_editor_set_id]
         set_name = params[:komet_mapping_set_editor_name]
         description = params[:komet_mapping_set_editor_description]
+        field_info = session[:mapset_item_definitions]
+        failed_writes = {set: [], items: []}
+        successful_writes = 0
 
         if params[:komet_mapping_set_editor_state].downcase == 'active'
             active = true
@@ -413,9 +422,9 @@ class MappingController < ApplicationController
             return_value =  MappingApis::get_mapping_api(uuid_or_id: set_id, action: MappingApiActions::ACTION_UPDATE_SET, additional_req_params: request_params, body_params: body_params)
 
             if return_value.is_a? CommonRest::UnexpectedResponse
-
-                render json: {set_id: nil}
-                return
+                failed_writes[:set] << {id: :set, error: 'The set was unable to be updated.'}
+            else
+                successful_writes += 1
             end
         else
 
@@ -472,10 +481,11 @@ class MappingController < ApplicationController
 
             if return_value.is_a? CommonRest::UnexpectedResponse
 
-                render json: {set_id: nil}
-                return
+                failed_writes[:set] << {id: :set, error: 'The set was unable to be created.'}
+                render json: {set_id: nil, failed_writes: failed_writes} and return
             end
 
+            successful_writes += 1
             set_id = return_value.uuid
         end
 
@@ -493,22 +503,16 @@ class MappingController < ApplicationController
         end
 
         if comment_return.is_a? CommonRest::UnexpectedResponse
-            comment_return = 'fail'
-        else
-            comment_return = 'pass'
+
+            if failed_writes[:set].length == 0
+                failed_writes[:set] << {id: :set, error: 'The comment was not successfully processed.'}
+            else
+                failed_writes[:set][0][:error] << ' The comment was not successfully processed.'
+            end
+
+        elsif comment_return != ''
+            successful_writes += 1
         end
-
-        # clear taxonomy caches after writing data
-        clear_rest_caches
-
-        render json: {set_id: set_id, comment_status: comment_return}
-    end
-
-    def process_map_item
-
-        set_id = params[:set_id]
-        field_info = session[:mapset_item_definitions]
-        failed_writes = []
 
         if params[:items]
 
@@ -520,13 +524,19 @@ class MappingController < ApplicationController
                     target_concept = item['target_concept']
                 end
 
+                if item['state'].downcase == 'active'
+                    active = true
+                else
+                    active = false
+                end
+
                 qualifier_concept = nil
 
                 if item['qualifier_concept'] != nil && item['qualifier_concept'] != ''
                     qualifier_concept = item['qualifier_concept']
                 end
 
-                body_params = {targetConcept: target_concept, qualifierConcept: qualifier_concept}
+                body_params = {targetConcept: target_concept, qualifierConcept: qualifier_concept, active: active}
 
                 extended_fields = []
 
@@ -539,8 +549,15 @@ class MappingController < ApplicationController
 
                         if ['FLOAT', 'DOUBLE'].include?(data_type)
                             data = BigDecimal.new(data);
+
                         elsif ['LONG', 'INTEGER'].include?(data_type)
-                            data =data.to_i;
+
+                            if data_type == 'LONG' && field[:label_display].downcase.include?('date')
+                                data = DateTime.strptime(data, '%m/%d/%Y %H:%M:%S:%L').strftime('%Q')
+                            end
+
+                            data = data.to_i;
+
                         elsif data_type == 'BOOLEAN'
 
                             if data == 'true'
@@ -560,6 +577,7 @@ class MappingController < ApplicationController
                 end
 
                 body_params[:mapItemExtendedFields] = extended_fields
+                item_error = ''
 
                 # if the item ID is a UUID, then it is an existing item to be updated, otherwise it is a new item to be created
                 if is_id?(item_id)
@@ -567,7 +585,9 @@ class MappingController < ApplicationController
                     return_value = MappingApis::get_mapping_api(action: MappingApiActions::ACTION_UPDATE_ITEM, uuid_or_id: item_id, additional_req_params: {editToken: get_edit_token}, body_params: body_params)
 
                     if return_value.is_a? CommonRest::UnexpectedResponse
-                        failed_writes << {id: item_id}
+                        item_error << 'The map item below was not processed. '
+                    else
+                        successful_writes += 1
                     end
                 else
 
@@ -577,7 +597,9 @@ class MappingController < ApplicationController
                     return_value = MappingApis::get_mapping_api(action: MappingApiActions::ACTION_CREATE_ITEM, additional_req_params: {editToken: get_edit_token}, body_params: body_params)
 
                     if return_value.is_a? CommonRest::UnexpectedResponse
-                        failed_writes << {id: item_id}
+                        failed_writes[:items] << {id: item_id}
+                    else
+                        successful_writes += 1
                     end
 
                     item_id = return_value.uuid
@@ -599,15 +621,24 @@ class MappingController < ApplicationController
                     end
 
                     if comment_return.is_a? CommonRest::UnexpectedResponse
-                        failed_writes << {id: item_id, type: 'comment'}
+                        item_error << 'The comment on the map item below was not processed.'
+                    else
+                        successful_writes += 1
                     end
+                end
+
+                if item_error != ''
+                    failed_writes[:items] << {id: item_id, error: item_error}
                 end
             end
         end
 
         # clear taxonomy caches after writing data
-        clear_rest_caches
+        if successful_writes > 0
+            clear_rest_caches
+        end
 
         render json: {set_id: set_id, failed: failed_writes}
     end
+
 end
