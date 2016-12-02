@@ -3,7 +3,7 @@ namespace :isaac do
   def require_all(dir)
     ruby_files = Dir.glob(dir + '*.rb')
     ruby_files.each do |rf|
-      require rf
+      require rf unless rf =~/workflow/
     end
   end
 

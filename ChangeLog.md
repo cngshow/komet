@@ -3,10 +3,17 @@ Komet Changelog
 This changelog summarizes changes and fixes which are a part of each revision.  For more details on the fixes, refer tracking numbers 
 where provided, and the git commit history.
 
+* 2016/12/?? - 1.49
+    *
+
 * 2016/12/01 - 1.48
-   * Map items save with map set. Only one save button.
-   * Map items display as read only unless in edit mode
-   * Dates in map items now display and save correctly
+    * fixed 508 contrast error on mapset,concept detail and user perference page
+    * Added state field to map items
+    * Added a fix for selecting the start date as today for VHAT export
+    * Check in for color shapes.  When a user logs out, his/her choices will not impact the next user that logs in.
+    * Map items save with map set. Only one save button.
+    * Map items display as read only unless in edit mode
+    * Dates in map items now display and save correctly
 
 * 2016/11/30 - 1.46:
    * Fixed NAN text showing when adding new concept dialects
@@ -16,8 +23,6 @@ where provided, and the git commit history.
    * Fixed bug causing dialects to always be set to inactive
    * Added a fix for selecting the start date as today for VHAT export
    * Active/Inactive filter control now works to change the state filter in queries, and the control css updates correctly. However, inactive items are not showing in when the filter is set to 'inactive'. It looks to be a bug on the ISAAC REST side.
-   * fixed 508 contrast error on mapset,concept detail and user perference page
-   * Added state field to map items
 
 * 2016/11/29 - 1.45:
     * Edit Concept Screen various 508 fixes.  Contrast on assoc value labels (Mod css)  Labels, header and titles added to text not being read by JAWS.
