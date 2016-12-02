@@ -502,13 +502,19 @@ class KometDashboardController < ApplicationController
         # getcoordinates_results[:colormodule]= session[:colormodule]
         # getcoordinates_results[:colorpath]= session[:colorpath]
         # getcoordinates_results[:colorrefsets]= session[:colorrefsets]
+
+
+        $log.info("user prefs user_sessions #{user_session(UserSession::USER_PREFERENCES)}")
         user_prefs = user_session(UserSession::USER_PREFERENCES)
         unless user_prefs.nil?
             user_prefs = user_session(UserSession::USER_PREFERENCES)
             getcoordinates_results[:colormodule]= user_prefs[:colormodule]
+            $log.info("user prefs color module is #{user_prefs[:colormodule]}, param[:colormodule] is #{getcoordinates_results[:colormodule]}")
             getcoordinates_results[:colorpath]= user_prefs[:colorpath]
             getcoordinates_results[:colorrefsets]= user_prefs[:colorrefsets]
         end
+        $log.info("user prefs rendering getcoordinates_results #{getcoordinates_results}")
+        $log.info("user prefs rendering getcoordinates_results json #{getcoordinates_results.to_json}")
         render json:  getcoordinates_results.to_json
     end
 
@@ -522,12 +528,17 @@ class KometDashboardController < ApplicationController
         # session[:colormodule] = params[:colormodule]
         # session[:colorpath] = params[:colorpath]
         # session[:colorrefsets] = params[:colorrefsets]
+        $log.info("user prefs color module before saving it to session, param[:colormodule] is #{params[:colormodule]}")
+
         user_prefs = HashWithIndifferentAccess.new
         user_prefs[:colormodule] = params[:colormodule]
+        $log.info("user prefs color module is #{user_prefs[:colormodule]}, param[:colormodule] is #{params[:colormodule]}")
         user_prefs[:colorpath] = params[:colorpath]
+        $log.info("user prefs color path is #{user_prefs[:colorpath]}, param[:colormodule] is #{params[:colorpath]}")
         user_prefs[:colorrefsets] = params[:colorrefsets]
+        $log.info("user prefs color refset is #{user_prefs[:colorrefsets]}, param[:colormodule] is #{params[:colorrefsets]}")
         user_session(UserSession::USER_PREFERENCES, user_prefs)
-
+        $log.info("user prefs after saving it to session color module is #{user_prefs[:colormodule]}, param[:colormodule] is #{params[:colormodule]}")
         hash.merge!(CommonRest::CacheRequest::PARAMS_NO_CACHE)
 
         results = CoordinateRest.get_coordinate(action: CoordinateRestActions::ACTION_COORDINATES_TOKEN, additional_req_params: hash)
