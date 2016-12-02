@@ -10,6 +10,7 @@ require './lib/rails_common/logging/open_logging'
 require './lib/rails_common/logging/logging'
 require './lib/utilities/cached_hash'
 require './lib/rails_common/util/helpers'
+require './lib/rails_common/logging/prisme_log_event'
 ISAAC_ROOT = ENV['ISAAC_ROOT'].nil? ? '' : ENV['ISAAC_ROOT']
 
 $isaac_hunter_mutex = Mutex.new #Not re-entrant, but lock acquires in 1/2 the time (After JVM is warm and toasty).
@@ -68,6 +69,9 @@ require './lib/rails_common/roles/roles'
 
 $rest_cache = CachedHash.new($PROPS.fetch('KOMET.rest_cache_max').to_i)
 
+at_exit do
+  $log.always_n(PrismeLogEvent::LIFECYCLE_TAG, "#{Rails.application.class.parent_name}/#{$CONTEXT} has been ruthlessly executed!", false)
+end
 
 # Thread.new do
 #   sleep 3
