@@ -3,8 +3,8 @@ Komet Changelog
 This changelog summarizes changes and fixes which are a part of each revision.  For more details on the fixes, refer tracking numbers 
 where provided, and the git commit history.
 
-* 2016/12/?? - PENDING
-    *
+* 2016/12/02 - 1.49
+    * Changed get_refset_list to use metadata variable instead of property file
 
 * 2016/12/02 - 1.48
     * Map items save with map set. Only one save button.
