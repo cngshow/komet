@@ -3,7 +3,10 @@ Komet Changelog
 This changelog summarizes changes and fixes which are a part of each revision.  For more details on the fixes, refer tracking numbers 
 where provided, and the git commit history.
 
-* 2016/11/??
+* 2016/12/01 - 1.48
+   * Map items save with map set. Only one save button.
+   * Map items display as read only unless in edit mode
+   * Dates in map items now display and save correctly
 
 * 2016/11/30 - 1.46:
    * Fixed NAN text showing when adding new concept dialects
