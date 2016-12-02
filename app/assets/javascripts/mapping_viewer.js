@@ -110,7 +110,7 @@ var MappingViewer = function(viewerID, currentSetID, viewerAction) {
             var state = this.panelStates[key][0];
             var callback = this.panelStates[key][1];
 
-            if (state) {
+            if (!state) {
                 this.togglePanelDetails(key, callback);
             }
         }
@@ -368,73 +368,33 @@ var MappingViewer = function(viewerID, currentSetID, viewerAction) {
 
         this.generateSetEditorItemsAdditionalFields();
 
-        if (viewerAction == MappingModule.SET_DETAILS){
+        if (viewerAction != MappingModule.CREATE_SET){
 
-            form.find(".komet-mapping-set-editor-edit").hide();
+            var itemGrid = $("#komet_mapping_items_" + this.viewerID);
+            this.itemFieldInfo = mapItems.column_definitions;
 
-            if (this.currentSetID != null && this.currentSetID != ""){
+            var itemSectionString = "";
 
-                var itemGrid = $("#komet_mapping_items_" + this.viewerID);
-                this.itemFieldInfo = mapItems.column_definitions;
+            if (mapItems.data.length == 0){
+                itemSectionString += this.createItemNoDataRowString();
+            } else {
 
-                var itemSectionString = "";
-
-                if (mapItems.data.length == 0){
-                    itemSectionString += this.createItemNoDataRowString();
-                } else {
-
-                    for (var i = 0; i < mapItems.data.length; i++){
-                        itemSectionString += this.createItemRowString(mapItems.data[i]);
-                    }
+                for (var i = 0; i < mapItems.data.length; i++){
+                    itemSectionString += this.createItemRowString(mapItems.data[i]);
                 }
-
-                // create a dom fragment from our items structure
-                var itemSection = document.createRange().createContextualFragment(itemSectionString);
-                itemGrid.append(itemSection);
-
-                UIHelper.processAutoSuggestTags(itemGrid);
-
-                // make a copy of the items grid so we can restore it if the user cancels changes
-                this.setEditorMapItemsCopy = itemGrid.html();
-
-                $("#komet_mapping_set_editor_items_form_" + this.viewerID).submit(function () {
-
-                    $.ajax({
-                        type: "POST",
-                        url: $(this).attr("action"),
-                        data: $(this).serialize(), //new FormData($(this)[0]),
-                        success: function (data) {
-
-                            var editorSection = $("#komet_mapping_items_section_" + thisViewer.viewerID);
-
-                            if (data.failed.length > 0){
-
-                                editorSection.prepend(UIHelper.generatePageMessage("Errors occurred, all changes not listed were processed. See below for the errors."));
-
-                                for (var i = 0; i < data.failed.length; i++) {
-
-                                    editorSection.find("#komet_mapping_item_row_" + data.failed[i].id + "_" + thisViewer.viewerID).before(UIHelper.generatePageMessage("The map item below was not processed."));
-                                }
-
-                            } else {
-
-                                editorSection.prepend(UIHelper.generatePageMessage("All changes were processed successfully."));
-
-                                // make a copy of the items grid so we can restore it if the user cancels changes
-                                thisViewer.setEditorMapItemsCopy = itemGrid.html();
-                            }
-                        }
-                    });
-
-                    // have to return false to stop the form from posting twice.
-                    return false;
-                });
-
-                //UIHelper.toggleFieldAvailability("#komet_mapping_overview_item_create_" + this.viewerID, true);
             }
-        } else {
 
-            form.find(".komet-mapping-set-editor-display").hide();
+            // create a dom fragment from our items structure
+            var itemSection = document.createRange().createContextualFragment(itemSectionString);
+            itemGrid.append(itemSection);
+
+            UIHelper.processAutoSuggestTags(itemGrid);
+        }
+
+        if (viewerAction == MappingModule.SET_DETAILS){
+            form.find(".komet-mapping-show-on-edit").hide();
+        } else {
+            form.find(".komet-mapping-show-on-view").hide();
         }
 
         $("#komet_mapping_set_tabs_" + this.viewerID).tabs();
@@ -447,8 +407,43 @@ var MappingViewer = function(viewerID, currentSetID, viewerAction) {
                 data: $(this).serialize(), //new FormData($(this)[0]),
                 success: function (data) {
 
-                    MappingModule.tree.reloadTree(thisViewer.getViewParams());
-                    $.publish(KometChannels.Mapping.mappingTreeNodeSelectedChannel, ["", data.set_id, thisViewer.getViewParams(), thisViewer.viewerID, WindowManager.INLINE, MappingModule.SET_DETAILS]);
+                    var setSection = $("#komet_mapping_set_panel_" + thisViewer.viewerID);
+                    var itemSection = $("#komet_mapping_items_section_" + thisViewer.viewerID);
+
+                    if (data.failed.set.length == 0){
+                        MappingModule.tree.reloadTree(thisViewer.getViewParams());
+                    }
+
+                    if (data.failed.set.length > 0 || data.failed.items.length > 0){
+
+                        var topErrorMessage = "Errors occurred with ";
+
+                        if (data.failed.set.length > 0){
+
+                            topErrorMessage += "the map set";
+                            setSection.prepend(UIHelper.generatePageMessage(data.failed.set[0].error));
+
+                            if (data.failed.items.length > 0){
+                                topErrorMessage += " and with ";
+                            }
+                        }
+
+                        if (data.failed.items.length > 0){
+                            topErrorMessage += "map items";
+                        }
+
+                        setSection.before(UIHelper.generatePageMessage(topErrorMessage + ". All changes not listed were processed. See below for the errors."));
+
+                        for (var i = 0; i < data.failed.items.length; i++) {
+
+                            itemSection.find("#komet_mapping_item_row_" + data.failed.items[i].id + "_" + thisViewer.viewerID).before(UIHelper.generatePageMessage(data.failed.items[i].error));
+                        }
+
+                    } else {
+
+                        setSection.before(UIHelper.generatePageMessage("All changes were processed successfully."));
+                        $.publish(KometChannels.Mapping.mappingTreeNodeSelectedChannel, ["", data.set_id, thisViewer.getViewParams(), thisViewer.viewerID, WindowManager.INLINE, MappingModule.SET_DETAILS]);
+                    }
                 }
             });
 
@@ -527,7 +522,7 @@ var MappingViewer = function(viewerID, currentSetID, viewerAction) {
             var idPrefix = "komet_mapping_set_editor_";
             var name = idPrefix + fieldsToInclude[i];
             var id = name + '_' + this.viewerID;
-            var classes = "form-control komet-mapping-set-editor-edit komet-mapping-set-editor-create-only";
+            var classes = "form-control komet-mapping-show-on-edit komet-mapping-hide-on-create-only";
             var value = "";
             var dataType = "STRING";
             var labelValue = fieldsToInclude[i];
@@ -559,7 +554,7 @@ var MappingViewer = function(viewerID, currentSetID, viewerAction) {
                     + 'value="' + labelValue + '" '
                     + 'label="' + labelDisplayValue + ':" '
                     + 'display-value="' + displayValue + '" '
-                    + 'classes="komet-mapping-set-editor-edit komet-mapping-set-editor-create-only" '
+                    + 'classes="komet-mapping-show-on-edit komet-mapping-hide-on-create-only" '
                     + '></autosuggest>';
 
                 value = displayValue;
@@ -570,7 +565,7 @@ var MappingViewer = function(viewerID, currentSetID, viewerAction) {
                 includedFields += label + '<input name="' + name + '" id="' + id + '" class="' + classes + '" value="' + value + '">';
             }
 
-            includedFields += '<div class="komet-mapping-set-editor-display komet-mapping-set-editor-create-only">' + value + '</div>';
+            includedFields += '<div class="komet-mapping-show-on-view komet-mapping-hide-on-create-only">' + value + '</div>';
 
             // close the definition-item
             includedFields += '</div>';
@@ -629,7 +624,7 @@ var MappingViewer = function(viewerID, currentSetID, viewerAction) {
         UIHelper.acceptFormChanges("#" + this.SET_INCLUDE_FIELD_DIALOG);
 
         this.generateSetEditorAdditionalFields();
-        $("#komet_mapping_set_editor_form_" + this.viewerID).find(".komet-mapping-set-editor-display").hide();
+        $("#komet_mapping_set_editor_form_" + this.viewerID).find(".komet-mapping-show-on-view").hide();
     };
 
     MappingViewer.prototype.removeSetIncludedField = function(fieldName){
@@ -926,6 +921,7 @@ var MappingViewer = function(viewerID, currentSetID, viewerAction) {
         var targetConceptDisplay = "";
         var state = "";
         var qualifierConcept = "";
+        var qualifierConceptDisplay = "";
         var commentID = "0";
         var comment = "";
         //var state = "";
@@ -933,7 +929,8 @@ var MappingViewer = function(viewerID, currentSetID, viewerAction) {
         var rowID = "";
         var rowString = null;
         var idPrefix = "komet_mapping_item_" + itemID;
-        var ariaLabel = "komet_mapping_item";
+        var ariaLabel = "Mapping Item";
+        var classes = "form-control komet-mapping-show-on-edit";
 
 
         if (rowData != null){
@@ -945,6 +942,7 @@ var MappingViewer = function(viewerID, currentSetID, viewerAction) {
             targetConceptDisplay = rowData.target_concept_display;
             state = rowData.state;
             qualifierConcept = rowData.qualifier_concept;
+            qualifierConceptDisplay = rowData.qualifier_concept_display;
             commentID = rowData.comment_id;
             comment = rowData.comment;
             ariaLabel = rowData.source_concept_display;
@@ -973,28 +971,27 @@ var MappingViewer = function(viewerID, currentSetID, viewerAction) {
             + 'name-format="array" '
             + 'value="' + targetConcepID + '" '
             + 'display-value="' + targetConceptDisplay + '" '
-            + 'classes="komet-mapping-item-target-concept">'
+            + 'classes="komet-mapping-item-target-concept komet-mapping-show-on-edit">'
             + '</autosuggest></div>';
 
-        rowString += '<div>' + UIHelper.createSelectFieldString(idPrefix + '_state', 'items[' + itemID + '][state]', 'form-control', UIHelper.getPreDefinedOptionsForSelect("active_inactive"), state, 'Item State') + '</div>';
+        rowString += '<div>' + UIHelper.createSelectFieldString(idPrefix + '_state', 'items[' + itemID + '][state]', classes, UIHelper.getPreDefinedOptionsForSelect("active_inactive"), state, ariaLabel + ' Item State')
+            + '<div class="komet-mapping-show-on-view" aria-label="' + ariaLabel + ' Item State">' + state + '</div></div>';
 
         var qualifierOptions = [{value: '', label: 'No Restrictions'}, {value: '8aa6421d-4966-5230-ae5f-aca96ee9c2c1', label: 'Exact'}, {value: 'c1068428-a986-5c12-9583-9b2d3a24fdc6', label: 'Broader Than'}, {value: '250d3a08-4f28-5127-8758-e8df4947f89c', label: 'Narrower Than'}];
-        rowString += '<div>' + UIHelper.createSelectFieldString(idPrefix + '_qualifier_concept', 'items[' + itemID + '][qualifier_concept]', 'form-control', qualifierOptions, qualifierConcept, ariaLabel) + '</div>';
+        rowString += '<div>' + UIHelper.createSelectFieldString(idPrefix + '_qualifier_concept', 'items[' + itemID + '][qualifier_concept]', classes, qualifierOptions, qualifierConcept, ariaLabel + 'Mapping Qualifier')
+            + '<div class="komet-mapping-show-on-view" aria-label="' + ariaLabel + ' Mapping Qualifier">' + qualifierConceptDisplay + '</div></div>';
 
         $.each(this.itemFieldInfo, function (fieldID, field) {
 
             var name = 'items[' + itemID + '][' + field.name + ']';
             var id = idPrefix + "_" + field.name + '_' + this.viewerID;
-            var classes = "form-control komet-mapping-set-editor-edit";
             var value = "";
             var dataType = field.data_type;
-
+            var itemAriaLabel = ariaLabel + ' ' + field.label_display;
 
             if (!isNew && rowData[field.name] != undefined){
                 value = rowData[field.name];
             }
-
-            var ariaLabel = field.name;
 
             rowString += '<div>';
 
@@ -1013,28 +1010,26 @@ var MappingViewer = function(viewerID, currentSetID, viewerAction) {
                     + 'name-format="array" '
                     + 'value="' + value + '" '
                     + 'display-value="' + displayValue + '" '
-                    + 'classes="komet-mapping-set-editor-edit" '
+                    + 'classes="komet-mapping-show-on-edit" '
                     + '></autosuggest>';
 
                 value = displayValue;
 
             } else if (dataType == "BOOLEAN"){
-                console.log("mapping BOOLEAN aria-label", ariaLabel );
-                rowString += UIHelper.createSelectFieldString(id, name, classes, UIHelper.getPreDefinedOptionsForSelect("true_false"), value, ariaLabel);
+                rowString += UIHelper.createSelectFieldString(id, name, classes, UIHelper.getPreDefinedOptionsForSelect("true_false"), value, itemAriaLabel);
             } else if (dataType == "SELECT"){
-                console.log("mapping SELECT aria-label", ariaLabel );
-                rowString += UIHelper.createSelectFieldString(id, name, classes, field.options, value, ariaLabel);
+                rowString += UIHelper.createSelectFieldString(id, name, classes, field.options, value, itemAriaLabel);
             } else {
-                rowString += '<input name="' + name + '" id="' + id + '" class="' + classes + '" value="' + value + '" aria-label="' + ariaLabel + '">';
+                rowString += '<input name="' + name + '" id="' + id + '" class="' + classes + '" value="' + value + '" aria-label="' + itemAriaLabel + '">';
             }
 
-            rowString += '</div>';
+            rowString += '<div class="komet-mapping-show-on-view" aria-label="' + itemAriaLabel + '">' + value + '</div></div>';
 
         }.bind(this));
 
         rowString += '<div class="komet-mapping-item-edit-row-comments"><input type="hidden" name="items[' + itemID + '][comment_id]" value="' + commentID + '">'
             + '<input type="hidden" id="komet_mapping_item_' + itemID + '_comment" name="items[' + itemID + '][comment]" value="' + comment + '">'
-            + '<a href="#" title="Add/Edit comment" onclick="WindowManager.viewers[' + this.viewerID + '].editItemComments(\'' + itemID + '\', this);return false;">';
+            + '<a href="#" title="Add/Edit comment" aria-label="' + ariaLabel + ' Comments" class="komet-mapping-show-on-edit" onclick="WindowManager.viewers[' + this.viewerID + '].editItemComments(\'' + itemID + '\', this);return false;">';
 
         if (comment == "") {
             rowString += "Add comment";
@@ -1042,7 +1037,7 @@ var MappingViewer = function(viewerID, currentSetID, viewerAction) {
             rowString +=  comment;
         }
 
-        rowString += '</a></div><div class="komet-mapping-item-edit-row-tools">';
+        rowString += '</a><div class="komet-mapping-show-on-view" aria-label="' + ariaLabel + ' Comments">' + comment + '</div></div><div class="komet-mapping-item-edit-row-tools">';
 
         if (isNew){
             rowString += '<button type="button" class="komet-link-button" onclick="WindowManager.viewers[' + this.viewerID + '].removeItemRow(\'' + rowID + '\', this)" title="Remove row" aria-label="Remove row"><div class="glyphicon glyphicon-remove"></div></button>';
@@ -1156,42 +1151,66 @@ var MappingViewer = function(viewerID, currentSetID, viewerAction) {
 
     MappingViewer.prototype.enterSetEditMode = function(){
 
-        $(".komet-mapping-set-editor-display:not(.komet-mapping-set-editor-create-only)").hide();
-        $(".komet-mapping-set-editor-edit:not(.komet-mapping-set-editor-create-only)").show();
+        $(".komet-mapping-show-on-view:not(.komet-mapping-hide-on-create-only)").hide();
+        $(".komet-mapping-show-on-edit:not(.komet-mapping-hide-on-create-only)").show();
 
+        // make a copy of the set so we can restore it if the user cancels changes
         this.setEditorMapSetCopy = jQuery.extend({}, this.setEditorMapSet);
+
+        // make a copy of the items grid so we can restore it if the user cancels changes
+        if (this.viewerAction != MappingModule.CREATE_SET){
+            this.setEditorMapItemsCopy = $("#komet_mapping_items_" + this.viewerID).html();
+        }
     };
 
-    MappingViewer.prototype.cancelSetEditMode = function(){
+    MappingViewer.prototype.cancelSetEditMode = function(triggerElement){
 
-        if (this.viewerAction == MappingModule.CREATE_SET){
-            WindowManager.cancelEditMode(this.viewerID.toString());
-        }
 
-        $(".komet-mapping-set-editor-display").show();
-        $(".komet-mapping-set-editor-edit").hide();
+        var confirmCallback = function(buttonClicked){
 
-        console.log("Had Changes: " + UIHelper.hasFormChanged("#komet_mapping_set_editor_form_" + this.viewerID));
-        UIHelper.resetFormChanges("#komet_mapping_set_editor_form_" + this.viewerID);
+            if (buttonClicked != 'cancel') {
 
-        if (this.setEditorMapSetCopy != null){
+                if (this.viewerAction == MappingModule.CREATE_SET){
+                    WindowManager.cancelEditMode(this.viewerID.toString());
+                } else {
 
-            this.setEditorMapSet = jQuery.extend({}, this.setEditorMapSetCopy);
-            this.setEditorMapSetCopy = null;
-        }
+                    var itemGrid = $("#komet_mapping_items_" + this.viewerID);
 
-        if (this.setEditorOriginalIncludedFields != null){
+                    if (this.setEditorMapItemsCopy != null){
+                        itemGrid.html(this.setEditorMapItemsCopy);
+                    }
+                }
 
-            $("#" + this.SET_INCLUDE_FIELD_CHECKBOX_SECTION).html(document.createRange().createContextualFragment(this.setEditorOriginalIncludedFields));
-            this.generateSetEditorAdditionalFields();
-            $("#komet_mapping_set_definition_tab_" + this.viewerID).find(".komet-mapping-set-added-row .komet-mapping-set-editor-edit").hide();
-        }
+                $(".komet-mapping-show-on-view").show();
+                $(".komet-mapping-show-on-edit").hide();
 
-        if (this.setEditorOriginalItemsIncludedFields != null){
+                console.log("Had Changes: " + UIHelper.hasFormChanged("#komet_mapping_set_editor_form_" + this.viewerID));
+                UIHelper.resetFormChanges("#komet_mapping_set_editor_form_" + this.viewerID);
 
-            $("#" + this.ITEMS_INCLUDE_FIELD_CHECKBOX_SECTION).html(document.createRange().createContextualFragment(this.setEditorOriginalItemsIncludedFields));
-            this.generateSetEditorItemsAdditionalFields();
-        }
+                if (this.setEditorMapSetCopy != null){
+
+                    this.setEditorMapSet = jQuery.extend({}, this.setEditorMapSetCopy);
+                    this.setEditorMapSetCopy = null;
+                }
+
+                if (this.setEditorOriginalIncludedFields != null){
+
+                    $("#" + this.SET_INCLUDE_FIELD_CHECKBOX_SECTION).html(document.createRange().createContextualFragment(this.setEditorOriginalIncludedFields));
+                    this.generateSetEditorAdditionalFields();
+                    $("#komet_mapping_set_definition_tab_" + this.viewerID).find(".komet-mapping-set-added-row .komet-mapping-show-on-edit").hide();
+                }
+
+                if (this.setEditorOriginalItemsIncludedFields != null){
+
+                    $("#" + this.ITEMS_INCLUDE_FIELD_CHECKBOX_SECTION).html(document.createRange().createContextualFragment(this.setEditorOriginalItemsIncludedFields));
+                    this.generateSetEditorItemsAdditionalFields();
+                }
+            }
+
+        }.bind(this);
+
+        UIHelper.generateConfirmationDialog("Cancel Edits?", "Are you sure you want to discard all unsaved changes?", confirmCallback, "Yes", triggerElement);
+
     };
 
     // call our constructor function

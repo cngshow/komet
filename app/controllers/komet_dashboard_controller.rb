@@ -561,7 +561,7 @@ class KometDashboardController < ApplicationController
 
         additional_req_params = {coordToken: coordinates_token, stated: @stated, childDepth: 50}
 
-        refsets = TaxonomyRest.get_isaac_concept(uuid: $PROPS['KOMET.assemblage_concept_id'], additional_req_params: additional_req_params)
+        refsets = TaxonomyRest.get_isaac_concept(uuid: $isaac_metadata_auxiliary['ASSEMBLAGE']['uuids'].first[:uuid], additional_req_params: additional_req_params)
 
         if refsets.is_a? CommonRest::UnexpectedResponse
             render json: [] and return
