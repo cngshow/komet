@@ -17,6 +17,15 @@
  limitations under the License.
  */
 var ExportModule = (function () {
+  function default_dates() {
+    var start_date = $("#start_date").data("DateTimePicker");
+    var end_date = $("#end_date").data("DateTimePicker");
+    start_date.clear();
+    end_date.clear();
+    start_date.maxDate(moment());
+    end_date.maxDate(moment().endOf('day'));
+  }
+
   function init() {
     var start_date = $("#start_date");
     var end_date = $("#end_date");
@@ -24,31 +33,28 @@ var ExportModule = (function () {
     start_date.datetimepicker({
       showClear: true,
       allowInputToggle: true,
-      format: 'MM/DD/YYYY',
-      maxDate: moment().startOf('day'),
       icons: {
         date: "fa fa-calendar"
       }
     });
-    start_date.data("DateTimePicker").clear();
 
     end_date.datetimepicker({
       showClear: true,
       allowInputToggle: true,
-      format: 'MM/DD/YYYY',
-      maxDate: moment().endOf('day'),
       icons: {
         date: "fa fa-calendar"
       }
     });
-    end_date.data("DateTimePicker").clear();
 
     start_date.on("dp.change", function(e) {
-      $('#end_date').data("DateTimePicker").minDate(moment(e.date).add(1, "second"));
+      var ed = $('#end_date').data("DateTimePicker");
+      ed.minDate(moment(e.timestamp).add(1, "minute"));
+      ed.clear();
     });
 
     // wire the modal for exporting
     $('#komet_export_link').on('click', function () {
+      default_dates();
       ModalFormValidatorModule.show_modal('export_modal');
     });
 
