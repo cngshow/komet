@@ -5,6 +5,7 @@ where provided, and the git commit history.
 
 * 2016/12/02 - 1.49
     * Changed get_refset_list to use metadata variable instead of property file
+    * Changed export date picker to include time as well
 
 * 2016/12/02 - 1.48
     * Map items save with map set. Only one save button.
