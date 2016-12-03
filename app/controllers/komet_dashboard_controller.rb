@@ -384,12 +384,14 @@ class KometDashboardController < ApplicationController
         get_concept_attributes(@concept_id, @stated)
         get_concept_descriptions(@concept_id, @stated)
         get_concept_sememes(@concept_id, @stated)
+        get_concept_refsets(@concept_id, @stated)
         render partial: params[:partial]
     end
 
     ##
     # get_concept_attributes - RESTful route for populating concept attribute tab using an http :GET
     # The current tree node representing the concept is identified in the request params with the key :concept_id
+    # Whether to display the stated (true) or inferred view of concepts with a request param of :stated (true/false)
     # @param [Boolean] clone - Are we cloning a concept
     # @return none - setting the @attributes variable
     def get_concept_attributes(concept_id = nil, stated = nil, clone = false)
@@ -408,6 +410,7 @@ class KometDashboardController < ApplicationController
     ##
     # get_concept_descriptions - RESTful route for populating concept summary tab using an http :GET
     # The current tree node representing the concept is identified in the request params with the key :concept_id
+    # Whether to display the stated (true) or inferred view of concepts with a request param of :stated (true/false)
     # @param [Boolean] clone - Are we cloning a concept
     # @return none - setting the @descriptions variable
     def get_concept_descriptions(concept_id = nil, stated = nil, clone = false)
@@ -426,6 +429,7 @@ class KometDashboardController < ApplicationController
     ##
     # get_concept_associations - RESTful route for populating concept association tab using an http :GET
     # The current tree node representing the concept is identified in the request params with the key :concept_id
+    # Whether to display the stated (true) or inferred view of concepts with a request param of :stated (true/false)
     # @param [Boolean] clone - Are we cloning a concept
     # @return none - setting the @associations variable
     def get_concept_associations(concept_id = nil, stated = nil, clone = false)
@@ -444,6 +448,7 @@ class KometDashboardController < ApplicationController
     ##
     # get_concept_sememes - RESTful route for populating concept sememes section using an http :GET
     # The current tree node representing the concept is identified in the request params with the key :concept_id
+    # Whether to display the stated (true) or inferred view of concepts with a request param of :stated (true/false)
     # @param [Boolean] clone - Are we cloning a concept
     # @return none - setting the @concept_sememes variable
     def get_concept_sememes(concept_id = nil, stated = nil, clone = false)
@@ -459,7 +464,33 @@ class KometDashboardController < ApplicationController
         @concept_sememes = get_attached_sememes(concept_id, stated, clone)
     end
 
-    def get_concept_children(concept_id: nil, returnJSON: true, removeSemanticTag: false)
+    ##
+    # get_concept_refsets - RESTful route for populating concept refsets section using an http :GET
+    # The current tree node representing the concept is identified in the request params with the key :concept_id
+    # Whether to display the stated (true) or inferred view of concepts with a request param of :stated (true/false)
+    # @return none - setting the refsets variable
+    def get_concept_refsets(concept_id = nil, stated = nil)
+
+        return_json = false
+
+        if concept_id == nil && params[:concept_id]
+
+            concept_id = params[:concept_id]
+            return_json = true
+        end
+
+        if stated == nil && params[:stated]
+            stated = params[:stated]
+        end
+
+        @concept_refsets = get_refsets(concept_id, stated)
+
+        if return_json
+            render json: @concept_refsets
+        end
+    end
+
+    def get_concept_children(concept_id: nil, return_json: true, remove_semantic_tag: false)
 
         if concept_id == nil
             concept_id = params[:uuid]
@@ -467,7 +498,7 @@ class KometDashboardController < ApplicationController
 
         children = get_direct_children(concept_id)
 
-        if (returnJSON)
+        if return_json
             render json: children
         else
 
@@ -478,7 +509,7 @@ class KometDashboardController < ApplicationController
                 text = child.conChronology.description
 
                 # TODO - replace with regex that handles any semantic tag: start with /\s\(([^)]+)\)/ (regex101.com)
-                if removeSemanticTag
+                if remove_semantic_tag
                     text.slice!(' (ISAAC)')
                 end
 
@@ -597,17 +628,6 @@ class KometDashboardController < ApplicationController
         refset_nodes
     end
 
-    ##
-    # get_concept_refsets - RESTful route for populating concept refsets section using an http :GET
-    # The current tree node representing the concept is identified in the request params with the key :concept_id
-    # @return none - setting the refsets variable
-    def get_concept_refsets()
-        concept_id = params[:concept_id]
-        stated = params[:stated]
-        refsets = get_refsets(concept_id, stated)
-        render json: refsets
-    end
-
     def get_concept_description_types
 
         coordinates_token = session[:coordinatestoken].token
@@ -711,14 +731,14 @@ class KometDashboardController < ApplicationController
         get_concept_descriptions(@concept_id, true, clone)
         get_concept_associations(@concept_id, true, clone)
 
-        @language_options = get_concept_children(concept_id: $isaac_metadata_auxiliary['LANGUAGE']['uuids'].first[:uuid], returnJSON: false, removeSemanticTag: true)
+        @language_options = get_concept_children(concept_id: $isaac_metadata_auxiliary['LANGUAGE']['uuids'].first[:uuid], return_json: false, remove_semantic_tag: true)
         # TODO - Change get_concept_children function to pull all leaf nodes so we can stop hardcoding this uuid
-        @dialect_options = get_concept_children(concept_id: $isaac_metadata_auxiliary['DIALECT_ASSEMBLAGE']['uuids'].first[:uuid], returnJSON: false, removeSemanticTag: true)
-        @case_options = get_concept_children(concept_id: $isaac_metadata_auxiliary['DESCRIPTION_CASE_SIGNIFICANCE']['uuids'].first[:uuid], returnJSON: false, removeSemanticTag: true)
-        @acceptability_options = get_concept_children(concept_id: $isaac_metadata_auxiliary['DESCRIPTION_ACCEPTABILITY']['uuids'].first[:uuid], returnJSON: false, removeSemanticTag: true)
-        @description_type_options = get_concept_children(concept_id: $isaac_metadata_auxiliary['DESCRIPTION_TYPE']['uuids'].first[:uuid], returnJSON: false, removeSemanticTag: true)
+        @dialect_options = get_concept_children(concept_id: $isaac_metadata_auxiliary['DIALECT_ASSEMBLAGE']['uuids'].first[:uuid], return_json: false, remove_semantic_tag: true)
+        @case_options = get_concept_children(concept_id: $isaac_metadata_auxiliary['DESCRIPTION_CASE_SIGNIFICANCE']['uuids'].first[:uuid], return_json: false, remove_semantic_tag: true)
+        @acceptability_options = get_concept_children(concept_id: $isaac_metadata_auxiliary['DESCRIPTION_ACCEPTABILITY']['uuids'].first[:uuid], return_json: false, remove_semantic_tag: true)
+        @description_type_options = get_concept_children(concept_id: $isaac_metadata_auxiliary['DESCRIPTION_TYPE']['uuids'].first[:uuid], return_json: false, remove_semantic_tag: true)
         # TODO - Change get_concept_children function to pull all leaf nodes so we can stop hardcoding this uuid
-        @description_extended_type_options = get_concept_children(concept_id: '09c43aa9-eaed-5217-bc5f-23cacca4df38', returnJSON: false, removeSemanticTag: true)
+        @description_extended_type_options = get_concept_children(concept_id: '09c43aa9-eaed-5217-bc5f-23cacca4df38', return_json: false, remove_semantic_tag: true)
         @association_type_options = get_association_types
 
         if clone
