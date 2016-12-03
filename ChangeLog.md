@@ -7,6 +7,7 @@ where provided, and the git commit history.
     * Changed get_refset_list to use metadata variable instead of property file
     * Changed export date picker to include time as well
     * Changed so concept refset tab will not appear unless there are refsets to display
+    * Updated to latest enunciate file (ID search)
 
 * 2016/12/02 - 1.48
     * Map items save with map set. Only one save button.
