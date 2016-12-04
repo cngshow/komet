@@ -23,6 +23,7 @@ module SearchApiActions
   ACTION_PREFIX = :prefix
   ACTION_SEMEMES = :sememes
   ACTION_BY_REFERENCED_COMPONENT = :by_referenced_component
+  ACTION_ID = :id
 end
 
 module SearchApis
@@ -36,30 +37,32 @@ module SearchApis
   PATH_PREFIX = ROOT_PATH + 'prefix'
   PATH_SEMEMES = ROOT_PATH + 'sememes'
   PATH_BY_REFERENCED_COMPONENT = ROOT_PATH + 'forReferencedComponent'
+  PATH_ID = ROOT_PATH + 'id'
 
   # these are not used!!
-  PARAMS_DESCRIPTIONS = {}
-  PARAMS_PREFIX = {}
-  PARAMS_SEMEMES = {}
-  PARAMS_BY_REFERENCED_COMPONENT = {}
+  PARAMS_EMPTY = {}
 
   ACTION_CONSTANTS = {
       ACTION_DESCRIPTIONS => {
           PATH_SYM => PATH_DESCRIPTIONS,
-          STARTING_PARAMS_SYM => PARAMS_DESCRIPTIONS,
+          STARTING_PARAMS_SYM => PARAMS_EMPTY,
           CLAZZ_SYM => Gov::Vha::Isaac::Rest::Api1::Data::Search::RestSearchResultPage},
       ACTION_PREFIX => {
           PATH_SYM => PATH_PREFIX,
-          STARTING_PARAMS_SYM => PARAMS_PREFIX,
+          STARTING_PARAMS_SYM => PARAMS_EMPTY,
           CLAZZ_SYM => Gov::Vha::Isaac::Rest::Api1::Data::Search::RestSearchResultPage},
       ACTION_SEMEMES => {
           PATH_SYM => PATH_SEMEMES,
-          STARTING_PARAMS_SYM => PARAMS_SEMEMES,
+          STARTING_PARAMS_SYM => PARAMS_EMPTY,
           CLAZZ_SYM => Gov::Vha::Isaac::Rest::Api1::Data::Search::RestSearchResultPage},
       ACTION_BY_REFERENCED_COMPONENT => {
           PATH_SYM => PATH_BY_REFERENCED_COMPONENT,
-          STARTING_PARAMS_SYM => PARAMS_BY_REFERENCED_COMPONENT,
-          CLAZZ_SYM => Gov::Vha::Isaac::Rest::Api1::Data::Search::RestSearchResultPage}
+          STARTING_PARAMS_SYM => PARAMS_EMPTY,
+          CLAZZ_SYM => Gov::Vha::Isaac::Rest::Api1::Data::Search::RestSearchResultPage},
+      ACTION_ID => {
+          PATH_SYM => PATH_ID,
+          STARTING_PARAMS_SYM => PARAMS_EMPTY,
+          CLAZZ_SYM => Gov::Vha::Isaac::Rest::Api1::Data::Search::RestSearchResultPage},
   }
 
   class << self

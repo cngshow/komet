@@ -3,6 +3,12 @@ Komet Changelog
 This changelog summarizes changes and fixes which are a part of each revision.  For more details on the fixes, refer tracking numbers 
 where provided, and the git commit history.
 
+* 2016/12/04 - 1.49
+    * Changed get_refset_list to use metadata variable instead of property file
+    * Changed export date picker to include time as well
+    * Changed so concept refset tab will not appear unless there are refsets to display
+    * Updated to latest enunciate file (ID search)
+
 * 2016/12/02 - 1.48
     * Map items save with map set. Only one save button.
     * Map items display as read only unless in edit mode

@@ -214,11 +214,7 @@ var ConceptViewer = function(viewerID, currentConceptID, viewerAction) {
         );
     };
 
-    ConceptViewer.prototype.loadRefsetGrid = function(panelID, open, conceptID) {
-
-        if(!(!this.refsetGridOptions && open)){
-            return;
-        }
+    ConceptViewer.prototype.loadRefsetGrid = function() {
 
         // If a grid already exists destroy it or it will create a second grid
         if (this.refsetGridOptions) {
@@ -240,14 +236,14 @@ var ConceptViewer = function(viewerID, currentConceptID, viewerAction) {
         }
 
         new agGrid.Grid($("#" + this.REFSET_GRID).get(0), this.refsetGridOptions);
-        this.getRefsetResultData(conceptID);
+        this.getRefsetResultData();
     };
 
-    ConceptViewer.prototype.getRefsetResultData = function(uuid) {
+    ConceptViewer.prototype.getRefsetResultData = function() {
 
         // load the parameters from the form to add to the query string sent in the ajax data call
         var pageSize = 25;
-        var refsetsParams = "?concept_id=" + uuid + "&stated=" + this.getStatedView();
+        var refsetsParams = "?concept_id=" + this.currentConceptID + "&stated=" + this.getStatedView();
 
         function renderCell(params) {
 

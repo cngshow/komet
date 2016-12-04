@@ -2,7 +2,9 @@ module TaxonomyHelper
 
     def get_tree_node_flag(flag_name, ids_to_match)
         flag = ''
+        $log.info("user prefs taxonomy helper.rd file user_sessions #{user_session(UserSession::USER_PREFERENCES)}")
         user_prefs = user_session(UserSession::USER_PREFERENCES).nil? ? {} : user_session(UserSession::USER_PREFERENCES)
+        $log.info("user prefs taxonomy helper.rd file user_prefs['color' + flag_name] #{user_prefs['color' + flag_name]}")
         if user_prefs['color' + flag_name]
 
             colors = user_prefs['color' + flag_name].find_all{|key, hash|
