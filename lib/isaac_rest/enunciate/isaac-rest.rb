@@ -5929,6 +5929,8 @@ module Wrappers
     attr_accessor :sequence
     # The type of this object - concept, sememe, or unknown.  (if applicable, may be null)
     attr_accessor :type
+    # The type of this object - concept, sememe, or unknown.  (if applicable, may be null)
+    attr_accessor :detail
 
     # the json hash for this RestWriteResponse
     def to_jaxb_json_hash
@@ -5938,6 +5940,7 @@ module Wrappers
       _h['nid'] = nid.to_jaxb_json_hash unless nid.nil?
       _h['sequence'] = sequence.to_jaxb_json_hash unless sequence.nil?
       _h['type'] = type.to_jaxb_json_hash unless type.nil?
+      _h['detail'] = detail.to_jaxb_json_hash unless detail.nil?
       return _h
     end
 
@@ -6041,6 +6044,25 @@ module Wrappers
                }
             else
                 @type = _oa
+            end
+          end
+        if !_o['detail'].nil?
+          _oa = _o['detail']
+            if(_oa.is_a? Hash)
+              @detail = EnunciateHelpers::LAMB_CLASS_AWARE.call(_oa) if _oa['@class']
+              @detail =  String.from_json(_oa) unless _oa['@class']
+            elsif (_oa.is_a? Array)
+              #an array(of hashes hopefully) or scalar
+              @detail = Array.new
+              _oa.each { | _item | 
+                 if ((_item.nil? || _item['@class'].nil?)rescue true)
+                   @detail.push String.from_json(_item)
+                 else
+                   @detail.push EnunciateHelpers::LAMB_CLASS_AWARE.call(_item)
+                 end
+               }
+            else
+                @detail = _oa
             end
           end
     end
@@ -8659,6 +8681,106 @@ module Data
 module Sememe
 
   # (no documentation provided)
+  class RestDynamicSememeBaseCreate < Gov::Vha::Isaac::Rest::Api1::Data::Sememe::RestDynamicSememeBase 
+
+    # The concept sequence, nid or UUID that identifies the concept that defined the assemblage of this sememe.
+    # This is effectively the type of the sememe being created.
+    attr_accessor :assemblageConcept
+    # The nid or UUID (may NOT be a sequence) of desired referenced component of the sememe instance.
+    attr_accessor :referencedComponent
+
+    # the json hash for this RestDynamicSememeBaseCreate
+    def to_jaxb_json_hash
+      _h = super
+      _h['assemblageConcept'] = assemblageConcept.to_jaxb_json_hash unless assemblageConcept.nil?
+      _h['referencedComponent'] = referencedComponent.to_jaxb_json_hash unless referencedComponent.nil?
+      return _h
+    end
+
+    #initializes this RestDynamicSememeBaseCreate with a json hash
+    def init_jaxb_json_hash(_o)
+      super _o
+        if !_o['assemblageConcept'].nil?
+          _oa = _o['assemblageConcept']
+            if(_oa.is_a? Hash)
+              @assemblageConcept = EnunciateHelpers::LAMB_CLASS_AWARE.call(_oa) if _oa['@class']
+              @assemblageConcept =  String.from_json(_oa) unless _oa['@class']
+            elsif (_oa.is_a? Array)
+              #an array(of hashes hopefully) or scalar
+              @assemblageConcept = Array.new
+              _oa.each { | _item | 
+                 if ((_item.nil? || _item['@class'].nil?)rescue true)
+                   @assemblageConcept.push String.from_json(_item)
+                 else
+                   @assemblageConcept.push EnunciateHelpers::LAMB_CLASS_AWARE.call(_item)
+                 end
+               }
+            else
+                @assemblageConcept = _oa
+            end
+          end
+        if !_o['referencedComponent'].nil?
+          _oa = _o['referencedComponent']
+            if(_oa.is_a? Hash)
+              @referencedComponent = EnunciateHelpers::LAMB_CLASS_AWARE.call(_oa) if _oa['@class']
+              @referencedComponent =  String.from_json(_oa) unless _oa['@class']
+            elsif (_oa.is_a? Array)
+              #an array(of hashes hopefully) or scalar
+              @referencedComponent = Array.new
+              _oa.each { | _item | 
+                 if ((_item.nil? || _item['@class'].nil?)rescue true)
+                   @referencedComponent.push String.from_json(_item)
+                 else
+                   @referencedComponent.push EnunciateHelpers::LAMB_CLASS_AWARE.call(_item)
+                 end
+               }
+            else
+                @referencedComponent = _oa
+            end
+          end
+    end
+
+    # constructs a RestDynamicSememeBaseCreate from a (parsed) JSON hash
+    def self.from_json(o)
+      if o.nil?
+        return nil
+      else
+        inst = new
+        inst.init_jaxb_json_hash o
+        return inst
+      end
+    end
+  end
+
+end
+
+end
+
+end
+
+end
+
+end
+
+end
+
+end
+
+module Gov
+
+module Vha
+
+module Isaac
+
+module Rest
+
+module Api1
+
+module Data
+
+module Sememe
+
+  # (no documentation provided)
   class RestSememeDescriptionVersion < Gov::Vha::Isaac::Rest::Api1::Data::Sememe::RestSememeVersion 
 
     # The concept sequence of the concept that represents the case significance flag on the description .
@@ -8814,106 +8936,6 @@ module Sememe
     end
 
     # constructs a RestSememeDescriptionVersion from a (parsed) JSON hash
-    def self.from_json(o)
-      if o.nil?
-        return nil
-      else
-        inst = new
-        inst.init_jaxb_json_hash o
-        return inst
-      end
-    end
-  end
-
-end
-
-end
-
-end
-
-end
-
-end
-
-end
-
-end
-
-module Gov
-
-module Vha
-
-module Isaac
-
-module Rest
-
-module Api1
-
-module Data
-
-module Sememe
-
-  # (no documentation provided)
-  class RestDynamicSememeBaseCreate < Gov::Vha::Isaac::Rest::Api1::Data::Sememe::RestDynamicSememeBase 
-
-    # The concept sequence, nid or UUID that identifies the concept that defined the assemblage of this sememe.
-    # This is effectively the type of the sememe being created.
-    attr_accessor :assemblageConcept
-    # The nid or UUID (may NOT be a sequence) of desired referenced component of the sememe instance.
-    attr_accessor :referencedComponent
-
-    # the json hash for this RestDynamicSememeBaseCreate
-    def to_jaxb_json_hash
-      _h = super
-      _h['assemblageConcept'] = assemblageConcept.to_jaxb_json_hash unless assemblageConcept.nil?
-      _h['referencedComponent'] = referencedComponent.to_jaxb_json_hash unless referencedComponent.nil?
-      return _h
-    end
-
-    #initializes this RestDynamicSememeBaseCreate with a json hash
-    def init_jaxb_json_hash(_o)
-      super _o
-        if !_o['assemblageConcept'].nil?
-          _oa = _o['assemblageConcept']
-            if(_oa.is_a? Hash)
-              @assemblageConcept = EnunciateHelpers::LAMB_CLASS_AWARE.call(_oa) if _oa['@class']
-              @assemblageConcept =  String.from_json(_oa) unless _oa['@class']
-            elsif (_oa.is_a? Array)
-              #an array(of hashes hopefully) or scalar
-              @assemblageConcept = Array.new
-              _oa.each { | _item | 
-                 if ((_item.nil? || _item['@class'].nil?)rescue true)
-                   @assemblageConcept.push String.from_json(_item)
-                 else
-                   @assemblageConcept.push EnunciateHelpers::LAMB_CLASS_AWARE.call(_item)
-                 end
-               }
-            else
-                @assemblageConcept = _oa
-            end
-          end
-        if !_o['referencedComponent'].nil?
-          _oa = _o['referencedComponent']
-            if(_oa.is_a? Hash)
-              @referencedComponent = EnunciateHelpers::LAMB_CLASS_AWARE.call(_oa) if _oa['@class']
-              @referencedComponent =  String.from_json(_oa) unless _oa['@class']
-            elsif (_oa.is_a? Array)
-              #an array(of hashes hopefully) or scalar
-              @referencedComponent = Array.new
-              _oa.each { | _item | 
-                 if ((_item.nil? || _item['@class'].nil?)rescue true)
-                   @referencedComponent.push String.from_json(_item)
-                 else
-                   @referencedComponent.push EnunciateHelpers::LAMB_CLASS_AWARE.call(_item)
-                 end
-               }
-            else
-                @referencedComponent = _oa
-            end
-          end
-    end
-
-    # constructs a RestDynamicSememeBaseCreate from a (parsed) JSON hash
     def self.from_json(o)
       if o.nil?
         return nil
