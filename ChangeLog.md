@@ -3,6 +3,19 @@ Komet Changelog
 This changelog summarizes changes and fixes which are a part of each revision.  For more details on the fixes, refer tracking numbers 
 where provided, and the git commit history.
 
+* 2016/12/06 - 1.50
+    * researched the code, and  changed the code of get coordinatekoen to accept only post. - this code changes will show the shape and color on all  servers
+        defects 421416, 421398
+    * Fixed map items so that items with blank numeric fields or dates do not get saved with '0' or bad dates.
+    * Fixed Qualifier field on map item read only view so it does not show 'Undefined'.
+    * Fixed Target Concept field on map item read only view so it shows the concept.
+    * Fixed map items so you can omit the target concept field.
+    * Autosuggest fields now display the proper preferred description from the matching concept. The actual matching text is also displayed if it isn't 
+        identical to the preferred term.
+    * Search now display the proper preferred description from the matching concept as well as the actual matching text.
+    * Identifier search now gives a list of taxonomy types to search for IDs. If search type is ID or Description and a UUID is entered, it will search specifically 
+        for UUIDs, otherwise it performs a sememe search. If you pick a specific ID type it performs a sememe search using that ID type as an assemblage to search in.
+
 * 2016/12/04 - 1.49
     * Changed get_refset_list to use metadata variable instead of property file
     * Changed export date picker to include time as well

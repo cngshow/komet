@@ -26,139 +26,150 @@ require './lib/rails_common/util/controller_helpers'
 # SearchController -
 # handles the taxonomy search functionality
 class SearchController < ApplicationController
-  include SearchApis, IdAPIsRest, SememeRest, ConceptConcern, CommonController
+    include SearchApis, IdAPIsRest, SememeRest, ConceptConcern, CommonController
 
-  ##
-  # get_assemblage_suggestions - RESTful route for populating a list suggested list of assemblages as a user types into a field via http :GET or :POST
-  # The term entered by the user to search for assemblages with a request param of :term
-  #@return [json] a list of matching assemblage text and ids - array of hashes {label:, value:}
-  def get_assemblage_suggestions
+    ##
+    # get_assemblage_suggestions - RESTful route for populating a list suggested list of assemblages as a user types into a field via http :GET or :POST
+    # The term entered by the user to search for assemblages with a request param of :term
+    #@return [json] a list of matching assemblage text and ids - array of hashes {label:, value:}
+    def get_assemblage_suggestions
 
-    coordinates_token = session[:coordinatestoken].token
-    search_term = params[:term]
-    assemblage_suggestions_data = []
+        coordinates_token = session[:coordinatestoken].token
+        search_term = params[:term]
+        assemblage_suggestions_data = []
 
-    results = SearchApis.get_search_api(action: ACTION_PREFIX, additional_req_params: {coordToken: coordinates_token, query: search_term, maxPageSize: 25, expand: 'referencedConcept'})
+        results = SearchApis.get_search_api(action: ACTION_PREFIX, additional_req_params: {coordToken: coordinates_token, query: search_term, maxPageSize: 25, expand: 'referencedConcept'})
 
-    results.results.each do |result|
+        results.results.each do |result|
 
-      assemblage_suggestions_data << {label: result.matchText, value: result.referencedConcept.identifiers.uuids.first}
+            assemblage_suggestions_data << {label: result.referencedConcept.description, match_text: result.matchText, value: result.referencedConcept.identifiers.uuids.first}
 
-    end
-
-    # use this to look up all dynamic sememe assemblages "406e872b-2e19-5f5e-a71d-e4e4b2c68fe5"
-
-    render json: assemblage_suggestions_data
-  end
-
-  ##
-  # get_assemblage_recents - RESTful route for populating a list of recent assemblage searches via http :GET
-  #@return [json] an array of hashes {id:, text:}
-  def get_assemblage_recents
-
-    recents_array = []
-
-    if session[:search_assemblage_recents]
-      recents_array = session[:search_assemblage_recents]
-    end
-
-    render json: recents_array
-  end
-
-  ##
-  # get_search_results - RESTful route for populating the search results via http :GET
-  # The query string to search for with a request param of :taxonomy_search_text
-  # The type of search we are doing with a request param of :taxonomy_search_type (descriptions|sememes)
-  # The number of results to fetch with a request param of :taxonomy_search_limit
-  # If doing a description search the type of description to search with a request param of :description_type (fsn|synonym|definition)
-  # If doing a sememe search whether to treat the query string as a string or determine its type programmatically with a request param of :treatAsString (true|false)
-  # If doing a sememe search the id of an assemblage to search within with a request param of :taxonomy_search_assemblage_id
-  # If doing a sememe search the display text of an assemblage to search within with a request param of :taxonomy_search_assemblage_display
-  #@return [json] the search results - an array of hashes {id:, matching_text:, concept_status:, score:}
-  def get_search_results
-
-    coordinates_token = session[:coordinatestoken].token
-    search_results = {}
-    search_data = []
-    search_text = params[:taxonomy_search_text]
-    search_type = params[:taxonomy_search_type]
-    page_size = params[:taxonomy_search_page_size]
-    page_number = params[:taxonomy_search_page_number]
-    additional_params = {coordToken: coordinates_token, query: search_text, expand: 'referencedConcept,versionsLatestOnly', pageNum: page_number}
-
-    if search_text == nil || search_text == ''
-      render json: {total_rows: 0, page_data: []} and return
-    end
-
-    if page_size != nil || page_size == ''
-      additional_params[:maxPageSize] =  page_size
-    end
-
-    if search_type == 'descriptions'
-
-      description_type = params[:taxonomy_search_description_type]
-
-      unless description_type.nil? || description_type.eql?('all')
-        additional_params[:descriptionType] =  description_type
-      end
-
-      # perform a description search with the parameters we set
-      results = SearchApis.get_search_api(action: ACTION_DESCRIPTIONS, additional_req_params: additional_params)
-
-      if results.is_a? CommonRest::UnexpectedResponse
-        render json: {total_number: 0, page_number: 0, data: []} and return
-      end
-
-      search_results[:total_number] = results.paginationData.approximateTotal
-      search_results[:page_number] = results.paginationData.pageNum
-
-      results.results.each do |result|
-
-        # add the information to the search array to be returned
-        result_data = {id: result.referencedConcept.identifiers.uuids.first, matching_terms: result.matchText, match_score: result.score}
-
-        if result.referencedConcept.versions.length > 0
-          result_data[:concept_status] = result.referencedConcept.versions.first.conVersion.state.enumName
         end
 
-        search_data << result_data
-      end
+        # use this to look up all dynamic sememe assemblages "406e872b-2e19-5f5e-a71d-e4e4b2c68fe5"
 
-    elsif search_type.eql?('sememes') || search_type.eql?('identifiers')
-
-      additional_params[:treatAsString] = params[:taxonomy_search_treat_as_string]
-      assemblage = params[:taxonomy_search_assemblage_id]
-
-      # if there is an assemblage ID in params add it to the params being passed to the search
-      if assemblage != nil && assemblage != ''
-
-        additional_params[:sememeAssemblageId] = assemblage
-        add_to_recents(CONCEPT_RECENTS, assemblage, params[:taxonomy_search_assemblage_display], params[:taxonomy_search_assemblage_type])
-
-      end
-
-      # perform a sememe search with the parameters we set
-      results = SearchApis.get_search_api(action: ACTION_SEMEMES, additional_req_params: additional_params)
-
-      search_results[:total_number] = results.paginationData.approximateTotal
-      search_results[:page_number] = results.paginationData.pageNum
-
-      results.results.each do |result|
-
-        # add the information to the search array to be returned
-        search_data << {id: result.referencedConcept.identifiers.uuids.first, matching_terms: result.matchText, concept_status: result.referencedConcept.versions.first.conVersion.state.enumName, match_score: result.score}
-      end
-
+        render json: assemblage_suggestions_data
     end
 
-    search_results[:data] = search_data
-    render json: search_results
-  end
+    ##
+    # get_assemblage_recents - RESTful route for populating a list of recent assemblage searches via http :GET
+    #@return [json] an array of hashes {id:, text:}
+    def get_assemblage_recents
 
-  def initialize
+        recents_array = []
 
-    @cached_results = []
+        if session[:search_assemblage_recents]
+            recents_array = session[:search_assemblage_recents]
+        end
 
-  end
+        render json: recents_array
+    end
+
+    ##
+    # get_search_results - RESTful route for populating the search results via http :GET
+    # The query string to search for with a request param of :taxonomy_search_text
+    # The type of search we are doing with a request param of :taxonomy_search_type (descriptions|sememes)
+    # The number of results to fetch with a request param of :taxonomy_search_limit
+    # If doing a description search the type of description to search with a request param of :description_type (fsn|synonym|definition)
+    # If doing a sememe search whether to treat the query string as a string or determine its type programmatically with a request param of :treatAsString (true|false)
+    # If doing a sememe search the id of an assemblage to search within with a request param of :taxonomy_search_assemblage_id
+    # If doing a sememe search the display text of an assemblage to search within with a request param of :taxonomy_search_assemblage_display
+    #@return [json] the search results - an array of hashes {id:, matching_text:, concept_status:, score:}
+    def get_search_results
+
+        coordinates_token = session[:coordinatestoken].token
+        search_results = {}
+        search_data = []
+        search_text = params[:taxonomy_search_text]
+        search_type = params[:taxonomy_search_type]
+        page_size = params[:taxonomy_search_page_size]
+        page_number = params[:taxonomy_search_page_number]
+        additional_params = {coordToken: coordinates_token, query: search_text, expand: 'referencedConcept,versionsLatestOnly', pageNum: page_number}
+
+        if search_text == nil || search_text == ''
+            render json: {total_rows: 0, page_data: []} and return
+        end
+
+        if page_size != nil || page_size == ''
+            additional_params[:maxPageSize] =  page_size
+        end
+
+        term_is_id = is_id?(search_text.strip)
+
+        if search_type == 'descriptions' && !term_is_id
+
+            description_type = params[:taxonomy_search_description_type]
+
+            unless description_type.nil? || description_type.eql?('all')
+                additional_params[:descriptionType] =  description_type
+            end
+
+            # perform a description search with the parameters we set
+            results = SearchApis.get_search_api(action: ACTION_DESCRIPTIONS, additional_req_params: additional_params)
+
+        elsif search_type.eql?('sememes') || (search_type.eql?('identifiers') && (!['UUID', 'Any'].include?(params[:taxonomy_search_id_type]) || (params[:taxonomy_search_id_type] == 'Any' && !term_is_id)))
+
+            # if this is a sememe search get the params from the request, if this is an ID search treatAsString is yes and the assemblage depends on the ID type
+            if search_type.eql?('sememes')
+
+                additional_params[:treatAsString] = params[:taxonomy_search_treat_as_string]
+                assemblage = params[:taxonomy_search_assemblage_id]
+            else
+
+                additional_params[:treatAsString] = 'true'
+
+                if params[:taxonomy_search_id_type] == 'Any'
+                    assemblage = ''
+                else
+                    assemblage = $isaac_metadata_auxiliary[params[:taxonomy_search_id_type]]['uuids'].first[:uuid]
+                end
+            end
+
+            # if there is an assemblage ID in params add it to the params being passed to the search
+            if assemblage != nil && assemblage != ''
+
+                additional_params[:sememeAssemblageId] = assemblage
+
+                # if it's a sememe search add it to the recents menu
+                if search_type.eql?('sememes')
+                    add_to_recents(CONCEPT_RECENTS, assemblage, params[:taxonomy_search_assemblage_display], params[:taxonomy_search_assemblage_type])
+                end
+            end
+
+            # perform a sememe search with the parameters we set
+            results = SearchApis.get_search_api(action: ACTION_SEMEMES, additional_req_params: additional_params)
+        else
+
+            # make sure to trim the search term
+            additional_params[:query] = search_text.strip
+
+            # perform an ID search with the parameters we set
+            results = SearchApis.get_search_api(action: ACTION_ID, additional_req_params: additional_params)
+        end
+
+        # if the search errored then return an empty search result
+        if results.is_a? CommonRest::UnexpectedResponse
+            render json: {total_number: 0, page_number: 0, data: []} and return
+        end
+
+        search_results[:total_number] = results.paginationData.approximateTotal
+        search_results[:page_number] = results.paginationData.pageNum
+
+        #loop through the search results
+        results.results.each do |result|
+
+            # add the information to the search array to be returned
+            search_data << {id: result.referencedConcept.identifiers.uuids.first, matching_concept: result.referencedConcept.description, matching_terms: result.matchText, concept_status: result.referencedConcept.versions.first.conVersion.state.enumName, match_score: result.score}
+        end
+
+        search_results[:data] = search_data
+        render json: search_results
+    end
+
+    def initialize
+
+        @cached_results = []
+
+    end
 
 end

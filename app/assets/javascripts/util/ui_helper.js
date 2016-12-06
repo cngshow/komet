@@ -518,6 +518,18 @@ var UIHelper = (function () {
                 , change: onAutoSuggestChange(characterTriggerLimit)
             });
 
+            displayField.data("ui-autocomplete")._renderItem = function (ul, item) {
+
+                var matchingText = "";
+
+                if (item.label != item.matching_text){
+                    matchingText = " (Matching Text: " + item.matching_text + ")";
+                }
+
+                var li = $('<li class="ui-menu-item">' + item.label + matchingText + '</li>').data('ui-autocomplete-item', item);
+                return ul.append(li);
+            };
+
             var recentsButton = $("#" + fieldIDBase + "_recents_button" + fieldIDPostfix);
 
             recentsButton.on('show.bs.dropdown', function () {

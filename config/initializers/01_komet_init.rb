@@ -70,7 +70,8 @@ require './lib/rails_common/roles/roles'
 $rest_cache = CachedHash.new($PROPS.fetch('KOMET.rest_cache_max').to_i)
 
 at_exit do
-  $log.always_n(PrismeLogEvent::LIFECYCLE_TAG, "#{Rails.application.class.parent_name}/#{$CONTEXT} has been ruthlessly executed!", false)
+  context = ($CONTEXT.eql?('/')) ? '' : $CONTEXT
+  $log.always_n(PrismeLogEvent::LIFECYCLE_TAG, "#{Rails.application.class.parent_name}/#{context} has been ruthlessly executed!", false) unless $rake
 end
 
 # Thread.new do

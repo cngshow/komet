@@ -335,7 +335,7 @@ class MappingController < ApplicationController
             item_hash[:source_concept_display] = item.sourceDescription
             item_hash[:target_concept] = item.targetConcept
 
-            if item_hash[:target_concept] != nil || item_hash[:target_concept] != ''
+            if item_hash[:target_concept] != nil && item_hash[:target_concept] != ''
                 item_hash[:target_concept] = item_hash[:target_concept].uuids.first
             end
 
@@ -348,6 +348,7 @@ class MappingController < ApplicationController
             end
 
             item_hash[:target_concept_display] = item.targetDescription
+            item_hash[:qualifier_concept_display] = item.qualifierDescription
             item_hash[:state] = item.mappingItemStamp.state.enumName
             item_hash[:time] = DateTime.strptime((item.mappingItemStamp.time / 1000).to_s, '%s').strftime('%m/%d/%Y')
             item_hash[:author] = get_concept_metadata(item.mappingItemStamp.authorSequence)
@@ -520,7 +521,7 @@ class MappingController < ApplicationController
 
                 target_concept = nil
 
-                if item['target_concept'] != nil || item['target_concept'] != ''
+                if item['target_concept'] != nil && item['target_concept'] != ''
                     target_concept = item['target_concept']
                 end
 
@@ -552,11 +553,15 @@ class MappingController < ApplicationController
 
                         elsif ['LONG', 'INTEGER'].include?(data_type)
 
-                            if data_type == 'LONG' && field[:label_display].downcase.include?('date')
+                            if data_type == 'LONG' && field[:label_display].downcase.include?('date') && data.include?('/)')
                                 data = DateTime.strptime(data, '%m/%d/%Y %H:%M:%S:%L').strftime('%Q')
                             end
 
-                            data = data.to_i;
+                            if data == nil || data == ''
+                                data = nil
+                            else
+                                data = data.to_i
+                            end
 
                         elsif data_type == 'BOOLEAN'
 
@@ -585,7 +590,7 @@ class MappingController < ApplicationController
                     return_value = MappingApis::get_mapping_api(action: MappingApiActions::ACTION_UPDATE_ITEM, uuid_or_id: item_id, additional_req_params: {editToken: get_edit_token}, body_params: body_params)
 
                     if return_value.is_a? CommonRest::UnexpectedResponse
-                        item_error << 'The map item below was not processed. '
+                        item_error << 'The map item below was not updated. '
                     else
                         successful_writes += 1
                     end
@@ -597,12 +602,12 @@ class MappingController < ApplicationController
                     return_value = MappingApis::get_mapping_api(action: MappingApiActions::ACTION_CREATE_ITEM, additional_req_params: {editToken: get_edit_token}, body_params: body_params)
 
                     if return_value.is_a? CommonRest::UnexpectedResponse
-                        failed_writes[:items] << {id: item_id}
+                        item_error << 'The map item below was not created. '
                     else
-                        successful_writes += 1
-                    end
 
-                    item_id = return_value.uuid
+                        successful_writes += 1
+                        item_id = return_value.uuid
+                    end
                 end
 
                 if !return_value.is_a? CommonRest::UnexpectedResponse
