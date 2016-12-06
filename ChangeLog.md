@@ -3,6 +3,9 @@ Komet Changelog
 This changelog summarizes changes and fixes which are a part of each revision.  For more details on the fixes, refer tracking numbers 
 where provided, and the git commit history.
 
+* 2016/12/? - 1.50
+    * researched the code, and  changed the code of get coordinatekoen to accept only post. - this code changes will show the shape and color on all  servers
+
 * 2016/12/04 - 1.49
     * Changed get_refset_list to use metadata variable instead of property file
     * Changed export date picker to include time as well
