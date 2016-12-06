@@ -1116,7 +1116,7 @@ class KometDashboardController < ApplicationController
         results.results.each do |result|
 
             # TODO - remove the hard-coding of type to 'vhat' when the type flags are implemented in the REST APIs
-            concept_suggestions_data << {label: result.matchText, value: result.referencedConcept.identifiers.uuids.first, type: 'vhat'}
+            concept_suggestions_data << {label: result.referencedConcept.description, value: result.referencedConcept.identifiers.uuids.first, type: 'vhat', matching_text: result.matchText}
         end
 
         render json: concept_suggestions_data
