@@ -21,6 +21,9 @@ var TaxonomySearchModule = (function () {
             return false;
         });
 
+        $("#taxonomy_search_sememe_fields").hide();
+        $("#taxonomy_search_id_fields").hide();
+
         // load any previous assemblage queries into a menu for the user to select from
         UIHelper.processAutoSuggestTags(form);
     }
@@ -53,11 +56,11 @@ var TaxonomySearchModule = (function () {
             rowModelType: 'pagination',
             columnDefs:  [
                 {field: "id", headerName: 'ID', hide: 'true'},
-                // # TODO - does this context menu make sense here - what are we doing with the matching text
-                {field: "matching_terms", headerName: "Matching Terms", cellRenderer: function(params) {
+                {field: "matching_concept", headerName: "Matching Concept", cellRenderer: function(params) {
                     return '<span class="komet-context-menu" data-menu-type="concept" data-menu-uuid="' + params.data.id + '" '
-                        + 'data-menu-state="' + params.data.concept_status + '" data-menu-concept-text="' + params.data.matching_terms + '">' + params.value + '</span>';
+                        + 'data-menu-state="' + params.data.concept_status + '" data-menu-concept-text="' + params.data.matching_concept + '">' + params.value + '</span>';
                 }},
+                {field: "matching_terms", headerName: "Matching Terms"},
                 {field: "concept_status", headerName: "Status"},
                 {field: "match_score", headerName: "Score", suppressSizeToFit: "false", hide: 'true'}
             ]
@@ -83,10 +86,11 @@ var TaxonomySearchModule = (function () {
         // set only the parameters needed based on the search type
         if (search_type.val() === "descriptions"){
             searchParams += "&taxonomy_search_description_type=" + $("#taxonomy_search_description_type").val();
-        }
-        else {
+        } else if (search_type.val() === "sememes"){
             searchParams += "&taxonomy_search_treat_as_string=" + $("#taxonomy_search_treat_as_string").val() + "&taxonomy_search_assemblage_id=" + $("#taxonomy_search_assemblage").val()
                 + "&taxonomy_search_assemblage_display=" + $("#taxonomy_search_assemblage_display").val();
+        } else {
+            searchParams += "&taxonomy_search_id_type=" + $("#taxonomy_search_id_type").val()
         }
 
         var pageSize = Number(page_size.val());
@@ -152,53 +156,22 @@ var TaxonomySearchModule = (function () {
 
 
         if (field.value === "descriptions") {
+
             $("#taxonomy_search_option_description_type_fields").show();
             $("#taxonomy_search_sememe_fields").hide();
-        } else {
+            $("#taxonomy_search_id_fields").hide();
+
+        } else if (field.value === "sememes") {
+
             $("#taxonomy_search_option_description_type_fields").hide();
-            var is_identifier = (field.value === "identifiers");
-            $('#taxonomy_search_treat_as_string').prop('disabled', is_identifier).val(is_identifier ? 'true' : 'false');
             $("#taxonomy_search_sememe_fields").show();
-            $("#taxonomy_search_assemblage_display").val(is_identifier ? 'VUID' : '');
+            $("#taxonomy_search_id_fields").hide();
+        } else {
+
+            $("#taxonomy_search_option_description_type_fields").hide();
+            $("#taxonomy_search_sememe_fields").hide();
+            $("#taxonomy_search_id_fields").show();
         }
-    }
-
-    function onAssemblageSuggestionSelection(event, ui){
-
-        $("#taxonomy_search_assemblage_display").val(ui.item.label);
-        $("#taxonomy_search_assemblage_id").val(ui.item.value);
-        return false;
-    }
-
-    function onAssemblageSuggestionChange(event, ui){
-
-        if (!ui.item){
-            event.target.value = "";
-            $("#taxonomy_search_assemblage_id").val("");
-        }
-    }
-
-    function loadAssemblageRecents() {
-
-        $.get(gon.routes.search_get_assemblage_recents_path, function (data) {
-
-            var options = "";
-
-            $.each(data, function (index, value) {
-
-                // use the html function to escape any html that may have been entered by the user
-                var valueText = $("<li>").text(value.text).html();
-                options += "<li><a href=\"#\" onclick=\"TaxonomySearchModule.useAssemblageRecent('" + value.id + "', '" + valueText + "')\">" + valueText + "</a></li>";
-            });
-
-            $("#taxonomy_search_assemblage_recents").html(options);
-        });
-    }
-
-    function useAssemblageRecent(id, text){
-
-        $("#taxonomy_search_assemblage_display").val(text);
-        $("#taxonomy_search_assemblage_id").val(id);
     }
 
     function exportCSV(){
@@ -209,7 +182,6 @@ var TaxonomySearchModule = (function () {
         initialize: init,
         loadResultGrid: loadResultGrid,
         changeSearchType: changeSearchType,
-        useAssemblageRecent: useAssemblageRecent,
         exportCSV: exportCSV
     };
 

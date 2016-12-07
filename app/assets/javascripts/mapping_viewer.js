@@ -938,11 +938,20 @@ var MappingViewer = function(viewerID, currentSetID, viewerAction) {
             itemID = rowData.item_id;
             rowID = 'komet_mapping_item_row_' + itemID + '_' + this.viewerID;
             idPrefix = "komet_mapping_item_" + itemID;
-            targetConcepID = rowData.target_concept;
-            targetConceptDisplay = rowData.target_concept_display;
+
+            if (rowData.target_concept != null){
+
+                targetConcepID = rowData.target_concept;
+                targetConceptDisplay = rowData.target_concept_display;
+            }
+
+            if (rowData.qualifier_concept != null){
+
+                qualifierConcept = rowData.qualifier_concept;
+                qualifierConceptDisplay = rowData.qualifier_concept_display;
+            }
+
             state = rowData.state;
-            qualifierConcept = rowData.qualifier_concept;
-            qualifierConceptDisplay = rowData.qualifier_concept_display;
             commentID = rowData.comment_id;
             comment = rowData.comment;
             ariaLabel = rowData.source_concept_display;
@@ -972,7 +981,7 @@ var MappingViewer = function(viewerID, currentSetID, viewerAction) {
             + 'value="' + targetConcepID + '" '
             + 'display-value="' + targetConceptDisplay + '" '
             + 'classes="komet-mapping-item-target-concept komet-mapping-show-on-edit">'
-            + '</autosuggest></div>';
+            + '</autosuggest><div class="komet-mapping-show-on-view" aria-label="' + ariaLabel + ' Target Concept">' + targetConceptDisplay + '</div></div>';
 
         rowString += '<div>' + UIHelper.createSelectFieldString(idPrefix + '_state', 'items[' + itemID + '][state]', classes, UIHelper.getPreDefinedOptionsForSelect("active_inactive"), state, ariaLabel + ' Item State')
             + '<div class="komet-mapping-show-on-view" aria-label="' + ariaLabel + ' Item State">' + state + '</div></div>';

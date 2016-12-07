@@ -39,16 +39,26 @@
                 <%= select_tag :taxonomy_search_description_type, options_for_select([['All Types', 'all'], ['Fully Specified Name', 'fsn'], ['Synonym', 'synonym'], ['Definition', 'definition']], 'all') %>
             </div>
 
-        <span id="taxonomy_search_sememe_fields">
+            <div id="taxonomy_search_sememe_fields">
 
-            <div>
-                <%= label_tag :taxonomy_search_treat_as_string, 'Treat Search Text as String:' %>
-                <%= select_tag :taxonomy_search_treat_as_string, options_for_select([['True', 'true'], ['False', 'false']], 'false') %>
+                <div>
+                    <%= label_tag :taxonomy_search_treat_as_string, 'Treat Search Text as String:' %>
+                    <%= select_tag :taxonomy_search_treat_as_string, options_for_select([['True', 'true'], ['False', 'false']], 'false') %>
+                </div>
+
+                <autosuggest id-base="taxonomy_search_assemblage" label="Search Assemblage:"></autosuggest>
+
             </div>
 
-            <autosuggest id-base="taxonomy_search_assemblage" label="Search Assemblage:"></autosuggest>
+            <div id="taxonomy_search_id_fields">
 
-        </span>
+                <div>
+                    <%= label_tag :taxonomy_search_id_type, 'Type of ID:' %>
+                    <%= select_tag :taxonomy_search_id_type, options_for_select([['Any'], ['LOINC', 'LOINC_NUM'], ['RX Norm', 'RXCUI'], ['SNOMED', 'SNOMED_INTEGER_ID'], ['UUID', 'UUID'], ['VHAT', 'VUID']], 'Any') %>
+
+                </div>
+
+            </div>
 
         </div>
 

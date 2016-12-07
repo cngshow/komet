@@ -243,7 +243,6 @@ var PreferenceModule = (function () {
             var allowedStates=$('input[name=status]:checked').val();
             var colormodule=[];
             var colorpath=[];
-          //  var colormoduleshapes=[];
             var params = "";
             var moduleid="";
             var colorrefsets = [];
@@ -255,27 +254,24 @@ var PreferenceModule = (function () {
             });
 
             $('input[name=color_id]').each(function() {
-                var splitvalue = this.id.split('~');
-                if (splitvalue[0] != "color_id")
-                { var getshapecntlID= "colormoduleshape" + splitvalue[1];
-                    colormodule.push({module_name:splitvalue[0],moduleid:splitvalue[1] ,colorid:this.value,colorshape:document.getElementById(getshapecntlID).value}) ;
+                var splimoduletvalue = this.id.split('~');
+                if (splimoduletvalue[0] != "color_id")
+                {
+                    var getshapemodulecntlID= "colormoduleshape" + splimoduletvalue[1];
+                    colormodule.push({module_name:splimoduletvalue[0],moduleid:splimoduletvalue[1] ,colorid:this.value,colorshape:document.getElementById(getshapemodulecntlID).value}) ;
                 }
 
             });
             $('input[name=colorpath]').each(function() {
-                var splitvalue = this.id.split('~');
-                var getshapecntlID= "colorpathshape" + splitvalue[1];
-                colorpath.push({path_name:splitvalue[0],pathid:splitvalue[1] ,colorid:this.value,colorshape:document.getElementById(getshapecntlID).value}) ;
+                var splitpathvalue = this.id.split('~');
+                var getshapepathcntlID= "colorpathshape" + splitpathvalue[1];
+                colorpath.push({path_name:splitpathvalue[0],pathid:splitpathvalue[1] ,colorid:this.value,colorshape:document.getElementById(getshapepathcntlID).value}) ;
             });
 
             $('input[name=colorrefsets]').each(function() {
                 var splitvalue = this.id.split('~');
                 colorrefsets.push({refsets_name:splitvalue[0],refsetsid:splitvalue[1],colorid:this.value,colorshape:splitvalue[2]}) ;
             });
-           // $('input[name=colormodule_shape]').each(function() {
-             //   var splitvalue = this.id.split('~');
-               // colormoduleshapes.push({moduleid:splitvalue[1] ,shapeclass:this.value }) ;
-            //});
 
             dialect_values = dialect_values.substring(0, dialect_values.length -1); // removing comma from end of the string
             description_values = description_values.substring(0, description_values.length -1);// removing comma from end of the string
@@ -292,9 +288,10 @@ var PreferenceModule = (function () {
             };
             $.post( gon.routes.taxonomy_get_coordinatestoken_path, params, function( results ) {
                 console.log(results);
-                dialog.dialog( "close" );
-                location.replace(gon.routes.komet_dashboard_dashboard_path);
+
             });
+            dialog.dialog( "close" );
+            location.replace(gon.routes.komet_dashboard_dashboard_path);
         }
     }
 
@@ -514,7 +511,7 @@ var PreferenceModule = (function () {
 
             var colorpathheadingtd2 = document.createElement("TD");
             colorpathheadingtd2.innerHTML = 'Color';
-            colorpathheadingtd2.setAttribute("style", "width:25%")
+            colorpathheadingtd2.setAttribute("style", "width:30%")
             document.getElementById("colorpathheading").appendChild(colorpathheadingtd2);
 
            var colorpathheadingtd3 = document.createElement("TD");

@@ -21,6 +21,8 @@ require './lib/rails_common/util/controller_helpers'
 require './lib/isaac_rest/id_apis_rest'
 require 'bigdecimal'
 
+include ERB::Util
+
 ##
 # MappingController -
 # handles the concept mapping screens
@@ -51,7 +53,7 @@ class MappingController < ApplicationController
 
             set_hash[:id] = get_next_id
             set_hash[:set_id] = set.identifiers.uuids.first
-            set_hash[:text] = set.name + flags
+            set_hash[:text] = CGI::escapeHTML(set.name) + flags
             set_hash[:state] = set.mappingSetStamp.state.enumName
             # TODO - remove the hard-coding of type to 'vhat' when the type flags are implemented in the REST APIs
             set_hash[:terminology_type] = 'vhat'
@@ -201,7 +203,7 @@ class MappingController < ApplicationController
                 end
 
                 @map_set[:include_fields] << name
-                @map_set[name] = {name: name, data_type: data_type, value: value, label: label, label_display: label_display, removable: removable, display: display, required: false}
+                @map_set[name] = {name: name, data_type: data_type, value: html_escape(value), label: label, label_display: label_display, removable: removable, display: display, required: false}
 
                 if field.extensionValue.class == DATA_TYPES_CLASS::RestDynamicSememeNid || field.extensionValue.class == DATA_TYPES_CLASS::RestDynamicSememeUUID
 
@@ -276,8 +278,8 @@ class MappingController < ApplicationController
             end
 
             @map_set[:set_id] = set.identifiers.uuids.first
-            @map_set[:name] = set.name
-            @map_set[:description] = set.description
+            @map_set[:name] = html_escape(set.name)
+            @map_set[:description] = html_escape(set.description)
             @map_set[:state] = set.mappingSetStamp.state.enumName
             @map_set[:time] = DateTime.strptime((set.mappingSetStamp.time / 1000).to_s, '%s').strftime('%m/%d/%Y')
             @map_set[:author] = get_concept_metadata(set.mappingSetStamp.authorSequence)
@@ -288,7 +290,7 @@ class MappingController < ApplicationController
                 @map_set[:comment] = ''
                 @map_set[:comment_id] = '0'
             else
-                @map_set[:comment] = set.comments.first.comment
+                @map_set[:comment] = html_escape(set.comments.first.comment)
                 @map_set[:comment_id] = set.comments.first.identifiers.uuids.first
             end
 
@@ -335,7 +337,7 @@ class MappingController < ApplicationController
             item_hash[:source_concept_display] = item.sourceDescription
             item_hash[:target_concept] = item.targetConcept
 
-            if item_hash[:target_concept] != nil || item_hash[:target_concept] != ''
+            if item_hash[:target_concept] != nil && item_hash[:target_concept] != ''
                 item_hash[:target_concept] = item_hash[:target_concept].uuids.first
             end
 
@@ -348,6 +350,7 @@ class MappingController < ApplicationController
             end
 
             item_hash[:target_concept_display] = item.targetDescription
+            item_hash[:qualifier_concept_display] = item.qualifierDescription
             item_hash[:state] = item.mappingItemStamp.state.enumName
             item_hash[:time] = DateTime.strptime((item.mappingItemStamp.time / 1000).to_s, '%s').strftime('%m/%d/%Y')
             item_hash[:author] = get_concept_metadata(item.mappingItemStamp.authorSequence)
@@ -358,7 +361,7 @@ class MappingController < ApplicationController
                 item_hash[:comment] = ''
                 item_hash[:comment_id] = '0'
             else
-                item_hash[:comment] = item.comments.first.comment
+                item_hash[:comment] = html_escape(item.comments.first.comment)
                 item_hash[:comment_id] = item.comments.first.identifiers.uuids.first
             end
 
@@ -381,7 +384,7 @@ class MappingController < ApplicationController
                     if field_info[:data_type] == 'LONG' && field_info[:label_display].downcase.include?('date')
                         item_hash[field_info[:name]] = DateTime.strptime(field.data.to_s, '%Q').strftime('%m/%d/%Y %H:%M:%S:%L')
                     else
-                        item_hash[field_info[:name]] = field.data
+                        item_hash[field_info[:name]] = html_escape(field.data)
                     end
                 end
             end
@@ -520,7 +523,7 @@ class MappingController < ApplicationController
 
                 target_concept = nil
 
-                if item['target_concept'] != nil || item['target_concept'] != ''
+                if item['target_concept'] != nil && item['target_concept'] != ''
                     target_concept = item['target_concept']
                 end
 
@@ -552,11 +555,15 @@ class MappingController < ApplicationController
 
                         elsif ['LONG', 'INTEGER'].include?(data_type)
 
-                            if data_type == 'LONG' && field[:label_display].downcase.include?('date')
+                            if data_type == 'LONG' && field[:label_display].downcase.include?('date') && data.include?('/)')
                                 data = DateTime.strptime(data, '%m/%d/%Y %H:%M:%S:%L').strftime('%Q')
                             end
 
-                            data = data.to_i;
+                            if data == nil || data == ''
+                                data = nil
+                            else
+                                data = data.to_i
+                            end
 
                         elsif data_type == 'BOOLEAN'
 
@@ -585,7 +592,7 @@ class MappingController < ApplicationController
                     return_value = MappingApis::get_mapping_api(action: MappingApiActions::ACTION_UPDATE_ITEM, uuid_or_id: item_id, additional_req_params: {editToken: get_edit_token}, body_params: body_params)
 
                     if return_value.is_a? CommonRest::UnexpectedResponse
-                        item_error << 'The map item below was not processed. '
+                        item_error << 'The map item below was not updated. '
                     else
                         successful_writes += 1
                     end
@@ -597,12 +604,12 @@ class MappingController < ApplicationController
                     return_value = MappingApis::get_mapping_api(action: MappingApiActions::ACTION_CREATE_ITEM, additional_req_params: {editToken: get_edit_token}, body_params: body_params)
 
                     if return_value.is_a? CommonRest::UnexpectedResponse
-                        failed_writes[:items] << {id: item_id}
+                        item_error << 'The map item below was not created. '
                     else
-                        successful_writes += 1
-                    end
 
-                    item_id = return_value.uuid
+                        successful_writes += 1
+                        item_id = return_value.uuid
+                    end
                 end
 
                 if !return_value.is_a? CommonRest::UnexpectedResponse
