@@ -288,9 +288,10 @@ var PreferenceModule = (function () {
             };
             $.post( gon.routes.taxonomy_get_coordinatestoken_path, params, function( results ) {
                 console.log(results);
-                dialog.dialog( "close" );
-                location.replace(gon.routes.komet_dashboard_dashboard_path);
+
             });
+            dialog.dialog( "close" );
+            location.replace(gon.routes.komet_dashboard_dashboard_path);
         }
     }
 
