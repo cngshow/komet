@@ -25,6 +25,7 @@ require './lib/rails_common/util/helpers'
 require './app/helpers/application_helper' #build broken w/o this
 
 include KOMETUtilities
+include ERB::Util
 
 module ConceptConcern
     include ApplicationHelper
@@ -113,7 +114,7 @@ module ConceptConcern
         # iterate over the array of Gov::Vha::Isaac::Rest::Api1::Data::Sememe::RestSememeDescriptionVersion returned
         descriptions.each do |description|
 
-            description_info = {text: description.text}
+            description_info = {text: html_escape(description.text)}
 
             # TODO - remove the hard-coding of type to 'vhat' when the type flags are implemented in the REST APIs
             description_info[:terminology_type] = 'vhat'
@@ -462,6 +463,16 @@ module ConceptConcern
                         column_used: false
                     }
 
+                    if field_info[assemblage_id + '_' + column_id][:sememe_definition_id] == $isaac_metadata_auxiliary['EXTENDED_DESCRIPTION_TYPE']['uuids'].first[:uuid]
+
+                        field_info[assemblage_id + '_' + column_id][:column_display] = 'dropdown'
+                        field_info[assemblage_id + '_' + column_id][:dropdown_options] = get_direct_children('fc134ddd-9a15-5540-8fcc-987bf2af9198', true, true)
+                        # elsif used_column_data[:data_type] == 'UUID'
+
+                    else
+                        field_info[assemblage_id + '_' + column_id][:column_display] = 'text'
+                    end
+
                     data_row[:columns][column_id] = {}
                 end
             }
@@ -543,6 +554,16 @@ module ConceptConcern
                             column_used: false
                         }
 
+                        if used_column_data[:sememe_definition_id] == $isaac_metadata_auxiliary['EXTENDED_DESCRIPTION_TYPE']['uuids'].first[:uuid]
+
+                            used_column_data[:column_display] = 'dropdown'
+                            used_column_data[:dropdown_options] = get_direct_children('fc134ddd-9a15-5540-8fcc-987bf2af9198', true, true)
+                       # elsif used_column_data[:data_type] == 'UUID'
+
+                        else
+                            used_column_data[:column_display] = 'text'
+                        end
+
                         used_column_list << used_column_data
                         used_column_hash[assemblage_id + '_' + column_id] = used_column_data
                         list_index = (used_column_list.length) - 1
@@ -562,7 +583,7 @@ module ConceptConcern
                         converted_value = ''
 
                         # if the column is one of a specific set, make sure it has string data and see if it contains IDs. If it does look up their description
-                        if (['column name', 'target'].include?(row_column.columnName)) && (data_column.data.kind_of? String) && find_ids(data_column.data)
+                        if (['column name', 'target'].include?(row_column.columnName) && (data_column.data.kind_of? String) && find_ids(data_column.data)) || (data_column.respond_to?('dataIdentified') && data_column.dataIdentified.type.enumName == 'CONCEPT')
 
                             # the description should be included, but if not look it up
                             if data_column.respond_to?('conceptDescription')
@@ -590,7 +611,7 @@ module ConceptConcern
                         end
 
                         # store the data for the column
-                        column_data = {data: data, display: converted_value}
+                        column_data = {data: html_escape(data), display: converted_value}
                     end
 
                     # add the sememe column id and data to the sememe data row
@@ -701,7 +722,7 @@ module ConceptConcern
                         end
 
                         # store the data for the column
-                        column_data = {data: data, display: converted_value}
+                        column_data = {data: html_escape(data), display: converted_value}
                     end
 
                     # add the sememe column id and data to the sememe data row
@@ -745,17 +766,41 @@ module ConceptConcern
 
     ##
     # get_concept_children - takes a uuid and returns all of its direct children.
-    # @param [String] uuid - The UUID to look up children for
+    # @param [String] concept_id - The UUID to look up children for
+    # @param [Boolean] format_results - Should the results be processed
+    # @param [Boolean] remove_semantic_tag - Should semantic tags be removed (Just 'ISAAC' at the moment)
     # @return [object] an array of children
-    def get_direct_children(uuid)
+    def get_direct_children(concept_id, format_results = false, remove_semantic_tag = false)
 
-        concepts = ConceptRest.get_concept(action: ConceptRestActions::ACTION_VERSION, uuid: uuid, additional_req_params: {includeChildren: 'true'})
+        children = ConceptRest.get_concept(action: ConceptRestActions::ACTION_VERSION, uuid: concept_id, additional_req_params: {includeChildren: 'true'})
 
-        if concepts.is_a? CommonRest::UnexpectedResponse
+        if children.is_a? CommonRest::UnexpectedResponse
             return [];
         end
 
-        return concepts.children
+        children = children.children
+
+        if format_results
+
+            child_array = []
+
+            children.each do |child|
+
+                text = child.conChronology.description
+
+                # TODO - replace with regex that handles any semantic tag: start with /\s\(([^)]+)\)/ (regex101.com)
+                if remove_semantic_tag
+                    text.slice!(' (ISAAC)')
+                end
+
+                child_array << {concept_id: child.conChronology.identifiers.uuids.first, concept_sequence: child.conChronology.identifiers.sequence, text: text}
+            end
+
+            return child_array
+        else
+            return children
+        end
+
     end
 
 end
