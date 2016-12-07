@@ -5,6 +5,9 @@ where provided, and the git commit history.
 
 * 2016/12/07 - 1.52
     * Fixed issue with mapping effective date not parsing dates correctly
+    * Fixed clone concept error with snomed concepts
+    * Taxonomy IDs are removed from cloned concepts
+    * Description VUIDs show in read-only mode on concepts
 
 * 2016/12/06 - 1.51
     * Fixed edit concepts so the extended description type field is a dropdown with text choices
