@@ -21,6 +21,8 @@ require './lib/isaac_rest/taxonomy_rest'
 require './lib/rails_common/util/controller_helpers'
 require './lib/isaac_rest/search_apis_rest'
 
+include ERB::Util
+
 ##
 # KometDashboardController -
 # handles the loading of the taxonomy tree
@@ -324,7 +326,7 @@ class KometDashboardController < ApplicationController
 
                 anchor_attributes[:class] << ' komet-reverse-tree-node'
                 parent_id = get_next_id
-                node_text = 'Parents of ' + raw_node[:text] + raw_node[:badge] + flags
+                node_text = 'Parents of ' + CGI::escapeHTML(raw_node[:text]) + raw_node[:badge] + flags
                 icon_class << '-arrow'
 
                 parent_nodes = populate_tree(raw_node[:id], true, true, 100, true)
@@ -343,7 +345,7 @@ class KometDashboardController < ApplicationController
             # if the node has no children (or no parents if doing a parent search) identify it as a leaf, otherwise it is a branch
             show_expander = false unless raw_node[has_relation]
 
-            node_text = raw_node[:text] + raw_node[:badge] + flags
+            node_text = CGI::escapeHTML(raw_node[:text]) + raw_node[:badge] + flags
 
             node = {id: get_next_id, concept_id: raw_node[:id], text: node_text, parent_reversed: parent_reversed, parent_search: parent_search, stamp_state: raw_node[:state], icon: icon_class, a_attr: anchor_attributes}
 

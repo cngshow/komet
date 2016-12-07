@@ -53,7 +53,7 @@ class MappingController < ApplicationController
 
             set_hash[:id] = get_next_id
             set_hash[:set_id] = set.identifiers.uuids.first
-            set_hash[:text] = set.name + flags
+            set_hash[:text] = CGI::escapeHTML(set.name) + flags
             set_hash[:state] = set.mappingSetStamp.state.enumName
             # TODO - remove the hard-coding of type to 'vhat' when the type flags are implemented in the REST APIs
             set_hash[:terminology_type] = 'vhat'
