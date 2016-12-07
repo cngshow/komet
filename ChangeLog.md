@@ -3,8 +3,15 @@ Komet Changelog
 This changelog summarizes changes and fixes which are a part of each revision.  For more details on the fixes, refer tracking numbers 
 where provided, and the git commit history.
 
+* 2016/12/07 - 1.51
+    * Fixed edit concepts so the extended description type field is a dropdown with text choices
+    * Edit concepts extended description type field dropdown works with new properties.
+    * Added HTML escaping to edit concepts and mapping, so that HTML characters don't break the GUI or allow XSS attacks.
+    * Fixed HTML characters in the trees
+    * Fixed little bit of inconsistent behaviour of custom shape and color functionality. 
+
 * 2016/12/06 - 1.50
-    * researched the code, and  changed the code of get coordinatekoen to accept only post. - this code changes will show the shape and color on all  servers
+    * researched the code, and  changed the code of get coordinate token to accept only post. - this code changes will show the shape and color on all  servers
         defects 421416, 421398
     * Fixed map items so that items with blank numeric fields or dates do not get saved with '0' or bad dates.
     * Fixed Qualifier field on map item read only view so it does not show 'Undefined'.

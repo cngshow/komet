@@ -21,6 +21,8 @@ require './lib/rails_common/util/controller_helpers'
 require './lib/isaac_rest/id_apis_rest'
 require 'bigdecimal'
 
+include ERB::Util
+
 ##
 # MappingController -
 # handles the concept mapping screens
@@ -51,7 +53,7 @@ class MappingController < ApplicationController
 
             set_hash[:id] = get_next_id
             set_hash[:set_id] = set.identifiers.uuids.first
-            set_hash[:text] = set.name + flags
+            set_hash[:text] = CGI::escapeHTML(set.name) + flags
             set_hash[:state] = set.mappingSetStamp.state.enumName
             # TODO - remove the hard-coding of type to 'vhat' when the type flags are implemented in the REST APIs
             set_hash[:terminology_type] = 'vhat'
@@ -201,7 +203,7 @@ class MappingController < ApplicationController
                 end
 
                 @map_set[:include_fields] << name
-                @map_set[name] = {name: name, data_type: data_type, value: value, label: label, label_display: label_display, removable: removable, display: display, required: false}
+                @map_set[name] = {name: name, data_type: data_type, value: html_escape(value), label: label, label_display: label_display, removable: removable, display: display, required: false}
 
                 if field.extensionValue.class == DATA_TYPES_CLASS::RestDynamicSememeNid || field.extensionValue.class == DATA_TYPES_CLASS::RestDynamicSememeUUID
 
@@ -276,8 +278,8 @@ class MappingController < ApplicationController
             end
 
             @map_set[:set_id] = set.identifiers.uuids.first
-            @map_set[:name] = set.name
-            @map_set[:description] = set.description
+            @map_set[:name] = html_escape(set.name)
+            @map_set[:description] = html_escape(set.description)
             @map_set[:state] = set.mappingSetStamp.state.enumName
             @map_set[:time] = DateTime.strptime((set.mappingSetStamp.time / 1000).to_s, '%s').strftime('%m/%d/%Y')
             @map_set[:author] = get_concept_metadata(set.mappingSetStamp.authorSequence)
@@ -288,7 +290,7 @@ class MappingController < ApplicationController
                 @map_set[:comment] = ''
                 @map_set[:comment_id] = '0'
             else
-                @map_set[:comment] = set.comments.first.comment
+                @map_set[:comment] = html_escape(set.comments.first.comment)
                 @map_set[:comment_id] = set.comments.first.identifiers.uuids.first
             end
 
@@ -359,7 +361,7 @@ class MappingController < ApplicationController
                 item_hash[:comment] = ''
                 item_hash[:comment_id] = '0'
             else
-                item_hash[:comment] = item.comments.first.comment
+                item_hash[:comment] = html_escape(item.comments.first.comment)
                 item_hash[:comment_id] = item.comments.first.identifiers.uuids.first
             end
 
@@ -382,7 +384,7 @@ class MappingController < ApplicationController
                     if field_info[:data_type] == 'LONG' && field_info[:label_display].downcase.include?('date')
                         item_hash[field_info[:name]] = DateTime.strptime(field.data.to_s, '%Q').strftime('%m/%d/%Y %H:%M:%S:%L')
                     else
-                        item_hash[field_info[:name]] = field.data
+                        item_hash[field_info[:name]] = html_escape(field.data)
                     end
                 end
             end

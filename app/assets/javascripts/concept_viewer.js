@@ -633,7 +633,7 @@ var ConceptViewer = function(viewerID, currentConceptID, viewerAction) {
 
         }.bind(this));
 
-        rowString +=  '<div>' + this.createSelectField("properties", rowData.sememe_instance_id, null, null, "state", this.selectFieldOptions.state, rowData.state, "Property state") + '</div></div>';
+        rowString +=  '<div>' + this.createSelectField(rowData.sememe_instance_id + "_state_" + this.viewerID, "properties[" + rowData.sememe_instance_id + "][state]", this.selectFieldOptions.state, rowData.state, "Property state") + '</div></div>';
 
         if (rowData.new) {
             rowString += '<div class="komet-concept-edit-row-tools"><button type="button" class="komet-link-button"'
@@ -677,15 +677,16 @@ var ConceptViewer = function(viewerID, currentConceptID, viewerAction) {
         }
 
         var rowID = "komet_concept_description_panel_" + descriptionID + "_" + this.viewerID;
+        var namePrefix = "descriptions[" + descriptionID + "]";
 
         rowString += '<div id="' + rowID + '" class="komet-concept-section-panel komet-concept-description-panel">'
             + '<div class="komet-concept-section-panel-details">'
             + '<div class="komet-concept-edit-row komet-concept-edit-description-row komet-changeable">'
-            + '<div>' + this.createSelectField("descriptions", descriptionID, null, null, "description_type", this.selectFieldOptions.descriptionType, type, "Description Type") + '</div>'
-            + '<div><input type="text" id="komet_concept_edit_description_type_' + descriptionID + '_' + this.viewerID + '" name="descriptions[' + descriptionID + '][text]" value="' + text + '" class="form-control komet_concept_edit_description_type" aria-label="Description Type"></div>'
-            + '<div>' + this.createSelectField("descriptions", descriptionID, null, null, "description_language", this.selectFieldOptions.language, language, "Description Language") + '</div>'
-            + '<div>' + this.createSelectField("descriptions", descriptionID, null, null, "description_case_significance", this.selectFieldOptions.caseSignificance, caseSignificance, "Description Case Significance") + '</div>'
-            + '<div>' + this.createSelectField("descriptions", descriptionID, null, null, "description_state", this.selectFieldOptions.state, state, "Description State") + '</div>';
+            + '<div>' + this.createSelectField(descriptionID + "_description_type_" + this.viewerID, namePrefix + "[description_type]", this.selectFieldOptions.descriptionType, type, "Description Type") + '</div>'
+            + '<div><input type="text" id="komet_concept_edit_description_type_' + descriptionID + '_' + this.viewerID + '" name="' + namePrefix + '[text]" value="' + text + '" class="form-control komet_concept_edit_description_type" aria-label="Description Type"></div>'
+            + '<div>' + this.createSelectField(descriptionID + "_description_language_" + this.viewerID, namePrefix + "[description_language]", this.selectFieldOptions.language, language, "Description Language") + '</div>'
+            + '<div>' + this.createSelectField(descriptionID + "_description_case_significance_" + this.viewerID, namePrefix + "[description_case_significance]", this.selectFieldOptions.caseSignificance, caseSignificance, "Description Case Significance") + '</div>'
+            + '<div>' + this.createSelectField(descriptionID + "_description_state_" + this.viewerID, namePrefix + "[description_state]", this.selectFieldOptions.state, state, "Description State") + '</div>';
 
         if (isNew){
             rowString += '<div class="komet-concept-edit-row-tools">'
@@ -732,10 +733,11 @@ var ConceptViewer = function(viewerID, currentConceptID, viewerAction) {
 
         var propertyID = descriptionID + '_' + rowData.sememe_instance_id;
         var rowID = 'komet_concept_edit_description_properties_row_' + propertyID + '_' + this.viewerID;
+        var namePrefix = "descriptions[" + descriptionID + "][properties][" + rowData.sememe_instance_id + "]";
 
         var rowString = '<div id="' + rowID + '" class="komet-concept-edit-row komet-concept-edit-description-properties-row komet-changeable"><div>'
-            + '<input type="hidden" name="descriptions[' + descriptionID + '][properties][' + rowData.sememe_instance_id + '][sememe]" value="' + rowData.sememe_definition_id + '"> '
-            + '<input type="hidden" name="descriptions[' + descriptionID + '][properties][' + rowData.sememe_instance_id + '][sememe_name]" value="' + rowData.sememe_name + '"> '
+            + '<input type="hidden" name="' + namePrefix + '[sememe]" value="' + rowData.sememe_definition_id + '"> '
+            + '<input type="hidden" name="' + namePrefix + '[sememe_name]" value="' + rowData.sememe_name + '"> '
             + '<span class="form-field komet-concept-edit-description-properties-sememe"><b>' + rowData.sememe_name + '</b></span></div>'
             + '<div class="komet-containing-block">';
 
@@ -751,15 +753,24 @@ var ConceptViewer = function(viewerID, currentConceptID, viewerAction) {
                 data = field.data;
             }
 
-            rowString += '<input type="hidden" name="descriptions[' + descriptionID + '][properties][' + rowData.sememe_instance_id + '][' + fieldID + '][column_number]" value="' + fieldInfo[fieldInfoKey].column_number + '">'
-                + '<input type="hidden" name="descriptions[' + descriptionID + '][properties][' + rowData.sememe_instance_id + '][' + fieldID + '][data_type_class]" value="' + fieldInfo[fieldInfoKey].data_type_class + '">'
-                + '<div class="input-group"><label for="komet_concept_edit_description_properties_' + viewerFieldID + '" class="input-group-addon">' + fieldLabel + '</label>'
-                + '<input type="text" id="komet_concept_edit_description_properties_' + viewerFieldID + '" name="descriptions[' + descriptionID + '][properties][' + rowData.sememe_instance_id + '][' + fieldID + '][value]" value="' + data + '" class="form-control komet_concept_edit_description_properties_field">'
-                + '</div>';
+            rowString += '<input type="hidden" name="' + namePrefix + '[' + fieldID + '][column_number]" value="' + fieldInfo[fieldInfoKey].column_number + '">'
+                + '<input type="hidden" name="' + namePrefix + '[' + fieldID + '][data_type_class]" value="' + fieldInfo[fieldInfoKey].data_type_class + '">'
+                + '<div class="input-group"><label for="komet_concept_edit_description_properties_' + viewerFieldID + '" class="input-group-addon">' + fieldLabel + '</label>';
+
+            if (fieldInfo[fieldInfoKey].column_display == 'text'){
+
+                rowString += '<input type="text" id="komet_concept_edit_description_properties_' + viewerFieldID + '" name="' + namePrefix + '[' + fieldID + '][value]" value="' + data + '" class="form-control komet_concept_edit_description_properties_field">'
+                    + '</div>';
+            } else {
+
+                var dropdownOptions = this.createSelectFieldOptions(fieldInfo[fieldInfoKey].dropdown_options);
+                rowString += this.createSelectField("description_properties_" + viewerFieldID, namePrefix + "[" + fieldID + "][value]", dropdownOptions, data, fieldLabel, "komet_concept_edit_description_properties_field")
+                    + '</div>';
+            }
 
         }.bind(this));
 
-        rowString += '<div>' + this.createSelectField("descriptions", descriptionID, "properties", rowData.sememe_instance_id, "state", this.selectFieldOptions.state, rowData.state, "state") + '</div>'
+        rowString += '<div>' + this.createSelectField(propertyID + '_state_' + this.viewerID, namePrefix + "[state]", this.selectFieldOptions.state, rowData.state, "state") + '</div>'
             + '</div>';
 
         if (rowData.new){
@@ -782,6 +793,8 @@ var ConceptViewer = function(viewerID, currentConceptID, viewerAction) {
         var state = "";
         var isNew = false;
         var rowString = null;
+        var namePrefix = "";
+        var idPrefix = "";
 
         if (rowData != null){
 
@@ -789,10 +802,12 @@ var ConceptViewer = function(viewerID, currentConceptID, viewerAction) {
             dialect = rowData.dialect_definition_id
             acceptability = rowData.acceptability_id;
             state = rowData.state;
+            namePrefix = "descriptions[" + descriptionID + "][dialects][" + dialectID + "]";
+            idPrefix = descriptionID + "_" + dialectID;
 
             rowString = '<div class="komet-concept-edit-row komet-concept-edit-description-dialect-row">'
-                + '<input type="hidden" name="descriptions[' + descriptionID + '][dialects][' + dialectID + '][dialect]" value="' + dialect + '">'
-                + '<input type="hidden" name="descriptions[' + descriptionID + '][dialects][' + dialectID + '][acceptability]" value="' + acceptability + '">'
+                + '<input type="hidden" name="' + namePrefix + '[dialect]" value="' + dialect + '">'
+                + '<input type="hidden" name="' + namePrefix + '[acceptability]" value="' + acceptability + '">'
                 + '<div>' + rowData.text + '</div>'
                 + '<div>' + rowData.acceptability_text + '</div>';
         } else {
@@ -801,10 +816,12 @@ var ConceptViewer = function(viewerID, currentConceptID, viewerAction) {
             dialectID = window.performance.now().toString().replace(".", "");
             var viewerDialectID = dialectID + '_' + this.viewerID;
             var rowID = 'komet_concept_edit_description_dialect_row_' + viewerDialectID;
+            idPrefix = descriptionID + "_" + dialectID;
+            namePrefix = "descriptions[" + descriptionID + "][dialects][" + dialectID + "]";
 
             rowString = '<div id="' + rowID + '" class="komet-concept-edit-row komet-concept-edit-description-dialect-row">'
-                + '<div>' + this.createSelectField("descriptions", descriptionID, "dialects", dialectID, "dialect", this.selectFieldOptions.dialect, dialect, "dialect", "Dialect State") + '</div>'
-                + '<div>' + this.createSelectField("descriptions", descriptionID, "dialects", dialectID, "acceptability", this.selectFieldOptions.acceptability, acceptability, "acceptability", "Dialect Acceptability") + '</div>';
+                + '<div>' + this.createSelectField(idPrefix + "_dialect_" + this.viewerID, namePrefix + "[dialect]", this.selectFieldOptions.dialect, dialect, "dialect", "Dialect State") + '</div>'
+                + '<div>' + this.createSelectField(idPrefix + "_acceptability_" + this.viewerID, namePrefix + "[acceptability]", this.selectFieldOptions.acceptability, acceptability, "acceptability", "Dialect Acceptability") + '</div>';
         }
 
         if (isNew){
@@ -813,7 +830,7 @@ var ConceptViewer = function(viewerID, currentConceptID, viewerAction) {
                 + '<div class="glyphicon glyphicon-remove"></div>'
                 + '</button></div>';
         } else {
-            rowString += '<div>' + this.createSelectField("descriptions", descriptionID, "dialects", dialectID, "state", this.selectFieldOptions.state, state, "Dialect State") + '</div>'
+            rowString += '<div>' + this.createSelectField(idPrefix + "_state_" + this.viewerID, namePrefix + "[state]", this.selectFieldOptions.state, state, "Dialect State") + '</div>'
         }
 
         rowString += '</div>';
@@ -851,7 +868,7 @@ var ConceptViewer = function(viewerID, currentConceptID, viewerAction) {
 
             isNew = true;
             associationID = window.performance.now().toString().replace(".", "");
-            typeDisplay = this.createSelectField("associations", associationID, null, null, "association_type", this.selectFieldOptions.associationType, "", "Association type");
+            typeDisplay = this.createSelectField(associationID + "_association_type_" + this.viewerID, "associations[" + associationID + "][association_type]", this.selectFieldOptions.associationType, "", "Association type");
 
         }
 
@@ -868,7 +885,7 @@ var ConceptViewer = function(viewerID, currentConceptID, viewerAction) {
             + 'type-value="' + targetTaxonomyType + '" '
             + 'classes="komet-concept-edit-association-value">'
             + '</autosuggest></div>'
-            + '<div>' + this.createSelectField("associations", associationID, null, null, "association_state", this.selectFieldOptions.state, state, "Association State") + '</div>';
+            + '<div>' + this.createSelectField(associationID + "_association_state_" + this.viewerID, "associations[" + associationID + "][association_state]", this.selectFieldOptions.state, state, "Association State") + '</div>';
 
         if (isNew){
             rowString += '<div class="komet-concept-edit-row-tools">'
@@ -1056,25 +1073,17 @@ var ConceptViewer = function(viewerID, currentConceptID, viewerAction) {
         UIHelper.generateConfirmationDialog("Delete " + type + "?", "Are you sure you want to remove this " + type + "?", confirmCallback, "Yes", closeElement);
     };
 
-    ConceptViewer.prototype.createSelectField = function (type, typeID, subtype, subtypeID, fieldName, options, selectedItem, label) {
+    ConceptViewer.prototype.createSelectField = function (idPrefix, namePrefix, options, selectedItem, label, classes) {
 
-        var idSubtypeID = "";
-        var nameSubtype = "";
-        var nameSubtypeID = "";
+        var id = "komet_concept_edit_" + idPrefix;
 
-        if (subtype != undefined || subtype != null){
-
-            idSubtypeID = subtypeID + "_";
-            nameSubtype = "[" + subtype + "]";
-            nameSubtypeID = "[" + subtypeID + "]";
+        if (classes == undefined || classes == null){
+            classes = "";
         }
 
-        var id = "komet_concept_edit_" + typeID + "_" + idSubtypeID + fieldName + '_' + this.viewerID;
-        var name = type + '[' + typeID + ']' + nameSubtype + nameSubtypeID + '[' + fieldName + ']';
-
         var fieldString = '<select id="' + id + '"'
-            + ' name="' + name + '"'
-            + ' class="form-control komet_concept_edit_' + fieldName + '"'
+            + ' name="' + namePrefix + '"'
+            + ' class="form-control ' + classes + '"'
             + ((label) ? (' aria-label="' + label) + '"' : '')
             + '>';
 
@@ -1096,36 +1105,36 @@ var ConceptViewer = function(viewerID, currentConceptID, viewerAction) {
 
     ConceptViewer.prototype.loadSelectFieldOptions = function (selectOptions) {
 
-        function createOptions(options){
-
-            var optionArray = [];
-
-            for (var i = 0; i < options.length; i++){
-                optionArray.push({value: options[i].concept_id, label: options[i].text});
-            }
-
-            return optionArray;
-        }
-
         this.selectFieldOptions = {};
 
-        this.selectFieldOptions.descriptionType = createOptions(selectOptions.descriptionType);
+        this.selectFieldOptions.descriptionType = this.createSelectFieldOptions(selectOptions.descriptionType);
 
-        this.selectFieldOptions.language = createOptions(selectOptions.language);
+        this.selectFieldOptions.language = this.createSelectFieldOptions(selectOptions.language);
 
-        this.selectFieldOptions.dialect = createOptions(selectOptions.dialect);
+        this.selectFieldOptions.dialect = this.createSelectFieldOptions(selectOptions.dialect);
 
-        this.selectFieldOptions.caseSignificance = createOptions(selectOptions.case);
+        this.selectFieldOptions.caseSignificance = this.createSelectFieldOptions(selectOptions.case);
 
-        this.selectFieldOptions.acceptability = createOptions(selectOptions.acceptability);
+        this.selectFieldOptions.acceptability = this.createSelectFieldOptions(selectOptions.acceptability);
 
-        this.selectFieldOptions.associationType = createOptions(selectOptions.associationType);
+        this.selectFieldOptions.associationType = this.createSelectFieldOptions(selectOptions.associationType);
 
         this.selectFieldOptions.state = [
             {value: "Active", label: "Active"},
             {value: "Inactive", label: "Inactive"}
         ];
     };
+
+    ConceptViewer.prototype.createSelectFieldOptions = function (options) {
+
+        var optionArray = [];
+
+        for (var i = 0; i < options.length; i++){
+            optionArray.push({value: options[i].concept_id, label: options[i].text});
+        }
+
+        return optionArray;
+    }
 
     ConceptViewer.prototype.validateEditForm = function () {
 
