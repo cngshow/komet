@@ -496,27 +496,12 @@ class KometDashboardController < ApplicationController
             concept_id = params[:uuid]
         end
 
-        children = get_direct_children(concept_id)
+        children = get_direct_children(concept_id, !return_json, remove_semantic_tag)
 
         if return_json
             render json: children
         else
-
-            child_array = []
-
-            children.each do |child|
-
-                text = child.conChronology.description
-
-                # TODO - replace with regex that handles any semantic tag: start with /\s\(([^)]+)\)/ (regex101.com)
-                if remove_semantic_tag
-                    text.slice!(' (ISAAC)')
-                end
-
-                child_array << {concept_id: child.conChronology.identifiers.uuids.first, concept_sequence: child.conChronology.identifiers.sequence, text: text}
-            end
-
-            return child_array
+            return children
         end
 
     end

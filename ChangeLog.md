@@ -3,8 +3,8 @@ Komet Changelog
 This changelog summarizes changes and fixes which are a part of each revision.  For more details on the fixes, refer tracking numbers 
 where provided, and the git commit history.
 
-* 2016/12/?? - 1.51  PENDING
-    *
+* 2016/12/06 - 1.51  PENDING
+    * Fixed edit concepts so the extended description type field is a dropdown with text choices
 
 * 2016/12/06 - 1.50
     * researched the code, and  changed the code of get coordinatekoen to accept only post. - this code changes will show the shape and color on all  servers
