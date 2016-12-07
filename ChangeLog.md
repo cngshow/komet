@@ -3,6 +3,9 @@ Komet Changelog
 This changelog summarizes changes and fixes which are a part of each revision.  For more details on the fixes, refer tracking numbers 
 where provided, and the git commit history.
 
+* 2016/12/?? - 1.52 - PENDING
+    *
+
 * 2016/12/07 - 1.51
     * Fixed edit concepts so the extended description type field is a dropdown with text choices
     * Edit concepts extended description type field dropdown works with new properties.
