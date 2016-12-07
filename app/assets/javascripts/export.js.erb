@@ -79,13 +79,13 @@ var ExportModule = (function () {
     // select the parameters to pass to the rest call
     var params = {};
     var sd = gon.vhat_export_params.start_date;
-    params[sd] = start.startOf('day').format('x');
+    params[sd] = start.format('x');
 
     // get the end date
     var _endDate = $("#end_date");
     var end_dt = _endDate.data("DateTimePicker").date();
     var ed = gon.vhat_export_params.end_date;
-    params[ed] = (end_dt == null) ? gon.vhat_export_params.max_end_date : end_dt.endOf('day').format('x');
+    params[ed] = (end_dt == null) ? gon.vhat_export_params.max_end_date : end_dt.format('x');
 
     // issue the file download
     var url = gon.export_url + gon.vhat_export_params.path + '?' + jQuery.param(params);
