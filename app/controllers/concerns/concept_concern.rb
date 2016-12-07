@@ -25,6 +25,7 @@ require './lib/rails_common/util/helpers'
 require './app/helpers/application_helper' #build broken w/o this
 
 include KOMETUtilities
+include ERB::Util
 
 module ConceptConcern
     include ApplicationHelper
@@ -113,7 +114,7 @@ module ConceptConcern
         # iterate over the array of Gov::Vha::Isaac::Rest::Api1::Data::Sememe::RestSememeDescriptionVersion returned
         descriptions.each do |description|
 
-            description_info = {text: description.text}
+            description_info = {text: html_escape(description.text)}
 
             # TODO - remove the hard-coding of type to 'vhat' when the type flags are implemented in the REST APIs
             description_info[:terminology_type] = 'vhat'
@@ -462,6 +463,16 @@ module ConceptConcern
                         column_used: false
                     }
 
+                    if field_info[assemblage_id + '_' + column_id][:sememe_definition_id] == $isaac_metadata_auxiliary['EXTENDED_DESCRIPTION_TYPE']['uuids'].first[:uuid]
+
+                        field_info[assemblage_id + '_' + column_id][:column_display] = 'dropdown'
+                        field_info[assemblage_id + '_' + column_id][:dropdown_options] = get_direct_children('fc134ddd-9a15-5540-8fcc-987bf2af9198', true, true)
+                        # elsif used_column_data[:data_type] == 'UUID'
+
+                    else
+                        field_info[assemblage_id + '_' + column_id][:column_display] = 'text'
+                    end
+
                     data_row[:columns][column_id] = {}
                 end
             }
@@ -600,7 +611,7 @@ module ConceptConcern
                         end
 
                         # store the data for the column
-                        column_data = {data: data, display: converted_value}
+                        column_data = {data: html_escape(data), display: converted_value}
                     end
 
                     # add the sememe column id and data to the sememe data row
@@ -711,7 +722,7 @@ module ConceptConcern
                         end
 
                         # store the data for the column
-                        column_data = {data: data, display: converted_value}
+                        column_data = {data: html_escape(data), display: converted_value}
                     end
 
                     # add the sememe column id and data to the sememe data row
