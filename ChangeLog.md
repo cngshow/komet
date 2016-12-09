@@ -3,13 +3,13 @@ Komet Changelog
 This changelog summarizes changes and fixes which are a part of each revision.  For more details on the fixes, refer tracking numbers 
 where provided, and the git commit history.
 
-* 2016/12/07 - 1.52
+* 2016/12/?? - 1.52 PENDING
     * Fixed issue with mapping effective date not parsing dates correctly
     * Fixed clone concept error with snomed concepts
     * Taxonomy IDs are removed from cloned concepts
     * Description VUIDs show in read-only mode on concepts
 
-* 2016/12/06 - 1.51
+* 2016/12/07 - 1.51
     * Fixed edit concepts so the extended description type field is a dropdown with text choices
     * Edit concepts extended description type field dropdown works with new properties.
     * Added HTML escaping to edit concepts and mapping, so that HTML characters don't break the GUI or allow XSS attacks.
