@@ -51,14 +51,14 @@ module PrismeConfigConcern
     context = $CONTEXT
     context = '/' + context unless context[0].eql? '/'
     proxy_location = get_proxy_location(host: host, port: port)
-    $log.trace("proxy location is #{proxy_location}")
+    $log.info("proxy location is #{proxy_location}")
     path_proxified = (URI url_string).path.gsub(context, proxy_location)
-    $log.trace("path_proxified is #{path_proxified}, context is #{context}")
+    $log.info("path_proxified is #{path_proxified}, context is #{context}")
     path_proxified = '/' + path_proxified unless path_proxified[0].eql? '/'
-    $log.trace("path_proxified is now #{path_proxified}, context is #{context}")
+    $log.info("path_proxified is now #{path_proxified}, context is #{context}")
     uri = URI url_string
     uri.path = path_proxified
-    $log.trace ("path is #{uri}")
+    $log.info ("path is #{uri}")
     uri.to_s
   end
 
