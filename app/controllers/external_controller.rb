@@ -38,7 +38,7 @@ class ExternalController < ApplicationController
 
       # redirect to komet dashboard if the user has roles
       if user_session(UserSession::ROLES)
-        redirect_to komet_dashboard_dashboard_url
+        redirect_to_proxy_sensitive komet_dashboard_dashboard_url
         return
       end
     end
@@ -47,11 +47,11 @@ class ExternalController < ApplicationController
 
   def authenticate
     if read_only?
-      redirect_to komet_dashboard_dashboard_url
+      redirect_to_proxy_sensitive komet_dashboard_dashboard_url
     else
       #not authenticated - redirect to the naughty page
       flash[:error] = 'Invalid username or password.'
-      redirect_to root_url
+      redirect_to_proxy_sensitive root_url
     end
   end
 

@@ -159,7 +159,7 @@ class WorkflowController < ApplicationController
     $log.debug("Advanced: #{result}")
     clear_user_workflow  unless failure
     flash.alert = result.body if failure
-    redirect_to komet_dashboard_dashboard_path
+    redirect_to_proxy_sensitive komet_dashboard_dashboard_path
   end
 
   private

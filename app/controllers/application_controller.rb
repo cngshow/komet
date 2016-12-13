@@ -265,4 +265,12 @@ class ApplicationController < ActionController::Base
     Thread.current.thread_variable_set(:komet_user_session, nil)
   end
 
+  def redirect_to_proxy_sensitive(url_string)
+    if ssoi?
+      redirect_to PrismeConfigConcern.recontext(url_string: url_string, controller: self)
+    else
+      redirect_to url_string
+    end
+  end
+
 end
