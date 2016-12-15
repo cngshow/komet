@@ -144,7 +144,7 @@ class ApplicationController < ActionController::Base
         rescue => ex
           $log.error("KOMET could not communicate with PRISME at URL #{roles_url}")
           $log.error("Error message is #{ex.message}")
-          @prisme_communication_error = "KOMET could not communicate with PRISME, #{ex}"
+          @prisme_communication_error = "KOMET could not communicate with PRISME, #{ex}"#test
         end
       end
 
