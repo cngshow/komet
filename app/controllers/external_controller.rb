@@ -52,7 +52,7 @@ class ExternalController < ApplicationController
       #not authenticated - redirect to the naughty page
       flash[:error] = 'Invalid username or password.'
       flash[:error] = "\n#{@prisme_communication_error}" if @prisme_communication_error
-      redirect_to_proxy_sensitive root_url
+      redirect_to root_url
     end
   end
 
