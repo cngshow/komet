@@ -584,7 +584,10 @@ module ConceptConcern
                     taxonomy_ids = ['803af596-aea8-5184-b8e1-45f801585d17']
 
                     ['LOINC_NUM', 'RXCUI', 'SNOMED_INTEGER_ID', 'VUID'].each{ |taxonomy|
-                        taxonomy_ids << $isaac_metadata_auxiliary[taxonomy]['uuids'].first[:uuid]
+
+                        if $isaac_metadata_auxiliary[taxonomy]
+                            taxonomy_ids << $isaac_metadata_auxiliary[taxonomy]['uuids'].first[:uuid]
+                        end
                     }
 
                     # if the column data is not empty process the data
