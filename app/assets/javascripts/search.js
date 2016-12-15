@@ -2,6 +2,8 @@ var TaxonomySearchModule = (function () {
 
     var newSearch = true;
     var gridOptions;
+    var gridOptions_Exprot;
+    var totalNoRecords;
 
     function init() {
 
@@ -16,8 +18,9 @@ var TaxonomySearchModule = (function () {
         var form = $("#komet_taxonomy_search_form");
 
         form.submit(function () {
-
+            TaxonomySearchModule.loadExportGrid();
             TaxonomySearchModule.loadResultGrid();
+
             return false;
         });
 
@@ -66,7 +69,7 @@ var TaxonomySearchModule = (function () {
             ]
         };
 
-        new agGrid.Grid($("#taxonomy_search_results").get(0), gridOptions);
+       new agGrid.Grid($("#taxonomy_search_results").get(0), gridOptions);
 
         getResultData();
 
@@ -174,15 +177,78 @@ var TaxonomySearchModule = (function () {
         }
     }
 
+    function loadExportGrid() {
+
+        // If a grid already exists destroy it or it will create a second grid
+        if (gridOptions_Exprot){
+            gridOptions_Exprot.api.destroy();
+        }
+        gridOptions_Exprot = {
+             columnDefs:  [
+                {field: "id", headerName: 'ID', hide: 'true'},
+                {field: "matching_concept", headerName: "Matching Concept", cellRenderer: function(params) {
+                    return '<span class="komet-context-menu" data-menu-type="concept" data-menu-uuid="' + params.data.id + '" '
+                        + 'data-menu-state="' + params.data.concept_status + '" data-menu-concept-text="' + params.data.matching_concept + '">' + params.value + '</span>';
+                }},
+                {field: "matching_terms", headerName: "Matching Terms00"},
+                {field: "concept_status", headerName: "Status"},
+                {field: "match_score", headerName: "Score", suppressSizeToFit: "false", hide: 'true'}
+            ]
+        };
+
+        new agGrid.Grid($("#taxonomy_search_exportresults").get(0), gridOptions_Exprot);
+        $("#taxonomy_search_exportresults").hide();
+        // load the parameters from the form to add to the query string sent in the ajax data call
+        newSearch = true;
+        var search_type = $("#taxonomy_search_type");
+        var page_size =10000000;
+
+        var searchParams = "?taxonomy_search_text=" + $("#taxonomy_search_text").val() + "&taxonomy_search_page_size=" + page_size
+            + "&taxonomy_search_type=" + search_type.val() + "&new_search=" + newSearch;
+
+        // set only the parameters needed based on the search type
+        if (search_type.val() === "descriptions"){
+            searchParams += "&taxonomy_search_description_type=" + $("#taxonomy_search_description_type").val();
+        } else if (search_type.val() === "sememes"){
+            searchParams += "&taxonomy_search_treat_as_string=" + $("#taxonomy_search_treat_as_string").val() + "&taxonomy_search_assemblage_id=" + $("#taxonomy_search_assemblage").val()
+                + "&taxonomy_search_assemblage_display=" + $("#taxonomy_search_assemblage_display").val();
+        } else {
+            searchParams += "&taxonomy_search_id_type=" + $("#taxonomy_search_id_type").val()
+        }
+
+        var pageSize = Number(page_size);
+
+        // set the grid datasource options, including processing the data rows
+        var dataSource2 = {
+
+            pageSize: pageSize,
+            getRows: function (params) {
+
+                var pageNumber = 1;
+
+                searchParams += "&taxonomy_search_page_number=" + pageNumber;
+                console.log(searchParams);
+                // make an ajax call to get the data
+                $.get( gon.routes.search_get_search_results_path + searchParams, function( search_results ) {
+                    params.successCallback(search_results.data, search_results.total_number);
+                });
+            }
+        };
+
+        gridOptions_Exprot.api.setDatasource(dataSource2);
+
+    }
     function exportCSV(){
-        gridOptions.api.exportDataAsCsv({allColumns: true});
+       // TaxonomySearchModule.loadExportGrid();
+        gridOptions_Exprot.api.exportDataAsCsv({allColumns: true});
     }
 
     return {
         initialize: init,
         loadResultGrid: loadResultGrid,
         changeSearchType: changeSearchType,
-        exportCSV: exportCSV
+        exportCSV: exportCSV,
+        loadExportGrid:loadExportGrid
     };
 
 })();
