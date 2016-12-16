@@ -457,7 +457,7 @@ var MappingViewer = function(viewerID, currentSetID, viewerAction) {
 
     MappingViewer.prototype.generateSetEditorDialogIncludeSection = function(fieldName, fieldInfo){
 
-        var sectionString = '<fieldset><legend style="width: 0px;height:0px">&nbsp;</legend><div class="' + this.INCLUDE_FIELD_CLASS_PREFIX + fieldName + '">'
+        var sectionString = '<div role="group" aria-labelledby="' + this.SET_INCLUDE_FIELD_PREFIX + fieldName + '_field_label' + this.viewerID + '" class="' + this.INCLUDE_FIELD_CLASS_PREFIX + fieldName + '">'
             + '<input type="checkbox" name="' + this.SET_INCLUDE_FIELD_PREFIX.slice(0, -1) + '[]" class="form-control" '
             + 'id="' + this.SET_INCLUDE_FIELD_PREFIX + fieldName + '_' + this.viewerID + '" value="' + fieldName + '" ';
 
@@ -465,7 +465,7 @@ var MappingViewer = function(viewerID, currentSetID, viewerAction) {
             sectionString += 'checked="checked"';
         }
 
-        sectionString += '><label for="' + this.SET_INCLUDE_FIELD_PREFIX + fieldName + '_' + this.viewerID + '">' + fieldInfo.label_display + '</label>';
+        sectionString += '><label id="' + this.SET_INCLUDE_FIELD_PREFIX + fieldName + '_field_label' + this.viewerID + '" for="' + this.SET_INCLUDE_FIELD_PREFIX + fieldName + '_' + this.viewerID + '">' + fieldInfo.label_display + '</label>';
 
         if (fieldInfo.removable){
             sectionString += '<button type="button" class="komet-link-button komet-flex-right" onclick="WindowManager.viewers[' + this.viewerID + '].removeSetIncludedField(\'' + fieldName + '\');" aria-label="Remove">'
@@ -476,7 +476,7 @@ var MappingViewer = function(viewerID, currentSetID, viewerAction) {
             + '<input type="hidden" name="' + this.SET_INCLUDE_FIELD_PREFIX + fieldName + '_data_type" value="' + fieldInfo.data_type + '">'
             + '<input type="hidden" name="' + this.SET_INCLUDE_FIELD_PREFIX + fieldName + '_required" value="' + fieldInfo.required + '">'
             + '<input type="hidden" name="' + this.SET_INCLUDE_FIELD_PREFIX + fieldName + '_removable" value="' + fieldInfo.removable + '">'
-            + '</div></fieldset>';
+            + '</div>';
 
         return sectionString;
     };

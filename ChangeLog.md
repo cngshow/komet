@@ -4,7 +4,11 @@ This changelog summarizes changes and fixes which are a part of each revision.  
 where provided, and the git commit history.
 
 * 2016/12/?? - 1.53 - PENDING
-    *
+    * Fixed CSS issues with the Add Map Fields dialog boxes in IE.
+    * Fixed the autosuggest recent calls so they cache properly
+    * Added Refset sections under Concept and Descriptions on the concept edit screen.
+    * Updated to latest enunciate file
+    * Changed to latest taxonomy ID names in metadata.
 
 * 2016/12/16 - 1.52
     * Fixed issue with mapping effective date not parsing dates correctly
