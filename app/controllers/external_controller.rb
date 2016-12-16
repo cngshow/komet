@@ -51,11 +51,13 @@ class ExternalController < ApplicationController
     else
       #not authenticated - redirect to the naughty page
       flash[:error] = 'Invalid username or password.'
+      flash[:error] = "\n#{@prisme_communication_error}" if @prisme_communication_error
       redirect_to root_url
     end
   end
 
   def logout
+    pundit_user
     clear_user_session
     flash[:notice] = 'You have been logged out.'
     logout_url_string = ssoi? ? PrismeConfigConcern.logout_link : root_url

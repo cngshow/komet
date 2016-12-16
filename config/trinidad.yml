@@ -1,6 +1,6 @@
   address: 0.0.0.0 # set to '*' to bind to all interfaces (0.0.0.0 ALLOWS the outside world to hit it. localhost only allows access from that box)
   # port where Trinidad is running
-  port: 3000
+  port: 3001
   # specify with `trinidad -e production`
   environment: '<%= ENV['RAILS_ENV'].nil? ? 'development' : ENV['RAILS_ENV']%>'
   http: # HTTP connector setup

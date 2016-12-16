@@ -3,12 +3,20 @@ Komet Changelog
 This changelog summarizes changes and fixes which are a part of each revision.  For more details on the fixes, refer tracking numbers 
 where provided, and the git commit history.
 
+* 2016/12/16 - 1.52
+    * Fixed issue with mapping effective date not parsing dates correctly
+    * Fixed clone concept error with snomed concepts
+    * Taxonomy IDs are removed from cloned concepts
+    * Description VUIDs show in read-only mode on concepts
+    * resolved issue with export csv file
+    * added verification code to make sure taxonomy concepts are in metadata before running code on them
+
 * 2016/12/07 - 1.51
     * Fixed edit concepts so the extended description type field is a dropdown with text choices
     * Edit concepts extended description type field dropdown works with new properties.
     * Added HTML escaping to edit concepts and mapping, so that HTML characters don't break the GUI or allow XSS attacks.
     * Fixed HTML characters in the trees
-    * Fixed little bit of inconsistent behaviour of custom shape and color functionality. 
+    * Fixed little bit of inconsistent behaviour of custom shape and color functionality.
 
 * 2016/12/06 - 1.50
     * researched the code, and  changed the code of get coordinate token to accept only post. - this code changes will show the shape and color on all  servers

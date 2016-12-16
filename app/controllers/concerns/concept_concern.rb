@@ -139,15 +139,23 @@ module ConceptConcern
                 description_info[:description_id] = description_id
             end
 
+            attributes << {label: 'UUID', text: description_id, state: description_state, time: description_time, author: description_author, module: description_module, path: description_path}
+
             if !clone
 
-                attributes << {label: 'UUID', text: description_id, state: description_state, time: description_time, author: description_author, module: description_module, path: description_path}
-
                 # get the description SCTID information if there is one and add it to the attributes array
-                sctid = IdAPIsRest.get_id(uuid_or_id: description_id, action: IdAPIsRestActions::ACTION_TRANSLATE, additional_req_params: {outputType: 'sctid'})
+                coding_id = IdAPIsRest.get_id(uuid_or_id: description_id, action: IdAPIsRestActions::ACTION_TRANSLATE, additional_req_params: {outputType: 'sctid'})
 
-                if sctid.respond_to?(:value)
-                    attributes << {label: 'SCTID', text: sctid.value, state: description_state, time: description_time, author: description_author, module: description_module, path: description_path}
+                if coding_id.respond_to?(:value)
+                    attributes << {label: 'SCTID', text: coding_id.value, state: description_state, time: description_time, author: description_author, module: description_module, path: description_path}
+                else
+
+                    # else get the concept VUID information if there is one
+                    coding_id = IdAPIsRest.get_id(uuid_or_id: uuid, action: IdAPIsRestActions::ACTION_TRANSLATE, additional_req_params: {outputType: 'vuid'})
+
+                    if coding_id.respond_to?(:value)
+                        attributes << {label: 'VUID', text: coding_id.value, state: description_state, time: description_time, author: description_author, module: description_module, path: description_path}
+                    end
                 end
             end
 
@@ -572,8 +580,18 @@ module ConceptConcern
                     data_column = sememe.dataColumns[row_column.columnOrder]
                     column_data = {}
 
+                    # TODO - stop hardcoding the 'Code' UUID once it's in the metadata
+                    taxonomy_ids = ['803af596-aea8-5184-b8e1-45f801585d17']
+
+                    ['LOINC_NUM', 'RXCUI', 'SNOMED_INTEGER_ID', 'VUID'].each{ |taxonomy|
+
+                        if $isaac_metadata_auxiliary[taxonomy]
+                            taxonomy_ids << $isaac_metadata_auxiliary[taxonomy]['uuids'].first[:uuid]
+                        end
+                    }
+
                     # if the column data is not empty process the data
-                    if data_column != nil
+                    if data_column != nil && (!clone || (clone && !taxonomy_ids.include?(used_column_data[:sememe_definition_id])))
 
                         # mark in our column lists that this column has data in at least one row
                         used_column_list[list_index][:column_used] = true
