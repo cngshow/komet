@@ -12,6 +12,7 @@ where provided, and the git commit history.
     * Removed hardcoded 'CODE' UUID, getting it from metadata now
     * refactor code of user preference screen to fix unknow bug in unix environment defect # 421416
     * fixed defect # 369888 CSV export on serach page was not exproting all the records
+    * Checking that targetConcept exists on associations call during concept edit
 
 * 2016/12/16 - 1.52
     * Fixed issue with mapping effective date not parsing dates correctly

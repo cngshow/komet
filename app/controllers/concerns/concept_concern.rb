@@ -315,8 +315,15 @@ module ConceptConcern
 
             type_text = type.description
 
-            target_id = association.targetConcept.identifiers.uuids.first
-            target_text = association.targetConcept.description
+            target_id = ''
+            target_text = ''
+
+            if association.targetConcept
+
+                target_id = association.targetConcept.identifiers.uuids.first
+                target_text = association.targetConcept.description
+            end
+
             # TODO - remove the hard-coding of type to 'vhat' when the type flags are implemented in the REST APIs
             target_taxonomy_type = 'vhat'
             state = association.associationItemStamp.state.enumName
