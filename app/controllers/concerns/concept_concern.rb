@@ -580,11 +580,9 @@ module ConceptConcern
 
                     data_column = sememe.dataColumns[row_column.columnOrder]
                     column_data = {}
+                    taxonomy_ids = []
 
-                    # TODO - stop hardcoding the 'Code' UUID once it's in the metadata
-                    taxonomy_ids = ['803af596-aea8-5184-b8e1-45f801585d17']
-
-                    ['LOINC_NUM', 'RXCUI', 'SCTID', 'VUID'].each{ |taxonomy|
+                    ['LOINC_NUM', 'RXCUI', 'SCTID', 'VUID', 'CODE'].each{ |taxonomy|
 
                         if $isaac_metadata_auxiliary[taxonomy]
                             taxonomy_ids << $isaac_metadata_auxiliary[taxonomy]['uuids'].first[:uuid]

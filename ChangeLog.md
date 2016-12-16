@@ -9,6 +9,7 @@ where provided, and the git commit history.
     * Added Refset sections under Concept and Descriptions on the concept edit screen.
     * Updated to latest enunciate file
     * Changed to latest taxonomy ID names in metadata.
+    * Removed hardcoded 'CODE' UUID, getting it from metadata now
 
 * 2016/12/16 - 1.52
     * Fixed issue with mapping effective date not parsing dates correctly
