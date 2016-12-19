@@ -1,7 +1,40 @@
+require 'fileutils'
 module PrismeConfigConcern
   class << self
     attr_accessor :config
     attr_accessor :isaac_proxy_context
+    attr_accessor :proxy_css
+  end
+
+  PROXY_CSS_DIR = '../assets/'
+  PROXY_CSS_BASE_PREPEND = 'proxy_'
+
+  def self.proxy_css_file_exists?
+    !get_proxy_css_file.nil?
+  end
+
+  def self.get_proxy_css_file
+    Dir.glob(PROXY_CSS_DIR + PROXY_CSS_BASE_PREPEND + 'application*.css').first
+  end
+
+  def self.create_proxy_css(proxy_string:, context:)
+    return if PrismeConfigConcern.proxy_css
+    PrismeConfigConcern.proxy_css = true if proxy_css_file_exists?
+    unless PrismeConfigConcern.proxy_css
+      begin
+        css_file =  Dir.glob(PROXY_CSS_DIR + 'application*.css').first
+        if css_file
+          css_string = File.open(css_file, "rb").read
+          css_string.gsub!("#{context}", proxy_string)
+          proxy_file_name = PROXY_CSS_BASE_PREPEND + File.basename(css_file)
+          File.open(PROXY_CSS_DIR + proxy_file_name, 'wb') { |file| file.write(css_string) }
+          PrismeConfigConcern.proxy_css = true
+        end
+      rescue => ex
+        $log.error("Failed to write css proxy file! #{ex}")
+        $log.error(ex.backtrace.join("\n"))
+      end
+    end
   end
 
   def self.get_config
@@ -52,7 +85,7 @@ module PrismeConfigConcern
     context = '/' + context unless context[0].eql? '/'
     proxy_location = get_proxy_location(host: host, port: port)
     $log.info("proxy location is #{proxy_location}")
-    path_proxified = (URI url_string).path.gsub(context, proxy_location)
+    path_proxified = (URI url_string).path.gsub(context, proxy_location).gsub('//','/') #final gsub is in case proxy_location ends in /
     $log.info("path_proxified is #{path_proxified}, context is #{context}")
     path_proxified = '/' + path_proxified unless path_proxified[0].eql? '/'
     $log.info("path_proxified is now #{path_proxified}, context is #{context}")
@@ -64,7 +97,6 @@ module PrismeConfigConcern
 
 
   def self.get_proxy_location(host:, port:)
-    host = localize_host host
     PrismeConfigConcern.proxy_urls.each do |k|
       uri = URI k['incoming_url_path']
       port = uri.port
@@ -89,14 +121,6 @@ module PrismeConfigConcern
 
   def self.logout_link
     PrismeUtilities.ssoi_logout_path_from_json_string(config_hash: get_config)
-  end
-
-  private
-
-  def self.localize_host(host)
-    host.gsub!('0:0:0:0:0:0:0:1', 'localhost')
-    host.gsub!('127.0.0.1', 'localhost')
-    host
   end
 
 end

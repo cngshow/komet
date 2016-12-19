@@ -52,4 +52,33 @@ module ApplicationHelper
     user_session_defined? ? user_session(UserSession::LOGIN) : 'unknown'
   end
 
+  def redirect_to_proxy_sensitive(url_string)
+    if ssoi? #if we are under ssoi we assume we are behind apache
+      redirect_to PrismeConfigConcern.recontext(url_string: url_string, controller: my_controller)
+    else
+      redirect_to url_string
+    end
+  end
+
+  def proxy_sensitive(url_string)
+    url_string = url_string.to_s
+    host = my_controller.true_address
+    port = my_controller.true_port
+    context = $CONTEXT
+    context = '/' + context unless context[0].eql? '/'
+    return url_string if context.eql? '/' #we need a nontrivial context or nothing to do...
+    if ssoi? #if we are under ssoi we assume we are behind apache
+      proxy = PrismeConfigConcern.get_proxy_location(host: host, port: port)
+      PrismeConfigConcern.create_proxy_css(proxy_string: proxy, context: context)
+      return raw url_string.gsub("#{context}", proxy).gsub('/application-', '/' + PrismeConfigConcern::PROXY_CSS_BASE_PREPEND + 'application-')
+    else
+      return url_string
+    end
+  end
+
+  def my_controller
+    return self if self.is_a? ApplicationController
+    return controller
+  end
+
 end
