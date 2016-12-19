@@ -79,7 +79,7 @@ module PrismeConfigConcern
 
   #http://localhost:8090/rails_komet_a/komet_dashboard/dashboard (sample url_string)
   def self.recontext(url_string: , controller:)
-    host = localize_host controller.true_address
+    host = controller.true_address
     port = controller.true_port
     context = $CONTEXT
     context = '/' + context unless context[0].eql? '/'
