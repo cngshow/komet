@@ -81,6 +81,31 @@ var PreferenceModule = (function () {
 
                     document.getElementById('komet_preferences_refsets_table').innerHTML ="";
 
+                    var colorheadingtr = document.createElement("TR");
+                    colorheadingtr.setAttribute("id", "colorrefset");
+                    colorheadingtr.setAttribute("style", "background-color: #0000a2;color:white;text-align: center")
+                    document.getElementById('komet_preferences_refsets_table').appendChild(colorheadingtr);
+
+                    var colorheadingtd0 = document.createElement("TD");
+                    colorheadingtd0.innerHTML ='ID';
+                    document.getElementById("colorrefset").appendChild(colorheadingtd0);
+
+                    var colorheadingtd1 = document.createElement("TD");
+                    colorheadingtd1.innerHTML ='Color';
+                    document.getElementById("colorrefset").appendChild(colorheadingtd1);
+
+                    var colorheadingtd1 = document.createElement("TD");
+                    colorheadingtd1.innerHTML ='Shape';
+                    document.getElementById("colorrefset").appendChild(colorheadingtd1);
+
+                    var colorheadingtd2 = document.createElement("TD");
+                    colorheadingtd2.innerHTML = 'Refset';
+                    document.getElementById("colorrefset").appendChild(colorheadingtd2);
+
+                    var colorheadingtd3 = document.createElement("TD");
+                    colorheadingtd3.innerHTML = 'Delete';
+                    document.getElementById("colorrefset").appendChild(colorheadingtd3);
+
                      $.each(getcoordinates_results.colorrefsets, function (index, value) {
                         addRefsetRow(value.refsets_name,value.colorid,value.refsetsid,value.colorshape)
                     });
@@ -320,7 +345,7 @@ var PreferenceModule = (function () {
         var selectedshape = '#' + id ;
         var inputids='#' + inputid;
 
-        $(selectedshape).removeClass("noshape");
+        $(selectedshape).removeClass("None");
         $(selectedshape).removeClass("glyphicon glyphicon-stop");
         $(selectedshape).removeClass( "glyphicon glyphicon-star");
         $(selectedshape).removeClass( "fa fa-circle");
@@ -329,10 +354,6 @@ var PreferenceModule = (function () {
         $(selectedshape).html(shapes);
         $(selectedshape).addClass(classname);
         document.getElementById(inputid).value =classname;
-
-        console.log(classname);
-        console.log(inputid);
-console.log( document.getElementById(inputid).value );
 
     }
 
@@ -359,9 +380,7 @@ console.log( document.getElementById(inputid).value );
 
         return shapedd;
     }
-     function getShapeName(classname)
-     {
-
+     function getShapeName(classname)  {
          if (classname == 'none')
              return 'No shape';
          else if (classname == 'glyphicon glyphicon-stop')
@@ -378,8 +397,6 @@ console.log( document.getElementById(inputid).value );
          else
          if (classname == 'glyphicon glyphicon-asterisk')
              return 'Asterisk';
-
-
         // return 'Square';
      }
     //clear color value

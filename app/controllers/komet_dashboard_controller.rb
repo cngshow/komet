@@ -517,7 +517,6 @@ class KometDashboardController < ApplicationController
         getcoordinates_refset = CoordinateRest.get_coordinate(action: CoordinateRestActions::ACTION_COORDINATES,additional_req_params: additional_req_params)
         value = getcoordinates_refset.languageCoordinate.to_json
 
-
         getcoordinates_refset = JSON.parse(getcoordinates_refset.to_json)
         $log.info("user prefs user_sessions #{user_session(UserSession::USER_PREFERENCES)}")
         user_prefs = user_session(UserSession::USER_PREFERENCES)
@@ -545,14 +544,13 @@ class KometDashboardController < ApplicationController
         user_prefs[:colormodule] = params[:colormodule]
         user_prefs[:colorpath] = params[:colorpath]
         user_prefs[:colorrefsets] = params[:colorrefsets]
+
         user_session(UserSession::USER_PREFERENCES, user_prefs)
 
         hash.merge!(CommonRest::CacheRequest::PARAMS_NO_CACHE)
 
         results = CoordinateRest.get_coordinate(action: CoordinateRestActions::ACTION_COORDINATES_TOKEN, additional_req_params: hash)
         session[:coordinatestoken] = results
-       # $log.debug("token get_coordinatestoken #{results.token}" )
-        get_user_preference_info
         render json: results.to_json
 
     end
@@ -687,17 +685,25 @@ class KometDashboardController < ApplicationController
     end
 
     def get_user_preference_info
+
+        #language dropdown on options tab
         @language_options = get_concept_children(concept_id: $isaac_metadata_auxiliary['LANGUAGE']['uuids'].first[:uuid], return_json: false, remove_semantic_tag: true)
+        #get default values - dialect options and description type on options tab
         dialect_options = get_concept_children(concept_id: $isaac_metadata_auxiliary['DIALECT_ASSEMBLAGE']['uuids'].first[:uuid], return_json: false, remove_semantic_tag: true)
+        description_type_options = get_concept_children(concept_id: $isaac_metadata_auxiliary['DESCRIPTION_TYPE']['uuids'].first[:uuid], return_json: false, remove_semantic_tag: true)
 
         getcoordinates_results = {}
-        description_type_options = get_concept_children(concept_id: $isaac_metadata_auxiliary['DESCRIPTION_TYPE']['uuids'].first[:uuid], return_json: false, remove_semantic_tag: true)
         token = session[:coordinatestoken].token
         additional_req_params = {coordToken: token}
         getcoordinates_results  = CoordinateRest.get_coordinate(action: CoordinateRestActions::ACTION_COORDINATES,additional_req_params: additional_req_params)
+
+        #language dropdown -- suser selected language
         @languageCoordinate = getcoordinates_results.languageCoordinate.language
+
+        #get user selected order  - dialect options and description type on options tab
         descriptiontypepreferences = getcoordinates_results.languageCoordinate.descriptionTypePreferences;
         dialectassemblagepreferences= getcoordinates_results.languageCoordinate.dialectAssemblagePreferences;
+
         dialect_options_arry=[]
         #add matched items
         matched=''
@@ -753,21 +759,19 @@ class KometDashboardController < ApplicationController
 
         allowedstates=getcoordinates_results.stampCoordinate.allowedStates;
         allowedstates.each do |statestype|
-         if statestype.enumName.downcase == 'active'
-              @allowedstates= 'active'
-         end
-         if statestype.enumName.downcase == 'inactive' &&  @allowedstates == 'active'
-             @allowedstates= @allowedstates + ',inactive'
-         end
-         if statestype.enumName.downcase == 'inactive' &&  @allowedstates == ""
-             @allowedstates= 'inactive'
-         end
+             if statestype.enumName.downcase == 'active'
+                  @allowedstates= @allowedstates.to_s + 'active'
+             end
+
+             if statestype.enumName.downcase == 'inactive'
+                 @allowedstates= @allowedstates.to_s + 'inactive'
+             end
         end
 
         if @allowedstates == 'active'
             @allowedstatesActive ='checked="checked"'
         end
-        if @allowedstates == 'inactive,active'
+        if @allowedstates == 'inactiveactive'
            @allowedstatesboth = 'checked="checked"'
         end
         if @allowedstates == 'inactive'
@@ -789,11 +793,11 @@ class KometDashboardController < ApplicationController
         colorpath = get_concept_children(concept_id: $isaac_metadata_auxiliary['PATH']['uuids'].first[:uuid], return_json: false, remove_semantic_tag: true)
             if colorpath_results.nil?
                 colorpath.each do |colors|
-                    colornew_array << {pathcolorid: colors[:concept_sequence], pathcolortext: colors[:text], pathcolorvalue:'' ,pathcolorshape:'none'}
+                    colornew_array << {pathcolorid: colors[:concept_sequence], pathcolortext: colors[:text], pathcolorvalue:'' ,pathcolorshape:'None',colorshapename:'None'}
                 end
             else
                 colorpath_results.each do |addshape|
-                    colornew_array << {pathcolorid: addshape[1][:pathid], pathcolortext: addshape[1][:path_name], pathcolorvalue:addshape[1][:colorid] ,pathcolorshape:addshape[1][:colorshape]}
+                    colornew_array << {pathcolorid: addshape[1][:pathid], pathcolortext: addshape[1][:path_name], pathcolorvalue:addshape[1][:colorid] ,pathcolorshape:addshape[1][:colorshape],colorshapename:getShapeName(addshape[1][:colorshape])}
                 end
             end
         @colorpathshape =colornew_array
@@ -803,16 +807,34 @@ class KometDashboardController < ApplicationController
         colormodule = get_concept_children(concept_id: $isaac_metadata_auxiliary['MODULE']['uuids'].first[:uuid], return_json: false, remove_semantic_tag: true)
         if colormodule_results.nil?
             colormodule.each do |colors|
-                colormodulenew_array << {modulecolorid: colors[:concept_sequence], modulecolortext: colors[:text], modulecolorvalue:'' ,modulecolorshape:'none'}
+                colormodulenew_array << {modulecolorid: colors[:concept_sequence], modulecolortext: colors[:text], modulecolorvalue:'' ,modulecolorshape:'None',colorshapename:'None'}
             end
         else
             colormodule_results.each do |addshape|
-                colormodulenew_array << {modulecolorid: addshape[1][:moduleid], modulecolortext: addshape[1][:module_name], modulecolorvalue:addshape[1][:colorid] ,modulecolorshape:addshape[1][:colorshape]}
+                colormodulenew_array << {modulecolorid: addshape[1][:moduleid], modulecolortext: addshape[1][:module_name], modulecolorvalue:addshape[1][:colorid] ,modulecolorshape:addshape[1][:colorshape],colorshapename:getShapeName(addshape[1][:colorshape])}
             end
         end
         @colormoduleshape =colormodulenew_array
 
     end
+
+    def getShapeName(classname)
+
+        if classname == 'None'
+            return 'None'
+        elsif classname == 'glyphicon glyphicon-stop'
+            return 'Square'
+        elsif classname == 'glyphicon glyphicon-star'
+            return 'Star'
+        elsif classname == 'fa fa-circle'
+            return 'Circle'
+        elsif classname == 'glyphicon glyphicon-triangle-top'
+            return 'Triangle'
+        elsif classname == 'glyphicon glyphicon-asterisk'
+            return 'Asterisk'
+        end
+    end
+
 
     def get_concept_edit_info
 
@@ -1251,13 +1273,11 @@ class KometDashboardController < ApplicationController
 
         @stated = 'true'
         @view_params = {statesToView: 'active,inactive'}
-
         if !session[:coordinatestoken]
-
             session[:coordinatestoken] = CoordinateRest.get_coordinate(action: CoordinateRestActions::ACTION_COORDINATES_TOKEN)
-
+            get_user_preference_info
         end
-        get_user_preference_info
+         get_user_preference_info
         $log.debug("token initial #{session[:coordinatestoken].token}" )
 
     end

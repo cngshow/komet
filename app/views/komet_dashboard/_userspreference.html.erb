@@ -100,20 +100,20 @@
               <td id="lbl_colorpathtr_<%= type[:modulecolorid]%>"> <%= type[:modulecolortext]%></td>
               <% label = "lbl_colorTr_#{ type[:modulecolorid] }"
                  colorrowid = "'#{type[:modulecolortext]}~#{ type[:modulecolorid] }','colorTr#{ type[:modulecolorid] }'"
+                 shapeCntlId =  "colormoduleshape#{ type[:modulecolorid] }"
+                 displayShapeDiv =  "cshape_#{ type[:modulecolorid] }"
               %>
               <td>
-                <a title="clear color" style="padding:2px;color:red" aria-labelledby="<%=label %>" onclick="PreferenceModule.removecolor(<%= colorrowid %>)">X</a>&nbsp;
+                <a title="clear color" style="padding:2px;color:red" aria-labelledby="<%=label %>" onclick="PreferenceModule.removecolor(<%= colorrowid %>);PreferenceModule.setShape('None','None','<%=displayShapeDiv%>','<%=shapeCntlId%>')">X</a>&nbsp;
                 <input name="color_id" class="demo" title="Click here to change color" aria-labelledby="<%=label %>" type="text"  id="<%= type[:modulecolortext]%>~<%= type[:modulecolorid]%>" size="6" style="height:30px" data-control="hue" value="<%= type[:modulecolorvalue]%>" />
               </td>
               <td>
-                <% shapeCntlId =  "colormoduleshape#{ type[:modulecolorid] }"
-                   displayShapeDiv =  "cshape_#{ type[:modulecolorid] }"  %>
 
-                <div class="dropdown" ><div class="<%= type[:modulecolorshape]%>" style="display: inline-block" id="<%=displayShapeDiv%>"><%= type[:modulecolorshape]%> </div>
+                <div class="dropdown" ><div class="<%= type[:modulecolorshape]%>" style="display: inline-block" id="<%=displayShapeDiv%>"><%= type[:colorshapename]%> </div>
                   <input name="colormodule_shape" value="<%= type[:modulecolorshape]%>"  type="hidden" id="<%=shapeCntlId%>"  />
               <span  class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" id="shapeid" aria-expanded="false">
               <span class="caret"></span></span><ul class="dropdown-menu"   aria-label="select shape">
-                  <li><a style="display: inline-block" onclick="PreferenceModule.setShape('none','None','<%=displayShapeDiv%>','<%=shapeCntlId%>')" href="#">No Shape</a></li>
+                  <li><a style="display: inline-block" onclick="PreferenceModule.setShape('None','None','<%=displayShapeDiv%>','<%=shapeCntlId%>')" href="#">None</a></li>
                   <li aria-hidden="true"  class="glyphicon glyphicon-stop" ><a style="display: inline-block" onclick="PreferenceModule.setShape('glyphicon glyphicon-stop','Square','<%=displayShapeDiv%>','<%=shapeCntlId%>')" href="#">Square</a></li>
                   <li aria-hidden="true" class="glyphicon glyphicon-star"><a href="#" style="display: inline-block" onclick="PreferenceModule.setShape('glyphicon glyphicon-star','Star','<%=displayShapeDiv%>','<%=shapeCntlId%>')">Star</a></li>
                   <li aria-hidden="true" class="glyphicon glyphicon-triangle-top"><a href="#" style="display: inline-block" onclick="PreferenceModule.setShape('glyphicon glyphicon-triangle-top','Triangle','<%=displayShapeDiv%>','<%=shapeCntlId%>')">Triangle</a></li>
@@ -140,20 +140,18 @@
             <td id="lbl_colorpathtr_<%= type[:pathcolorid]%>"> <%= type[:pathcolortext]%></td>
             <% label = "lbl_colorpathtr_#{ type[:pathcolorid] }"
                colorrowid = "'#{type[:pathcolortext]}~#{ type[:pathcolorid] }','colorpathtr#{ type[:pathcolorid] }'"
-            %>
+               shapeCntlId =  "colorpathshape#{ type[:pathcolorid] }"
+               displayShapeDiv =  "cpathshape_#{ type[:pathcolorid] }"  %>
             <td>
-              <a title="clear color" style="padding:2px;color:red" aria-labelledby="<%=label %>" onclick="PreferenceModule.removecolor(<%= colorrowid %>)">X</a>&nbsp;
+              <a title="clear color" style="padding:2px;color:red" aria-labelledby="<%=label %>" onclick="PreferenceModule.removecolor(<%= colorrowid %>);PreferenceModule.setShape('None','None','<%=displayShapeDiv%>','<%=shapeCntlId%>')">X</a>&nbsp;
               <input name="colorpath" class="pathcolordemo" title="Click here to change color" aria-labelledby="<%=label %>" type="text"  id="<%= type[:pathcolortext]%>~<%= type[:pathcolorid]%>" size="6" style="height:30px" data-control="hue" value="<%= type[:pathcolorvalue]%>" />
             </td>
             <td>
-              <% shapeCntlId =  "colorpathshape#{ type[:pathcolorid] }"
-               displayShapeDiv =  "cpathshape_#{ type[:pathcolorid] }"  %>
-
              <div class="dropdown" ><div class="<%= type[:pathcolorshape]%>" style="display: inline-block" id="<%=displayShapeDiv%>"><%= type[:pathcolorshape]%> </div>
              <input name="colormodule_shape" value="<%= type[:pathcolorshape]%>"  type="hidden" id="<%=shapeCntlId%>"  />
               <span  class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" id="shapeid" aria-expanded="false">
               <span class="caret"></span></span><ul class="dropdown-menu"   aria-label="select shape">
-              <li><a style="display: inline-block" onclick="PreferenceModule.setShape('none','None','<%=displayShapeDiv%>','<%=shapeCntlId%>')" href="#">No Shape</a></li>
+              <li><a style="display: inline-block" onclick="PreferenceModule.setShape('None','None','<%=displayShapeDiv%>','<%=shapeCntlId%>')" href="#">None</a></li>
               <li aria-hidden="true"  class="glyphicon glyphicon-stop" ><a style="display: inline-block" onclick="PreferenceModule.setShape('glyphicon glyphicon-stop','Square','<%=displayShapeDiv%>','<%=shapeCntlId%>')" href="#">Square</a></li>
               <li aria-hidden="true" class="glyphicon glyphicon-star"><a href="#" style="display: inline-block" onclick="PreferenceModule.setShape('glyphicon glyphicon-star','Star','<%=displayShapeDiv%>','<%=shapeCntlId%>')">Star</a></li>
               <li aria-hidden="true" class="glyphicon glyphicon-triangle-top"><a href="#" style="display: inline-block" onclick="PreferenceModule.setShape('glyphicon glyphicon-triangle-top','Triangle','<%=displayShapeDiv%>','<%=shapeCntlId%>')">Triangle</a></li>
