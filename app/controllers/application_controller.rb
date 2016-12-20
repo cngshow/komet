@@ -37,7 +37,7 @@ class ApplicationController < ActionController::Base
   before_action :read_only # must be after ensure_roles
   # todo tried testing with reviewer? and could not get to the login page
 
-  before_action :set_render_menu, :setup_routes, :setup_constants
+  before_action :set_render_menu, :setup_proxy_aware_routes, :setup_constants
   attr_reader :ssoi # a boolean if we have ssoi headers
   alias ssoi? ssoi
 
@@ -263,6 +263,18 @@ class ApplicationController < ActionController::Base
 
   def clear_thread_locals
     Thread.current.thread_variable_set(:komet_user_session, nil)
+  end
+
+  def setup_proxy_aware_routes
+    setup_routes
+    if ssoi?
+      context = $CONTEXT
+      context = '/' + context unless context[0].eql? '/'
+      host = true_address
+      port = true_port
+      proxy = PrismeConfigConcern.get_proxy_location(host: host, port: port)
+      gon.routes = @@routes_hash.map{|k,v| [k,v.gsub("#{context}","#{proxy}").gsub('//', '/')]}.to_h
+    end
   end
 
 end

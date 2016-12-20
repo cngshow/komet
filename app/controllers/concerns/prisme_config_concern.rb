@@ -17,6 +17,7 @@ module PrismeConfigConcern
     Dir.glob(PROXY_CSS_DIR + PROXY_CSS_BASE_PREPEND + 'application*.css').first
   end
 
+
   def self.create_proxy_css(proxy_string:, context:)
     return if PrismeConfigConcern.proxy_css
     PrismeConfigConcern.proxy_css = true if proxy_css_file_exists?
@@ -25,7 +26,9 @@ module PrismeConfigConcern
         css_file =  Dir.glob(PROXY_CSS_DIR + 'application*.css').first
         if css_file
           css_string = File.open(css_file, "rb").read
-          css_string.gsub!("#{context}", proxy_string)
+          context.chop! if context[-1].eql? '/'
+          proxy_string.chop! if proxy_string[-1].eql? '/'
+          css_string.gsub!(context, proxy_string)
           proxy_file_name = PROXY_CSS_BASE_PREPEND + File.basename(css_file)
           File.open(PROXY_CSS_DIR + proxy_file_name, 'wb') { |file| file.write(css_string) }
           PrismeConfigConcern.proxy_css = true

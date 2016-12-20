@@ -30,7 +30,7 @@ class KometDashboardController < ApplicationController
     include TaxonomyConcern, ConceptConcern, InstrumentationConcern, SearchApis
     include CommonController, TaxonomyHelper
 
-    before_action :setup_routes, :setup_constants, :only => [:dashboard]
+    #before_action :setup_routes, :setup_constants, :only => [:dashboard] #todo Ask Tim why is this in app controller too?  OK to whack?
     after_filter :byte_size unless Rails.env.production?
     skip_before_action :ensure_roles, only: [:version]
     skip_after_action :verify_authorized, only: [:version]
