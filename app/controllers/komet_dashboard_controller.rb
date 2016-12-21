@@ -564,17 +564,12 @@ class KometDashboardController < ApplicationController
         if stated != nil
             @stated = stated
         end
-
         additional_req_params = {coordToken: coordinates_token, stated: @stated, childDepth: 50}
-
         refsets = TaxonomyRest.get_isaac_concept(uuid: $isaac_metadata_auxiliary['ASSEMBLAGE']['uuids'].first[:uuid], additional_req_params: additional_req_params)
-
         if refsets.is_a? CommonRest::UnexpectedResponse
             render json: [] and return
         end
-
         processed_refsets = process_refset_list(refsets)
-
         render json: processed_refsets.to_json
 
     end
@@ -816,6 +811,27 @@ class KometDashboardController < ApplicationController
         end
         @colormoduleshape =colormodulenew_array
 
+        coordinates_token = session[:coordinatestoken].token
+        stated = params[:stated]
+
+        # check to make sure the flag for stated or inferred view was passed in
+        if stated != nil
+            @stated = stated
+        end
+        additional_req_params = {coordToken: coordinates_token, stated: @stated, childDepth: 50}
+        refsets = TaxonomyRest.get_isaac_concept(uuid: $isaac_metadata_auxiliary['ASSEMBLAGE']['uuids'].first[:uuid], additional_req_params: additional_req_params)
+        if refsets.is_a? CommonRest::UnexpectedResponse
+            render json: [] and return
+        end
+        @processed_refsets = process_refset_list(refsets)
+
+        colorrefsetnew_array=[]
+        if !colorrefsets_results.nil?
+            colorrefsets_results.each do |refsetcolor|
+                colorrefsetnew_array << {refsetsid: refsetcolor[1][:refsetsid], refsets_name: refsetcolor[1][:refsets_name], refsetcolorvalue:refsetcolor[1][:colorid] ,refsetcolorshape:refsetcolor[1][:colorshape],colorshapename:getShapeName(refsetcolor[1][:colorshape])}
+            end
+        end
+        @colorrefsetnew=colorrefsetnew_array
     end
 
     def getShapeName(classname)

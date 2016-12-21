@@ -57,11 +57,7 @@ var PreferenceModule = (function () {
         });
 
         dialog.parent().children().children(".ui-dialog-titlebar-close").remove();
-        // get the list of refsets to populate the refsets dropdown
-        $.get(gon.routes.taxonomy_get_refset_list_path, function(refset_data) {
-            refsetList = refset_data;
-            createRefsetFieldRow();
-        });
+
         form = dialog.find( "form" ).on( "submit", function( event ) {
             event.preventDefault();
             applyChanges();
@@ -76,43 +72,7 @@ var PreferenceModule = (function () {
             if (stamp_date !== gon.vhat_export_params.max_end_date) {
                 $('#stamp_date').data("DateTimePicker").date(moment(stamp_date));
             }
-            $.get( gon.routes.taxonomy_get_coordinates_path, function( getcoordinates_results ) {
-                if (getcoordinates_results.colorrefsets != null) {
 
-                    document.getElementById('komet_preferences_refsets_table').innerHTML ="";
-
-                    var colorheadingtr = document.createElement("TR");
-                    colorheadingtr.setAttribute("id", "colorrefset");
-                    colorheadingtr.setAttribute("style", "background-color: #0000a2;color:white;text-align: center")
-                    document.getElementById('komet_preferences_refsets_table').appendChild(colorheadingtr);
-
-                    var colorheadingtd0 = document.createElement("TD");
-                    colorheadingtd0.innerHTML ='ID';
-                    document.getElementById("colorrefset").appendChild(colorheadingtd0);
-
-                    var colorheadingtd1 = document.createElement("TD");
-                    colorheadingtd1.innerHTML ='Color';
-                    document.getElementById("colorrefset").appendChild(colorheadingtd1);
-
-                    var colorheadingtd1 = document.createElement("TD");
-                    colorheadingtd1.innerHTML ='Shape';
-                    document.getElementById("colorrefset").appendChild(colorheadingtd1);
-
-                    var colorheadingtd2 = document.createElement("TD");
-                    colorheadingtd2.innerHTML = 'Refset';
-                    document.getElementById("colorrefset").appendChild(colorheadingtd2);
-
-                    var colorheadingtd3 = document.createElement("TD");
-                    colorheadingtd3.innerHTML = 'Delete';
-                    document.getElementById("colorrefset").appendChild(colorheadingtd3);
-
-                     $.each(getcoordinates_results.colorrefsets, function (index, value) {
-                        addRefsetRow(value.refsets_name,value.colorid,value.refsetsid,value.colorshape)
-                    });
-
-                }
-
-            });
             $(document).on("click", "#applybtn", function (ev) {
                 var refsetname=$("#komet_preferences_refset_id option:selected").text();
                 var refsetsid=$("#komet_preferences_refset_id option:selected").val();
@@ -233,57 +193,6 @@ var PreferenceModule = (function () {
         }
     }
 
-    // create a new select field for choosing a refset and color picker
-    function createRefsetFieldRow(){
-
-        var options = "";
-        var refsetSelect = '<label  for="komet_preferences_refset_id">Select Refset: </label><select style="width:270px"  id="komet_preferences_refset_id">';
-
-        Object.keys(refsetList).forEach( function(refsetID) {
-            options += '<option value="' + refsetID + '">' + refsetList[refsetID] + '</option>';
-        });
-
-        refsetSelect += options + '</select>';
-        document.getElementById('getdd').innerHTML =refsetSelect;
-
-        var refsetShape='';
-        var td4 = document.createElement("TD");
-        var shapeCntlId =  "'colorrefsetshape'"  ;
-        var displayShapeDiv =  "crefsetshape_0"  ;
-        refsetShape = PreferenceModule.createShapedropdown(displayShapeDiv , 0 , shapeCntlId,'none');
-
-        document.getElementById('getrefsetshape').innerHTML =refsetShape;
-
-        //  refsetRows.push(rowID);
-        document.getElementById('komet_preferences_refsets_table').innerHTML ="";
-
-        var colorheadingtr = document.createElement("TR");
-        colorheadingtr.setAttribute("id", "colorrefset");
-        colorheadingtr.setAttribute("style", "background-color: #0000a2;color:white;text-align: center")
-        document.getElementById('komet_preferences_refsets_table').appendChild(colorheadingtr);
-
-        var colorheadingtd0 = document.createElement("TD");
-        colorheadingtd0.innerHTML ='ID';
-        document.getElementById("colorrefset").appendChild(colorheadingtd0);
-
-        var colorheadingtd1 = document.createElement("TD");
-        colorheadingtd1.innerHTML ='Color';
-        document.getElementById("colorrefset").appendChild(colorheadingtd1);
-
-        var colorheadingtd2 = document.createElement("TD");
-        colorheadingtd2.innerHTML ='Shape';
-        document.getElementById("colorrefset").appendChild(colorheadingtd2);
-
-        var colorheadingtd3 = document.createElement("TD");
-        colorheadingtd3.innerHTML = 'Refset';
-        document.getElementById("colorrefset").appendChild(colorheadingtd3);
-
-        var colorheadingtd4 = document.createElement("TD");
-        colorheadingtd4.innerHTML = 'Delete';
-        document.getElementById("colorrefset").appendChild(colorheadingtd4);
-
-    }
-
     function addRefsetRow(refset,colorid,refsetsid,colorrefsetshape)    {
         rowCount = rowCount + 1;
        // var rowID = window.performance.now();
@@ -357,30 +266,7 @@ var PreferenceModule = (function () {
 
     }
 
-    /// creates shape dropdown
-    function createShapedropdown(displayShapeDiv,conceptSequence,shapeCntlId,value)    {
-        var shapedd='';
-        shapedd ='<div class="dropdown" ><div class="' +  value + '" style="display: inline-block" id="' +  displayShapeDiv + '">' + PreferenceModule.getShapeName(value) + '</div>';
-        shapedd = shapedd + '<input name="colormodule_shape" value="' +  value + '"  type="hidden" id=' + shapeCntlId + '  />';
-        shapedd = shapedd + '<span  class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" id="shapeid" aria-expanded="false">';
-        shapedd = shapedd + '<span class="caret"></span></span><ul class="dropdown-menu"   aria-label="select shape">';
-        shapedd = shapedd + '<li>';
-        shapedd = shapedd + '<a style="display: inline-block" onclick="PreferenceModule.setShape(' + "'none'" + "," + "'None'" + ",'" +  displayShapeDiv  + "'," + shapeCntlId + ')" href="#">No Shape</a></li>';
-        shapedd = shapedd + '<li aria-hidden="true"  class="glyphicon glyphicon-stop" >';
-        shapedd = shapedd + '<a style="display: inline-block" onclick="PreferenceModule.setShape(' + "'glyphicon glyphicon-stop'" + "," + "'Square'" + ",'" +  displayShapeDiv  + "'," + shapeCntlId + ')" href="#">Square</a></li>';
-        shapedd = shapedd + '<li aria-hidden="true" class="glyphicon glyphicon-star">';
-        shapedd = shapedd + '<a href="#" style="display: inline-block" onclick="PreferenceModule.setShape(' + "'glyphicon glyphicon-star'" + "," + "'Star'" +  ",'" +  displayShapeDiv  + "'," + shapeCntlId + ')">Star</a></li>';
-        shapedd = shapedd + '<li aria-hidden="true" class="glyphicon glyphicon-triangle-top">';
-        shapedd = shapedd + '<a href="#" style="display: inline-block" onclick="PreferenceModule.setShape(' + "'glyphicon glyphicon-triangle-top'" + "," + "'Triangle'" +  ",'" +  displayShapeDiv  + "'," + shapeCntlId + ')">Triangle</a></li>';
-        shapedd = shapedd + '<li aria-hidden="true" class="glyphicon glyphicon-asterisk">';
-        shapedd = shapedd + '<a href="#" style="display: inline-block" onclick="PreferenceModule.setShape(' + "'glyphicon glyphicon-asterisk'" + "," + "'Asterisk'" +  ",'" +  displayShapeDiv  + "'," + shapeCntlId + ')">Asterisk</a></li>';
-        shapedd = shapedd + '<li aria-hidden="true" class="fa fa-circle">';
-        shapedd = shapedd + '<a href="#" style="display: inline-block" onclick="PreferenceModule.setShape(' + "'fa fa-circle'" + "," + "'Circle'" +  ",'" +  displayShapeDiv  + "'," + shapeCntlId + ')">Circle</a></li>';
-        shapedd = shapedd + '</ul></div>';
-
-        return shapedd;
-    }
-     function getShapeName(classname)  {
+    function getShapeName(classname)  {
          if (classname == 'none')
              return 'No shape';
          else if (classname == 'glyphicon glyphicon-stop')
@@ -408,25 +294,14 @@ var PreferenceModule = (function () {
         $("#" + rowid ).find('.minicolors-swatch-color').css("background-color","");
     }
 
-    function selectItemByValue(elmnt, value){
-       for(var i=0; i < elmnt.options.length; i++)
-        {
-            if(elmnt.options[i].value == value)
-                elmnt.selectedIndex = i;
-        }
-    }
-
 
     return {
 
         initialize: init,
-        selectItemByValue: selectItemByValue,
-        createRefsetFieldRow:createRefsetFieldRow,
         addRefsetRow: addRefsetRow,
         deleteRefsetFieldRow: deleteRefsetFieldRow,
         removecolor:removecolor,
         setShape:setShape,
-        createShapedropdown:createShapedropdown,
         getShapeName:getShapeName
 
 

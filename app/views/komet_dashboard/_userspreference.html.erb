@@ -147,7 +147,7 @@
               <input name="colorpath" class="pathcolordemo" title="Click here to change color" aria-labelledby="<%=label %>" type="text"  id="<%= type[:pathcolortext]%>~<%= type[:pathcolorid]%>" size="6" style="height:30px" data-control="hue" value="<%= type[:pathcolorvalue]%>" />
             </td>
             <td>
-             <div class="dropdown" ><div class="<%= type[:pathcolorshape]%>" style="display: inline-block" id="<%=displayShapeDiv%>"><%= type[:pathcolorshape]%> </div>
+             <div class="dropdown" ><div class="<%= type[:pathcolorshape]%>" style="display: inline-block" id="<%=displayShapeDiv%>"><%= type[:colorshapename]%> </div>
              <input name="colormodule_shape" value="<%= type[:pathcolorshape]%>"  type="hidden" id="<%=shapeCntlId%>"  />
               <span  class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" id="shapeid" aria-expanded="false">
               <span class="caret"></span></span><ul class="dropdown-menu"   aria-label="select shape">
@@ -169,22 +169,66 @@
 
     <div id="komet_preferences_refsets_colors" style="height: 450px;">
       <table border="0" style="display: inline-block ">
-
         <tr>
-          <td style="width: 35%">
-            <div id="getdd"></div>
-          </td>
-          <td style="width: 20%" style="padding-left: 5px;text-align: center;margin-left: 2px">
-            &nbsp;&nbsp;<input name="color_id" class="demo" title="Click here to change color" aria-label="Change color" type="hidden" id="color_id" size="1" style="height:25px" data-control="hue" value=""/>
-          </td>
+
           <td style="width: 30%">
-            <div id="getrefsetshape"></div>
+            <label  for="komet_preferences_refset_id">Select Refset: </label>
+            <select style="width:270px"  id="komet_preferences_refset_id">
+
+              <% @processed_refsets.each do |type| %>
+                      <option  value="<%= type[0] %>"><%= type[1] %></option>
+              <% end %>
+            </select>
           </td>
+          <td style="padding-left: 5px;text-align: center;margin-left: 2px">
+            &nbsp;&nbsp;<input name="refsetcolor_id" class="demo" title="Click here to change color" aria-label="Change color" type="hidden" id="color_id" size="1" style="height:25px" data-control="hue" value=""/>
+          </td>
+          <td>
+            <%shapeCntlId =  "colorrefsetshape"
+             displayShapeDiv =  "crefsetshape_0" %>
+
+            <div class="dropdown" ><div class="none" style="display: inline-block" id="<%=displayShapeDiv%>">none </div>
+              <input name="colormodule_shape" value="none"  type="hidden" id="<%=shapeCntlId%>"  />
+              <span  class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" id="shapeid" aria-expanded="false">
+              <span class="caret"></span></span><ul class="dropdown-menu"   aria-label="select shape">
+              <li><a style="display: inline-block" onclick="PreferenceModule.setShape('None','None','<%=displayShapeDiv%>','<%=shapeCntlId%>')" href="#">None</a></li>
+              <li aria-hidden="true"  class="glyphicon glyphicon-stop" ><a style="display: inline-block" onclick="PreferenceModule.setShape('glyphicon glyphicon-stop','Square','<%=displayShapeDiv%>','<%=shapeCntlId%>')" href="#">Square</a></li>
+              <li aria-hidden="true" class="glyphicon glyphicon-star"><a href="#" style="display: inline-block" onclick="PreferenceModule.setShape('glyphicon glyphicon-star','Star','<%=displayShapeDiv%>','<%=shapeCntlId%>')">Star</a></li>
+              <li aria-hidden="true" class="glyphicon glyphicon-triangle-top"><a href="#" style="display: inline-block" onclick="PreferenceModule.setShape('glyphicon glyphicon-triangle-top','Triangle','<%=displayShapeDiv%>','<%=shapeCntlId%>')">Triangle</a></li>
+              <li aria-hidden="true" class="glyphicon glyphicon-asterisk"><a href="#" style="display: inline-block" onclick="PreferenceModule.setShape('glyphicon glyphicon-asterisk','Asterisk','<%=displayShapeDiv%>','<%=shapeCntlId%>')">Asterisk</a></li>
+              <li aria-hidden="true" class="fa fa-circle"><a href="#" style="display: inline-block" onclick="PreferenceModule.setShape('fa fa-circle','Circle','<%=displayShapeDiv%>','<%=shapeCntlId%>')">Circle</a></li>
+            </ul></div>
+
+             </td>
           <td><input name="applybtn" id="applybtn" type="button" value="Apply"/></td>
         </tr>
       </table>
       <BR><BR>
-      <table width="90%" cellpadding="5" cellspacing="0" id="komet_preferences_refsets_table"></table>
+      <table width="90%" cellpadding="5" cellspacing="0" id="komet_preferences_refsets_table">
+        <tr style="background-color: #0000a2;color:white">
+          <td>ID</td>
+          <td>Color</td>
+          <td>Shape</td>
+          <td>Refset</td>
+          <td>Delete</td>
+        </tr>
+        <%if !@colorrefsetnew.nil?
+              rcounter = rcounter.to_i
+          @colorrefsetnew.each do |refsets|
+              rcounter = rcounter + 10000%>
+
+            <tr id="tr<%=rcounter %>">
+              <td> <%=refsets[:refsetsid]%></td>
+                <td style="border:outset 1px black;width:15px;background-color:<%=refsets[:refsetcolorvalue]%>">&nbsp;
+                <input name="colorrefsets"  type="hidden" id="<%=refsets[:refsetsid]%>~<%=refsets[:refsetsid]%>~<%=refsets[:colorshapename]%>" size="6" style="height:30px" data-control="hue" value="<%=refsets[:refsetcolorvalue]%>"  /></td>
+              <td style="text-align: center" ><div  class="<%=refsets[:refsetcolorshape]%>"></div></td>
+              <td> <%=refsets[:refsets_name]%></td>
+              <td style="text-align: center" ><a tooltip="remove refset" name="removeRow" onclick="PreferenceModule.deleteRefsetFieldRow(<%=rcounter %>)">X</a></td>
+            </tr>
+        <% end
+
+        end%>
+      </table>
     </div>
   </div>
 
