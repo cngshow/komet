@@ -24,13 +24,15 @@
                 <%= select_tag "komet_mapping_overview_page_size_#{@viewer_id}", options_for_select([['25'], ['50'], ['100'], ['250'], ['500'], ['1000']], '25'), style: 'display: none'  %>
             </div>
 
-            <button type="button" id="komet_mapping_overview_sets_refresh_<%= @viewer_id %>" class="komet-link-button komet-panel-tools-control" onclick="WindowManager.viewers[<%= @viewer_id %>].loadOverviewSetsGrid();" title="Reload Mapping Set Grid" aria-label="Reload Mapping Set Grid">
-                <div title="Reload Mapping Set Grid" class="fa fa-refresh"></div>
-            </button>
+            <% if @mapping_action == 'set_list' %>
+                <button type="button" id="komet_mapping_overview_sets_refresh_<%= @viewer_id %>" class="komet-link-button komet-panel-tools-control" onclick="WindowManager.viewers[<%= @viewer_id %>].loadOverviewSetsGrid();" title="Reload Mapping Set Grid" aria-label="Reload Mapping Set Grid">
+                    <div title="Reload Mapping Set Grid" class="fa fa-refresh"></div>
+                </button>
+            <% end %>
 
             <div class="komet-panel-tools-control">
                 <label for="komet_mapping_show_stamp_<%= @viewer_id %>">Show STAMP</label>
-                <input type="checkbox" id="komet_mapping_show_stamp_<%= @viewer_id %>" onclick="WindowManager.viewers[<%= @viewer_id %>].toggleSTAMP();" value="true">
+                <input type="checkbox" checked id="komet_mapping_show_stamp_<%= @viewer_id %>" onclick="WindowManager.viewers[<%= @viewer_id %>].toggleSTAMP();" value="true">
             </div>
 
             <div class="komet-panel-tools-control">
@@ -60,6 +62,7 @@
 
     <div id="komet_mapping_viewer_body_<%= @viewer_id %>" class="komet-mapping-viewer-body panel-body"></div>
   </fieldset>
+
     <script>
 
         var statesToView = $("#komet_viewer_<%= @viewer_id %>").find("input[name='komet_mapping_states_to_view']");
@@ -77,6 +80,7 @@
         } else {
 
             WindowManager.viewers[<%= @viewer_id %>].currentSetID = "<%= @set_id %>";
+            WindowManager.viewers[<%= @viewer_id %>].viewerAction = "<%= @mapping_action %>";
 
             if (WindowManager.getLinkedViewerID() == "<%= @viewer_id %>") {
                 WindowManager.viewers["<%= @viewer_id %>"].swapLinkIcon(true);

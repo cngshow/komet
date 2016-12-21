@@ -13,6 +13,8 @@ where provided, and the git commit history.
     * refactor code of user preference screen to fix unknow bug in unix environment defect # 421416
     * fixed defect # 369888 CSV export on serach page was not exproting all the records
     * Checking that targetConcept exists on associations call during concept edit
+    * Added functionality to the mapping STAMP control
+    * Removed refresh button when looking at set details
 
 * 2016/12/16 - 1.52
     * Fixed issue with mapping effective date not parsing dates correctly
