@@ -860,13 +860,13 @@ var ConceptViewer = function(viewerID, currentConceptID, viewerAction) {
                 + '<div>' + this.createSelectField(idPrefix + "_acceptability_" + this.viewerID, namePrefix + "[acceptability]", this.selectFieldOptions.acceptability, acceptability, "acceptability", "Dialect Acceptability") + '</div>';
         }
 
+        rowString += '<div>' + this.createSelectField(idPrefix + "_state_" + this.viewerID, namePrefix + "[state]", this.selectFieldOptions.state, state, "Dialect State") + '</div>'
+
         if (isNew){
             rowString += '<div class="komet-concept-edit-row-tools">'
                 + '<button type="button" class="komet-link-button" onclick="WindowManager.viewers[' + this.viewerID + '].removeItemRow(\'' + dialectID + '\', \'' + rowID + '\', \'dialect\', ' + isNew + ', this)" title="Remove row" aria-label="Remove row">'
                 + '<div class="glyphicon glyphicon-remove"></div>'
                 + '</button></div>';
-        } else {
-            rowString += '<div>' + this.createSelectField(idPrefix + "_state_" + this.viewerID, namePrefix + "[state]", this.selectFieldOptions.state, state, "Dialect State") + '</div>'
         }
 
         rowString += '</div>';
