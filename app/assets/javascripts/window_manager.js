@@ -20,6 +20,8 @@ var WindowManager = (function () {
             return;
         }
 
+        UIHelper.clearAutoSuggestRecentCache();
+
         var range = document.createRange();
 
         if (windowType == NEW) {
@@ -54,8 +56,6 @@ var WindowManager = (function () {
             viewerElement.scrollParent()[0].scrollTop = 0;
             viewerElement[0].parentNode.replaceChild(documentFragment, viewerElement[0]);
         }
-
-        UIHelper.clearAutoSuggestRecentCache();
 }
 
     function createViewer(viewer) {

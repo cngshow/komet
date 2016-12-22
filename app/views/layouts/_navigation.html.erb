@@ -68,86 +68,7 @@
 </nav>
 
 <div id="komet_user_preference_form" title="User's Preference">
-  <div id="komet_preferences_tabs" role="tab">
-    <ul>
-      <li><a href='#useroptions'>Options</a></li>
-      <li><a href='#color-module'>Color Module</a></li>
-      <li><a href='#colorpath-module'>Color Path</a></li>
-      <li><a href='#komet_preferences_refsets_colors'>Color Refsets</a></li>
-    </ul>
-    <div id="useroptions">
-      <form>
-        <div style="height: 45px">
-          <div style="font-weight: bold; width: 40%; text-align: right; vertical-align: middle; float: left">Select Language:&nbsp;&nbsp;</div>
-          <div style="width: 60%; float: right">
-            <select id="komet_concept_language" class="form-control" aria-label="Select Language" aria-expanded="true" role="listbox"></select>
-          </div>
-        </div>
-        <div style="height: 45px">
-          <div id="stamp_date_label" style="font-weight: bold; width: 40%; text-align: right; vertical-align: middle; float: left">STAMP as of Date:&nbsp;&nbsp;</div>
-          <div style="width: 60%; float: right">
-            <div class='input-group date' id='stamp_date'>
-              <input type='text' class="form-control" aria-labelledby="stamp_date_label">
-              <span class="input-group-addon">
-                <span class="fa fa-calendar"></span>
-              </span>
-            </div>
-          </div>
-        </div>
-        <br><br>
 
-        <table id="description_type" width='80%' style="z-index:990" cellpadding='2' cellspacing='3'>
-        </table>
-        <br><br>
-
-        <table id="dialecttbl" width='80%' style="z-index:990" cellpadding='2' cellspacing='3'>
-        </table>
-
-        <br><br>
-
-        <div>
-          <fieldset  width='60%'>
-          <div width='60%' style="background-color: #0000a2;color:white;z-index:990">Status</div>
-
-            <legend style="width: 0px;height:0px">&nbsp;</legend>
-          <input type="radio" name="status" aria-checked="false" aria-label="Active" role="radio" value="Active">Active<br>
-          <input type="radio" name="status" aria-checked="false" aria-label="Inactive" role="radio" value="Inactive">InActive<br>
-          <input type="radio" name="status" aria-checked="false" aria-label="Active,Inactive" role="radio" checked="checked" value="Active,Inactive">Both<br>
-          </fieldset>
-        </div>
-      </form>
-    </div>
-    <div id="color-module" style="height: 650px;">
-      <div>Please click on <span style="color: red; ">X</span> to clear color</div>
-      <table id="listofmodule" width='90%' cellpadding='2' border='0' cellspacing='3'>
-      </table>
-    </div>
-    <div id="colorpath-module" style="height: 450px;">
-      <div>Please click on <span style="color: red; ">X</span> to clear color</div>
-      <table id="listofpath" width='90%' cellpadding='2' cellspacing='3'>
-      </table>
-    </div>
-
-    <div id="komet_preferences_refsets_colors" style="height: 450px;">
-      <table border="0" style="display: inline-block ">
-
-        <tr>
-          <td style="width: 35%">
-            <div id="getdd"></div>
-          </td>
-          <td style="width: 20%" style="padding-left: 5px;text-align: center;margin-left: 2px">
-            &nbsp;&nbsp;<input name="color_id" class="demo" title="Click here to change color" aria-label="Change color" type="hidden" id="color_id" size="1" style="height:25px" data-control="hue" value=""/>
-          </td>
-          <td style="width: 30%">
-            <div id="getrefsetshape"></div>
-          </td>
-          <td><input name="applybtn" id="applybtn" type="button" value="Apply"/></td>
-        </tr>
-      </table>
-      <BR><BR>
-      <table width="90%" cellpadding="5" cellspacing="0" id="komet_preferences_refsets_table"></table>
-    </div>
-  </div>
 </div>
 
 <!--modal window for exporting new and updated concepts -->
@@ -194,8 +115,13 @@
 
 <script>
   $(document).ready(function () {
-    $("#komet_preferences_tabs").tabs();
-    PreferenceModule.initialize();
+
+
+      $('#komet_user_preference_form').html("<%= j(render(:partial => 'komet_dashboard/userspreference')) %>");
+
+
+
+
     ExportModule.initialize();
 
     $('#stamp_date').datetimepicker({

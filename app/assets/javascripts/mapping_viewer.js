@@ -25,14 +25,9 @@ var MappingViewer = function(viewerID, currentSetID, viewerAction) {
         this.currentSetID = currentSetID;
         this.panelStates = {};
         this.overviewSetsGridOptions = null;
-        this.overviewItemsGridOptions = null;
-        this.targetCandidatesGridOptions = null;
         this.showOverviewInactiveConcepts = null;
-        this.showSTAMP = false;
-        this.showItemsSTAMP = false;
-        this.itemEditorWindow = null;
+        this.showSTAMP = true;
         this.viewerAction = viewerAction;
-        this.setEditorCreatedFields = [];
         this.setEditorMapSet = {};
         this.INCLUDE_FIELD_CLASS_PREFIX = "komet-mapping-added-";
         this.SET_INCLUDE_FIELD_PREFIX = "komet_mapping_set_editor_include_fields_";
@@ -159,10 +154,6 @@ var MappingViewer = function(viewerID, currentSetID, viewerAction) {
         // If a grid already exists destroy it or it will create a second grid
         if (this.overviewSetsGridOptions) {
             this.overviewSetsGridOptions.api.destroy();
-        }
-
-        if (this.showSTAMP){
-            $("#komet_mapping_show_stamp_" + this.viewerID)[0].checked = true;
         }
 
         // disable map set specific actions
@@ -306,19 +297,15 @@ var MappingViewer = function(viewerID, currentSetID, viewerAction) {
 
     MappingViewer.prototype.toggleSTAMP = function(){
 
-        var stampControl = $("#komet_mapping_show_stamp_" + this.viewerID);
+        this.showSTAMP = $("#komet_mapping_show_stamp_" + this.viewerID)[0].checked;
 
-        if (stampControl[0].checked) {
+        if (this.viewerAction == MappingModule.SET_LIST) {
 
-            this.showSTAMP = true;
-            this.overviewSetsGridOptions.columnApi.setColumnsVisible(["state", "time", "author", "module", "path"], true);
+            this.overviewSetsGridOptions.columnApi.setColumnsVisible(["state", "time", "author", "module", "path"], this.showSTAMP);
+            this.overviewSetsGridOptions.api.sizeColumnsToFit();
         } else {
-
-            this.showSTAMP = false;
-            this.overviewSetsGridOptions.columnApi.setColumnsVisible(["state", "time", "author", "module", "path"], false);
+            $("#komet_mapping_section_" + this.viewerID).find(".komet-mapping-stamp-fields").toggleClass("hide", !this.showSTAMP);
         }
-
-        this.overviewSetsGridOptions.api.sizeColumnsToFit();
     };
 
     MappingViewer.prototype.toggleOverviewInactiveConcepts = function(){
@@ -368,7 +355,7 @@ var MappingViewer = function(viewerID, currentSetID, viewerAction) {
 
         this.generateSetEditorItemsAdditionalFields();
 
-        if (viewerAction != MappingModule.CREATE_SET){
+        if (this.viewerAction != MappingModule.CREATE_SET){
 
             var itemGrid = $("#komet_mapping_items_" + this.viewerID);
             this.itemFieldInfo = mapItems.column_definitions;
@@ -391,7 +378,7 @@ var MappingViewer = function(viewerID, currentSetID, viewerAction) {
             UIHelper.processAutoSuggestTags(itemGrid);
         }
 
-        if (viewerAction == MappingModule.SET_DETAILS){
+        if (this.viewerAction == MappingModule.SET_DETAILS){
             form.find(".komet-mapping-show-on-edit").hide();
         } else {
             form.find(".komet-mapping-show-on-view").hide();
@@ -457,7 +444,7 @@ var MappingViewer = function(viewerID, currentSetID, viewerAction) {
 
     MappingViewer.prototype.generateSetEditorDialogIncludeSection = function(fieldName, fieldInfo){
 
-        var sectionString = '<fieldset><legend style="width: 0px;height:0px">&nbsp;</legend><div class="' + this.INCLUDE_FIELD_CLASS_PREFIX + fieldName + '">'
+        var sectionString = '<div role="group" aria-labelledby="' + this.SET_INCLUDE_FIELD_PREFIX + fieldName + '_field_label' + this.viewerID + '" class="' + this.INCLUDE_FIELD_CLASS_PREFIX + fieldName + '">'
             + '<input type="checkbox" name="' + this.SET_INCLUDE_FIELD_PREFIX.slice(0, -1) + '[]" class="form-control" '
             + 'id="' + this.SET_INCLUDE_FIELD_PREFIX + fieldName + '_' + this.viewerID + '" value="' + fieldName + '" ';
 
@@ -465,7 +452,7 @@ var MappingViewer = function(viewerID, currentSetID, viewerAction) {
             sectionString += 'checked="checked"';
         }
 
-        sectionString += '><label for="' + this.SET_INCLUDE_FIELD_PREFIX + fieldName + '_' + this.viewerID + '">' + fieldInfo.label_display + '</label>';
+        sectionString += '><label id="' + this.SET_INCLUDE_FIELD_PREFIX + fieldName + '_field_label' + this.viewerID + '" for="' + this.SET_INCLUDE_FIELD_PREFIX + fieldName + '_' + this.viewerID + '">' + fieldInfo.label_display + '</label>';
 
         if (fieldInfo.removable){
             sectionString += '<button type="button" class="komet-link-button komet-flex-right" onclick="WindowManager.viewers[' + this.viewerID + '].removeSetIncludedField(\'' + fieldName + '\');" aria-label="Remove">'
@@ -476,7 +463,7 @@ var MappingViewer = function(viewerID, currentSetID, viewerAction) {
             + '<input type="hidden" name="' + this.SET_INCLUDE_FIELD_PREFIX + fieldName + '_data_type" value="' + fieldInfo.data_type + '">'
             + '<input type="hidden" name="' + this.SET_INCLUDE_FIELD_PREFIX + fieldName + '_required" value="' + fieldInfo.required + '">'
             + '<input type="hidden" name="' + this.SET_INCLUDE_FIELD_PREFIX + fieldName + '_removable" value="' + fieldInfo.removable + '">'
-            + '</div></fieldset>';
+            + '</div>';
 
         return sectionString;
     };
@@ -920,6 +907,10 @@ var MappingViewer = function(viewerID, currentSetID, viewerAction) {
         var targetConcepID = "";
         var targetConceptDisplay = "";
         var state = "";
+        var time = "";
+        var author = "";
+        var module = "";
+        var path = "";
         var qualifierConcept = "";
         var qualifierConceptDisplay = "";
         var commentID = "0";
@@ -952,6 +943,10 @@ var MappingViewer = function(viewerID, currentSetID, viewerAction) {
             }
 
             state = rowData.state;
+            time = rowData.time;
+            author = rowData.author;
+            module = rowData.module;
+            path = rowData.path;
             commentID = rowData.comment_id;
             comment = rowData.comment;
             ariaLabel = rowData.source_concept_display;
@@ -983,8 +978,12 @@ var MappingViewer = function(viewerID, currentSetID, viewerAction) {
             + 'classes="komet-mapping-item-target-concept komet-mapping-show-on-edit">'
             + '</autosuggest><div class="komet-mapping-show-on-view" aria-label="' + ariaLabel + ' Target Concept">' + targetConceptDisplay + '</div></div>';
 
-        rowString += '<div>' + UIHelper.createSelectFieldString(idPrefix + '_state', 'items[' + itemID + '][state]', classes, UIHelper.getPreDefinedOptionsForSelect("active_inactive"), state, ariaLabel + ' Item State')
-            + '<div class="komet-mapping-show-on-view" aria-label="' + ariaLabel + ' Item State">' + state + '</div></div>';
+        rowString += '<div class="komet-mapping-stamp-fields">' + UIHelper.createSelectFieldString(idPrefix + '_state', 'items[' + itemID + '][state]', classes, UIHelper.getPreDefinedOptionsForSelect("active_inactive"), state, ariaLabel + ' Item State')
+            + '<div class="komet-mapping-show-on-view" aria-label="' + ariaLabel + ' Item State">' + state + '</div></div>'
+            + '<div class="komet-mapping-stamp-fields"><div aria-label="' + ariaLabel + ' Item Time">' + time + '</div></div>'
+            + '<div class="komet-mapping-stamp-fields"><div aria-label="' + ariaLabel + ' Item Author">' + author + '</div></div>'
+            + '<div class="komet-mapping-stamp-fields"><div aria-label="' + ariaLabel + ' Item Module">' + module + '</div></div>'
+            + '<div class="komet-mapping-stamp-fields"><div aria-label="' + ariaLabel + ' Item Path">' + path + '</div></div>';
 
         var qualifierOptions = [{value: '', label: 'No Restrictions'}, {value: '8aa6421d-4966-5230-ae5f-aca96ee9c2c1', label: 'Exact'}, {value: 'c1068428-a986-5c12-9583-9b2d3a24fdc6', label: 'Broader Than'}, {value: '250d3a08-4f28-5127-8758-e8df4947f89c', label: 'Narrower Than'}];
         rowString += '<div>' + UIHelper.createSelectFieldString(idPrefix + '_qualifier_concept', 'items[' + itemID + '][qualifier_concept]', classes, qualifierOptions, qualifierConcept, ariaLabel + 'Mapping Qualifier')
@@ -1140,22 +1139,6 @@ var MappingViewer = function(viewerID, currentSetID, viewerAction) {
         }.bind(this);
 
         UIHelper.generateConfirmationDialog("Cancel Edits?", "Are you sure you want to discard all unsaved changes?", confirmCallback, "Yes", triggerElement);
-    };
-
-    MappingViewer.prototype.toggleItemsSTAMP = function(){
-
-        if (this.showItemsSTAMP) {
-
-            this.showItemsSTAMP = false;
-            this.overviewItemsGridOptions.columnApi.setColumnsVisible(["status", "time", "author", "module", "path"], false);
-        } else {
-
-            this.showItemsSTAMP = true;
-            this.overviewItemsGridOptions.columnApi.setColumnsVisible(["status", "time", "author", "module", "path"], true);
-        }
-
-        this.overviewItemsGridOptions.api.sizeColumnsToFit();
-
     };
 
     MappingViewer.prototype.enterSetEditMode = function(){

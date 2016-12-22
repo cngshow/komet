@@ -23,6 +23,7 @@ var UIHelper = (function () {
 
     var conceptClipboard = {};
     var autoSuggestRecentCache = {};
+    var deferredRecentsCalls = null;
     const VHAT = "vhat";
     const SNOMED = "snomed";
     const LOINC = "loinc";
@@ -592,7 +593,16 @@ var UIHelper = (function () {
             });
 
             // recentsDropdown.trigger("recents:load");
-             loadAutoSuggestRecents(fieldIDBase + "_recents" + fieldIDPostfix, recentsRestVariable, useRecentsCache, restrictSearch);
+
+            if (deferredRecentsCalls && deferredRecentsCalls.state() == "pending"){
+
+                deferredRecentsCalls.done(function(){
+                    loadAutoSuggestRecents(fieldIDBase + "_recents" + fieldIDPostfix, recentsRestVariable, useRecentsCache, restrictSearch);
+                }.bind(this));
+
+            } else {
+                loadAutoSuggestRecents(fieldIDBase + "_recents" + fieldIDPostfix, recentsRestVariable, useRecentsCache, restrictSearch);
+            }
         });
     };
 
@@ -637,6 +647,8 @@ var UIHelper = (function () {
 
     var loadAutoSuggestRecents = function (recentsID, restVariable, useRecentsCache, recentsName) {
 
+        deferredRecentsCalls = $.Deferred();
+
         if (useRecentsCache == null){
             useRecentsCache = true;
         }
@@ -645,6 +657,7 @@ var UIHelper = (function () {
         if (useRecentsCache && autoSuggestRecentCache[recentsName] != null){
 
             $("#" + recentsID).html(autoSuggestRecentCache[recentsName]);
+            deferredRecentsCalls.resolve();
             return;
         }
 
@@ -675,7 +688,9 @@ var UIHelper = (function () {
             $("#" + recentsID).html(options);
 
             if (useRecentsCache) {
+
                 autoSuggestRecentCache[recentsName] = options;
+                deferredRecentsCalls.resolve();
             }
 
         });
