@@ -3,10 +3,10 @@ Komet Changelog
 This changelog summarizes changes and fixes which are a part of each revision.  For more details on the fixes, refer tracking numbers 
 where provided, and the git commit history.
 
-* 2016/12/21 - 1.53
-    * Fixed typo in logging file that was causing errors
+* 2016/12/?? - 1.54 - PENDING
+    
 
-* 2016/12/20 - 1.53
+* 2016/12/22 - 1.53
     * Fixed CSS issues with the Add Map Fields dialog boxes in IE.
     * Fixed the autosuggest recent calls so they cache properly
     * Added Refset sections under Concept and Descriptions on the concept edit screen.
@@ -18,7 +18,7 @@ where provided, and the git commit history.
     * Checking that targetConcept exists on associations call during concept edit
     * Added functionality to the mapping STAMP control
     * Removed refresh button when looking at set details
-
+	* Fixed typo in logging file that was causing errors
 
 * 2016/12/16 - 1.52
     * Fixed issue with mapping effective date not parsing dates correctly
