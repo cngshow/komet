@@ -5,6 +5,9 @@ where provided, and the git commit history.
 
 * 2016/12/21 - 1.53
     * Fixed typo in logging file that was causing errors
+    * Fixed concept clone from creating a duplicate FSN dialect
+    * Changed code so on creation of a concept description if no dialect is added it will automatically add US English as a preferred dialect.
+    * Fixed bug in concept create due to hardcoded language sequence ID that has since changed. This was stopping create from working. Switched to using ID from metadata
 
 * 2016/12/20 - 1.53
     * Fixed CSS issues with the Add Map Fields dialog boxes in IE.
@@ -13,8 +16,8 @@ where provided, and the git commit history.
     * Updated to latest enunciate file
     * Changed to latest taxonomy ID names in metadata.
     * Removed hardcoded 'CODE' UUID, getting it from metadata now
-    * refactor code of user preference screen to fix unknow bug in unix environment defect # 421416
-    * fixed defect # 369888 CSV export on serach page was not exproting all the records
+    * refactor code of user preference screen to fix unknown bug in unix environment defect # 421416
+    * fixed defect # 369888 CSV export on search page was not exporting all the records
     * Checking that targetConcept exists on associations call during concept edit
     * Added functionality to the mapping STAMP control
     * Removed refresh button when looking at set details

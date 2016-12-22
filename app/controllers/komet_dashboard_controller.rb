@@ -651,12 +651,11 @@ class KometDashboardController < ApplicationController
         parent_concept_text = params[:komet_create_concept_parent_display]
         parent_concept_type = params[:komet_create_concept_parent_type]
 
-
         body_params = {
-            fsn: preferred_term, # + ' (' + parent_concept_text + ')',
-            #preferredTerm: preferred_term,
+            fsn: preferred_term,
             parentConceptIds: [parent_concept_id],
-            descriptionLanguageConceptId: 8
+            descriptionLanguageConceptId: $isaac_metadata_auxiliary['ENGLISH_LANGUAGE']['uuids'].first[:uuid],
+            descriptionPreferredInDialectAssemblagesConceptIds: [$isaac_metadata_auxiliary['US_ENGLISH_DIALECT']['uuids'].first[:uuid]]
         }
 
         # if it is present get the description type concept sequence from the uuid
@@ -973,10 +972,14 @@ class KometDashboardController < ApplicationController
             if params[:descriptions]
 
                 fsn_id = $isaac_metadata_auxiliary['FULLY_SPECIFIED_NAME']['uuids'].first[:uuid]
+                preferred_dialect_id = $isaac_metadata_auxiliary['PREFERRED']['uuids'].first[:uuid]
                 fsn = nil
+                dialects_to_remove = []
 
+                # loop through the descriptions looking for the FSN
                 params[:descriptions].each do |description_id, description|
 
+                    # When we find the FSN, copy its info and preferred dialects, create the new concept, and break the loop
                     if description['description_type'] == fsn_id
 
                         body_params = {
@@ -984,6 +987,27 @@ class KometDashboardController < ApplicationController
                             parentConceptIds: [params[:komet_concept_edit_parent]],
                             descriptionLanguageConceptId: description['description_language']
                         }
+
+                        # process the dialects
+                        if description[:dialects]
+
+                            dialects = []
+
+                            description[:dialects].each do |dialect_id, dialect|
+
+                                if dialect['acceptability'] == preferred_dialect_id
+
+                                    dialect['dialect_id'] = dialect_id
+                                    dialects << dialect['dialect']
+                                    dialects_to_remove << dialect
+                                end
+                            end
+                        else
+                            dialects << $isaac_metadata_auxiliary['US_ENGLISH_DIALECT']['uuids'].first[:uuid]
+                        end
+
+                        # add the preferred dialects from the FSN
+                        body_params[:descriptionPreferredInDialectAssemblagesConceptIds] = dialects
 
                         new_concept_id = ConceptRest::get_concept(action: ConceptRestActions::ACTION_CREATE, additional_req_params: {editToken: get_edit_token}, body_params: body_params )
 
@@ -1004,11 +1028,18 @@ class KometDashboardController < ApplicationController
             if create_success
                 concept_id = new_concept_id.uuid
 
+                dialects_to_remove.each_with_index do |dialect, index|
+
+                    fsn[:dialects][new_concept_id.dialectSememes[index].uuids.first] = dialect
+                    fsn[:dialects].delete(dialect['dialect_id'])
+                end
+
                 # Copy the FSN into a new hash entry using the returned ID from the newly created FSN, then delete the old key
                 params[:descriptions][new_concept_id.fsnDescriptionSememe.uuids.first] = fsn
                 params[:descriptions].delete(fsn_id)
+
             else
-                render json: {concept_id: concept_id, failed: {id: concept_id, text: 'Clone Concept: The new concept was unable to be created.' , type: 'clone'}}
+                render json: {concept_id: concept_id, failed: {id: concept_id, text: 'Clone Concept: The new concept was unable to be created.' , type: 'clone'}} and return
             end
         end
 
@@ -1112,6 +1143,8 @@ class KometDashboardController < ApplicationController
                                 acceptable << dialect['dialect']
                             end
                         end
+                    else
+                        preferred << $isaac_metadata_auxiliary['US_ENGLISH_DIALECT']['uuids'].first[:uuid]
                     end
 
                     if preferred.length > 0
