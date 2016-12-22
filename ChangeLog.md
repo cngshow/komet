@@ -4,9 +4,6 @@ This changelog summarizes changes and fixes which are a part of each revision.  
 where provided, and the git commit history.
 
 * 2016/12/?? - 1.54 - PENDING
-    * Fixed concept clone from creating a duplicate FSN dialect
-    * Changed code so on creation of a concept description if no dialect is added it will automatically add US English as a preferred dialect.
-    * Fixed bug in concept create due to hardcoded language sequence ID that has since changed. This was stopping create from working. Switched to using ID from metadata
 
 * 2016/12/20 - 1.53
     * Fixed CSS issues with the Add Map Fields dialog boxes in IE.
