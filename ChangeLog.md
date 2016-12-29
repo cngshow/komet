@@ -3,7 +3,7 @@ Komet Changelog
 This changelog summarizes changes and fixes which are a part of each revision.  For more details on the fixes, refer tracking numbers 
 where provided, and the git commit history.
 
-* 2016/12/28 - 1.54 - PENDING
+* 2016/12/29 - 1.54
     * Fixed concept clone from creating a duplicate FSN dialect
     * Changed code so on creation of a concept description if no dialect is added it will automatically add US English as a preferred dialect.
     * Fixed bug in concept create due to hardcoded language sequence ID that has since changed. This was stopping create from working. Switched to using ID from metadata
