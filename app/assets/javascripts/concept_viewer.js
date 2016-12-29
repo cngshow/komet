@@ -225,7 +225,7 @@ var ConceptViewer = function(viewerID, currentConceptID, viewerAction) {
         this.refsetGridOptions = {
             enableColResize: true,
             enableSorting: true,
-            suppressCellSelection: true,
+            suppressCellSelection: false,
             rowSelection: "single",
             onGridReady: onGridReady,
             rowModelType: 'pagination'
@@ -235,8 +235,19 @@ var ConceptViewer = function(viewerID, currentConceptID, viewerAction) {
             event.api.sizeColumnsToFit();
         }
 
-        new agGrid.Grid($("#" + this.REFSET_GRID).get(0), this.refsetGridOptions);
+        var refsetGridDiv = $("#" + this.REFSET_GRID);
+
+        new agGrid.Grid(refsetGridDiv.get(0), this.refsetGridOptions);
         this.getRefsetResultData();
+
+        $("#komet_refsets_tab_trigger_" + this.viewerID).focus(function(){
+
+            if (this.refsetGridOptions.api.rowModel.rowsToDisplay.length > 0){
+
+                this.refsetGridOptions.api.ensureIndexVisible(0);
+                this.refsetGridOptions.api.setFocusedCell(0, "state");
+            }
+        }.bind(this));
     };
 
     ConceptViewer.prototype.getRefsetResultData = function() {
@@ -276,7 +287,7 @@ var ConceptViewer = function(viewerID, currentConceptID, viewerAction) {
         // set the grid datasource options, including processing the data rows
         var dataSource = {
 
-            pageSize: pageSize,
+            paginationPageSize: pageSize,
             getRows: function (params) {
 
                 var pageNumber = params.endRow / pageSize;
@@ -860,13 +871,13 @@ var ConceptViewer = function(viewerID, currentConceptID, viewerAction) {
                 + '<div>' + this.createSelectField(idPrefix + "_acceptability_" + this.viewerID, namePrefix + "[acceptability]", this.selectFieldOptions.acceptability, acceptability, "acceptability", "Dialect Acceptability") + '</div>';
         }
 
+        rowString += '<div>' + this.createSelectField(idPrefix + "_state_" + this.viewerID, namePrefix + "[state]", this.selectFieldOptions.state, state, "Dialect State") + '</div>'
+
         if (isNew){
             rowString += '<div class="komet-concept-edit-row-tools">'
                 + '<button type="button" class="komet-link-button" onclick="WindowManager.viewers[' + this.viewerID + '].removeItemRow(\'' + dialectID + '\', \'' + rowID + '\', \'dialect\', ' + isNew + ', this)" title="Remove row" aria-label="Remove row">'
                 + '<div class="glyphicon glyphicon-remove"></div>'
                 + '</button></div>';
-        } else {
-            rowString += '<div>' + this.createSelectField(idPrefix + "_state_" + this.viewerID, namePrefix + "[state]", this.selectFieldOptions.state, state, "Dialect State") + '</div>'
         }
 
         rowString += '</div>';

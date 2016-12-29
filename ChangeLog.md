@@ -3,7 +3,12 @@ Komet Changelog
 This changelog summarizes changes and fixes which are a part of each revision.  For more details on the fixes, refer tracking numbers 
 where provided, and the git commit history.
 
-* 2016/12/?? - 1.54 - PENDING
+* 2016/12/29 - 1.54
+    * Fixed concept clone from creating a duplicate FSN dialect
+    * Changed code so on creation of a concept description if no dialect is added it will automatically add US English as a preferred dialect.
+    * Fixed bug in concept create due to hardcoded language sequence ID that has since changed. This was stopping create from working. Switched to using ID from metadata
+    * Fixed Hyphen misspelling on Add Map Items dialog
+    * Added ability to tab into search and refset grids, and then navigate the grids with keyboard commands
 
 * 2016/12/20 - 1.53
     * Fixed CSS issues with the Add Map Fields dialog boxes in IE.
@@ -17,9 +22,7 @@ where provided, and the git commit history.
     * Checking that targetConcept exists on associations call during concept edit
     * Added functionality to the mapping STAMP control
     * Removed refresh button when looking at set details
-    * Fixed concept clone from creating a duplicate FSN dialect
-    * Changed code so on creation of a concept description if no dialect is added it will automatically add US English as a preferred dialect.
-    * Fixed bug in concept create due to hardcoded language sequence ID that has since changed. This was stopping create from working. Switched to using ID from metadata
+    * Fixed typo in logging file that was causing errors
 
 * 2016/12/16 - 1.52
     * Fixed issue with mapping effective date not parsing dates correctly

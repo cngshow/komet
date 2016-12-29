@@ -114,7 +114,7 @@ module CommonRest
     invoke_callbacks if self.respond_to? :invoke_callbacks #if I have been mixed into an instance of common rest base I will respond to this
     json.freeze
     json_to_yaml_file(json, url_to_path_string(raw_url))
-    $rest_cache[cache_lookup] = json unless http_method != CommonActionSyms::HTTP_METHOD_GET
+    $rest_cache[cache_lookup] = json unless ((http_method != CommonActionSyms::HTTP_METHOD_GET) || !response.status.eql?(200)) #this should prevent RestExceptionResponse from being cached
     json.deep_dup
   end
 end
