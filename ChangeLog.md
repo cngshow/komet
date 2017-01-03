@@ -3,6 +3,9 @@ Komet Changelog
 This changelog summarizes changes and fixes which are a part of each revision.  For more details on the fixes, refer tracking numbers 
 where provided, and the git commit history.
 
+* 2017/01/?
+    * Added unmapped option to Mapping Qualifier as per defect 418372
+
 * 2016/12/29 - 1.55
     * Fixed issue with search grid that caused the grid not to show results.
     * Cleaned up search export code, changed so search results are not run until the export button is clicked.
