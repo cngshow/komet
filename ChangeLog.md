@@ -3,8 +3,11 @@ Komet Changelog
 This changelog summarizes changes and fixes which are a part of each revision.  For more details on the fixes, refer tracking numbers 
 where provided, and the git commit history.
 
-* 2017/01/?
+* 2017/01/03 - 1.56
     * Added unmapped option to Mapping Qualifier as per defect 418372
+    * Fixed refset grid so it can be navigated with the keyboard.
+    * Added wait cursor to show when a mapping or concept viewer is being loaded, or when a search is performed.
+    * Added debugging code to help figure out edit cancel bug (blank screen) on SQA
 
 * 2016/12/29 - 1.55
     * Fixed issue with search grid that caused the grid not to show results.

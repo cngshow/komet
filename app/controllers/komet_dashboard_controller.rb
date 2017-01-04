@@ -651,21 +651,26 @@ class KometDashboardController < ApplicationController
         parent_concept_text = params[:komet_create_concept_parent_display]
         parent_concept_type = params[:komet_create_concept_parent_type]
 
-        body_params = {
-            fsn: preferred_term,
-            parentConceptIds: [parent_concept_id],
-            descriptionLanguageConceptId: $isaac_metadata_auxiliary['ENGLISH_LANGUAGE']['uuids'].first[:uuid],
-            descriptionPreferredInDialectAssemblagesConceptIds: [$isaac_metadata_auxiliary['US_ENGLISH_DIALECT']['uuids'].first[:uuid]]
-        }
+        begin
+            body_params = {
+                fsn: preferred_term,
+                parentConceptIds: [parent_concept_id],
+                descriptionLanguageConceptId: $isaac_metadata_auxiliary['ENGLISH_LANGUAGE']['uuids'].first[:uuid],
+                descriptionPreferredInDialectAssemblagesConceptIds: [$isaac_metadata_auxiliary['US_ENGLISH_DIALECT']['uuids'].first[:uuid]]
+            }
 
-        # if it is present get the description type concept sequence from the uuid
-        if description_type != ''
-            body_params[:extendedDescriptionTypeConcept] = description_type
-        end
+            # if it is present get the description type concept sequence from the uuid
+            if description_type != ''
+                body_params[:extendedDescriptionTypeConcept] = description_type
+            end
 
-        new_concept_id = ConceptRest::get_concept(action: ConceptRestActions::ACTION_CREATE, additional_req_params: {editToken: get_edit_token}, body_params: body_params )
+            new_concept_id = ConceptRest::get_concept(action: ConceptRestActions::ACTION_CREATE, additional_req_params: {editToken: get_edit_token}, body_params: body_params )
 
-        if new_concept_id.is_a? CommonRest::UnexpectedResponse
+            if new_concept_id.is_a? CommonRest::UnexpectedResponse
+                render json: {concept_id: nil} and return
+            end
+
+        rescue => exception
             render json: {concept_id: nil} and return
         end
 
@@ -909,6 +914,7 @@ class KometDashboardController < ApplicationController
     end
 
     def edit_concept
+
         concept_id =  params[:concept_id]
         failed_writes = []
 
@@ -917,47 +923,55 @@ class KometDashboardController < ApplicationController
 
             sememes.each do |sememe_instance_id, sememe|
 
-                # get the sememe definition ID  and name
-                sememe_definition_id = sememe['sememe']
-                sememe_name = sememe['sememe_name']
+                begin
 
-                if sememe_name == nil
-                    sememe_name = ''
-                end
+                    # get the sememe definition ID  and name
+                    sememe_definition_id = sememe['sememe']
+                    sememe_name = sememe['sememe_name']
 
-                # remove the sememe and sememe name properties
-                sememe.delete('sememe')
-                sememe.delete('sememe_name')
+                    if sememe_name == nil
+                        sememe_name = ''
+                    end
 
-                if sememe[:state].downcase == 'active'
-                    active = true
-                else
-                    active = false
-                end
+                    # remove the sememe and sememe name properties
+                    sememe.delete('sememe')
+                    sememe.delete('sememe_name')
 
-                # remove the state property
-                sememe.delete('state')
+                    if sememe[:state].downcase == 'active'
+                        active = true
+                    else
+                        active = false
+                    end
 
-                body_params = {active: active, columnData: []}
-                additional_req_params = {editToken: get_edit_token}
+                    # remove the state property
+                    sememe.delete('state')
 
-                sememe.each do |field_id, field|
-                    body_params[:columnData] << {columnNumber: field['column_number'], data: field['value'], '@class' => field['data_type_class']}
-                end
+                    body_params = {active: active, columnData: []}
+                    additional_req_params = {editToken: get_edit_token}
 
-                # if the sememe ID is a UUID, then it is an existing sememe to be updated, otherwise it is a new sememe to be created
-                if is_id?(sememe_instance_id)
-                    return_value = SememeRest::get_sememe(action: SememeRestActions::ACTION_SEMEME_UPDATE, uuid_or_id: sememe_instance_id, additional_req_params: additional_req_params, body_params: body_params)
-                else
+                    sememe.each do |field_id, field|
+                        body_params[:columnData] << {columnNumber: field['column_number'], data: field['value'], '@class' => field['data_type_class']}
+                    end
 
-                    body_params[:assemblageConcept] = sememe_definition_id
-                    body_params[:referencedComponent] = referenced_id
+                    # if the sememe ID is a UUID, then it is an existing sememe to be updated, otherwise it is a new sememe to be created
+                    if is_id?(sememe_instance_id)
+                        return_value = SememeRest::get_sememe(action: SememeRestActions::ACTION_SEMEME_UPDATE, uuid_or_id: sememe_instance_id, additional_req_params: additional_req_params, body_params: body_params)
+                    else
 
-                    return_value = SememeRest::get_sememe(action: SememeRestActions::ACTION_SEMEME_CREATE, additional_req_params: additional_req_params, body_params: body_params)
-                end
+                        body_params[:assemblageConcept] = sememe_definition_id
+                        body_params[:referencedComponent] = referenced_id
 
-                # if the sememe create or update failed, mark it
-                if return_value.is_a? CommonRest::UnexpectedResponse
+                        return_value = SememeRest::get_sememe(action: SememeRestActions::ACTION_SEMEME_CREATE, additional_req_params: additional_req_params, body_params: body_params)
+                    end
+
+                    # if the sememe create or update failed, mark it
+                    if return_value.is_a? CommonRest::UnexpectedResponse
+                        failed_writes << {id: referenced_id + '_' + sememe_instance_id, text: error_text_prefix + type + ': ' + sememe_name, type: type}
+                    end
+
+                rescue => exception
+
+                    $log.error(exception)
                     failed_writes << {id: referenced_id + '_' + sememe_instance_id, text: error_text_prefix + type + ': ' + sememe_name, type: type}
                 end
             end
@@ -969,59 +983,67 @@ class KometDashboardController < ApplicationController
             create_success = false
             new_concept_id = nil
 
-            if params[:descriptions]
+            begin
 
-                fsn_id = $isaac_metadata_auxiliary['FULLY_SPECIFIED_NAME']['uuids'].first[:uuid]
-                preferred_dialect_id = $isaac_metadata_auxiliary['PREFERRED']['uuids'].first[:uuid]
-                fsn = nil
-                dialects_to_remove = []
+                if params[:descriptions]
 
-                # loop through the descriptions looking for the FSN
-                params[:descriptions].each do |description_id, description|
+                    fsn_id = $isaac_metadata_auxiliary['FULLY_SPECIFIED_NAME']['uuids'].first[:uuid]
+                    preferred_dialect_id = $isaac_metadata_auxiliary['PREFERRED']['uuids'].first[:uuid]
+                    fsn = nil
+                    dialects_to_remove = []
 
-                    # When we find the FSN, copy its info and preferred dialects, create the new concept, and break the loop
-                    if description['description_type'] == fsn_id
+                    # loop through the descriptions looking for the FSN
+                    params[:descriptions].each do |description_id, description|
 
-                        body_params = {
-                            fsn: description['text'],
-                            parentConceptIds: [params[:komet_concept_edit_parent]],
-                            descriptionLanguageConceptId: description['description_language']
-                        }
+                        # When we find the FSN, copy its info and preferred dialects, create the new concept, and break the loop
+                        if description['description_type'] == fsn_id
 
-                        # process the dialects
-                        if description[:dialects]
+                            body_params = {
+                                fsn: description['text'],
+                                parentConceptIds: [params[:komet_concept_edit_parent]],
+                                descriptionLanguageConceptId: description['description_language']
+                            }
 
-                            dialects = []
+                            # process the dialects
+                            if description[:dialects]
 
-                            description[:dialects].each do |dialect_id, dialect|
+                                dialects = []
 
-                                if dialect['acceptability'] == preferred_dialect_id
+                                description[:dialects].each do |dialect_id, dialect|
 
-                                    dialect['dialect_id'] = dialect_id
-                                    dialects << dialect['dialect']
-                                    dialects_to_remove << dialect
+                                    if dialect['acceptability'] == preferred_dialect_id
+
+                                        dialect['dialect_id'] = dialect_id
+                                        dialects << dialect['dialect']
+                                        dialects_to_remove << dialect
+                                    end
                                 end
+                            else
+                                dialects << $isaac_metadata_auxiliary['US_ENGLISH_DIALECT']['uuids'].first[:uuid]
                             end
-                        else
-                            dialects << $isaac_metadata_auxiliary['US_ENGLISH_DIALECT']['uuids'].first[:uuid]
-                        end
 
-                        # add the preferred dialects from the FSN
-                        body_params[:descriptionPreferredInDialectAssemblagesConceptIds] = dialects
+                            # add the preferred dialects from the FSN
+                            body_params[:descriptionPreferredInDialectAssemblagesConceptIds] = dialects
 
-                        new_concept_id = ConceptRest::get_concept(action: ConceptRestActions::ACTION_CREATE, additional_req_params: {editToken: get_edit_token}, body_params: body_params )
+                            new_concept_id = ConceptRest::get_concept(action: ConceptRestActions::ACTION_CREATE, additional_req_params: {editToken: get_edit_token}, body_params: body_params )
 
-                        # if the concept create failed, break out of the loop
-                        if new_concept_id.is_a? CommonRest::UnexpectedResponse
+                            # if the concept create failed, break out of the loop
+                            if new_concept_id.is_a? CommonRest::UnexpectedResponse
+                                break
+                            end
+
+                            fsn = description
+                            fsn_id = description_id
+                            create_success = true
                             break
                         end
-
-                        fsn = description
-                        fsn_id = description_id
-                        create_success = true
-                        break
                     end
                 end
+
+            rescue => exception
+
+                $log.error(exception)
+                create_success = false
             end
 
             # if the concept create did not happen, return with a failed message, otherwise copy the new concept ID into the concept_id field to continue with the edit

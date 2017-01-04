@@ -413,231 +413,254 @@ class MappingController < ApplicationController
         failed_writes = {set: [], items: []}
         successful_writes = 0
 
-        if params[:komet_mapping_set_editor_state].downcase == 'active'
-            active = true
-        else
-            active = false
-        end
+        begin
 
-        body_params = {name: set_name, description: description, active: active}
-        request_params = {editToken: get_edit_token}
-
-        if set_id && set_id != ''
-
-            return_value =  MappingApis::get_mapping_api(uuid_or_id: set_id, action: MappingApiActions::ACTION_UPDATE_SET, additional_req_params: request_params, body_params: body_params)
-
-            if return_value.is_a? CommonRest::UnexpectedResponse
-                failed_writes[:set] << {id: :set, error: 'The set was unable to be updated.'}
+            if params[:komet_mapping_set_editor_state].downcase == 'active'
+                active = true
             else
-                successful_writes += 1
+                active = false
             end
-        else
 
-            set_extended_fields = []
-            item_extended_fields = []
+            body_params = {name: set_name, description: description, active: active}
+            request_params = {editToken: get_edit_token}
 
-            if params['komet_mapping_set_editor_include_fields'] != nil
+            if set_id && set_id != ''
 
-                params['komet_mapping_set_editor_include_fields'].each do |set_field|
+                return_value =  MappingApis::get_mapping_api(uuid_or_id: set_id, action: MappingApiActions::ACTION_UPDATE_SET, additional_req_params: request_params, body_params: body_params)
 
-                    set_field_label = params['komet_mapping_set_editor_include_fields_' + set_field + '_label']
-                    set_field_data_type = params['komet_mapping_set_editor_include_fields_' + set_field + '_data_type']
+                if return_value.is_a? CommonRest::UnexpectedResponse
+                    failed_writes[:set] << {id: :set, error: 'The set was unable to be updated.'}
+                else
+                    successful_writes += 1
+                end
+            else
 
-                    if set_field_data_type != 'UUID'
-                        set_field_data_type = set_field_data_type.downcase
-                        set_field_data_type[0] = params['komet_mapping_set_editor_include_fields_' + set_field + '_data_type'][0]
+                set_extended_fields = []
+                item_extended_fields = []
+
+                if params['komet_mapping_set_editor_include_fields'] != nil
+
+                    params['komet_mapping_set_editor_include_fields'].each do |set_field|
+
+                        set_field_label = params['komet_mapping_set_editor_include_fields_' + set_field + '_label']
+                        set_field_data_type = params['komet_mapping_set_editor_include_fields_' + set_field + '_data_type']
+
+                        if set_field_data_type != 'UUID'
+                            set_field_data_type = set_field_data_type.downcase
+                            set_field_data_type[0] = params['komet_mapping_set_editor_include_fields_' + set_field + '_data_type'][0]
+                        end
+
+                        set_field_data_type = 'gov.vha.isaac.rest.api1.data.sememe.dataTypes.RestDynamicSememe' + set_field_data_type
+                        set_field_value = params['komet_mapping_set_editor_' + set_field]
+
+                        set_extended_fields << {extensionNameConcept: set_field_label, extensionValue: {'@class' => set_field_data_type, columnNumber: 1, data: set_field_value}}
                     end
 
-                    set_field_data_type = 'gov.vha.isaac.rest.api1.data.sememe.dataTypes.RestDynamicSememe' + set_field_data_type
-                    set_field_value = params['komet_mapping_set_editor_' + set_field]
 
-                    set_extended_fields << {extensionNameConcept: set_field_label, extensionValue: {'@class' => set_field_data_type, columnNumber: 1, data: set_field_value}}
                 end
 
+                if params[:komet_mapping_set_editor_rules] != ''
 
-            end
+                    # TODO - use the first line when implemented in the metadata
+                    #rules_id = $isaac_metadata_auxiliary['DYNAMIC_SEMEME_COLUMN_BUSINESS_RULES']['uuids'].first[:uuid]
+                    rules_id = '7ebc6742-8586-58c3-b49d-765fb5a93f35'
 
-            if params[:komet_mapping_set_editor_rules] != ''
-
-                # TODO - use the first line when implemented in the metadata
-                #rules_id = $isaac_metadata_auxiliary['DYNAMIC_SEMEME_COLUMN_BUSINESS_RULES']['uuids'].first[:uuid]
-                rules_id = '7ebc6742-8586-58c3-b49d-765fb5a93f35'
-
-                set_extended_fields << {extensionNameConcept: rules_id, extensionValue: {'@class' => 'gov.vha.isaac.rest.api1.data.sememe.dataTypes.RestDynamicSememeString', columnNumber: 1, data: params[:komet_mapping_set_editor_rules]}}
-            end
-
-            body_params[:mapSetExtendedFields] = set_extended_fields
-
-            if params['komet_mapping_set_editor_items_include_fields'] != nil
-
-                params['komet_mapping_set_editor_items_include_fields'].each do |item_field|
-
-                    item_field_label = params['komet_mapping_set_editor_items_include_fields_' + item_field + '_label']
-                    item_field_data_type = params['komet_mapping_set_editor_items_include_fields_' + item_field + '_data_type']
-                    item_field_required = params['komet_mapping_set_editor_items_include_fields_' + item_field + '_required']
-
-                    item_extended_fields << {columnLabelConcept: item_field_label, columnDataType: item_field_data_type, columnRequired: item_field_required}
+                    set_extended_fields << {extensionNameConcept: rules_id, extensionValue: {'@class' => 'gov.vha.isaac.rest.api1.data.sememe.dataTypes.RestDynamicSememeString', columnNumber: 1, data: params[:komet_mapping_set_editor_rules]}}
                 end
 
-                body_params[:mapItemExtendedFieldsDefinition] = item_extended_fields
+                body_params[:mapSetExtendedFields] = set_extended_fields
+
+                if params['komet_mapping_set_editor_items_include_fields'] != nil
+
+                    params['komet_mapping_set_editor_items_include_fields'].each do |item_field|
+
+                        item_field_label = params['komet_mapping_set_editor_items_include_fields_' + item_field + '_label']
+                        item_field_data_type = params['komet_mapping_set_editor_items_include_fields_' + item_field + '_data_type']
+                        item_field_required = params['komet_mapping_set_editor_items_include_fields_' + item_field + '_required']
+
+                        item_extended_fields << {columnLabelConcept: item_field_label, columnDataType: item_field_data_type, columnRequired: item_field_required}
+                    end
+
+                    body_params[:mapItemExtendedFieldsDefinition] = item_extended_fields
+                end
+
+                return_value = MappingApis::get_mapping_api(action: MappingApiActions::ACTION_CREATE_SET, additional_req_params: request_params, body_params: body_params )
+
+                if return_value.is_a? CommonRest::UnexpectedResponse
+
+                    failed_writes[:set] << {id: :set, error: 'The set was unable to be created.'}
+                    render json: {set_id: nil, failed: failed_writes} and return
+                end
+
+                successful_writes += 1
+                set_id = return_value.uuid
             end
 
-            return_value = MappingApis::get_mapping_api(action: MappingApiActions::ACTION_CREATE_SET, additional_req_params: request_params, body_params: body_params )
+            comment = params[:komet_mapping_set_editor_comment]
+            comment_id = params[:komet_mapping_set_editor_comment_id]
+            comment_return = ''
 
-            if return_value.is_a? CommonRest::UnexpectedResponse
+            if comment_id == '0' && comment != ''
 
-                failed_writes[:set] << {id: :set, error: 'The set was unable to be created.'}
-                render json: {set_id: nil, failed_writes: failed_writes} and return
+                comment_return = CommentApis.get_comment_api(action: CommentApiActions::ACTION_CREATE, additional_req_params: {editToken: get_edit_token}, body_params: {comment: comment, commentedItem: set_id})
+
+            elsif comment_id != '0'
+
+                comment_return = CommentApis.get_comment_api(uuid_or_id: comment_id, action: CommentApiActions::ACTION_UPDATE, additional_req_params: {editToken: get_edit_token}, body_params: {comment: comment})
             end
 
-            successful_writes += 1
-            set_id = return_value.uuid
-        end
+            if comment_return.is_a? CommonRest::UnexpectedResponse
 
-        comment = params[:komet_mapping_set_editor_comment]
-        comment_id = params[:komet_mapping_set_editor_comment_id]
-        comment_return = ''
+                if failed_writes[:set].length == 0
+                    failed_writes[:set] << {id: :set, error: 'The comment was not successfully processed.'}
+                else
+                    failed_writes[:set][0][:error] << ' The comment was not successfully processed.'
+                end
 
-        if comment_id == '0' && comment != ''
+            elsif comment_return != ''
+                successful_writes += 1
+            end
 
-            comment_return = CommentApis.get_comment_api(action: CommentApiActions::ACTION_CREATE, additional_req_params: {editToken: get_edit_token}, body_params: {comment: comment, commentedItem: set_id})
+        rescue => exception
 
-        elsif comment_id != '0'
-
-            comment_return = CommentApis.get_comment_api(uuid_or_id: comment_id, action: CommentApiActions::ACTION_UPDATE, additional_req_params: {editToken: get_edit_token}, body_params: {comment: comment})
-        end
-
-        if comment_return.is_a? CommonRest::UnexpectedResponse
+            $log.error(exception)
 
             if failed_writes[:set].length == 0
-                failed_writes[:set] << {id: :set, error: 'The comment was not successfully processed.'}
+                failed_writes[:set] << {id: :set, error: 'An error occurred. All data may not have been saved'}
             else
-                failed_writes[:set][0][:error] << ' The comment was not successfully processed.'
+                failed_writes[:set][0][:error] << ' An error occurred. All data may not have been saved'
             end
 
-        elsif comment_return != ''
-            successful_writes += 1
+            render json: {set_id: nil, failed: failed_writes} and return
         end
 
         if params[:items]
 
             params[:items].each do |item_id, item|
 
-                target_concept = nil
+                begin
 
-                if item['target_concept'] != nil && item['target_concept'] != ''
-                    target_concept = item['target_concept']
-                end
+                    target_concept = nil
 
-                if item['state'].downcase == 'active'
-                    active = true
-                else
-                    active = false
-                end
+                    if item['target_concept'] != nil && item['target_concept'] != ''
+                        target_concept = item['target_concept']
+                    end
 
-                qualifier_concept = nil
+                    if item['state'].downcase == 'active'
+                        active = true
+                    else
+                        active = false
+                    end
 
-                if item['qualifier_concept'] != nil && item['qualifier_concept'] != ''
-                    qualifier_concept = item['qualifier_concept']
-                end
+                    qualifier_concept = nil
 
-                body_params = {targetConcept: target_concept, qualifierConcept: qualifier_concept, active: active}
+                    if item['qualifier_concept'] != nil && item['qualifier_concept'] != ''
+                        qualifier_concept = item['qualifier_concept']
+                    end
 
-                extended_fields = []
+                    body_params = {targetConcept: target_concept, qualifierConcept: qualifier_concept, active: active}
 
-                field_info.each do |field|
+                    extended_fields = []
 
-                    data_type = field[:data_type]
-                    data = item[field[:name]]
+                    field_info.each do |field|
 
-                    if data_type != 'UUID'
+                        data_type = field[:data_type]
+                        data = item[field[:name]]
 
-                        if ['FLOAT', 'DOUBLE'].include?(data_type)
-                            data = BigDecimal.new(data);
+                        if data_type != 'UUID'
 
-                        elsif ['LONG', 'INTEGER'].include?(data_type)
+                            if ['FLOAT', 'DOUBLE'].include?(data_type)
+                                data = BigDecimal.new(data);
 
-                            if data_type == 'LONG' && field[:label_display].downcase.include?('date') && data.include?('/')
-                                data = DateTime.strptime(data, '%m/%d/%Y %H:%M').strftime('%Q')
+                            elsif ['LONG', 'INTEGER'].include?(data_type)
+
+                                if data_type == 'LONG' && field[:label_display].downcase.include?('date') && data.include?('/')
+                                    data = DateTime.strptime(data, '%m/%d/%Y %H:%M').strftime('%Q')
+                                end
+
+                                if data == nil || data == ''
+                                    data = nil
+                                else
+                                    data = data.to_i
+                                end
+
+                            elsif data_type == 'BOOLEAN'
+
+                                if data == 'true'
+                                    data = true
+                                else
+                                    data = false
+                                end
                             end
 
-                            if data == nil || data == ''
-                                data = nil
-                            else
-                                data = data.to_i
-                            end
-
-                        elsif data_type == 'BOOLEAN'
-
-                            if data == 'true'
-                                data = true
-                            else
-                                data = false
-                            end
+                            data_type = data_type.downcase
+                            data_type[0] = field[:data_type][0]
                         end
 
-                        data_type = data_type.downcase
-                        data_type[0] = field[:data_type][0]
+                        data_type = 'gov.vha.isaac.rest.api1.data.sememe.dataTypes.RestDynamicSememe' + data_type
+
+                        extended_fields << {columnNumber: field[:order], data: data, '@class' => data_type}
                     end
 
-                    data_type = 'gov.vha.isaac.rest.api1.data.sememe.dataTypes.RestDynamicSememe' + data_type
+                    body_params[:mapItemExtendedFields] = extended_fields
+                    item_error = ''
 
-                    extended_fields << {columnNumber: field[:order], data: data, '@class' => data_type}
-                end
+                    # if the item ID is a UUID, then it is an existing item to be updated, otherwise it is a new item to be created
+                    if is_id?(item_id)
 
-                body_params[:mapItemExtendedFields] = extended_fields
-                item_error = ''
+                        return_value = MappingApis::get_mapping_api(action: MappingApiActions::ACTION_UPDATE_ITEM, uuid_or_id: item_id, additional_req_params: {editToken: get_edit_token}, body_params: body_params)
 
-                # if the item ID is a UUID, then it is an existing item to be updated, otherwise it is a new item to be created
-                if is_id?(item_id)
-
-                    return_value = MappingApis::get_mapping_api(action: MappingApiActions::ACTION_UPDATE_ITEM, uuid_or_id: item_id, additional_req_params: {editToken: get_edit_token}, body_params: body_params)
-
-                    if return_value.is_a? CommonRest::UnexpectedResponse
-                        item_error << 'The map item below was not updated. '
-                    else
-                        successful_writes += 1
-                    end
-                else
-
-                    body_params[:mapSetConcept] = set_id
-                    body_params[:sourceConcept] = item['source_concept']
-
-                    return_value = MappingApis::get_mapping_api(action: MappingApiActions::ACTION_CREATE_ITEM, additional_req_params: {editToken: get_edit_token}, body_params: body_params)
-
-                    if return_value.is_a? CommonRest::UnexpectedResponse
-                        item_error << 'The map item below was not created. '
+                        if return_value.is_a? CommonRest::UnexpectedResponse
+                            item_error << 'The map item below was not updated. '
+                        else
+                            successful_writes += 1
+                        end
                     else
 
-                        successful_writes += 1
-                        item_id = return_value.uuid
-                    end
-                end
+                        body_params[:mapSetConcept] = set_id
+                        body_params[:sourceConcept] = item['source_concept']
 
-                if !return_value.is_a? CommonRest::UnexpectedResponse
+                        return_value = MappingApis::get_mapping_api(action: MappingApiActions::ACTION_CREATE_ITEM, additional_req_params: {editToken: get_edit_token}, body_params: body_params)
 
-                    comment = item[:comment]
-                    comment_id = item[:comment_id]
-                    comment_return = ''
+                        if return_value.is_a? CommonRest::UnexpectedResponse
+                            item_error << 'The map item below was not created. '
+                        else
 
-                    if comment_id == '0' && comment != ''
-
-                        comment_return = CommentApis.get_comment_api(action: CommentApiActions::ACTION_CREATE, additional_req_params: {editToken: get_edit_token}, body_params: {comment: comment, commentedItem: item_id})
-
-                    elsif comment_id != '0'
-
-                        comment_return = CommentApis.get_comment_api(uuid_or_id: comment_id, action: CommentApiActions::ACTION_UPDATE, additional_req_params: {editToken: get_edit_token}, body_params: {comment: comment})
+                            successful_writes += 1
+                            item_id = return_value.uuid
+                        end
                     end
 
-                    if comment_return.is_a? CommonRest::UnexpectedResponse
-                        item_error << 'The comment on the map item below was not processed.'
-                    else
-                        successful_writes += 1
-                    end
-                end
+                    if !return_value.is_a? CommonRest::UnexpectedResponse
 
-                if item_error != ''
-                    failed_writes[:items] << {id: item_id, error: item_error}
+                        comment = item[:comment]
+                        comment_id = item[:comment_id]
+                        comment_return = ''
+
+                        if comment_id == '0' && comment != ''
+
+                            comment_return = CommentApis.get_comment_api(action: CommentApiActions::ACTION_CREATE, additional_req_params: {editToken: get_edit_token}, body_params: {comment: comment, commentedItem: item_id})
+
+                        elsif comment_id != '0'
+
+                            comment_return = CommentApis.get_comment_api(uuid_or_id: comment_id, action: CommentApiActions::ACTION_UPDATE, additional_req_params: {editToken: get_edit_token}, body_params: {comment: comment})
+                        end
+
+                        if comment_return.is_a? CommonRest::UnexpectedResponse
+                            item_error << 'The comment on the map item below was not processed.'
+                        else
+                            successful_writes += 1
+                        end
+                    end
+
+                    if item_error != ''
+                        failed_writes[:items] << {id: item_id, error: item_error}
+                    end
+
+                rescue => exception
+
+                    $log.error(exception)
+                    failed_writes[:items] << {id: item_id, error: 'An error occurred, the data may not have been saved'}
                 end
             end
         end
