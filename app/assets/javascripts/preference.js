@@ -160,7 +160,9 @@ var PreferenceModule = (function () {
 
             dialect_values = dialect_values.substring(0, dialect_values.length -1); // removing comma from end of the string
             description_values = description_values.substring(0, description_values.length -1);// removing comma from end of the string
-
+            console.log(colormodule);
+            console.log(colorpath);
+            console.log(colorrefsets);
             params = {
                 language: language_values,
                 stamp_date: stamp_date,
@@ -173,10 +175,11 @@ var PreferenceModule = (function () {
             };
             $.post( gon.routes.taxonomy_get_coordinatestoken_path, params, function( results ) {
                 console.log(results);
+                dialog.dialog( "close" );
+                location.replace(gon.routes.komet_dashboard_dashboard_path);
 
             });
-            dialog.dialog( "close" );
-            location.replace(gon.routes.komet_dashboard_dashboard_path);
+
         }
     }
 

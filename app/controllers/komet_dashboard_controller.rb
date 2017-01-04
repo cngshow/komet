@@ -540,17 +540,31 @@ class KometDashboardController < ApplicationController
         hash[:descriptionTypePrefs] = params[:descriptionTypePrefs]
         hash[:allowedStates]= params[:allowedStates]
 
+        $log.info("get_coordinatestoken hash #{hash}")
+        $log.info("get_coordinatestoken  params[:colormodule] #{ params[:colormodule]}")
+        $log.info("get_coordinatestoken params[:colorpath] #{params[:colorpath]}")
+        $log.info("get_coordinatestoken  params[:colorrefsets] #{ params[:colorrefsets]}")
+
         user_prefs = HashWithIndifferentAccess.new
         user_prefs[:colormodule] = params[:colormodule]
         user_prefs[:colorpath] = params[:colorpath]
         user_prefs[:colorrefsets] = params[:colorrefsets]
-
         user_session(UserSession::USER_PREFERENCES, user_prefs)
 
-        hash.merge!(CommonRest::CacheRequest::PARAMS_NO_CACHE)
+         hash.merge!(CommonRest::CacheRequest::PARAMS_NO_CACHE)
 
         results = CoordinateRest.get_coordinate(action: CoordinateRestActions::ACTION_COORDINATES_TOKEN, additional_req_params: hash)
         session[:coordinatestoken] = results
+        $log.info("get_coordinatestoken  results #{ results}")
+
+        user_prefs = user_session(UserSession::USER_PREFERENCES)
+        unless user_prefs.nil?
+            user_prefs = user_session(UserSession::USER_PREFERENCES)
+            $log.info("user_prefs[:colormodule] get_coordinatestoken #{user_prefs[:colormodule]}")
+            $log.info("user prefs [:colorpath] get_coordinatestoken #{user_prefs[:colorpath]}")
+            $log.info("user prefs [:colorrefsets] get_coordinatestoken #{user_prefs[:colorrefsets]}")
+        end
+
         render json: results.to_json
 
     end
@@ -682,21 +696,37 @@ class KometDashboardController < ApplicationController
 
         #language dropdown on options tab
         @language_options = get_concept_children(concept_id: $isaac_metadata_auxiliary['LANGUAGE']['uuids'].first[:uuid], return_json: false, remove_semantic_tag: true)
+        $log.info("get_user_preference_info @language_options #{@language_options}")
+
         #get default values - dialect options and description type on options tab
         dialect_options = get_concept_children(concept_id: $isaac_metadata_auxiliary['DIALECT_ASSEMBLAGE']['uuids'].first[:uuid], return_json: false, remove_semantic_tag: true)
+        $log.info("get_user_preference_info @language_options #{dialect_options}")
+
         description_type_options = get_concept_children(concept_id: $isaac_metadata_auxiliary['DESCRIPTION_TYPE']['uuids'].first[:uuid], return_json: false, remove_semantic_tag: true)
+        $log.info("get_user_preference_info @language_options #{description_type_options}")
 
         getcoordinates_results = {}
         token = session[:coordinatestoken].token
+        $log.info("get_user_preference_info token #{token}")
+
         additional_req_params = {coordToken: token}
+        $log.info("get_user_preference_info additional_req_params #{additional_req_params}")
+
         getcoordinates_results  = CoordinateRest.get_coordinate(action: CoordinateRestActions::ACTION_COORDINATES,additional_req_params: additional_req_params)
+        $log.info("get_user_preference_info getcoordinates_results #{getcoordinates_results}")
 
         #language dropdown -- suser selected language
         @languageCoordinate = getcoordinates_results.languageCoordinate.language
+        $log.info("get_user_preference_info @languageCoordinate #{@languageCoordinate}")
+
 
         #get user selected order  - dialect options and description type on options tab
         descriptiontypepreferences = getcoordinates_results.languageCoordinate.descriptionTypePreferences;
+        $log.info("get_user_preference_info descriptiontypepreferences #{descriptiontypepreferences}")
+
         dialectassemblagepreferences= getcoordinates_results.languageCoordinate.dialectAssemblagePreferences;
+        $log.info("get_user_preference_info dialectassemblagepreferences #{dialectassemblagepreferences}")
+
 
         dialect_options_arry=[]
         #add matched items
@@ -708,6 +738,7 @@ class KometDashboardController < ApplicationController
                     end
                 end
         end
+        $log.info("get_user_preference_info dialect_options_arry #{dialect_options_arry}")
         #add unmatched items
         dialect_options.each do |dialectOptins|
             dialect_options_arry.each do |userddialect|
@@ -723,6 +754,7 @@ class KometDashboardController < ApplicationController
             end
         end
         @dialect_options=dialect_options_arry
+        $log.info("get_user_preference_info @dialect_options #{@dialect_options}")
         #add matched items
         description_type_arry =[]
         descriptiontypepreferences.each do |userddialect|
@@ -732,6 +764,7 @@ class KometDashboardController < ApplicationController
                 end
             end
         end
+        $log.info("get_user_preference_info description_type_arry #{description_type_arry}")
         #add unmatched items
         matched=''
         description_type_options.each do |dialectOptins|
@@ -749,9 +782,16 @@ class KometDashboardController < ApplicationController
 
         end
         @description_type_options =description_type_arry
+        $log.info("get_user_preference_info @description_type_options #{@description_type_options}")
+
+
         @stamp_date = getcoordinates_results.taxonomyCoordinate.stampCoordinate.time
+        $log.info("get_user_preference_info @stamp_date #{@stamp_date}")
+
 
         allowedstates=getcoordinates_results.stampCoordinate.allowedStates;
+        $log.info("get_user_preference_info allowedstates #{allowedstates}")
+
         allowedstates.each do |statestype|
              if statestype.enumName.downcase == 'active'
                   @allowedstates= @allowedstates.to_s + 'active'
@@ -761,6 +801,7 @@ class KometDashboardController < ApplicationController
                  @allowedstates= @allowedstates.to_s + 'inactive'
              end
         end
+        $log.info("get_user_preference_info @allowedstates #{@allowedstates}")
 
         if @allowedstates == 'active'
             @allowedstatesActive ='checked="checked"'
@@ -772,6 +813,10 @@ class KometDashboardController < ApplicationController
             @allowedstatesinactive  = 'checked="checked"'
         end
 
+        $log.info("get_user_preference_info @allowedstatesinactive #{@allowedstatesinactive}")
+        $log.info("get_user_preference_info @allowedstatesboth #{@allowedstatesboth}")
+        $log.info("get_user_preference_info @allowedstatesActive #{@allowedstatesActive}")
+
 
         user_prefs = user_session(UserSession::USER_PREFERENCES)
         unless user_prefs.nil?
@@ -781,11 +826,17 @@ class KometDashboardController < ApplicationController
             colorrefsets_results= user_prefs[:colorrefsets]
         end
 
+        $log.info("get_user_preference_info colormodule_results #{colormodule_results}")
+        $log.info("get_user_preference_info colorpath_results #{colorpath_results}")
+        $log.info("get_user_preference_info colorrefsets_results #{colorrefsets_results}")
+
         colornew_array=[]
 
         @colorpathshape=''
         colorpath = get_concept_children(concept_id: $isaac_metadata_auxiliary['PATH']['uuids'].first[:uuid], return_json: false, remove_semantic_tag: true)
-            if colorpath_results.nil?
+        $log.info("get_user_preference_info colorpath #{colorpath}")
+
+        if colorpath_results.nil?
                 colorpath.each do |colors|
                     colornew_array << {pathcolorid: colors[:concept_sequence], pathcolortext: colors[:text], pathcolorvalue:'' ,pathcolorshape:'None',colorshapename:'None'}
                 end
@@ -795,10 +846,14 @@ class KometDashboardController < ApplicationController
                 end
             end
         @colorpathshape =colornew_array
+        $log.info("get_user_preference_info @colorpathshape #{@colorpathshape}")
+
         colormodulenew_array=[]
 
         @colormoduleshape=''
         colormodule = get_concept_children(concept_id: $isaac_metadata_auxiliary['MODULE']['uuids'].first[:uuid], return_json: false, remove_semantic_tag: true)
+        $log.info("get_user_preference_info colormodule #{colormodule}")
+
         if colormodule_results.nil?
             colormodule.each do |colors|
                 colormodulenew_array << {modulecolorid: colors[:concept_sequence], modulecolortext: colors[:text], modulecolorvalue:'' ,modulecolorshape:'None',colorshapename:'None'}
@@ -809,20 +864,30 @@ class KometDashboardController < ApplicationController
             end
         end
         @colormoduleshape =colormodulenew_array
+        $log.info("get_user_preference_info @colormoduleshape #{@colormoduleshape}")
 
         coordinates_token = session[:coordinatestoken].token
+        $log.info("get_user_preference_info coordinates_token #{coordinates_token}")
+
         stated = params[:stated]
+        $log.info("get_user_preference_info stated #{stated}")
+
 
         # check to make sure the flag for stated or inferred view was passed in
         if stated != nil
             @stated = stated
         end
         additional_req_params = {coordToken: coordinates_token, stated: @stated, childDepth: 50}
+        $log.info("get_user_preference_info additional_req_params #{additional_req_params}")
+
         refsets = TaxonomyRest.get_isaac_concept(uuid: $isaac_metadata_auxiliary['ASSEMBLAGE']['uuids'].first[:uuid], additional_req_params: additional_req_params)
+        $log.info("get_user_preference_info refsets #{refsets}")
+
         if refsets.is_a? CommonRest::UnexpectedResponse
             render json: [] and return
         end
         @processed_refsets = process_refset_list(refsets)
+        $log.info("get_user_preference_info @processed_refsets #{@processed_refsets}")
 
         colorrefsetnew_array=[]
         if !colorrefsets_results.nil?
@@ -831,6 +896,8 @@ class KometDashboardController < ApplicationController
             end
         end
         @colorrefsetnew=colorrefsetnew_array
+        $log.info("get_user_preference_info @colorrefsetnew #{@colorrefsetnew}")
+
     end
 
     def getShapeName(classname)
@@ -1324,7 +1391,6 @@ class KometDashboardController < ApplicationController
         @view_params = {statesToView: 'active,inactive'}
         if !session[:coordinatestoken]
             session[:coordinatestoken] = CoordinateRest.get_coordinate(action: CoordinateRestActions::ACTION_COORDINATES_TOKEN)
-            get_user_preference_info
         end
          get_user_preference_info
         $log.debug("token initial #{session[:coordinatestoken].token}" )
