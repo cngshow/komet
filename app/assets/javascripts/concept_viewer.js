@@ -379,6 +379,12 @@ var ConceptViewer = function(viewerID, currentConceptID, viewerAction) {
 
     ConceptViewer.prototype.createConcept = function() {
 
+        /*$("#komet_viewer_" + this.viewerID).on("detach", function(){
+
+            var editorSection = $("#komet_concept_editor_section_" + this.viewerID);
+            UIHelper.hasFormChanged(editorSection, false, false);
+        }.bind(this));*/
+
         UIHelper.processAutoSuggestTags("#komet_concept_associations_panel_" + this.viewerID);
 
         var parentField = $("#komet_create_concept_parent_display_" + this.viewerID);
@@ -414,18 +420,23 @@ var ConceptViewer = function(viewerID, currentConceptID, viewerAction) {
 
         $("#komet_concept_editor_form_" + this.viewerID).submit(function () {
 
+            Common.cursor_wait();
+
             UIHelper.removePageMessages("#komet_concept_editor_form_" + this.viewerID);
 
             $.ajax({
                 type: "POST",
                 url: $(this).attr("action"),
                 data: $(this).serialize(), //new FormData($(this)[0]),
+                error: function (){Common.cursor_auto();},
                 success: function (data) {
 
                     console.log(data);
 
                     if (data.concept_id == null){
+
                         $("#komet_concept_editor_section_" + thisViewer.viewerID).prepend(UIHelper.generatePageMessage("An error has occurred. The concept was not created."));
+                        Common.cursor_auto();
                     } else {
 
                         TaxonomyModule.tree.reloadTreeStatedView(TaxonomyModule.getStatedView(), false);
@@ -569,15 +580,15 @@ var ConceptViewer = function(viewerID, currentConceptID, viewerAction) {
 
         form.submit(function () {
 
+            Common.cursor_wait();
             UIHelper.removePageMessages(form);
 
             $.ajax({
                 type: "POST",
                 url: $(this).attr("action"),
                 data: $(this).serialize(),
+                error: function (){Common.cursor_auto();},
                 success: function (data) {
-
-                    console.log(data);
 
                     if (data.failed.length > 0){
 
@@ -619,7 +630,7 @@ var ConceptViewer = function(viewerID, currentConceptID, viewerAction) {
 
                         editorSection.prepend(UIHelper.generatePageMessage(errorString));
                         UIHelper.clearAutoSuggestRecentCache();
-
+                        Common.cursor_auto();
                     } else {
 
                         TaxonomyModule.tree.reloadTreeStatedView(TaxonomyModule.getStatedView(), false);

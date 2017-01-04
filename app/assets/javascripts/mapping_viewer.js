@@ -151,6 +151,8 @@ var MappingViewer = function(viewerID, currentSetID, viewerAction) {
 
     MappingViewer.prototype.loadOverviewSetsGrid = function(){
 
+        Common.cursor_wait();
+
         // If a grid already exists destroy it or it will create a second grid
         if (this.overviewSetsGridOptions) {
             this.overviewSetsGridOptions.api.destroy();
@@ -216,7 +218,9 @@ var MappingViewer = function(viewerID, currentSetID, viewerAction) {
 
                 // make an ajax call to get the data
                 $.get(gon.routes.mapping_get_overview_sets_results_path + searchParams, function (search_results) {
+
                     params.successCallback(search_results.data, search_results.total_number);
+                    Common.cursor_auto();
                 }.bind(this));
             }.bind(this)
         };
@@ -388,10 +392,13 @@ var MappingViewer = function(viewerID, currentSetID, viewerAction) {
 
         form.submit(function () {
 
+            Common.cursor_wait();
+
             $.ajax({
                 type: "POST",
                 url: $(this).attr("action"),
                 data: $(this).serialize(), //new FormData($(this)[0]),
+                error: function(){Common.cursor_auto();},
                 success: function (data) {
 
                     var setSection = $("#komet_mapping_set_panel_" + thisViewer.viewerID);
@@ -425,6 +432,8 @@ var MappingViewer = function(viewerID, currentSetID, viewerAction) {
 
                             itemSection.find("#komet_mapping_item_row_" + data.failed.items[i].id + "_" + thisViewer.viewerID).before(UIHelper.generatePageMessage(data.failed.items[i].error));
                         }
+
+                        Common.cursor_auto();
 
                     } else {
 

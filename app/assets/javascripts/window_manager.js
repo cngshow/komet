@@ -83,6 +83,9 @@ var WindowManager = (function () {
 
     function registerPreviousViewerContent(viewerID) {
 
+        console.log("*** registerPreviousViewerContent viewer ID: " + viewerID);
+        console.log("*** registerPreviousViewerContent viewer action: " + WindowManager.viewers[viewerID].viewerAction);
+
         if (WindowManager.viewers[viewerID].constructor.name = "ConceptViewer" && WindowManager.viewers[viewerID].viewerAction == ConceptsModule.VIEW){
 
             WindowManager.viewers[viewerID].viewer_previous_content_id = WindowManager.viewers[viewerID].currentConceptID;
@@ -93,18 +96,29 @@ var WindowManager = (function () {
         }
 
         WindowManager.viewers[viewerID].viewer_previous_content_type = WindowManager.viewers[viewerID].constructor.name
+
+        console.log("*** registerPreviousViewerContent previous content type: " + WindowManager.viewers[viewerID].viewer_previous_content_type);
+        console.log("*** registerPreviousViewerContent previous content id: " + WindowManager.viewers[viewerID].viewer_previous_content_id);
     }
 
     function cancelEditMode(viewerID) {
 
+        console.log("*** cancelEditMode viewer ID: " + viewerID);
+        console.log("*** cancelEditMode previous content type: " + WindowManager.viewers[viewerID].viewer_previous_content_type);
+        console.log("*** cancelEditMode previous content id: " + WindowManager.viewers[viewerID].viewer_previous_content_id);
+
         if (WindowManager.viewers[viewerID].viewer_previous_content_type && WindowManager.viewers[viewerID].viewer_previous_content_id){
 
             if (WindowManager.viewers[viewerID].viewer_previous_content_type == "ConceptViewer"){
+                console.log("*** cancelEditMode ConceptViewer");
+                console.log("*** cancelEditMode ConceptViewer View Params: " + TaxonomyModule.getStatedView());
 
                 $.publish(KometChannels.Taxonomy.taxonomyTreeNodeSelectedChannel, ["", WindowManager.viewers[viewerID].viewer_previous_content_id, TaxonomyModule.getStatedView(), viewerID, WindowManager.INLINE]);
                 return false;
 
             } else if (WindowManager.viewers[viewerID].viewer_previous_content_type == "MappingViewer"){
+                console.log("*** cancelEditMode MappingViewer");
+                console.log("*** cancelEditMode MappingViewer View Params: " + MappingModule.getTreeViewParams());
 
                 $.publish(KometChannels.Mapping.mappingTreeNodeSelectedChannel, ["", WindowManager.viewers[viewerID].viewer_previous_content_id, MappingModule.getTreeViewParams(), viewerID, WindowManager.INLINE]);
                 return false;

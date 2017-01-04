@@ -38,6 +38,8 @@ var TaxonomySearchModule = (function () {
 
     function loadResultGrid() {
 
+        Common.cursor_wait();
+
         UIHelper.removePageMessages("#komet_taxonomy_search_form");
 
         if ($("#taxonomy_search_text").val() === ""){
@@ -103,19 +105,25 @@ var TaxonomySearchModule = (function () {
             //paginationPageSize: pageSize,
             getRows: function (params) {
 
+                Common.cursor_wait();
+
                 var pageNumber = params.endRow / pageSize;
 
                 searchParams += "&taxonomy_search_page_number=" + pageNumber;
 
                 // make an ajax call to get the data
-                $.get( gon.routes.search_get_search_results_path + searchParams, function( search_results ) {
+                var jqxhr = $.get( gon.routes.search_get_search_results_path + searchParams, function( search_results ) {
 
                     if (search_results.data.length > 0){
                         $("#taxonomy_search_export").show();
                     } else {
                         $("#taxonomy_search_export").hide();
                     }
+
                     params.successCallback(search_results.data, search_results.total_number);
+                    Common.cursor_auto();
+                }).fail(function() {
+                    Common.cursor_auto();
                 });
             }
         };
