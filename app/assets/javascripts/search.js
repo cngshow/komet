@@ -1,9 +1,6 @@
 var TaxonomySearchModule = (function () {
 
-    var newSearch = true;
     var gridOptions;
-    var gridOptions_Exprot;
-    var totalNoRecords;
 
     function init() {
 
@@ -18,9 +15,8 @@ var TaxonomySearchModule = (function () {
         var form = $("#komet_taxonomy_search_form");
 
         form.submit(function () {
-            TaxonomySearchModule.loadExportGrid();
-            TaxonomySearchModule.loadResultGrid();
 
+            TaxonomySearchModule.loadResultGrid();
             return false;
         });
 
@@ -42,6 +38,8 @@ var TaxonomySearchModule = (function () {
 
     function loadResultGrid() {
 
+        Common.cursor_wait();
+
         UIHelper.removePageMessages("#komet_taxonomy_search_form");
 
         if ($("#taxonomy_search_text").val() === ""){
@@ -49,8 +47,6 @@ var TaxonomySearchModule = (function () {
             $("#taxonomy_search_combo_field").after(UIHelper.generatePageMessage("Search Text cannot be blank."));
             return;
         }
-
-        newSearch = true;
 
         // If a grid already exists destroy it or it will create a second grid
         if (gridOptions){
@@ -78,22 +74,17 @@ var TaxonomySearchModule = (function () {
             ]
         };
 
-       new agGrid.Grid($("#taxonomy_search_results").get(0), gridOptions);
-
+        new agGrid.Grid($("#taxonomy_search_results").get(0), gridOptions);
         getResultData();
-
-        newSearch = false;
     }
 
     function getResultData(){
 
         // load the parameters from the form to add to the query string sent in the ajax data call
-
         var search_type = $("#taxonomy_search_type");
         var page_size = $("#taxonomy_search_page_size");
 
-        var searchParams = "?taxonomy_search_text=" + $("#taxonomy_search_text").val() + "&taxonomy_search_page_size=" + page_size.val()
-            + "&taxonomy_search_type=" + search_type.val() + "&new_search=" + newSearch;
+        var searchParams = "?taxonomy_search_text=" + $("#taxonomy_search_text").val() + "&taxonomy_search_page_size=" + page_size.val() + "&taxonomy_search_type=" + search_type.val();
 
         // set only the parameters needed based on the search type
         if (search_type.val() === "descriptions"){
@@ -106,26 +97,33 @@ var TaxonomySearchModule = (function () {
         }
 
         var pageSize = Number(page_size.val());
+        gridOptions.paginationPageSize = pageSize;
 
         // set the grid datasource options, including processing the data rows
         var dataSource = {
 
-            paginationPageSize: pageSize,
+            //paginationPageSize: pageSize,
             getRows: function (params) {
+
+                Common.cursor_wait();
 
                 var pageNumber = params.endRow / pageSize;
 
                 searchParams += "&taxonomy_search_page_number=" + pageNumber;
 
                 // make an ajax call to get the data
-                $.get( gon.routes.search_get_search_results_path + searchParams, function( search_results ) {
+                var jqxhr = $.get( gon.routes.search_get_search_results_path + searchParams, function( search_results ) {
 
                     if (search_results.data.length > 0){
                         $("#taxonomy_search_export").show();
                     } else {
                         $("#taxonomy_search_export").hide();
                     }
+
                     params.successCallback(search_results.data, search_results.total_number);
+                    Common.cursor_auto();
+                }).fail(function() {
+                    Common.cursor_auto();
                 });
             }
         };
@@ -133,7 +131,6 @@ var TaxonomySearchModule = (function () {
         gridOptions.api.setDatasource(dataSource);
 
         // reload the recents menu
-        //loadAssemblageRecents();
         UIHelper.loadAutoSuggestRecents("taxonomy_search_assemblage_recents", null);
     }
 
@@ -186,35 +183,24 @@ var TaxonomySearchModule = (function () {
         }
     }
 
-    function loadExportGrid() {
+    function exportCSV(){
 
-        // If a grid already exists destroy it or it will create a second grid
-        if (gridOptions_Exprot){
-            gridOptions_Exprot.api.destroy();
-        }
-        gridOptions_Exprot = {
-             rowModelType: 'pagination',
-             columnDefs:  [
-                {field: "id", headerName: 'ID', hide: 'true'},
-                {field: "matching_concept", headerName: "Matching Concept", cellRenderer: function(params) {
-                    return '<span class="komet-context-menu" data-menu-type="concept" data-menu-uuid="' + params.data.id + '" '
-                        + 'data-menu-state="' + params.data.concept_status + '" data-menu-concept-text="' + params.data.matching_concept + '">' + params.value + '</span>';
-                }},
+        var gridOptionsExport = {
+            columnDefs:  [
+                {field: "id", headerName: 'ID'},
+                {field: "matching_concept", headerName: "Matching Concept"},
                 {field: "matching_terms", headerName: "Matching Terms"},
                 {field: "concept_status", headerName: "Status"},
-                {field: "match_score", headerName: "Score", suppressSizeToFit: "false", hide: 'true'}
+                {field: "match_score", headerName: "Score", suppressSizeToFit: "false"}
             ]
         };
 
-        new agGrid.Grid($("#taxonomy_search_exportresults").get(0), gridOptions_Exprot);
-        $("#taxonomy_search_exportresults").hide();
-        // load the parameters from the form to add to the query string sent in the ajax data call
-        newSearch = true;
-        var search_type = $("#taxonomy_search_type");
-        var page_size =10000000;
+        new agGrid.Grid($("#taxonomy_search_results_export").get(0), gridOptionsExport);
 
-        var searchParams = "?taxonomy_search_text=" + $("#taxonomy_search_text").val() + "&taxonomy_search_page_size=" + page_size
-            + "&taxonomy_search_type=" + search_type.val() + "&new_search=" + newSearch;
+        // load the parameters from the form to add to the query string sent in the ajax data call
+        var search_type = $("#taxonomy_search_type");
+
+        var searchParams = "?taxonomy_search_text=" + $("#taxonomy_search_text").val() + "&taxonomy_search_page_number=1&taxonomy_search_page_size=10000000&taxonomy_search_type=" + search_type.val();
 
         // set only the parameters needed based on the search type
         if (search_type.val() === "descriptions"){
@@ -226,39 +212,20 @@ var TaxonomySearchModule = (function () {
             searchParams += "&taxonomy_search_id_type=" + $("#taxonomy_search_id_type").val()
         }
 
-        var pageSize = Number(page_size);
+        // make an ajax call to get the data
+        $.get(gon.routes.search_get_search_results_path + searchParams, function( search_results ) {
 
-        // set the grid datasource options, including processing the data rows
-        var dataSource2 = {
-
-            paginationPageSize: pageSize,
-            getRows: function (params) {
-
-                var pageNumber = 1;
-
-                searchParams += "&taxonomy_search_page_number=" + pageNumber;
-                console.log(searchParams);
-                // make an ajax call to get the data
-                $.get( gon.routes.search_get_search_results_path + searchParams, function( search_results ) {
-                    params.successCallback(search_results.data, search_results.total_number);
-                });
-            }
-        };
-
-        gridOptions_Exprot.api.setDatasource(dataSource2);
-
-    }
-    function exportCSV(){
-       // TaxonomySearchModule.loadExportGrid();
-        gridOptions_Exprot.api.exportDataAsCsv({allColumns: true});
+            gridOptionsExport.api.setRowData(search_results.data);
+            gridOptionsExport.api.exportDataAsCsv({allColumns: true});
+            gridOptionsExport.api.destroy();
+        });
     }
 
     return {
         initialize: init,
         loadResultGrid: loadResultGrid,
         changeSearchType: changeSearchType,
-        exportCSV: exportCSV,
-        loadExportGrid:loadExportGrid
+        exportCSV: exportCSV
     };
 
 })();

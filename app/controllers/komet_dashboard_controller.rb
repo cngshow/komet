@@ -540,17 +540,31 @@ class KometDashboardController < ApplicationController
         hash[:descriptionTypePrefs] = params[:descriptionTypePrefs]
         hash[:allowedStates]= params[:allowedStates]
 
+        $log.info("get_coordinatestoken hash #{hash}")
+        $log.info("get_coordinatestoken  params[:colormodule] #{ params[:colormodule]}")
+        $log.info("get_coordinatestoken params[:colorpath] #{params[:colorpath]}")
+        $log.info("get_coordinatestoken  params[:colorrefsets] #{ params[:colorrefsets]}")
+
         user_prefs = HashWithIndifferentAccess.new
         user_prefs[:colormodule] = params[:colormodule]
         user_prefs[:colorpath] = params[:colorpath]
         user_prefs[:colorrefsets] = params[:colorrefsets]
-
         user_session(UserSession::USER_PREFERENCES, user_prefs)
 
-        hash.merge!(CommonRest::CacheRequest::PARAMS_NO_CACHE)
+         hash.merge!(CommonRest::CacheRequest::PARAMS_NO_CACHE)
 
         results = CoordinateRest.get_coordinate(action: CoordinateRestActions::ACTION_COORDINATES_TOKEN, additional_req_params: hash)
         session[:coordinatestoken] = results
+        $log.info("get_coordinatestoken  results #{ results}")
+
+        user_prefs = user_session(UserSession::USER_PREFERENCES)
+        unless user_prefs.nil?
+            user_prefs = user_session(UserSession::USER_PREFERENCES)
+            $log.info("user_prefs[:colormodule] get_coordinatestoken #{user_prefs[:colormodule]}")
+            $log.info("user prefs [:colorpath] get_coordinatestoken #{user_prefs[:colorpath]}")
+            $log.info("user prefs [:colorrefsets] get_coordinatestoken #{user_prefs[:colorrefsets]}")
+        end
+
         render json: results.to_json
 
     end
@@ -651,21 +665,26 @@ class KometDashboardController < ApplicationController
         parent_concept_text = params[:komet_create_concept_parent_display]
         parent_concept_type = params[:komet_create_concept_parent_type]
 
-        body_params = {
-            fsn: preferred_term,
-            parentConceptIds: [parent_concept_id],
-            descriptionLanguageConceptId: $isaac_metadata_auxiliary['ENGLISH_LANGUAGE']['uuids'].first[:uuid],
-            descriptionPreferredInDialectAssemblagesConceptIds: [$isaac_metadata_auxiliary['US_ENGLISH_DIALECT']['uuids'].first[:uuid]]
-        }
+        begin
+            body_params = {
+                fsn: preferred_term,
+                parentConceptIds: [parent_concept_id],
+                descriptionLanguageConceptId: $isaac_metadata_auxiliary['ENGLISH_LANGUAGE']['uuids'].first[:uuid],
+                descriptionPreferredInDialectAssemblagesConceptIds: [$isaac_metadata_auxiliary['US_ENGLISH_DIALECT']['uuids'].first[:uuid]]
+            }
 
-        # if it is present get the description type concept sequence from the uuid
-        if description_type != ''
-            body_params[:extendedDescriptionTypeConcept] = description_type
-        end
+            # if it is present get the description type concept sequence from the uuid
+            if description_type != ''
+                body_params[:extendedDescriptionTypeConcept] = description_type
+            end
 
-        new_concept_id = ConceptRest::get_concept(action: ConceptRestActions::ACTION_CREATE, additional_req_params: {editToken: get_edit_token}, body_params: body_params )
+            new_concept_id = ConceptRest::get_concept(action: ConceptRestActions::ACTION_CREATE, additional_req_params: {editToken: get_edit_token}, body_params: body_params )
 
-        if new_concept_id.is_a? CommonRest::UnexpectedResponse
+            if new_concept_id.is_a? CommonRest::UnexpectedResponse
+                render json: {concept_id: nil} and return
+            end
+
+        rescue => exception
             render json: {concept_id: nil} and return
         end
 
@@ -682,21 +701,37 @@ class KometDashboardController < ApplicationController
 
         #language dropdown on options tab
         @language_options = get_concept_children(concept_id: $isaac_metadata_auxiliary['LANGUAGE']['uuids'].first[:uuid], return_json: false, remove_semantic_tag: true)
+        $log.info("get_user_preference_info @language_options #{@language_options}")
+
         #get default values - dialect options and description type on options tab
         dialect_options = get_concept_children(concept_id: $isaac_metadata_auxiliary['DIALECT_ASSEMBLAGE']['uuids'].first[:uuid], return_json: false, remove_semantic_tag: true)
+        $log.info("get_user_preference_info @language_options #{dialect_options}")
+
         description_type_options = get_concept_children(concept_id: $isaac_metadata_auxiliary['DESCRIPTION_TYPE']['uuids'].first[:uuid], return_json: false, remove_semantic_tag: true)
+        $log.info("get_user_preference_info @language_options #{description_type_options}")
 
         getcoordinates_results = {}
         token = session[:coordinatestoken].token
+        $log.info("get_user_preference_info token #{token}")
+
         additional_req_params = {coordToken: token}
+        $log.info("get_user_preference_info additional_req_params #{additional_req_params}")
+
         getcoordinates_results  = CoordinateRest.get_coordinate(action: CoordinateRestActions::ACTION_COORDINATES,additional_req_params: additional_req_params)
+        $log.info("get_user_preference_info getcoordinates_results #{getcoordinates_results}")
 
         #language dropdown -- suser selected language
         @languageCoordinate = getcoordinates_results.languageCoordinate.language
+        $log.info("get_user_preference_info @languageCoordinate #{@languageCoordinate}")
+
 
         #get user selected order  - dialect options and description type on options tab
         descriptiontypepreferences = getcoordinates_results.languageCoordinate.descriptionTypePreferences;
+        $log.info("get_user_preference_info descriptiontypepreferences #{descriptiontypepreferences}")
+
         dialectassemblagepreferences= getcoordinates_results.languageCoordinate.dialectAssemblagePreferences;
+        $log.info("get_user_preference_info dialectassemblagepreferences #{dialectassemblagepreferences}")
+
 
         dialect_options_arry=[]
         #add matched items
@@ -708,6 +743,7 @@ class KometDashboardController < ApplicationController
                     end
                 end
         end
+        $log.info("get_user_preference_info dialect_options_arry #{dialect_options_arry}")
         #add unmatched items
         dialect_options.each do |dialectOptins|
             dialect_options_arry.each do |userddialect|
@@ -723,6 +759,7 @@ class KometDashboardController < ApplicationController
             end
         end
         @dialect_options=dialect_options_arry
+        $log.info("get_user_preference_info @dialect_options #{@dialect_options}")
         #add matched items
         description_type_arry =[]
         descriptiontypepreferences.each do |userddialect|
@@ -732,6 +769,7 @@ class KometDashboardController < ApplicationController
                 end
             end
         end
+        $log.info("get_user_preference_info description_type_arry #{description_type_arry}")
         #add unmatched items
         matched=''
         description_type_options.each do |dialectOptins|
@@ -749,9 +787,16 @@ class KometDashboardController < ApplicationController
 
         end
         @description_type_options =description_type_arry
+        $log.info("get_user_preference_info @description_type_options #{@description_type_options}")
+
+
         @stamp_date = getcoordinates_results.taxonomyCoordinate.stampCoordinate.time
+        $log.info("get_user_preference_info @stamp_date #{@stamp_date}")
+
 
         allowedstates=getcoordinates_results.stampCoordinate.allowedStates;
+        $log.info("get_user_preference_info allowedstates #{allowedstates}")
+
         allowedstates.each do |statestype|
              if statestype.enumName.downcase == 'active'
                   @allowedstates= @allowedstates.to_s + 'active'
@@ -761,6 +806,7 @@ class KometDashboardController < ApplicationController
                  @allowedstates= @allowedstates.to_s + 'inactive'
              end
         end
+        $log.info("get_user_preference_info @allowedstates #{@allowedstates}")
 
         if @allowedstates == 'active'
             @allowedstatesActive ='checked="checked"'
@@ -772,6 +818,10 @@ class KometDashboardController < ApplicationController
             @allowedstatesinactive  = 'checked="checked"'
         end
 
+        $log.info("get_user_preference_info @allowedstatesinactive #{@allowedstatesinactive}")
+        $log.info("get_user_preference_info @allowedstatesboth #{@allowedstatesboth}")
+        $log.info("get_user_preference_info @allowedstatesActive #{@allowedstatesActive}")
+
 
         user_prefs = user_session(UserSession::USER_PREFERENCES)
         unless user_prefs.nil?
@@ -781,11 +831,17 @@ class KometDashboardController < ApplicationController
             colorrefsets_results= user_prefs[:colorrefsets]
         end
 
+        $log.info("get_user_preference_info colormodule_results #{colormodule_results}")
+        $log.info("get_user_preference_info colorpath_results #{colorpath_results}")
+        $log.info("get_user_preference_info colorrefsets_results #{colorrefsets_results}")
+
         colornew_array=[]
 
         @colorpathshape=''
         colorpath = get_concept_children(concept_id: $isaac_metadata_auxiliary['PATH']['uuids'].first[:uuid], return_json: false, remove_semantic_tag: true)
-            if colorpath_results.nil?
+        $log.info("get_user_preference_info colorpath #{colorpath}")
+
+        if colorpath_results.nil?
                 colorpath.each do |colors|
                     colornew_array << {pathcolorid: colors[:concept_sequence], pathcolortext: colors[:text], pathcolorvalue:'' ,pathcolorshape:'None',colorshapename:'None'}
                 end
@@ -795,10 +851,14 @@ class KometDashboardController < ApplicationController
                 end
             end
         @colorpathshape =colornew_array
+        $log.info("get_user_preference_info @colorpathshape #{@colorpathshape}")
+
         colormodulenew_array=[]
 
         @colormoduleshape=''
         colormodule = get_concept_children(concept_id: $isaac_metadata_auxiliary['MODULE']['uuids'].first[:uuid], return_json: false, remove_semantic_tag: true)
+        $log.info("get_user_preference_info colormodule #{colormodule}")
+
         if colormodule_results.nil?
             colormodule.each do |colors|
                 colormodulenew_array << {modulecolorid: colors[:concept_sequence], modulecolortext: colors[:text], modulecolorvalue:'' ,modulecolorshape:'None',colorshapename:'None'}
@@ -809,20 +869,30 @@ class KometDashboardController < ApplicationController
             end
         end
         @colormoduleshape =colormodulenew_array
+        $log.info("get_user_preference_info @colormoduleshape #{@colormoduleshape}")
 
         coordinates_token = session[:coordinatestoken].token
+        $log.info("get_user_preference_info coordinates_token #{coordinates_token}")
+
         stated = params[:stated]
+        $log.info("get_user_preference_info stated #{stated}")
+
 
         # check to make sure the flag for stated or inferred view was passed in
         if stated != nil
             @stated = stated
         end
         additional_req_params = {coordToken: coordinates_token, stated: @stated, childDepth: 50}
+        $log.info("get_user_preference_info additional_req_params #{additional_req_params}")
+
         refsets = TaxonomyRest.get_isaac_concept(uuid: $isaac_metadata_auxiliary['ASSEMBLAGE']['uuids'].first[:uuid], additional_req_params: additional_req_params)
+        $log.info("get_user_preference_info refsets #{refsets}")
+
         if refsets.is_a? CommonRest::UnexpectedResponse
             render json: [] and return
         end
         @processed_refsets = process_refset_list(refsets)
+        $log.info("get_user_preference_info @processed_refsets #{@processed_refsets}")
 
         colorrefsetnew_array=[]
         if !colorrefsets_results.nil?
@@ -831,6 +901,8 @@ class KometDashboardController < ApplicationController
             end
         end
         @colorrefsetnew=colorrefsetnew_array
+        $log.info("get_user_preference_info @colorrefsetnew #{@colorrefsetnew}")
+
     end
 
     def getShapeName(classname)
@@ -909,6 +981,7 @@ class KometDashboardController < ApplicationController
     end
 
     def edit_concept
+
         concept_id =  params[:concept_id]
         failed_writes = []
 
@@ -917,47 +990,55 @@ class KometDashboardController < ApplicationController
 
             sememes.each do |sememe_instance_id, sememe|
 
-                # get the sememe definition ID  and name
-                sememe_definition_id = sememe['sememe']
-                sememe_name = sememe['sememe_name']
+                begin
 
-                if sememe_name == nil
-                    sememe_name = ''
-                end
+                    # get the sememe definition ID  and name
+                    sememe_definition_id = sememe['sememe']
+                    sememe_name = sememe['sememe_name']
 
-                # remove the sememe and sememe name properties
-                sememe.delete('sememe')
-                sememe.delete('sememe_name')
+                    if sememe_name == nil
+                        sememe_name = ''
+                    end
 
-                if sememe[:state].downcase == 'active'
-                    active = true
-                else
-                    active = false
-                end
+                    # remove the sememe and sememe name properties
+                    sememe.delete('sememe')
+                    sememe.delete('sememe_name')
 
-                # remove the state property
-                sememe.delete('state')
+                    if sememe[:state].downcase == 'active'
+                        active = true
+                    else
+                        active = false
+                    end
 
-                body_params = {active: active, columnData: []}
-                additional_req_params = {editToken: get_edit_token}
+                    # remove the state property
+                    sememe.delete('state')
 
-                sememe.each do |field_id, field|
-                    body_params[:columnData] << {columnNumber: field['column_number'], data: field['value'], '@class' => field['data_type_class']}
-                end
+                    body_params = {active: active, columnData: []}
+                    additional_req_params = {editToken: get_edit_token}
 
-                # if the sememe ID is a UUID, then it is an existing sememe to be updated, otherwise it is a new sememe to be created
-                if is_id?(sememe_instance_id)
-                    return_value = SememeRest::get_sememe(action: SememeRestActions::ACTION_SEMEME_UPDATE, uuid_or_id: sememe_instance_id, additional_req_params: additional_req_params, body_params: body_params)
-                else
+                    sememe.each do |field_id, field|
+                        body_params[:columnData] << {columnNumber: field['column_number'], data: field['value'], '@class' => field['data_type_class']}
+                    end
 
-                    body_params[:assemblageConcept] = sememe_definition_id
-                    body_params[:referencedComponent] = referenced_id
+                    # if the sememe ID is a UUID, then it is an existing sememe to be updated, otherwise it is a new sememe to be created
+                    if is_id?(sememe_instance_id)
+                        return_value = SememeRest::get_sememe(action: SememeRestActions::ACTION_SEMEME_UPDATE, uuid_or_id: sememe_instance_id, additional_req_params: additional_req_params, body_params: body_params)
+                    else
 
-                    return_value = SememeRest::get_sememe(action: SememeRestActions::ACTION_SEMEME_CREATE, additional_req_params: additional_req_params, body_params: body_params)
-                end
+                        body_params[:assemblageConcept] = sememe_definition_id
+                        body_params[:referencedComponent] = referenced_id
 
-                # if the sememe create or update failed, mark it
-                if return_value.is_a? CommonRest::UnexpectedResponse
+                        return_value = SememeRest::get_sememe(action: SememeRestActions::ACTION_SEMEME_CREATE, additional_req_params: additional_req_params, body_params: body_params)
+                    end
+
+                    # if the sememe create or update failed, mark it
+                    if return_value.is_a? CommonRest::UnexpectedResponse
+                        failed_writes << {id: referenced_id + '_' + sememe_instance_id, text: error_text_prefix + type + ': ' + sememe_name, type: type}
+                    end
+
+                rescue => exception
+
+                    $log.error(exception)
                     failed_writes << {id: referenced_id + '_' + sememe_instance_id, text: error_text_prefix + type + ': ' + sememe_name, type: type}
                 end
             end
@@ -969,59 +1050,67 @@ class KometDashboardController < ApplicationController
             create_success = false
             new_concept_id = nil
 
-            if params[:descriptions]
+            begin
 
-                fsn_id = $isaac_metadata_auxiliary['FULLY_SPECIFIED_NAME']['uuids'].first[:uuid]
-                preferred_dialect_id = $isaac_metadata_auxiliary['PREFERRED']['uuids'].first[:uuid]
-                fsn = nil
-                dialects_to_remove = []
+                if params[:descriptions]
 
-                # loop through the descriptions looking for the FSN
-                params[:descriptions].each do |description_id, description|
+                    fsn_id = $isaac_metadata_auxiliary['FULLY_SPECIFIED_NAME']['uuids'].first[:uuid]
+                    preferred_dialect_id = $isaac_metadata_auxiliary['PREFERRED']['uuids'].first[:uuid]
+                    fsn = nil
+                    dialects_to_remove = []
 
-                    # When we find the FSN, copy its info and preferred dialects, create the new concept, and break the loop
-                    if description['description_type'] == fsn_id
+                    # loop through the descriptions looking for the FSN
+                    params[:descriptions].each do |description_id, description|
 
-                        body_params = {
-                            fsn: description['text'],
-                            parentConceptIds: [params[:komet_concept_edit_parent]],
-                            descriptionLanguageConceptId: description['description_language']
-                        }
+                        # When we find the FSN, copy its info and preferred dialects, create the new concept, and break the loop
+                        if description['description_type'] == fsn_id
 
-                        # process the dialects
-                        if description[:dialects]
+                            body_params = {
+                                fsn: description['text'],
+                                parentConceptIds: [params[:komet_concept_edit_parent]],
+                                descriptionLanguageConceptId: description['description_language']
+                            }
 
-                            dialects = []
+                            # process the dialects
+                            if description[:dialects]
 
-                            description[:dialects].each do |dialect_id, dialect|
+                                dialects = []
 
-                                if dialect['acceptability'] == preferred_dialect_id
+                                description[:dialects].each do |dialect_id, dialect|
 
-                                    dialect['dialect_id'] = dialect_id
-                                    dialects << dialect['dialect']
-                                    dialects_to_remove << dialect
+                                    if dialect['acceptability'] == preferred_dialect_id
+
+                                        dialect['dialect_id'] = dialect_id
+                                        dialects << dialect['dialect']
+                                        dialects_to_remove << dialect
+                                    end
                                 end
+                            else
+                                dialects << $isaac_metadata_auxiliary['US_ENGLISH_DIALECT']['uuids'].first[:uuid]
                             end
-                        else
-                            dialects << $isaac_metadata_auxiliary['US_ENGLISH_DIALECT']['uuids'].first[:uuid]
-                        end
 
-                        # add the preferred dialects from the FSN
-                        body_params[:descriptionPreferredInDialectAssemblagesConceptIds] = dialects
+                            # add the preferred dialects from the FSN
+                            body_params[:descriptionPreferredInDialectAssemblagesConceptIds] = dialects
 
-                        new_concept_id = ConceptRest::get_concept(action: ConceptRestActions::ACTION_CREATE, additional_req_params: {editToken: get_edit_token}, body_params: body_params )
+                            new_concept_id = ConceptRest::get_concept(action: ConceptRestActions::ACTION_CREATE, additional_req_params: {editToken: get_edit_token}, body_params: body_params )
 
-                        # if the concept create failed, break out of the loop
-                        if new_concept_id.is_a? CommonRest::UnexpectedResponse
+                            # if the concept create failed, break out of the loop
+                            if new_concept_id.is_a? CommonRest::UnexpectedResponse
+                                break
+                            end
+
+                            fsn = description
+                            fsn_id = description_id
+                            create_success = true
                             break
                         end
-
-                        fsn = description
-                        fsn_id = description_id
-                        create_success = true
-                        break
                     end
                 end
+
+            rescue => exception
+
+                $log.error(exception)
+                create_success = false
             end
 
             # if the concept create did not happen, return with a failed message, otherwise copy the new concept ID into the concept_id field to continue with the edit
@@ -1324,7 +1413,6 @@ class KometDashboardController < ApplicationController
         @view_params = {statesToView: 'active,inactive'}
         if !session[:coordinatestoken]
             session[:coordinatestoken] = CoordinateRest.get_coordinate(action: CoordinateRestActions::ACTION_COORDINATES_TOKEN)
-            get_user_preference_info
         end
          get_user_preference_info
         $log.debug("token initial #{session[:coordinatestoken].token}" )

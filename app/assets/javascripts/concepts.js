@@ -40,6 +40,7 @@ var ConceptsModule = (function () {
 
     function loadViewerData(conceptID, stated, viewerAction, viewerID, windowType, params) {
 
+        Common.cursor_wait();
         WindowManager.deferred = $.Deferred();
 
         if (WindowManager.viewers.inlineViewers.length == 0 || WindowManager.getLinkedViewerID() == WindowManager.NEW){
@@ -101,6 +102,8 @@ var ConceptsModule = (function () {
                 if (windowType != WindowManager.NEW && windowType != WindowManager.POPUP) {
                     WindowManager.deferred.resolve();
                 }
+
+                Common.cursor_auto();
             }
             catch (err) {
                 console.log("*******  ERROR **********");

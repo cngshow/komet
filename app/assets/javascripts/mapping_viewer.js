@@ -151,6 +151,8 @@ var MappingViewer = function(viewerID, currentSetID, viewerAction) {
 
     MappingViewer.prototype.loadOverviewSetsGrid = function(){
 
+        Common.cursor_wait();
+
         // If a grid already exists destroy it or it will create a second grid
         if (this.overviewSetsGridOptions) {
             this.overviewSetsGridOptions.api.destroy();
@@ -216,7 +218,9 @@ var MappingViewer = function(viewerID, currentSetID, viewerAction) {
 
                 // make an ajax call to get the data
                 $.get(gon.routes.mapping_get_overview_sets_results_path + searchParams, function (search_results) {
+
                     params.successCallback(search_results.data, search_results.total_number);
+                    Common.cursor_auto();
                 }.bind(this));
             }.bind(this)
         };
@@ -388,10 +392,13 @@ var MappingViewer = function(viewerID, currentSetID, viewerAction) {
 
         form.submit(function () {
 
+            Common.cursor_wait();
+
             $.ajax({
                 type: "POST",
                 url: $(this).attr("action"),
                 data: $(this).serialize(), //new FormData($(this)[0]),
+                error: function(){Common.cursor_auto();},
                 success: function (data) {
 
                     var setSection = $("#komet_mapping_set_panel_" + thisViewer.viewerID);
@@ -425,6 +432,8 @@ var MappingViewer = function(viewerID, currentSetID, viewerAction) {
 
                             itemSection.find("#komet_mapping_item_row_" + data.failed.items[i].id + "_" + thisViewer.viewerID).before(UIHelper.generatePageMessage(data.failed.items[i].error));
                         }
+
+                        Common.cursor_auto();
 
                     } else {
 
@@ -985,7 +994,7 @@ var MappingViewer = function(viewerID, currentSetID, viewerAction) {
             + '<div class="komet-mapping-stamp-fields"><div aria-label="' + ariaLabel + ' Item Module">' + module + '</div></div>'
             + '<div class="komet-mapping-stamp-fields"><div aria-label="' + ariaLabel + ' Item Path">' + path + '</div></div>';
 
-        var qualifierOptions = [{value: '', label: 'No Restrictions'}, {value: '8aa6421d-4966-5230-ae5f-aca96ee9c2c1', label: 'Exact'}, {value: 'c1068428-a986-5c12-9583-9b2d3a24fdc6', label: 'Broader Than'}, {value: '250d3a08-4f28-5127-8758-e8df4947f89c', label: 'Narrower Than'}];
+        var qualifierOptions = [{value: '', label: 'No Restrictions'}, {value: '8aa6421d-4966-5230-ae5f-aca96ee9c2c1', label: 'Exact'}, {value: 'c1068428-a986-5c12-9583-9b2d3a24fdc6', label: 'Broader Than'}, {value: '250d3a08-4f28-5127-8758-e8df4947f89c', label: 'Narrower Than'},{value: 'e5f7f98f-9607-55a7-bbc4-25f2e61df23d',label:'Unmapped'}];
         rowString += '<div>' + UIHelper.createSelectFieldString(idPrefix + '_qualifier_concept', 'items[' + itemID + '][qualifier_concept]', classes, qualifierOptions, qualifierConcept, ariaLabel + 'Mapping Qualifier')
             + '<div class="komet-mapping-show-on-view" aria-label="' + ariaLabel + ' Mapping Qualifier">' + qualifierConceptDisplay + '</div></div>';
 

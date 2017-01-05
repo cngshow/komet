@@ -40,6 +40,7 @@ var MappingModule = (function () {
     // the path to a javascript partial file that will re-render all the appropriate partials once the ajax call returns
     function loadViewerData(setID, viewParams, viewerAction, viewerID, windowType) {
 
+        Common.cursor_wait();
         WindowManager.deferred = $.Deferred();
 
         var params = {partial: 'komet_dashboard/mapping/mapping_viewer', mapping_action: viewerAction, viewer_id: viewerID, set_id: setID, view_params: viewParams};
@@ -64,6 +65,8 @@ var MappingModule = (function () {
                 if (windowType != WindowManager.NEW && windowType != WindowManager.POPUP) {
                     WindowManager.deferred.resolve();
                 }
+
+                Common.cursor_auto();
             }
             catch (err) {
                 console.log("*******  ERROR **********");
