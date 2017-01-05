@@ -3,15 +3,13 @@ Komet Changelog
 This changelog summarizes changes and fixes which are a part of each revision.  For more details on the fixes, refer tracking numbers 
 where provided, and the git commit history.
 
-* 2017/01/03 - 1.56
+* 2017/01/?? - 1.55 PENDING
+    * Fixed issue with search grid that caused the grid not to show results.
+    * Cleaned up search export code, changed so search results are not run until the export button is clicked.
     * Added unmapped option to Mapping Qualifier as per defect 418372
     * Fixed refset grid so it can be navigated with the keyboard.
     * Added wait cursor to show when a mapping or concept viewer is being loaded, or when a search is performed.
     * Added debugging code to help figure out edit cancel bug (blank screen) on SQA
-
-* 2016/12/29 - 1.55
-    * Fixed issue with search grid that caused the grid not to show results.
-    * Cleaned up search export code, changed so search results are not run until the export button is clicked.
 
 * 2016/12/28 - 1.54
     * Fixed concept clone from creating a duplicate FSN dialect
