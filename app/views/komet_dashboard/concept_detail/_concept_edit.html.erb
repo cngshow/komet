@@ -1,7 +1,7 @@
 <div class="panel panel-default komet-no-margins komet-panel komet-concept-edit" id="komet_viewer_<%= @viewer_id %>" data-komet-viewer-id="<%= @viewer_id %>">
     <!-- DO NOT PUT ANYTHING ABOVE THE KOMET VIEWER DIV - IT WILL BREAK WINDOWING WHEN CLOSING VIEWERS AND BE REPEATED EVERY TIME NEW CONTENT IS LOADED TO INLINE VIEWER -->
 
-    <%= form_tag(taxonomy_edit_concept_path, method: 'post', id: "komet_concept_editor_form_#{@viewer_id}") do %>
+    <%= form_tag(proxy_sensitive(taxonomy_edit_concept_path), method: 'post', id: "komet_concept_editor_form_#{@viewer_id}") do %>
 
         <input type="hidden" name="concept_id" value="<%= @concept_id %>">
       <fieldset><legend style="width: 0px;height:0px">&nbsp;</legend>

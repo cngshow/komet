@@ -158,7 +158,7 @@
         <h2 class="modal-title">VHAT XML Export</h2>
       </div>
       <div class="modal-body">
-        <%= form_tag(export_path, method: :post, id: 'export_modal_form', name: 'export_modal_form') do %>
+        <%= form_tag(proxy_sensitive(export_path), method: :post, id: 'export_modal_form', name: 'export_modal_form') do %>
             <%= label_tag 'start_date_input', 'Start Date' %>
             <div class='input-group date' id='start_date'>
               <input id='start_date_input' name="start_date_input" type='text' class="form-control" placeholder="Enter the start date for this export" required/>
