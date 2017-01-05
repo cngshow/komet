@@ -71,7 +71,7 @@ module ApplicationHelper
       proxy = PrismeConfigConcern.get_proxy_location(host: host, port: port)
       PrismeConfigConcern.create_proxy_css(proxy_string: proxy, context: context)
       proxy_sensitive_url_string = url_string.gsub("#{context}", proxy)
-      proxy_sensitive_url_string.gsub!('/application-', '/' + PrismeConfigConcern::PROXY_CSS_BASE_PREPEND + 'application-') if (proxy_sensitive_url_string =~ /.*\.css.*/)
+      proxy_sensitive_url_string.gsub!('/application-', '/' + PrismeConfigConcern::PROXY_CSS_BASE_PREPEND + 'application-') if (proxy_sensitive_url_string =~ /.*\.css".*/)
       return raw proxy_sensitive_url_string.gsub('//','/')
     else
       return url_string
