@@ -59,7 +59,7 @@ class ExternalController < ApplicationController
     clear_user_session
     flash[:notice] = 'You have been logged out.'
     logout_url_string = ssoi? ? PrismeConfigConcern.logout_link : root_url
-    redirect_to logout_url_string
+    redirect_to proxy_sensitive(logout_url_string)
   end
 
   def export
