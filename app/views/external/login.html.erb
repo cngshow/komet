@@ -94,7 +94,7 @@
     manager.
   </div>
   <div class="komet-external-right-column">
-    <%= form_tag proxy_sensitive(login_path), class: "komet-external-login-form", id: "komet-external-login-form" do %>
+    <%= form_tag login_path, class: "komet-external-login-form", id: "komet-external-login-form" do %>
         <div>
           <%= label_tag 'komet_username', 'User Name:' %><br>
           <%= text_field_tag :komet_username %>

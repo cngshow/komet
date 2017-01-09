@@ -1,7 +1,7 @@
 <div class="panel panel-default komet-no-margins komet-panel komet-concept-create" id="komet_viewer_<%= @viewer_id %>" data-komet-viewer-id="<%= @viewer_id %>">
     <!-- DO NOT PUT ANYTHING ABOVE THE KOMET VIEWER DIV - IT WILL BREAK WINDOWING WHEN CLOSING VIEWERS AND BE REPEATED EVERY TIME NEW CONTENT IS LOADED TO INLINE VIEWER -->
 
-    <%= form_tag(proxy_sensitive(taxonomy_create_concept_path), method: 'post', id: "komet_concept_editor_form_#{@viewer_id}") do %>
+    <%= form_tag(taxonomy_create_concept_path, method: 'post', id: "komet_concept_editor_form_#{@viewer_id}") do %>
 
         <div class="panel-heading">
             <span class="panel-title komet-section-title">

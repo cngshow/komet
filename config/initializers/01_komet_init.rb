@@ -11,6 +11,8 @@ require './lib/rails_common/logging/logging'
 require './lib/utilities/cached_hash'
 require './lib/rails_common/util/helpers'
 require './lib/rails_common/logging/prisme_log_event'
+require './lib/utilities/route_set_open'
+
 ISAAC_ROOT = ENV['ISAAC_ROOT'].nil? ? '' : ENV['ISAAC_ROOT']
 
 $isaac_hunter_mutex = Mutex.new #Not re-entrant, but lock acquires in 1/2 the time (After JVM is warm and toasty).

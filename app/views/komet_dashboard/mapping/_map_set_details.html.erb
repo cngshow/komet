@@ -1,6 +1,6 @@
 <div id="komet_mapping_section_<%= @viewer_id %>">
 
-    <%= form_tag(proxy_sensitive(mapping_process_map_set_path), method: 'post', id: "komet_mapping_set_editor_form_#{@viewer_id}", class: 'komet-mapping-set-details-form') do %>
+    <%= form_tag(mapping_process_map_set_path, method: 'post', id: "komet_mapping_set_editor_form_#{@viewer_id}", class: 'komet-mapping-set-details-form') do %>
 
         <div id="komet_mapping_set_panel_<%= @viewer_id %>" class="komet-mapping-section-panel">
 

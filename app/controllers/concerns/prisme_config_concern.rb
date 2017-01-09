@@ -1,4 +1,5 @@
 require 'fileutils'
+
 module PrismeConfigConcern
   class << self
     attr_accessor :config
@@ -86,7 +87,7 @@ module PrismeConfigConcern
     port = controller.true_port
     context = $CONTEXT
     context = '/' + context unless context[0].eql? '/'
-    proxy_location = get_proxy_location(host: host, port: port)
+    proxy_location = get_proxy_location(host: host, port: port, context: context)
     $log.info("proxy location is #{proxy_location}")
     path_proxified = (URI url_string).path.gsub(context, proxy_location).gsub('//','/') #final gsub is in case proxy_location ends in /
     $log.info("path_proxified is #{path_proxified}, context is #{context}")
@@ -99,12 +100,14 @@ module PrismeConfigConcern
   end
 
 
-  def self.get_proxy_location(host:, port:)
+  def self.get_proxy_location(host:, port:, context:)
+    my_context = context.gsub('/','')
     PrismeConfigConcern.proxy_urls.each do |k|
       uri = URI k['incoming_url_path']
+      path = uri.path.gsub('/','')
       port = uri.port
       $log.info(uri.host + " : " + port.to_s)
-      return k['proxy_location'] if (host.eql?(uri.host) && port.to_s.eql?(port.to_s))
+      return k['proxy_location'] if (host.eql?(uri.host) && port.to_s.eql?(port.to_s) && my_context.eql?(path))
     end
     $log.warn("I could not find a valid proxy config for host #{host} with port #{port}.  Check prisme's server_config.yml")
     $CONTEXT
