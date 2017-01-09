@@ -29,6 +29,15 @@ var TaxonomySearchModule = (function () {
 
         // load any previous assemblage queries into a menu for the user to select from
         UIHelper.processAutoSuggestTags(form);
+
+        $("#komet_search_tab_trigger").focus(function(){
+
+            if (gridOptions && gridOptions.api.rowModel.rowsToDisplay.length > 0){
+
+                gridOptions.api.ensureIndexVisible(0);
+                gridOptions.api.setFocusedCell(0, "matching_concept");
+            }
+        }.bind(this));
     }
 
     function loadResultGrid() {
@@ -52,7 +61,7 @@ var TaxonomySearchModule = (function () {
         gridOptions = {
             enableColResize: true,
             enableSorting: true,
-            suppressCellSelection: true,
+            suppressCellSelection: false,
             rowSelection: "single",
             onSelectionChanged: onGridSelection,
             onGridReady: onGridReady,
@@ -101,7 +110,7 @@ var TaxonomySearchModule = (function () {
         // set the grid datasource options, including processing the data rows
         var dataSource = {
 
-            pageSize: pageSize,
+            paginationPageSize: pageSize,
             getRows: function (params) {
 
                 var pageNumber = params.endRow / pageSize;
@@ -184,13 +193,14 @@ var TaxonomySearchModule = (function () {
             gridOptions_Exprot.api.destroy();
         }
         gridOptions_Exprot = {
+             rowModelType: 'pagination',
              columnDefs:  [
                 {field: "id", headerName: 'ID', hide: 'true'},
                 {field: "matching_concept", headerName: "Matching Concept", cellRenderer: function(params) {
                     return '<span class="komet-context-menu" data-menu-type="concept" data-menu-uuid="' + params.data.id + '" '
                         + 'data-menu-state="' + params.data.concept_status + '" data-menu-concept-text="' + params.data.matching_concept + '">' + params.value + '</span>';
                 }},
-                {field: "matching_terms", headerName: "Matching Terms00"},
+                {field: "matching_terms", headerName: "Matching Terms"},
                 {field: "concept_status", headerName: "Status"},
                 {field: "match_score", headerName: "Score", suppressSizeToFit: "false", hide: 'true'}
             ]
@@ -221,7 +231,7 @@ var TaxonomySearchModule = (function () {
         // set the grid datasource options, including processing the data rows
         var dataSource2 = {
 
-            pageSize: pageSize,
+            paginationPageSize: pageSize,
             getRows: function (params) {
 
                 var pageNumber = 1;

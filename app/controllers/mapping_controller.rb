@@ -345,8 +345,6 @@ class MappingController < ApplicationController
                 item_hash[:target_concept] = item_hash[:target_concept].uuids.first
             end
 
-            item_hash[:state] = item.mappingItemStamp.state.enumName
-
             item_hash[:qualifier_concept] = item.qualifierConcept
 
             if item_hash[:qualifier_concept] != nil && item_hash[:qualifier_concept] != ''

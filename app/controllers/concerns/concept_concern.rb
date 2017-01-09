@@ -315,8 +315,15 @@ module ConceptConcern
 
             type_text = type.description
 
-            target_id = association.targetConcept.identifiers.uuids.first
-            target_text = association.targetConcept.description
+            target_id = ''
+            target_text = ''
+
+            if association.targetConcept
+
+                target_id = association.targetConcept.identifiers.uuids.first
+                target_text = association.targetConcept.description
+            end
+
             # TODO - remove the hard-coding of type to 'vhat' when the type flags are implemented in the REST APIs
             target_taxonomy_type = 'vhat'
             state = association.associationItemStamp.state.enumName
@@ -503,6 +510,7 @@ module ConceptConcern
         coordinates_token = session[:coordinatestoken].token
         additional_req_params = {coordToken: coordinates_token, stated: stated}
         data_rows = []
+        refset_rows = []
 
         # iterate over the array of sememes returned
         sememes.each do |sememe|
@@ -579,12 +587,13 @@ module ConceptConcern
 
                     data_column = sememe.dataColumns[row_column.columnOrder]
                     column_data = {}
+                    taxonomy_ids = []
 
-                    # TODO - stop hardcoding the 'Code' UUID once it's in the metadata
-                    taxonomy_ids = ['803af596-aea8-5184-b8e1-45f801585d17']
+                    ['LOINC_NUM', 'RXCUI', 'SCTID', 'VUID', 'CODE'].each{ |taxonomy|
 
-                    ['LOINC_NUM', 'RXCUI', 'SNOMED_INTEGER_ID', 'VUID'].each{ |taxonomy|
-                        taxonomy_ids << $isaac_metadata_auxiliary[taxonomy]['uuids'].first[:uuid]
+                        if $isaac_metadata_auxiliary[taxonomy]
+                            taxonomy_ids << $isaac_metadata_auxiliary[taxonomy]['uuids'].first[:uuid]
+                        end
                     }
 
                     # if the column data is not empty process the data
@@ -645,10 +654,18 @@ module ConceptConcern
 
             end
 
-            # add the sememe data row to the array of return rows
-            data_rows << data_row
+            # add the sememe data row to the array of return rows if it isn't a refset (no columns), else mark it as a refset and store it for adding later
+            if sememe_definition.columnInfo.length > 0
+                data_rows << data_row
+            else
 
+                data_row[:refset] = true
+                refset_rows << data_row
+            end
         end
+
+        # add any refsets to the array of return rows
+        data_rows.concat(refset_rows)
 
         return {data_rows: data_rows, used_column_list: used_column_list, used_column_hash: used_column_hash }
 

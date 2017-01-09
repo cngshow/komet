@@ -58,25 +58,6 @@ var PreferenceModule = (function () {
 
         dialog.parent().children().children(".ui-dialog-titlebar-close").remove();
 
-        // Gets list of all the languages based on constant uuid value
-        var uuidParams =  "?uuid=" +  gon.IsaacMetadataAuxiliary.LANGUAGE.uuids[0].uuid;
-        // make an ajax call to get the data for language on option tab
-        $.get(gon.routes.taxonomy_get_concept_children_path + uuidParams, function( results ) {
-            $.each(results,function(index,value) {
-                $("#komet_concept_language").append($("<option />").val(value.conChronology.identifiers.sequence).text(value.conChronology.description));
-            });
-        });
-
-        populateColormodule(''); // populate color module
-        populateColorpath(''); // populate color path
-
-        // get the list of refsets to populate the refsets dropdown
-        $.get(gon.routes.taxonomy_get_refset_list_path, function(refset_data) {
-            refsetList = refset_data;
-            createRefsetFieldRow();
-        });
-
-
         form = dialog.find( "form" ).on( "submit", function( event ) {
             event.preventDefault();
             applyChanges();
@@ -86,106 +67,11 @@ var PreferenceModule = (function () {
             dialog.dialog( "open" );
             //Get default goordinates
 
-            var getcoordinates = "";
-            var descriptiontypepreferences= "";
-            var dialectassemblagepreferences="";
-            var allowedstates =[];
+            var stamp_date = $('#stampedDt').val();
 
-            document.getElementById('description_type').innerHTML ="";
-            document.getElementById('dialecttbl').innerHTML ="";
-
-
-            var tr = document.createElement("TR");
-            tr.setAttribute("id", "heading1");
-            tr.setAttribute("style", "background-color: #0000a2;color:white");
-            document.getElementById('description_type').appendChild(tr);
-
-            var tr1 = document.createElement("TR");
-            tr1.setAttribute("id", "heading2");
-            tr1.setAttribute("style", "background-color: #0000a2;color:white");
-            document.getElementById('dialecttbl').appendChild(tr1);
-
-            var td1 = document.createElement("TD");
-            td1.innerHTML ='Rank';
-            document.getElementById("heading1").appendChild(td1);
-
-            var td2 = document.createElement("TD");
-            td2.innerHTML = 'Dialect Preference';
-            document.getElementById("heading1").appendChild(td2);
-
-            var td4 = document.createElement("TD");
-            td4.innerHTML ='Rank';
-            document.getElementById("heading2").appendChild(td4);
-
-            var td3 = document.createElement("TD");
-            td3.innerHTML = 'Description Type';
-            document.getElementById("heading2").appendChild(td3);
-
-            $.get( gon.routes.taxonomy_get_coordinates_path, function( getcoordinates_results ) {
-                var stamp_date = getcoordinates_results.taxonomyCoordinate.stampCoordinate.time;
-
-                if (stamp_date !== gon.vhat_export_params.max_end_date) {
-                    $('#stamp_date').data("DateTimePicker").date(moment(stamp_date));
-                }
-
-                selectItemByValue(document.getElementById('komet_concept_language'),getcoordinates_results.languageCoordinate.language);
-                $("#komet_concept_language").val(getcoordinates_results.languageCoordinate.language);
-                descriptiontypepreferences = getcoordinates_results.languageCoordinate.descriptionTypePreferences;
-                dialectassemblagepreferences= getcoordinates_results.languageCoordinate.dialectAssemblagePreferences;
-                allowedstates =getcoordinates_results.stampCoordinate.allowedStates;
-                // Gets list of all the dialect based on constant uuid value
-                populateControls('dialecttbl',gon.IsaacMetadataAuxiliary.DIALECT_ASSEMBLAGE.uuids[0].uuid,dialectassemblagepreferences);
-
-                // Gets list of all the description type based on constant uuid value
-                populateControls('description_type',gon.IsaacMetadataAuxiliary.DESCRIPTION_TYPE.uuids[0].uuid,descriptiontypepreferences);
-
-                //checked selected  values in status list
-                selectAllowedstates(allowedstates);
-
-                // this recreating color module table from session
-                if (getcoordinates_results.colormodule != null)
-                {
-                    document.getElementById('listofmodule').innerHTML = "";
-                    populateColormodule(getcoordinates_results.colormodule);
-                }
-
-                // this recreating path color  table from session
-                if (getcoordinates_results.colorpath != null) {
-                    document.getElementById('listofpath').innerHTML ="";
-                    populateColorpath(getcoordinates_results.colorpath);
-                }
-                if (getcoordinates_results.colorrefsets != null) {
-
-                    document.getElementById('komet_preferences_refsets_table').innerHTML ="";
-
-                    var colorheadingtr = document.createElement("TR");
-                    colorheadingtr.setAttribute("id", "colorrefset");
-                    colorheadingtr.setAttribute("style", "background-color: #0000a2;color:white;text-align: center")
-                    document.getElementById('komet_preferences_refsets_table').appendChild(colorheadingtr);
-
-                    var colorheadingtd0 = document.createElement("TD");
-                    colorheadingtd0.innerHTML ='ID';
-                    document.getElementById("colorrefset").appendChild(colorheadingtd0);
-
-                    var colorheadingtd1 = document.createElement("TD");
-                    colorheadingtd1.innerHTML ='Color';
-                    document.getElementById("colorrefset").appendChild(colorheadingtd1);
-
-                    var colorheadingtd2 = document.createElement("TD");
-                    colorheadingtd2.innerHTML = 'Refset';
-                    document.getElementById("colorrefset").appendChild(colorheadingtd2);
-
-                    var colorheadingtd3 = document.createElement("TD");
-                    colorheadingtd3.innerHTML = 'Delete';
-                    document.getElementById("colorrefset").appendChild(colorheadingtd3);
-
-                    $.each(getcoordinates_results.colorrefsets, function (index, value) {
-                        addRefsetRow(value.refsets_name,value.colorid,value.refsetsid,value.colorshape)
-                    });
-
-                }
-
-            });
+            if (stamp_date !== gon.vhat_export_params.max_end_date) {
+                $('#stamp_date').data("DateTimePicker").date(moment(stamp_date));
+            }
 
             $(document).on("click", "#applybtn", function (ev) {
                 var refsetname=$("#komet_preferences_refset_id option:selected").text();
@@ -197,7 +83,6 @@ var PreferenceModule = (function () {
 
 
         });
-
 
         //this events are used to rank the description type and dialect rows
         $(document).on("click", ".change-rank.up", function (ev) {
@@ -308,57 +193,6 @@ var PreferenceModule = (function () {
         }
     }
 
-    // create a new select field for choosing a refset and color picker
-    function createRefsetFieldRow(){
-
-        var options = "";
-        var refsetSelect = '<label  for="komet_preferences_refset_id">Select Refset: </label><select style="width:270px"  id="komet_preferences_refset_id">';
-
-        Object.keys(refsetList).forEach( function(refsetID) {
-            options += '<option value="' + refsetID + '">' + refsetList[refsetID] + '</option>';
-        });
-
-        refsetSelect += options + '</select>';
-        document.getElementById('getdd').innerHTML =refsetSelect;
-
-        var refsetShape='';
-        var td4 = document.createElement("TD");
-        var shapeCntlId =  "'colorrefsetshape'"  ;
-        var displayShapeDiv =  "crefsetshape_0"  ;
-        refsetShape = PreferenceModule.createShapedropdown(displayShapeDiv , 0 , shapeCntlId,'none');
-
-        document.getElementById('getrefsetshape').innerHTML =refsetShape;
-
-        //  refsetRows.push(rowID);
-        document.getElementById('komet_preferences_refsets_table').innerHTML ="";
-
-        var colorheadingtr = document.createElement("TR");
-        colorheadingtr.setAttribute("id", "colorrefset");
-        colorheadingtr.setAttribute("style", "background-color: #0000a2;color:white;text-align: center")
-        document.getElementById('komet_preferences_refsets_table').appendChild(colorheadingtr);
-
-        var colorheadingtd0 = document.createElement("TD");
-        colorheadingtd0.innerHTML ='ID';
-        document.getElementById("colorrefset").appendChild(colorheadingtd0);
-
-        var colorheadingtd1 = document.createElement("TD");
-        colorheadingtd1.innerHTML ='Color';
-        document.getElementById("colorrefset").appendChild(colorheadingtd1);
-
-        var colorheadingtd2 = document.createElement("TD");
-        colorheadingtd2.innerHTML ='Shape';
-        document.getElementById("colorrefset").appendChild(colorheadingtd2);
-
-        var colorheadingtd3 = document.createElement("TD");
-        colorheadingtd3.innerHTML = 'Refset';
-        document.getElementById("colorrefset").appendChild(colorheadingtd3);
-
-        var colorheadingtd4 = document.createElement("TD");
-        colorheadingtd4.innerHTML = 'Delete';
-        document.getElementById("colorrefset").appendChild(colorheadingtd4);
-
-    }
-
     function addRefsetRow(refset,colorid,refsetsid,colorrefsetshape)    {
         rowCount = rowCount + 1;
        // var rowID = window.performance.now();
@@ -415,258 +249,12 @@ var PreferenceModule = (function () {
 
     }
 
-
-    // sets selected value of status radion button list
-    function selectAllowedstates(values)    {
-        var statues ="";
-        var inactive ="";
-
-        for (var i = 0, count = values.length; i < count; i++) {
-            if (values[i].name === 'Active')
-            {
-                statues = 'Active'
-            }
-            if (values[i].name === 'Inactive' &&  statues === 'Active')
-            {
-                statues = statues +  ',Inactive'
-            }
-            if (values[i].name === 'Inactive' &&  statues === "")
-            {
-                statues  = 'Inactive'
-            }
-
-        }
-        $("input[name=status][value='" + statues + "']").attr('checked', 'checked');
-    }
-
-
-    function populateColorpath(pathvalue)    {
-       if (pathvalue === '')
-        {
-            // make an ajax call to get the data for path color list
-            var   uuidParams =  "?uuid=" +  gon.IsaacMetadataAuxiliary.PATH.uuids[0].uuid;
-            $.get(gon.routes.taxonomy_get_concept_children_path + uuidParams, function( results ) {
-                document.getElementById('listofpath').innerHTML ="";
-                var colorpathheadingtr = document.createElement("TR");
-                colorpathheadingtr.setAttribute("id", "colorpathheading");
-                colorpathheadingtr.setAttribute("style", "background-color: #0000a2;color:white");
-                document.getElementById('listofpath').appendChild(colorpathheadingtr);
-
-                var colorpathheadingtd1 = document.createElement("TD");
-                colorpathheadingtd1.innerHTML ='Path';
-                colorpathheadingtd1.setAttribute("style", "width:40%")
-                document.getElementById("colorpathheading").appendChild(colorpathheadingtd1);
-
-                var colorpathheadingtd2 = document.createElement("TD");
-                colorpathheadingtd2.innerHTML = 'Color';
-                colorpathheadingtd2.setAttribute("style", "width:25%")
-                document.getElementById("colorpathheading").appendChild(colorpathheadingtd2);
-
-                var colorpathheadingtd3 = document.createElement("TD");
-                colorpathheadingtd3.innerHTML = 'Shape';
-                colorpathheadingtd3.setAttribute("style", "width:30%")
-                document.getElementById("colorpathheading").appendChild(colorpathheadingtd3);
-
-                $.each(results,function(index,value) {
-                    var tr = document.createElement("TR");
-                    tr.setAttribute("id", "colorpathtr" + value.conChronology.identifiers.sequence);
-                    document.getElementById('listofpath').appendChild(tr);
-
-                    var label = 'lbl_colorpathtr_' + value.conChronology.identifiers.sequence;
-                    var td2 = document.createElement("TD");
-                    td2.setAttribute("id", label);
-                    td2.innerHTML = value.conChronology.description;
-
-                    document.getElementById("colorpathtr" + value.conChronology.identifiers.sequence).appendChild(td2);
-
-                    var colorrowid = "'" + value.conChronology.description + "~" + value.conChronology.identifiers.sequence + "','colorpathtr" + value.conChronology.identifiers.sequence + "'";
-
-                    var td3 = document.createElement("TD");
-                    td3.innerHTML = '<a title="clear color" style="padding:2px;color:red" aria-labelledby="' + label + '" onclick="PreferenceModule.removecolor(' + colorrowid + ')">X</a>&nbsp;'
-                        +'<input name="colorpath" class="pathcolordemo" title="Click here to change color" aria-labelledby="' + label +'" type="text" '
-                        + 'id="' + value.conChronology.description + '~' + value.conChronology.identifiers.sequence + '" size="6" style="height:30px" data-control="hue" value="" />';
-                    document.getElementById("colorpathtr" + value.conChronology.identifiers.sequence).appendChild(td3);
-
-                    var td4 = document.createElement("TD");
-                    var shapeCntlId =  "'colorpathshape" + value.conChronology.identifiers.sequence + "'" ;
-                    var displayShapeDiv =  "cpathshape_" + value.conChronology.identifiers.sequence  ;
-                    td4.innerHTML = PreferenceModule.createShapedropdown(displayShapeDiv , value.conChronology.identifiers.sequence , shapeCntlId,'none');
-                    document.getElementById("colorpathtr" + value.conChronology.identifiers.sequence).appendChild(td4);
-
-                    $('.pathcolordemo').minicolors();
-                });
-            });
-        }
-        else {
-            document.getElementById('listofpath').innerHTML ="";
-            var colorpathheadingtr = document.createElement("TR");
-            colorpathheadingtr.setAttribute("id", "colorpathheading");
-            colorpathheadingtr.setAttribute("style", "background-color: #0000a2;color:white")
-            document.getElementById('listofpath').appendChild(colorpathheadingtr);
-
-            var colorpathheadingtd1 = document.createElement("TD");
-            colorpathheadingtd1.innerHTML ='Path';
-            colorpathheadingtd1.setAttribute("style", "width:40%")
-            document.getElementById("colorpathheading").appendChild(colorpathheadingtd1);
-
-            var colorpathheadingtd2 = document.createElement("TD");
-            colorpathheadingtd2.innerHTML = 'Color';
-            colorpathheadingtd2.setAttribute("style", "width:30%")
-            document.getElementById("colorpathheading").appendChild(colorpathheadingtd2);
-
-           var colorpathheadingtd3 = document.createElement("TD");
-           colorpathheadingtd3.innerHTML = 'Shape';
-           colorpathheadingtd3.setAttribute("style", "width:30%")
-           document.getElementById("colorpathheading").appendChild(colorpathheadingtd3);
-
-            $.each(pathvalue, function (index, value) {
-                var tr = document.createElement("TR");
-                tr.setAttribute("id", "colorpathtr" + value.pathid);
-                document.getElementById('listofpath').appendChild(tr);
-
-                var label = 'lbl_colorpathtr_' + value.pathid;
-                var td2 = document.createElement("TD");
-                td2.innerHTML = value.path_name;
-                td2.setAttribute("id", label);
-                document.getElementById("colorpathtr" + value.pathid).appendChild(td2);
-
-                var colorrowid = "'" + value.path_name + "~" + value.pathid + "','colorpathtr" + value.pathid + "'";
-
-                var td3 = document.createElement("TD");
-                td3.innerHTML = '<a title="clear color" style="padding:2px;color:red" aria-labelledby="' + label + '" onclick="PreferenceModule.removecolor(' + colorrowid + ')">X</a>&nbsp;'
-                    +'<input name="colorpath" class="pathcolordemo" title="Click here to change path color"  aria-labelledby="' + label +'" type="text" '
-                    + 'id="' + value.path_name + '~' + value.pathid + '" size="6" style="height:30px" data-control="hue" value="' + value.colorid + '" />';
-                document.getElementById("colorpathtr" + value.pathid).appendChild(td3);
-
-                var td4 = document.createElement("TD");
-                var shapeCntlId =  "'colorpathshape" + value.pathid + "'" ;
-                var displayShapeDiv =  "cpathshape_" + value.pathid  ;
-                td4.innerHTML = PreferenceModule.createShapedropdown(displayShapeDiv , value.pathid , shapeCntlId,value.colorshape);
-                document.getElementById("colorpathtr" + value.pathid).appendChild(td4);
-
-
-                $('.pathcolordemo').minicolors();
-            });
-        }
-
-
-
-    }
-    // adding row to color module table
-    function populateColormodule(colormodule)    {
-
-        if(colormodule === '')
-        {
-            document.getElementById('listofmodule').innerHTML ="";
-
-            var colorheadingtr = document.createElement("TR");
-            colorheadingtr.setAttribute("id", "colorheading");
-            colorheadingtr.setAttribute("style", "background-color: #0000a2;color:white")
-            document.getElementById('listofmodule').appendChild(colorheadingtr);
-
-            var colorheadingtd1 = document.createElement("TD");
-            colorheadingtd1.innerHTML ='Module';
-            colorheadingtd1.setAttribute("style", "width:40%")
-            document.getElementById("colorheading").appendChild(colorheadingtd1);
-
-            var colorheadingtd2 = document.createElement("TD");
-            colorheadingtd2.innerHTML = 'Color';
-            colorheadingtd2.setAttribute("style", "width:30%")
-            document.getElementById("colorheading").appendChild(colorheadingtd2);
-            var colorheadingtd3 = document.createElement("TD");
-            colorheadingtd3.innerHTML = 'Shape';
-            colorheadingtd3.setAttribute("style", "width:30%")
-            document.getElementById("colorheading").appendChild(colorheadingtd3);
-            //Gets list of all the module.creating color module table from rest api call by passing constant uuid
-            var uuidParams =  "?uuid=" +  gon.IsaacMetadataAuxiliary.MODULE.uuids[0].uuid;
-            // make an ajax call to get the data for module color list
-            $.get(gon.routes.taxonomy_get_concept_children_path + uuidParams, function( results ) {
-                $.each(results,function(index,value) {
-                    var tr = document.createElement("TR");
-                    tr.setAttribute("id", "colorTr" + value.conChronology.identifiers.sequence);
-                    document.getElementById('listofmodule').appendChild(tr);
-
-                    var label = 'lbl_colorTr_' + value.conChronology.identifiers.sequence;
-                    var td2 = document.createElement("TD");
-                    td2.innerHTML = value.conChronology.description;
-                    td2.setAttribute("id", label);
-                    document.getElementById("colorTr" + value.conChronology.identifiers.sequence).appendChild(td2);
-
-                    var colorrowid = "'" + value.conChronology.description + "~" + value.conChronology.identifiers.sequence + "','colorTr" + value.conChronology.identifiers.sequence + "'";
-                    var td3 = document.createElement("TD");
-                    td3.innerHTML = '<a title="clear color" style="padding:2px;color:red" aria-labelledby="' + label + '" onclick="PreferenceModule.removecolor(' + colorrowid + ')">X</a>'
-                        + '<input name="color_id" class="demo" title="Click here to change color"  aria-labelledby="' + label + '" type="text" '
-                        + 'id="' + value.conChronology.description + '~' + value.conChronology.identifiers.sequence + '" size="6" style="height:30px" data-control="hue" value="" />&nbsp;';
-                    document.getElementById("colorTr" + value.conChronology.identifiers.sequence).appendChild(td3);
-
-                    var td4 = document.createElement("TD");
-                    var shapeCntlId =  "'colormoduleshape" + value.conChronology.identifiers.sequence + "'" ;
-                    var displayShapeDiv =  "cshape_" + value.conChronology.identifiers.sequence  ;
-                    td4.innerHTML = PreferenceModule.createShapedropdown(displayShapeDiv , value.conChronology.identifiers.sequence , shapeCntlId,'none');
-                    document.getElementById("colorTr" + value.conChronology.identifiers.sequence).appendChild(td4);
-                    $('.demo').minicolors();
-                });
-
-            });
-        }
-        else {
-            document.getElementById('listofmodule').innerHTML ="";
-            var colorheadingtr = document.createElement("TR");
-            colorheadingtr.setAttribute("id", "colorheading");
-            colorheadingtr.setAttribute("style", "background-color: #0000a2;color:white")
-            document.getElementById('listofmodule').appendChild(colorheadingtr);
-
-            var colorheadingtd1 = document.createElement("TD");
-            colorheadingtd1.innerHTML ='Module';
-            colorheadingtd1.setAttribute("style", "width:40%")
-            document.getElementById("colorheading").appendChild(colorheadingtd1);
-
-            var colorheadingtd2 = document.createElement("TD");
-            colorheadingtd2.innerHTML = 'Color';
-            colorheadingtd2.setAttribute("style", "width:30%")
-            document.getElementById("colorheading").appendChild(colorheadingtd2);
-
-            var colorheadingtd3 = document.createElement("TD");
-            colorheadingtd3.innerHTML = 'Shape';
-            colorheadingtd3.setAttribute("style", "width:30%")
-            document.getElementById("colorheading").appendChild(colorheadingtd3);
-
-            $.each(colormodule, function (index, value) {
-                var tr = document.createElement("TR");
-                tr.setAttribute("id", "colorTr" + value.moduleid);
-                document.getElementById('listofmodule').appendChild(tr);
-
-                var label = 'lbl_colorTr_' + value.moduleid;
-                var td2 = document.createElement("TD");
-                td2.innerHTML = value.module_name;
-                td2.setAttribute("id", label);
-                document.getElementById("colorTr" + value.moduleid).appendChild(td2);
-
-                var colorrowid = "'" + value.module_name + "~" + value.moduleid + "','colorTr" + value.moduleid + "'";
-                var td3 = document.createElement("TD");
-                td3.innerHTML = '<a title="clear color"  style="padding:2px;color:red" aria-labelledby="' + label + '" onclick="PreferenceModule.removecolor(' + colorrowid + ')">X</a>&nbsp;'
-                    + '<input name="color_id" class="demo" title="Click here to change color" aria-labelledby="' + label + '" type="text" '
-                    + 'id="' + value.module_name + '~' + value.moduleid + '" size="6" style="height:30px" data-control="hue" value="' + value.colorid + '" />';
-                document.getElementById("colorTr" + value.moduleid).appendChild(td3);
-
-                var td4 = document.createElement("TD");
-                var shapeCntlId =  "'colormoduleshape" + value.moduleid + "'" ;
-                var displayShapeDiv =  "cshape_" + value.moduleid  ;
-                td4.innerHTML = PreferenceModule.createShapedropdown(displayShapeDiv , value.moduleid , shapeCntlId,value.colorshape);
-                document.getElementById("colorTr" + value.moduleid).appendChild(td4);
-                $('.demo').minicolors();
-            });
-
-        }
-
-    }
-
-    // sets selected shape into div tag
+     // sets selected shape into div tag
     function setShape(classname,shapes,id,inputid)    {
         var selectedshape = '#' + id ;
         var inputids='#' + inputid;
 
-        $(selectedshape).removeClass("noshape");
+        $(selectedshape).removeClass("None");
         $(selectedshape).removeClass("glyphicon glyphicon-stop");
         $(selectedshape).removeClass( "glyphicon glyphicon-star");
         $(selectedshape).removeClass( "fa fa-circle");
@@ -676,35 +264,9 @@ var PreferenceModule = (function () {
         $(selectedshape).addClass(classname);
         document.getElementById(inputid).value =classname;
 
-
     }
 
-    /// creates shape dropdown
-    function createShapedropdown(displayShapeDiv,conceptSequence,shapeCntlId,value)    {
-        var shapedd='';
-        shapedd ='<div class="dropdown" ><div class="' +  value + '" style="display: inline-block" id="' +  displayShapeDiv + '">' + PreferenceModule.getShapeName(value) + '</div>';
-        shapedd = shapedd + '<input name="colormodule_shape" value="' +  value + '"  type="hidden" id=' + shapeCntlId + '  />';
-        shapedd = shapedd + '<span  class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" id="shapeid" aria-expanded="false">';
-        shapedd = shapedd + '<span class="caret"></span></span><ul class="dropdown-menu"   aria-label="select shape">';
-        shapedd = shapedd + '<li>';
-        shapedd = shapedd + '<a style="display: inline-block" onclick="PreferenceModule.setShape(' + "'none'" + "," + "'None'" + ",'" +  displayShapeDiv  + "'," + shapeCntlId + ')" href="#">No Shape</a></li>';
-        shapedd = shapedd + '<li aria-hidden="true"  class="glyphicon glyphicon-stop" >';
-        shapedd = shapedd + '<a style="display: inline-block" onclick="PreferenceModule.setShape(' + "'glyphicon glyphicon-stop'" + "," + "'Square'" + ",'" +  displayShapeDiv  + "'," + shapeCntlId + ')" href="#">Square</a></li>';
-        shapedd = shapedd + '<li aria-hidden="true" class="glyphicon glyphicon-star">';
-        shapedd = shapedd + '<a href="#" style="display: inline-block" onclick="PreferenceModule.setShape(' + "'glyphicon glyphicon-star'" + "," + "'Star'" +  ",'" +  displayShapeDiv  + "'," + shapeCntlId + ')">Star</a></li>';
-        shapedd = shapedd + '<li aria-hidden="true" class="glyphicon glyphicon-triangle-top">';
-        shapedd = shapedd + '<a href="#" style="display: inline-block" onclick="PreferenceModule.setShape(' + "'glyphicon glyphicon-triangle-top'" + "," + "'Triangle'" +  ",'" +  displayShapeDiv  + "'," + shapeCntlId + ')">Triangle</a></li>';
-        shapedd = shapedd + '<li aria-hidden="true" class="glyphicon glyphicon-asterisk">';
-        shapedd = shapedd + '<a href="#" style="display: inline-block" onclick="PreferenceModule.setShape(' + "'glyphicon glyphicon-asterisk'" + "," + "'Asterisk'" +  ",'" +  displayShapeDiv  + "'," + shapeCntlId + ')">Asterisk</a></li>';
-        shapedd = shapedd + '<li aria-hidden="true" class="fa fa-circle">';
-        shapedd = shapedd + '<a href="#" style="display: inline-block" onclick="PreferenceModule.setShape(' + "'fa fa-circle'" + "," + "'Circle'" +  ",'" +  displayShapeDiv  + "'," + shapeCntlId + ')">Circle</a></li>';
-        shapedd = shapedd + '</ul></div>';
-
-        return shapedd;
-    }
-     function getShapeName(classname)
-     {
-
+    function getShapeName(classname)  {
          if (classname == 'none')
              return 'No shape';
          else if (classname == 'glyphicon glyphicon-stop')
@@ -721,8 +283,6 @@ var PreferenceModule = (function () {
          else
          if (classname == 'glyphicon glyphicon-asterisk')
              return 'Asterisk';
-
-
         // return 'Square';
      }
     //clear color value
@@ -734,102 +294,14 @@ var PreferenceModule = (function () {
         $("#" + rowid ).find('.minicolors-swatch-color').css("background-color","");
     }
 
-    // creates table of description type and dialect
-    function populateControls(tablename,uuid,arrya_ids)    {
-        var counter =0;
-        var get_default_ids =[];
-        var get_default_values_id =[];
-
-        if (tablename === 'dialecttbl')
-        { counter =10;
-        }
-        uuidParams =  "?uuid=" + uuid;
-        $.get( gon.routes.taxonomy_get_concept_children_path + uuidParams, function( results ) {
-            $.each(results,function(index,value) {
-                get_default_ids.push(value.conChronology.identifiers.sequence);
-                get_default_values_id.push({id:value.conChronology.identifiers.sequence,description:value.conChronology.description})
-            });
-
-            var items = get_default_ids;
-            var items_used = arrya_ids;
-            var items_compared = Array();
-            var items_adddescription_id =[];
-
-            $.each(items, function(i, val){
-                if($.inArray(val, items_used) < 0)
-                    items_compared.push(val);
-            });
-            // create rows that match coordination id with users pref coordination id
-            for (var i = 0, count = items_used.length; i < count; i++) {
-                counter = counter + 1;
-                for(var j = 0; j < get_default_values_id.length; j++)
-                {
-                    if( parseInt(items_used[i]) === parseInt(get_default_values_id[j].id)  )
-                    {
-                        renderTbl(get_default_values_id,counter,tablename,j);
-                    }
-                }
-            }
-            //create row that coordination id is not part of users pref
-            for (var i = 0, count = get_default_values_id.length; i < count; i++) {
-                counter = counter + 1;
-                for(var j = 0; j < items_compared.length; j++)
-                {
-                    if( parseInt(get_default_values_id[i].id) === parseInt(items_compared[j]) )
-                    {
-                        renderTbl( get_default_values_id,counter,tablename,i);
-                    }
-                }
-            }
-
-        });
-    }
-
-    function selectItemByValue(elmnt, value){
-       for(var i=0; i < elmnt.options.length; i++)
-        {
-            if(elmnt.options[i].value == value)
-                elmnt.selectedIndex = i;
-        }
-    }
-
-    // add row to description type and dialect table
-    function renderTbl(value,counter,tblname,index)    {
-        var tr = document.createElement("TR");
-        tr.setAttribute("id", "Tr" + counter);
-        tr.setAttribute("data-cnt",counter);
-        document.getElementById(tblname).appendChild(tr);
-
-        var td1 = document.createElement("TD");
-        td1.innerHTML ='<a style="cursor: default"  class="change-rank up" data-icon="&#9650;"></a>&nbsp<a  style="cursor: default"   class="change-rank down" data-icon="&#9660;"></a>';
-        document.getElementById("Tr" + counter).appendChild(td1);
-
-        var td2 = document.createElement("TD");
-        td2.innerHTML = value[index].description;
-        document.getElementById("Tr" + counter).appendChild(td2);
-
-        var td3 = document.createElement("TD");
-        td3.innerHTML ='<input   type="hidden" name="' + tblname  + '" id="rank_"' + counter + '" size="2" value="' + value[index].id + '" />';
-        document.getElementById("Tr" + counter).appendChild(td3);
-
-    }
-
 
     return {
 
         initialize: init,
-        renderTbl: renderTbl,
-        populateColormodule: populateColormodule,
-        populateColorpath: populateColorpath,
-        populateControls: populateControls,
-        selectAllowedstates: selectAllowedstates,
-        selectItemByValue: selectItemByValue,
-        createRefsetFieldRow:createRefsetFieldRow,
         addRefsetRow: addRefsetRow,
         deleteRefsetFieldRow: deleteRefsetFieldRow,
         removecolor:removecolor,
         setShape:setShape,
-        createShapedropdown:createShapedropdown,
         getShapeName:getShapeName
 
 

@@ -510,30 +510,26 @@ class KometDashboardController < ApplicationController
 
     # gets default/ users preference coordinates
     def get_coordinates
-        getcoordinates_results = {}
+        getcoordinates_refset = {}
         token = session[:coordinatestoken].token
         additional_req_params = {coordToken: token}
         $log.debug("token get_coordinates #{token}" )
-        getcoordinates_results = CoordinateRest.get_coordinate(action: CoordinateRestActions::ACTION_COORDINATES,additional_req_params: additional_req_params)
-        value = getcoordinates_results.languageCoordinate.to_json
-        getcoordinates_results = JSON.parse(getcoordinates_results.to_json)
-        # getcoordinates_results[:colormodule]= session[:colormodule]
-        # getcoordinates_results[:colorpath]= session[:colorpath]
-        # getcoordinates_results[:colorrefsets]= session[:colorrefsets]
+        getcoordinates_refset = CoordinateRest.get_coordinate(action: CoordinateRestActions::ACTION_COORDINATES,additional_req_params: additional_req_params)
+        value = getcoordinates_refset.languageCoordinate.to_json
 
-
+        getcoordinates_refset = JSON.parse(getcoordinates_refset.to_json)
         $log.info("user prefs user_sessions #{user_session(UserSession::USER_PREFERENCES)}")
         user_prefs = user_session(UserSession::USER_PREFERENCES)
         unless user_prefs.nil?
             user_prefs = user_session(UserSession::USER_PREFERENCES)
-            getcoordinates_results[:colormodule]= user_prefs[:colormodule]
-            $log.info("user prefs color module is #{user_prefs[:colormodule]}, param[:colormodule] is #{getcoordinates_results[:colormodule]}")
-            getcoordinates_results[:colorpath]= user_prefs[:colorpath]
-            getcoordinates_results[:colorrefsets]= user_prefs[:colorrefsets]
+            getcoordinates_refset[:colormodule]= user_prefs[:colormodule]
+            $log.info("user prefs color module is #{user_prefs[:colormodule]}, param[:colormodule] is #{getcoordinates_refset[:colormodule]}")
+            getcoordinates_refset[:colorpath]= user_prefs[:colorpath]
+            getcoordinates_refset[:colorrefsets]= user_prefs[:colorrefsets]
         end
-        $log.info("user prefs rendering getcoordinates_results #{getcoordinates_results}")
-        $log.info("user prefs rendering getcoordinates_results json #{getcoordinates_results.to_json}")
-        render json:  getcoordinates_results.to_json
+        $log.info("user prefs rendering getcoordinates_results #{getcoordinates_refset}")
+        $log.info("user prefs rendering getcoordinates_results json #{getcoordinates_refset.to_json}")
+        render json:  getcoordinates_refset.to_json
     end
 
     def get_coordinatestoken
@@ -543,26 +539,18 @@ class KometDashboardController < ApplicationController
         hash[:dialectPrefs] = params[:dialectPrefs]
         hash[:descriptionTypePrefs] = params[:descriptionTypePrefs]
         hash[:allowedStates]= params[:allowedStates]
-        # session[:colormodule] = params[:colormodule]
-        # session[:colorpath] = params[:colorpath]
-        # session[:colorrefsets] = params[:colorrefsets]
-        $log.info("user prefs color module before saving it to session, param[:colormodule] is #{params[:colormodule]}")
 
         user_prefs = HashWithIndifferentAccess.new
         user_prefs[:colormodule] = params[:colormodule]
-        $log.info("user prefs color module is #{user_prefs[:colormodule]}, param[:colormodule] is #{params[:colormodule]}")
         user_prefs[:colorpath] = params[:colorpath]
-        $log.info("user prefs color path is #{user_prefs[:colorpath]}, param[:colormodule] is #{params[:colorpath]}")
         user_prefs[:colorrefsets] = params[:colorrefsets]
-        $log.info("user prefs color refset is #{user_prefs[:colorrefsets]}, param[:colormodule] is #{params[:colorrefsets]}")
+
         user_session(UserSession::USER_PREFERENCES, user_prefs)
-        $log.info("user prefs after saving it to session color module is #{user_prefs[:colormodule]}, param[:colormodule] is #{params[:colormodule]}")
+
         hash.merge!(CommonRest::CacheRequest::PARAMS_NO_CACHE)
 
         results = CoordinateRest.get_coordinate(action: CoordinateRestActions::ACTION_COORDINATES_TOKEN, additional_req_params: hash)
         session[:coordinatestoken] = results
-        $log.debug("token get_coordinatestoken #{results.token}" )
-
         render json: results.to_json
 
     end
@@ -576,17 +564,12 @@ class KometDashboardController < ApplicationController
         if stated != nil
             @stated = stated
         end
-
         additional_req_params = {coordToken: coordinates_token, stated: @stated, childDepth: 50}
-
         refsets = TaxonomyRest.get_isaac_concept(uuid: $isaac_metadata_auxiliary['ASSEMBLAGE']['uuids'].first[:uuid], additional_req_params: additional_req_params)
-
         if refsets.is_a? CommonRest::UnexpectedResponse
             render json: [] and return
         end
-
         processed_refsets = process_refset_list(refsets)
-
         render json: processed_refsets.to_json
 
     end
@@ -668,12 +651,11 @@ class KometDashboardController < ApplicationController
         parent_concept_text = params[:komet_create_concept_parent_display]
         parent_concept_type = params[:komet_create_concept_parent_type]
 
-
         body_params = {
-            fsn: preferred_term, # + ' (' + parent_concept_text + ')',
-            #preferredTerm: preferred_term,
+            fsn: preferred_term,
             parentConceptIds: [parent_concept_id],
-            descriptionLanguageConceptId: 8
+            descriptionLanguageConceptId: $isaac_metadata_auxiliary['ENGLISH_LANGUAGE']['uuids'].first[:uuid],
+            descriptionPreferredInDialectAssemblagesConceptIds: [$isaac_metadata_auxiliary['US_ENGLISH_DIALECT']['uuids'].first[:uuid]]
         }
 
         # if it is present get the description type concept sequence from the uuid
@@ -695,6 +677,179 @@ class KometDashboardController < ApplicationController
 
         render json: {concept_id: new_concept_id.uuid}
     end
+
+    def get_user_preference_info
+
+        #language dropdown on options tab
+        @language_options = get_concept_children(concept_id: $isaac_metadata_auxiliary['LANGUAGE']['uuids'].first[:uuid], return_json: false, remove_semantic_tag: true)
+        #get default values - dialect options and description type on options tab
+        dialect_options = get_concept_children(concept_id: $isaac_metadata_auxiliary['DIALECT_ASSEMBLAGE']['uuids'].first[:uuid], return_json: false, remove_semantic_tag: true)
+        description_type_options = get_concept_children(concept_id: $isaac_metadata_auxiliary['DESCRIPTION_TYPE']['uuids'].first[:uuid], return_json: false, remove_semantic_tag: true)
+
+        getcoordinates_results = {}
+        token = session[:coordinatestoken].token
+        additional_req_params = {coordToken: token}
+        getcoordinates_results  = CoordinateRest.get_coordinate(action: CoordinateRestActions::ACTION_COORDINATES,additional_req_params: additional_req_params)
+
+        #language dropdown -- suser selected language
+        @languageCoordinate = getcoordinates_results.languageCoordinate.language
+
+        #get user selected order  - dialect options and description type on options tab
+        descriptiontypepreferences = getcoordinates_results.languageCoordinate.descriptionTypePreferences;
+        dialectassemblagepreferences= getcoordinates_results.languageCoordinate.dialectAssemblagePreferences;
+
+        dialect_options_arry=[]
+        #add matched items
+        matched=''
+        dialectassemblagepreferences.each do |userddialect|
+                dialect_options.each do |dialectOptins|
+                    if dialectOptins[:concept_sequence] == userddialect
+                        dialect_options_arry <<  dialectOptins
+                    end
+                end
+        end
+        #add unmatched items
+        dialect_options.each do |dialectOptins|
+            dialect_options_arry.each do |userddialect|
+                if dialectOptins[:concept_sequence] == userddialect[:concept_sequence]
+                    matched='true'
+                    break
+                else
+                    matched='false'
+                end
+            end
+            if matched == 'false'
+                dialect_options_arry <<  dialectOptins
+            end
+        end
+        @dialect_options=dialect_options_arry
+        #add matched items
+        description_type_arry =[]
+        descriptiontypepreferences.each do |userddialect|
+            description_type_options.each do |dialectOptins|
+                if dialectOptins[:concept_sequence] == userddialect
+                    description_type_arry <<  dialectOptins
+                end
+            end
+        end
+        #add unmatched items
+        matched=''
+        description_type_options.each do |dialectOptins|
+            description_type_arry.each do |userddialect|
+                if dialectOptins[:concept_sequence] == userddialect[:concept_sequence]
+                    matched='true'
+                    break
+                else
+                    matched='false'
+                end
+            end
+            if matched == 'false'
+                description_type_arry <<  dialectOptins
+            end
+
+        end
+        @description_type_options =description_type_arry
+        @stamp_date = getcoordinates_results.taxonomyCoordinate.stampCoordinate.time
+
+        allowedstates=getcoordinates_results.stampCoordinate.allowedStates;
+        allowedstates.each do |statestype|
+             if statestype.enumName.downcase == 'active'
+                  @allowedstates= @allowedstates.to_s + 'active'
+             end
+
+             if statestype.enumName.downcase == 'inactive'
+                 @allowedstates= @allowedstates.to_s + 'inactive'
+             end
+        end
+
+        if @allowedstates == 'active'
+            @allowedstatesActive ='checked="checked"'
+        end
+        if @allowedstates == 'inactiveactive'
+           @allowedstatesboth = 'checked="checked"'
+        end
+        if @allowedstates == 'inactive'
+            @allowedstatesinactive  = 'checked="checked"'
+        end
+
+
+        user_prefs = user_session(UserSession::USER_PREFERENCES)
+        unless user_prefs.nil?
+            user_prefs = user_session(UserSession::USER_PREFERENCES)
+            colormodule_results= user_prefs[:colormodule]
+            colorpath_results= user_prefs[:colorpath]
+            colorrefsets_results= user_prefs[:colorrefsets]
+        end
+
+        colornew_array=[]
+
+        @colorpathshape=''
+        colorpath = get_concept_children(concept_id: $isaac_metadata_auxiliary['PATH']['uuids'].first[:uuid], return_json: false, remove_semantic_tag: true)
+            if colorpath_results.nil?
+                colorpath.each do |colors|
+                    colornew_array << {pathcolorid: colors[:concept_sequence], pathcolortext: colors[:text], pathcolorvalue:'' ,pathcolorshape:'None',colorshapename:'None'}
+                end
+            else
+                colorpath_results.each do |addshape|
+                    colornew_array << {pathcolorid: addshape[1][:pathid], pathcolortext: addshape[1][:path_name], pathcolorvalue:addshape[1][:colorid] ,pathcolorshape:addshape[1][:colorshape],colorshapename:getShapeName(addshape[1][:colorshape])}
+                end
+            end
+        @colorpathshape =colornew_array
+        colormodulenew_array=[]
+
+        @colormoduleshape=''
+        colormodule = get_concept_children(concept_id: $isaac_metadata_auxiliary['MODULE']['uuids'].first[:uuid], return_json: false, remove_semantic_tag: true)
+        if colormodule_results.nil?
+            colormodule.each do |colors|
+                colormodulenew_array << {modulecolorid: colors[:concept_sequence], modulecolortext: colors[:text], modulecolorvalue:'' ,modulecolorshape:'None',colorshapename:'None'}
+            end
+        else
+            colormodule_results.each do |addshape|
+                colormodulenew_array << {modulecolorid: addshape[1][:moduleid], modulecolortext: addshape[1][:module_name], modulecolorvalue:addshape[1][:colorid] ,modulecolorshape:addshape[1][:colorshape],colorshapename:getShapeName(addshape[1][:colorshape])}
+            end
+        end
+        @colormoduleshape =colormodulenew_array
+
+        coordinates_token = session[:coordinatestoken].token
+        stated = params[:stated]
+
+        # check to make sure the flag for stated or inferred view was passed in
+        if stated != nil
+            @stated = stated
+        end
+        additional_req_params = {coordToken: coordinates_token, stated: @stated, childDepth: 50}
+        refsets = TaxonomyRest.get_isaac_concept(uuid: $isaac_metadata_auxiliary['ASSEMBLAGE']['uuids'].first[:uuid], additional_req_params: additional_req_params)
+        if refsets.is_a? CommonRest::UnexpectedResponse
+            render json: [] and return
+        end
+        @processed_refsets = process_refset_list(refsets)
+
+        colorrefsetnew_array=[]
+        if !colorrefsets_results.nil?
+            colorrefsets_results.each do |refsetcolor|
+                colorrefsetnew_array << {refsetsid: refsetcolor[1][:refsetsid], refsets_name: refsetcolor[1][:refsets_name], refsetcolorvalue:refsetcolor[1][:colorid] ,refsetcolorshape:refsetcolor[1][:colorshape],colorshapename:getShapeName(refsetcolor[1][:colorshape])}
+            end
+        end
+        @colorrefsetnew=colorrefsetnew_array
+    end
+
+    def getShapeName(classname)
+
+        if classname == 'None'
+            return 'None'
+        elsif classname == 'glyphicon glyphicon-stop'
+            return 'Square'
+        elsif classname == 'glyphicon glyphicon-star'
+            return 'Star'
+        elsif classname == 'fa fa-circle'
+            return 'Circle'
+        elsif classname == 'glyphicon glyphicon-triangle-top'
+            return 'Triangle'
+        elsif classname == 'glyphicon glyphicon-asterisk'
+            return 'Asterisk'
+        end
+    end
+
 
     def get_concept_edit_info
 
@@ -817,10 +972,14 @@ class KometDashboardController < ApplicationController
             if params[:descriptions]
 
                 fsn_id = $isaac_metadata_auxiliary['FULLY_SPECIFIED_NAME']['uuids'].first[:uuid]
+                preferred_dialect_id = $isaac_metadata_auxiliary['PREFERRED']['uuids'].first[:uuid]
                 fsn = nil
+                dialects_to_remove = []
 
+                # loop through the descriptions looking for the FSN
                 params[:descriptions].each do |description_id, description|
 
+                    # When we find the FSN, copy its info and preferred dialects, create the new concept, and break the loop
                     if description['description_type'] == fsn_id
 
                         body_params = {
@@ -828,6 +987,27 @@ class KometDashboardController < ApplicationController
                             parentConceptIds: [params[:komet_concept_edit_parent]],
                             descriptionLanguageConceptId: description['description_language']
                         }
+
+                        # process the dialects
+                        if description[:dialects]
+
+                            dialects = []
+
+                            description[:dialects].each do |dialect_id, dialect|
+
+                                if dialect['acceptability'] == preferred_dialect_id
+
+                                    dialect['dialect_id'] = dialect_id
+                                    dialects << dialect['dialect']
+                                    dialects_to_remove << dialect
+                                end
+                            end
+                        else
+                            dialects << $isaac_metadata_auxiliary['US_ENGLISH_DIALECT']['uuids'].first[:uuid]
+                        end
+
+                        # add the preferred dialects from the FSN
+                        body_params[:descriptionPreferredInDialectAssemblagesConceptIds] = dialects
 
                         new_concept_id = ConceptRest::get_concept(action: ConceptRestActions::ACTION_CREATE, additional_req_params: {editToken: get_edit_token}, body_params: body_params )
 
@@ -848,11 +1028,18 @@ class KometDashboardController < ApplicationController
             if create_success
                 concept_id = new_concept_id.uuid
 
+                dialects_to_remove.each_with_index do |dialect, index|
+
+                    fsn[:dialects][new_concept_id.dialectSememes[index].uuids.first] = dialect
+                    fsn[:dialects].delete(dialect['dialect_id'])
+                end
+
                 # Copy the FSN into a new hash entry using the returned ID from the newly created FSN, then delete the old key
                 params[:descriptions][new_concept_id.fsnDescriptionSememe.uuids.first] = fsn
                 params[:descriptions].delete(fsn_id)
+
             else
-                render json: {concept_id: concept_id, failed: {id: concept_id, text: 'Clone Concept: The new concept was unable to be created.' , type: 'clone'}}
+                render json: {concept_id: concept_id, failed: {id: concept_id, text: 'Clone Concept: The new concept was unable to be created.' , type: 'clone'}} and return
             end
         end
 
@@ -956,6 +1143,8 @@ class KometDashboardController < ApplicationController
                                 acceptable << dialect['dialect']
                             end
                         end
+                    else
+                        preferred << $isaac_metadata_auxiliary['US_ENGLISH_DIALECT']['uuids'].first[:uuid]
                     end
 
                     if preferred.length > 0
@@ -1133,11 +1322,13 @@ class KometDashboardController < ApplicationController
 
         @stated = 'true'
         @view_params = {statesToView: 'active,inactive'}
-
         if !session[:coordinatestoken]
             session[:coordinatestoken] = CoordinateRest.get_coordinate(action: CoordinateRestActions::ACTION_COORDINATES_TOKEN)
+            get_user_preference_info
         end
+         get_user_preference_info
         $log.debug("token initial #{session[:coordinatestoken].token}" )
+
     end
 
     # this action is called via javascript if/when the user's session has timed out

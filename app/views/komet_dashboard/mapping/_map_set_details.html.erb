@@ -89,12 +89,40 @@
 
                         </div>
 
-                        <div class="komet-mapping-set-definition-row">
+                        <div class="komet-mapping-set-definition-row komet-mapping-stamp-fields">
 
                             <div class="komet-mapping-set-definition-item">
                                 <%= label_tag "komet_mapping_set_editor_state_#{@viewer_id}", 'State:' %>
                                 <%= select_tag :komet_mapping_set_editor_state, options_for_select([['Active'], ['Inactive']], @map_set[:state].titlecase), id: "komet_mapping_set_editor_state_#{@viewer_id}", class: 'form-control komet-mapping-show-on-edit' %>
                                 <div class="komet-mapping-show-on-view"><%= @map_set[:state].titlecase %></div>
+                            </div>
+
+                            <div class="komet-mapping-set-definition-item">
+                                <%= label_tag "komet_mapping_set_editor_time_#{@viewer_id}", 'Time:' %>
+                                <div id="komet_mapping_set_editor_time_<%= @viewer_id %>"><%= @map_set[:time] %></div>
+                            </div>
+
+                        </div>
+
+                        <div class="komet-mapping-set-definition-row komet-mapping-stamp-fields">
+
+                            <div class="komet-mapping-set-definition-item">
+                                <%= label_tag "komet_mapping_set_editor_author_#{@viewer_id}", 'Author:' %>
+                                <div id="komet_mapping_set_editor_author_<%= @viewer_id %>"><%= @map_set[:author] %></div>
+                            </div>
+
+                            <div class="komet-mapping-set-definition-item">
+                                <%= label_tag "komet_mapping_set_editor_module_#{@viewer_id}", 'Module:' %>
+                                <div id="komet_mapping_set_editor_module_<%= @viewer_id %>"><%= @map_set[:module] %></div>
+                            </div>
+
+                        </div>
+
+                        <div class="komet-mapping-set-definition-row">
+
+                            <div class="komet-mapping-set-definition-item komet-mapping-stamp-fields">
+                                <%= label_tag "komet_mapping_set_editor_path_#{@viewer_id}", 'Path:' %>
+                                <div id="komet_mapping_set_editor_path_<%= @viewer_id %>"><%= @map_set[:path] %></div>
                             </div>
 
                             <div class="komet-mapping-set-definition-item">
@@ -211,7 +239,11 @@
 
                             <div>Mapping Source Concept</div>
                             <div>Mapping Target Concept</div>
-                            <div>State</div>
+                            <div class="komet-mapping-stamp-fields">State</div>
+                            <div class="komet-mapping-stamp-fields">Time</div>
+                            <div class="komet-mapping-stamp-fields">Author</div>
+                            <div class="komet-mapping-stamp-fields">Module</div>
+                            <div class="komet-mapping-stamp-fields">Path</div>
                             <div>Mapping Qualifier</div>
 
                             <% Array(@map_items[:column_definitions]).each do |column| %>

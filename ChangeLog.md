@@ -3,11 +3,34 @@ Komet Changelog
 This changelog summarizes changes and fixes which are a part of each revision.  For more details on the fixes, refer tracking numbers 
 where provided, and the git commit history.
 
-* 2016/12/?? - 1.52 PENDING
+* 2016/12/29 - 1.54
+    * Fixed concept clone from creating a duplicate FSN dialect
+    * Changed code so on creation of a concept description if no dialect is added it will automatically add US English as a preferred dialect.
+    * Fixed bug in concept create due to hardcoded language sequence ID that has since changed. This was stopping create from working. Switched to using ID from metadata
+    * Fixed Hyphen misspelling on Add Map Items dialog
+    * Added ability to tab into search and refset grids, and then navigate the grids with keyboard commands
+
+* 2016/12/20 - 1.53
+    * Fixed CSS issues with the Add Map Fields dialog boxes in IE.
+    * Fixed the autosuggest recent calls so they cache properly
+    * Added Refset sections under Concept and Descriptions on the concept edit screen.
+    * Updated to latest enunciate file
+    * Changed to latest taxonomy ID names in metadata.
+    * Removed hardcoded 'CODE' UUID, getting it from metadata now
+    * refactor code of user preference screen to fix unknown bug in unix environment defect # 421416
+    * fixed defect # 369888 CSV export on search page was not exporting all the records
+    * Checking that targetConcept exists on associations call during concept edit
+    * Added functionality to the mapping STAMP control
+    * Removed refresh button when looking at set details
+    * Fixed typo in logging file that was causing errors
+
+* 2016/12/16 - 1.52
     * Fixed issue with mapping effective date not parsing dates correctly
     * Fixed clone concept error with snomed concepts
     * Taxonomy IDs are removed from cloned concepts
     * Description VUIDs show in read-only mode on concepts
+    * resolved issue with export csv file
+    * added verification code to make sure taxonomy concepts are in metadata before running code on them
 
 * 2016/12/07 - 1.51
     * Fixed edit concepts so the extended description type field is a dropdown with text choices

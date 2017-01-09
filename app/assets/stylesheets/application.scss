@@ -1174,7 +1174,6 @@ td.komet-concept-table-nested-indicator.komet-concept-table-nested-indicator-ope
 }
 .komet-add-fields-dialog button{
     padding: 2px 8px;
-    height: 26px;
 }
 .komet-add-fields-dialog-header{
     display: flex;
@@ -1219,6 +1218,7 @@ td.komet-concept-table-nested-indicator.komet-concept-table-nested-indicator-ope
 .komet-add-fields-dialog-right-column{
     display: flex;
     flex-direction: column;
+    width: 100%;
 }
 .komet-add-fields-dialog-right-column > div{
     margin-bottom: 5px

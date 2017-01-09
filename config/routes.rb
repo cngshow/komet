@@ -26,6 +26,7 @@ Rails.application.routes.draw do
     get 'komet_dashboard/get_concept_sememes', :as => :taxonomy_get_concept_sememes
     get 'komet_dashboard/get_concept_refsets', :as => :taxonomy_get_concept_refsets
     get 'komet_dashboard/get_concept_children', :as => :taxonomy_get_concept_children
+    get 'komet_dashboard/get_user_preference_info', :as => :taxonomy_get_user_preference_info
     get 'komet_dashboard/get_coordinates', :as => :taxonomy_get_coordinates
     post 'komet_dashboard/get_coordinatestoken', :as => :taxonomy_get_coordinatestoken
    # match 'komet_dashboard/get_coordinatestoken' => 'komet_dashboard#get_coordinatestoken', :as => :taxonomy_get_coordinatestoken, via: [:get, :post]
@@ -37,6 +38,7 @@ Rails.application.routes.draw do
     post 'komet_dashboard/edit_concept', :as => :taxonomy_edit_concept
     get 'komet_dashboard/change_concept_state', :as => :taxonomy_change_concept_state
     get 'komet_dashboard/clone_concept', :as => :taxonomy_clone_concept
+
 
     # workflow routes
 =begin

@@ -11,7 +11,7 @@ module TaxonomyHelper
 
             colors.each do |color|
                 colorshape = ''
-                if color[1]['colorshape'] != 'none'
+                if color[1]['colorshape'] != 'None'
                   colorshape= color[1]['colorshape']
                   flag = ' <span class="' + colorshape  + '" style="color: ' + color[1]['colorid'] + ';"></span>'
                 else

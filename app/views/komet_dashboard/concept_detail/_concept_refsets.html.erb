@@ -22,6 +22,7 @@
         <!-- details drawer - can be collapsed -->
         <div class="komet-concept-section-panel-details">
 
+            <span id="komet_refsets_tab_trigger_<%= @viewer_id %>" tabindex="0"></span>
             <div id="refsets_grid_<%= @viewer_id %>" style="height: 350px;" class="ag-fresh"></div> <BR>
             <button id="taxonomy_refset_export" onclick="WindowManager.viewers[<%= @viewer_id %>].exportCSV()">CSV Export</button>
 
