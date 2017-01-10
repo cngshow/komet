@@ -60,23 +60,6 @@ function flash_notify(options, settings) {
   $.notify(options, settings);
 }
 
-$(document).ajaxComplete(function (event, jqXHR, ajaxOptions) {
-  var url = ajaxOptions.url;
-  var patt = new RegExp(gon.routes.flash_notifier_flash_notifications_path);
-  var res = patt.test(url);
-
-  // only make the rest call for routes that are NOT the flash notifier call
-  if (!res) {
-    $.get(gon.routes.flash_notifier_flash_notifications_path, function (results) {
-      //iterate the results calling $.notify
-      var arrayLength = results.length;
-
-      for (var i = 0; i < arrayLength; i++) {
-        flash_notify(results[i].options, results[i].settings);
-      }
-    });
-  }
-});
 var time_between_role_notifications = <%=$PROPS['KOMET.role_change_notification_time_interval']%>;
 var time_between_role_checks = <%=$PROPS['KOMET.role_change_check_time_interval']%>;
 var last_notification_time = null;
@@ -85,17 +68,14 @@ $(document).ajaxSend(function (event, jqXHR, ajaxOptions) {
   var url = ajaxOptions.url;
   var patt = new RegExp(gon.routes.flash_notifier_roles_path);
   var flash_notifier_role_match = patt.test(url);
-  patt = new RegExp(gon.routes.flash_notifier_flash_notifications_path);
-  var flash_notifier_match = patt.test(url);
-  var res = !(flash_notifier_role_match || flash_notifier_match);
-  //console.log(gon.routes.flash_notifier_roles_path);
+  var res = !(flash_notifier_role_match);
+
   // only make the rest call for routes that are NOT the flash notifier call, or the the role check itself
   var secs_between_checks = (new Date() - last_role_check)/1000;
   if (res && (secs_between_checks > time_between_role_checks)) {
     $.get(gon.routes.flash_notifier_roles_path, function (results) {
       last_role_check = new Date();
-      //console.log(results);
-      //console.log('- ' + gon.roles);
+
       if (Common.arr_diff(gon.roles, results).length != 0) {
         var time_delta = (new Date() - last_notification_time)/1000;
         if ( time_delta > time_between_role_notifications) {
