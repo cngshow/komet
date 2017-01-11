@@ -67,8 +67,7 @@ Rails.application.routes.draw do
     post 'mapping/process_map_set'
     post 'mapping/process_map_item'
 
-    # flash notifications route via completed ajax calls
-    get 'flash_notifier/flash_notifications'
+    # flash notifications roles ajax call
     get 'flash_notifier/roles'
 
     # You can have the root of your site routed with "root"
