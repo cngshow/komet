@@ -4,7 +4,7 @@ This changelog summarizes changes and fixes which are a part of each revision.  
 where provided, and the git commit history.
 
 * 2017/01/?? - 1.57 - PENDING
-    *
+    * isaac contexts branch is merged in
 
 * 2017/01/12 - 1.56
     * Added a warning message if attempting to leave a page that has unsaved changes. Does not show if reloading the entire page, only if navigating to another section.
