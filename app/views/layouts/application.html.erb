@@ -1,20 +1,20 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta http-equiv="X-UA-Compatible" content="IE=Edge" >
+  <meta http-equiv="X-UA-Compatible" content="IE=Edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title><%= content_for?(:title) ? yield(:title) : t('app_name') %></title>
   <meta name="description" content="<%= content_for?(:description) ? yield(:description) : "KOMET Tooling" %>">
   <%= include_gon %>
-  <%= stylesheet_link_tag 'application', media: 'all', 'data-turbolinks-track' => true %>
-  <%= javascript_include_tag 'application', 'data-turbolinks-track' => true %>
+  <%= proxy_sensitive(stylesheet_link_tag('application', media: 'all', 'data-turbolinks-track' => true)) %>
+  <%= proxy_sensitive(javascript_include_tag('application', 'data-turbolinks-track' => true)) %>
 
   <%= csrf_meta_tags %>
 
 </head>
 <body class="<%= controller_name %> <%= action_name %>">
 <header>
-  <%= render 'layouts/navigation' if @set_render_menu%>
+  <%= render 'layouts/navigation' if @set_render_menu %>
 </header>
 <main role="main" class="komet-main">
   <%= render 'layouts/messages' %>
@@ -25,13 +25,13 @@
 <%#= render partial: 'layouts/workflow_footer'%>
 </footer>
 </body>
-    <script>
-        $(document).ready(function () {
-            var splitter = $("#komet_dashboard_splitter");
-            // reset the height and refresh the splitter after load to get rid of the strange margin that appears on the right panel (Firefox, Chrome)
-            splitter.css("height", "100%");
-            splitter.enhsplitter('refresh');
-        });
-    </script>
+<script>
+  $(document).ready(function () {
+    var splitter = $("#komet_dashboard_splitter");
+    // reset the height and refresh the splitter after load to get rid of the strange margin that appears on the right panel (Firefox, Chrome)
+    splitter.css("height", "100%");
+    splitter.enhsplitter('refresh');
+  });
+</script>
 </html>
-
+<%= render 'flashes/flash_notifications' %>

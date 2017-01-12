@@ -52,4 +52,34 @@ module ApplicationHelper
     user_session_defined? ? user_session(UserSession::LOGIN) : 'unknown'
   end
 
+
+  def proxy_sensitive(url_string)
+    begin
+      url_string = url_string.to_s
+      host = my_controller.true_address
+      port = my_controller.true_port
+      context = $CONTEXT
+      context = '/' + context unless context[0].eql? '/'
+      return url_string if context.eql? '/' #we need a nontrivial context or nothing to do...
+      if my_controller.ssoi? #if we are under ssoi we assume we are behind apache
+        proxy = PrismeConfigConcern.get_proxy_location(host: host, port: port, context: context)
+        PrismeConfigConcern.create_proxy_css(proxy_string: proxy, context: context)
+        proxy_sensitive_url_string = url_string.gsub("#{context}", proxy)
+        proxy_sensitive_url_string.gsub!('/application-', '/' + PrismeConfigConcern::PROXY_CSS_BASE_PREPEND + 'application-') if (proxy_sensitive_url_string =~ /.*\.css".*/)
+        return raw proxy_sensitive_url_string.gsub('//','/') if self.respond_to? :raw
+        return proxy_sensitive_url_string.gsub('//','/')
+      else
+        return url_string
+      end
+    rescue =>ex
+      $log.error("Failed to get proxy data returning original url #{url_string}... #{ex}")
+      return url_string
+    end
+  end
+
+  def my_controller
+    return self if self.is_a? ApplicationController
+    return controller
+  end
+
 end

@@ -9,12 +9,6 @@ class FlashNotifierController < ApplicationController
   before_filter :ensure_roles, only: [:roles]
   $log.trace(all_filters)
 
-  # this is called from application.js when ajax calls are completed to flash messages
-  def flash_notifications
-    $log.trace('calling flash notifications')
-    render json: show_flash
-  end
-
   def roles
     $log.trace("#{pundit_user}")
     render json: pundit_user[:roles]

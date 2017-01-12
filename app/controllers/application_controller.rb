@@ -37,7 +37,7 @@ class ApplicationController < ActionController::Base
   before_action :read_only # must be after ensure_roles
   # todo tried testing with reviewer? and could not get to the login page
 
-  before_action :set_render_menu, :setup_routes, :setup_constants
+  before_action :set_render_menu, :setup_routes, :setup_constants #setup routes must remain after ensure_roles
   attr_reader :ssoi # a boolean if we have ssoi headers
   alias ssoi? ssoi
 
@@ -260,10 +260,13 @@ class ApplicationController < ActionController::Base
 
   def set_up_thread_locals
     Thread.current.thread_variable_set(:komet_user_session, session)
+    proxy_helper_lambda = ->(url_string) do proxy_sensitive(url_string) end
+    Thread.current.thread_variable_set(:proxy_helper_lambda, proxy_helper_lambda)
   end
 
   def clear_thread_locals
     Thread.current.thread_variable_set(:komet_user_session, nil)
+    Thread.current.thread_variable_set(:proxy_helper_lambda, nil)
   end
 
 end
