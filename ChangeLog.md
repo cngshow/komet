@@ -3,8 +3,9 @@ Komet Changelog
 This changelog summarizes changes and fixes which are a part of each revision.  For more details on the fixes, refer tracking numbers 
 where provided, and the git commit history.
 
-* 2017/01/?? - 1.56 PENDING
-    * 
+* 2017/01/12 - 1.56 PENDING
+    * Added a warning message if attempting to leave a page that has unsaved changes. Does not show if reloading the entire page, only if navigating to another section.
+    * Fixed issue with mapsets ordering the common extended fields inconsistently
 
 * 2017/01/05 - 1.55
     * Fixed issue with search grid that caused the grid not to show results.

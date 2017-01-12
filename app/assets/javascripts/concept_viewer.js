@@ -379,11 +379,20 @@ var ConceptViewer = function(viewerID, currentConceptID, viewerAction) {
 
     ConceptViewer.prototype.createConcept = function() {
 
-        /*$("#komet_viewer_" + this.viewerID).on("detach", function(){
+        var editorSection = $("#komet_concept_editor_section_" + this.viewerID);
 
-            var editorSection = $("#komet_concept_editor_section_" + this.viewerID);
-            UIHelper.hasFormChanged(editorSection, false, false);
-        }.bind(this));*/
+        $("#komet_viewer_" + this.viewerID).on( 'unsavedCheck', function(event){
+
+            var changed = UIHelper.hasFormChanged(editorSection, false, false);
+            var shouldStay = false
+
+            if (changed){
+                shouldStay = !confirm("You have unsaved changes. Are you sure you want to leave this page?");
+            }
+
+            return shouldStay;
+        });
+
 
         UIHelper.processAutoSuggestTags("#komet_concept_associations_panel_" + this.viewerID);
 
@@ -439,6 +448,7 @@ var ConceptViewer = function(viewerID, currentConceptID, viewerAction) {
                         Common.cursor_auto();
                     } else {
 
+                        $("#komet_viewer_" + viewerID).off('unsavedCheck');
                         TaxonomyModule.tree.reloadTreeStatedView(TaxonomyModule.getStatedView(), false);
                         $.publish(KometChannels.Taxonomy.taxonomyConceptEditorChannel, [ConceptsModule.EDIT, data.concept_id, thisViewer.viewerID, WindowManager.INLINE]);
                     }
@@ -514,6 +524,20 @@ var ConceptViewer = function(viewerID, currentConceptID, viewerAction) {
     };
 
     ConceptViewer.prototype.editConcept = function(attributes, conceptProperties, descriptions, associations, selectOptions){
+
+        var editorSection = $("#komet_concept_editor_section_" + this.viewerID);
+
+        $("#komet_viewer_" + this.viewerID).on( 'unsavedCheck', function(event){
+
+            var changed = UIHelper.hasFormChanged(editorSection, false, false);
+            var shouldStay = false
+
+            if (changed){
+                shouldStay = !confirm("You have unsaved changes. Are you sure you want to leave this page?");
+            }
+
+            return shouldStay;
+        });
 
         var form = $("#komet_concept_editor_form_" + this.viewerID);
 
@@ -633,6 +657,7 @@ var ConceptViewer = function(viewerID, currentConceptID, viewerAction) {
                         Common.cursor_auto();
                     } else {
 
+                        $("#komet_viewer_" + viewerID).off('unsavedCheck');
                         TaxonomyModule.tree.reloadTreeStatedView(TaxonomyModule.getStatedView(), false);
                         $.publish(KometChannels.Taxonomy.taxonomyTreeNodeSelectedChannel, [null, data.concept_id, TaxonomyModule.getStatedView(), thisViewer.viewerID, WindowManager.INLINE]);
                     }

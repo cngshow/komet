@@ -40,6 +40,12 @@ var ConceptsModule = (function () {
 
     function loadViewerData(conceptID, stated, viewerAction, viewerID, windowType, params) {
 
+        var isDirty = $('#komet_viewer_' + viewerID).triggerHandler("unsavedCheck");
+
+        if (isDirty){
+            return false;
+        }
+
         Common.cursor_wait();
         WindowManager.deferred = $.Deferred();
 
