@@ -145,16 +145,6 @@ class MappingController < ApplicationController
         coordinates_token = session[:coordinatestoken].token
         @map_set = {id: '', name: '', description: '', version: '', vuid: '', rules: '', include_fields: [], state: '', status: 'Active', time: '', module: '', path: '', comment_id: 0, comment: ''}
 
-        # add the definitions for the template map fields
-        @map_set[:include_fields] = ['source_system', 'source_version', 'target_system', 'target_version']
-        @map_set[:source_system] = {name: 'source_system', data_type: 'UUID', value: '', label: '32e30e80-3fac-5317-80cf-d85eab22fa9e', label_display: 'mapping source code system', removable: false, display: false, required: false}
-        @map_set[:source_system_display] = ''
-        @map_set[:source_version] = {name: 'source_version', data_type: 'STRING', value: '', label: '5b3479cb-25b2-5965-a031-54238588218f', label_display: 'mapping source code system version', removable: false, display: false, required: false}
-        @map_set[:target_system] = {name: 'target_system', data_type: 'UUID', value: '', label: '6b31a67a-7e6d-57c0-8609-52912076fce8', label_display: 'mapping target code system', removable: false, display: false, required: false}
-        @map_set[:target_system_display] = ''
-        @map_set[:target_version] = {name: 'target_version', data_type: 'STRING', value: '', label: 'b5165f68-b934-5c79-ac71-bd5375f7c809', label_display: 'mapping target code system version', removable: false, display: false, required: false}
-        # @map_set[:comments] = {name: 'comments', data_type: 'STRING', value: '', label: 'Comments', label_display: 'Comments', removable: false, display: false, required: false}
-
         # add the definitions for the template item fields
         @map_set[:item_fields] = []
         # @map_set[:item_field_equivalence] = {name: 'qualifier', data_type: 'SELECT', value: '', label: '8e84c657-5f47-51b8-8ebf-89a9d025a9ef', label_display: 'mapping qualifier', removable: false, display: false, required: false, options: [{value: '', label: 'No Restrictions'}, {value: '8aa6421d-4966-5230-ae5f-aca96ee9c2c1', label: 'Exact'}, {value: 'c1068428-a986-5c12-9583-9b2d3a24fdc6', label: 'Broader Than'}, {value: '250d3a08-4f28-5127-8758-e8df4947f89c', label: 'Narrower Than'}]}
@@ -162,6 +152,9 @@ class MappingController < ApplicationController
         @set_id = params[:set_id]
 
         if @set_id &&  @set_id != ''
+
+            # add the definitions for the template map fields
+            @map_set[:include_fields] = ['32e30e80-3fac-5317-80cf-d85eab22fa9e', '5b3479cb-25b2-5965-a031-54238588218f', '6b31a67a-7e6d-57c0-8609-52912076fce8', 'b5165f68-b934-5c79-ac71-bd5375f7c809']
 
             set = MappingApis::get_mapping_api(action: MappingApiActions::ACTION_SET, uuid_or_id: @set_id,  additional_req_params: {coordToken: coordinates_token, expand: 'comments'})
 
@@ -202,7 +195,10 @@ class MappingController < ApplicationController
                     display = false
                 end
 
-                @map_set[:include_fields] << name
+                if !@map_set[:include_fields].include?(name)
+                    @map_set[:include_fields] << name
+                end
+
                 @map_set[name] = {name: name, data_type: data_type, value: html_escape(value), label: label, label_display: label_display, removable: removable, display: display, required: false}
 
                 if field.extensionValue.class == DATA_TYPES_CLASS::RestDynamicSememeNid || field.extensionValue.class == DATA_TYPES_CLASS::RestDynamicSememeUUID
@@ -219,6 +215,14 @@ class MappingController < ApplicationController
                     end
                 end
 
+            end
+
+            # remove any unused default included fields
+            ['32e30e80-3fac-5317-80cf-d85eab22fa9e', '5b3479cb-25b2-5965-a031-54238588218f', '6b31a67a-7e6d-57c0-8609-52912076fce8', 'b5165f68-b934-5c79-ac71-bd5375f7c809'].each_with_index  do |field, index|
+
+                if !@map_set.key?(field)
+                    @map_set[:include_fields].delete(field)
+                end
             end
 
             item_fields = set.mapItemFieldsDefinition
@@ -305,6 +309,17 @@ class MappingController < ApplicationController
 
             @mapping_action = 'create_set'
             @viewer_title = 'Create New Map Set'
+
+            # add the definitions for the template map fields
+            @map_set[:include_fields] = ['source_system', 'source_version', 'target_system', 'target_version']
+            @map_set[:source_system] = {name: 'source_system', data_type: 'UUID', value: '', label: '32e30e80-3fac-5317-80cf-d85eab22fa9e', label_display: 'mapping source code system', removable: false, display: false, required: false}
+            @map_set[:source_system_display] = ''
+            @map_set[:source_version] = {name: 'source_version', data_type: 'STRING', value: '', label: '5b3479cb-25b2-5965-a031-54238588218f', label_display: 'mapping source code system version', removable: false, display: false, required: false}
+            @map_set[:target_system] = {name: 'target_system', data_type: 'UUID', value: '', label: '6b31a67a-7e6d-57c0-8609-52912076fce8', label_display: 'mapping target code system', removable: false, display: false, required: false}
+            @map_set[:target_system_display] = ''
+            @map_set[:target_version] = {name: 'target_version', data_type: 'STRING', value: '', label: 'b5165f68-b934-5c79-ac71-bd5375f7c809', label_display: 'mapping target code system version', removable: false, display: false, required: false}
+            # @map_set[:comments] = {name: 'comments', data_type: 'STRING', value: '', label: 'Comments', label_display: 'Comments', removable: false, display: false, required: false}
+
         end
     end
 

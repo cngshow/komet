@@ -304,7 +304,8 @@ var UIHelper = (function () {
 
                 // if we are not returning the array of changes or highlighting them, then we can stop looping and return true
                 if (!returnChanges && !highlightChanges) {
-                    return true;
+                    changes.push(field);
+                    return false;
                 }
 
                 // add the field to the changes array

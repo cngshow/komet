@@ -40,6 +40,12 @@ var MappingModule = (function () {
     // the path to a javascript partial file that will re-render all the appropriate partials once the ajax call returns
     function loadViewerData(setID, viewParams, viewerAction, viewerID, windowType) {
 
+        var isDirty = $('#komet_viewer_' + viewerID).triggerHandler("unsavedCheck");
+
+        if (isDirty){
+            return false;
+        }
+
         Common.cursor_wait();
         WindowManager.deferred = $.Deferred();
 

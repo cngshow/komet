@@ -330,6 +330,19 @@ var MappingViewer = function(viewerID, currentSetID, viewerAction) {
     MappingViewer.prototype.initializeSetEditor = function(viewerAction, mapItems){
 
         var form = $("#komet_mapping_set_editor_form_" + this.viewerID);
+
+        $("#komet_viewer_" + this.viewerID).on( 'unsavedCheck', function(event){
+
+            var changed = UIHelper.hasFormChanged(form, false, false);
+            var shouldStay = false
+
+            if (changed){
+                shouldStay = !confirm("You have unsaved changes. Are you sure you want to leave this page?");
+            }
+
+            return shouldStay;
+        });
+
         var thisViewer = this;
 
         this.viewerAction = viewerAction;
@@ -437,6 +450,7 @@ var MappingViewer = function(viewerID, currentSetID, viewerAction) {
 
                     } else {
 
+                        $("#komet_viewer_" + viewerID).off('unsavedCheck');
                         setSection.before(UIHelper.generatePageMessage("All changes were processed successfully."));
                         $.publish(KometChannels.Mapping.mappingTreeNodeSelectedChannel, ["", data.set_id, thisViewer.getViewParams(), thisViewer.viewerID, WindowManager.INLINE, MappingModule.SET_DETAILS]);
                     }
