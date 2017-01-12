@@ -56,7 +56,7 @@ var WindowManager = (function () {
             viewerElement.scrollParent()[0].scrollTop = 0;
             viewerElement[0].parentNode.replaceChild(documentFragment, viewerElement[0]);
         }
-}
+    }
 
     function createViewer(viewer) {
 
@@ -106,6 +106,8 @@ var WindowManager = (function () {
         console.log("*** cancelEditMode viewer ID: " + viewerID);
         console.log("*** cancelEditMode previous content type: " + WindowManager.viewers[viewerID].viewer_previous_content_type);
         console.log("*** cancelEditMode previous content id: " + WindowManager.viewers[viewerID].viewer_previous_content_id);
+
+        $("#komet_viewer_" + viewerID).off('unsavedCheck');
 
         if (WindowManager.viewers[viewerID].viewer_previous_content_type && WindowManager.viewers[viewerID].viewer_previous_content_id){
 

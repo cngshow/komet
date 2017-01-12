@@ -48,6 +48,7 @@ var PreferenceModule = (function () {
                 "Apply changes": applyChanges,
                 Cancel: function() {
                     dialog.dialog( "close" );
+                    location.replace(gon.routes.komet_dashboard_dashboard_path);
                 }
             },
             close: function() {
