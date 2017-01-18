@@ -532,7 +532,7 @@ var MappingViewer = function(viewerID, currentSetID, viewerAction) {
             var idPrefix = "komet_mapping_set_editor_";
             var name = idPrefix + fieldsToInclude[i];
             var id = name + '_' + this.viewerID;
-            var classes = "form-control komet-mapping-show-on-edit komet-mapping-hide-on-create-only";
+            var classes = "form-control komet-mapping-show-on-edit";
             var value = "";
             var dataType = "STRING";
             var labelValue = fieldsToInclude[i];
@@ -564,7 +564,7 @@ var MappingViewer = function(viewerID, currentSetID, viewerAction) {
                     + 'value="' + labelValue + '" '
                     + 'label="' + labelDisplayValue + ':" '
                     + 'display-value="' + displayValue + '" '
-                    + 'classes="komet-mapping-show-on-edit komet-mapping-hide-on-create-only" '
+                    + 'classes="' + classes + '" '
                     + '></autosuggest>';
 
                 value = displayValue;
@@ -575,7 +575,7 @@ var MappingViewer = function(viewerID, currentSetID, viewerAction) {
                 includedFields += label + '<input name="' + name + '" id="' + id + '" class="' + classes + '" value="' + value + '">';
             }
 
-            includedFields += '<div class="komet-mapping-show-on-view komet-mapping-hide-on-create-only">' + value + '</div>';
+            includedFields += '<div class="komet-mapping-show-on-view">' + value + '</div>';
 
             // close the definition-item
             includedFields += '</div>';
@@ -1146,28 +1146,10 @@ var MappingViewer = function(viewerID, currentSetID, viewerAction) {
         UIHelper.generateConfirmationDialog("Delete Map Item?", "Are you sure you want to remove this map item?", confirmCallback, "Yes", closeElement);
     };
 
-    MappingViewer.prototype.cancelSetItemEdit = function(triggerElement){
-
-        var confirmCallback = function(buttonClicked){
-
-            if (buttonClicked != 'cancel') {
-
-                var itemGrid = $("#komet_mapping_items_" + this.viewerID);
-
-                if (this.setEditorMapItemsCopy != null){
-                    itemGrid.html(this.setEditorMapItemsCopy);
-                }
-            }
-
-        }.bind(this);
-
-        UIHelper.generateConfirmationDialog("Cancel Edits?", "Are you sure you want to discard all unsaved changes?", confirmCallback, "Yes", triggerElement);
-    };
-
     MappingViewer.prototype.enterSetEditMode = function(){
 
-        $(".komet-mapping-show-on-view:not(.komet-mapping-hide-on-create-only)").hide();
-        $(".komet-mapping-show-on-edit:not(.komet-mapping-hide-on-create-only)").show();
+        $(".komet-mapping-show-on-view").hide();
+        $(".komet-mapping-show-on-edit:not(.komet-mapping-show-on-create-only)").show();
 
         // make a copy of the set so we can restore it if the user cancels changes
         this.setEditorMapSetCopy = jQuery.extend({}, this.setEditorMapSet);

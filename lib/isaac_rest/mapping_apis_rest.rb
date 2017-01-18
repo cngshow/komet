@@ -78,7 +78,7 @@ module MappingApis
             STARTING_PARAMS_SYM => PARAMS_EMPTY,
             CLAZZ_SYM => Gov::Vha::Isaac::Rest::Api::Data::Wrappers::RestWriteResponse,
             HTTP_METHOD_KEY => HTTP_METHOD_PUT,
-            BODY_CLASS => Gov::Vha::Isaac::Rest::Api1::Data::Mapping::RestMappingSetVersionBase},
+            BODY_CLASS => Gov::Vha::Isaac::Rest::Api1::Data::Mapping::RestMappingSetVersionBaseUpdate},
         ACTION_UPDATE_ITEM => {
             PATH_SYM => PATH_UPDATE_ITEM,
             STARTING_PARAMS_SYM => PARAMS_EMPTY,

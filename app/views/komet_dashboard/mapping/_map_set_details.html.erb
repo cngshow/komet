@@ -68,7 +68,7 @@
                         }) %>
 
                         <div class="komet-mapping-set-definition-controls">
-                            <button class="btn btn-default komet-mapping-show-on-edit komet-mapping-hide-on-create-only" type="button" onclick="WindowManager.viewers[<%= @viewer_id %>].showIncludeSetFieldsDialog()">Add
+                            <button class="btn btn-default komet-mapping-show-on-edit komet-mapping-show-on-create-only" type="button" onclick="WindowManager.viewers[<%= @viewer_id %>].showIncludeSetFieldsDialog()">Add
                                 More Fields
                             </button>
                         </div>
@@ -148,7 +148,7 @@
                         }) %>
 
                         <div class="komet-mapping-set-definition-controls">
-                            <button class="btn btn-default komet-mapping-show-on-edit komet-mapping-hide-on-create-only" type="button" onclick="WindowManager.viewers[<%= @viewer_id %>].showIncludeSetItemsFieldsDialog()">Add
+                            <button class="btn btn-default komet-mapping-show-on-edit komet-mapping-show-on-create-only" type="button" onclick="WindowManager.viewers[<%= @viewer_id %>].showIncludeSetItemsFieldsDialog()">Add
                                 More Fields to Map Items
                             </button>
                         </div>
@@ -165,7 +165,7 @@
                     </div>
 
                     <div id="komet_mapping_set_rules_tab_<%= @viewer_id %>" class="komet-mapping-set-tab-body">
-                        <%= text_area_tag :komet_mapping_set_editor_rules, @map_set[:rules], id: "komet_mapping_set_editor_rules_#{@viewer_id}", class: 'form-control komet-mapping-show-on-edit komet-mapping-hide-on-create-only', 'aria-label': "Business Rules" %>
+                        <%= text_area_tag :komet_mapping_set_editor_rules, @map_set[:rules], id: "komet_mapping_set_editor_rules_#{@viewer_id}", class: 'form-control komet-mapping-show-on-edit', 'aria-label': "Business Rules" %>
                         <div class="komet-mapping-show-on-view"><%= @map_set[:rules] %></div>
                     </div>
 

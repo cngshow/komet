@@ -3,8 +3,9 @@ Komet Changelog
 This changelog summarizes changes and fixes which are a part of each revision.  For more details on the fixes, refer tracking numbers 
 where provided, and the git commit history.
 
-* 2017/01/?? - 1.58 - PENDING
-    *
+* 2017/01/17 - 1.58
+    * Updated to latest enunciate file
+    * Changed mapset so that you can edit extended fields
 
 * 2017/01/12 - 1.57
     * isaac contexts branch is merged in
