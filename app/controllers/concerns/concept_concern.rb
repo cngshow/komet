@@ -524,6 +524,10 @@ module ConceptConcern
                 # use the assemblage to do a sememe_sememeDefinition call to get the columns that sememe has.
                 sememe_definition = SememeRest.get_sememe(action: SememeRestActions::ACTION_SEMEME_DEFINITION, uuid_or_id: assemblage_id, additional_req_params: additional_req_params)
 
+                if sememe_definition.is_a? CommonRest::UnexpectedResponse
+                    next
+                end
+
                 # if we are cloning a concept then put in a placeholder for the instance ID
                 if clone
                     sememe_instance_id = get_next_id

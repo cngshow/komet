@@ -4,7 +4,7 @@ This changelog summarizes changes and fixes which are a part of each revision.  
 where provided, and the git commit history.
 
 * 2017/01/?? - 1.59 - PENDING
-    *
+    * changed so errors in attached sememe processing don't kill the app.
 
 * 2017/01/19 - 1.58
     * Updated to latest enunciate file
