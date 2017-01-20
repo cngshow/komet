@@ -138,7 +138,8 @@
 						</configuration>
 					</execution>
 					
-					<!-- Build two instances of the war for now - one with a relative path of _a, one with _b, so we can deploy twice on the same server -->
+					<!-- Build 1 instances of the war for now during SNAPSHOT, build 3 during release - one each with a relative path of _a, _b and _c, 
+					  so we can deploy three times on the same server -->
 					<execution>
 						<id>build war a</id>
 						<phase>compile</phase>
@@ -153,6 +154,7 @@
 							<args>devops:build_war</args>
 						</configuration>
 					</execution>
+					<!-- wars b and c are only built during a release build.  When version is set to SNAPSHOT, we only create the a war -->
 					<execution>
 						<id>build war b</id>
 						<phase>compile</phase>
@@ -164,7 +166,21 @@
 							<jrubyJvmArgs>-Xmx4000m -Djava.awt.headless=true</jrubyJvmArgs>
 							<execArgs>RAILS_ENV=${railsMode} RAILS_RELATIVE_URL_ROOT=/rails_komet_b</execArgs>
 							<command>rake</command>
-							<args>devops:build_war</args>
+							<args>${warArguments}</args>  <!-- Hackery to noop, when doing a SNAPSHOT -->
+						</configuration>
+					</execution>
+					<execution>
+						<id>build war c</id>
+						<phase>compile</phase>
+						<goals>
+							<goal>exec</goal>
+						</goals>
+						<configuration>
+							<jrubyVerbose>true</jrubyVerbose>
+							<jrubyJvmArgs>-Xmx4000m -Djava.awt.headless=true</jrubyJvmArgs>
+							<execArgs>RAILS_ENV=${railsMode} RAILS_RELATIVE_URL_ROOT=/rails_komet_c</execArgs>
+							<command>rake</command>
+							<args>${warArguments}</args> <!-- Hackery to noop, when doing a SNAPSHOT -->
 						</configuration>
 					</execution>
 				</executions>
@@ -187,19 +203,26 @@
 								<condition property="railsMode" value="test" else="production">
 									<matches string="${project.version}" pattern=".*-SNAPSHOT" />
 								</condition>
+								 <!-- If the version is SNAPSHOT - just build komet a - but setting our hack phase to a phase that we dont use. -->
+								<condition property="warArguments" value="--version" else="devops:build_war">
+									<matches string="${project.version}" pattern=".*-SNAPSHOT" />
+								</condition>
+								<condition property="warSkipAttachBC" value="true" else="false">
+									<matches string="${project.version}" pattern=".*-SNAPSHOT" />
+								</condition>
 							</target>
 						</configuration>
 					</execution>
 				</executions>
 			</plugin>
 			
-			<!-- Attach both wars -->
+			<!-- Attach 1 or 3 wars -->
 			<plugin>
 				<groupId>org.codehaus.mojo</groupId>
 				<artifactId>build-helper-maven-plugin</artifactId>
 				<executions>
 					<execution>
-						<id>attach-artifacts</id>
+						<id>attach-artifact-a</id>
 						<phase>package</phase>
 						<goals>
 							<goal>attach-artifact</goal>
@@ -211,9 +234,26 @@
 									<classifier>a</classifier>
 									<type>war</type>
 								</artifact>
+							</artifacts>
+						</configuration>
+					</execution>
+					<execution>
+						<id>attach-artifacts-bc</id>
+						<phase>package</phase>
+						<goals>
+							<goal>attach-artifact</goal>
+						</goals>
+						<configuration>
+							<skipAttach>${warSkipAttachBC}</skipAttach>
+							<artifacts>
 								<artifact>
 									<file>${project.build.directory}/rails_komet_b.war</file>
 									<classifier>b</classifier>
+									<type>war</type>
+								</artifact>
+								<artifact>
+									<file>${project.build.directory}/rails_komet_c.war</file>
+									<classifier>c</classifier>
 									<type>war</type>
 								</artifact>
 							</artifacts>
