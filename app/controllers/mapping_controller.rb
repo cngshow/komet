@@ -184,8 +184,8 @@ class MappingController < ApplicationController
 
                 # if the field is buiness rules then pull it out and handle it specially
                 # TODO - use the first line when implemented in the metadata
-                # if label == $isaac_metadata_auxiliary['DYNAMIC_SEMEME_COLUMN_BUSINESS_RULES']['uuids'].first[:uuid]
-                if label == '7ebc6742-8586-58c3-b49d-765fb5a93f35'
+                if label == $isaac_metadata_auxiliary['BUSINESS_RULES']['uuids'].first[:uuid]
+                #if label == '7ebc6742-8586-58c3-b49d-765fb5a93f35'
 
                     @map_set[:rules] = value
                     next
@@ -399,7 +399,7 @@ class MappingController < ApplicationController
                     end
 
                     if field_info[:data_type] == 'LONG' && field_info[:label_display].downcase.include?('date')
-                        item_hash[field_info[:name]] = DateTime.strptime(field.data.to_s, '%Q').strftime('%m/%d/%Y %H:%M')
+                        item_hash[field_info[:name]] = DateTime.strptime(field.data.to_s, '%Q').strftime('%m/%d/%Y')
                     else
                         item_hash[field_info[:name]] = html_escape(field.data)
                     end
@@ -591,7 +591,7 @@ class MappingController < ApplicationController
                             elsif ['LONG', 'INTEGER'].include?(data_type)
 
                                 if data_type == 'LONG' && field[:label_display].downcase.include?('date') && data.include?('/')
-                                    data = DateTime.strptime(data, '%m/%d/%Y %H:%M').strftime('%Q')
+                                    data = DateTime.strptime(data, '%m/%d/%Y').strftime('%Q')
                                 end
 
                                 if data == nil || data == ''
