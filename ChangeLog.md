@@ -7,7 +7,7 @@ where provided, and the git commit history.
     * changed so errors in attached sememe processing don't kill the app.
     * Removed hours and minutes from Mapping Effective Date so that it will update properly
     * Komet gets the aitc environment hash from prisme and displays the environment next to the version
-
+    * Refactored much of the user preferences code to make it more maintainable
 
 * 2017/01/19 - 1.58
     * Updated to latest enunciate file
