@@ -183,4 +183,7 @@ Warbler::Config.new do |config|
 
   # JNDI data source name
   # config.webxml.jndi = 'jdbc/rails'
+  
+  # Include these two files in META-INF, so anyone looking at the war knows everything about how it was built.
+  config.script_files = FileList["target/pom.properties", "pom.xml"]
 end

@@ -20,7 +20,8 @@ var PreferenceModule = (function () {
 
     var refsetList = {};
     var refsetRows = [];
-    var rowCount=0;
+    var rowCount = 0;
+
     function init() {
 
         refsetList = {};
@@ -31,7 +32,7 @@ var PreferenceModule = (function () {
         dialog = $("#komet_user_preference_form").dialog({
             autoOpen: false,
             closeOnEscape: false,
-            position: { my: "right top", at: "left bottom", of: "#komet_user_preference_link" },
+            position: {my: "right top", at: "left bottom", of: "#komet_user_preference_link"},
             height: 650,
             width: 650,
             dialogClass: "no-close",
@@ -47,67 +48,70 @@ var PreferenceModule = (function () {
             buttons: {
                 "Apply changes": applyChanges,
                 Cancel: function() {
+
                     dialog.dialog( "close" );
-                    location.replace(gon.routes.komet_dashboard_dashboard_path);
+                    //location.replace(gon.routes.komet_dashboard_dashboard_path);
                 }
             },
             close: function() {
-                form[ 0 ].reset();
-
+                form[0].reset();
             }
         });
 
         dialog.parent().children().children(".ui-dialog-titlebar-close").remove();
 
-        form = dialog.find( "form" ).on( "submit", function( event ) {
+        form = dialog.find("form").on("submit", function(event) {
+
             event.preventDefault();
             applyChanges();
         });
 
-        $("#komet_user_preference_link").on( "click", function() {
-            dialog.dialog( "open" );
-            //Get default goordinates
+        $("#komet_user_preference_link").on("click", function() {
 
-            var stamp_date = $('#stampedDt').val();
+            dialog.dialog("open");
 
-            if (stamp_date !== gon.vhat_export_params.max_end_date) {
-                $('#stamp_date').data("DateTimePicker").date(moment(stamp_date));
+            // Get default coordinates
+            var stampDate = $('#stampedDt').val();
+
+            if (stampDate !== gon.vhat_export_params.max_end_date) {
+                $('#stamp_date').data("DateTimePicker").date(moment(stampDate));
             }
 
-            $(document).on("click", "#applybtn", function (ev) {
-                var refsetname=$("#komet_preferences_refset_id option:selected").text();
-                var refsetsid=$("#komet_preferences_refset_id option:selected").val();
-                var colorid=$("#color_id").val();
-                var colorrefsetshape = $("#colorrefsetshape").val();
-                addRefsetRow(refsetname,colorid,refsetsid,colorrefsetshape);
+            $(document).on("click", "#applybtn", function () {
+
+                var refsetSelectionField = $("#komet_preferences_refset_id").find("option:selected");
+                addRefsetRow(refsetSelectionField.text(), $("#color_id").val(), refsetSelectionField.val(), $("#komet_preferences_shape_refset").val());
             });
-
-
         });
 
         //this events are used to rank the description type and dialect rows
-        $(document).on("click", ".change-rank.up", function (ev) {
-            var $original = $(this).closest("tr"),
-                $target = $original.prev();
+        $(document).on("click", ".change-rank.up", function () {
 
-            if ($target.length) {
-                var cnt = $original.data('cnt'),
-                    targetcnt = $target.data("cnt");
-                if (targetcnt) {
-                    $original.after($target);
+            var original = $(this).closest("tr"),
+                target = original.prev();
+
+            if (target.length) {
+
+                var targetCount = target.data("cnt");
+
+                if (targetCount) {
+                    original.after(target);
                 }
             }
         });
 
         //this events are used to rank the description type and dialect rows
-        $(document).on("click", ".change-rank.down", function (ev) {
-            var $original = $(this).closest("tr"),
-                $target = $original.next();
-            if ($target.length) {
-                var cnt = $original.data('cnt'),
-                    targetcnt = $target.data("cnt");
-                if (targetcnt) {
-                    $original.before($target);
+        $(document).on("click", ".change-rank.down", function () {
+
+            var original = $(this).closest("tr"),
+                target = original.next();
+
+            if (target.length) {
+
+                var targetCount = target.data("cnt");
+
+                if (targetCount) {
+                    original.before(target);
                 }
             }
         });
@@ -127,11 +131,11 @@ var PreferenceModule = (function () {
             }
 
             var allowedStates=$('input[name=status]:checked').val();
-            var colormodule=[];
-            var colorpath=[];
+            var module_flags=[];
+            var path_flags=[];
             var params = "";
             var moduleid="";
-            var colorrefsets = [];
+            var refset_flags = [];
             $('input[name=description_type]').each(function() {
                 description_values += this.value + ',' ;
             });
@@ -139,40 +143,33 @@ var PreferenceModule = (function () {
                 dialect_values += this.value + ',' ;
             });
 
-            $('input[name=color_id]').each(function() {
-                var splimoduletvalue = this.id.split('~');
-                if (splimoduletvalue[0] != "color_id")
-                {
-                    var getshapemodulecntlID= "colormoduleshape" + splimoduletvalue[1];
-                    colormodule.push({module_name:splimoduletvalue[0],moduleid:splimoduletvalue[1] ,colorid:this.value,colorshape:document.getElementById(getshapemodulecntlID).value}) ;
-                }
-
+            $('input[name=module_id]').each(function() {
+                module_flags.push({id: this.value, text: $("#komet_preferences_text_" + this.value).val(), color: $("#komet_preferences_color_" + this.value).val(), shape: $("#komet_preferences_shape_" + this.value).val()});
             });
-            $('input[name=colorpath]').each(function() {
-                var splitpathvalue = this.id.split('~');
-                var getshapepathcntlID= "colorpathshape" + splitpathvalue[1];
-                colorpath.push({path_name:splitpathvalue[0],pathid:splitpathvalue[1] ,colorid:this.value,colorshape:document.getElementById(getshapepathcntlID).value}) ;
+
+            $('input[name=path_id]').each(function() {
+                path_flags.push({id: this.value, text: $("#komet_preferences_text_" + this.value).val(), color: $("#komet_preferences_color_" + this.value).val(), shape: $("#komet_preferences_shape_" + this.value).val()});
             });
 
             $('input[name=colorrefsets]').each(function() {
                 var splitvalue = this.id.split('~');
-                colorrefsets.push({refsets_name:splitvalue[0],refsetsid:splitvalue[1],colorid:this.value,colorshape:splitvalue[2]}) ;
+                refset_flags.push({text: splitvalue[0], id: splitvalue[1], color: this.value, shape: splitvalue[2]}) ;
             });
 
             dialect_values = dialect_values.substring(0, dialect_values.length -1); // removing comma from end of the string
             description_values = description_values.substring(0, description_values.length -1);// removing comma from end of the string
-            console.log(colormodule);
-            console.log(colorpath);
-            console.log(colorrefsets);
+            console.log(module_flags);
+            console.log(path_flags);
+            console.log(refset_flags);
             params = {
                 language: language_values,
                 stamp_date: stamp_date,
                 dialectPrefs: dialect_values,
                 descriptionTypePrefs: description_values,
                 allowedStates: allowedStates,
-                colormodule: colormodule,
-                colorpath: colorpath,
-                colorrefsets: colorrefsets
+                module_flags: module_flags,
+                path_flags: path_flags,
+                refset_flags: refset_flags
             };
             $.post( gon.routes.taxonomy_get_coordinatestoken_path, params, function( results ) {
                 console.log(results);
@@ -186,10 +183,10 @@ var PreferenceModule = (function () {
 
     function deleteRefsetFieldRow(rowID){
 
-       // $("#tr1").remove();
-       // var index = refsetRows.indexOf('tr1');
+        // $("#tr1").remove();
+        // var index = refsetRows.indexOf('tr1');
 
-         $("#tr" + rowID).remove();
+        $("#tr" + rowID).remove();
         var index = refsetRows.indexOf(rowID);
 
         if (index > -1) {
@@ -197,9 +194,10 @@ var PreferenceModule = (function () {
         }
     }
 
-    function addRefsetRow(refset,colorid,refsetsid,colorrefsetshape)    {
+    function addRefsetRow(refset, colorid, refsetsid, colorrefsetshape) {
+
         rowCount = rowCount + 1;
-       // var rowID = window.performance.now();
+        // var rowID = window.performance.now();
         var tblrowcount = 0;
         var  founditem='false';
         $("#komet_preferences_refsets_table").find('tr').each(function (i, el) {
@@ -211,7 +209,7 @@ var PreferenceModule = (function () {
             tblrowcount = tblrowcount + 1
             if (parseInt(refsetsIds) === parseInt(refsetsid) && tblrowcount > 1)
             {
-               // $tds.eq(1).setAttribute("style", "border:outset 1px black;width:15px;background-color:" + colorid );
+                // $tds.eq(1).setAttribute("style", "border:outset 1px black;width:15px;background-color:" + colorid );
                 founditem='true';
                 $tds.eq(1).css("background-color", "#" + colorid);
                 $tds.eq(2).addClass(colorrefsetshape);
@@ -222,93 +220,84 @@ var PreferenceModule = (function () {
                 founditem='false';
             }
         });
-            if (founditem === 'false')
-            {
 
-                var refsetRow = document.createElement("tr");
-                var refsetDeleteCell = document.createElement("td");
-                var refsetColorCell = document.createElement("td");
-                var refsetColorShapeCell = document.createElement("td");
-                var refsetIDCell = document.createElement("td");
-                var refsetCell = document.createElement("td");
-                refsetRow.setAttribute("id", "tr" + rowCount);
+        if (founditem === 'false') {
 
-                refsetIDCell.innerHTML = refsetsid;
-                refsetCell.innerHTML ="&nbsp;&nbsp;" + refset;
-                refsetColorShapeCell.innerHTML='<div class="' +  colorrefsetshape + '" ></div>';
-                refsetColorCell.setAttribute("style", "border:outset 1px black;width:15px;background-color:" + colorid );
-                refsetColorShapeCell.setAttribute("style", "text-align: center" );
-                refsetDeleteCell.setAttribute("style", "text-align: center" );
-                refsetDeleteCell.innerHTML='<a tooltip="remove refset" name="removeRow" onclick="PreferenceModule.deleteRefsetFieldRow(' + rowCount + ')">X</a>';
-                refsetColorCell.innerHTML = '<input name="colorrefsets"  type="hidden" id="' + refset + '~' + refsetsid + '~' + colorrefsetshape + '" size="6" style="height:30px" data-control="hue" value=" ' + colorid + ' "  />';
+            var refsetRow = document.createElement("tr");
+            var refsetDeleteCell = document.createElement("td");
+            var refsetColorCell = document.createElement("td");
+            var refsetColorShapeCell = document.createElement("td");
+            var refsetIDCell = document.createElement("td");
+            var refsetCell = document.createElement("td");
+            refsetRow.setAttribute("id", "tr" + rowCount);
 
-                refsetRow.appendChild(refsetIDCell);
-                refsetRow.appendChild(refsetColorCell);
-                refsetRow.appendChild(refsetColorShapeCell);
-                refsetRow.appendChild(refsetCell);
-                refsetRow.appendChild(refsetDeleteCell);
+            refsetIDCell.innerHTML = refsetsid;
+            refsetCell.innerHTML ="&nbsp;&nbsp;" + refset;
+            refsetColorShapeCell.innerHTML='<div class="' +  colorrefsetshape + '" ></div>';
+            refsetColorCell.setAttribute("style", "border:outset 1px black;width:15px;background-color:" + colorid );
+            refsetColorShapeCell.setAttribute("style", "text-align: center" );
+            refsetDeleteCell.setAttribute("style", "text-align: center" );
+            refsetDeleteCell.innerHTML='<a tooltip="remove refset" name="removeRow" onclick="PreferenceModule.deleteRefsetFieldRow(' + rowCount + ')">X</a>';
+            refsetColorCell.innerHTML = '<input name="colorrefsets"  type="hidden" id="' + refset + '~' + refsetsid + '~' + colorrefsetshape + '" size="6" style="height:30px" data-control="hue" value=" ' + colorid + ' "  />';
 
-                $("#komet_preferences_refsets_table").append(refsetRow);
-            }
+            refsetRow.appendChild(refsetIDCell);
+            refsetRow.appendChild(refsetColorCell);
+            refsetRow.appendChild(refsetColorShapeCell);
+            refsetRow.appendChild(refsetCell);
+            refsetRow.appendChild(refsetDeleteCell);
 
+            $("#komet_preferences_refsets_table").append(refsetRow);
+        }
     }
 
-     // sets selected shape into div tag
-    function setShape(classname,shapes,id,inputid)    {
-        var selectedshape = '#' + id ;
-        var inputids='#' + inputid;
+    // sets selected shape into div tag
+    function setShape(className, shapeName, flagID) {
 
-        $(selectedshape).removeClass("None");
-        $(selectedshape).removeClass("glyphicon glyphicon-stop");
-        $(selectedshape).removeClass( "glyphicon glyphicon-star");
-        $(selectedshape).removeClass( "fa fa-circle");
-        $(selectedshape).removeClass( "glyphicon glyphicon-triangle-top");
-        $(selectedshape).removeClass( "glyphicon glyphicon-asterisk");
-        $(selectedshape).html(shapes);
-        $(selectedshape).addClass(classname);
-        document.getElementById(inputid).value =classname;
+        var shapeExample = $('#komet_preferences_shape_example_' + flagID);
 
+        shapeExample.removeClass();
+        shapeExample.addClass(className);
+        shapeExample.html(shapeName);
+
+        document.getElementById("komet_preferences_shape_" + flagID).value = className;
     }
 
-    function getShapeName(classname)  {
-         if (classname == 'none')
-             return 'No shape';
-         else if (classname == 'glyphicon glyphicon-stop')
-             return 'Square';
-         else
-         if (classname == 'glyphicon glyphicon-star')
-             return 'Star';
-         else
-         if (classname == 'fa fa-circle')
-             return 'Circle';
-         else
-         if (classname == 'glyphicon glyphicon-triangle-top')
-             return 'Triangle';
-         else
-         if (classname == 'glyphicon glyphicon-asterisk')
-             return 'Asterisk';
-        // return 'Square';
-     }
+    // based on the class list passed in return the appropriate shape name
+    function getShapeName(className) {
+
+        if (className == 'none') {
+            return 'No shape';
+        } else if (className == 'glyphicon glyphicon-stop') {
+            return 'Square';
+        } else if (className == 'glyphicon glyphicon-star') {
+            return 'Star';
+        } else if (className == 'fa fa-circle') {
+            return 'Circle';
+        } else if (className == 'glyphicon glyphicon-triangle-top') {
+            return 'Triangle';
+        } else if (className == 'glyphicon glyphicon-asterisk') {
+            return 'Asterisk';
+        }
+    }
+
     //clear color value
-    function removecolor(controlid,rowid)    {
+    function removeColor(flagID) {
 
-        var colorid = "#" + controlid;
-        document.getElementById(controlid).value="";
-        document.getElementById(controlid).style.backgroundColor ="";
-        $("#" + rowid ).find('.minicolors-swatch-color').css("background-color","");
+        var colorField = document.getElementById('komet_preferences_color_' + flagID);
+        colorField.value="";
+        colorField.style.backgroundColor ="";
+
+        $("#komet_preferences_row_" + flagID ).find('.minicolors-swatch-color').css("background-color", "");
     }
-
 
     return {
 
         initialize: init,
         addRefsetRow: addRefsetRow,
         deleteRefsetFieldRow: deleteRefsetFieldRow,
-        removecolor:removecolor,
+        removeColor:removeColor,
         setShape:setShape,
         getShapeName:getShapeName
-
-
     };
 
 })();

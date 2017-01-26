@@ -1,28 +1,32 @@
 module TaxonomyHelper
 
     def get_tree_node_flag(flag_name, ids_to_match)
-        flag = ''
-        user_prefs = user_session(UserSession::USER_PREFERENCES).nil? ? {} : user_session(UserSession::USER_PREFERENCES)
-        $log.debug("get_tree_node_flag user_prefs['color' + flag_name] #{user_prefs['color' + flag_name]}")
-        if user_prefs['color' + flag_name]
 
-            colors = user_prefs['color' + flag_name].find_all{|key, hash|
-                hash[flag_name + 'id'].to_i.in?(ids_to_match) && hash['colorid'] != ''
+        return_flags = ''
+        user_prefs = user_session(UserSession::USER_PREFERENCES).nil? ? {} : user_session(UserSession::USER_PREFERENCES)
+        $log.debug("get_tree_node_flag user_prefs[flag_name + '_flags'] #{user_prefs[flag_name + '_flags']}")
+
+        if user_prefs[flag_name + '_flags']
+
+            flags = user_prefs[flag_name + '_flags'].find_all{|key, hash|
+                hash['id'].to_i.in?(ids_to_match) && hash['color'] != ''
             }
-            $log.info("get_tree_node_flag colors #{colors}")
-            colors.each do |color|
-                colorshape = ''
-                $log.debug("get_tree_node_flag color[1]['colorshape'] #{color[1]['colorshape']}")
-                if color[1]['colorshape'] != 'None'
-                  colorshape= color[1]['colorshape']
-                  flag = ' <span class="' + colorshape  + '" style="color: ' + color[1]['colorid'] + ';"></span>'
+
+            $log.info("get_tree_node_flag flags #{flags}")
+            flags.each do |flag|
+
+                shape = ''
+                $log.debug("get_tree_node_flag flag[1]['shape'] #{flag[1]['shape']}")
+
+                if flag[1]['shape'].downcase != 'none'
+                    return_flags = ' <span class="' + flag[1]['shape']  + '" style="color: ' + flag[1]['color'] + ';"></span>'
                 else
-                    flag = ' <span class="komet-node-' + flag_name + '-flag ' + colorshape  + '" style="border-color: ' + color[1]['colorid'] + ';"></span>'
+                    return_flags = ' <span class="komet-node-' + flag_name + '-flag" style="border-color: ' + flag[1]['color'] + ';"></span>'
                 end
 
-                           end
+            end
         end
 
-        flag
+        return_flags
     end
 end
