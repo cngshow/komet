@@ -1429,10 +1429,13 @@ class KometDashboardController < ApplicationController
     def metadata
     end
 
+    #http://localhost:3001/komet_dashboard/version?include_isaac=true
     def version
         @version = $PROPS['PRISME.war_version']
         @version = 'Unversioned by PRISME.' if @version.nil?
         @version = {version: @version}
+        uuid = $PROPS['PRISME.war_uuid']
+        @version[:war_uuid] = uuid.nil? ? 'DEV_BOX' : uuid
         if (params[:include_isaac])
             begin
                 system_info_isaac = SystemApis::get_system_api(action: SystemApiActions::ACTION_SYSTEM_INFO)
