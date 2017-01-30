@@ -51,13 +51,13 @@ class KometDashboardController < ApplicationController
 #    end
 #        CRIS, test flash code
 #        resp = CoordinateRest.get_coordinate(action: CoordinateRestActions::ACTION_COORDINATES_TOKEN, additional_req_params: {foo: 'faa'})
-        #resp.rest_exception.flash_error
-        #resp.flash_error   (both work)
-        # if resp.is_a? CommonRest::UnexpectedResponse
-        #     resp.flash_error
-        # end
+#resp.rest_exception.flash_error
+#resp.flash_error   (both work)
+# if resp.is_a? CommonRest::UnexpectedResponse
+#     resp.flash_error
+# end
 
-        #resp.flash_error if resp.respond_to? :flash_error
+#resp.flash_error if resp.respond_to? :flash_error
 
         selected_concept_id = params[:concept_id]
         parent_search = params[:parent_search]
@@ -302,7 +302,7 @@ class KometDashboardController < ApplicationController
             relation = :children
             has_relation = :has_children
             flags = get_tree_node_flag('module', [raw_node[:module]])
-            flags << get_tree_node_flag('refsets', [raw_node[:refsets]])
+            flags << get_tree_node_flag('refset', raw_node[:refsets])
             flags << get_tree_node_flag('path', [raw_node[:path]])
 
             if raw_node[:state] && raw_node[:state].downcase.eql?('inactive')
@@ -467,7 +467,7 @@ class KometDashboardController < ApplicationController
     end
 
     ##
-    # get_concept_refsets - RESTful route for populating concept refsets section using an http :GET
+    # get_concept_refsets - RESTful route for populating concept assemblages section using an http :GET
     # The current tree node representing the concept is identified in the request params with the key :concept_id
     # Whether to display the stated (true) or inferred view of concepts with a request param of :stated (true/false)
     # @return none - setting the refsets variable
@@ -510,63 +510,254 @@ class KometDashboardController < ApplicationController
 
     # gets default/ users preference coordinates
     def get_coordinates
-        getcoordinates_refset = {}
-        token = session[:coordinatestoken].token
-        additional_req_params = {coordToken: token}
-        $log.debug("token get_coordinates #{token}" )
-        getcoordinates_refset = CoordinateRest.get_coordinate(action: CoordinateRestActions::ACTION_COORDINATES,additional_req_params: additional_req_params)
-        value = getcoordinates_refset.languageCoordinate.to_json
 
-        getcoordinates_refset = JSON.parse(getcoordinates_refset.to_json)
-      #  $log.info("user prefs user_sessions #{user_session(UserSession::USER_PREFERENCES)}")
+        coordinates_token = session[:coordinatestoken].token
+        $log.debug("token get_coordinates #{coordinates_token}" )
+
+        # get the details of what is in the coordinates token
+        coordinates_params = CoordinateRest.get_coordinate(action: CoordinateRestActions::ACTION_COORDINATES,additional_req_params: {coordToken: coordinates_token})
+
+        coordinates_params = JSON.parse(coordinates_params.to_json)
         user_prefs = user_session(UserSession::USER_PREFERENCES)
+
         unless user_prefs.nil?
+
             user_prefs = user_session(UserSession::USER_PREFERENCES)
-            getcoordinates_refset[:colormodule]= user_prefs[:colormodule]
-            $log.info("user prefs color module is #{user_prefs[:colormodule]}, param[:colormodule] is #{getcoordinates_refset[:colormodule]}")
-            getcoordinates_refset[:colorpath]= user_prefs[:colorpath]
-            getcoordinates_refset[:colorrefsets]= user_prefs[:colorrefsets]
+            coordinates_params[:module_flags] = user_prefs[:module_flags]
+            coordinates_params[:path_flags] = user_prefs[:path_flags]
+            coordinates_params[:refset_flags] = user_prefs[:refset_flags]
+
+            $log.info("get_coordinates module_flags is #{user_prefs[:module_flags]}")
+            $log.info("get_coordinates path_flags is #{user_prefs[:path_flags]}")
+            $log.info("get_coordinates refset_flags is #{user_prefs[:refset_flags]}")
         end
-        #$log.info("user prefs rendering getcoordinates_results #{getcoordinates_refset}")
-        #$log.info("user prefs rendering getcoordinates_results json #{getcoordinates_refset.to_json}")
-        render json:  getcoordinates_refset.to_json
+
+        $log.info("get_coordinates coordinates_params is #{coordinates_params.to_json}")
+        render json:  coordinates_params.to_json
     end
 
     def get_coordinatestoken
-        hash = {}
-        hash[:language] = params[:language]
-        hash[:time] = params[:stamp_date]
-        hash[:dialectPrefs] = params[:dialectPrefs]
-        hash[:descriptionTypePrefs] = params[:descriptionTypePrefs]
-        hash[:allowedStates]= params[:allowedStates]
 
-        $log.debug("get_coordinatestoken hash #{hash}")
-        $log.debug("get_coordinatestoken  params[:colormodule] #{ params[:colormodule]}")
-        $log.debug("get_coordinatestoken params[:colorpath] #{params[:colorpath]}")
-        $log.debug("get_coordinatestoken  params[:colorrefsets] #{ params[:colorrefsets]}")
+        additional_req_params = {}
+        additional_req_params[:language] = params[:language]
+        additional_req_params[:time] = params[:stamp_date]
+        additional_req_params[:dialectPrefs] = params[:dialectPrefs]
+        additional_req_params[:descriptionTypePrefs] = params[:descriptionTypePrefs]
+        additional_req_params[:allowedStates] = params[:allowedStates]
+        additional_req_params.merge!(CommonRest::CacheRequest::PARAMS_NO_CACHE)
+
+        $log.debug("get_coordinatestoken additional_req_params #{additional_req_params}")
+        $log.debug("get_coordinatestoken  params[:module_list] #{ params[:module_flags]}")
+        $log.debug("get_coordinatestoken params[:path_list] #{params[:path_flags]}")
+        $log.debug("get_coordinatestoken  params[:refset_flags] #{ params[:refset_flags]}")
+
+        session[:coordinatestoken] = CoordinateRest.get_coordinate(action: CoordinateRestActions::ACTION_COORDINATES_TOKEN, additional_req_params: additional_req_params)
+        $log.info("get_coordinatestoken session[:coordinatestoken] #{ session[:coordinatestoken]}")
 
         user_prefs = HashWithIndifferentAccess.new
-        user_prefs[:colormodule] = params[:colormodule]
-        user_prefs[:colorpath] = params[:colorpath]
-        user_prefs[:colorrefsets] = params[:colorrefsets]
+        user_prefs[:module_flags] = params[:module_flags]
+        user_prefs[:path_flags] = params[:path_flags]
+        user_prefs[:refset_flags] = params[:refset_flags]
         user_session(UserSession::USER_PREFERENCES, user_prefs)
 
-         hash.merge!(CommonRest::CacheRequest::PARAMS_NO_CACHE)
+        render json: session[:coordinatestoken].to_json
 
-        results = CoordinateRest.get_coordinate(action: CoordinateRestActions::ACTION_COORDINATES_TOKEN, additional_req_params: hash)
-        session[:coordinatestoken] = results
-        $log.info("get_coordinatestoken  results #{ results}")
+    end
 
-        user_prefs = user_session(UserSession::USER_PREFERENCES)
-        unless user_prefs.nil?
-            user_prefs = user_session(UserSession::USER_PREFERENCES)
-            $log.debug("user_prefs[:colormodule] get_coordinatestoken #{user_prefs[:colormodule]}")
-            $log.debug("user prefs [:colorpath] get_coordinatestoken #{user_prefs[:colorpath]}")
-            $log.debug("user prefs [:colorrefsets] get_coordinatestoken #{user_prefs[:colorrefsets]}")
+    def get_user_preference_info
+
+        # clear_user_session
+
+        # get the coordinates token from the session
+        coordinates_token = session[:coordinatestoken].token
+        additional_req_params = {coordToken: coordinates_token}
+        $log.debug("get_user_preference_info token #{coordinates_token}")
+
+        # get the details of what is in the coordinates token
+        coordinates_params = CoordinateRest.get_coordinate(action: CoordinateRestActions::ACTION_COORDINATES,additional_req_params: additional_req_params)
+
+        # get the full list of dialects
+        unsorted_dialect_options = get_concept_children(concept_id: $isaac_metadata_auxiliary['DIALECT_ASSEMBLAGE']['uuids'].first[:uuid], return_json: false, remove_semantic_tag: true)
+        $log.debug("get_user_preference_info @unsorted_dialect_options #{unsorted_dialect_options}")
+
+        # get the list of user preferred dialects
+        dialect_assemblage_preferences = coordinates_params.languageCoordinate.dialectAssemblagePreferences
+        $log.debug("get_user_preference_info dialect_assemblage_preferences #{dialect_assemblage_preferences}")
+
+        preferred_items = []
+
+        # loop through the preferred dialect list and put user preferred dialects into an array first, delete them from the total dialect array
+        dialect_assemblage_preferences.each do |preference|
+
+            unsorted_dialect_options.each_with_index do |dialect_option, index|
+
+                if dialect_option[:concept_sequence] == preference
+
+                    preferred_items << dialect_option
+                    unsorted_dialect_options.delete_at(index)
+                    break
+                end
+            end
         end
 
-        render json: results.to_json
+        # add what's left in the total dialect array to the end of the preferred dialects
+        @dialect_options = preferred_items + unsorted_dialect_options
+        $log.debug("get_user_preference_info @dialect_options #{@dialect_options}")
 
+        # get the full list of description types
+        unsorted_description_type_options = get_concept_children(concept_id: $isaac_metadata_auxiliary['DESCRIPTION_TYPE']['uuids'].first[:uuid], return_json: false, remove_semantic_tag: true)
+        $log.debug("get_user_preference_info @description_type_options #{unsorted_description_type_options}")
+
+        # get the list of user preferred description types
+        description_type_preferences = coordinates_params.languageCoordinate.descriptionTypePreferences
+        $log.debug("get_user_preference_info description_type_preferences #{description_type_preferences}")
+
+        preferred_items = []
+
+        # loop through the preferred description type list and put user preferred description types into an array first, delete them from the total description type array
+        description_type_preferences.each do |preference|
+
+            unsorted_description_type_options.each_with_index do |description_type_option, index|
+
+                if description_type_option[:concept_sequence] == preference
+
+                    preferred_items << description_type_option
+                    unsorted_description_type_options.delete_at(index)
+                    break
+                end
+            end
+        end
+
+        # add what's left in the total description type array to the end of the preferred description types
+        @description_type_options = preferred_items + unsorted_description_type_options
+        $log.debug("get_user_preference_info @description_type_options #{@description_type_options}")
+
+        # get the full list of languages
+        @language_options = get_concept_children(concept_id: $isaac_metadata_auxiliary['LANGUAGE']['uuids'].first[:uuid], return_json: false, remove_semantic_tag: true)
+        $log.debug("get_user_preference_info @language_options #{@language_options}")
+
+        # get the user selected language
+        @language_coordinate = coordinates_params.languageCoordinate.language
+        $log.debug("get_user_preference_info @language_coordinate #{@language_coordinate}")
+
+        # get the user selected STAMP date they wish to view
+        @stamp_date = coordinates_params.taxonomyCoordinate.stampCoordinate.time
+        $log.debug("get_user_preference_info @stamp_date #{@stamp_date}")
+
+        # get the user selected view state preference
+        allowed_state_preference = coordinates_params.stampCoordinate.allowedStates
+        $log.debug("get_user_preference_info allowed_states #{allowed_state_preference}")
+
+        # set the allowed_states variable based on the user preference
+        if allowed_state_preference.length > 1
+            @allowed_states = 'both'
+        else
+            @allowed_states = allowed_state_preference.first.enumName.downcase
+        end
+
+        $log.debug("get_user_preference_info @allowed_states #{@allowed_states}")
+
+        user_prefs = user_session(UserSession::USER_PREFERENCES)
+
+        # if the user preferences from the session is not null, get the users flag preferences from it
+        unless user_prefs.nil?
+
+            module_flag_preferences = user_prefs[:module_flags]
+            path_flag_preferences = user_prefs[:path_flags]
+            refset_flag_preferences = user_prefs[:refset_flags]
+        end
+
+        $log.debug("get_user_preference_info module_flag_preferences #{module_flag_preferences}")
+        $log.debug("get_user_preference_info path_flag_preferences #{path_flag_preferences}")
+        $log.debug("get_user_preference_info refset_flag_preferences #{refset_flag_preferences}")
+
+        @path_flags = []
+
+        # get the full list of paths
+        path_list = get_concept_children(concept_id: $isaac_metadata_auxiliary['PATH']['uuids'].first[:uuid], return_json: false, remove_semantic_tag: true)
+        $log.debug("get_user_preference_info path_list #{path_list}")
+
+        # if the user doesn't have current preferences loop thru the full path list to build an array of flag options, otherwise loop thru their preferences
+        if path_flag_preferences.nil?
+            path_list.each do |path|
+                @path_flags << {id: path[:concept_sequence], text: path[:text], color: '', shape: 'None', shape_name: 'None'}
+            end
+        else
+            path_flag_preferences.each do |preference|
+                @path_flags << {id: preference[1][:id], text: preference[1][:text], color: preference[1][:color], shape: preference[1][:shape], shape_name: get_shape_name(preference[1][:shape])}
+            end
+        end
+
+        $log.debug("get_user_preference_info @path_flags #{@path_flags}")
+
+        @module_flags = []
+
+        # get the full list of modules
+        module_list = get_concept_children(concept_id: $isaac_metadata_auxiliary['MODULE']['uuids'].first[:uuid], return_json: false, remove_semantic_tag: true)
+        $log.debug("get_user_preference_info module_list #{module_list}")
+
+        # if the user doesn't have current preferences loop thru the full module list to build an array of flag options, otherwise loop thru their preferences
+        if module_flag_preferences.nil?
+            module_list.each do |komet_module|
+                @module_flags << {id: komet_module[:concept_sequence], text: komet_module[:text], color: '', shape: 'None', shape_name: 'None'}
+            end
+        else
+            module_flag_preferences.each do |preference|
+                @module_flags << {id: preference[1][:id], text: preference[1][:text], color: preference[1][:color], shape: preference[1][:shape], shape_name: get_shape_name(preference[1][:shape])}
+            end
+        end
+
+        $log.debug("get_user_preference_info @module_flags #{@module_flags}")
+
+        additional_req_params.merge!({stated: @stated, childDepth: 50})
+
+        # get the assemblage concept so we can get all children (refset concepts) from it
+        assemblages = TaxonomyRest.get_isaac_concept(uuid: $isaac_metadata_auxiliary['ASSEMBLAGE']['uuids'].first[:uuid], additional_req_params: additional_req_params)
+
+        # if the assemblage concept is loaded
+        unless assemblages.is_a? CommonRest::UnexpectedResponse
+
+            # process the children of the assemblage concept into a full list of refsets
+            @refset_options = process_refset_list(assemblages)
+            $log.debug("get_user_preference_info @refset_options #{@refset_options}")
+
+            @refset_flags = []
+
+            # if the user has current preferences loop thru them to build an array of flag options
+            unless refset_flag_preferences.nil?
+
+                refset_flag_preferences.each do |preference|
+                    @refset_flags << {id: preference[1][:id], text: preference[1][:text], color: preference[1][:color], shape: preference[1][:shape], shape_name: get_shape_name(preference[1][:shape])}
+                end
+            end
+
+            $log.debug("get_user_preference_info @refset_flags #{@refset_flags}")
+        end
+
+        stated = params[:stated]
+        $log.debug("get_user_preference_info stated #{stated}")
+
+        # check to make sure the flag for stated or inferred view was passed in
+        if stated != nil
+            @stated = stated
+        end
+    end
+
+    def get_shape_name(classname)
+
+        if classname == 'None'
+            return 'None'
+        elsif classname == 'glyphicon glyphicon-stop'
+            return 'Square'
+        elsif classname == 'glyphicon glyphicon-star'
+            return 'Star'
+        elsif classname == 'fa fa-circle'
+            return 'Circle'
+        elsif classname == 'glyphicon glyphicon-triangle-top'
+            return 'Triangle'
+        elsif classname == 'glyphicon glyphicon-asterisk'
+            return 'Asterisk'
+        end
     end
 
     def get_refset_list
@@ -696,232 +887,6 @@ class KometDashboardController < ApplicationController
 
         render json: {concept_id: new_concept_id.uuid}
     end
-
-    def get_user_preference_info
-
-        #language dropdown on options tab
-        @language_options = get_concept_children(concept_id: $isaac_metadata_auxiliary['LANGUAGE']['uuids'].first[:uuid], return_json: false, remove_semantic_tag: true)
-        $log.debug("get_user_preference_info @language_options #{@language_options}")
-
-        #get default values - dialect options and description type on options tab
-        dialect_options = get_concept_children(concept_id: $isaac_metadata_auxiliary['DIALECT_ASSEMBLAGE']['uuids'].first[:uuid], return_json: false, remove_semantic_tag: true)
-        $log.debug("get_user_preference_info @language_options #{dialect_options}")
-
-        description_type_options = get_concept_children(concept_id: $isaac_metadata_auxiliary['DESCRIPTION_TYPE']['uuids'].first[:uuid], return_json: false, remove_semantic_tag: true)
-        $log.debug("get_user_preference_info @language_options #{description_type_options}")
-
-        getcoordinates_results = {}
-        token = session[:coordinatestoken].token
-        $log.debug("get_user_preference_info token #{token}")
-
-        additional_req_params = {coordToken: token}
-        $log.debug("get_user_preference_info additional_req_params #{additional_req_params}")
-
-        getcoordinates_results  = CoordinateRest.get_coordinate(action: CoordinateRestActions::ACTION_COORDINATES,additional_req_params: additional_req_params)
-        $log.debug("get_user_preference_info getcoordinates_results #{getcoordinates_results}")
-
-        #language dropdown -- suser selected language
-        @languageCoordinate = getcoordinates_results.languageCoordinate.language
-        $log.debug("get_user_preference_info @languageCoordinate #{@languageCoordinate}")
-
-
-        #get user selected order  - dialect options and description type on options tab
-        descriptiontypepreferences = getcoordinates_results.languageCoordinate.descriptionTypePreferences;
-        $log.debug("get_user_preference_info descriptiontypepreferences #{descriptiontypepreferences}")
-
-        dialectassemblagepreferences= getcoordinates_results.languageCoordinate.dialectAssemblagePreferences;
-        $log.debug("get_user_preference_info dialectassemblagepreferences #{dialectassemblagepreferences}")
-
-
-        dialect_options_arry=[]
-        #add matched items
-        matched=''
-        dialectassemblagepreferences.each do |userddialect|
-                dialect_options.each do |dialectOptins|
-                    if dialectOptins[:concept_sequence] == userddialect
-                        dialect_options_arry <<  dialectOptins
-                    end
-                end
-        end
-        $log.debug("get_user_preference_info dialect_options_arry #{dialect_options_arry}")
-        #add unmatched items
-        dialect_options.each do |dialectOptins|
-            dialect_options_arry.each do |userddialect|
-                if dialectOptins[:concept_sequence] == userddialect[:concept_sequence]
-                    matched='true'
-                    break
-                else
-                    matched='false'
-                end
-            end
-            if matched == 'false'
-                dialect_options_arry <<  dialectOptins
-            end
-        end
-        @dialect_options=dialect_options_arry
-        $log.debug("get_user_preference_info @dialect_options #{@dialect_options}")
-        #add matched items
-        description_type_arry =[]
-        descriptiontypepreferences.each do |userddialect|
-            description_type_options.each do |dialectOptins|
-                if dialectOptins[:concept_sequence] == userddialect
-                    description_type_arry <<  dialectOptins
-                end
-            end
-        end
-        $log.debug("get_user_preference_info description_type_arry #{description_type_arry}")
-        #add unmatched items
-        matched=''
-        description_type_options.each do |dialectOptins|
-            description_type_arry.each do |userddialect|
-                if dialectOptins[:concept_sequence] == userddialect[:concept_sequence]
-                    matched='true'
-                    break
-                else
-                    matched='false'
-                end
-            end
-            if matched == 'false'
-                description_type_arry <<  dialectOptins
-            end
-
-        end
-        @description_type_options =description_type_arry
-        $log.debug("get_user_preference_info @description_type_options #{@description_type_options}")
-
-
-        @stamp_date = getcoordinates_results.taxonomyCoordinate.stampCoordinate.time
-        $log.debug("get_user_preference_info @stamp_date #{@stamp_date}")
-
-
-        allowedstates=getcoordinates_results.stampCoordinate.allowedStates;
-        $log.debug("get_user_preference_info allowedstates #{allowedstates}")
-
-        allowedstates.each do |statestype|
-             if statestype.enumName.downcase == 'active'
-                  @allowedstates= @allowedstates.to_s + 'active'
-             end
-
-             if statestype.enumName.downcase == 'inactive'
-                 @allowedstates= @allowedstates.to_s + 'inactive'
-             end
-        end
-        $log.debug("get_user_preference_info @allowedstates #{@allowedstates}")
-
-        if @allowedstates == 'active'
-            @allowedstatesActive ='checked="checked"'
-        end
-        if @allowedstates == 'inactiveactive'
-           @allowedstatesboth = 'checked="checked"'
-        end
-        if @allowedstates == 'inactive'
-            @allowedstatesinactive  = 'checked="checked"'
-        end
-
-        $log.debug("get_user_preference_info @allowedstatesinactive #{@allowedstatesinactive}")
-        $log.debug("get_user_preference_info @allowedstatesboth #{@allowedstatesboth}")
-        $log.debug("get_user_preference_info @allowedstatesActive #{@allowedstatesActive}")
-
-
-        user_prefs = user_session(UserSession::USER_PREFERENCES)
-        unless user_prefs.nil?
-            user_prefs = user_session(UserSession::USER_PREFERENCES)
-            colormodule_results= user_prefs[:colormodule]
-            colorpath_results= user_prefs[:colorpath]
-            colorrefsets_results= user_prefs[:colorrefsets]
-        end
-
-        $log.debug("get_user_preference_info colormodule_results #{colormodule_results}")
-        $log.debug("get_user_preference_info colorpath_results #{colorpath_results}")
-        $log.debug("get_user_preference_info colorrefsets_results #{colorrefsets_results}")
-
-        colornew_array=[]
-
-        @colorpathshape=''
-        colorpath = get_concept_children(concept_id: $isaac_metadata_auxiliary['PATH']['uuids'].first[:uuid], return_json: false, remove_semantic_tag: true)
-        $log.debug("get_user_preference_info colorpath #{colorpath}")
-
-        if colorpath_results.nil?
-                colorpath.each do |colors|
-                    colornew_array << {pathcolorid: colors[:concept_sequence], pathcolortext: colors[:text], pathcolorvalue:'' ,pathcolorshape:'None',colorshapename:'None'}
-                end
-            else
-                colorpath_results.each do |addshape|
-                    colornew_array << {pathcolorid: addshape[1][:pathid], pathcolortext: addshape[1][:path_name], pathcolorvalue:addshape[1][:colorid] ,pathcolorshape:addshape[1][:colorshape],colorshapename:getShapeName(addshape[1][:colorshape])}
-                end
-            end
-        @colorpathshape =colornew_array
-        $log.debug("get_user_preference_info @colorpathshape #{@colorpathshape}")
-
-        colormodulenew_array=[]
-
-        @colormoduleshape=''
-        colormodule = get_concept_children(concept_id: $isaac_metadata_auxiliary['MODULE']['uuids'].first[:uuid], return_json: false, remove_semantic_tag: true)
-        $log.debug("get_user_preference_info colormodule #{colormodule}")
-
-        if colormodule_results.nil?
-            colormodule.each do |colors|
-                colormodulenew_array << {modulecolorid: colors[:concept_sequence], modulecolortext: colors[:text], modulecolorvalue:'' ,modulecolorshape:'None',colorshapename:'None'}
-            end
-        else
-            colormodule_results.each do |addshape|
-                colormodulenew_array << {modulecolorid: addshape[1][:moduleid], modulecolortext: addshape[1][:module_name], modulecolorvalue:addshape[1][:colorid] ,modulecolorshape:addshape[1][:colorshape],colorshapename:getShapeName(addshape[1][:colorshape])}
-            end
-        end
-        @colormoduleshape =colormodulenew_array
-        $log.debug("get_user_preference_info @colormoduleshape #{@colormoduleshape}")
-
-        coordinates_token = session[:coordinatestoken].token
-        $log.debug("get_user_preference_info coordinates_token #{coordinates_token}")
-
-        stated = params[:stated]
-        $log.debug("get_user_preference_info stated #{stated}")
-
-
-        # check to make sure the flag for stated or inferred view was passed in
-        if stated != nil
-            @stated = stated
-        end
-        additional_req_params = {coordToken: coordinates_token, stated: @stated, childDepth: 50}
-        $log.debug("get_user_preference_info additional_req_params #{additional_req_params}")
-
-        refsets = TaxonomyRest.get_isaac_concept(uuid: $isaac_metadata_auxiliary['ASSEMBLAGE']['uuids'].first[:uuid], additional_req_params: additional_req_params)
-        $log.debug("get_user_preference_info refsets #{refsets}")
-
-        if refsets.is_a? CommonRest::UnexpectedResponse
-            render json: [] and return
-        end
-        @processed_refsets = process_refset_list(refsets)
-        $log.debug("get_user_preference_info @processed_refsets #{@processed_refsets}")
-
-        colorrefsetnew_array=[]
-        if !colorrefsets_results.nil?
-            colorrefsets_results.each do |refsetcolor|
-                colorrefsetnew_array << {refsetsid: refsetcolor[1][:refsetsid], refsets_name: refsetcolor[1][:refsets_name], refsetcolorvalue:refsetcolor[1][:colorid] ,refsetcolorshape:refsetcolor[1][:colorshape],colorshapename:getShapeName(refsetcolor[1][:colorshape])}
-            end
-        end
-        @colorrefsetnew=colorrefsetnew_array
-        $log.debug("get_user_preference_info @colorrefsetnew #{@colorrefsetnew}")
-
-    end
-
-    def getShapeName(classname)
-
-        if classname == 'None'
-            return 'None'
-        elsif classname == 'glyphicon glyphicon-stop'
-            return 'Square'
-        elsif classname == 'glyphicon glyphicon-star'
-            return 'Star'
-        elsif classname == 'fa fa-circle'
-            return 'Circle'
-        elsif classname == 'glyphicon glyphicon-triangle-top'
-            return 'Triangle'
-        elsif classname == 'glyphicon glyphicon-asterisk'
-            return 'Asterisk'
-        end
-    end
-
 
     def get_concept_edit_info
 
@@ -1123,7 +1088,7 @@ class KometDashboardController < ApplicationController
                     fsn[:dialects].delete(dialect['dialect_id'])
                 end
 
-                # Copy the FSN into a new hash entry using the returned ID from the newly created FSN, then delete the old key
+                # Copy the FSN into a new additional_req_params entry using the returned ID from the newly created FSN, then delete the old key
                 params[:descriptions][new_concept_id.fsnDescriptionSememe.uuids.first] = fsn
                 params[:descriptions].delete(fsn_id)
 
@@ -1414,7 +1379,7 @@ class KometDashboardController < ApplicationController
         if !session[:coordinatestoken]
             session[:coordinatestoken] = CoordinateRest.get_coordinate(action: CoordinateRestActions::ACTION_COORDINATES_TOKEN)
         end
-         get_user_preference_info
+        get_user_preference_info
         $log.debug("token initial #{session[:coordinatestoken].token}" )
 
     end
