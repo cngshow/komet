@@ -372,6 +372,22 @@ var MappingViewer = function(viewerID, currentSetID, viewerAction) {
 
         this.generateSetEditorItemsAdditionalFields();
 
+        var itemsDialogRightColumn = $('#' + this.ITEMS_INCLUDE_FIELD_DIALOG).find(".komet-add-fields-dialog-right-column");
+
+        var calculatedFieldsSelection = '<div class="komet-add-fields-dialog-body-header">Add From Calculated Fields</div>'
+            + '<div><select id="komet_mapping_set_editor_items_add_fields_calculated_field_' + this.viewerID + '" class="form-control"><option value="" selected></option>';
+
+        for (var i = 0; i < this.setEditorMapSet["all_calculated_fields"].length; i++){
+            
+            var field_info = this.setEditorMapSet["all_calculated_fields"][i];
+            calculatedFieldsSelection += '<option data-component-type="' + field_info.component_type + '" value="' + field_info.id + '">' + field_info.text + '</option>';
+        }
+
+        calculatedFieldsSelection += '</select></div><div><button type="button" class="btn btn-default" aria-label="Add field" onclick="WindowManager.viewers[' + this.viewerID + '].addSetItemsCalculatedField();">Add Field</button></div>'
+            + '<br><div class="komet-add-fields-dialog-body-header">OR</div><br>';
+
+        itemsDialogRightColumn.prepend(calculatedFieldsSelection);
+
         if (this.viewerAction != MappingModule.CREATE_SET){
 
             var itemGrid = $("#komet_mapping_items_" + this.viewerID);
@@ -465,27 +481,27 @@ var MappingViewer = function(viewerID, currentSetID, viewerAction) {
 
     /********* Map Set Additional Fields Methods */
 
-    MappingViewer.prototype.generateSetEditorDialogIncludeSection = function(fieldName, fieldInfo){
+    MappingViewer.prototype.generateSetEditorDialogIncludeSection = function(fieldID, fieldInfo){
 
-        var sectionString = '<div role="group" aria-labelledby="' + this.SET_INCLUDE_FIELD_PREFIX + fieldName + '_field_label' + this.viewerID + '" class="' + this.INCLUDE_FIELD_CLASS_PREFIX + fieldName + '">'
+        var sectionString = '<div role="group" aria-labelledby="' + this.SET_INCLUDE_FIELD_PREFIX + fieldID + '_field_label' + this.viewerID + '" class="' + this.INCLUDE_FIELD_CLASS_PREFIX + fieldID + '">'
             + '<input type="checkbox" name="' + this.SET_INCLUDE_FIELD_PREFIX.slice(0, -1) + '[]" class="form-control" '
-            + 'id="' + this.SET_INCLUDE_FIELD_PREFIX + fieldName + '_' + this.viewerID + '" value="' + fieldName + '" ';
+            + 'id="' + this.SET_INCLUDE_FIELD_PREFIX + fieldID + '_' + this.viewerID + '" value="' + fieldID + '" ';
 
         if (fieldInfo.display){
             sectionString += 'checked="checked"';
         }
 
-        sectionString += '><label id="' + this.SET_INCLUDE_FIELD_PREFIX + fieldName + '_field_label' + this.viewerID + '" for="' + this.SET_INCLUDE_FIELD_PREFIX + fieldName + '_' + this.viewerID + '">' + fieldInfo.label_display + '</label>';
+        sectionString += '><label id="' + this.SET_INCLUDE_FIELD_PREFIX + fieldID + '_field_label' + this.viewerID + '" for="' + this.SET_INCLUDE_FIELD_PREFIX + fieldID + '_' + this.viewerID + '">' + fieldInfo.text + '</label>';
 
         if (fieldInfo.removable){
-            sectionString += '<button type="button" class="komet-link-button komet-flex-right" onclick="WindowManager.viewers[' + this.viewerID + '].removeSetIncludedField(\'' + fieldName + '\');" aria-label="Remove">'
+            sectionString += '<button type="button" class="komet-link-button komet-flex-right" onclick="WindowManager.viewers[' + this.viewerID + '].removeSetIncludedField(\'' + fieldID + '\');" aria-label="Remove">'
                 + '<div class="glyphicon glyphicon-remove"></div></button>';
         }
 
-        sectionString += '<input type="hidden" name="' + this.SET_INCLUDE_FIELD_PREFIX + fieldName + '_label" value="' + fieldInfo.label + '">'
-            + '<input type="hidden" name="' + this.SET_INCLUDE_FIELD_PREFIX + fieldName + '_data_type" value="' + fieldInfo.data_type + '">'
-            + '<input type="hidden" name="' + this.SET_INCLUDE_FIELD_PREFIX + fieldName + '_required" value="' + fieldInfo.required + '">'
-            + '<input type="hidden" name="' + this.SET_INCLUDE_FIELD_PREFIX + fieldName + '_removable" value="' + fieldInfo.removable + '">'
+        sectionString += '<input type="hidden" name="' + this.SET_INCLUDE_FIELD_PREFIX + fieldID + '_label" value="' + fieldInfo.id + '">'
+            + '<input type="hidden" name="' + this.SET_INCLUDE_FIELD_PREFIX + fieldID + '_data_type" value="' + fieldInfo.data_type + '">'
+            + '<input type="hidden" name="' + this.SET_INCLUDE_FIELD_PREFIX + fieldID + '_required" value="' + fieldInfo.required + '">'
+            + '<input type="hidden" name="' + this.SET_INCLUDE_FIELD_PREFIX + fieldID + '_removable" value="' + fieldInfo.removable + '">'
             + '</div>';
 
         return sectionString;
@@ -543,8 +559,8 @@ var MappingViewer = function(viewerID, currentSetID, viewerAction) {
 
                 value = this.setEditorMapSet[fieldsToInclude[i]].value;
                 dataType = this.setEditorMapSet[fieldsToInclude[i]].data_type;
-                labelValue = this.setEditorMapSet[fieldsToInclude[i]].label;
-                labelDisplayValue = this.setEditorMapSet[fieldsToInclude[i]].label_display;
+                labelValue = value;
+                labelDisplayValue = this.setEditorMapSet[fieldsToInclude[i]].text;
                 required = this.setEditorMapSet[fieldsToInclude[i]].required;
             }
 
@@ -663,30 +679,29 @@ var MappingViewer = function(viewerID, currentSetID, viewerAction) {
             return;
         }
 
-        // make sure there are no invalid characters in the name
-        // var name = labelDisplayField.val().replace(/[^a-zA-Z0-9_\-]/g, '').toLowerCase();
-        var name = labelField.val();
+        // make sure there are no invalid characters in the id
+        // var id = labelDisplayField.val().replace(/[^a-zA-Z0-9_\-]/g, '').toLowerCase();
+        var id = labelField.val();
 
-        if (this.setEditorMapSet.include_fields.indexOf(name) >= 0){
+        if (this.setEditorMapSet.include_fields.indexOf(id) >= 0){
 
             $(prefix + "options_section_" + this.viewerID).after(UIHelper.generatePageMessage("The label must be unique. There is another field in this mapset with this label."));
             return;
         }
 
-        var fieldInfo = {"name": name,
+        var fieldInfo = {"id": id,
             "data_type": dataTypeField.val(),
-            "label": labelField.val(),
-            "label_display": labelDisplayField.val().replace(/[^a-zA-Z0-9_,\- ]+/g, ''),
+            "text": labelDisplayField.val().replace(/[^a-zA-Z0-9_,\- ]+/g, ''),
             "required": requiredField[0].checked,
             "value": "",
             "removable": true,
             "display": true
         };
 
-        this.setEditorMapSet.include_fields.push(name);
-        this.setEditorMapSet[name] = fieldInfo;
+        this.setEditorMapSet.include_fields.push(id);
+        this.setEditorMapSet[id] = fieldInfo;
 
-        var newSection = this.generateSetEditorDialogIncludeSection(name, fieldInfo);
+        var newSection = this.generateSetEditorDialogIncludeSection(id, fieldInfo);
 
         // create a dom fragment from our generated structure and append it to the dialog form
         $("#" + this.SET_INCLUDE_FIELD_CHECKBOX_SECTION).append(document.createRange().createContextualFragment(newSection));
@@ -699,27 +714,32 @@ var MappingViewer = function(viewerID, currentSetID, viewerAction) {
 
     /********* Set Item Additional Fields Methods */
 
-    MappingViewer.prototype.generateSetEditorItemsDialogIncludeSection = function(fieldName, fieldInfo){
+    MappingViewer.prototype.generateSetEditorItemsDialogIncludeSection = function(fieldID, fieldInfo){
 
-        var sectionString = '<div class="' + this.INCLUDE_FIELD_CLASS_PREFIX + fieldName + '">'
+        var fieldSection = this.ITEMS_INCLUDE_FIELD_PREFIX + 'section_' + fieldID + '_' + this.viewerID;
+
+        var sectionString = '<div class="' + this.INCLUDE_FIELD_CLASS_PREFIX + fieldID + '" id="' + fieldSection + '">'
+            + '<div><div class="glyphicon glyphicon-arrow-up komet-mapping-change-order-icon" onclick="WindowManager.viewers[' + this.viewerID + '].changeFieldOrder(\'' + fieldSection + '\', \'up\');"></div></div> '
+            + '<div><div class="glyphicon glyphicon-arrow-down komet-mapping-change-order-icon" onclick="WindowManager.viewers[' + this.viewerID + '].changeFieldOrder(\'' + fieldSection + '\', \'down\');"></div></div> '
             + '<input type="checkbox" name="' + this.ITEMS_INCLUDE_FIELD_PREFIX.slice(0, -1) + '[]" class="form-control" '
-            + 'id="' + this.ITEMS_INCLUDE_FIELD_PREFIX + fieldName + '_' + this.viewerID + '" value="' + fieldName + '" ';
+            + 'id="' + this.ITEMS_INCLUDE_FIELD_PREFIX + fieldID + '_' + this.viewerID + '" value="' + fieldID + '" ';
 
         if (fieldInfo.display){
             sectionString += 'checked="checked"';
         }
 
-        sectionString += '><label for="' + this.ITEMS_INCLUDE_FIELD_PREFIX + fieldName + '_' + this.viewerID + '">' + fieldInfo.label_display + '</label>';
+        sectionString += '><label for="' + this.ITEMS_INCLUDE_FIELD_PREFIX + fieldID + '_' + this.viewerID + '">' + fieldInfo.text + '</label>';
 
         if (fieldInfo.removable){
-            sectionString += '<button type="button" class="komet-link-button komet-flex-right" onclick="WindowManager.viewers[' + this.viewerID + '].removeSetItemsIncludedField(\'' + fieldName + '\');" title="Remove Field" aria-label="Remove Field">'
+            sectionString += '<button type="button" class="komet-link-button komet-flex-right" onclick="WindowManager.viewers[' + this.viewerID + '].removeSetItemsIncludedField(\'' + fieldID + '\');" title="Remove Field" aria-label="Remove Field">'
                 + '<div class="glyphicon glyphicon-remove"></div></button>';
         }
 
-        sectionString += '<input type="hidden" name="' + this.ITEMS_INCLUDE_FIELD_PREFIX + fieldName + '_label" value="' + fieldInfo.label + '">'
-            + '<input type="hidden" name="' + this.ITEMS_INCLUDE_FIELD_PREFIX + fieldName + '_data_type" value="' + fieldInfo.data_type + '">'
-            + '<input type="hidden" name="' + this.SET_INCLUDE_FIELD_PREFIX + fieldName + '_required" value="' + fieldInfo.required + '">'
-            + '<input type="hidden" name="' + this.ITEMS_INCLUDE_FIELD_PREFIX + fieldName + '_removable" value="' + fieldInfo.removable + '">'
+        sectionString += '<input type="hidden" name="' + this.ITEMS_INCLUDE_FIELD_PREFIX + fieldID + '_label" value="' + fieldInfo.id + '">'
+            + '<input type="hidden" name="' + this.ITEMS_INCLUDE_FIELD_PREFIX + fieldID + '_data_type" value="' + fieldInfo.data_type + '">'
+            + '<input type="hidden" name="' + this.ITEMS_INCLUDE_FIELD_PREFIX + fieldID + '_component_type" value="' + fieldInfo.component_type + '">'
+            + '<input type="hidden" name="' + this.SET_INCLUDE_FIELD_PREFIX + fieldID + '_required" value="' + fieldInfo.required + '">'
+            + '<input type="hidden" name="' + this.ITEMS_INCLUDE_FIELD_PREFIX + fieldID + '_removable" value="' + fieldInfo.removable + '">'
             + '</div>';
 
         return sectionString;
@@ -770,6 +790,7 @@ var MappingViewer = function(viewerID, currentSetID, viewerAction) {
             var name = 'name="' + idPrefix + fieldsToInclude[i]+ ' ';
             var id = 'id="' + idPrefix + fieldsToInclude[i] + '_' + this.viewerID + ' ';
             var dataType = "STRING";
+            var componentType = "";
             var labelValue = fieldsToInclude[i];
             var labelDisplayValue = fieldsToInclude[i];
             var required = false;
@@ -777,15 +798,16 @@ var MappingViewer = function(viewerID, currentSetID, viewerAction) {
             if (fieldInfo != undefined){
 
                 dataType = fieldInfo.data_type;
-                labelValue = fieldInfo.label;
-                labelDisplayValue = fieldInfo.label_display;
+                componentType = fieldInfo.component_type;
+                labelValue = fieldInfo.id;
+                labelDisplayValue = fieldInfo.text;
                 required = fieldInfo.required;
             }
 
             includedFields += '<div><b>Name:</b> ' + labelDisplayValue + '</div>';
             includedFields += '<div><b>Data Type:</b> ' + dataType + '</div>';
 
-            if (dataType == "SELECT"){
+            if (dataType == "SELECT" && componentType != "EQUIVALENCE_TYPE"){
 
                 includedFields += '<div><b>Options:</b> ';
 
@@ -860,6 +882,30 @@ var MappingViewer = function(viewerID, currentSetID, viewerAction) {
         this.generateSetEditorItemsAdditionalFields();
     };
 
+    MappingViewer.prototype.changeFieldOrder = function(fieldSection, direction) {
+
+        var selected = $("#" + fieldSection);
+        var target;
+
+        // if we are moving the selected field up the target is the previous sibling, otherwise it's the next sibling
+        if (direction == "up") {
+            target = selected.prev();
+        } else {
+            target = selected.next();
+        }
+
+        // make sure the target exists
+        if (target.length) {
+
+            // if we are moving the selected field up the move the target to after the selected field, otherwise move it to before the selected field
+            if (direction == "up") {
+                selected.after(target);
+            } else {
+                selected.before(target);
+            }
+        }
+    };
+
     MappingViewer.prototype.removeSetItemsIncludedField = function(fieldName){
 
         // remove the field section from the dialog included fields
@@ -868,6 +914,43 @@ var MappingViewer = function(viewerID, currentSetID, viewerAction) {
         // remove the field information from the map set info javascript variable, both the field information and from the include fields array
         this.setEditorMapSet["item_fields"].splice(this.setEditorMapSet["item_fields"].indexOf(fieldName), 1);
         delete this.setEditorMapSet["item_field_" + fieldName];
+    };
+
+    MappingViewer.prototype.addSetItemsCalculatedField = function(){
+
+        UIHelper.removePageMessages("#" + this.ITEMS_INCLUDE_FIELD_DIALOG);
+
+        var calculatedField = $("#komet_mapping_set_editor_items_add_fields_calculated_field_" + this.viewerID);
+
+        var id = calculatedField.val();
+
+        if (id == ""){
+
+            calculatedField.after(UIHelper.generatePageMessage("A Calculated field must be selected."));
+            return;
+        }
+
+        var selectedOption = calculatedField.find("option:selected");
+
+        var fieldInfo = {"id": id,
+            "data_type": 'STRING',
+            "component_type": selectedOption.attr("data-component-type"),
+            "text": selectedOption.text(),
+            "required": false,
+            "removable": true,
+            "display": true
+        };
+
+        this.setEditorMapSet.item_fields.push(id);
+        this.setEditorMapSet["item_field_" + id] = fieldInfo;
+
+        var newSection = this.generateSetEditorItemsDialogIncludeSection(id, fieldInfo);
+
+        // create a dom fragment from our generated structure and append it to the dialog form
+        $("#" + this.ITEMS_INCLUDE_FIELD_CHECKBOX_SECTION).append(document.createRange().createContextualFragment(newSection));
+
+        // reset the field
+        calculatedField.val("");
     };
 
     MappingViewer.prototype.addSetItemsField = function(){
@@ -886,30 +969,29 @@ var MappingViewer = function(viewerID, currentSetID, viewerAction) {
             return;
         }
 
-        // make sure there are no invalid characters in the name
-        // var name = labelDisplayField.val().replace(/[^a-zA-Z0-9_\-]/g, '').toLowerCase();
-        var name = labelField.val();
+        // make sure there are no invalid characters in the id
+        // var id = labelDisplayField.val().replace(/[^a-zA-Z0-9_\-]/g, '').toLowerCase();
+        var id = labelField.val();
 
-        if (this.setEditorMapSet.item_fields.indexOf(name) >= 0){
+        if (this.setEditorMapSet.item_fields.indexOf(id) >= 0){
 
             $(prefix + "options_section_" + this.viewerID).after(UIHelper.generatePageMessage("The label must be unique. There is another field in this mapset with this label."));
             return;
         }
 
-        var fieldInfo = {"name": name,
+        var fieldInfo = {"id": id,
             "data_type": dataTypeField.val(),
-            "label": labelField.val(),
-            "label_display": labelDisplayField.val().replace(/[^a-zA-Z0-9_,\- ]+/g, ''),
+            "component_type": 'ITEM_EXTENDED',
+            "text": labelDisplayField.val().replace(/[^a-zA-Z0-9_,\- ]+/g, ''),
             "required": requiredField[0].checked,
             "removable": true,
             "display": true
         };
 
+        this.setEditorMapSet.item_fields.push(id);
+        this.setEditorMapSet["item_field_" + id] = fieldInfo;
 
-        this.setEditorMapSet.item_fields.push(name);
-        this.setEditorMapSet["item_field_" + name] = fieldInfo;
-
-        var newSection = this.generateSetEditorItemsDialogIncludeSection(name, fieldInfo);
+        var newSection = this.generateSetEditorItemsDialogIncludeSection(id, fieldInfo);
 
         // create a dom fragment from our generated structure and append it to the dialog form
         $("#" + this.ITEMS_INCLUDE_FIELD_CHECKBOX_SECTION).append(document.createRange().createContextualFragment(newSection));
@@ -927,15 +1009,11 @@ var MappingViewer = function(viewerID, currentSetID, viewerAction) {
     MappingViewer.prototype.createItemRowString = function (rowData) {
 
         var itemID = "";
-        var targetConcepID = "";
-        var targetConceptDisplay = "";
         var state = "";
         var time = "";
         var author = "";
         var module = "";
         var path = "";
-        var qualifierConcept = "";
-        var qualifierConceptDisplay = "";
         var commentID = "0";
         var comment = "";
         //var state = "";
@@ -946,25 +1024,11 @@ var MappingViewer = function(viewerID, currentSetID, viewerAction) {
         var ariaLabel = "Mapping Item";
         var classes = "form-control komet-mapping-show-on-edit";
 
-
         if (rowData != null){
 
             itemID = rowData.item_id;
             rowID = 'komet_mapping_item_row_' + itemID + '_' + this.viewerID;
             idPrefix = "komet_mapping_item_" + itemID;
-
-            if (rowData.target_concept != null){
-
-                targetConcepID = rowData.target_concept;
-                targetConceptDisplay = rowData.target_concept_display;
-            }
-
-            if (rowData.qualifier_concept != null){
-
-                qualifierConcept = rowData.qualifier_concept;
-                qualifierConceptDisplay = rowData.qualifier_concept_display;
-            }
-
             state = rowData.state;
             time = rowData.time;
             author = rowData.author;
@@ -974,8 +1038,7 @@ var MappingViewer = function(viewerID, currentSetID, viewerAction) {
             comment = rowData.comment;
             ariaLabel = rowData.source_concept_display;
 
-            rowString = '<div id="' + rowID + '" class="komet-mapping-item-edit-row">'
-                + '<div>' + rowData.source_concept_display + '</div>';
+            rowString = '<div id="' + rowID + '" class="komet-mapping-item-edit-row">';
         } else {
 
             isNew = true;
@@ -983,61 +1046,36 @@ var MappingViewer = function(viewerID, currentSetID, viewerAction) {
             rowID = 'komet_mapping_item_row_' + itemID + '_' + this.viewerID;
             idPrefix = "komet_mapping_item_" + itemID;
 
-            rowString = '<div id="' + rowID + '" class="komet-mapping-item-edit-row">'
-                + '<div><autosuggest id-base="' + idPrefix + '_source_concept" '
-                + 'id-postfix="_' + this.viewerID + '" '
-                + 'name="items[' + itemID + '][source_concept" '
-                + 'name-format="array" '
-                + 'classes="komet-mapping-item-source-concept">'
-                + '</autosuggest></div>';
+            rowString = '<div id="' + rowID + '" class="komet-mapping-item-edit-row">';
         }
-
-        rowString += '<div><autosuggest id-base="' + idPrefix + '_target_concept" '
-            + 'id-postfix="_' + this.viewerID + '" '
-            + 'name="items[' + itemID + '][target_concept" '
-            + 'name-format="array" '
-            + 'value="' + targetConcepID + '" '
-            + 'display-value="' + targetConceptDisplay + '" '
-            + 'classes="komet-mapping-item-target-concept komet-mapping-show-on-edit">'
-            + '</autosuggest><div class="komet-mapping-show-on-view" aria-label="' + ariaLabel + ' Target Concept">' + targetConceptDisplay + '</div></div>';
-
-        rowString += '<div class="komet-mapping-stamp-fields">' + UIHelper.createSelectFieldString(idPrefix + '_state', 'items[' + itemID + '][state]', classes, UIHelper.getPreDefinedOptionsForSelect("active_inactive"), state, ariaLabel + ' Item State')
-            + '<div class="komet-mapping-show-on-view" aria-label="' + ariaLabel + ' Item State">' + state + '</div></div>'
-            + '<div class="komet-mapping-stamp-fields"><div aria-label="' + ariaLabel + ' Item Time">' + time + '</div></div>'
-            + '<div class="komet-mapping-stamp-fields"><div aria-label="' + ariaLabel + ' Item Author">' + author + '</div></div>'
-            + '<div class="komet-mapping-stamp-fields"><div aria-label="' + ariaLabel + ' Item Module">' + module + '</div></div>'
-            + '<div class="komet-mapping-stamp-fields"><div aria-label="' + ariaLabel + ' Item Path">' + path + '</div></div>';
-
-        var qualifierOptions = [{value: '', label: 'No Restrictions'}, {value: '8aa6421d-4966-5230-ae5f-aca96ee9c2c1', label: 'Exact'}, {value: 'c1068428-a986-5c12-9583-9b2d3a24fdc6', label: 'Broader Than'}, {value: '250d3a08-4f28-5127-8758-e8df4947f89c', label: 'Narrower Than'},{value: 'e5f7f98f-9607-55a7-bbc4-25f2e61df23d',label:'Unmapped'}];
-        rowString += '<div>' + UIHelper.createSelectFieldString(idPrefix + '_qualifier_concept', 'items[' + itemID + '][qualifier_concept]', classes, qualifierOptions, qualifierConcept, ariaLabel + 'Mapping Qualifier')
-            + '<div class="komet-mapping-show-on-view" aria-label="' + ariaLabel + ' Mapping Qualifier">' + qualifierConceptDisplay + '</div></div>';
 
         $.each(this.itemFieldInfo, function (fieldID, field) {
 
-            var name = 'items[' + itemID + '][' + field.name + ']';
-            var id = idPrefix + "_" + field.name + '_' + this.viewerID;
+            var name = 'items[' + itemID + '][' + field.id + ']';
+            var id = idPrefix + "_" + field.id + '_' + this.viewerID;
             var value = "";
             var dataType = field.data_type;
-            var itemAriaLabel = ariaLabel + ' ' + field.label_display;
+            var componentType = field.component_type;
+            var itemAriaLabel = ariaLabel + ' ' + field.text;
 
-            if (!isNew && rowData[field.name] != undefined){
-                value = rowData[field.name];
+            if (!isNew && rowData[field.id] != undefined){
+                value = rowData[field.id];
             }
 
             rowString += '<div>';
 
-            if (dataType == "UUID"){
+            if (dataType == "UUID" || field.id == "DESCRIPTION_TARGET" || (field.id == "DESCRIPTION_SOURCE" && isNew)) {
 
-                var displayValue = "";
+                var displayValue = value;
 
-                if (!isNew && rowData[field.name + "_display"] != undefined){
-                    displayValue = rowData[field.name + "_display"];
+                if (!isNew && rowData[field.id + "_display"] != undefined) {
+                    displayValue = rowData[field.id + "_display"];
                 }
 
                 rowString += '<autosuggest '
-                    + 'id-base="' + idPrefix + "_" + field.name + '" '
+                    + 'id-base="' + idPrefix + "_" + field.id + '" '
                     + 'id-postfix="_' + this.viewerID + '" '
-                    + 'name="items[' + itemID + '][' + field.name + '" '
+                    + 'name="items[' + itemID + '][' + field.id + '" '
                     + 'name-format="array" '
                     + 'value="' + value + '" '
                     + 'display-value="' + displayValue + '" '
@@ -1046,10 +1084,29 @@ var MappingViewer = function(viewerID, currentSetID, viewerAction) {
 
                 value = displayValue;
 
+            } else if ((field.id == "DESCRIPTION_SOURCE" && !isNew) || componentType == "SOURCE" || componentType == "TARGET"){
+
+                if (!isNew && rowData[field.id + "_display"] != undefined) {
+                    value = rowData[field.id + "_display"];
+                }
+
+                rowString += '<div class="komet-mapping-show-on-edit" aria-label="' + itemAriaLabel + '">' + value + '</div>';
+
+            } else if (componentType == "EQUIVALENCE_TYPE"){
+
+                var qualifierOptions = [{value: '', label: 'No Restrictions'}, {value: '8aa6421d-4966-5230-ae5f-aca96ee9c2c1', label: 'Exact'}, {value: 'c1068428-a986-5c12-9583-9b2d3a24fdc6', label: 'Broader Than'}, {value: '250d3a08-4f28-5127-8758-e8df4947f89c', label: 'Narrower Than'},{value: 'e5f7f98f-9607-55a7-bbc4-25f2e61df23d',label:'Unmapped'}];
+                rowString += UIHelper.createSelectFieldString(id, name, classes, qualifierOptions, value, itemAriaLabel);
+
+                if (!isNew && rowData[field.id + "_display"] != undefined) {
+                    value = rowData[field.id + "_display"];
+                }
+
             } else if (dataType == "BOOLEAN"){
                 rowString += UIHelper.createSelectFieldString(id, name, classes, UIHelper.getPreDefinedOptionsForSelect("true_false"), value, itemAriaLabel);
+
             } else if (dataType == "SELECT"){
                 rowString += UIHelper.createSelectFieldString(id, name, classes, field.options, value, itemAriaLabel);
+
             } else {
                 rowString += '<input name="' + name + '" id="' + id + '" class="' + classes + '" value="' + value + '" aria-label="' + itemAriaLabel + '">';
             }
@@ -1068,7 +1125,14 @@ var MappingViewer = function(viewerID, currentSetID, viewerAction) {
             rowString +=  comment;
         }
 
-        rowString += '</a><div class="komet-mapping-show-on-view" aria-label="' + ariaLabel + ' Comments">' + comment + '</div></div><div class="komet-mapping-item-edit-row-tools">';
+        rowString += '</a><div class="komet-mapping-show-on-view" aria-label="' + ariaLabel + ' Comments">' + comment + '</div></div>'
+            + '<div class="komet-mapping-stamp-fields">' + UIHelper.createSelectFieldString(idPrefix + '_state', 'items[' + itemID + '][state]', classes, UIHelper.getPreDefinedOptionsForSelect("active_inactive"), state, ariaLabel + ' Item State')
+            + '<div class="komet-mapping-show-on-view" aria-label="' + ariaLabel + ' Item State">' + state + '</div></div>'
+            + '<div class="komet-mapping-stamp-fields"><div aria-label="' + ariaLabel + ' Item Time">' + time + '</div></div>'
+            + '<div class="komet-mapping-stamp-fields"><div aria-label="' + ariaLabel + ' Item Author">' + author + '</div></div>'
+            + '<div class="komet-mapping-stamp-fields"><div aria-label="' + ariaLabel + ' Item Module">' + module + '</div></div>'
+            + '<div class="komet-mapping-stamp-fields"><div aria-label="' + ariaLabel + ' Item Path">' + path + '</div></div>'
+            + '<div class="komet-mapping-item-edit-row-tools">';
 
         if (isNew){
             rowString += '<button type="button" class="komet-link-button" onclick="WindowManager.viewers[' + this.viewerID + '].removeItemRow(\'' + rowID + '\', this)" title="Remove row" aria-label="Remove row"><div class="glyphicon glyphicon-remove"></div></button>';

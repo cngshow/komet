@@ -992,6 +992,10 @@ td.komet-concept-table-nested-indicator.komet-concept-table-nested-indicator-ope
     background-color: #eef1f3;
     overflow: visible;
 }
+div.komet-mapping-change-order-icon.glyphicon{
+    color: black;
+    cursor: hand;
+}
 .komet-mapping-set-tabs > div.komet-mapping-set-tab-body{
     display: flex;
     flex-direction: column;
@@ -1157,7 +1161,7 @@ td.komet-concept-table-nested-indicator.komet-concept-table-nested-indicator-ope
     display: flex;
     flex-direction: column;
     border: solid black 1px;
-    width: 550px;
+    width: 700px;
     font-size: small;
     z-index: 1;
     background-color: white;
@@ -1201,13 +1205,14 @@ td.komet-concept-table-nested-indicator.komet-concept-table-nested-indicator-ope
 .komet-add-fields-dialog-left-column .glyphicon{
     font-size: smaller;
     color: red;
+    margin: 4px;
 }
 .komet-add-fields-dialog-middle-column{
     display: flex;
     flex-direction: column;
     flex: 1 0 auto;
     align-items: center;
-    width: 50px;
+    width: 40px;
 }
 .komet-add-fields-dialog-middle-column hr{
     border: 1px solid black;

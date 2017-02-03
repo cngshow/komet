@@ -4,7 +4,7 @@ This changelog summarizes changes and fixes which are a part of each revision.  
 where provided, and the git commit history.
 
 * 2017/02/?? - 1.60 - PENDING
-    *
+    * Updated mapping to allow item field order to be chosen and calculated fields to be added to map items. Both occur only on mapset create. (Jazz: 444802, 430117)
 
 * 2017/01/26 - 1.59
     * Changed so errors in attached sememe processing don't kill the app.

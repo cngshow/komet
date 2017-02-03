@@ -22,7 +22,10 @@ module MappingApiActions
     ACTION_SETS = :sets
     ACTION_ITEMS = :items
     ACTION_SET = :set
+    ACTION_FIELDS = :fields
+    ACTION_FIELD = :field
     ACTION_CREATE_SET = :create_set
+    ACTION_CLONE_SET = :clone_set
     ACTION_CREATE_ITEM = :create_item
     ACTION_UPDATE_SET = :update_set
     ACTION_UPDATE_ITEM = :update_item
@@ -38,7 +41,10 @@ module MappingApis
     PATH_SETS = ROOT_PATH + 'mappingSets'
     PATH_ITEMS = ROOT_PATH + 'mappingItems/{id}'
     PATH_SET = ROOT_PATH + 'mappingSet/{id}'
+    PATH_FIELDS = ROOT_PATH + 'fields'
+    PATH_FIELD = ROOT_PATH + 'field'
     PATH_CREATE_SET = PATH_MAPPING_WRITE_API + 'mappingSet/create'
+    PATH_CLONE_SET = PATH_MAPPING_WRITE_API + 'mappingSet/clone'
     PATH_CREATE_ITEM = PATH_MAPPING_WRITE_API + 'mappingItem/create'
     PATH_UPDATE_SET = PATH_MAPPING_WRITE_API + 'mappingSet/update/{id}'
     PATH_UPDATE_ITEM = PATH_MAPPING_WRITE_API + 'mappingItem/update/{id}'
@@ -46,7 +52,6 @@ module MappingApis
     # these are not used!!
     PARAMS_EMPTY = {}
     PARAMS_NO_CACHE = CommonRest::CacheRequest::PARAMS_NO_CACHE
-
 
     ACTION_CONSTANTS = {
         ACTION_SETS => {
@@ -61,12 +66,26 @@ module MappingApis
             PATH_SYM => PATH_SET,
             STARTING_PARAMS_SYM => PARAMS_EMPTY,
             CLAZZ_SYM => Gov::Vha::Isaac::Rest::Api1::Data::Mapping::RestMappingSetVersion},
+        ACTION_FIELDS => {
+            PATH_SYM => PATH_FIELDS,
+            STARTING_PARAMS_SYM => PARAMS_EMPTY,
+            CLAZZ_SYM => Gov::Vha::Isaac::Rest::Api1::Data::Mapping::RestMappingSetDisplayField},
+        ACTION_FIELD => {
+            PATH_SYM => PATH_FIELD,
+            STARTING_PARAMS_SYM => PARAMS_EMPTY,
+            CLAZZ_SYM => Gov::Vha::Isaac::Rest::Api1::Data::Mapping::RestMappingSetDisplayField},
         ACTION_CREATE_SET => {
             PATH_SYM => PATH_CREATE_SET,
             STARTING_PARAMS_SYM => PARAMS_EMPTY,
             CLAZZ_SYM => Gov::Vha::Isaac::Rest::Api::Data::Wrappers::RestWriteResponse,
             HTTP_METHOD_KEY => HTTP_METHOD_POST,
             BODY_CLASS => Gov::Vha::Isaac::Rest::Api1::Data::Mapping::RestMappingSetVersionBaseCreate},
+        ACTION_CLONE_SET => {
+            PATH_SYM => PATH_CLONE_SET,
+            STARTING_PARAMS_SYM => PARAMS_EMPTY,
+            CLAZZ_SYM => Gov::Vha::Isaac::Rest::Api::Data::Wrappers::RestWriteResponse,
+            HTTP_METHOD_KEY => HTTP_METHOD_POST,
+            BODY_CLASS => Gov::Vha::Isaac::Rest::Api1::Data::Mapping::RestMappingSetVersionClone},
         ACTION_CREATE_ITEM => {
             PATH_SYM => PATH_CREATE_ITEM,
             STARTING_PARAMS_SYM => PARAMS_EMPTY,
@@ -98,8 +117,13 @@ module MappingApis
         attr_accessor :uuid
 
         def initialize(uuid:, action:, params:, body_params:, action_constants:)
+
             @uuid = uuid.to_s unless uuid.nil?
-            uuid_check uuid: uuid unless [MappingApiActions::ACTION_SETS, MappingApiActions::ACTION_CREATE_SET, MappingApiActions::ACTION_CREATE_ITEM].include?(action)
+
+            if [MappingApiActions::ACTION_ITEMS, MappingApiActions::ACTION_SET, MappingApiActions::ACTION_UPDATE_SET, MappingApiActions::ACTION_UPDATE_ITEM].include?(action)
+                uuid_check(uuid: uuid)
+            end
+
             super(params: params, body_params: body_params, action: action, action_constants: action_constants)
         end
 
@@ -127,5 +151,7 @@ load('./lib/isaac_rest/mapping_apis_rest.rb')
 #put_test = MappingApis::get_mapping_api(uuid_or_id: '83d0b015-ba7e-4e52-8490-0c96ba32b19b', action: MappingApiActions::ACTION_UPDATE_SET, additional_req_params: {editToken: },  body_params: {name: "Map Set Test 1.1", description: "The first test of updating a mapset.", purpose: "The first test of updating a mapset using the rest APIs." } )
 get_test = MappingApis::get_mapping_api(action: MappingApiActions::ACTION_SETS,  additional_req_params: {} )
 set_test = MappingApis::get_mapping_api(action: MappingApiActions::ACTION_SET, uuid_or_id: "a9262b1e-f650-5440-9d0d-edf75851ce91" )
+fields_test = MappingApis::get_mapping_api(action: MappingApiActions::ACTION_FIELDS )
+field_test = MappingApis::get_mapping_api(action: MappingApiActions::ACTION_FIELD,  additional_req_params: {field: "f31f3d89-5a6f-5e1f-81d3-5b68344d96f9"} )
 =end
 
