@@ -237,22 +237,18 @@
 
                         <div class="komet-mapping-item-edit-header-row">
 
-                            <div>Mapping Source Concept</div>
-                            <div>Mapping Target Concept</div>
+                            <% Array(@map_items[:column_definitions]).each do |column| %>
+
+                                <div><%= column[:text] %></div>
+
+                            <% end %>
+
+                            <div>Comments</div>
                             <div class="komet-mapping-stamp-fields">State</div>
                             <div class="komet-mapping-stamp-fields">Time</div>
                             <div class="komet-mapping-stamp-fields">Author</div>
                             <div class="komet-mapping-stamp-fields">Module</div>
                             <div class="komet-mapping-stamp-fields">Path</div>
-                            <div>Mapping Qualifier</div>
-
-                            <% Array(@map_items[:column_definitions]).each do |column| %>
-
-                                <div><%= column[:label_display] %></div>
-
-                            <% end %>
-
-                            <div>Comments</div>
                             <div></div>
 
                         </div>

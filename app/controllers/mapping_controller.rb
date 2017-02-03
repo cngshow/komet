@@ -141,20 +141,21 @@ class MappingController < ApplicationController
 
     def map_set_editor
 
+        # reset the session item definitions
         session[:mapset_item_definitions] = []
         coordinates_token = session[:coordinatestoken].token
         @map_set = {id: '', name: '', description: '', version: '', vuid: '', rules: '', include_fields: [], state: '', status: 'Active', time: '', module: '', path: '', comment_id: 0, comment: ''}
-
-        # add the definitions for the template item fields
-        @map_set[:item_fields] = []
-        # @map_set[:item_field_equivalence] = {name: 'qualifier', data_type: 'SELECT', value: '', label: '8e84c657-5f47-51b8-8ebf-89a9d025a9ef', label_display: 'mapping qualifier', removable: false, display: false, required: false, options: [{value: '', label: 'No Restrictions'}, {value: '8aa6421d-4966-5230-ae5f-aca96ee9c2c1', label: 'Exact'}, {value: 'c1068428-a986-5c12-9583-9b2d3a24fdc6', label: 'Broader Than'}, {value: '250d3a08-4f28-5127-8758-e8df4947f89c', label: 'Narrower Than'}]}
+        source_system_id = '32e30e80-3fac-5317-80cf-d85eab22fa9e'
+        source_version_id = '5b3479cb-25b2-5965-a031-54238588218f'
+        target_system_id = '6b31a67a-7e6d-57c0-8609-52912076fce8'
+        target_version_id = 'b5165f68-b934-5c79-ac71-bd5375f7c809'
 
         @set_id = params[:set_id]
 
         if @set_id &&  @set_id != ''
 
             # add the definitions for the template map fields
-            @map_set[:include_fields] = ['32e30e80-3fac-5317-80cf-d85eab22fa9e', '5b3479cb-25b2-5965-a031-54238588218f', '6b31a67a-7e6d-57c0-8609-52912076fce8', 'b5165f68-b934-5c79-ac71-bd5375f7c809']
+            @map_set[:include_fields] = [source_system_id, source_version_id, target_system_id, target_version_id]
 
             set = MappingApis::get_mapping_api(action: MappingApiActions::ACTION_SET, uuid_or_id: @set_id,  additional_req_params: {coordToken: coordinates_token, expand: 'comments'})
 
@@ -174,18 +175,15 @@ class MappingController < ApplicationController
 
             extended_fields.each do |field|
 
-                name = field.extensionNameConceptIdentifiers.uuids.first
-                label = field.extensionNameConceptIdentifiers.uuids.first
-                label_display = field.extensionNameConceptDescription
+                id = field.extensionNameConceptIdentifiers.uuids.first
+                text = field.extensionNameConceptDescription
                 value = field.extensionValue.data
                 removable = true
                 display = true
                 data_type = field.extensionValue.class.to_s.remove('Gov::Vha::Isaac::Rest::Api1::Data::Sememe::DataTypes::RestDynamicSememe')
 
-                # if the field is buiness rules then pull it out and handle it specially
-                # TODO - use the first line when implemented in the metadata
-                if label == $isaac_metadata_auxiliary['BUSINESS_RULES']['uuids'].first[:uuid]
-                #if label == '7ebc6742-8586-58c3-b49d-765fb5a93f35'
+                # if the field is business rules then pull it out and handle it specially
+                if id == $isaac_metadata_auxiliary['BUSINESS_RULES']['uuids'].first[:uuid]
 
                     @map_set[:rules] = value
                     next
@@ -195,96 +193,151 @@ class MappingController < ApplicationController
                     display = false
                 end
 
-                if !@map_set[:include_fields].include?(name)
-                    @map_set[:include_fields] << name
+                if !@map_set[:include_fields].include?(id)
+                    @map_set[:include_fields] << id
                 end
 
-                @map_set[name] = {name: name, data_type: data_type, value: html_escape(value), label: label, label_display: label_display, removable: removable, display: display, required: false}
+                @map_set[id] = {id: id, data_type: data_type, value: html_escape(value), text: text, removable: removable, display: display, required: false}
 
                 if field.extensionValue.class == DATA_TYPES_CLASS::RestDynamicSememeNid || field.extensionValue.class == DATA_TYPES_CLASS::RestDynamicSememeUUID
 
-                    @map_set[name][:data_type] = 'UUID'
+                    @map_set[id][:data_type] = 'UUID'
 
                     if display
 
                         if field.extensionValue.class == DATA_TYPES_CLASS::RestDynamicSememeNid
-                            @map_set[name][:value] = IdAPIsRest.get_id(uuid_or_id: value, action: IdAPIsRestActions::ACTION_TRANSLATE, additional_req_params: {inputType: 'nid', outputType: 'uuid'}).value
+                            @map_set[id][:value] = IdAPIsRest.get_id(uuid_or_id: value, action: IdAPIsRestActions::ACTION_TRANSLATE, additional_req_params: {inputType: 'nid', outputType: 'uuid'}).value
                         end
 
-                        @map_set[name.to_s + '_display'] = field.extensionValue.conceptDescription
+                        @map_set[id.to_s + '_display'] = field.extensionValue.conceptDescription
                     end
                 end
 
             end
 
             # remove any unused default included fields
-            ['32e30e80-3fac-5317-80cf-d85eab22fa9e', '5b3479cb-25b2-5965-a031-54238588218f', '6b31a67a-7e6d-57c0-8609-52912076fce8', 'b5165f68-b934-5c79-ac71-bd5375f7c809'].each_with_index  do |field, index|
+            [source_system_id, source_version_id, target_system_id, target_version_id].each_with_index  do |field, index|
 
                 if !@map_set.key?(field)
                     @map_set[:include_fields].delete(field)
                 end
             end
 
-            item_fields = set.mapItemFieldsDefinition
+            # if there are no values for displayFields follow the old way of sorting the fields, otherwise use displayFields to set order
+            if set.displayFields.length == 0 
+                
+                # add the definitions for the template item fields
+                @map_set[:item_fields] = ['DESCRIPTION_SOURCE', 'DESCRIPTION_TARGET', 'DESCRIPTION_EQUIVALENCE_TYPE']
 
-            item_fields.each do |field|
+                # setup the intrinsic map item fields
+                source_info = {id: 'DESCRIPTION_SOURCE', description: 'Mapping Source Concept', order: 0, data_type: 'UUID', required: true, text: 'Mapping Source Concept', removable: false, display: true, component_type: 'SOURCE'}
+                target_info = {id: 'DESCRIPTION_TARGET', description: 'Mapping Target Concept', order: 1, data_type: 'UUID', required: true, text: 'Mapping Target Concept', removable: false, display: true, component_type: 'TARGET'}
+                qualifier_info = {id: 'DESCRIPTION_EQUIVALENCE_TYPE', description: 'Mapping Qualifier', order: 2, data_type: 'SELECT', required: true, text: 'Mapping Qualifier', removable: false, display: true, component_type: 'EQUIVALENCE_TYPE'}
 
-                name = field.columnLabelConcept.uuids.first
-                label = name
-                label_display = field.columnName
-                description = field.columnDescription
-                order = field.columnOrder.to_s
-                data_type = field.columnDataType.enumName
-                required = field.columnRequired
-                validator_types = field.columnValidatorTypes
-                validators = field.columnValidatorData
-                removable = true
-                display = true
+                # load the intrinsic map item fields into our return mapset variable
+                @map_set['item_field_DESCRIPTION_SOURCE'] = source_info
+                @map_set['item_field_DESCRIPTION_TARGET'] = target_info
+                @map_set['item_field_DESCRIPTION_EQUIVALENCE_TYPE'] = qualifier_info
 
-                if data_type == 'LONG' && label_display.downcase.include?('date')
-                    label_display << ' (mm/dd/yyyy)'
+                # load the intrinsic map item fields into our session item definitions
+                session[:mapset_item_definitions] = [source_info, target_info, qualifier_info]
+
+                # get the item fields from the mapset
+                item_fields = set.mapItemFieldsDefinition
+
+                # loop through the item extended fields
+                item_fields.each do |field|
+    
+                    id = field.columnLabelConcept.uuids.first
+                    text = field.columnName
+                    description = field.columnDescription
+                    order = field.columnOrder.to_s
+                    data_type = field.columnDataType.enumName
+                    required = field.columnRequired
+                    removable = true
+                    display = true
+    
+                    if data_type == 'LONG' && text.downcase.include?('date')
+                        text << ' (mm/dd/yyyy)'
+                    end
+    
+                    @map_set[:item_fields] << id
+                    @map_set['item_field_' + id] = {id: id, description: description, order: order, data_type: data_type, required: required, text: text, removable: removable, display: display, component_type: 'ITEM_EXTENDED'}
+    
+                    session[:mapset_item_definitions] << @map_set['item_field_' + id]
+    
                 end
+            else
 
-                @map_set[:item_fields] << name
-                @map_set['item_field_' + name] = {name: name, description: description, order: order, data_type: data_type, required: required, label: label, label_display: label_display, removable: removable, display: display}
+                # add the definitions for the template item fields
+                @map_set[:item_fields] = []
+                field_info = {}
+                computed_field_index = 0
 
-                field_type = 'STRING'
+                # item_fields.each do |field|
+                set.displayFields.each do |field|
 
-                # if data_type == 'UUID'
-                #
-                #     field_type = 'concept'
-                #
-                #     validator_types.each_with_index do |validator_type, index|
-                #
-                #         if validators[index].class == DATA_TYPES_CLASS::RestDynamicSememeUUID && validator_type.enumName == 'IS KIND OF' && validators[index].dataObjectType.enumName == 'CONCEPT'
-                #
-                #             field_type = 'select'
-                #
-                #             option_concepts = TaxonomyRest.get_isaac_concept(uuid: validators[index].data, additional_req_params: {coordToken: coordinates_token})
-                #
-                #             if !option_concepts.is_a? CommonRest::UnexpectedResponse
-                #
-                #                 options = []
-                #
-                #                 option_concepts.children.each do |option_concept|
-                #
-                #                     options << option_concept.conChronology.description
-                #                 end
-                #
-                #                 @map_set['item_field_' + name][:options] = options
-                #             end
-                #         end
-                #     end
-                # else
-                #     field_type = 'text'
-                # end
+                    # handle the Mapping Source Concept
+                    if field.id == 'DESCRIPTION' && field.componentType.enumName == 'SOURCE'
 
-                @map_set['item_field_' + name][:type] = data_type
+                        @map_set[:item_fields] << 'DESCRIPTION_SOURCE'
+                        field_info = {id: 'DESCRIPTION_SOURCE', description: 'Mapping Source Concept', order: computed_field_index, data_type: 'UUID', required: true, text: 'Mapping Source Concept', removable: false, display: true, component_type: 'SOURCE'}
+                        @map_set['item_field_DESCRIPTION_SOURCE'] = field_info
+                        computed_field_index += 1
+                    
+                    # handle the Mapping Target Concept    
+                    elsif field.id == 'DESCRIPTION' && field.componentType.enumName == 'TARGET'
 
-                session[:mapset_item_definitions] << @map_set['item_field_' + name]
+                        @map_set[:item_fields] << 'DESCRIPTION_TARGET'
+                        field_info = {id: 'DESCRIPTION_TARGET', description: 'Mapping Target Concept', order: computed_field_index, data_type: 'UUID', required: true, text: 'Mapping Target Concept', removable: false, display: true, component_type: 'TARGET'}
+                        @map_set['item_field_DESCRIPTION_TARGET'] = field_info
+                        computed_field_index += 1
 
+                    # handle the Mapping Target Qualifier    
+                    elsif field.id == 'DESCRIPTION' && field.componentType.enumName == 'EQUIVALENCE_TYPE'
+
+                        @map_set[:item_fields] << 'DESCRIPTION_EQUIVALENCE_TYPE'
+                        field_info = {id: 'DESCRIPTION_EQUIVALENCE_TYPE', description: 'Mapping Qualifier', order: computed_field_index, data_type: 'SELECT', required: true, text: 'Mapping Qualifier', removable: false, display: true, component_type: 'EQUIVALENCE_TYPE'}
+                        @map_set['item_field_DESCRIPTION_EQUIVALENCE_TYPE'] = field_info
+                        computed_field_index += 1
+
+                    # handle calculated fields    
+                    elsif field.componentType.enumName == 'SOURCE' || field.componentType.enumName == 'TARGET'
+
+                        @map_set[:item_fields] << field.id
+                        field_info = {id: field.id, description: field.description, order: computed_field_index, data_type: 'STRING', required: false, text: field.description, removable: true, display: true, component_type: field.componentType.enumName}
+                        @map_set['item_field_' + field.id] = field_info
+                        computed_field_index += 1
+                        
+                    # handle extended fields    
+                    else
+
+                        extended_field = set.mapItemFieldsDefinition[field.id.to_i]
+
+                        id = extended_field.columnLabelConcept.uuids.first
+                        text = extended_field.columnName
+                        description = extended_field.columnDescription
+                        order = extended_field.columnOrder.to_s
+                        data_type = extended_field.columnDataType.enumName
+                        required = extended_field.columnRequired
+                        removable = true
+                        display = true
+
+                        if data_type == 'LONG' && text.downcase.include?('date')
+                            text << ' (mm/dd/yyyy)'
+                        end
+
+                        @map_set[:item_fields] << id
+                        field_info = {id: id, description: description, order: order, data_type: data_type, required: required, text: text, removable: removable, display: display, component_type: 'ITEM_EXTENDED'}
+                        @map_set['item_field_' + id] = field_info
+
+                    end
+                    
+                    session[:mapset_item_definitions] << field_info
+                end
+   
             end
-
+            
             @map_set[:set_id] = set.identifiers.uuids.first
             @map_set[:name] = html_escape(set.name)
             @map_set[:description] = html_escape(set.description)
@@ -311,16 +364,49 @@ class MappingController < ApplicationController
             @viewer_title = 'Create New Map Set'
 
             # add the definitions for the template map fields
-            @map_set[:include_fields] = ['source_system', 'source_version', 'target_system', 'target_version']
-            @map_set[:source_system] = {name: 'source_system', data_type: 'UUID', value: '', label: '32e30e80-3fac-5317-80cf-d85eab22fa9e', label_display: 'mapping source code system', removable: false, display: false, required: false}
-            @map_set[:source_system_display] = ''
-            @map_set[:source_version] = {name: 'source_version', data_type: 'STRING', value: '', label: '5b3479cb-25b2-5965-a031-54238588218f', label_display: 'mapping source code system version', removable: false, display: false, required: false}
-            @map_set[:target_system] = {name: 'target_system', data_type: 'UUID', value: '', label: '6b31a67a-7e6d-57c0-8609-52912076fce8', label_display: 'mapping target code system', removable: false, display: false, required: false}
-            @map_set[:target_system_display] = ''
-            @map_set[:target_version] = {name: 'target_version', data_type: 'STRING', value: '', label: 'b5165f68-b934-5c79-ac71-bd5375f7c809', label_display: 'mapping target code system version', removable: false, display: false, required: false}
-            # @map_set[:comments] = {name: 'comments', data_type: 'STRING', value: '', label: 'Comments', label_display: 'Comments', removable: false, display: false, required: false}
+            @map_set[:include_fields] = [source_system_id, source_version_id, target_system_id, target_version_id]
+            @map_set[source_system_id] = {id: source_system_id, data_type: 'UUID', value: '', text: 'mapping source code system', removable: false, display: false, required: false}
+            @map_set[source_system_id + '_display'] = ''
+            @map_set[source_version_id] = {id: source_version_id, data_type: 'STRING', value: '', text: 'mapping source code system version', removable: false, display: false, required: false}
+            @map_set[target_system_id] = {id: target_system_id, data_type: 'UUID', value: '', text: 'mapping target code system', removable: false, display: false, required: false}
+            @map_set[target_system_id + '_display'] = ''
+            @map_set[target_version_id] = {id: target_version_id, data_type: 'STRING', value: '', text: 'mapping target code system version', removable: false, display: false, required: false}
 
+            # add the definitions for the template item fields
+            @map_set[:item_fields] = ['DESCRIPTION_SOURCE', 'DESCRIPTION_TARGET', 'DESCRIPTION_EQUIVALENCE_TYPE']
+
+            # setup the intrinsic map item fields
+            source_info = {id: 'DESCRIPTION_SOURCE', description: 'Mapping Source Concept', order: nil, data_type: 'UUID', required: true, text: 'Mapping Source Concept', removable: false, display: true, component_type: 'SOURCE'}
+            target_info = {id: 'DESCRIPTION_TARGET', description: 'Mapping Target Concept', order: nil, data_type: 'UUID', required: true, text: 'Mapping Target Concept', removable: false, display: true, component_type: 'TARGET'}
+            qualifier_info = {id: 'DESCRIPTION_EQUIVALENCE_TYPE', description: 'Mapping Qualifier', order: nil, data_type: 'SELECT', required: true, text: 'Mapping Qualifier', removable: false, display: true, component_type: 'EQUIVALENCE_TYPE'}
+
+            # load the intrinsic map item fields into our return mapset variable
+            @map_set['item_field_DESCRIPTION_SOURCE'] = source_info
+            @map_set['item_field_DESCRIPTION_TARGET'] = target_info
+            @map_set['item_field_DESCRIPTION_EQUIVALENCE_TYPE'] = qualifier_info
+
+            # load the intrinsic map item fields into our session item definitions
+            session[:mapset_item_definitions] = [source_info, target_info, qualifier_info]
         end
+
+        # Get the complete list of available calculated fields
+        calculated_fields = MappingApis::get_mapping_api(action: MappingApiActions::ACTION_FIELDS,  additional_req_params: {coordToken: coordinates_token})
+
+        @map_set[:all_calculated_fields] = []
+
+        unless calculated_fields.is_a? CommonRest::UnexpectedResponse
+
+            calculated_fields.each do |calculated_field|
+
+                unless calculated_field.id == 'DESCRIPTION'
+
+                    @map_set[:all_calculated_fields] << {id: calculated_field.id, component_type: 'SOURCE', text: 'Source ' + calculated_field.description}
+                    @map_set[:all_calculated_fields] << {id: calculated_field.id, component_type: 'TARGET', text: 'Target ' + calculated_field.description}
+                end
+
+            end
+        end
+
     end
 
     def get_overview_items_results(set_id = nil)
@@ -332,6 +418,7 @@ class MappingController < ApplicationController
 
 
         if set_id == nil && params[:set_id]
+
             render_return = true
             set_id = params[:set_id]
         end
@@ -352,22 +439,6 @@ class MappingController < ApplicationController
             item_hash = {}
 
             item_hash[:item_id] = item.identifiers.uuids.first
-            item_hash[:source_concept] = item.sourceConcept.uuids.first
-            item_hash[:source_concept_display] = item.sourceDescription
-            item_hash[:target_concept] = item.targetConcept
-
-            if item_hash[:target_concept] != nil && item_hash[:target_concept] != ''
-                item_hash[:target_concept] = item_hash[:target_concept].uuids.first
-            end
-
-            item_hash[:qualifier_concept] = item.qualifierConcept
-
-            if item_hash[:qualifier_concept] != nil && item_hash[:qualifier_concept] != ''
-                item_hash[:qualifier_concept] = item_hash[:qualifier_concept].uuids.first
-            end
-
-            item_hash[:target_concept_display] = item.targetDescription
-            item_hash[:qualifier_concept_display] = item.qualifierDescription
             item_hash[:state] = item.mappingItemStamp.state.enumName
             item_hash[:time] = DateTime.strptime((item.mappingItemStamp.time / 1000).to_s, '%s').strftime('%m/%d/%Y')
             item_hash[:author] = get_concept_metadata(item.mappingItemStamp.authorSequence)
@@ -382,26 +453,68 @@ class MappingController < ApplicationController
                 item_hash[:comment_id] = item.comments.first.identifiers.uuids.first
             end
 
-            item.mapItemExtendedFields.each_with_index do |field, index|
+            # loop through the column definitions which are ordered properly
+            column_definitions.each do |column_definition|
 
-                if field != nil
+                # handle Mapping Source Concept, Mapping Target Concept, or Mapping Qualifier
+                if column_definition[:id].starts_with?('DESCRIPTION')
 
-                    field_info = session[:mapset_item_definitions][field.columnNumber]
+                    # get the property that contains the field value
+                    if column_definition[:id] == 'DESCRIPTION_EQUIVALENCE_TYPE'
+                        item_hash[column_definition[:id]] = item.qualifierConcept
+
+                    elsif column_definition[:id] == 'DESCRIPTION_SOURCE'
+                        item_hash[column_definition[:id]] = item.sourceConcept
+                    else
+                        item_hash[column_definition[:id]] = item.targetConcept
+                    end
+
+                    # check to see if there is a value in the field before proceeding
+                    if item_hash[column_definition[:id]] != nil && item_hash[column_definition[:id]] != ''
+                        item_hash[column_definition[:id]] = item_hash[column_definition[:id]].uuids.first
+                    else
+                        item_hash[column_definition[:id]] = ''
+                    end
+
+                    # check to see if computedDisplayFields is present, otherwise just use the UUID for the value
+                    if item.computedDisplayFields
+                        item_hash[column_definition[:id] + '_display'] = item.computedDisplayFields[column_definition[:order].to_i].value
+                    else
+                        item_hash[column_definition[:id] + '_display'] = item_hash[column_definition[:id]]
+                    end
+
+                # handle the calculated fields
+                elsif ['SOURCE', 'TARGET'].include?(column_definition[:component_type])
+
+                    item_hash[column_definition[:id]] = item.computedDisplayFields[column_definition[:order].to_i].value
+
+                # handle extended field definitions
+                else
+
+                    # get the extended field column order from the definition so we can process the correct item from mapItemExtendedFields
+                    field = item.mapItemExtendedFields[column_definition[:order].to_i]
+
+                    # if there is no field data skip to the next column
+                    if field == nil
+                        next
+                    end
 
                     # TODO - look into GEM mappings having data type and field data that doesn't match (GEM PCS ICD-10 to ICD-9)
-                    if field_info[:data_type] == 'UUID'
+                    # for UUID data types we need a display field
+                    if column_definition[:data_type] == 'UUID'
 
                         if field.respond_to? :conceptDescription
-                            item_hash[field_info[:name] + '_display'] = field.conceptDescription
+                            item_hash[column_definition[:id] + '_display'] = field.conceptDescription
                         else
-                            item_hash[field_info[:name] + '_display'] = field.data
+                            item_hash[column_definition[:id] + '_display'] = field.data
                         end
                     end
 
-                    if field_info[:data_type] == 'LONG' && field_info[:label_display].downcase.include?('date')
-                        item_hash[field_info[:name]] = DateTime.strptime(field.data.to_s, '%Q').strftime('%m/%d/%Y')
+                    # if we are dealing with a date make sure to process it properly, otherwise just escape the data and then add it to our item hash
+                    if column_definition[:data_type] == 'LONG' && column_definition[:text].downcase.include?('date')
+                        item_hash[column_definition[:id]] = DateTime.strptime(field.data.to_s, '%Q').strftime('%m/%d/%Y')
                     else
-                        item_hash[field_info[:name]] = html_escape(field.data)
+                        item_hash[column_definition[:id]] = html_escape(field.data)
                     end
                 end
             end
@@ -441,6 +554,7 @@ class MappingController < ApplicationController
 
             set_extended_fields = []
             item_extended_fields = []
+            item_display_fields = []
 
             if params['komet_mapping_set_editor_include_fields'] != nil
 
@@ -488,16 +602,33 @@ class MappingController < ApplicationController
 
                 if params['komet_mapping_set_editor_items_include_fields'] != nil
 
+                    extended_field_count = 0
+
                     params['komet_mapping_set_editor_items_include_fields'].each do |item_field|
 
                         item_field_label = params['komet_mapping_set_editor_items_include_fields_' + item_field + '_label']
                         item_field_data_type = params['komet_mapping_set_editor_items_include_fields_' + item_field + '_data_type']
+                        item_field_component_type = params['komet_mapping_set_editor_items_include_fields_' + item_field + '_component_type']
                         item_field_required = params['komet_mapping_set_editor_items_include_fields_' + item_field + '_required']
 
-                        item_extended_fields << {columnLabelConcept: item_field_label, columnDataType: item_field_data_type, columnRequired: item_field_required}
+                        if ['SOURCE', 'TARGET', 'EQUIVALENCE_TYPE'].include?(item_field_component_type)
+
+                            if item_field_label.starts_with?('DESCRIPTION')
+                                item_field_label = 'DESCRIPTION'
+                            end
+
+                        else
+
+                            item_extended_fields << {columnLabelConcept: item_field_label, columnDataType: item_field_data_type, columnRequired: item_field_required}
+                            item_field_label = extended_field_count
+                            extended_field_count += extended_field_count
+                        end
+
+                        item_display_fields << {id: item_field_label, fieldComponentType: item_field_component_type}
                     end
 
                     body_params[:mapItemExtendedFieldsDefinition] = item_extended_fields
+                    body_params[:displayFields] = item_display_fields
                 end
 
                 return_value = MappingApis::get_mapping_api(action: MappingApiActions::ACTION_CREATE_SET, additional_req_params: request_params, body_params: body_params )
@@ -556,11 +687,9 @@ class MappingController < ApplicationController
 
                 begin
 
+                    source_concept = nil
                     target_concept = nil
-
-                    if item['target_concept'] != nil && item['target_concept'] != ''
-                        target_concept = item['target_concept']
-                    end
+                    qualifier_concept = nil
 
                     if item['state'].downcase == 'active'
                         active = true
@@ -568,29 +697,46 @@ class MappingController < ApplicationController
                         active = false
                     end
 
-                    qualifier_concept = nil
+
 
                     if item['qualifier_concept'] != nil && item['qualifier_concept'] != ''
                         qualifier_concept = item['qualifier_concept']
                     end
-
-                    body_params = {targetConcept: target_concept, qualifierConcept: qualifier_concept, active: active}
 
                     extended_fields = []
 
                     field_info.each do |field|
 
                         data_type = field[:data_type]
-                        data = item[field[:name]]
+                        data = item[field[:id]]
 
-                        if data_type != 'UUID'
+                        if field[:id].starts_with?('DESCRIPTION')
+
+                            if data == nil && data == ''
+                                next
+                            end
+
+                            if field[:id] == 'DESCRIPTION_SOURCE'
+                                source_concept = data
+                            elsif field[:id] == 'DESCRIPTION_TARGET'
+                                target_concept = data
+                            else
+                                qualifier_concept = data
+                            end
+
+                            next
+
+                        elsif field[:component_type] == 'SOURCE' || field[:component_type] == 'TARGET'
+                            next
+
+                        elsif data_type != 'UUID'
 
                             if ['FLOAT', 'DOUBLE'].include?(data_type)
                                 data = BigDecimal.new(data);
 
                             elsif ['LONG', 'INTEGER'].include?(data_type)
 
-                                if data_type == 'LONG' && field[:label_display].downcase.include?('date') && data.include?('/')
+                                if data_type == 'LONG' && field[:text].downcase.include?('date') && data.include?('/')
                                     data = DateTime.strptime(data, '%m/%d/%Y').strftime('%Q')
                                 end
 
@@ -618,7 +764,7 @@ class MappingController < ApplicationController
                         extended_fields << {columnNumber: field[:order], data: data, '@class' => data_type}
                     end
 
-                    body_params[:mapItemExtendedFields] = extended_fields
+                    body_params = {targetConcept: target_concept, qualifierConcept: qualifier_concept, mapItemExtendedFields: extended_fields, active: active}
                     item_error = ''
 
                     # if the item ID is a UUID, then it is an existing item to be updated, otherwise it is a new item to be created
@@ -634,7 +780,7 @@ class MappingController < ApplicationController
                     else
 
                         body_params[:mapSetConcept] = set_id
-                        body_params[:sourceConcept] = item['source_concept']
+                        body_params[:sourceConcept] = source_concept
 
                         return_value = MappingApis::get_mapping_api(action: MappingApiActions::ACTION_CREATE_ITEM, additional_req_params: {editToken: get_edit_token}, body_params: body_params)
 
