@@ -4,7 +4,7 @@ This changelog summarizes changes and fixes which are a part of each revision.  
 where provided, and the git commit history.
 
 * 2017/02/?? - 1.61 - PENDING
-    *
+    * Renamed 'Mapping Qualifier' field to 'Equivalence Type' (Jazz: 440248)
 
 * 2017/02/03 - 1.60
     * Updated mapping to allow item field order to be chosen and calculated fields to be added to map items. Both occur only on mapset create. (Jazz: 444802, 430117)

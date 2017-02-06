@@ -232,7 +232,7 @@ class MappingController < ApplicationController
                 # setup the intrinsic map item fields
                 source_info = {id: 'DESCRIPTION_SOURCE', description: 'Mapping Source Concept', order: 0, data_type: 'UUID', required: true, text: 'Mapping Source Concept', removable: false, display: true, component_type: 'SOURCE'}
                 target_info = {id: 'DESCRIPTION_TARGET', description: 'Mapping Target Concept', order: 1, data_type: 'UUID', required: true, text: 'Mapping Target Concept', removable: false, display: true, component_type: 'TARGET'}
-                qualifier_info = {id: 'DESCRIPTION_EQUIVALENCE_TYPE', description: 'Mapping Qualifier', order: 2, data_type: 'SELECT', required: true, text: 'Mapping Qualifier', removable: false, display: true, component_type: 'EQUIVALENCE_TYPE'}
+                qualifier_info = {id: 'DESCRIPTION_EQUIVALENCE_TYPE', description: 'Equivalence Type', order: 2, data_type: 'SELECT', required: true, text: 'Equivalence Type', removable: false, display: true, component_type: 'EQUIVALENCE_TYPE'}
 
                 # load the intrinsic map item fields into our return mapset variable
                 @map_set['item_field_DESCRIPTION_SOURCE'] = source_info
@@ -297,7 +297,7 @@ class MappingController < ApplicationController
                     elsif field.id == 'DESCRIPTION' && field.componentType.enumName == 'EQUIVALENCE_TYPE'
 
                         @map_set[:item_fields] << 'DESCRIPTION_EQUIVALENCE_TYPE'
-                        field_info = {id: 'DESCRIPTION_EQUIVALENCE_TYPE', description: 'Mapping Qualifier', order: computed_field_index, data_type: 'SELECT', required: true, text: 'Mapping Qualifier', removable: false, display: true, component_type: 'EQUIVALENCE_TYPE'}
+                        field_info = {id: 'DESCRIPTION_EQUIVALENCE_TYPE', description: 'Equivalence Type', order: computed_field_index, data_type: 'SELECT', required: true, text: 'Equivalence Type', removable: false, display: true, component_type: 'EQUIVALENCE_TYPE'}
                         @map_set['item_field_DESCRIPTION_EQUIVALENCE_TYPE'] = field_info
                         computed_field_index += 1
 
@@ -378,7 +378,7 @@ class MappingController < ApplicationController
             # setup the intrinsic map item fields
             source_info = {id: 'DESCRIPTION_SOURCE', description: 'Mapping Source Concept', order: nil, data_type: 'UUID', required: true, text: 'Mapping Source Concept', removable: false, display: true, component_type: 'SOURCE'}
             target_info = {id: 'DESCRIPTION_TARGET', description: 'Mapping Target Concept', order: nil, data_type: 'UUID', required: true, text: 'Mapping Target Concept', removable: false, display: true, component_type: 'TARGET'}
-            qualifier_info = {id: 'DESCRIPTION_EQUIVALENCE_TYPE', description: 'Mapping Qualifier', order: nil, data_type: 'SELECT', required: true, text: 'Mapping Qualifier', removable: false, display: true, component_type: 'EQUIVALENCE_TYPE'}
+            qualifier_info = {id: 'DESCRIPTION_EQUIVALENCE_TYPE', description: 'Equivalence Type', order: nil, data_type: 'SELECT', required: true, text: 'Equivalence Type', removable: false, display: true, component_type: 'EQUIVALENCE_TYPE'}
 
             # load the intrinsic map item fields into our return mapset variable
             @map_set['item_field_DESCRIPTION_SOURCE'] = source_info
