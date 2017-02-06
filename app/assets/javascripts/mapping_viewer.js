@@ -1021,7 +1021,7 @@ var MappingViewer = function(viewerID, currentSetID, viewerAction) {
         var rowID = "";
         var rowString = null;
         var idPrefix = "komet_mapping_item_" + itemID;
-        var ariaLabel = "Mapping Item";
+        var ariaLabel = "Mapping Item ";
         var classes = "form-control komet-mapping-show-on-edit";
 
         if (rowData != null){
@@ -1036,7 +1036,7 @@ var MappingViewer = function(viewerID, currentSetID, viewerAction) {
             path = rowData.path;
             commentID = rowData.comment_id;
             comment = rowData.comment;
-            ariaLabel = rowData.source_concept_display;
+            ariaLabel = rowData.item_name + " ";
 
             rowString = '<div id="' + rowID + '" class="komet-mapping-item-edit-row">';
         } else {
@@ -1064,13 +1064,13 @@ var MappingViewer = function(viewerID, currentSetID, viewerAction) {
 
             rowString += '<div>';
 
+            var displayValue = value;
+
+            if (!isNew && rowData[field.id + "_display"] != undefined) {
+                displayValue = rowData[field.id + "_display"];
+            }
+
             if (dataType == "UUID" || field.id == "DESCRIPTION_TARGET" || (field.id == "DESCRIPTION_SOURCE" && isNew)) {
-
-                var displayValue = value;
-
-                if (!isNew && rowData[field.id + "_display"] != undefined) {
-                    displayValue = rowData[field.id + "_display"];
-                }
 
                 rowString += '<autosuggest '
                     + 'id-base="' + idPrefix + "_" + field.id + '" '
@@ -1082,24 +1082,8 @@ var MappingViewer = function(viewerID, currentSetID, viewerAction) {
                     + 'classes="komet-mapping-show-on-edit" '
                     + '></autosuggest>';
 
-                value = displayValue;
-
             } else if ((field.id == "DESCRIPTION_SOURCE" && !isNew) || componentType == "SOURCE" || componentType == "TARGET"){
-
-                if (!isNew && rowData[field.id + "_display"] != undefined) {
-                    value = rowData[field.id + "_display"];
-                }
-
-                rowString += '<div class="komet-mapping-show-on-edit" aria-label="' + itemAriaLabel + '">' + value + '</div>';
-
-            } else if (componentType == "EQUIVALENCE_TYPE"){
-
-                var qualifierOptions = [{value: '', label: 'No Restrictions'}, {value: '8aa6421d-4966-5230-ae5f-aca96ee9c2c1', label: 'Exact'}, {value: 'c1068428-a986-5c12-9583-9b2d3a24fdc6', label: 'Broader Than'}, {value: '250d3a08-4f28-5127-8758-e8df4947f89c', label: 'Narrower Than'},{value: 'e5f7f98f-9607-55a7-bbc4-25f2e61df23d',label:'Unmapped'}];
-                rowString += UIHelper.createSelectFieldString(id, name, classes, qualifierOptions, value, itemAriaLabel);
-
-                if (!isNew && rowData[field.id + "_display"] != undefined) {
-                    value = rowData[field.id + "_display"];
-                }
+                rowString += '<div class="komet-mapping-show-on-edit" aria-label="' + itemAriaLabel + '">' + displayValue + '</div>';
 
             } else if (dataType == "BOOLEAN"){
                 rowString += UIHelper.createSelectFieldString(id, name, classes, UIHelper.getPreDefinedOptionsForSelect("true_false"), value, itemAriaLabel);
@@ -1111,7 +1095,7 @@ var MappingViewer = function(viewerID, currentSetID, viewerAction) {
                 rowString += '<input name="' + name + '" id="' + id + '" class="' + classes + '" value="' + value + '" aria-label="' + itemAriaLabel + '">';
             }
 
-            rowString += '<div class="komet-mapping-show-on-view" aria-label="' + itemAriaLabel + '">' + value + '</div></div>';
+            rowString += '<div class="komet-mapping-show-on-view" aria-label="' + itemAriaLabel + '">' + displayValue + '</div></div>';
 
         }.bind(this));
 

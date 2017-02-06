@@ -5,6 +5,9 @@ where provided, and the git commit history.
 
 * 2017/02/?? - 1.61 - PENDING
     * Renamed 'Mapping Qualifier' field to 'Equivalence Type' (Jazz: 440248)
+    * Now pulling Equivalence Type' mapping item field options from the appropriate concepts (Jazz: 440248)
+    * Added option to UIHelper.createSelectFieldString to create empty option tags
+    * Fixed autosuggest field so if you clear the field completely it will clear out the underlying value
 
 * 2017/02/03 - 1.60
     * Updated mapping to allow item field order to be chosen and calculated fields to be added to map items. Both occur only on mapset create. (Jazz: 444802, 430117)

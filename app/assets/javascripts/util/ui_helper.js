@@ -628,7 +628,7 @@ var UIHelper = (function () {
 
         return function (event, ui) {
 
-            if (this.value.length >= characterTriggerLimit && !ui.item) {
+            if (this.value.length == 0 || (this.value.length >= characterTriggerLimit && !ui.item)) {
 
                 var idField = $("#" + this.id.replace("_display", ""));
                 idField.val("");
@@ -723,13 +723,30 @@ var UIHelper = (function () {
 
     };
 
-    var createSelectFieldString = function(selectID, selectName, classes, options, selectedItem, label) {
+    var createSelectFieldString = function(selectID, selectName, classes, options, selectedItem, label, createEmptyOption) {
+
+        if (createEmptyOption == null || createEmptyOption == undefined){
+            createEmptyOption = false;
+        }
 
         var fieldString = '<select id="' + selectID + '"'
             + ' name="' + selectName + '"'
             + ' class="form-control ' + classes + '"'
             + ((label) ? (' aria-label="' + label) + '"' : '')
             + '>';
+
+        // create an empty option tag if that was specified
+        if (createEmptyOption){
+
+            fieldString += '<option ';
+
+            // make sure to select it if there was no value for the field, otherwise the dirty form check will get triggered
+            if (selectedItem == null || selectedItem.toString() == "") {
+                fieldString += 'selected="selected" ';
+            }
+
+            fieldString += 'value=""></option>';
+        }
 
         for (var i = 0; i < options.length; i++) {
 
