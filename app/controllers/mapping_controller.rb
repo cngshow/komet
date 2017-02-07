@@ -145,10 +145,10 @@ class MappingController < ApplicationController
         session[:mapset_item_definitions] = []
         coordinates_token = session[:coordinatestoken].token
         @map_set = {id: '', name: '', description: '', version: '', vuid: '', rules: '', include_fields: [], state: '', status: 'Active', time: '', module: '', path: '', comment_id: 0, comment: ''}
-        source_system_id = '32e30e80-3fac-5317-80cf-d85eab22fa9e'
-        source_version_id = '5b3479cb-25b2-5965-a031-54238588218f'
-        target_system_id = '6b31a67a-7e6d-57c0-8609-52912076fce8'
-        target_version_id = 'b5165f68-b934-5c79-ac71-bd5375f7c809'
+        source_system_id = $isaac_metadata_auxiliary['MAPPING_SOURCE_CODE_SYSTEM']['uuids'].first[:uuid]
+        source_version_id = $isaac_metadata_auxiliary['MAPPING_SOURCE_CODE_SYSTEM_VERSION']['uuids'].first[:uuid]
+        target_system_id = $isaac_metadata_auxiliary['MAPPING_TARGET_CODE_SYSTEM']['uuids'].first[:uuid]
+        target_version_id = $isaac_metadata_auxiliary['MAPPING_TARGET_CODE_SYSTEM_VERSION']['uuids'].first[:uuid]
 
         # get the options to populate the Equivalence Type dropdown
         equivalence_options = [{value: '', label: 'No Restrictions'}]
@@ -311,8 +311,9 @@ class MappingController < ApplicationController
                     # handle calculated fields    
                     elsif field.componentType.enumName == 'SOURCE' || field.componentType.enumName == 'TARGET'
 
+                        field_name = field.componentType.enumName.titleize + ' ' + field.description
                         @map_set[:item_fields] << field.id
-                        field_info = {id: field.id, description: field.description, order: computed_field_index, data_type: 'STRING', required: false, text: field.description, removable: true, display: true, component_type: field.componentType.enumName}
+                        field_info = {id: field.id, description: field_name, order: computed_field_index, data_type: 'STRING', required: false, text: field_name, removable: true, display: true, component_type: field.componentType.enumName}
                         @map_set['item_field_' + field.id] = field_info
                         computed_field_index += 1
                         
@@ -595,16 +596,11 @@ class MappingController < ApplicationController
 
                     set_extended_fields << {extensionNameConcept: set_field_label, extensionValue: {'@class' => set_field_data_type, columnNumber: 1, data: set_field_value}}
                 end
-
-
             end
 
             if params[:komet_mapping_set_editor_rules] != ''
 
-                # TODO - use the first line when implemented in the metadata
-                #rules_id = $isaac_metadata_auxiliary['DYNAMIC_SEMEME_COLUMN_BUSINESS_RULES']['uuids'].first[:uuid]
-                rules_id = '7ebc6742-8586-58c3-b49d-765fb5a93f35'
-
+                rules_id = $isaac_metadata_auxiliary['BUSINESS_RULES']['uuids'].first[:uuid]
                 set_extended_fields << {extensionNameConcept: rules_id, extensionValue: {'@class' => 'gov.vha.isaac.rest.api1.data.sememe.dataTypes.RestDynamicSememeString', columnNumber: 1, data: params[:komet_mapping_set_editor_rules]}}
             end
 
