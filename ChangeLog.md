@@ -3,6 +3,14 @@ Komet Changelog
 This changelog summarizes changes and fixes which are a part of each revision.  For more details on the fixes, refer tracking numbers 
 where provided, and the git commit history.
 
+* 2017/02/?? - 1.61 - PENDING
+    * Renamed 'Mapping Qualifier' field to 'Equivalence Type' (Jazz: 440248)
+    * Now pulling Equivalence Type' mapping item field options from the appropriate concepts (Jazz: 440248)
+    * Added option to UIHelper.createSelectFieldString to create empty option tags
+    * Fixed autosuggest field so if you clear the field completely it will clear out the underlying value
+    * Renamed some map set fields and pulled IDs from metadata instead of hardcoding.
+    * Added 'Source' or 'Target' to mapset calculated column labels
+
 * 2017/02/03 - 1.60
     * Updated mapping to allow item field order to be chosen and calculated fields to be added to map items. Both occur only on mapset create. (Jazz: 444802, 430117)
 
@@ -97,7 +105,6 @@ where provided, and the git commit history.
     * fixed 508 contrast error on mapset,concept detail and user perference page
     * Added state field to map items
     * Added a fix for selecting the start date as today for VHAT export
-
 
 * 2016/11/30 - 1.46:
    * Fixed NAN text showing when adding new concept dialects

@@ -76,13 +76,13 @@
                         <div class="komet-mapping-set-definition-row">
 
                             <div class="komet-mapping-set-definition-item">
-                                <%= label_tag "komet_mapping_set_editor_name_#{@viewer_id}", 'Fully Specified Name:' %>
+                                <%= label_tag "komet_mapping_set_editor_name_#{@viewer_id}", 'Name:' %>
                                 <%= text_field_tag :komet_mapping_set_editor_name, @map_set[:name], id: "komet_mapping_set_editor_name_#{@viewer_id}", class: 'form-control komet-mapping-show-on-edit' %>
                                 <div class="komet-mapping-show-on-view"><%= @map_set[:name] %></div>
                             </div>
 
                             <div class="komet-mapping-set-definition-item">
-                                <%= label_tag "komet_mapping_set_editor_description_#{@viewer_id}", 'Description:' %>
+                                <%= label_tag "komet_mapping_set_editor_description_#{@viewer_id}", 'Purpose:' %>
                                 <%= text_field_tag :komet_mapping_set_editor_description, @map_set[:description], id: "komet_mapping_set_editor_description_#{@viewer_id}", class: 'form-control komet-mapping-show-on-edit' %>
                                 <div class="komet-mapping-show-on-view"><%= @map_set[:description] %></div>
                             </div>

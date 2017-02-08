@@ -145,10 +145,17 @@ class MappingController < ApplicationController
         session[:mapset_item_definitions] = []
         coordinates_token = session[:coordinatestoken].token
         @map_set = {id: '', name: '', description: '', version: '', vuid: '', rules: '', include_fields: [], state: '', status: 'Active', time: '', module: '', path: '', comment_id: 0, comment: ''}
-        source_system_id = '32e30e80-3fac-5317-80cf-d85eab22fa9e'
-        source_version_id = '5b3479cb-25b2-5965-a031-54238588218f'
-        target_system_id = '6b31a67a-7e6d-57c0-8609-52912076fce8'
-        target_version_id = 'b5165f68-b934-5c79-ac71-bd5375f7c809'
+        source_system_id = $isaac_metadata_auxiliary['MAPPING_SOURCE_CODE_SYSTEM']['uuids'].first[:uuid]
+        source_version_id = $isaac_metadata_auxiliary['MAPPING_SOURCE_CODE_SYSTEM_VERSION']['uuids'].first[:uuid]
+        target_system_id = $isaac_metadata_auxiliary['MAPPING_TARGET_CODE_SYSTEM']['uuids'].first[:uuid]
+        target_version_id = $isaac_metadata_auxiliary['MAPPING_TARGET_CODE_SYSTEM_VERSION']['uuids'].first[:uuid]
+
+        # get the options to populate the Equivalence Type dropdown
+        equivalence_options = [{value: '', label: 'No Restrictions'}]
+
+        get_direct_children($isaac_metadata_auxiliary['MAPPING_QUALIFIERS']['uuids'].first[:uuid], true, true).each do |option|
+            equivalence_options << {value: option[:concept_id], label: option[:text]}
+        end
 
         @set_id = params[:set_id]
 
@@ -232,7 +239,7 @@ class MappingController < ApplicationController
                 # setup the intrinsic map item fields
                 source_info = {id: 'DESCRIPTION_SOURCE', description: 'Mapping Source Concept', order: 0, data_type: 'UUID', required: true, text: 'Mapping Source Concept', removable: false, display: true, component_type: 'SOURCE'}
                 target_info = {id: 'DESCRIPTION_TARGET', description: 'Mapping Target Concept', order: 1, data_type: 'UUID', required: true, text: 'Mapping Target Concept', removable: false, display: true, component_type: 'TARGET'}
-                qualifier_info = {id: 'DESCRIPTION_EQUIVALENCE_TYPE', description: 'Mapping Qualifier', order: 2, data_type: 'SELECT', required: true, text: 'Mapping Qualifier', removable: false, display: true, component_type: 'EQUIVALENCE_TYPE'}
+                qualifier_info = {id: 'DESCRIPTION_EQUIVALENCE_TYPE', description: 'Equivalence Type', order: 2, data_type: 'SELECT', required: true, text: 'Equivalence Type', removable: false, display: true, component_type: 'EQUIVALENCE_TYPE', options: equivalence_options}
 
                 # load the intrinsic map item fields into our return mapset variable
                 @map_set['item_field_DESCRIPTION_SOURCE'] = source_info
@@ -297,15 +304,16 @@ class MappingController < ApplicationController
                     elsif field.id == 'DESCRIPTION' && field.componentType.enumName == 'EQUIVALENCE_TYPE'
 
                         @map_set[:item_fields] << 'DESCRIPTION_EQUIVALENCE_TYPE'
-                        field_info = {id: 'DESCRIPTION_EQUIVALENCE_TYPE', description: 'Mapping Qualifier', order: computed_field_index, data_type: 'SELECT', required: true, text: 'Mapping Qualifier', removable: false, display: true, component_type: 'EQUIVALENCE_TYPE'}
+                        field_info = {id: 'DESCRIPTION_EQUIVALENCE_TYPE', description: 'Equivalence Type', order: computed_field_index, data_type: 'SELECT', required: true, text: 'Equivalence Type', removable: false, display: true, component_type: 'EQUIVALENCE_TYPE', options: equivalence_options}
                         @map_set['item_field_DESCRIPTION_EQUIVALENCE_TYPE'] = field_info
                         computed_field_index += 1
 
                     # handle calculated fields    
                     elsif field.componentType.enumName == 'SOURCE' || field.componentType.enumName == 'TARGET'
 
+                        field_name = field.componentType.enumName.titleize + ' ' + field.description
                         @map_set[:item_fields] << field.id
-                        field_info = {id: field.id, description: field.description, order: computed_field_index, data_type: 'STRING', required: false, text: field.description, removable: true, display: true, component_type: field.componentType.enumName}
+                        field_info = {id: field.id, description: field_name, order: computed_field_index, data_type: 'STRING', required: false, text: field_name, removable: true, display: true, component_type: field.componentType.enumName}
                         @map_set['item_field_' + field.id] = field_info
                         computed_field_index += 1
                         
@@ -378,7 +386,7 @@ class MappingController < ApplicationController
             # setup the intrinsic map item fields
             source_info = {id: 'DESCRIPTION_SOURCE', description: 'Mapping Source Concept', order: nil, data_type: 'UUID', required: true, text: 'Mapping Source Concept', removable: false, display: true, component_type: 'SOURCE'}
             target_info = {id: 'DESCRIPTION_TARGET', description: 'Mapping Target Concept', order: nil, data_type: 'UUID', required: true, text: 'Mapping Target Concept', removable: false, display: true, component_type: 'TARGET'}
-            qualifier_info = {id: 'DESCRIPTION_EQUIVALENCE_TYPE', description: 'Mapping Qualifier', order: nil, data_type: 'SELECT', required: true, text: 'Mapping Qualifier', removable: false, display: true, component_type: 'EQUIVALENCE_TYPE'}
+            qualifier_info = {id: 'DESCRIPTION_EQUIVALENCE_TYPE', description: 'Equivalence Type', order: nil, data_type: 'SELECT', required: true, text: 'Equivalence Type', removable: false, display: true, component_type: 'EQUIVALENCE_TYPE', options: equivalence_options}
 
             # load the intrinsic map item fields into our return mapset variable
             @map_set['item_field_DESCRIPTION_SOURCE'] = source_info
@@ -427,6 +435,8 @@ class MappingController < ApplicationController
         #show_inactive = params[:show_inactive]
         results = {column_definitions: column_definitions}
         item_data = []
+        source_name = ''
+        target_name = ''
 
         items = MappingApis::get_mapping_api(action: MappingApiActions::ACTION_ITEMS, uuid_or_id: set_id,  additional_req_params: {coordToken: coordinates_token, allowedStates: view_params['statesToView'], expand: 'referencedDetails,comments '}) # CommonRest::CacheRequest => false
 
@@ -437,6 +447,8 @@ class MappingController < ApplicationController
         items.each do |item|
 
             item_hash = {}
+            source_name = ''
+            target_name = ''
 
             item_hash[:item_id] = item.identifiers.uuids.first
             item_hash[:state] = item.mappingItemStamp.state.enumName
@@ -478,7 +490,15 @@ class MappingController < ApplicationController
 
                     # check to see if computedDisplayFields is present, otherwise just use the UUID for the value
                     if item.computedDisplayFields
+
                         item_hash[column_definition[:id] + '_display'] = item.computedDisplayFields[column_definition[:order].to_i].value
+
+                        # if this is the source or target concept record the display name in the return object for convenient access since these columns aren't always in a predefined order
+                        if column_definition[:id] == 'DESCRIPTION_SOURCE'
+                            source_name = item.computedDisplayFields[column_definition[:order].to_i].value
+                        elsif column_definition[:id] == 'DESCRIPTION_TARGET' && item.computedDisplayFields[column_definition[:order].to_i].value != nil
+                            target_name = item.computedDisplayFields[column_definition[:order].to_i].value
+                        end
                     else
                         item_hash[column_definition[:id] + '_display'] = item_hash[column_definition[:id]]
                     end
@@ -517,6 +537,9 @@ class MappingController < ApplicationController
                         item_hash[column_definition[:id]] = html_escape(field.data)
                     end
                 end
+
+                # record the item display name in the item hash for convenient access since these columns aren't always in a predefined order
+                item_hash[:item_name] = source_name + ' - ' + target_name
             end
 
             item_data << item_hash
@@ -573,16 +596,11 @@ class MappingController < ApplicationController
 
                     set_extended_fields << {extensionNameConcept: set_field_label, extensionValue: {'@class' => set_field_data_type, columnNumber: 1, data: set_field_value}}
                 end
-
-
             end
 
             if params[:komet_mapping_set_editor_rules] != ''
 
-                # TODO - use the first line when implemented in the metadata
-                #rules_id = $isaac_metadata_auxiliary['DYNAMIC_SEMEME_COLUMN_BUSINESS_RULES']['uuids'].first[:uuid]
-                rules_id = '7ebc6742-8586-58c3-b49d-765fb5a93f35'
-
+                rules_id = $isaac_metadata_auxiliary['BUSINESS_RULES']['uuids'].first[:uuid]
                 set_extended_fields << {extensionNameConcept: rules_id, extensionValue: {'@class' => 'gov.vha.isaac.rest.api1.data.sememe.dataTypes.RestDynamicSememeString', columnNumber: 1, data: params[:komet_mapping_set_editor_rules]}}
             end
 
