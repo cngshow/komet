@@ -3,6 +3,9 @@ Komet Changelog
 This changelog summarizes changes and fixes which are a part of each revision.  For more details on the fixes, refer tracking numbers 
 where provided, and the git commit history.
 
+* 2017/02/?? - 1.63 - PENDING
+    *
+
 * 2017/02/09 - 1.62
     * Renamed 'Mapping Qualifier' field to 'Equivalence Type' (Jazz: 440248)
     * Now pulling Equivalence Type' mapping item field options from the appropriate concepts (Jazz: 440248)
