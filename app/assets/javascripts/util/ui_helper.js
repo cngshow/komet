@@ -1134,18 +1134,6 @@ var UIHelper = (function () {
         };
     }
 
-    function cloneConcept(id) {
-
-        return function () {
-
-            params = {id: id};
-
-            $.get(gon.routes.taxonomy_clone_concept_path, params, function (results) {
-                console.log("Clone Concept " + uuid);
-            });
-        };
-    }
-
     function changeConceptState(element, concept_id, conceptText, newState) {
 
         return function (){
@@ -1167,7 +1155,7 @@ var UIHelper = (function () {
                 if (results.state != null) {
 
                     splitter.prepend(UIHelper.generatePageMessage("The state of concept " + conceptText + " was successfully updated.", true, "success"));
-                    TaxonomyModule.tree.reloadTreeStatedView(TaxonomyModule.getStatedView(), false);
+                    TaxonomyModule.tree.reloadTree(TaxonomyModule.getViewParams(), false);
 
                     // if the mapping module has been loaded then refresh the mapping tree
                     if (MappingModule.tree){

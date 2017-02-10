@@ -9,13 +9,11 @@ var ConceptsModule = (function () {
 
         // listen for the onChange event broadcast by any of the taxonomy trees.
         $.subscribe(KometChannels.Taxonomy.taxonomyTreeNodeSelectedChannel, function (e, treeID, conceptID, stated, viewerID, windowType) {
-
             callLoadViewerData(conceptID, stated, VIEW, viewerID, windowType);
         });
 
         // listen for the onChange event broadcast by selecting a search result.
         $.subscribe(KometChannels.Taxonomy.taxonomySearchResultSelectedChannel, function (e, conceptID, viewerID, windowType) {
-
             callLoadViewerData(conceptID, TaxonomyModule.defaultStatedView, VIEW, viewerID, windowType);
         });
 
@@ -128,8 +126,8 @@ var ConceptsModule = (function () {
         WindowManager.deferred.resolve();
     }
 
-    function setStatedView(viewerID, field) {
-        loadViewerData(WindowManager.viewers[viewerID].currentConceptID, field.value, VIEW, viewerID);
+    function setStatedView(viewerID) {
+        loadViewerData(WindowManager.viewers[viewerID].currentConceptID, WindowManager.viewers[viewerID].getViewParams(), VIEW, viewerID);
     }
 
     return {

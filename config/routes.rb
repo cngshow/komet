@@ -37,7 +37,6 @@ Rails.application.routes.draw do
     post 'komet_dashboard/get_new_property_info', :as => :taxonomy_get_new_property_info
     post 'komet_dashboard/edit_concept', :as => :taxonomy_edit_concept
     get 'komet_dashboard/change_concept_state', :as => :taxonomy_change_concept_state
-    get 'komet_dashboard/clone_concept', :as => :taxonomy_clone_concept
 
 
     # workflow routes

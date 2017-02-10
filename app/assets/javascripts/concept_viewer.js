@@ -149,7 +149,7 @@ var ConceptViewer = function(viewerID, currentConceptID, viewerAction) {
 
     ConceptViewer.prototype.loadLineageTrees = function(){
 
-        var stated = this.getStatedView();
+        var viewParams = this.getViewParams();
 
         if (this.trees.hasOwnProperty(this.PARENTS_TREE) && this.trees[this.PARENTS_TREE].tree.jstree(true)){
 
@@ -157,8 +157,8 @@ var ConceptViewer = function(viewerID, currentConceptID, viewerAction) {
             this.trees[this.CHILDREN_TREE].tree.jstree(true).destroy();
         }
 
-        this.trees[this.PARENTS_TREE] = new KometTaxonomyTree(this.PARENTS_TREE, stated, true, this.currentConceptID, false, this.viewerID);
-        this.trees[this.CHILDREN_TREE] = new KometTaxonomyTree(this.CHILDREN_TREE, stated, false, this.currentConceptID, false, this.viewerID, false);
+        this.trees[this.PARENTS_TREE] = new KometTaxonomyTree(this.PARENTS_TREE, viewParams, true, this.currentConceptID, false, this.viewerID);
+        this.trees[this.CHILDREN_TREE] = new KometTaxonomyTree(this.CHILDREN_TREE, viewParams, false, this.currentConceptID, false, this.viewerID, false);
 
         this.trees[this.PARENTS_TREE].tree.bind('ready.jstree', function (event, data) {
 
@@ -208,7 +208,7 @@ var ConceptViewer = function(viewerID, currentConceptID, viewerAction) {
 
         TaxonomyModule.tree.findNodeInTree(
             this.currentConceptID,
-            TaxonomyModule.getStatedView(),
+            TaxonomyModule.getViewParams(),
             function (foundNodeId) {},
             true
         );
@@ -254,7 +254,7 @@ var ConceptViewer = function(viewerID, currentConceptID, viewerAction) {
 
         // load the parameters from the form to add to the query string sent in the ajax data call
         var pageSize = 25;
-        var refsetsParams = "?concept_id=" + this.currentConceptID + "&stated=" + this.getStatedView();
+        var refsetsParams = "?concept_id=" + this.currentConceptID + "&view_params=" + this.getViewParams();
 
         function renderCell(params) {
 
@@ -330,6 +330,10 @@ var ConceptViewer = function(viewerID, currentConceptID, viewerAction) {
 
     ConceptViewer.prototype.getStatedView = function(){
         return $('#komet_concept_stated_' + this.viewerID).prop("checked");
+    };
+
+    ConceptViewer.prototype.getViewParams = function(){
+        return {stated: this.getStatedView()};
     };
 
     ConceptViewer.prototype.exportCSV  = function(){
@@ -449,7 +453,7 @@ var ConceptViewer = function(viewerID, currentConceptID, viewerAction) {
                     } else {
 
                         $("#komet_viewer_" + viewerID).off('unsavedCheck');
-                        TaxonomyModule.tree.reloadTreeStatedView(TaxonomyModule.getStatedView(), false);
+                        TaxonomyModule.tree.reloadTree(TaxonomyModule.getViewParams(), false);
                         $.publish(KometChannels.Taxonomy.taxonomyConceptEditorChannel, [ConceptsModule.EDIT, data.concept_id, thisViewer.viewerID, WindowManager.INLINE]);
                     }
                 }
@@ -658,8 +662,8 @@ var ConceptViewer = function(viewerID, currentConceptID, viewerAction) {
                     } else {
 
                         $("#komet_viewer_" + viewerID).off('unsavedCheck');
-                        TaxonomyModule.tree.reloadTreeStatedView(TaxonomyModule.getStatedView(), false);
-                        $.publish(KometChannels.Taxonomy.taxonomyTreeNodeSelectedChannel, [null, data.concept_id, TaxonomyModule.getStatedView(), thisViewer.viewerID, WindowManager.INLINE]);
+                        TaxonomyModule.tree.reloadTree(TaxonomyModule.getViewParams(), false);
+                        $.publish(KometChannels.Taxonomy.taxonomyTreeNodeSelectedChannel, [null, data.concept_id, TaxonomyModule.getViewParams(), thisViewer.viewerID, WindowManager.INLINE]);
                     }
                 }
             });

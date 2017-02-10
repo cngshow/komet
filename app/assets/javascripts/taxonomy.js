@@ -20,37 +20,39 @@ Copyright Notice
 var TaxonomyModule = (function () {
 
     function init() {
-
-        this.defaultStatedView = this.getStatedView();
-
-        this.tree = new KometTaxonomyTree("taxonomy_tree", this.defaultStatedView, false, null, true, null);
-    }
-
-    // listen for the onChange event broadcast by the trees on the details panes. If they have items selected then reload this tree
-    function subscribeToDetailsTaxonomyTrees() {
-
-        $.subscribe(KometChannels.Taxonomy.taxonomyTreeRebaseChannel, function (e, treeID, conceptID) {
-            this.tree.rebaseTreeAtConcept("taxonomy_tree", conceptID);
-        });
-    }
-
-    // listen for the onChange event broadcast by the trees on the details panes. If they have items selected then reload this tree
-    function onDoubleClick(event) {
-        reloadTree(TaxonomyModule[event.currentTarget.id].selectedConceptID);
+        this.tree = new KometTaxonomyTree("taxonomy_tree", getViewParams(), false, null, true, null);
     }
 
     function getStatedView(){
         return $("#komet_taxonomy_stated").prop("checked");
     }
 
-    function setStatedView(field){
-        this.tree.reloadTreeStatedView(field.value);
+    function toggleStatedView(statedField){
+        statedField.parent().toggleClass("btn-primary btn-default");
+    }
+
+    function getViewParams (){
+        return {stated: getStatedView()};
+    }
+
+    function reloadTree() {
+
+        var selectedID = null;
+        var linkedViewerID = WindowManager.getLinkedViewerID();
+
+        if (linkedViewerID != null && linkedViewerID != WindowManager.NEW && WindowManager.viewers[linkedViewerID].currentConceptID){
+            selectedID = WindowManager.viewers[linkedViewerID].currentConceptID;
+        }
+
+        this.tree.reloadTree(getTreeViewParams(), false);
     }
 
     return {
         initialize: init,
         getStatedView: getStatedView,
-        setStatedView: setStatedView
+        toggleStatedView: toggleStatedView,
+        getViewParams: getViewParams,
+        reloadTree: reloadTree
     };
 
 })();

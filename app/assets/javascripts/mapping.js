@@ -111,17 +111,16 @@ var MappingModule = (function () {
         $.publish(KometChannels.Mapping.mappingTreeNodeSelectedChannel, ["", null, MappingModule.getTreeViewParams(), WindowManager.getLinkedViewerID(), WindowManager.INLINE, MappingModule.CREATE_SET]);
     }
 
-    function setViewerStatesToView(viewerID, field) {
+    function setViewerStatesToView(viewerID) {
 
         var viewParams = WindowManager.viewers[viewerID].getViewParams();
-        viewParams.statesToView = field.value;
         $.publish(KometChannels.Mapping.mappingTreeNodeSelectedChannel, ["", WindowManager.viewers[viewerID].currentSetID, viewParams, viewerID, WindowManager.INLINE, WindowManager.viewers[viewerID].mapping_action]);
     }
 
     function setTreeStatesToView(field) {
 
         var viewParams = getTreeViewParams();
-        viewParams.statesToView = field.value;
+        viewParams.states_to_view = field.value;
         var selectedSetID = null;
         var linkedViewerID = WindowManager.getLinkedViewerID();
 
@@ -157,7 +156,7 @@ var MappingModule = (function () {
     }
 
     function getTreeViewParams (){
-        return {statesToView: getTreeStatesToView()};
+        return {states_to_view: getTreeStatesToView()};
     }
 
     return {

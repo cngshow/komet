@@ -42,9 +42,10 @@ class KometDashboardController < ApplicationController
     # The current tree node is identified in the request params with the key :concept_id
     # If the tree is reversed so we are searching for parents of this node is identified in the request params with the key :parent_search (true/false)
     # If the parent of this node was already doing a reverse search is identified in the request params with the key :parent_reversed (true/false)
-    # Whether to display the stated (true) or inferred view of concepts with a request param of :stated (true/false)
+    # [Object] view_params - various parameters related to the view filters the user wants to apply - see full definition comment at top of komet_dashboard_controller file
     #@return [json] the tree nodes to insert into the tree at the parent node passed in the request
     def load_tree_data
+
 #    roles = session[Roles::SESSION_ROLES_ROOT][Roles::SESSION_USER_ROLES]
 #    if(roles.include?(Roles::DEV_SUPER_USER))
 #      #do something
@@ -62,13 +63,13 @@ class KometDashboardController < ApplicationController
         selected_concept_id = params[:concept_id]
         parent_search = params[:parent_search]
         parent_reversed = params[:parent_reversed]
-        stated = params[:stated]
         tree_walk_levels = params[:tree_walk_levels]
         multi_path = params[:multi_path]
+        @view_params = params[:view_params]
 
-        # check to make sure the flag for stated or inferred view was passed in
-        if stated != nil
-            @stated = stated
+        # check to make sure the view parameters were passed in
+        if @view_params == nil
+            @view_params = session[:default_view_params]
         end
 
         # check to make the number of levels to walk the tree was passed in
@@ -93,7 +94,7 @@ class KometDashboardController < ApplicationController
         coordinates_token = session[:coordinatestoken].token
         root = selected_concept_id.eql?('#')
 
-        additional_req_params = {coordToken: coordinates_token, stated: @stated, sememeMembership: true}
+        additional_req_params = {coordToken: coordinates_token, stated: @view_params['stated'], sememeMembership: true}
 
         if boolean(parent_search)
             tree_walk_levels = 100
@@ -369,109 +370,114 @@ class KometDashboardController < ApplicationController
     ##
     # get_concept_information - RESTful route for populating concept details pane using an http :GET
     # The current tree node representing the concept is identified in the request params with the key :concept_id
-    # Whether to display the stated (true) or inferred view of concepts with a request param of :stated (true/false)
+    # [Object] view_params - various parameters related to the view filters the user wants to apply - see full definition comment at top of komet_dashboard_controller file
     # The javascript partial to render is identified in the request params with the key :partial
     # @return [javascript] render a javascript partial that re-renders all needed partials
     def get_concept_information
 
         @concept_id = params[:concept_id]
-        @stated = params[:stated]
         @viewer_id =  params[:viewer_id]
         @viewer_action = params[:viewer_action]
+        @view_params = params[:view_params]
+
+        # check to make sure the view parameters were passed in
+        if @view_params == nil
+            @view_params = session[:default_view_params]
+        end
 
         if @viewer_id == nil || @viewer_id == '' || @viewer_id == 'new'
             @viewer_id = get_next_id
         end
 
-        get_concept_attributes(@concept_id, @stated)
-        get_concept_descriptions(@concept_id, @stated)
-        get_concept_sememes(@concept_id, @stated)
-        get_concept_refsets(@concept_id, @stated)
+        get_concept_attributes(@concept_id, @view_params)
+        get_concept_descriptions(@concept_id, @view_params)
+        get_concept_sememes(@concept_id, @view_params)
+        get_concept_refsets(@concept_id, @view_params)
         render partial: params[:partial]
     end
 
     ##
     # get_concept_attributes - RESTful route for populating concept attribute tab using an http :GET
     # The current tree node representing the concept is identified in the request params with the key :concept_id
-    # Whether to display the stated (true) or inferred view of concepts with a request param of :stated (true/false)
+    # @param [Object] view_params - various parameters related to the view filters the user wants to apply - see full definition comment at top of komet_dashboard_controller file
     # @param [Boolean] clone - Are we cloning a concept
     # @return none - setting the @attributes variable
-    def get_concept_attributes(concept_id = nil, stated = nil, clone = false)
+    def get_concept_attributes(concept_id = nil, view_params = nil, clone = false)
 
         if concept_id == nil && params[:concept_id]
             concept_id = params[:concept_id]
         end
 
-        if stated == nil && params[:stated]
-            stated = params[:stated]
+        if view_params == nil && params[:view_params]
+            view_params = params[:view_params]
         end
 
-        @attributes =  get_attributes(concept_id, stated, clone)
+        @attributes =  get_attributes(concept_id, view_params, clone)
     end
 
     ##
     # get_concept_descriptions - RESTful route for populating concept summary tab using an http :GET
     # The current tree node representing the concept is identified in the request params with the key :concept_id
-    # Whether to display the stated (true) or inferred view of concepts with a request param of :stated (true/false)
+    # @param [Object] view_params - various parameters related to the view filters the user wants to apply - see full definition comment at top of komet_dashboard_controller file
     # @param [Boolean] clone - Are we cloning a concept
     # @return none - setting the @descriptions variable
-    def get_concept_descriptions(concept_id = nil, stated = nil, clone = false)
+    def get_concept_descriptions(concept_id = nil, view_params = nil, clone = false)
 
         if concept_id == nil && params[:concept_id]
             concept_id = params[:concept_id]
         end
 
-        if stated == nil && params[:stated]
-            stated = params[:stated]
+        if view_params == nil && params[:view_params]
+            view_params = params[:view_params]
         end
 
-        @descriptions =  get_descriptions(concept_id, stated, clone)
+        @descriptions =  get_descriptions(concept_id, view_params, clone)
     end
 
     ##
     # get_concept_associations - RESTful route for populating concept association tab using an http :GET
     # The current tree node representing the concept is identified in the request params with the key :concept_id
-    # Whether to display the stated (true) or inferred view of concepts with a request param of :stated (true/false)
+    # @param [Object] view_params - various parameters related to the view filters the user wants to apply - see full definition comment at top of komet_dashboard_controller file
     # @param [Boolean] clone - Are we cloning a concept
     # @return none - setting the @associations variable
-    def get_concept_associations(concept_id = nil, stated = nil, clone = false)
+    def get_concept_associations(concept_id = nil, view_params = nil, clone = false)
 
         if concept_id == nil && params[:concept_id]
             concept_id = params[:concept_id]
         end
 
-        if stated == nil && params[:stated]
-            stated = params[:stated]
+        if view_params == nil && params[:view_params]
+            view_params = params[:view_params]
         end
 
-        @associations =  get_associations(concept_id, stated, clone)
+        @associations =  get_associations(concept_id, view_params, clone)
     end
 
     ##
     # get_concept_sememes - RESTful route for populating concept sememes section using an http :GET
     # The current tree node representing the concept is identified in the request params with the key :concept_id
-    # Whether to display the stated (true) or inferred view of concepts with a request param of :stated (true/false)
+    # @param [Object] view_params - various parameters related to the view filters the user wants to apply - see full definition comment at top of komet_dashboard_controller file
     # @param [Boolean] clone - Are we cloning a concept
     # @return none - setting the @concept_sememes variable
-    def get_concept_sememes(concept_id = nil, stated = nil, clone = false)
+    def get_concept_sememes(concept_id = nil, view_params = nil, clone = false)
 
         if concept_id == nil && params[:concept_id]
             concept_id = params[:concept_id]
         end
 
-        if stated == nil && params[:stated]
-            stated = params[:stated]
+        if view_params == nil && params[:view_params]
+            view_params = params[:view_params]
         end
 
-        @concept_sememes = get_attached_sememes(concept_id, stated, clone)
+        @concept_sememes = get_attached_sememes(concept_id, view_params, clone)
     end
 
     ##
     # get_concept_refsets - RESTful route for populating concept assemblages section using an http :GET
     # The current tree node representing the concept is identified in the request params with the key :concept_id
-    # Whether to display the stated (true) or inferred view of concepts with a request param of :stated (true/false)
+    # @param [Object] view_params - various parameters related to the view filters the user wants to apply - see full definition comment at top of komet_dashboard_controller file
     # @return none - setting the refsets variable
-    def get_concept_refsets(concept_id = nil, stated = nil)
+    def get_concept_refsets(concept_id = nil, view_params = nil)
 
         return_json = false
 
@@ -481,11 +487,11 @@ class KometDashboardController < ApplicationController
             return_json = true
         end
 
-        if stated == nil && params[:stated]
-            stated = params[:stated]
+        if view_params == nil && params[:view_params]
+            view_params = params[:view_params]
         end
 
-        @concept_refsets = get_refsets(concept_id, stated)
+        @concept_refsets = get_refsets(concept_id, view_params)
 
         if return_json
             render json: @concept_refsets
@@ -709,7 +715,7 @@ class KometDashboardController < ApplicationController
 
         $log.debug("get_user_preference_info @module_flags #{@module_flags}")
 
-        additional_req_params.merge!({stated: @stated, childDepth: 50})
+        additional_req_params.merge!({stated: @view_params['stated'], childDepth: 50})
 
         # get the assemblage concept so we can get all children (refset concepts) from it
         assemblages = TaxonomyRest.get_isaac_concept(uuid: $isaac_metadata_auxiliary['ASSEMBLAGE']['uuids'].first[:uuid], additional_req_params: additional_req_params)
@@ -733,14 +739,6 @@ class KometDashboardController < ApplicationController
 
             $log.debug("get_user_preference_info @refset_flags #{@refset_flags}")
         end
-
-        stated = params[:stated]
-        $log.debug("get_user_preference_info stated #{stated}")
-
-        # check to make sure the flag for stated or inferred view was passed in
-        if stated != nil
-            @stated = stated
-        end
     end
 
     def get_shape_name(classname)
@@ -760,20 +758,24 @@ class KometDashboardController < ApplicationController
         end
     end
 
+    # [Object] view_params - various parameters related to the view filters the user wants to apply - see full definition comment at top of komet_dashboard_controller file
     def get_refset_list
 
         coordinates_token = session[:coordinatestoken].token
-        stated = params[:stated]
+        @view_params = params[:view_params]
 
-        # check to make sure the flag for stated or inferred view was passed in
-        if stated != nil
-            @stated = stated
+        # check to make sure the view parameters were passed in
+        if @view_params == nil
+            @view_params = session[:default_view_params]
         end
-        additional_req_params = {coordToken: coordinates_token, stated: @stated, childDepth: 50}
+
+        additional_req_params = {coordToken: coordinates_token, stated: @view_params['stated'], childDepth: 50}
         refsets = TaxonomyRest.get_isaac_concept(uuid: $isaac_metadata_auxiliary['ASSEMBLAGE']['uuids'].first[:uuid], additional_req_params: additional_req_params)
+
         if refsets.is_a? CommonRest::UnexpectedResponse
             render json: [] and return
         end
+
         processed_refsets = process_refset_list(refsets)
         render json: processed_refsets.to_json
 
@@ -1289,25 +1291,6 @@ class KometDashboardController < ApplicationController
 
     end
 
-    def clone_concept
-
-        @concept_id = params[:concept_id]
-        concept_data = get_conceptData(@concept_id)
-
-        body_params = {fsn: concept_data[:FSN], preferredTerm: concept_data[:PreferredTerm], parentConceptIds:concept_data[:ParentID]}
-
-        new_concept_id = ConceptRest::get_concept(action: ConceptRestActions::ACTION_CREATE, body_params: body_params )
-
-        if new_concept_id.is_a? CommonRest::UnexpectedResponse
-            render json: {concept_id: nil} and return
-        end
-
-        # clear taxonomy caches after writing data
-        clear_rest_caches
-
-        render json: {concept_id: new_concept_id}
-    end
-
     def change_concept_state
 
         concept_id = params[:concept_id]
@@ -1374,8 +1357,11 @@ class KometDashboardController < ApplicationController
     def dashboard
         # user_session(UserSession::WORKFLOW_UUID, '6457fb1f-b67b-4679-8f56-fa811e1e2a6b')
 
-        @stated = 'true'
-        @view_params = {statesToView: 'active,inactive'}
+        @view_params = {stated: true, states_to_view: 'active,inactive'}
+
+        # set variables for default view parameters that can be accessed from any controller or module
+        session[:default_view_params] = @view_params
+
         if !session[:coordinatestoken]
             session[:coordinatestoken] = CoordinateRest.get_coordinate(action: CoordinateRestActions::ACTION_COORDINATES_TOKEN)
         end

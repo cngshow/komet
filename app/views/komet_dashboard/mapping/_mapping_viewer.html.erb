@@ -70,10 +70,10 @@
         statesToView.change(function(){
 
             MappingModule.toggleTreeStatesToView(statesToView, this.value);
-            MappingModule.setViewerStatesToView("<%= @viewer_id %>", this);
+            MappingModule.setViewerStatesToView("<%= @viewer_id %>");
         });
 
-        MappingModule.toggleTreeStatesToView(statesToView, "<%= @view_params[:statesToView] %>");
+        MappingModule.toggleTreeStatesToView(statesToView, "<%= @view_params[:states_to_view] %>");
 
         if (!WindowManager.viewers.hasOwnProperty('<%= @viewer_id %>') || !(WindowManager.viewers[<%= @viewer_id %>] instanceof MappingViewer)) {
             MappingModule.createViewer("<%= @viewer_id %>", "<%= @set_id %>", "<%= @mapping_action %>");

@@ -25,7 +25,6 @@ module ApplicationHelper
   include UserSession
   include BootstrapNotifier
 
-
   def get_user_token
     user_session(UserSession::TOKEN)
   end

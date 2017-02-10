@@ -4,7 +4,7 @@ This changelog summarizes changes and fixes which are a part of each revision.  
 where provided, and the git commit history.
 
 * 2017/02/?? - 1.63 - PENDING
-    *
+    * Added changes to support multiple view parameters to taxonomy and concept viewer
 
 * 2017/02/09 - 1.62
     * Renamed 'Mapping Qualifier' field to 'Equivalence Type' (Jazz: 440248)

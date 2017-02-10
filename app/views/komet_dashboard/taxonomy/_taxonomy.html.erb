@@ -12,7 +12,7 @@
                 </label>
             </div>
 
-            <button type="button" class="komet-link-button" aria-label="Refresh Taxonomy Tree"  onclick="TaxonomyModule.tree.reloadTreeStatedView(TaxonomyModule.getStatedView(), false)"   title="Refresh Taxonomy Tree">
+            <button type="button" class="komet-link-button" aria-label="Refresh Taxonomy Tree"  onclick="TaxonomyModule.tree.reloadTree(TaxonomyModule.getViewParams(), false);" title="Refresh Taxonomy Tree">
                 <div class="glyphicon glyphicon-refresh"   title="Refresh Taxonomy Tree"></div>
             </button>
 
@@ -32,12 +32,13 @@
         stated.change(function(){
 
             stated.parent().toggleClass("btn-primary btn-default");
-            TaxonomyModule.setStatedView(this);
+            TaxonomyModule.reloadTree();
         });
 
+        // since the stated buttons are in an initial state, loop through them to select the correct default value and set styles appropriately
         stated.each(function(index, button){
 
-             if (button.value == "<%= @stated %>"){
+             if (button.value == "<%= @view_params[:stated] %>"){
 
                  var buttonParent = button.parentElement;
 
