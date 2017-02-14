@@ -897,6 +897,7 @@ class KometDashboardController < ApplicationController
         @viewer_action = params[:viewer_action]
         @viewer_previous_content_id = params[:viewer_previous_content_id]
         @viewer_previous_content_type = params[:viewer_previous_content_type]
+        @view_params = session[:edit_view_params]
         clone = false
 
         if @viewer_id == nil || @viewer_id == '' || @viewer_id == 'new'
@@ -907,10 +908,10 @@ class KometDashboardController < ApplicationController
             clone = true
         end
 
-        get_concept_attributes(@concept_id, true, clone)
-        get_concept_sememes(@concept_id, true, clone)
-        get_concept_descriptions(@concept_id, true, clone)
-        get_concept_associations(@concept_id, true, clone)
+        get_concept_attributes(@concept_id, @view_params, clone)
+        get_concept_sememes(@concept_id, @view_params, clone)
+        get_concept_descriptions(@concept_id, @view_params, clone)
+        get_concept_associations(@concept_id, @view_params, clone)
 
         @language_options = get_concept_children(concept_id: $isaac_metadata_auxiliary['LANGUAGE']['uuids'].first[:uuid], return_json: false, remove_semantic_tag: true)
         # TODO - Change get_concept_children function to pull all leaf nodes so we can stop hardcoding this uuid
@@ -1361,6 +1362,7 @@ class KometDashboardController < ApplicationController
 
         # set variables for default view parameters that can be accessed from any controller or module
         session[:default_view_params] = @view_params
+        session[:edit_view_params] = @view_params
 
         if !session[:coordinatestoken]
             session[:coordinatestoken] = CoordinateRest.get_coordinate(action: CoordinateRestActions::ACTION_COORDINATES_TOKEN)

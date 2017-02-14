@@ -44,7 +44,7 @@ var TaxonomyModule = (function () {
             selectedID = WindowManager.viewers[linkedViewerID].currentConceptID;
         }
 
-        this.tree.reloadTree(getTreeViewParams(), false);
+        this.tree.reloadTree(getViewParams(), false);
     }
 
     return {

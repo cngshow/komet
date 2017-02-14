@@ -41,7 +41,7 @@ module ConceptConcern
         coordinates_token = session[:coordinatestoken].token
         return_attributes = []
 
-        attributes = ConceptRest.get_concept(action: ConceptRestActions::ACTION_VERSION, uuid: uuid, additional_req_params: {coordToken: coordinates_token, expand: 'chronology', stated: view_params['stated']})
+        attributes = ConceptRest.get_concept(action: ConceptRestActions::ACTION_VERSION, uuid: uuid, additional_req_params: {coordToken: coordinates_token, expand: 'chronology', stated: view_params[:stated]})
 
         if attributes.is_a? CommonRest::UnexpectedResponse
             return [{value: ''}, {value: ''}, {value: ''}]
