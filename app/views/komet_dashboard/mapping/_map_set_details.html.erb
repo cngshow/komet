@@ -82,7 +82,7 @@
                             </div>
 
                             <div class="komet-mapping-set-definition-item">
-                                <%= label_tag "komet_mapping_set_editor_description_#{@viewer_id}", 'Purpose:' %>
+                                <%= label_tag "komet_mapping_set_editor_description_#{@viewer_id}", $isaac_metadata_auxiliary['PURPOSE']['fsn'] %>
                                 <%= text_field_tag :komet_mapping_set_editor_description, @map_set[:description], id: "komet_mapping_set_editor_description_#{@viewer_id}", class: 'form-control komet-mapping-show-on-edit' %>
                                 <div class="komet-mapping-show-on-view"><%= @map_set[:description] %></div>
                             </div>
@@ -144,18 +144,14 @@
                             id_prefix: 'komet_mapping_set_editor_items_',
                             id_postfix: '_' + @viewer_id,
                             javascript_object: 'WindowManager.viewers[' + @viewer_id + ']',
-                            javascript_function_qualifier: 'SetItems'
+                            javascript_function_qualifier: 'SetItems',
+                            show_templates: true
                         }) %>
 
                         <div class="komet-mapping-set-definition-controls">
                             <button class="btn btn-default komet-mapping-show-on-edit komet-mapping-show-on-create-only" type="button" onclick="WindowManager.viewers[<%= @viewer_id %>].showIncludeSetItemsFieldsDialog()">Add
                                 More Fields to Map Items
                             </button>
-                        </div>
-
-                        <div class="komet-mapping-set-definition-row">
-                            All map items include Mapping Source Concept, Mapping Target Concept (Optional), and Mapping Qualifier
-                            (Optional)
                         </div>
 
                         <div class="komet-mapping-set-definition-row">

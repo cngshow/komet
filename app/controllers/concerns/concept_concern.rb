@@ -33,15 +33,15 @@ module ConceptConcern
     ##
     # descriptions - takes a uuid and returns all of the description concepts attached to it.
     # @param [String] uuid - The UUID to look up descriptions for
-    # @param [Boolean] stated - Whether to display the stated (true) or inferred view of concepts
+    # @param [Object] view_params - various parameters related to the view filters the user wants to apply - see full definition comment at top of komet_dashboard_controller file
     # @param [Boolean] clone - Are we cloning a concept, if so we will not return the terminology IDs
     # @return [object] an array of hashes that contains the attributes
-    def get_attributes(uuid, stated, clone = false)
+    def get_attributes(uuid, view_params, clone = false)
 
         coordinates_token = session[:coordinatestoken].token
         return_attributes = []
 
-        attributes = ConceptRest.get_concept(action: ConceptRestActions::ACTION_VERSION, uuid: uuid, additional_req_params: {coordToken: coordinates_token, expand: 'chronology', stated: stated})
+        attributes = ConceptRest.get_concept(action: ConceptRestActions::ACTION_VERSION, uuid: uuid, additional_req_params: {coordToken: coordinates_token, expand: 'chronology', stated: view_params[:stated]})
 
         if attributes.is_a? CommonRest::UnexpectedResponse
             return [{value: ''}, {value: ''}, {value: ''}]
@@ -98,14 +98,14 @@ module ConceptConcern
     ##
     # get_descriptions - takes a uuid and returns all of the description concepts attached to it.
     # @param [String] uuid - The UUID to look up descriptions for
-    # @param [Boolean] stated - Whether to display the stated (true) or inferred view of concepts
+    # @param [Object] view_params - various parameters related to the view filters the user wants to apply - see full definition comment at top of komet_dashboard_controller file
     # @param [Boolean] clone - Are we cloning a concept, if so we will replace the description and other sememe IDs with placeholders
     # @return [object] a hash that contains an array of all the descriptions
-    def get_descriptions(uuid, stated, clone = false)
+    def get_descriptions(uuid, view_params, clone = false)
 
         coordinates_token = session[:coordinatestoken].token
         return_descriptions = []
-        descriptions = ConceptRest.get_concept(action: ConceptRestActions::ACTION_DESCRIPTIONS, uuid: uuid, additional_req_params: {coordToken: coordinates_token, stated: stated})
+        descriptions = ConceptRest.get_concept(action: ConceptRestActions::ACTION_DESCRIPTIONS, uuid: uuid, additional_req_params: {coordToken: coordinates_token, stated: view_params['stated']})
 
         if descriptions.is_a? CommonRest::UnexpectedResponse
             return return_descriptions
@@ -269,7 +269,7 @@ module ConceptConcern
             # process nested properties
             if description.nestedSememes.length > 0
 
-                nested_properties = process_attached_sememes(stated, description.nestedSememes, [], {}, 1, clone)
+                nested_properties = process_attached_sememes(view_params, description.nestedSememes, [], {}, 1, clone)
                 description_info[:nested_properties] = {field_info: nested_properties[:used_column_hash], data: nested_properties[:data_rows]}
             end
 
@@ -282,14 +282,14 @@ module ConceptConcern
     ##
     # get_associations - takes a uuid and returns all associations related to it.
     # @param [String] uuid - The UUID to look up associations for
-    # @param [Boolean] stated - Whether to display the stated (true) or inferred view of concepts
+    # @param [Object] view_params - various parameters related to the view filters the user wants to apply - see full definition comment at top of komet_dashboard_controller file
     # @param [Boolean] clone - Are we cloning a concept, if so we will replace the association IDs with placeholders
     # @return [object] a hash that contains an array of all the associations
-    def get_associations(uuid, stated, clone = false)
+    def get_associations(uuid, view_params, clone = false)
 
         coordinates_token = session[:coordinatestoken].token
         return_associations = []
-        additional_req_params = {coordToken: coordinates_token, stated: stated, expand: 'source, target'}
+        additional_req_params = {coordToken: coordinates_token, stated: view_params['stated'], expand: 'source, target'}
 
         associations = AssociationRest.get_association(action: AssociationRestActions::ACTION_WITH_SOURCE, uuid_or_id: uuid, additional_req_params: additional_req_params)
 
@@ -307,7 +307,7 @@ module ConceptConcern
             end
 
             type_id = association.associationType.uuids.first
-            type = AssociationRest.get_association(action: AssociationRestActions::ACTION_TYPE, uuid_or_id: type_id, additional_req_params: {coordToken: coordinates_token, stated: stated})
+            type = AssociationRest.get_association(action: AssociationRestActions::ACTION_TYPE, uuid_or_id: type_id, additional_req_params: {coordToken: coordinates_token, stated: view_params['stated']})
 
             if type.is_a? CommonRest::UnexpectedResponse
                 return return_associations
@@ -364,16 +364,16 @@ module ConceptConcern
     ##
     # get_attached_sememes - takes a uuid and returns all of the non-description sememes attached to it.
     # @param [String] uuid - The UUID to look up attached sememes for
-    # @param [Boolean] stated - Whether to display the stated (true) or inferred view of concepts
+    # @param [Object] view_params - various parameters related to the view filters the user wants to apply - see full definition comment at top of komet_dashboard_controller file
     # @param [Boolean] clone - Are we cloning a concept, if so we will replace the sememe IDs with placeholders
     # @return [object] a hash that contains an array of all the columns to be displayed and an array of all the sememes
-    def get_attached_sememes(uuid, stated, clone = false)
+    def get_attached_sememes(uuid, view_params, clone = false)
 
         coordinates_token = session[:coordinatestoken].token
 
-        sememes = SememeRest.get_sememe(action: SememeRestActions::ACTION_BY_REFERENCED_COMPONENT, uuid_or_id: uuid, additional_req_params: {coordToken: coordinates_token, expand: 'chronology,nestedSememes', stated: stated})
+        sememes = SememeRest.get_sememe(action: SememeRestActions::ACTION_BY_REFERENCED_COMPONENT, uuid_or_id: uuid, additional_req_params: {coordToken: coordinates_token, expand: 'chronology,nestedSememes', stated: view_params['stated']})
 
-        display_data = process_attached_sememes(stated, sememes, [], {}, 1, clone)
+        display_data = process_attached_sememes(view_params, sememes, [], {}, 1, clone)
 
         return {columns: display_data[:used_column_list], rows: display_data[:data_rows], field_info: display_data[:used_column_hash]}
 
@@ -382,16 +382,16 @@ module ConceptConcern
     ##
     # get_refsets - takes a uuid and returns all of the refset attached to it.
     # @param [String] uuid - The UUID to look up attached sememes for
-    # @param [Boolean] stated - Whether to display the stated (true) or inferred view of concepts
+    # @param [Object] view_params - various parameters related to the view filters the user wants to apply - see full definition comment at top of komet_dashboard_controller file
     # @return [object] a hash that contains an array of all the columns to be displayed and an array of all the refsets
-    def get_refsets(uuid, stated)
+    def get_refsets(uuid, view_params)
 
         coordinates_token = session[:coordinatestoken].token
         refsets_results = {}
         sememe_types = {}
         page_size = 25
         page_number = params[:taxonomy_refsets_page_number]
-        additional_params = {coordToken: coordinates_token, expand: 'chronology,nestedSememes,referencedDetails', pageNum: page_number, stated: stated}
+        additional_params = {coordToken: coordinates_token, expand: 'chronology,nestedSememes,referencedDetails', pageNum: page_number, stated: view_params['stated']}
         additional_params[:maxPageSize] =  page_size
 
         results = SememeRest.get_sememe(action: SememeRestActions::ACTION_BY_ASSEMBLAGE, uuid_or_id: uuid, additional_req_params:additional_params )
@@ -400,7 +400,7 @@ module ConceptConcern
         refsets_results[:page_number] = results.paginationData.pageNum
         used_column_list = [];
 
-        display_data = process_attached_refsets(stated, results.results, sememe_types, [], used_column_list)
+        display_data = process_attached_refsets(view_params, results.results, sememe_types, [], used_column_list)
 
         refsets_results[:data] = display_data
         refsets_results[:columns] = used_column_list
@@ -412,12 +412,12 @@ module ConceptConcern
     ##
     # get_sememe_details - takes a uuid and returns all of the description concepts attached to it.
     # @param [String] uuid - The UUID to look up descriptions for
-    # @param [Boolean] stated - Whether to display the stated (true) or inferred view of concepts
+    # @param [Object] view_params - various parameters related to the view filters the user wants to apply - see full definition comment at top of komet_dashboard_controller file
     # @return [object] a RestSememeVersion object
-    def get_sememe_version_details(uuid, stated)
+    def get_sememe_version_details(uuid, view_params)
 
         coordinates_token = session[:coordinatestoken].token
-        sememe = SememeRest.get_sememe(action: SememeRestActions::ACTION_VERSION, uuid_or_id: uuid, additional_req_params: {coordToken: coordinates_token, expand: 'chronology,nestedSememes', stated: stated})
+        sememe = SememeRest.get_sememe(action: SememeRestActions::ACTION_VERSION, uuid_or_id: uuid, additional_req_params: {coordToken: coordinates_token, expand: 'chronology,nestedSememes', stated: view_params['stated']})
 
         if sememe.is_a? CommonRest::UnexpectedResponse
             return nil
@@ -498,17 +498,17 @@ module ConceptConcern
 
     ##
     # process_attached_sememes - recursively loops through an array of sememes and processes them for display.
-    # @param [Boolean] stated - Whether to display the stated (true) or inferred view of concepts
+    # @param [Object] view_params - various parameters related to the view filters the user wants to apply - see full definition comment at top of komet_dashboard_controller file
     # @param [RestSememeVersion] sememes - a hash with an array of sememes to process
     # @param [Array] used_column_list - an array of data columns for display (for easier sequential access)
     # @param [Hash] used_column_hash - a hash of data columns for display (for easier random access)
     # @param [Number] level - the level of recursion we are at.
     # @param [Boolean] clone - Are we cloning a concept, if so we will replace the sememe IDs with placeholders
     # @return [object] a hash that contains an array of all the columns to be displayed and an array of all the data
-    def process_attached_sememes(stated, sememes, used_column_list, used_column_hash, level, clone = false)
+    def process_attached_sememes(view_params, sememes, used_column_list, used_column_hash, level, clone = false)
 
         coordinates_token = session[:coordinatestoken].token
-        additional_req_params = {coordToken: coordinates_token, stated: stated}
+        additional_req_params = {coordToken: coordinates_token, stated: view_params['stated']}
         data_rows = []
         refset_rows = []
 
@@ -652,7 +652,7 @@ module ConceptConcern
             if has_nested
 
                 sememes = sememe.nestedSememes
-                nested_sememe_data = process_attached_sememes(stated, sememes, used_column_list, used_column_hash, level + 1, clone)
+                nested_sememe_data = process_attached_sememes(view_params, sememes, used_column_list, used_column_hash, level + 1, clone)
 
                 data_row[:nested_rows] = nested_sememe_data[:data_rows]
 
@@ -678,12 +678,12 @@ module ConceptConcern
     ##
     # process_attached_refsets - recursively loops through an array of sememes and processes them for display.
     # @param [RestSememeVersion] sememes - a hash with an array of sememes to process, a cached hash of all unique sememe data, an array of data rows for display, and an array of columns to display
-    # @param [Boolean] stated - Whether to display the stated (true) or inferred view of concepts
+    # @param [Object] view_params - various parameters related to the view filters the user wants to apply - see full definition comment at top of komet_dashboard_controller file
     # @return [object] a hash that contains an array of all the columns to be displayed and an array of all the refsets
-    def process_attached_refsets(stated, sememes, sememe_types, data_rows, used_column_list)
+    def process_attached_refsets(view_params, sememes, sememe_types, data_rows, used_column_list)
 
         coordinates_token = session[:coordinatestoken].token
-        additional_req_params = {coordToken: coordinates_token, stated: stated}
+        additional_req_params = {coordToken: coordinates_token, stated: view_params['stated']}
 
         #Defining first 2 columns of grid.
         used_column_list << {id:'state', field: 'state', headerName: 'status', data_type: 'string'}
@@ -776,37 +776,13 @@ module ConceptConcern
     end
 
     ##
-    # descriptions - takes a uuid and returns all of the description concepts attached to it.
-    # @param [String] uuid - The UUID to look up descriptions for
-    # @param [Boolean] stated - Whether to display the stated (true) or inferred view of concepts
-    # @return [object] an array of hashes that contains the attributes
-    def get_conceptData(uuid)
-
-        coordinates_token = session[:coordinatestoken].token
-        returnConcept_attributes = []
-
-        isaac_concept = TaxonomyRest.get_isaac_concept(uuid: uuid)
-
-        if isaac_concept.is_a? CommonRest::UnexpectedResponse
-            return [{value: ''}, {value: ''}, {value: ''}]
-        end
-
-        returnConcept_attributes << {label: 'FSN', value: concept.conChronology.description}
-        returnConcept_attributes << {label: 'ParentID', value: parent.conChronology.identifiers.uuids.first}
-        descriptions = ConceptRest.get_concept(action: ConceptRestActions::ACTION_DESCRIPTIONS, uuid: uuid, additional_req_params: {coordToken: coordinates_token, stated: stated})
-        returnConcept_attributes << {label: 'PreferredTerm', value: description.text}
-
-        return returnConcept_attributes
-
-    end
-
-    ##
     # get_concept_children - takes a uuid and returns all of its direct children.
     # @param [String] concept_id - The UUID to look up children for
     # @param [Boolean] format_results - Should the results be processed
     # @param [Boolean] remove_semantic_tag - Should semantic tags be removed (Just 'ISAAC' at the moment)
+    # @param [Boolean] include_definition - should definition descriptions be looked up and included in the results
     # @return [object] an array of children
-    def get_direct_children(concept_id, format_results = false, remove_semantic_tag = false)
+    def get_direct_children(concept_id, format_results = false, remove_semantic_tag = false, include_definition = false)
 
         children = ConceptRest.get_concept(action: ConceptRestActions::ACTION_VERSION, uuid: concept_id, additional_req_params: {includeChildren: 'true'})
 
@@ -823,13 +799,31 @@ module ConceptConcern
             children.each do |child|
 
                 text = child.conChronology.description
+                definition = ''
 
                 # TODO - replace with regex that handles any semantic tag: start with /\s\(([^)]+)\)/ (regex101.com)
                 if remove_semantic_tag
                     text.slice!(' (ISAAC)')
                 end
 
-                child_array << {concept_id: child.conChronology.identifiers.uuids.first, concept_sequence: child.conChronology.identifiers.sequence, text: text}
+                if include_definition
+
+                    descriptions = ConceptRest.get_concept(action: ConceptRestActions::ACTION_DESCRIPTIONS, uuid: child.conChronology.identifiers.uuids.first, additional_req_params: {includeAttributes: false}) # coordToken: coordinates_token, stated: view_params['stated']
+
+                    unless descriptions.is_a? CommonRest::UnexpectedResponse
+
+                        descriptions.each do |description|
+
+                            if description.descriptionTypeConcept.uuids.first == $isaac_metadata_auxiliary['DEFINITION_DESCRIPTION_TYPE']['uuids'].first[:uuid]
+
+                                definition = description.text
+                                break
+                            end
+                        end
+                    end
+                end
+
+                child_array << {concept_id: child.conChronology.identifiers.uuids.first, concept_sequence: child.conChronology.identifiers.sequence, text: text, definition: definition}
             end
 
             return child_array

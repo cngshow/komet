@@ -42,7 +42,7 @@ class MappingController < ApplicationController
         view_params = params[:view_params]
         mapping_tree = []
 
-        map_sets_results = MappingApis::get_mapping_api(action: MappingApiActions::ACTION_SETS,  additional_req_params: {coordToken: coordinates_token, allowedStates: view_params['statesToView'], CommonRest::CacheRequest => false} )
+        map_sets_results = MappingApis::get_mapping_api(action: MappingApiActions::ACTION_SETS,  additional_req_params: {coordToken: coordinates_token, allowedStates: view_params['states_to_view'], CommonRest::CacheRequest => false} )
 
         map_sets_results.each do |set|
 
@@ -89,7 +89,7 @@ class MappingController < ApplicationController
         @view_params = params[:view_params]
 
         if @view_params == nil
-            @view_params = {statesToView: 'active,inactive'}
+            @view_params = {states_to_view: 'active,inactive'}
         end
 
         if @viewer_id == nil || @viewer_id == '' || @viewer_id == 'new'
@@ -114,7 +114,7 @@ class MappingController < ApplicationController
         page_number = 1 #params[:overview_sets_page_number]
         view_params = params[:view_params]
 
-        map_sets_results = MappingApis::get_mapping_api(action: MappingApiActions::ACTION_SETS,  additional_req_params: {coordToken: coordinates_token, allowedStates: view_params['statesToView'], CommonRest::CacheRequest => false} )
+        map_sets_results = MappingApis::get_mapping_api(action: MappingApiActions::ACTION_SETS,  additional_req_params: {coordToken: coordinates_token, allowedStates: view_params['states_to_view'], CommonRest::CacheRequest => false} )
 
         map_sets_results.each do |set|
 
@@ -144,17 +144,52 @@ class MappingController < ApplicationController
         # reset the session item definitions
         session[:mapset_item_definitions] = []
         coordinates_token = session[:coordinatestoken].token
-        @map_set = {id: '', name: '', description: '', version: '', vuid: '', rules: '', include_fields: [], state: '', status: 'Active', time: '', module: '', path: '', comment_id: 0, comment: ''}
-        source_system_id = $isaac_metadata_auxiliary['MAPPING_SOURCE_CODE_SYSTEM']['uuids'].first[:uuid]
-        source_version_id = $isaac_metadata_auxiliary['MAPPING_SOURCE_CODE_SYSTEM_VERSION']['uuids'].first[:uuid]
-        target_system_id = $isaac_metadata_auxiliary['MAPPING_TARGET_CODE_SYSTEM']['uuids'].first[:uuid]
-        target_version_id = $isaac_metadata_auxiliary['MAPPING_TARGET_CODE_SYSTEM_VERSION']['uuids'].first[:uuid]
+        @map_set = {id: '', name: '', description: '', version: '', vuid: '', rules: '', include_fields: [], state: 'Active', time: '', module: '', path: '', comment_id: 0, comment: ''}
+        source_system_id = $isaac_metadata_auxiliary['SOURCE_CODE_SYSTEM']['uuids'].first[:uuid]
+        source_system_text = $isaac_metadata_auxiliary['SOURCE_CODE_SYSTEM']['fsn']
+        source_version_id = $isaac_metadata_auxiliary['SOURCE_CODE_VERSION']['uuids'].first[:uuid]
+        source_version_text = $isaac_metadata_auxiliary['SOURCE_CODE_VERSION']['fsn']
+        target_system_id = $isaac_metadata_auxiliary['TARGET_CODE_SYSTEM']['uuids'].first[:uuid]
+        target_system_text = $isaac_metadata_auxiliary['TARGET_CODE_SYSTEM']['fsn']
+        target_version_id = $isaac_metadata_auxiliary['TARGET_CODE_VERSION']['uuids'].first[:uuid]
+        target_version_text = $isaac_metadata_auxiliary['TARGET_CODE_VERSION']['fsn']
+        description_id = $isaac_metadata_auxiliary['DESCRIPTION']['uuids'].first[:uuid]
+        description_text = $isaac_metadata_auxiliary['DESCRIPTION']['fsn']
 
-        # get the options to populate the Equivalence Type dropdown
-        equivalence_options = [{value: '', label: 'No Restrictions'}]
 
-        get_direct_children($isaac_metadata_auxiliary['MAPPING_QUALIFIERS']['uuids'].first[:uuid], true, true).each do |option|
-            equivalence_options << {value: option[:concept_id], label: option[:text]}
+        # set the item field templates if they haven't already been set
+        if session[:mapset_item_templates]
+            @map_set[:item_templates] = session[:mapset_item_templates]
+        else
+
+            @map_set[:item_templates] = {IPO: [
+                {id: $isaac_metadata_auxiliary['MAP_PATHWAY_ID']['uuids'].first[:uuid], description: $isaac_metadata_auxiliary['MAP_PATHWAY_ID']['fsn'], data_type: 'STRING', required: false, text: $isaac_metadata_auxiliary['MAP_PATHWAY_ID']['fsn'], removable: true, display: true, component_type: 'ITEM_EXTENDED'},
+                {id: $isaac_metadata_auxiliary['VA_STATION_NUMBER']['uuids'].first[:uuid], description: $isaac_metadata_auxiliary['VA_STATION_NUMBER']['fsn'], data_type: 'STRING', required: false, text: $isaac_metadata_auxiliary['VA_STATION_NUMBER']['fsn'], removable: true, display: true, component_type: 'ITEM_EXTENDED'},
+                {id: $isaac_metadata_auxiliary['VA_STATION_IEN']['uuids'].first[:uuid], description: $isaac_metadata_auxiliary['VA_STATION_IEN']['fsn'], data_type: 'STRING', required: false, text: $isaac_metadata_auxiliary['VA_STATION_IEN']['fsn'], removable: true, display: true, component_type: 'ITEM_EXTENDED'},
+                {id: $isaac_metadata_auxiliary['CODE']['uuids'].first[:uuid], description: 'Source ' + $isaac_metadata_auxiliary['CODE']['fsn'], data_type: 'STRING', required: false, text: 'Source ' + $isaac_metadata_auxiliary['CODE']['fsn'], removable: true, display: true, component_type: 'SOURCE'},
+                #{id: description_id, description: 'Source Description', data_type: 'STRING', required: false, text: 'Source Description', removable: true, display: true, component_type: 'SOURCE'},
+                {id: $isaac_metadata_auxiliary['CODE']['uuids'].first[:uuid], description: 'Target ' + $isaac_metadata_auxiliary['CODE']['fsn'], data_type: 'STRING', required: false, text: 'Target ' + $isaac_metadata_auxiliary['CODE']['fsn'], removable: true, display: true, component_type: 'TARGET'},
+                #{id: description_id, description: 'Target Description', data_type: 'STRING', required: false, text: 'Target Description', removable: true, display: true, component_type: 'TARGET'},
+                {id: target_system_id, description: target_system_text, data_type: 'STRING', required: false, text: target_system_text, removable: true, display: true, component_type: 'ITEM_EXTENDED'},
+                {id: target_version_id, description: target_version_text, data_type: 'STRING', required: false, text: target_version_text, removable: true, display: true, component_type: 'ITEM_EXTENDED'},
+                {id: $isaac_metadata_auxiliary['TARGET_TERMINOLOGY_DATE']['uuids'].first[:uuid], description: $isaac_metadata_auxiliary['TARGET_TERMINOLOGY_DATE']['fsn'], data_type: 'STRING', required: false, text: $isaac_metadata_auxiliary['TARGET_TERMINOLOGY_DATE']['fsn'], removable: true, display: true, component_type: 'ITEM_EXTENDED'}
+                #{id: $isaac_metadata_auxiliary['EQUIVALENCE_TYPE']['uuids'].first[:uuid], description: 'Relationship Type', data_type: 'STRING', required: false, text: 'Relationship Type', removable: true, display: true, component_type: 'ITEM_EXTENDED'},
+            ]}
+
+            session[:mapset_item_templates] = @map_set[:item_templates]
+        end
+
+        # set the Equivalence options if they haven't already been set
+        if session[:mapset_equivalence_options]
+            equivalence_options = session[:mapset_equivalence_options]
+        else
+
+            # get the options to populate the Equivalence Type dropdown
+            equivalence_options = [{value: '', label: 'No Restrictions'}]
+
+            get_direct_children($isaac_metadata_auxiliary['EQUIVALENCE_TYPES']['uuids'].first[:uuid], true, true, true).each do |option|
+                equivalence_options << {value: option[:concept_id], label: option[:text], tooltip: option[:definition]}
+            end
         end
 
         @set_id = params[:set_id]
@@ -237,9 +272,9 @@ class MappingController < ApplicationController
                 @map_set[:item_fields] = ['DESCRIPTION_SOURCE', 'DESCRIPTION_TARGET', 'DESCRIPTION_EQUIVALENCE_TYPE']
 
                 # setup the intrinsic map item fields
-                source_info = {id: 'DESCRIPTION_SOURCE', description: 'Mapping Source Concept', order: 0, data_type: 'UUID', required: true, text: 'Mapping Source Concept', removable: false, display: true, component_type: 'SOURCE'}
-                target_info = {id: 'DESCRIPTION_TARGET', description: 'Mapping Target Concept', order: 1, data_type: 'UUID', required: true, text: 'Mapping Target Concept', removable: false, display: true, component_type: 'TARGET'}
-                qualifier_info = {id: 'DESCRIPTION_EQUIVALENCE_TYPE', description: 'Equivalence Type', order: 2, data_type: 'SELECT', required: true, text: 'Equivalence Type', removable: false, display: true, component_type: 'EQUIVALENCE_TYPE', options: equivalence_options}
+                source_info = {id: 'DESCRIPTION_SOURCE', description: 'Source ' + $isaac_metadata_auxiliary['DESCRIPTION']['fsn'], order: 0, data_type: 'UUID', required: true, text: 'Source ' + $isaac_metadata_auxiliary['DESCRIPTION']['fsn'], removable: false, display: true, component_type: 'SOURCE'}
+                target_info = {id: 'DESCRIPTION_TARGET', description: 'Target ' + $isaac_metadata_auxiliary['DESCRIPTION']['fsn'], order: 1, data_type: 'UUID', required: true, text: 'Target ' + $isaac_metadata_auxiliary['DESCRIPTION']['fsn'], removable: false, display: true, component_type: 'TARGET'}
+                qualifier_info = {id: 'DESCRIPTION_EQUIVALENCE_TYPE', description: $isaac_metadata_auxiliary['EQUIVALENCE_TYPE']['fsn'], order: 2, data_type: 'SELECT', required: true, text: $isaac_metadata_auxiliary['EQUIVALENCE_TYPE']['fsn'], removable: false, display: true, component_type: 'EQUIVALENCE_TYPE', options: equivalence_options, options_tooltip: true}
 
                 # load the intrinsic map item fields into our return mapset variable
                 @map_set['item_field_DESCRIPTION_SOURCE'] = source_info
@@ -285,35 +320,34 @@ class MappingController < ApplicationController
                 set.displayFields.each do |field|
 
                     # handle the Mapping Source Concept
-                    if field.id == 'DESCRIPTION' && field.componentType.enumName == 'SOURCE'
+                    if field.id == description_id && field.componentType.enumName == 'SOURCE'
 
                         @map_set[:item_fields] << 'DESCRIPTION_SOURCE'
-                        field_info = {id: 'DESCRIPTION_SOURCE', description: 'Mapping Source Concept', order: computed_field_index, data_type: 'UUID', required: true, text: 'Mapping Source Concept', removable: false, display: true, component_type: 'SOURCE'}
+                        field_info = {id: 'DESCRIPTION_SOURCE', description: 'Source ' + $isaac_metadata_auxiliary['DESCRIPTION']['fsn'], order: computed_field_index, data_type: 'UUID', required: true, text: 'Source ' + $isaac_metadata_auxiliary['DESCRIPTION']['fsn'], removable: false, display: true, component_type: 'SOURCE'}
                         @map_set['item_field_DESCRIPTION_SOURCE'] = field_info
                         computed_field_index += 1
                     
                     # handle the Mapping Target Concept    
-                    elsif field.id == 'DESCRIPTION' && field.componentType.enumName == 'TARGET'
+                    elsif field.id == description_id && field.componentType.enumName == 'TARGET'
 
                         @map_set[:item_fields] << 'DESCRIPTION_TARGET'
-                        field_info = {id: 'DESCRIPTION_TARGET', description: 'Mapping Target Concept', order: computed_field_index, data_type: 'UUID', required: true, text: 'Mapping Target Concept', removable: false, display: true, component_type: 'TARGET'}
+                        field_info = {id: 'DESCRIPTION_TARGET', description: 'Target ' + $isaac_metadata_auxiliary['DESCRIPTION']['fsn'], order: computed_field_index, data_type: 'UUID', required: true, text: 'Target ' + $isaac_metadata_auxiliary['DESCRIPTION']['fsn'], removable: false, display: true, component_type: 'TARGET'}
                         @map_set['item_field_DESCRIPTION_TARGET'] = field_info
                         computed_field_index += 1
 
                     # handle the Mapping Target Qualifier    
-                    elsif field.id == 'DESCRIPTION' && field.componentType.enumName == 'EQUIVALENCE_TYPE'
+                    elsif field.id == description_id && field.componentType.enumName == 'EQUIVALENCE_TYPE'
 
                         @map_set[:item_fields] << 'DESCRIPTION_EQUIVALENCE_TYPE'
-                        field_info = {id: 'DESCRIPTION_EQUIVALENCE_TYPE', description: 'Equivalence Type', order: computed_field_index, data_type: 'SELECT', required: true, text: 'Equivalence Type', removable: false, display: true, component_type: 'EQUIVALENCE_TYPE', options: equivalence_options}
+                        field_info = {id: 'DESCRIPTION_EQUIVALENCE_TYPE', description: $isaac_metadata_auxiliary['EQUIVALENCE_TYPE']['fsn'], order: computed_field_index, data_type: 'SELECT', required: true, text: $isaac_metadata_auxiliary['EQUIVALENCE_TYPE']['fsn'], removable: false, display: true, component_type: 'EQUIVALENCE_TYPE', options: equivalence_options, options_tooltip: true}
                         @map_set['item_field_DESCRIPTION_EQUIVALENCE_TYPE'] = field_info
                         computed_field_index += 1
 
                     # handle calculated fields    
                     elsif field.componentType.enumName == 'SOURCE' || field.componentType.enumName == 'TARGET'
 
-                        field_name = field.componentType.enumName.titleize + ' ' + field.description
                         @map_set[:item_fields] << field.id
-                        field_info = {id: field.id, description: field_name, order: computed_field_index, data_type: 'STRING', required: false, text: field_name, removable: true, display: true, component_type: field.componentType.enumName}
+                        field_info = {id: field.id, description: field.description, order: computed_field_index, data_type: 'STRING', required: false, text: field.description, removable: true, display: true, component_type: field.componentType.enumName}
                         @map_set['item_field_' + field.id] = field_info
                         computed_field_index += 1
                         
@@ -373,20 +407,20 @@ class MappingController < ApplicationController
 
             # add the definitions for the template map fields
             @map_set[:include_fields] = [source_system_id, source_version_id, target_system_id, target_version_id]
-            @map_set[source_system_id] = {id: source_system_id, data_type: 'UUID', value: '', text: 'mapping source code system', removable: false, display: false, required: false}
+            @map_set[source_system_id] = {id: source_system_id, data_type: 'UUID', value: '', text: source_system_text, removable: false, display: false, required: false}
             @map_set[source_system_id + '_display'] = ''
-            @map_set[source_version_id] = {id: source_version_id, data_type: 'STRING', value: '', text: 'mapping source code system version', removable: false, display: false, required: false}
-            @map_set[target_system_id] = {id: target_system_id, data_type: 'UUID', value: '', text: 'mapping target code system', removable: false, display: false, required: false}
+            @map_set[source_version_id] = {id: source_version_id, data_type: 'STRING', value: '', text: source_version_text, removable: false, display: false, required: false}
+            @map_set[target_system_id] = {id: target_system_id, data_type: 'UUID', value: '', text: target_system_text, removable: false, display: false, required: false}
             @map_set[target_system_id + '_display'] = ''
-            @map_set[target_version_id] = {id: target_version_id, data_type: 'STRING', value: '', text: 'mapping target code system version', removable: false, display: false, required: false}
+            @map_set[target_version_id] = {id: target_version_id, data_type: 'STRING', value: '', text: target_version_text, removable: false, display: false, required: false}
 
             # add the definitions for the template item fields
             @map_set[:item_fields] = ['DESCRIPTION_SOURCE', 'DESCRIPTION_TARGET', 'DESCRIPTION_EQUIVALENCE_TYPE']
 
             # setup the intrinsic map item fields
-            source_info = {id: 'DESCRIPTION_SOURCE', description: 'Mapping Source Concept', order: nil, data_type: 'UUID', required: true, text: 'Mapping Source Concept', removable: false, display: true, component_type: 'SOURCE'}
-            target_info = {id: 'DESCRIPTION_TARGET', description: 'Mapping Target Concept', order: nil, data_type: 'UUID', required: true, text: 'Mapping Target Concept', removable: false, display: true, component_type: 'TARGET'}
-            qualifier_info = {id: 'DESCRIPTION_EQUIVALENCE_TYPE', description: 'Equivalence Type', order: nil, data_type: 'SELECT', required: true, text: 'Equivalence Type', removable: false, display: true, component_type: 'EQUIVALENCE_TYPE', options: equivalence_options}
+            source_info = {id: 'DESCRIPTION_SOURCE', description: 'Source ' + $isaac_metadata_auxiliary['DESCRIPTION']['fsn'], order: nil, data_type: 'UUID', required: true, text: 'Source ' + $isaac_metadata_auxiliary['DESCRIPTION']['fsn'], removable: false, display: true, component_type: 'SOURCE'}
+            target_info = {id: 'DESCRIPTION_TARGET', description: 'Target ' + $isaac_metadata_auxiliary['DESCRIPTION']['fsn'], order: nil, data_type: 'UUID', required: true, text: 'Target ' + $isaac_metadata_auxiliary['DESCRIPTION']['fsn'], removable: false, display: true, component_type: 'TARGET'}
+            qualifier_info = {id: 'DESCRIPTION_EQUIVALENCE_TYPE', description: $isaac_metadata_auxiliary['EQUIVALENCE_TYPE']['fsn'], order: nil, data_type: 'SELECT', required: true, text: $isaac_metadata_auxiliary['EQUIVALENCE_TYPE']['fsn'], removable: false, display: true, component_type: 'EQUIVALENCE_TYPE', options: equivalence_options, options_tooltip: true}
 
             # load the intrinsic map item fields into our return mapset variable
             @map_set['item_field_DESCRIPTION_SOURCE'] = source_info
@@ -406,7 +440,8 @@ class MappingController < ApplicationController
 
             calculated_fields.each do |calculated_field|
 
-                unless calculated_field.id == 'DESCRIPTION'
+                # if the field is not an intrinsic (description) map field add it to the list of calculated field
+                unless calculated_field.id == description_id
 
                     @map_set[:all_calculated_fields] << {id: calculated_field.id, component_type: 'SOURCE', text: 'Source ' + calculated_field.description}
                     @map_set[:all_calculated_fields] << {id: calculated_field.id, component_type: 'TARGET', text: 'Target ' + calculated_field.description}
@@ -438,7 +473,7 @@ class MappingController < ApplicationController
         source_name = ''
         target_name = ''
 
-        items = MappingApis::get_mapping_api(action: MappingApiActions::ACTION_ITEMS, uuid_or_id: set_id,  additional_req_params: {coordToken: coordinates_token, allowedStates: view_params['statesToView'], expand: 'referencedDetails,comments '}) # CommonRest::CacheRequest => false
+        items = MappingApis::get_mapping_api(action: MappingApiActions::ACTION_ITEMS, uuid_or_id: set_id,  additional_req_params: {coordToken: coordinates_token, allowedStates: view_params['states_to_view'], expand: 'referencedDetails,comments '}) # CommonRest::CacheRequest => false
 
         if items.is_a? CommonRest::UnexpectedResponse
             return {total_number: 0, data: []}
@@ -563,6 +598,7 @@ class MappingController < ApplicationController
         field_info = session[:mapset_item_definitions]
         failed_writes = {set: [], items: []}
         successful_writes = 0
+        description_id = $isaac_metadata_auxiliary['DESCRIPTION']['uuids'].first[:uuid]
 
         begin
 
@@ -632,7 +668,7 @@ class MappingController < ApplicationController
                         if ['SOURCE', 'TARGET', 'EQUIVALENCE_TYPE'].include?(item_field_component_type)
 
                             if item_field_label.starts_with?('DESCRIPTION')
-                                item_field_label = 'DESCRIPTION'
+                                item_field_label = description_id
                             end
 
                         else

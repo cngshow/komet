@@ -8,37 +8,35 @@ var ConceptsModule = (function () {
     function init() {
 
         // listen for the onChange event broadcast by any of the taxonomy trees.
-        $.subscribe(KometChannels.Taxonomy.taxonomyTreeNodeSelectedChannel, function (e, treeID, conceptID, stated, viewerID, windowType) {
-
-            callLoadViewerData(conceptID, stated, VIEW, viewerID, windowType);
+        $.subscribe(KometChannels.Taxonomy.taxonomyTreeNodeSelectedChannel, function (e, treeID, conceptID, viewParams, viewerID, windowType) {
+            callLoadViewerData(conceptID, viewParams, VIEW, viewerID, windowType);
         });
 
         // listen for the onChange event broadcast by selecting a search result.
         $.subscribe(KometChannels.Taxonomy.taxonomySearchResultSelectedChannel, function (e, conceptID, viewerID, windowType) {
-
-            callLoadViewerData(conceptID, TaxonomyModule.defaultStatedView, VIEW, viewerID, windowType);
+            callLoadViewerData(conceptID, TaxonomyModule.getViewParams(), VIEW, viewerID, windowType);
         });
 
         // listen for the onChange event broadcast for creating or editing a concept.
         $.subscribe(KometChannels.Taxonomy.taxonomyConceptEditorChannel, function (e, viewerAction, conceptID, viewerID, windowType, params) {
-            callLoadViewerData(conceptID, TaxonomyModule.defaultStatedView, viewerAction, viewerID, windowType, params);
+            callLoadViewerData(conceptID, TaxonomyModule.getViewParams(), viewerAction, viewerID, windowType, params);
         });
     }
 
-    function callLoadViewerData(conceptID, stated, viewerAction, viewerID, windowType, params) {
+    function callLoadViewerData(conceptID, viewParams, viewerAction, viewerID, windowType, params) {
 
         if (WindowManager.deferred && WindowManager.deferred.state() == "pending"){
 
             WindowManager.deferred.done(function(){
-                loadViewerData(conceptID, stated, viewerAction, WindowManager.getLinkedViewerID(), windowType, params)
+                loadViewerData(conceptID, viewParams, viewerAction, WindowManager.getLinkedViewerID(), windowType, params)
             }.bind(this));
 
         } else {
-            loadViewerData(conceptID, stated, viewerAction, viewerID, windowType, params);
+            loadViewerData(conceptID, viewParams, viewerAction, viewerID, windowType, params);
         }
     }
 
-    function loadViewerData(conceptID, stated, viewerAction, viewerID, windowType, params) {
+    function loadViewerData(conceptID, viewParams, viewerAction, viewerID, windowType, params) {
 
         var isDirty = $('#komet_viewer_' + viewerID).triggerHandler("unsavedCheck");
 
@@ -60,7 +58,7 @@ var ConceptsModule = (function () {
         // the path to a javascript partial file that will re-render all the appropriate partials once the ajax call returns
         var restPath = gon.routes.taxonomy_get_concept_information_path;
         var partial = "komet_dashboard/concept_detail/concept_information";
-        var restParameters = {concept_id: conceptID, stated: stated, partial: partial, viewer_id: viewerID, viewer_action: viewerAction};
+        var restParameters = {concept_id: conceptID, view_params: viewParams, partial: partial, viewer_id: viewerID, viewer_action: viewerAction};
         var onSuccess = function() {};
 
         if (viewerAction == VIEW) {
@@ -128,8 +126,8 @@ var ConceptsModule = (function () {
         WindowManager.deferred.resolve();
     }
 
-    function setStatedView(viewerID, field) {
-        loadViewerData(WindowManager.viewers[viewerID].currentConceptID, field.value, VIEW, viewerID);
+    function setStatedView(viewerID) {
+        loadViewerData(WindowManager.viewers[viewerID].currentConceptID, WindowManager.viewers[viewerID].getViewParams(), VIEW, viewerID);
     }
 
     return {

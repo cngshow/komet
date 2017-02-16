@@ -3,6 +3,12 @@ Komet Changelog
 This changelog summarizes changes and fixes which are a part of each revision.  For more details on the fixes, refer tracking numbers 
 where provided, and the git commit history.
 
+* 2017/02/16 - 1.63
+    * Added changes to support multiple view parameters to taxonomy and concept viewer
+    * Mapping Qualifier and it's values renamed (jazz: 440248)
+    * IPO Template created and available to be assigned in the "Add more fields to Map Items" dialog (jazz: 462456)
+    * Mapping fields renamed and pulled dynamically from concepts (jazz: 440195)
+
 * 2017/02/09 - 1.62
     * Renamed 'Mapping Qualifier' field to 'Equivalence Type' (Jazz: 440248)
     * Now pulling Equivalence Type' mapping item field options from the appropriate concepts (Jazz: 440248)
