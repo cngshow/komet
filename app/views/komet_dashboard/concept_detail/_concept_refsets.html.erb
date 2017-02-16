@@ -24,7 +24,9 @@
 
             <span id="komet_refsets_tab_trigger_<%= @viewer_id %>" tabindex="0"></span>
             <div id="refsets_grid_<%= @viewer_id %>" style="height: 350px;" class="ag-fresh"></div> <BR>
-            <button id="taxonomy_refset_export" onclick="WindowManager.viewers[<%= @viewer_id %>].exportCSV()">CSV Export</button>
+            <button id="taxonomy_refset_export" onclick="WindowManager.viewers[<%= @viewer_id %>].exportRefsetCSV()">CSV Export</button>
+
+            <div id="taxonomy_refsets_results_export" class="ag-fresh hide" ></div>
 
         </div>
 
