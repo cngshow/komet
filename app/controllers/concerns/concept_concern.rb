@@ -780,8 +780,9 @@ module ConceptConcern
     # @param [String] concept_id - The UUID to look up children for
     # @param [Boolean] format_results - Should the results be processed
     # @param [Boolean] remove_semantic_tag - Should semantic tags be removed (Just 'ISAAC' at the moment)
+    # @param [Boolean] include_definition - should definition descriptions be looked up and included in the results
     # @return [object] an array of children
-    def get_direct_children(concept_id, format_results = false, remove_semantic_tag = false)
+    def get_direct_children(concept_id, format_results = false, remove_semantic_tag = false, include_definition = false)
 
         children = ConceptRest.get_concept(action: ConceptRestActions::ACTION_VERSION, uuid: concept_id, additional_req_params: {includeChildren: 'true'})
 
@@ -798,13 +799,31 @@ module ConceptConcern
             children.each do |child|
 
                 text = child.conChronology.description
+                definition = ''
 
                 # TODO - replace with regex that handles any semantic tag: start with /\s\(([^)]+)\)/ (regex101.com)
                 if remove_semantic_tag
                     text.slice!(' (ISAAC)')
                 end
 
-                child_array << {concept_id: child.conChronology.identifiers.uuids.first, concept_sequence: child.conChronology.identifiers.sequence, text: text}
+                if include_definition
+
+                    descriptions = ConceptRest.get_concept(action: ConceptRestActions::ACTION_DESCRIPTIONS, uuid: child.conChronology.identifiers.uuids.first, additional_req_params: {includeAttributes: false}) # coordToken: coordinates_token, stated: view_params['stated']
+
+                    unless descriptions.is_a? CommonRest::UnexpectedResponse
+
+                        descriptions.each do |description|
+
+                            if description.descriptionTypeConcept.uuids.first == $isaac_metadata_auxiliary['DEFINITION_DESCRIPTION_TYPE']['uuids'].first[:uuid]
+
+                                definition = description.text
+                                break
+                            end
+                        end
+                    end
+                end
+
+                child_array << {concept_id: child.conChronology.identifiers.uuids.first, concept_sequence: child.conChronology.identifiers.sequence, text: text, definition: definition}
             end
 
             return child_array

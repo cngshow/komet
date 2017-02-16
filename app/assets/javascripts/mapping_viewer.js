@@ -33,6 +33,7 @@ var MappingViewer = function(viewerID, currentSetID, viewerAction) {
         this.SET_INCLUDE_FIELD_PREFIX = "komet_mapping_set_editor_include_fields_";
         this.SET_INCLUDE_FIELD_CHECKBOX_SECTION = "komet_mapping_set_editor_select_included_fields_" + viewerID;
         this.SET_INCLUDE_FIELD_DIALOG = "komet_mapping_set_editor_add_set_fields_" + viewerID;
+        this.ITEMS_INCLUDE_FIELD_TEMPLATES = "komet_mapping_set_editor_items_add_fields_template_" + viewerID;
         this.ITEMS_INCLUDE_FIELD_PREFIX = "komet_mapping_set_editor_items_include_fields_";
         this.ITEMS_INCLUDE_FIELD_CHECKBOX_SECTION = "komet_mapping_set_editor_items_select_included_fields_" + viewerID;
         this.ITEMS_INCLUDE_FIELD_DIALOG = "komet_mapping_set_editor_items_add_set_fields_" + viewerID;
@@ -372,6 +373,14 @@ var MappingViewer = function(viewerID, currentSetID, viewerAction) {
 
         this.generateSetEditorItemsAdditionalFields();
 
+        var itemTemplatesOptions = '';
+
+        $.each(this.setEditorMapSet.item_templates, function(key, value){
+            itemTemplatesOptions += '<option>' + key + '</option>'
+        });
+
+        $("#" + this.ITEMS_INCLUDE_FIELD_TEMPLATES).append(itemTemplatesOptions);
+
         var itemsDialogRightColumn = $('#' + this.ITEMS_INCLUDE_FIELD_DIALOG).find(".komet-add-fields-dialog-right-column");
 
         var calculatedFieldsSelection = '<div class="komet-add-fields-dialog-body-header">Add From Calculated Fields</div>'
@@ -421,6 +430,7 @@ var MappingViewer = function(viewerID, currentSetID, viewerAction) {
 
         form.submit(function () {
 
+            UIHelper.removePageMessages(form);
             Common.cursor_wait();
 
             $.ajax({
@@ -916,6 +926,30 @@ var MappingViewer = function(viewerID, currentSetID, viewerAction) {
         delete this.setEditorMapSet["item_field_" + fieldName];
     };
 
+    MappingViewer.prototype.addSetItemsTemplate = function(){
+
+        var templateField = $("#" + this.ITEMS_INCLUDE_FIELD_TEMPLATES);
+        var template = this.setEditorMapSet.item_templates[templateField.val()];
+        var includeItemFields = "";
+
+        for (var i = 0; i < template.length; i++){
+
+            if (!this.setEditorMapSet.item_fields[template[i].id]){
+
+                this.setEditorMapSet.item_fields.push(template[i].id);
+                this.setEditorMapSet["item_field_" + template[i].id] = template[i];
+
+                includeItemFields += this.generateSetEditorItemsDialogIncludeSection(template[i].id, template[i]);
+            }
+        }
+
+        // create a dom fragment from our generated structure and append it to the dialog form
+        $("#" + this.ITEMS_INCLUDE_FIELD_CHECKBOX_SECTION).append(document.createRange().createContextualFragment(includeItemFields));
+
+        // reset the template field
+        templateField.val("");
+    };
+
     MappingViewer.prototype.addSetItemsCalculatedField = function(){
 
         UIHelper.removePageMessages("#" + this.ITEMS_INCLUDE_FIELD_DIALOG);
@@ -1089,7 +1123,14 @@ var MappingViewer = function(viewerID, currentSetID, viewerAction) {
                 rowString += UIHelper.createSelectFieldString(id, name, classes, UIHelper.getPreDefinedOptionsForSelect("true_false"), value, itemAriaLabel);
 
             } else if (dataType == "SELECT"){
-                rowString += UIHelper.createSelectFieldString(id, name, classes, field.options, value, itemAriaLabel);
+
+                var tooltip = false;
+
+                if (field.options_tooltip){
+                    tooltip = field.options_tooltip;
+                }
+
+                rowString += UIHelper.createSelectFieldString(id, name, classes, field.options, value, itemAriaLabel, false, tooltip);
 
             } else {
                 rowString += '<input name="' + name + '" id="' + id + '" class="' + classes + '" value="' + value + '" aria-label="' + itemAriaLabel + '">';

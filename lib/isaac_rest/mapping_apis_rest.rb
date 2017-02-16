@@ -23,7 +23,6 @@ module MappingApiActions
     ACTION_ITEMS = :items
     ACTION_SET = :set
     ACTION_FIELDS = :fields
-    ACTION_FIELD = :field
     ACTION_CREATE_SET = :create_set
     ACTION_CLONE_SET = :clone_set
     ACTION_CREATE_ITEM = :create_item
@@ -42,7 +41,6 @@ module MappingApis
     PATH_ITEMS = ROOT_PATH + 'mappingItems/{id}'
     PATH_SET = ROOT_PATH + 'mappingSet/{id}'
     PATH_FIELDS = ROOT_PATH + 'fields'
-    PATH_FIELD = ROOT_PATH + 'field'
     PATH_CREATE_SET = PATH_MAPPING_WRITE_API + 'mappingSet/create'
     PATH_CLONE_SET = PATH_MAPPING_WRITE_API + 'mappingSet/clone'
     PATH_CREATE_ITEM = PATH_MAPPING_WRITE_API + 'mappingItem/create'
@@ -68,10 +66,6 @@ module MappingApis
             CLAZZ_SYM => Gov::Vha::Isaac::Rest::Api1::Data::Mapping::RestMappingSetVersion},
         ACTION_FIELDS => {
             PATH_SYM => PATH_FIELDS,
-            STARTING_PARAMS_SYM => PARAMS_EMPTY,
-            CLAZZ_SYM => Gov::Vha::Isaac::Rest::Api1::Data::Mapping::RestMappingSetDisplayField},
-        ACTION_FIELD => {
-            PATH_SYM => PATH_FIELD,
             STARTING_PARAMS_SYM => PARAMS_EMPTY,
             CLAZZ_SYM => Gov::Vha::Isaac::Rest::Api1::Data::Mapping::RestMappingSetDisplayField},
         ACTION_CREATE_SET => {
@@ -152,6 +146,5 @@ load('./lib/isaac_rest/mapping_apis_rest.rb')
 get_test = MappingApis::get_mapping_api(action: MappingApiActions::ACTION_SETS,  additional_req_params: {} )
 set_test = MappingApis::get_mapping_api(action: MappingApiActions::ACTION_SET, uuid_or_id: "a9262b1e-f650-5440-9d0d-edf75851ce91" )
 fields_test = MappingApis::get_mapping_api(action: MappingApiActions::ACTION_FIELDS )
-field_test = MappingApis::get_mapping_api(action: MappingApiActions::ACTION_FIELD,  additional_req_params: {field: "f31f3d89-5a6f-5e1f-81d3-5b68344d96f9"} )
 =end
 

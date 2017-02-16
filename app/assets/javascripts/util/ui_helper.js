@@ -723,10 +723,14 @@ var UIHelper = (function () {
 
     };
 
-    var createSelectFieldString = function(selectID, selectName, classes, options, selectedItem, label, createEmptyOption) {
+    var createSelectFieldString = function(selectID, selectName, classes, options, selectedItem, label, createEmptyOption, displayOptionTooltips) {
 
         if (createEmptyOption == null || createEmptyOption == undefined){
             createEmptyOption = false;
+        }
+
+        if (displayOptionTooltips == null || displayOptionTooltips == undefined){
+            displayOptionTooltips = false;
         }
 
         var fieldString = '<select id="' + selectID + '"'
@@ -751,6 +755,10 @@ var UIHelper = (function () {
         for (var i = 0; i < options.length; i++) {
 
             fieldString += '<option ';
+
+            if (displayOptionTooltips){
+                fieldString += 'title="' + options[i].tooltip + '" ';
+            }
 
             if (selectedItem != null && selectedItem.toString().toLowerCase() == options[i].value.toString().toLowerCase()) {
                 fieldString += 'selected="selected" ';
