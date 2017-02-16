@@ -3,6 +3,9 @@ Komet Changelog
 This changelog summarizes changes and fixes which are a part of each revision.  For more details on the fixes, refer tracking numbers 
 where provided, and the git commit history.
 
+* 2017/02/?? - 1.64 - PENDING
+    *
+
 * 2017/02/16 - 1.63
     * Added changes to support multiple view parameters to taxonomy and concept viewer
     * Mapping Qualifier and it's values renamed (jazz: 440248)
