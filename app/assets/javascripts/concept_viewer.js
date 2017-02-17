@@ -253,8 +253,9 @@ var ConceptViewer = function(viewerID, currentConceptID, viewerAction) {
     ConceptViewer.prototype.getRefsetResultData = function() {
 
         // load the parameters from the form to add to the query string sent in the ajax data call
-        var pageSize = 25;
         var refsetsParams = "?concept_id=" + this.currentConceptID + "&view_params=" + this.getViewParams();
+        var pageSize = 25;
+        this.refsetGridOptions.paginationPageSize = pageSize;
 
         function renderCell(params) {
 
@@ -287,7 +288,6 @@ var ConceptViewer = function(viewerID, currentConceptID, viewerAction) {
         // set the grid datasource options, including processing the data rows
         var dataSource = {
 
-            paginationPageSize: pageSize,
             getRows: function (params) {
 
                 var pageNumber = params.endRow / pageSize;
@@ -296,9 +296,11 @@ var ConceptViewer = function(viewerID, currentConceptID, viewerAction) {
 
                 // make an ajax call to get the data
                 $.get(gon.routes.taxonomy_get_concept_refsets_path + refsetsParams, function (refsets_results) {
+
                     $.each(refsets_results.columns, function (index, value) {
                         value.cellRenderer = renderCell
                     });
+
                     this.refsetGridOptions.api.setColumnDefs(refsets_results.columns);
                     params.successCallback(refsets_results.data, refsets_results.total_number);
                 }.bind(this));
@@ -306,6 +308,44 @@ var ConceptViewer = function(viewerID, currentConceptID, viewerAction) {
         };
 
         this.refsetGridOptions.api.setDatasource(dataSource);
+    };
+
+    ConceptViewer.prototype.exportRefsetCSV  = function(){
+
+        var gridOptionsExport = {};
+
+        var cellCallback = function(params) {
+
+            if (params.value.data) {
+
+                var dom = new DOMParser;
+                var data = dom.parseFromString('<!doctype html><body>' + params.value.data, 'text/html').body.textContent;
+
+                //if this row has a display value, show that in with the row data in parentheses after
+                if (params.value.display === '') {
+                    return data;
+                } else {
+
+                    var display = dom.parseFromString('<!doctype html><body>' + params.value.display, 'text/html').body.textContent;
+                    return display + " (" + data + ")";
+                }
+            } else {
+                return null;
+            }
+        };
+
+        new agGrid.Grid($("#taxonomy_refsets_results_export").get(0), gridOptionsExport);
+
+        var searchParams = "?concept_id=" + this.currentConceptID + "&view_params=" + this.getViewParams() + "&taxonomy_refsets_page_number=1&taxonomy_refsets_page_size=10000000;";
+
+        // make an ajax call to get the data
+        $.get(gon.routes.taxonomy_get_concept_refsets_path + searchParams, function( search_results ) {
+
+            gridOptionsExport.api.setColumnDefs(search_results.columns);
+            gridOptionsExport.api.setRowData(search_results.data);
+            gridOptionsExport.api.exportDataAsCsv({allColumns: true, processCellCallback: cellCallback});
+            gridOptionsExport.api.destroy();
+        });
     };
 
     ConceptViewer.prototype.swapLinkIcon = function(linked){
@@ -334,10 +374,6 @@ var ConceptViewer = function(viewerID, currentConceptID, viewerAction) {
 
     ConceptViewer.prototype.getViewParams = function(){
         return {stated: this.getStatedView()};
-    };
-
-    ConceptViewer.prototype.exportCSV  = function(){
-        this.refsetGridOptions.api.exportDataAsCsv({allColumns: true});
     };
 
     // This function is passed in to the Parent autosuggest tag as a string and is run when the parent field changes, after all other code executes

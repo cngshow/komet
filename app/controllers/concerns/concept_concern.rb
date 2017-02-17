@@ -389,8 +389,13 @@ module ConceptConcern
         coordinates_token = session[:coordinatestoken].token
         refsets_results = {}
         sememe_types = {}
-        page_size = 25
         page_number = params[:taxonomy_refsets_page_number]
+        page_size = 25
+
+        if params[:taxonomy_refsets_page_size] != nil
+            page_size = params[:taxonomy_refsets_page_size]
+        end
+
         additional_params = {coordToken: coordinates_token, expand: 'chronology,nestedSememes,referencedDetails', pageNum: page_number, stated: view_params['stated']}
         additional_params[:maxPageSize] =  page_size
 
@@ -398,7 +403,7 @@ module ConceptConcern
 
         refsets_results[:total_number] = results.paginationData.approximateTotal
         refsets_results[:page_number] = results.paginationData.pageNum
-        used_column_list = [];
+        used_column_list = []
 
         display_data = process_attached_refsets(view_params, results.results, sememe_types, [], used_column_list)
 

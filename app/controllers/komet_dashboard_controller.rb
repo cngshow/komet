@@ -492,6 +492,7 @@ class KometDashboardController < ApplicationController
         end
 
         @concept_refsets = get_refsets(concept_id, view_params)
+        session[:concept_refsets] = @concept_refsets
 
         if return_json
             render json: @concept_refsets
