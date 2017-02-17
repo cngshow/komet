@@ -3,7 +3,7 @@ Komet Changelog
 This changelog summarizes changes and fixes which are a part of each revision.  For more details on the fixes, refer tracking numbers 
 where provided, and the git commit history.
 
-* 2017/02/?? - 1.64 - PENDING
+* 2017/02/17 - 1.64
     * Fixed refset CSV export so data is shown and is not encoded. Also fixed paging issues on grid so all results can be accessed and true total row number is displayed (jazz: 369888)
     * Fixed issue with mapping item template fields or matching calculated fields (ie: Source Code and Target Code) all having the same column name.
 
