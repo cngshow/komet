@@ -29,6 +29,7 @@ var PreferenceModule = (function () {
         $.minicolors.defaults.position = 'bottom right';
         var dialog, form;
 
+        // create the dialog form
         dialog = $("#komet_user_preference_form").dialog({
             autoOpen: false,
             closeOnEscape: false,
@@ -48,9 +49,7 @@ var PreferenceModule = (function () {
             buttons: {
                 "Apply changes": applyChanges,
                 Cancel: function() {
-
                     dialog.dialog( "close" );
-                    //location.replace(gon.routes.komet_dashboard_dashboard_path);
                 }
             },
             close: function() {
@@ -84,7 +83,7 @@ var PreferenceModule = (function () {
             });
         });
 
-        //this events are used to rank the description type and dialect rows
+        //this event is used to rank the description type and dialect rows
         $(document).on("click", ".change-rank.up", function () {
 
             var original = $(this).closest("tr"),
@@ -100,7 +99,7 @@ var PreferenceModule = (function () {
             }
         });
 
-        //this events are used to rank the description type and dialect rows
+        //this event is used to rank the description type and dialect rows
         $(document).on("click", ".change-rank.down", function () {
 
             var original = $(this).closest("tr"),
@@ -171,7 +170,7 @@ var PreferenceModule = (function () {
                 path_flags: path_flags,
                 refset_flags: refset_flags
             };
-            $.post( gon.routes.taxonomy_get_coordinatestoken_path, params, function( results ) {
+            $.post( gon.routes.taxonomy_set_coordinates_token_path, params, function( results ) {
                 console.log(results);
                 dialog.dialog( "close" );
                 location.replace(gon.routes.komet_dashboard_dashboard_path);

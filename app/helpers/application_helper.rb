@@ -31,7 +31,7 @@ module ApplicationHelper
 
   def get_concept_metadata(id)
 
-    coordinates_token = session[:coordinatestoken].token
+    coordinates_token = session[:coordinates_token].token
     additional_req_params = {coordToken: coordinates_token}
 
     version = ConceptRest.get_concept(action: ConceptRestActions::ACTION_DESCRIPTIONS, uuid: id, additional_req_params: additional_req_params)

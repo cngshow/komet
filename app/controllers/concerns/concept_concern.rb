@@ -38,7 +38,7 @@ module ConceptConcern
     # @return [object] an array of hashes that contains the attributes
     def get_attributes(uuid, view_params, clone = false)
 
-        coordinates_token = session[:coordinatestoken].token
+        coordinates_token = session[:coordinates_token].token
         return_attributes = []
 
         attributes = ConceptRest.get_concept(action: ConceptRestActions::ACTION_VERSION, uuid: uuid, additional_req_params: {coordToken: coordinates_token, expand: 'chronology', stated: view_params[:stated]})
@@ -103,7 +103,7 @@ module ConceptConcern
     # @return [object] a hash that contains an array of all the descriptions
     def get_descriptions(uuid, view_params, clone = false)
 
-        coordinates_token = session[:coordinatestoken].token
+        coordinates_token = session[:coordinates_token].token
         return_descriptions = []
         descriptions = ConceptRest.get_concept(action: ConceptRestActions::ACTION_DESCRIPTIONS, uuid: uuid, additional_req_params: {coordToken: coordinates_token, stated: view_params['stated']})
 
@@ -287,7 +287,7 @@ module ConceptConcern
     # @return [object] a hash that contains an array of all the associations
     def get_associations(uuid, view_params, clone = false)
 
-        coordinates_token = session[:coordinatestoken].token
+        coordinates_token = session[:coordinates_token].token
         return_associations = []
         additional_req_params = {coordToken: coordinates_token, stated: view_params['stated'], expand: 'source, target'}
 
@@ -343,7 +343,7 @@ module ConceptConcern
     # @return [object] a hash that contains an array of all the association types
     def get_association_types
 
-        coordinates_token = session[:coordinatestoken].token
+        coordinates_token = session[:coordinates_token].token
         return_types = []
         additional_req_params = {coordToken: coordinates_token}
 
@@ -369,7 +369,7 @@ module ConceptConcern
     # @return [object] a hash that contains an array of all the columns to be displayed and an array of all the sememes
     def get_attached_sememes(uuid, view_params, clone = false)
 
-        coordinates_token = session[:coordinatestoken].token
+        coordinates_token = session[:coordinates_token].token
 
         sememes = SememeRest.get_sememe(action: SememeRestActions::ACTION_BY_REFERENCED_COMPONENT, uuid_or_id: uuid, additional_req_params: {coordToken: coordinates_token, expand: 'chronology,nestedSememes', stated: view_params['stated']})
 
@@ -386,7 +386,7 @@ module ConceptConcern
     # @return [object] a hash that contains an array of all the columns to be displayed and an array of all the refsets
     def get_refsets(uuid, view_params)
 
-        coordinates_token = session[:coordinatestoken].token
+        coordinates_token = session[:coordinates_token].token
         refsets_results = {}
         sememe_types = {}
         page_number = params[:taxonomy_refsets_page_number]
@@ -421,7 +421,7 @@ module ConceptConcern
     # @return [object] a RestSememeVersion object
     def get_sememe_version_details(uuid, view_params)
 
-        coordinates_token = session[:coordinatestoken].token
+        coordinates_token = session[:coordinates_token].token
         sememe = SememeRest.get_sememe(action: SememeRestActions::ACTION_VERSION, uuid_or_id: uuid, additional_req_params: {coordToken: coordinates_token, expand: 'chronology,nestedSememes', stated: view_params['stated']})
 
         if sememe.is_a? CommonRest::UnexpectedResponse
@@ -437,7 +437,7 @@ module ConceptConcern
     # @return [object] a RestSememeVersion object
     def get_sememe_definition_details(uuid)
 
-        coordinates_token = session[:coordinatestoken].token
+        coordinates_token = session[:coordinates_token].token
         additional_req_params = {coordToken: coordinates_token}
         data_row = {}
         field_info = {}
@@ -512,7 +512,7 @@ module ConceptConcern
     # @return [object] a hash that contains an array of all the columns to be displayed and an array of all the data
     def process_attached_sememes(view_params, sememes, used_column_list, used_column_hash, level, clone = false)
 
-        coordinates_token = session[:coordinatestoken].token
+        coordinates_token = session[:coordinates_token].token
         additional_req_params = {coordToken: coordinates_token, stated: view_params['stated']}
         data_rows = []
         refset_rows = []
@@ -687,7 +687,7 @@ module ConceptConcern
     # @return [object] a hash that contains an array of all the columns to be displayed and an array of all the refsets
     def process_attached_refsets(view_params, sememes, sememe_types, data_rows, used_column_list)
 
-        coordinates_token = session[:coordinatestoken].token
+        coordinates_token = session[:coordinates_token].token
         additional_req_params = {coordToken: coordinates_token, stated: view_params['stated']}
 
         #Defining first 2 columns of grid.

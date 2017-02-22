@@ -36,7 +36,7 @@ class MappingController < ApplicationController
 
     def load_tree_data
 
-        coordinates_token = session[:coordinatestoken].token
+        coordinates_token = session[:coordinates_token].token
         text_filter = params[:text_filter]
         set_filter = params[:set_filter]
         view_params = params[:view_params]
@@ -105,7 +105,7 @@ class MappingController < ApplicationController
 
     def get_overview_sets_results
 
-        coordinates_token = session[:coordinatestoken].token
+        coordinates_token = session[:coordinates_token].token
         results = {}
         data = []
         filter = params[:overview_sets_filter]
@@ -143,7 +143,7 @@ class MappingController < ApplicationController
 
         # reset the session item definitions
         session[:mapset_item_definitions] = []
-        coordinates_token = session[:coordinatestoken].token
+        coordinates_token = session[:coordinates_token].token
         @map_set = {id: '', name: '', description: '', version: '', vuid: '', rules: '', include_fields: [], state: 'Active', time: '', module: '', path: '', comment_id: 0, comment: ''}
         source_system_id = $isaac_metadata_auxiliary['SOURCE_CODE_SYSTEM']['uuids'].first[:uuid]
         source_system_text = $isaac_metadata_auxiliary['SOURCE_CODE_SYSTEM']['fsn']
@@ -454,7 +454,7 @@ class MappingController < ApplicationController
 
     def get_overview_items_results(set_id = nil)
 
-        coordinates_token = session[:coordinatestoken].token
+        coordinates_token = session[:coordinates_token].token
         column_definitions = session[:mapset_item_definitions]
         render_return = false
         view_params = params[:view_params]

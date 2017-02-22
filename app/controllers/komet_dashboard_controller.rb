@@ -91,7 +91,7 @@ class KometDashboardController < ApplicationController
 
     def populate_tree(selected_concept_id, parent_search, parent_reversed, tree_walk_levels, multi_path)
 
-        coordinates_token = session[:coordinatestoken].token
+        coordinates_token = session[:coordinates_token].token
         root = selected_concept_id.eql?('#')
 
         additional_req_params = {coordToken: coordinates_token, stated: @view_params['stated'], sememeMembership: true}
@@ -515,36 +515,9 @@ class KometDashboardController < ApplicationController
 
     end
 
-    # gets default/ users preference coordinates
-    def get_coordinates
+    def set_coordinates_token
 
-        coordinates_token = session[:coordinatestoken].token
-        $log.debug("token get_coordinates #{coordinates_token}" )
-
-        # get the details of what is in the coordinates token
-        coordinates_params = CoordinateRest.get_coordinate(action: CoordinateRestActions::ACTION_COORDINATES,additional_req_params: {coordToken: coordinates_token})
-
-        coordinates_params = JSON.parse(coordinates_params.to_json)
-        user_prefs = user_session(UserSession::USER_PREFERENCES)
-
-        unless user_prefs.nil?
-
-            user_prefs = user_session(UserSession::USER_PREFERENCES)
-            coordinates_params[:module_flags] = user_prefs[:module_flags]
-            coordinates_params[:path_flags] = user_prefs[:path_flags]
-            coordinates_params[:refset_flags] = user_prefs[:refset_flags]
-
-            $log.info("get_coordinates module_flags is #{user_prefs[:module_flags]}")
-            $log.info("get_coordinates path_flags is #{user_prefs[:path_flags]}")
-            $log.info("get_coordinates refset_flags is #{user_prefs[:refset_flags]}")
-        end
-
-        $log.info("get_coordinates coordinates_params is #{coordinates_params.to_json}")
-        render json:  coordinates_params.to_json
-    end
-
-    def get_coordinatestoken
-
+        # set the params for the API call from the request
         additional_req_params = {}
         additional_req_params[:language] = params[:language]
         additional_req_params[:time] = params[:stamp_date]
@@ -553,30 +526,30 @@ class KometDashboardController < ApplicationController
         additional_req_params[:allowedStates] = params[:allowedStates]
         additional_req_params.merge!(CommonRest::CacheRequest::PARAMS_NO_CACHE)
 
-        $log.debug("get_coordinatestoken additional_req_params #{additional_req_params}")
-        $log.debug("get_coordinatestoken  params[:module_list] #{ params[:module_flags]}")
-        $log.debug("get_coordinatestoken params[:path_list] #{params[:path_flags]}")
-        $log.debug("get_coordinatestoken  params[:refset_flags] #{ params[:refset_flags]}")
+        $log.debug("set_coordinates_token additional_req_params #{additional_req_params}")
+        $log.debug("set_coordinates_token  params[:module_list] #{ params[:module_flags]}")
+        $log.debug("set_coordinates_token params[:path_list] #{params[:path_flags]}")
+        $log.debug("set_coordinates_token  params[:refset_flags] #{ params[:refset_flags]}")
 
-        session[:coordinatestoken] = CoordinateRest.get_coordinate(action: CoordinateRestActions::ACTION_COORDINATES_TOKEN, additional_req_params: additional_req_params)
-        $log.info("get_coordinatestoken session[:coordinatestoken] #{ session[:coordinatestoken]}")
+        # make the call to set the token and put the retuned token into the session
+        session[:coordinates_token] = CoordinateRest.get_coordinate(action: CoordinateRestActions::ACTION_COORDINATES_TOKEN, additional_req_params: additional_req_params)
+        $log.info("set_coordinates_token session[:coordinates_token] #{ session[:coordinates_token]}")
 
+        # set the user choices for concept flags into the session for retrieval during concept display
         user_prefs = HashWithIndifferentAccess.new
         user_prefs[:module_flags] = params[:module_flags]
         user_prefs[:path_flags] = params[:path_flags]
         user_prefs[:refset_flags] = params[:refset_flags]
         user_session(UserSession::USER_PREFERENCES, user_prefs)
 
-        render json: session[:coordinatestoken].to_json
+        render json: session[:coordinates_token].to_json
 
     end
 
     def get_user_preference_info
 
-        # clear_user_session
-
         # get the coordinates token from the session
-        coordinates_token = session[:coordinatestoken].token
+        coordinates_token = session[:coordinates_token].token
         additional_req_params = {coordToken: coordinates_token}
         $log.debug("get_user_preference_info token #{coordinates_token}")
 
@@ -762,7 +735,7 @@ class KometDashboardController < ApplicationController
     # [Object] view_params - various parameters related to the view filters the user wants to apply - see full definition comment at top of komet_dashboard_controller file
     def get_refset_list
 
-        coordinates_token = session[:coordinatestoken].token
+        coordinates_token = session[:coordinates_token].token
         @view_params = params[:view_params]
 
         # check to make sure the view parameters were passed in
@@ -808,7 +781,7 @@ class KometDashboardController < ApplicationController
 
     def get_concept_description_types
 
-        coordinates_token = session[:coordinatestoken].token
+        coordinates_token = session[:coordinates_token].token
         containing_concept_id = 'fc134ddd-9a15-5540-8fcc-987bf2af9198'
         types = []
 
@@ -1316,7 +1289,7 @@ class KometDashboardController < ApplicationController
     # @return [json] a list of matching concept text and ids - array of hashes {label:, value:}
     def get_concept_suggestions
 
-        coordinates_token = session[:coordinatestoken].token
+        coordinates_token = session[:coordinates_token].token
         search_term = params[:term]
         concept_suggestions_data = []
         additional_req_params = {coordToken: coordinates_token, query: search_term, maxPageSize: 25, expand: 'referencedConcept', mergeOnConcept: true}
@@ -1365,11 +1338,11 @@ class KometDashboardController < ApplicationController
         session[:default_view_params] = @view_params
         session[:edit_view_params] = @view_params
 
-        if !session[:coordinatestoken]
-            session[:coordinatestoken] = CoordinateRest.get_coordinate(action: CoordinateRestActions::ACTION_COORDINATES_TOKEN)
+        if !session[:coordinates_token]
+            session[:coordinates_token] = CoordinateRest.get_coordinate(action: CoordinateRestActions::ACTION_COORDINATES_TOKEN)
         end
         get_user_preference_info
-        $log.debug("token initial #{session[:coordinatestoken].token}" )
+        $log.debug("token initial #{session[:coordinates_token].token}" )
 
     end
 
