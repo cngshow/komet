@@ -4,7 +4,7 @@
   <meta http-equiv="X-UA-Compatible" content="IE=Edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title><%= content_for?(:title) ? yield(:title) : t('app_name') %></title>
-  <meta name="description" content="<%= content_for?(:description) ? yield(:description) : "KOMET Tooling" %>">
+  <meta name="description" content="<%= content_for?(:description) ? yield(:description) : "#{KOMET_NAME}" %>">
   <%= include_gon %>
   <%= proxy_sensitive(stylesheet_link_tag('application', media: 'all', 'data-turbolinks-track' => true)) %>
   <%= proxy_sensitive(javascript_include_tag('application', 'data-turbolinks-track' => true)) %>
@@ -21,7 +21,7 @@
   <%= yield %>
 </main>
 <footer class="komet-workflow-action-bar">
-  KOMET Tooling <%= $PROPS['PRISME.war_version'] ? $PROPS['PRISME.war_version'] : 'Unversioned by PRISME.' %>
+  <%=KOMET_NAME%> <%= $PROPS['PRISME.war_version'] ? $PROPS['PRISME.war_version'] : 'Unversioned by PRISME.' %>
   <%=' - ' + @aitc_environment %>
 <%#= render partial: 'layouts/workflow_footer'%>
 </footer>
