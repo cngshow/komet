@@ -126,15 +126,10 @@ var ConceptsModule = (function () {
         WindowManager.deferred.resolve();
     }
 
-    function setStatedView(viewerID) {
-        loadViewerData(WindowManager.viewers[viewerID].currentConceptID, WindowManager.viewers[viewerID].getViewParams(), VIEW, viewerID);
-    }
-
     return {
         initialize: init,
         createViewer: createViewer,
         loadViewerData: loadViewerData,
-        setStatedView: setStatedView,
         VIEW: VIEW,
         EDIT: EDIT,
         CREATE: CREATE,

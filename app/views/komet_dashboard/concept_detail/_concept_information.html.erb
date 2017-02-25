@@ -1,7 +1,7 @@
 <div class="panel panel-default komet-no-margins komet-panel" id="komet_viewer_<%= @viewer_id %>" data-komet-viewer-id="<%= @viewer_id %>">
     <!-- DO NOT PUT ANYTHING ABOVE THE KOMET VIEWER DIV - IT WILL BREAK WINDOWING WHEN CLOSING VIEWERS AND BE REPEATED EVERY TIME NEW CONTENT IS LOADED TO INLINE VIEWER -->
 
-  <fieldset><div class="panel-heading">
+    <fieldset><div class="panel-heading">
         <span class="panel-title komet-section-title komet-context-menu"
               data-menu-type="concept"
               data-menu-uuid="<%= @concept_id %>"
@@ -18,22 +18,31 @@
             <%= @concept_text %>
         </span>
 
-      <legend style="width: 0px;height:0px">&nbsp;</legend>
+        <legend style="width: 0px;height:0px">&nbsp;</legend>
         <div class="komet-panel-tools">
 
-            <button type="button" class="komet-link-button komet-panel-tools-control" onclick="WindowManager.viewers[<%= @viewer_id %>].togglePanelDetails('komet_viewer_<%= @viewer_id %>')"  title="Expand All">
-                <div class="glyphicon glyphicon-plus-sign" title="Expand All"></div>
+            <button type="button" class="komet-link-button komet-panel-tools-control" onclick="WindowManager.viewers[<%= @viewer_id %>].togglePanelDetails('komet_viewer_<%= @viewer_id %>')" title="Expand All">
+                <div class="komet-action-icon glyphicon glyphicon-plus-sign" title="Expand All"></div>
                 <span>Expand All</span>
             </button>
 
-          <% if controller.can_edit_concept? %>
-            <button type="button" class="komet-link-button komet-panel-tools-control" onclick="$.publish(KometChannels.Taxonomy.taxonomyConceptEditorChannel, [ConceptsModule.EDIT, '<%= @concept_id %>', '<%= @viewer_id %>', WindowManager.INLINE]);"  title="Edit Concept">
-                <div class="fa fa-pencil-square" title="Edit Concept"></div>
-                <span>Edit Concept</span>
-            </button>
-          <% end %>
+            <% if controller.can_edit_concept? %>
+                <button type="button" class="komet-link-button komet-panel-tools-control" onclick="$.publish(KometChannels.Taxonomy.taxonomyConceptEditorChannel, [ConceptsModule.EDIT, '<%= @concept_id %>', '<%= @viewer_id %>', WindowManager.INLINE]);"  title="Edit Concept">
+                    <div class="komet-action-icon fa fa-pencil-square" title="Edit Concept"></div>
+                    <span>Edit Concept</span>
+                </button>
+            <% end %>
 
-          <div class="komet-panel-tools-control">
+            <div class="komet-panel-tools-control">
+                <div class='input-group date' id='komet_concept_stamp_date_<%= @viewer_id %>'>
+                    <input type='text' class="form-control" aria-label="STAMP Date Preference" title="STAMP Date Preference">
+                    <span class="input-group-addon">
+                        <span class="fa fa-calendar"></span>
+                    </span>
+                </div>
+            </div>
+
+            <div class="komet-panel-tools-control">
                 <div class="btn-group" data-toggle="buttons">
                     <label class="btn btn-default" for="komet_concept_stated_<%= @viewer_id %>">
                         <input type="radio" name="komet_concept_stated_inferred" id="komet_concept_stated_<%= @viewer_id %>" value="true" autocomplete="off" title="Stated View"> Stated
@@ -45,7 +54,7 @@
             </div>
 
             <button type="button" class="komet-link-button" onclick="WindowManager.closeViewer('<%= @viewer_id %>')" aria-label="Close Viewer" title="Close Viewer">
-                <div class="glyphicon glyphicon-remove"></div>
+                <div class="komet-action-icon glyphicon glyphicon-remove"></div>
             </button>
         </div>
 
@@ -90,26 +99,7 @@
 
         $(document).ready(function () {
 
-            var stated = $("#komet_viewer_<%= @viewer_id %>").find("input[name='komet_concept_stated_inferred']");
-
-            stated.change(function(){
-
-                stated.parent().toggleClass("btn-primary btn-default");
-                ConceptsModule.setStatedView("<%= @viewer_id %>", this);
-            });
-
-            stated.each(function(index, button){
-
-                if (button.value == "<%= @view_params[:stated] %>"){
-
-                    var buttonParent = button.parentElement;
-
-                    button.checked = true;
-                    buttonParent.classList.add('btn-primary');
-                    $(buttonParent).removeClass("btn-default");
-                }
-            });
-
+            WindowManager.viewers[<%= @viewer_id %>].initViewParams(<%= raw @view_params.to_json %>);
             WindowManager.viewers[<%= @viewer_id %>].restorePanelStates();
             WindowManager.viewers[<%= @viewer_id %>].loadLineageTrees();
             UIHelper.initializeContextMenus();

@@ -28,7 +28,6 @@ Rails.application.routes.draw do
     get 'komet_dashboard/get_concept_children', :as => :taxonomy_get_concept_children
     get 'komet_dashboard/get_user_preference_info', :as => :taxonomy_get_user_preference_info
     post 'komet_dashboard/set_coordinates_token', :as => :taxonomy_set_coordinates_token
-    get 'komet_dashboard/get_refset_list', :as => :taxonomy_get_refset_list
     get 'komet_dashboard/get_concept_create_info', :as => :taxonomy_get_concept_create_info
     get 'komet_dashboard/get_concept_edit_info', :as => :taxonomy_get_concept_edit_info
     post 'komet_dashboard/create_concept', :as => :taxonomy_create_concept

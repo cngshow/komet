@@ -156,7 +156,7 @@ var MappingModule = (function () {
     }
 
     function getTreeViewParams (){
-        return {states_to_view: getTreeStatesToView()};
+        return {allowedStates: getTreeStatesToView()};
     }
 
     return {

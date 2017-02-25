@@ -26,7 +26,7 @@
 
             <% if @mapping_action == 'set_list' %>
                 <button type="button" id="komet_mapping_overview_sets_refresh_<%= @viewer_id %>" class="komet-link-button komet-panel-tools-control" onclick="WindowManager.viewers[<%= @viewer_id %>].loadOverviewSetsGrid();" title="Reload Mapping Set Grid" aria-label="Reload Mapping Set Grid">
-                    <div title="Reload Mapping Set Grid" class="fa fa-refresh"></div>
+                    <div title="Reload Mapping Set Grid" class="komet-action-icon fa fa-refresh"></div>
                 </button>
             <% end %>
 
@@ -55,7 +55,7 @@
 
 
             <button type="button" class="komet-link-button" aria-label="Close Viewer" onclick="WindowManager.closeViewer('<%= @viewer_id %>')" title="Close Viewer">
-                <div class="glyphicon glyphicon-remove"></div>
+                <div class="komet-action-icon glyphicon glyphicon-remove"></div>
             </button>
         </div>
     </div>
@@ -73,7 +73,7 @@
             MappingModule.setViewerStatesToView("<%= @viewer_id %>");
         });
 
-        MappingModule.toggleTreeStatesToView(statesToView, "<%= @view_params[:states_to_view] %>");
+        MappingModule.toggleTreeStatesToView(statesToView, "<%= @view_params[:allowedStates] %>");
 
         if (!WindowManager.viewers.hasOwnProperty('<%= @viewer_id %>') || !(WindowManager.viewers[<%= @viewer_id %>] instanceof MappingViewer)) {
             MappingModule.createViewer("<%= @viewer_id %>", "<%= @set_id %>", "<%= @mapping_action %>");

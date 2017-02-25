@@ -147,7 +147,7 @@ var MappingViewer = function(viewerID, currentSetID, viewerAction) {
     };
 
     MappingViewer.prototype.getViewParams = function(){
-        return {states_to_view: this.getStatesToView()};
+        return {allowedStates: this.getStatesToView()};
     };
 
     MappingViewer.prototype.loadOverviewSetsGrid = function(){

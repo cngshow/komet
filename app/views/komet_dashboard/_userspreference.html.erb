@@ -8,7 +8,6 @@
     <div id="useroptions">
         <form>
             <div style="height: 45px">
-                <input id="stampedDt" type="hidden" value="<%@stamp_date%>">
                 <div style="font-weight: bold; width: 40%; text-align: right; vertical-align: middle; float: left">Select Language:&nbsp;&nbsp;</div>
                 <div style="width: 60%; float: right">
                     <select id="komet_concept_language" class="form-control" aria-label="Select Language" aria-expanded="true" role="listbox">
@@ -22,13 +21,14 @@
                     </select>           </div>
             </div>
             <div style="height: 45px">
+                <input id="stampedDt" type="hidden" value="<%=@stamp_date%>">
                 <div id="stamp_date_label" style="font-weight: bold; width: 40%; text-align: right; vertical-align: middle; float: left">STAMP as of Date:&nbsp;&nbsp;</div>
                 <div style="width: 60%; float: right">
                     <div class='input-group date' id='stamp_date'>
                         <input type='text' class="form-control" aria-labelledby="stamp_date_label">
-              <span class="input-group-addon">
-                <span class="fa fa-calendar"></span>
-              </span>
+                        <span class="input-group-addon">
+                            <span class="fa fa-calendar"></span>
+                        </span>
                     </div>
                 </div>
             </div>
@@ -85,58 +85,58 @@
             </div>
         </form>
     </div>
-    
+
     <div id="komet_preferences_module_section" style="height: 650px;">
         <div>Please click on <span style="color: red; ">X</span> to clear color</div>
-        
+
         <table id="komet_preferences_module_table" width='90%' cellpadding='2' border='0' cellspacing='3'>
-            
+
             <tr style="background-color: #0000a2;color:white">
                 <td>Module</td>
                 <td>Color</td>
                 <td>Shape</td>
             </tr>
-            
+
             <% @module_flags.each do |module_flag| %>
-                
+
                 <tr id="komet_preferences_row_<%= module_flag[:id] %>">
-                    
+
                     <td><%= module_flag[:text] %></td>
                     <td>
                         <input type="hidden" id="komet_preferences_id_<%= module_flag[:id] %>" name="module_id" value="<%= module_flag[:id]%>"/>
                         <input type="hidden" id="komet_preferences_text_<%= module_flag[:id] %>" name="module_text" value="<%= module_flag[:text]%>"/>
-                        <a 
-                            title="clear color" 
-                            style="padding:2px;color:red" 
-                            aria-label="clear <%= module_flag[:text] %> color" 
-                            onclick="PreferenceModule.removeColor('<%= module_flag[:id]%>');PreferenceModule.setShape('None','None','<%= module_flag[:id] %>')"
+                        <a
+                        title="clear color"
+                        style="padding:2px;color:red"
+                        aria-label="clear <%= module_flag[:text] %> color"
+                        onclick="PreferenceModule.removeColor('<%= module_flag[:id]%>');PreferenceModule.setShape('None','None','<%= module_flag[:id] %>')"
                         >X</a>&nbsp;
-                        
+
                         <input
-                            id="komet_preferences_color_<%= module_flag[:id] %>"
-                            name="module_color"
-                            value="<%= module_flag[:color]%>"
-                            class="komet_color_picker"
-                            title="Click here to change color" 
-                            aria-label="Change <%= module_flag[:text] %> color" 
-                            type="text"
-                            size="6" 
-                            style="height:30px" 
-                            data-control="hue"
+                        id="komet_preferences_color_<%= module_flag[:id] %>"
+                        name="module_color"
+                        value="<%= module_flag[:color]%>"
+                        class="komet_color_picker"
+                        title="Click here to change color"
+                        aria-label="Change <%= module_flag[:text] %> color"
+                        type="text"
+                        size="6"
+                        style="height:30px"
+                        data-control="hue"
                         />
                     </td>
-                    
+
                     <td>
                         <div class="dropdown">
-                            
+
                             <div class="<%= module_flag[:shape]%>" style="display: inline-block" id="komet_preferences_shape_example_<%= module_flag[:id] %>"><%= module_flag[:shape_name] %></div>
-                            
+
                             <input type="hidden" id="komet_preferences_shape_<%= module_flag[:id] %>" name="module_shape" value="<%= module_flag[:shape]%>"/>
-                            
+
                             <span class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"><span class="caret"></span></span>
-                            
+
                             <ul class="dropdown-menu" aria-label="select shape">
-                            
+
                                 <li><a style="display: inline-block" onclick="PreferenceModule.setShape('None','None','<%= module_flag[:id] %>')" href="#">None</a></li>
                                 <li aria-hidden="true" class="glyphicon glyphicon-stop" ><a href="#" style="display: inline-block" onclick="PreferenceModule.setShape('glyphicon glyphicon-stop', 'Square', '<%= module_flag[:id] %>')">Square</a></li>
                                 <li aria-hidden="true" class="glyphicon glyphicon-star"><a href="#" style="display: inline-block" onclick="PreferenceModule.setShape('glyphicon glyphicon-star', 'Star', '<%= module_flag[:id] %>')">Star</a></li>
@@ -171,23 +171,23 @@
                         <input type="hidden" id="komet_preferences_id_<%= path_flag[:id] %>" name="path_id" value="<%= path_flag[:id]%>"/>
                         <input type="hidden" id="komet_preferences_text_<%= path_flag[:id] %>" name="path_text" value="<%= path_flag[:text]%>"/>
                         <a
-                            title="clear color"
-                            style="padding:2px;color:red"
-                            aria-label="clear <%= path_flag[:text] %> color"
-                            onclick="PreferenceModule.removeColor('<%= path_flag[:id]%>');PreferenceModule.setShape('None','None','<%= path_flag[:id] %>')"
+                        title="clear color"
+                        style="padding:2px;color:red"
+                        aria-label="clear <%= path_flag[:text] %> color"
+                        onclick="PreferenceModule.removeColor('<%= path_flag[:id]%>');PreferenceModule.setShape('None','None','<%= path_flag[:id] %>')"
                         >X</a>&nbsp;
 
                         <input
-                            id="komet_preferences_color_<%= path_flag[:id] %>"
-                            name="path_color"
-                            value="<%= path_flag[:color]%>"
-                            class="komet_color_picker"
-                            title="Click here to change color"
-                            aria-label="Change <%= path_flag[:text] %> color"
-                            type="text"
-                            size="6"
-                            style="height:30px"
-                            data-control="hue"
+                        id="komet_preferences_color_<%= path_flag[:id] %>"
+                        name="path_color"
+                        value="<%= path_flag[:color]%>"
+                        class="komet_color_picker"
+                        title="Click here to change color"
+                        aria-label="Change <%= path_flag[:text] %> color"
+                        type="text"
+                        size="6"
+                        style="height:30px"
+                        data-control="hue"
                         />
                     </td>
 

@@ -152,7 +152,7 @@ var KometTaxonomyTree = function(treeID, viewParams, parentSearch, startingConce
     };
 
     // destroy the current tree and reload it using the specified view params
-    KometTaxonomyTree.prototype.reloadTree = function(viewParams, selectItem) {
+    KometTaxonomyTree.prototype.reloadTree = function(viewParams, selectItem, conceptID) {
 
         if (selectItem == undefined || selectItem == null) {
             selectItem = this.selectItem;
@@ -160,6 +160,11 @@ var KometTaxonomyTree = function(treeID, viewParams, parentSearch, startingConce
 
         this.tree.jstree(true).destroy();
         this.buildTaxonomyTree(viewParams, this.parentSearch, this.startingConceptID, selectItem, this.multiPath);
+
+        // if a concept ID was passed in then try to find the node and select it again, without triggering the change event
+        if (conceptID != null){
+            this.findNodeInTree(conceptID, viewParams)
+        }
     };
 
     // destroy the current tree and reload it using the conceptID as a starting point
@@ -201,15 +206,15 @@ var KometTaxonomyTree = function(treeID, viewParams, parentSearch, startingConce
         // an array of callback functions to handle cleanup of each node we touch once we find the target node
         var cleanUpNodes = [];
 
-        if (selectTheNode == undefined){
+        if (selectTheNode == null || selectTheNode == undefined){
             selectTheNode = true;
         }
 
-        if (suppressChangeEvent == undefined){
+        if (suppressChangeEvent == null || suppressChangeEvent == undefined){
             suppressChangeEvent = true;
         }
 
-        if (returnFunction == undefined){
+        if (returnFunction == null || returnFunction == undefined){
             returnFunction = function(){};
         }
 
@@ -220,7 +225,7 @@ var KometTaxonomyTree = function(treeID, viewParams, parentSearch, startingConce
         if (nodeID == undefined){
 
             var tree = this.tree.jstree(true);
-            var params = '?parent_search=true&parent_reversed=true&tree_walk_levels=100&concept_id=' + conceptID + '&view_params=' + viewParams;
+            var params = '?parent_search=true&parent_reversed=true&tree_walk_levels=100&concept_id=' + conceptID + '&' + jQuery.param({view_params: viewParams});
 
             var processNodeParents = function(data){
 

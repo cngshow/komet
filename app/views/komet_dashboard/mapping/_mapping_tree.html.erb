@@ -33,7 +33,7 @@
             </div>
 
             <button type="button" class="komet-link-button" onclick="MappingModule.tree.reloadTree(MappingModule.getTreeViewParams());" title="Reload Mapping Tree" aria-label="Reload Mapping Tree">
-                <div id="komet_mapping_tree_reload" alt="Reload Mapping Tree" class="fa fa-refresh" ></div>
+                <div id="komet_mapping_tree_reload" alt="Reload Mapping Tree" class="komet-action-icon fa fa-refresh" ></div>
             </button>
 
         </div>
@@ -60,7 +60,7 @@
             MappingModule.setTreeStatesToView(this);
         });
 
-        MappingModule.toggleTreeStatesToView(statesToView, "<%= @view_params[:states_to_view] %>");
+        MappingModule.toggleTreeStatesToView(statesToView, "<%= @view_params[:allowedStates] %>");
         MappingModule.initialize();
     });
 

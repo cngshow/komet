@@ -34,6 +34,55 @@ var ConceptViewer = function(viewerID, currentConceptID, viewerAction) {
         this.UNLINKED_TEXT = "Viewer not linked to Taxonomy Tree. Click to link.";
     };
 
+    ConceptViewer.prototype.getStatedView = function(){
+        return $('#komet_concept_stated_' + this.viewerID).prop("checked");
+    };
+
+    ConceptViewer.prototype.getStampDate = function(){
+
+        var stamp_date = $("#komet_concept_stamp_date_" + this.viewerID).find("input").val();
+
+        if (stamp_date == '') {
+            return 'latest';
+        } else {
+            return new Date(stamp_date).getTime().toString();
+        }
+    };
+
+    // function to set the initial state of the view param fields when the viewer content changes
+    ConceptViewer.prototype.initViewParams = function(view_params) {
+
+        // get the stated field group
+        var stated = $("#komet_viewer_" + this.viewerID).find("input[name='komet_concept_stated_inferred']");
+
+        // create the function to reload the viewer with the new view params, that will be run when the view param fields change.
+        var viewParamChange = function (){
+            this.setViewParams();
+        }.bind(this);
+
+        // initialize the stated field
+        UIHelper.initStatedField(stated, view_params.stated, viewParamChange);
+
+        // create the function to reload the viewer with the new view params, that will be run when the STAMP date changes.
+        var dateChange = function (event) {
+
+            console.log("%%%% STAMP Date Change %%%%");
+            this.setViewParams();
+        }.bind(this);
+
+        // initialize the STAMP date field
+        UIHelper.initDatePicker("#komet_concept_stamp_date_" + this.viewerID, view_params.time, dateChange);
+
+    };
+
+    ConceptViewer.prototype.setViewParams = function() {
+        ConceptsModule.loadViewerData(this.currentConceptID, this.getViewParams(), ConceptsModule.VIEW, this.viewerID);
+    };
+
+    ConceptViewer.prototype.getViewParams = function(){
+        return {stated: this.getStatedView(), time: this.getStampDate()};
+    };
+
     ConceptViewer.prototype.togglePanelDetails = function(panelID, callback, preserveState) {
 
         // get the panel's expander icon, or all expander icons if this is the top level expander
@@ -253,7 +302,7 @@ var ConceptViewer = function(viewerID, currentConceptID, viewerAction) {
     ConceptViewer.prototype.getRefsetResultData = function() {
 
         // load the parameters from the form to add to the query string sent in the ajax data call
-        var refsetsParams = "?concept_id=" + this.currentConceptID + "&view_params=" + this.getViewParams();
+        var refsetsParams = "?concept_id=" + this.currentConceptID + "&" + jQuery.param({view_params: this.getViewParams()});
         var pageSize = 25;
         this.refsetGridOptions.paginationPageSize = pageSize;
 
@@ -336,13 +385,13 @@ var ConceptViewer = function(viewerID, currentConceptID, viewerAction) {
 
         new agGrid.Grid($("#taxonomy_refsets_results_export").get(0), gridOptionsExport);
 
-        var searchParams = "?concept_id=" + this.currentConceptID + "&view_params=" + this.getViewParams() + "&taxonomy_refsets_page_number=1&taxonomy_refsets_page_size=10000000;";
+        var refsetParams = "?concept_id=" + this.currentConceptID + "&" + jQuery.param({view_params: this.getViewParams()}) + "&taxonomy_refsets_page_number=1&taxonomy_refsets_page_size=10000000;";
 
         // make an ajax call to get the data
-        $.get(gon.routes.taxonomy_get_concept_refsets_path + searchParams, function( search_results ) {
+        $.get(gon.routes.taxonomy_get_concept_refsets_path + refsetParams, function( refset_results ) {
 
-            gridOptionsExport.api.setColumnDefs(search_results.columns);
-            gridOptionsExport.api.setRowData(search_results.data);
+            gridOptionsExport.api.setColumnDefs(refset_results.columns);
+            gridOptionsExport.api.setRowData(refset_results.data);
             gridOptionsExport.api.exportDataAsCsv({allColumns: true, processCellCallback: cellCallback});
             gridOptionsExport.api.destroy();
         });
@@ -366,14 +415,6 @@ var ConceptViewer = function(viewerID, currentConceptID, viewerAction) {
 
     ConceptViewer.prototype.toggleTreeIcon = function(){
         $('#komet_concept_panel_tree_show_' + this.viewerID).toggle();
-    };
-
-    ConceptViewer.prototype.getStatedView = function(){
-        return $('#komet_concept_stated_' + this.viewerID).prop("checked");
-    };
-
-    ConceptViewer.prototype.getViewParams = function(){
-        return {stated: this.getStatedView()};
     };
 
     // This function is passed in to the Parent autosuggest tag as a string and is run when the parent field changes, after all other code executes

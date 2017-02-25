@@ -42,7 +42,7 @@ class MappingController < ApplicationController
         view_params = params[:view_params]
         mapping_tree = []
 
-        map_sets_results = MappingApis::get_mapping_api(action: MappingApiActions::ACTION_SETS,  additional_req_params: {coordToken: coordinates_token, allowedStates: view_params['states_to_view'], CommonRest::CacheRequest => false} )
+        map_sets_results = MappingApis::get_mapping_api(action: MappingApiActions::ACTION_SETS,  additional_req_params: {coordToken: coordinates_token, allowedStates: view_params[:allowedStates], CommonRest::CacheRequest => false} )
 
         map_sets_results.each do |set|
 
@@ -89,7 +89,7 @@ class MappingController < ApplicationController
         @view_params = params[:view_params]
 
         if @view_params == nil
-            @view_params = {states_to_view: 'active,inactive'}
+            @view_params = {allowedStates: 'active,inactive'}
         end
 
         if @viewer_id == nil || @viewer_id == '' || @viewer_id == 'new'
@@ -114,7 +114,7 @@ class MappingController < ApplicationController
         page_number = 1 #params[:overview_sets_page_number]
         view_params = params[:view_params]
 
-        map_sets_results = MappingApis::get_mapping_api(action: MappingApiActions::ACTION_SETS,  additional_req_params: {coordToken: coordinates_token, allowedStates: view_params['states_to_view'], CommonRest::CacheRequest => false} )
+        map_sets_results = MappingApis::get_mapping_api(action: MappingApiActions::ACTION_SETS,  additional_req_params: {coordToken: coordinates_token, allowedStates: view_params[:allowedStates], CommonRest::CacheRequest => false} )
 
         map_sets_results.each do |set|
 
@@ -187,7 +187,7 @@ class MappingController < ApplicationController
             # get the options to populate the Equivalence Type dropdown
             equivalence_options = [{value: '', label: 'No Restrictions'}]
 
-            get_direct_children($isaac_metadata_auxiliary['EQUIVALENCE_TYPES']['uuids'].first[:uuid], true, true, true).each do |option|
+            get_direct_children($isaac_metadata_auxiliary['EQUIVALENCE_TYPES']['uuids'].first[:uuid], true, true, true, session[:edit_view_params]).each do |option|
                 equivalence_options << {value: option[:concept_id], label: option[:text], tooltip: option[:definition]}
             end
         end
@@ -473,7 +473,7 @@ class MappingController < ApplicationController
         source_name = ''
         target_name = ''
 
-        items = MappingApis::get_mapping_api(action: MappingApiActions::ACTION_ITEMS, uuid_or_id: set_id,  additional_req_params: {coordToken: coordinates_token, allowedStates: view_params['states_to_view'], expand: 'referencedDetails,comments '}) # CommonRest::CacheRequest => false
+        items = MappingApis::get_mapping_api(action: MappingApiActions::ACTION_ITEMS, uuid_or_id: set_id,  additional_req_params: {coordToken: coordinates_token, allowedStates: view_params[:allowedStates], expand: 'referencedDetails,comments '}) # CommonRest::CacheRequest => false
 
         if items.is_a? CommonRest::UnexpectedResponse
             return {total_number: 0, data: []}

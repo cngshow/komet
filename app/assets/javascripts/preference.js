@@ -24,6 +24,19 @@ var PreferenceModule = (function () {
 
     function init() {
 
+        var stampDateField = $('#stamp_date');
+
+        stampDateField.datetimepicker({
+            showClear: true,
+            showTodayButton: true,
+            icons: {
+                time: "fa fa-clock-o",
+                date: "fa fa-calendar",
+                up: "fa fa-arrow-up",
+                down: "fa fa-arrow-down"
+            }
+        });
+
         refsetList = {};
         refsetRows = [];
         $.minicolors.defaults.position = 'bottom right';
@@ -69,11 +82,11 @@ var PreferenceModule = (function () {
 
             dialog.dialog("open");
 
-            // Get default coordinates
+            // get the hidden stamp date field value TODO - remove this field
             var stampDate = $('#stampedDt').val();
 
-            if (stampDate !== gon.vhat_export_params.max_end_date) {
-                $('#stamp_date').data("DateTimePicker").date(moment(stampDate));
+            if (stampDate !== 'latest') {
+                stampDateField.data("DateTimePicker").date(moment(+stampDate));
             }
 
             $(document).on("click", "#applybtn", function () {
@@ -122,7 +135,7 @@ var PreferenceModule = (function () {
             var language_values=$( "#komet_concept_language" ).val();
 
             // get the stamp_date and if it is not set then use the max long in gon
-            var stamp_date = $("#stamp_date").find("input").val();
+            var stamp_date = stampDateField.find("input").val();
             if (stamp_date == '') {
                 stamp_date = 'latest';
             } else {
@@ -162,7 +175,7 @@ var PreferenceModule = (function () {
             console.log(refset_flags);
             params = {
                 language: language_values,
-                stamp_date: stamp_date,
+                time: stamp_date,
                 dialectPrefs: dialect_values,
                 descriptionTypePrefs: description_values,
                 allowedStates: allowedStates,
@@ -289,14 +302,26 @@ var PreferenceModule = (function () {
         $("#komet_preferences_row_" + flagID ).find('.minicolors-swatch-color').css("background-color", "");
     }
 
+    function getStampDate(){
+
+        var stamp_date = $('#stamp_date').find("input").val();
+
+        if (stamp_date == '') {
+            return 'latest';
+        } else {
+            return new Date(stamp_date).getTime().toString();
+        }
+    }
+
     return {
 
         initialize: init,
         addRefsetRow: addRefsetRow,
         deleteRefsetFieldRow: deleteRefsetFieldRow,
-        removeColor:removeColor,
-        setShape:setShape,
-        getShapeName:getShapeName
+        removeColor: removeColor,
+        setShape: setShape,
+        getShapeName: getShapeName,
+        getStampDate: getStampDate
     };
 
 })();

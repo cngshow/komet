@@ -35,6 +35,100 @@ var UIHelper = (function () {
     const RECENTS_SEMEME = 'sememe';
     const RECENTS_METADATA = 'metadata';
 
+    /*
+     * initStatedField - Initialize a Stated field radio button group
+     * @param [object or string] statedElementOrSelector - Either a jquery object or the class or ID selector (including the "#" or "." prefix) that represents the radio button group we are initializing.
+     * @param [string] startingValue - the value to set the initial state of the field to, options are 'true' or 'false'. Default is 'true'
+     * @param [function] onChangeFunction - a function object that will be run when the field is changed (does not take parameters)
+     */
+    function initStatedField(statedElementOrSelector, startingValue, onChangeFunction) {
+
+        var statedGroup;
+
+        // If the type of the first parameter is a string, then use it as a jquery selector, otherwise use as is
+        if (typeof statedElementOrSelector === "string") {
+            statedGroup = $(statedElementOrSelector);
+        } else {
+            statedGroup = statedElementOrSelector;
+        }
+
+        // if the starting was not passed in then set it to true
+        if (startingValue != null || startingValue != undefined){
+            startingValue = 'true';
+        }
+
+        // set the initial stated field value and classes by looping through each component and checking it's value against the passed in view_params
+        statedGroup.each(function(index, button){
+
+            if (button.value == startingValue){
+
+                var buttonParent = button.parentElement;
+
+                button.checked = true;
+                buttonParent.classList.add('btn-primary');
+                $(buttonParent).removeClass("btn-default");
+            }
+        });
+
+        // set the stated field change function to set the appropriate classes
+        statedGroup.change(function(){
+
+            statedGroup.parent().toggleClass("btn-primary btn-default");
+
+            // If it was passed run the supplied onChange function
+            if (onChangeFunction != null || onChangeFunction != undefined){
+                onChangeFunction();
+            }
+        });
+    }
+
+    /*
+     * initDatePicker - Initialize a date picker input group to with a starting date
+     * @param [object or string] dateElementOrSelector - Either a jquery object or the class or ID selector (including the "#" or "." prefix) that represents the date picker input group we are initializing.
+     * @param [Number or string] startingDate - a long number that represents the date in milliseconds since the epoch, or the string 'latest'
+     * @param [function] onChangeFunction - a function object that will be run when the date is changed (takes an event parameter which includes .oldDate and .date (the new date)
+     */
+    function initDatePicker(dateElementOrSelector, startingDate, onChangeFunction) {
+
+        var datePicker;
+
+        // If the type of the first parameter is a string, then use it as a jquery selector, otherwise use as is
+        if (typeof dateElementOrSelector === "string") {
+            datePicker = $(dateElementOrSelector);
+        } else {
+            datePicker = dateElementOrSelector;
+        }
+
+        // get the date field input field
+        var input_field = datePicker.find("input");
+
+        // set the params for the date field
+        var date_params = {
+            useCurrent: false,
+            showClear: true,
+            showTodayButton: true,
+            icons: {
+                time: "fa fa-clock-o",
+                date: "fa fa-calendar",
+                up: "fa fa-arrow-up",
+                down: "fa fa-arrow-down"
+            }
+        };
+
+        // if the starting date is not 'latest' then set the default date param to the starting date
+        if (startingDate != null && startingDate != undefined && startingDate != 'latest'){
+            date_params.defaultDate = moment(+startingDate);
+        }
+
+        // create the date field
+        input_field.datetimepicker(date_params);
+
+        // If it was passed in, set the date field onChange function to the passed in function
+        if (onChangeFunction != null && onChangeFunction != undefined){
+            input_field.on("dp.change", onChangeFunction);
+        }
+    }
+
     function getActiveTabId(tabControlId) {
         var id = "#" + tabControlId;
         var idx = $(id).tabs("option", "active");
@@ -1049,8 +1143,8 @@ var UIHelper = (function () {
 
         return function () {
 
-            var stated;
             var viewerPanel = element.parents("div[id^=komet_viewer_]");
+            var viewParams;
 
             // if the viewerID was not passed it (but not if it is null), look up what it should be
             if (viewerID === undefined) {
@@ -1063,12 +1157,12 @@ var UIHelper = (function () {
             }
 
             if (viewerPanel.length > 0) {
-                stated = WindowManager.viewers[viewerID].getStatedView();
+                viewParams = WindowManager.viewers[viewerID].getViewParams();
             } else {
-                stated = TaxonomyModule.getStatedView();
+                viewParams = TaxonomyModule.getViewParams();
             }
 
-            $.publish(KometChannels.Taxonomy.taxonomyTreeNodeSelectedChannel, ["", id, stated, viewerID, windowType]);
+            $.publish(KometChannels.Taxonomy.taxonomyTreeNodeSelectedChannel, ["", id, viewParams, viewerID, windowType]);
         };
     }
 
@@ -1189,6 +1283,8 @@ var UIHelper = (function () {
     }
 
     return {
+        initStatedField: initStatedField,
+        initDatePicker: initDatePicker,
         getActiveTabId: getActiveTabId,
         isTabActive: isTabActive,
         initializeContextMenus: initializeContextMenus,

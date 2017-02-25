@@ -41,7 +41,7 @@ module ConceptConcern
         coordinates_token = session[:coordinates_token].token
         return_attributes = []
 
-        attributes = ConceptRest.get_concept(action: ConceptRestActions::ACTION_VERSION, uuid: uuid, additional_req_params: {coordToken: coordinates_token, expand: 'chronology', stated: view_params[:stated]})
+        attributes = ConceptRest.get_concept(action: ConceptRestActions::ACTION_VERSION, uuid: uuid, additional_req_params: {coordToken: coordinates_token, expand: 'chronology'}.merge!(view_params))
 
         if attributes.is_a? CommonRest::UnexpectedResponse
             return [{value: ''}, {value: ''}, {value: ''}]
@@ -64,14 +64,14 @@ module ConceptConcern
         if !clone
 
             # get the concept SCTID information if there is one
-            coding_id = IdAPIsRest.get_id(uuid_or_id: uuid, action: IdAPIsRestActions::ACTION_TRANSLATE, additional_req_params: {outputType: 'sctid'})
+            coding_id = IdAPIsRest.get_id(uuid_or_id: uuid, action: IdAPIsRestActions::ACTION_TRANSLATE, additional_req_params: {outputType: 'sctid', coordToken: coordinates_token}.merge!(view_params))
 
             if coding_id.respond_to?(:value)
                 @terminology_id = {label: 'SCTID', value: coding_id.value}
             else
 
                 # else get the concept VUID information if there is one
-                coding_id = IdAPIsRest.get_id(uuid_or_id: uuid, action: IdAPIsRestActions::ACTION_TRANSLATE, additional_req_params: {outputType: 'vuid'})
+                coding_id = IdAPIsRest.get_id(uuid_or_id: uuid, action: IdAPIsRestActions::ACTION_TRANSLATE, additional_req_params: {outputType: 'vuid', coordToken: coordinates_token}.merge!(view_params))
 
                 if coding_id.respond_to?(:value)
                     @terminology_id = {label: 'VUID', value: coding_id.value}
@@ -105,7 +105,7 @@ module ConceptConcern
 
         coordinates_token = session[:coordinates_token].token
         return_descriptions = []
-        descriptions = ConceptRest.get_concept(action: ConceptRestActions::ACTION_DESCRIPTIONS, uuid: uuid, additional_req_params: {coordToken: coordinates_token, stated: view_params['stated']})
+        descriptions = ConceptRest.get_concept(action: ConceptRestActions::ACTION_DESCRIPTIONS, uuid: uuid, additional_req_params: {coordToken: coordinates_token}.merge!(view_params))
 
         if descriptions.is_a? CommonRest::UnexpectedResponse
             return return_descriptions
@@ -144,14 +144,14 @@ module ConceptConcern
             if !clone
 
                 # get the description SCTID information if there is one and add it to the attributes array
-                coding_id = IdAPIsRest.get_id(uuid_or_id: description_id, action: IdAPIsRestActions::ACTION_TRANSLATE, additional_req_params: {outputType: 'sctid'})
+                coding_id = IdAPIsRest.get_id(uuid_or_id: description_id, action: IdAPIsRestActions::ACTION_TRANSLATE, additional_req_params: {outputType: 'sctid', coordToken: coordinates_token}.merge!(view_params))
 
                 if coding_id.respond_to?(:value)
                     attributes << {label: 'SCTID', text: coding_id.value, state: description_state, time: description_time, author: description_author, module: description_module, path: description_path}
                 else
 
                     # else get the concept VUID information if there is one
-                    coding_id = IdAPIsRest.get_id(uuid_or_id: uuid, action: IdAPIsRestActions::ACTION_TRANSLATE, additional_req_params: {outputType: 'vuid'})
+                    coding_id = IdAPIsRest.get_id(uuid_or_id: uuid, action: IdAPIsRestActions::ACTION_TRANSLATE, additional_req_params: {outputType: 'vuid', coordToken: coordinates_token}.merge!(view_params))
 
                     if coding_id.respond_to?(:value)
                         attributes << {label: 'VUID', text: coding_id.value, state: description_state, time: description_time, author: description_author, module: description_module, path: description_path}
@@ -289,7 +289,8 @@ module ConceptConcern
 
         coordinates_token = session[:coordinates_token].token
         return_associations = []
-        additional_req_params = {coordToken: coordinates_token, stated: view_params['stated'], expand: 'source, target'}
+        additional_req_params = {coordToken: coordinates_token, expand: 'source, target'}
+        additional_req_params.merge!(view_params)
 
         associations = AssociationRest.get_association(action: AssociationRestActions::ACTION_WITH_SOURCE, uuid_or_id: uuid, additional_req_params: additional_req_params)
 
@@ -307,7 +308,7 @@ module ConceptConcern
             end
 
             type_id = association.associationType.uuids.first
-            type = AssociationRest.get_association(action: AssociationRestActions::ACTION_TYPE, uuid_or_id: type_id, additional_req_params: {coordToken: coordinates_token, stated: view_params['stated']})
+            type = AssociationRest.get_association(action: AssociationRestActions::ACTION_TYPE, uuid_or_id: type_id, additional_req_params: {coordToken: coordinates_token}.merge!(view_params))
 
             if type.is_a? CommonRest::UnexpectedResponse
                 return return_associations
@@ -340,12 +341,14 @@ module ConceptConcern
 
     ##
     # get_association_types - returns all of the association types.
+    # @param [Object] view_params - various parameters related to the view filters the user wants to apply - see full definition comment at top of komet_dashboard_controller file
     # @return [object] a hash that contains an array of all the association types
-    def get_association_types
+    def get_association_types(view_params = {})
 
         coordinates_token = session[:coordinates_token].token
         return_types = []
         additional_req_params = {coordToken: coordinates_token}
+        additional_req_params.merge!(view_params)
 
         types = AssociationRest.get_association(action: AssociationRestActions::ACTION_TYPES, additional_req_params: additional_req_params)
 
@@ -371,7 +374,7 @@ module ConceptConcern
 
         coordinates_token = session[:coordinates_token].token
 
-        sememes = SememeRest.get_sememe(action: SememeRestActions::ACTION_BY_REFERENCED_COMPONENT, uuid_or_id: uuid, additional_req_params: {coordToken: coordinates_token, expand: 'chronology,nestedSememes', stated: view_params['stated']})
+        sememes = SememeRest.get_sememe(action: SememeRestActions::ACTION_BY_REFERENCED_COMPONENT, uuid_or_id: uuid, additional_req_params: {coordToken: coordinates_token, expand: 'chronology,nestedSememes'}.merge!(view_params))
 
         display_data = process_attached_sememes(view_params, sememes, [], {}, 1, clone)
 
@@ -396,10 +399,11 @@ module ConceptConcern
             page_size = params[:taxonomy_refsets_page_size]
         end
 
-        additional_params = {coordToken: coordinates_token, expand: 'chronology,nestedSememes,referencedDetails', pageNum: page_number, stated: view_params['stated']}
-        additional_params[:maxPageSize] =  page_size
+        additional_req_params = {coordToken: coordinates_token, expand: 'chronology,nestedSememes,referencedDetails', pageNum: page_number}
+        additional_req_params[:maxPageSize] =  page_size
+        additional_req_params.merge!(view_params)
 
-        results = SememeRest.get_sememe(action: SememeRestActions::ACTION_BY_ASSEMBLAGE, uuid_or_id: uuid, additional_req_params:additional_params )
+        results = SememeRest.get_sememe(action: SememeRestActions::ACTION_BY_ASSEMBLAGE, uuid_or_id: uuid, additional_req_params:additional_req_params )
 
         refsets_results[:total_number] = results.paginationData.approximateTotal
         refsets_results[:page_number] = results.paginationData.pageNum
@@ -422,7 +426,7 @@ module ConceptConcern
     def get_sememe_version_details(uuid, view_params)
 
         coordinates_token = session[:coordinates_token].token
-        sememe = SememeRest.get_sememe(action: SememeRestActions::ACTION_VERSION, uuid_or_id: uuid, additional_req_params: {coordToken: coordinates_token, expand: 'chronology,nestedSememes', stated: view_params['stated']})
+        sememe = SememeRest.get_sememe(action: SememeRestActions::ACTION_VERSION, uuid_or_id: uuid, additional_req_params: {coordToken: coordinates_token, expand: 'chronology,nestedSememes'}.merge!(view_params))
 
         if sememe.is_a? CommonRest::UnexpectedResponse
             return nil
@@ -434,11 +438,13 @@ module ConceptConcern
     ##
     # get_sememe_definition_details - takes a sememe uuid and returns all of the description concepts attached to it.
     # @param [String] uuid - The UUID to look up descriptions for
+    # @param [Object] view_params - various parameters related to the view filters the user wants to apply - see full definition comment at top of komet_dashboard_controller file
     # @return [object] a RestSememeVersion object
-    def get_sememe_definition_details(uuid)
+    def get_sememe_definition_details(uuid, view_params = {})
 
         coordinates_token = session[:coordinates_token].token
         additional_req_params = {coordToken: coordinates_token}
+        additional_req_params.merge!(view_params)
         data_row = {}
         field_info = {}
 
@@ -486,7 +492,7 @@ module ConceptConcern
                     if field_info[assemblage_id + '_' + column_id][:sememe_definition_id] == $isaac_metadata_auxiliary['EXTENDED_DESCRIPTION_TYPE']['uuids'].first[:uuid]
 
                         field_info[assemblage_id + '_' + column_id][:column_display] = 'dropdown'
-                        field_info[assemblage_id + '_' + column_id][:dropdown_options] = get_direct_children('fc134ddd-9a15-5540-8fcc-987bf2af9198', true, true)
+                        field_info[assemblage_id + '_' + column_id][:dropdown_options] = get_direct_children('fc134ddd-9a15-5540-8fcc-987bf2af9198', true, true, session[:edit_view_params])
                         # elsif used_column_data[:data_type] == 'UUID'
 
                     else
@@ -512,8 +518,8 @@ module ConceptConcern
     # @return [object] a hash that contains an array of all the columns to be displayed and an array of all the data
     def process_attached_sememes(view_params, sememes, used_column_list, used_column_hash, level, clone = false)
 
-        coordinates_token = session[:coordinates_token].token
-        additional_req_params = {coordToken: coordinates_token, stated: view_params['stated']}
+        additional_req_params = {coordToken: session[:coordinates_token].token}
+        additional_req_params.merge!(view_params)
         data_rows = []
         refset_rows = []
 
@@ -582,7 +588,7 @@ module ConceptConcern
                         if used_column_data[:sememe_definition_id] == $isaac_metadata_auxiliary['EXTENDED_DESCRIPTION_TYPE']['uuids'].first[:uuid]
 
                             used_column_data[:column_display] = 'dropdown'
-                            used_column_data[:dropdown_options] = get_direct_children('fc134ddd-9a15-5540-8fcc-987bf2af9198', true, true)
+                            used_column_data[:dropdown_options] = get_direct_children('fc134ddd-9a15-5540-8fcc-987bf2af9198', true, true, session[:edit_view_params])
                        # elsif used_column_data[:data_type] == 'UUID'
 
                         else
@@ -687,8 +693,8 @@ module ConceptConcern
     # @return [object] a hash that contains an array of all the columns to be displayed and an array of all the refsets
     def process_attached_refsets(view_params, sememes, sememe_types, data_rows, used_column_list)
 
-        coordinates_token = session[:coordinates_token].token
-        additional_req_params = {coordToken: coordinates_token, stated: view_params['stated']}
+        additional_req_params = {coordToken: session[:coordinates_token].token}
+        additional_req_params.merge!(view_params)
 
         #Defining first 2 columns of grid.
         used_column_list << {id:'state', field: 'state', headerName: 'status', data_type: 'string'}
@@ -754,7 +760,7 @@ module ConceptConcern
                                 separator = ', '
 
                                 if index == 0
-                                    data = '';
+                                    data = ''
                                     separator = ''
                                 end
 
@@ -781,18 +787,21 @@ module ConceptConcern
     end
 
     ##
-    # get_concept_children - takes a uuid and returns all of its direct children.
+    # get_direct_children - takes a uuid and returns all of its direct children.
     # @param [String] concept_id - The UUID to look up children for
     # @param [Boolean] format_results - Should the results be processed
     # @param [Boolean] remove_semantic_tag - Should semantic tags be removed (Just 'ISAAC' at the moment)
     # @param [Boolean] include_definition - should definition descriptions be looked up and included in the results
     # @return [object] an array of children
-    def get_direct_children(concept_id, format_results = false, remove_semantic_tag = false, include_definition = false)
+    def get_direct_children(concept_id, format_results = false, remove_semantic_tag = false, include_definition = false, view_params = {})
 
-        children = ConceptRest.get_concept(action: ConceptRestActions::ACTION_VERSION, uuid: concept_id, additional_req_params: {includeChildren: 'true'})
+        additional_req_params = {coordToken: session[:coordinates_token].token}
+        additional_req_params.merge!(view_params)
+
+        children = ConceptRest.get_concept(action: ConceptRestActions::ACTION_VERSION, uuid: concept_id, additional_req_params: additional_req_params.merge({includeChildren: 'true'}))
 
         if children.is_a? CommonRest::UnexpectedResponse
-            return [];
+            return []
         end
 
         children = children.children
@@ -813,7 +822,7 @@ module ConceptConcern
 
                 if include_definition
 
-                    descriptions = ConceptRest.get_concept(action: ConceptRestActions::ACTION_DESCRIPTIONS, uuid: child.conChronology.identifiers.uuids.first, additional_req_params: {includeAttributes: false}) # coordToken: coordinates_token, stated: view_params['stated']
+                    descriptions = ConceptRest.get_concept(action: ConceptRestActions::ACTION_DESCRIPTIONS, uuid: child.conChronology.identifiers.uuids.first, additional_req_params: additional_req_params.merge({includeAttributes: false}))
 
                     unless descriptions.is_a? CommonRest::UnexpectedResponse
 
