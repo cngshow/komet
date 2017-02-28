@@ -63,7 +63,7 @@ html, body{
 }
 .ui-tabs{
     padding:0px;
-    overflow: auto;
+    // overflow: auto; TODO - need to put back in - date picker gets cut off with this on - taxonomy tree has issues in IE if the panel is really narrow with it off
 }
 .ui-tabs .ui-tabs-panel{
     padding:0px;
@@ -440,6 +440,13 @@ div.komet-confirmation-dialog{
 }
 .komet-panel .komet-panel-tools-control .input-group.date .glyphicon, .komet-panel .komet-panel-tools-control .input-group.date .fa{
     margin: 0px;
+}
+.komet-panel .komet-panel-tools-control .input-group.date .form-control {
+    height: 25px;
+    font-size: 14px;
+}
+.komet-panel .komet-panel-tools-control .input-group.date .input-group-addon {
+    padding: 3px 6px;
 }
 .komet-panel .komet-panel-tools .komet-action-icon {
     margin-left: 10px;

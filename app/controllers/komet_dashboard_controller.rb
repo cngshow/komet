@@ -381,9 +381,15 @@ class KometDashboardController < ApplicationController
         end
 
         get_concept_attributes(@concept_id, @view_params)
-        get_concept_descriptions(@concept_id, @view_params)
-        get_concept_sememes(@concept_id, @view_params)
-        get_concept_refsets(@concept_id, @view_params)
+
+        # get the rest of the concept information unless the attributes were not returned
+        unless @concept_text == nil
+
+            get_concept_descriptions(@concept_id, @view_params)
+            get_concept_sememes(@concept_id, @view_params)
+            get_concept_refsets(@concept_id, @view_params)
+        end
+
         render partial: params[:partial]
     end
 
@@ -782,6 +788,7 @@ class KometDashboardController < ApplicationController
         @parent_id = params[:parent_id]
         @parent_text = params[:parent_text]
         @parent_type = params[:parent_type]
+        @view_params = session[:edit_view_params]
         @description_types = get_concept_description_types
         @viewer_action = params[:viewer_action]
         @viewer_previous_content_id = params[:viewer_previous_content_id]
@@ -1269,7 +1276,7 @@ class KometDashboardController < ApplicationController
     def get_concept_suggestions
 
         coordinates_token = session[:coordinates_token].token
-        view_params = check_view_params(params[:view_params])
+        view_params = check_view_params(params[:view_params], false)
         search_term = params[:term]
         concept_suggestions_data = []
         additional_req_params = {coordToken: coordinates_token, query: search_term, maxPageSize: 25, expand: 'referencedConcept', mergeOnConcept: true}
@@ -1321,9 +1328,9 @@ class KometDashboardController < ApplicationController
             @view_params = {stated: true, allowedStates: 'active,inactive', time: 'latest'}
 
             # set variables for default view parameters that can be accessed from any controller or module
-            session[:default_view_params] = @view_params
+            session[:default_view_params] = @view_params.clone
             # set a variable for view params to be used when pulling data for edits, which should always be the least restricted possible
-            session[:edit_view_params] = @view_params
+            session[:edit_view_params] = @view_params.clone
         end
 
         unless session[:coordinates_token]

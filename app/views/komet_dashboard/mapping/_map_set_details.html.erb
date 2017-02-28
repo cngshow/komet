@@ -39,7 +39,7 @@
                     <div class="komet-mapping-set-definition-header">
                         <%#= label_tag nil, 'Version:' %> <%#= @map_set[:version] %>
                     </div>
-                    <% if controller.can_edit_concept? %>
+                    <% if controller.can_edit_concept? && @view_params[:time] == 'latest' %>
                         <div class="komet-mapping-set-definition-controls">
                             <button class="btn btn-primary komet-mapping-show-on-view" type="button" onclick="WindowManager.viewers[<%= @viewer_id %>].enterSetEditMode()">Edit</button>
                             <button class="btn btn-default komet-mapping-show-on-edit" type="button" onclick="WindowManager.viewers[<%= @viewer_id %>].cancelSetEditMode(this)">Cancel</button>

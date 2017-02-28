@@ -65,7 +65,7 @@ var MappingModule = (function () {
 
             try {
 
-                WindowManager.loadViewerData(data, viewerID, "mapping", windowType);
+                WindowManager.callLoadViewerData(data, viewerID, "mapping", windowType);
 
                 // only resolve waiting requests if this is an inline viewer. New and popup viewers still have more processing.
                 if (windowType != WindowManager.NEW && windowType != WindowManager.POPUP) {
@@ -111,52 +111,69 @@ var MappingModule = (function () {
         $.publish(KometChannels.Mapping.mappingTreeNodeSelectedChannel, ["", null, MappingModule.getTreeViewParams(), WindowManager.getLinkedViewerID(), WindowManager.INLINE, MappingModule.CREATE_SET]);
     }
 
-    function setViewerStatesToView(viewerID) {
+    //function setViewerStatesToView(viewerID) {
+    //
+    //    var viewParams = WindowManager.viewers[viewerID].getViewParams();
+    //    $.publish(KometChannels.Mapping.mappingTreeNodeSelectedChannel, ["", WindowManager.viewers[viewerID].currentSetID, viewParams, viewerID, WindowManager.INLINE, WindowManager.viewers[viewerID].mapping_action]);
+    //}
 
-        var viewParams = WindowManager.viewers[viewerID].getViewParams();
-        $.publish(KometChannels.Mapping.mappingTreeNodeSelectedChannel, ["", WindowManager.viewers[viewerID].currentSetID, viewParams, viewerID, WindowManager.INLINE, WindowManager.viewers[viewerID].mapping_action]);
-    }
+    function getTreeStampDate() {
 
-    function setTreeStatesToView(field) {
+        var stamp_date = $("#komet_mapping_tree_stamp_date").find("input").val();
 
-        var viewParams = getTreeViewParams();
-        viewParams.states_to_view = field.value;
-        var selectedSetID = null;
-        var linkedViewerID = WindowManager.getLinkedViewerID();
-
-        if (linkedViewerID != null && linkedViewerID != WindowManager.NEW && WindowManager.viewers[linkedViewerID].currentSetID){
-            selectedSetID = WindowManager.viewers[linkedViewerID].currentSetID;
+        if (stamp_date == '' || stamp_date == 'latest') {
+            return 'latest';
+        } else {
+            return new Date(stamp_date).getTime().toString();
         }
-
-        this.tree.reloadTree(viewParams, false, selectedSetID);
     }
 
-    function getTreeStatesToView (){
+    function getTreeAllowedStates (){
         return $("#komet_mapping_tree_panel").find("input[name='komet_mapping_tree_states_to_view']:checked").val();
     }
 
-    function toggleTreeStatesToView(statesToViewField, value){
+    // function to set the initial state of the view param fields when the viewer content changes
+    function initTreeViewParams(view_params) {
 
-        statesToViewField.each(function(index, button) {
+        // initialize the STAMP date field
+        UIHelper.initDatePicker("#komet_mapping_tree_stamp_date", view_params.time);
 
-            var buttonParent = button.parentElement;
+        // get the allowed states field group
+        var allowedStates = $("#komet_mapping_tree_panel").find("input[name='komet_mapping_tree_states_to_view']");
 
-            if (button.value == value) {
-
-                button.checked = true;
-                buttonParent.classList.add('btn-primary');
-                $(buttonParent).removeClass("btn-default");
-            } else {
-
-                button.checked = false;
-                buttonParent.classList.add("btn-default");
-                $(buttonParent).removeClass("btn-primary");
-            }
-        });
+        // initialize the allowed states field
+        UIHelper.initAllowedStatesField(allowedStates, view_params.allowedStates);
     }
 
     function getTreeViewParams (){
-        return {allowedStates: getTreeStatesToView()};
+        return {time: getTreeStampDate(), allowedStates: getTreeAllowedStates()};
+    }
+
+    // function to change the view param values and then reload the tree
+    function setTreeViewParams(view_params) {
+
+        // set the STAMP date field
+        UIHelper.setStampDate($("#komet_mapping_tree_stamp_date"), view_params.time);
+
+        // set the Allowed States field
+        UIHelper.setAllowedStatesField($("#komet_mapping_tree_panel").find("input[name='komet_mapping_tree_states_to_view']"), view_params.allowedStates);
+
+        // reload the tree
+        this.reloadTree();
+    }
+
+    function reloadTree() {
+
+        var selectedID = null;
+        var linkedViewerID = WindowManager.getLinkedViewerID();
+
+        // if there is a linked mapping viewer get its set ID to try to find the node and select it again after reload, without triggering the change event
+        if (linkedViewerID != null && linkedViewerID != WindowManager.NEW && WindowManager.viewers[linkedViewerID].currentSetID){
+            selectedID = WindowManager.viewers[linkedViewerID].currentSetID;
+        }
+
+        // reload the tree, trying to reselect a linked concept if there was one
+        this.tree.reloadTree(getTreeViewParams(), false, selectedID);
     }
 
     return {
@@ -165,11 +182,13 @@ var MappingModule = (function () {
         createViewer: createViewer,
         openSetEditor: openSetEditor,
         createNewMapSet: createNewMapSet,
-        setViewerStatesToView: setViewerStatesToView,
-        setTreeStatesToView: setTreeStatesToView,
-        getTreeStatesToView: getTreeStatesToView,
-        toggleTreeStatesToView: toggleTreeStatesToView,
+        getTreeStampDate: getTreeStampDate,
+        //setViewerStatesToView: setViewerStatesToView,
+        getTreeAllowedStates: getTreeAllowedStates,
+        initTreeViewParams: initTreeViewParams,
         getTreeViewParams: getTreeViewParams,
+        setTreeViewParams: setTreeViewParams,
+        reloadTree: reloadTree,
         SET_LIST: SET_LIST,
         SET_DETAILS: SET_DETAILS,
         SET_EDITOR: SET_EDITOR,

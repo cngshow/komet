@@ -11,7 +11,7 @@
     <button type="button" class="komet-link-button" onclick="MappingModule.createNewMapSet(false);" title="Create New Map Set" aria-label="Create New Map Set">
       <div class="fa fa-plus" title="Create New Map Set"></div>
     </button>
-    <% if controller.can_edit_concept? %>
+    <% if controller.can_edit_concept? && @view_params[:time] == 'latest' %>
         <button type="button" class="komet-link-button" disabled onclick="WindowManager.viewers[<%= @viewer_id %>].loadOverviewSetsGridSelectedSet(MappingModule.SET_EDITOR);" title="Edit Selected Map Set" aria-label="Edit Selected Map Set">
           <div id="komet_mapping_overview_set_edit_<%= @viewer_id %>" class="fa fa-pencil " title="Edit Selected Map Set"></div>
         </button>

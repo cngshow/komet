@@ -37,40 +37,30 @@ var UIHelper = (function () {
 
     /*
      * initStatedField - Initialize a Stated field radio button group
-     * @param [object or string] statedElementOrSelector - Either a jquery object or the class or ID selector (including the "#" or "." prefix) that represents the radio button group we are initializing.
+     * @param [object or string] elementOrSelector - Either a jquery object or the class or ID selector (including the "#" or "." prefix) that represents the radio button group we are initializing.
      * @param [string] startingValue - the value to set the initial state of the field to, options are 'true' or 'false'. Default is 'true'
      * @param [function] onChangeFunction - a function object that will be run when the field is changed (does not take parameters)
      */
-    function initStatedField(statedElementOrSelector, startingValue, onChangeFunction) {
+    function initStatedField(elementOrSelector, startingValue, onChangeFunction) {
 
         var statedGroup;
 
         // If the type of the first parameter is a string, then use it as a jquery selector, otherwise use as is
-        if (typeof statedElementOrSelector === "string") {
-            statedGroup = $(statedElementOrSelector);
+        if (typeof elementOrSelector === "string") {
+            statedGroup = $(elementOrSelector);
         } else {
-            statedGroup = statedElementOrSelector;
+            statedGroup = elementOrSelector;
         }
 
-        // if the starting was not passed in then set it to true
+        // if the starting value was not passed in then set it to the default
         if (startingValue != null || startingValue != undefined){
             startingValue = 'true';
         }
 
-        // set the initial stated field value and classes by looping through each component and checking it's value against the passed in view_params
-        statedGroup.each(function(index, button){
+        // set the stated field value
+        setStatedField(statedGroup, startingValue);
 
-            if (button.value == startingValue){
-
-                var buttonParent = button.parentElement;
-
-                button.checked = true;
-                buttonParent.classList.add('btn-primary');
-                $(buttonParent).removeClass("btn-default");
-            }
-        });
-
-        // set the stated field change function to set the appropriate classes
+        // set the field change function to set the appropriate classes
         statedGroup.change(function(){
 
             statedGroup.parent().toggleClass("btn-primary btn-default");
@@ -84,19 +74,19 @@ var UIHelper = (function () {
 
     /*
      * initDatePicker - Initialize a date picker input group to with a starting date
-     * @param [object or string] dateElementOrSelector - Either a jquery object or the class or ID selector (including the "#" or "." prefix) that represents the date picker input group we are initializing.
+     * @param [object or string] elementOrSelector - Either a jquery object or the class or ID selector (including the "#" or "." prefix) that represents the date picker input group we are initializing.
      * @param [Number or string] startingDate - a long number that represents the date in milliseconds since the epoch, or the string 'latest'
      * @param [function] onChangeFunction - a function object that will be run when the date is changed (takes an event parameter which includes .oldDate and .date (the new date)
      */
-    function initDatePicker(dateElementOrSelector, startingDate, onChangeFunction) {
+    function initDatePicker(elementOrSelector, startingDate, onChangeFunction) {
 
         var datePicker;
 
         // If the type of the first parameter is a string, then use it as a jquery selector, otherwise use as is
-        if (typeof dateElementOrSelector === "string") {
-            datePicker = $(dateElementOrSelector);
+        if (typeof elementOrSelector === "string") {
+            datePicker = $(elementOrSelector);
         } else {
-            datePicker = dateElementOrSelector;
+            datePicker = elementOrSelector;
         }
 
         // get the date field input field
@@ -115,7 +105,7 @@ var UIHelper = (function () {
             }
         };
 
-        // if the starting date is not 'latest' then set the default date param to the starting date
+        // if the starting date is not 'latest' then set the default date param to the starting value. The plus is in case the value is a string
         if (startingDate != null && startingDate != undefined && startingDate != 'latest'){
             date_params.defaultDate = moment(+startingDate);
         }
@@ -123,10 +113,138 @@ var UIHelper = (function () {
         // create the date field
         input_field.datetimepicker(date_params);
 
-        // If it was passed in, set the date field onChange function to the passed in function
+        // If it was passed in, set the field onChange function to the passed in function
         if (onChangeFunction != null && onChangeFunction != undefined){
             input_field.on("dp.change", onChangeFunction);
         }
+    }
+
+    /*
+     * initAllowedStatesField - Initialize an Allowed States field radio button group
+     * @param [object or string] elementOrSelector - Either a jquery object or the class or ID selector (including the "#" or "." prefix) that represents the radio button group we are initializing.
+     * @param [string] startingValue - the value to set the initial state of the field to, options are 'active', 'inactive', or 'active,inactive'. Default is 'active,inactive'
+     * @param [function] onChangeFunction - a function object that will be run when the field is changed (does not take parameters)
+     */
+    function initAllowedStatesField(elementOrSelector, startingValue, onChangeFunction) {
+
+        var allowedStatesGroup;
+
+        // If the type of the first parameter is a string, then use it as a jquery selector, otherwise use as is
+        if (typeof elementOrSelector === "string") {
+            allowedStatesGroup = $(elementOrSelector);
+        } else {
+            allowedStatesGroup = elementOrSelector;
+        }
+
+        // if the starting value was not passed in then set it to the default
+        if (startingValue != null || startingValue != undefined){
+            startingValue = 'active,inactive';
+        }
+
+        // set the stated field value
+        setAllowedStatesField(allowedStatesGroup, startingValue);
+
+        // set the field change function to set the appropriate classes
+        allowedStatesGroup.change(function(){
+
+            UIHelper.setAllowedStatesField(allowedStatesGroup, this.value);
+
+            // If it was passed run the supplied onChange function
+            if (onChangeFunction != null || onChangeFunction != undefined){
+                onChangeFunction();
+            }
+        });
+    }
+
+    /*
+     * setStatedField - set the value of a Stated field radio button group
+     * @param [object or string] elementOrSelector - Either a jquery object or the class or ID selector (including the "#" or "." prefix) that represents the radio button group whose value we are setting.
+     * @param [string] newValue - the value to set the state of the field to, options are 'true' or 'false'. Default is 'true'
+     */
+    function setStatedField(elementOrSelector, newValue) {
+
+        var statedGroup;
+
+        // If the type of the first parameter is a string, then use it as a jquery selector, otherwise use as is
+        if (typeof elementOrSelector === "string") {
+            statedGroup = $(elementOrSelector);
+        } else {
+            statedGroup = elementOrSelector;
+        }
+
+
+        // set the field value and classes by looping through each component and checking it's value against the passed in value
+        statedGroup.each(function (index, button) {
+
+            if (button.value == newValue) {
+
+                var buttonParent = button.parentElement;
+
+                button.checked = true;
+                buttonParent.classList.add('btn-primary');
+                $(buttonParent).removeClass("btn-default");
+            }
+        });
+    }
+
+    /*
+     * setStampDate - set the value of a Stated field radio button group
+     * @param [object or string] elementOrSelector - Either a jquery object or the class or ID selector (including the "#" or "." prefix) that represents the date picker input group whose value we are setting.
+     * @param [string] newValue - the value to set the value of the field to
+     */
+    function setStampDate(elementOrSelector, newValue) {
+
+        var dateGroup;
+
+        // If the type of the first parameter is a string, then use it as a jquery selector, otherwise use as is
+        if (typeof elementOrSelector === "string") {
+            dateGroup = $(elementOrSelector);
+        } else {
+            dateGroup = elementOrSelector;
+        }
+
+        if (newValue == 'latest'){
+            newValue = '';
+        }
+
+        // set the date input value
+        dateGroup.find("input").val(newValue);
+    }
+
+    /*
+     * setAllowedStatesField - set the value of an Allowed States field radio button group
+     * @param [object or string] elementOrSelector - Either a jquery object or the class or ID selector (including the "#" or "." prefix) that represents the radio button group whose value we are setting.
+     * @param [string] newValue - the value to set the state of the field to, options are 'true' or 'false'. Default is 'true'
+     */
+    function setAllowedStatesField(elementOrSelector, newValue) {
+
+        var allowedStatesGroup;
+
+        // If the type of the first parameter is a string, then use it as a jquery selector, otherwise use as is
+        if (typeof elementOrSelector === "string") {
+            allowedStatesGroup = $(elementOrSelector);
+        } else {
+            allowedStatesGroup = elementOrSelector;
+        }
+
+
+        // set the field value and classes by looping through each component and checking it's value against the passed in value
+        allowedStatesGroup.each(function(index, button) {
+
+            var buttonParent = button.parentElement;
+
+            if (button.value == newValue) {
+
+                button.checked = true;
+                buttonParent.classList.add('btn-primary');
+                $(buttonParent).removeClass("btn-default");
+            } else {
+
+                button.checked = false;
+                buttonParent.classList.add("btn-default");
+                $(buttonParent).removeClass("btn-primary");
+            }
+        });
     }
 
     function getActiveTabId(tabControlId) {
@@ -583,6 +701,7 @@ var UIHelper = (function () {
             var useRecentsCache = tag.getAttribute("use-recents-cache");
             var characterTriggerLimit = tag.getAttribute("character-trigger-limit");
             var restrictSearch = tag.getAttribute("restrict-search");
+            var viewParams = tag.getAttribute("view_params");
 
             if (fieldIDPostfix == null) {
                 fieldIDPostfix = "";
@@ -606,9 +725,8 @@ var UIHelper = (function () {
 
             var displayField = $("#" + fieldIDBase + "_display" + fieldIDPostfix);
 
-
             displayField.autocomplete({
-                source: gon.routes[suggestionRestVariable] + '?restrict_search=' + restrictSearch,
+                source: gon.routes[suggestionRestVariable] + '?restrict_search=' + restrictSearch + '&' + jQuery.param({view_params: viewParams}),
                 minLength: characterTriggerLimit,
                 select: onAutoSuggestSelection
                 , change: onAutoSuggestChange(characterTriggerLimit)
@@ -1285,6 +1403,10 @@ var UIHelper = (function () {
     return {
         initStatedField: initStatedField,
         initDatePicker: initDatePicker,
+        initAllowedStatesField: initAllowedStatesField,
+        setStatedField: setStatedField,
+        setStampDate: setStampDate,
+        setAllowedStatesField: setAllowedStatesField,
         getActiveTabId: getActiveTabId,
         isTabActive: isTabActive,
         initializeContextMenus: initializeContextMenus,

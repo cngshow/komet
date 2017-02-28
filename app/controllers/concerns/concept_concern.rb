@@ -81,7 +81,7 @@ module ConceptConcern
 
         return_attributes << {label: 'Time', value: DateTime.strptime((attributes.conVersion.time / 1000).to_s, '%s').strftime('%m/%d/%Y')}
 
-        author = get_concept_metadata(attributes.conVersion.authorSequence)
+        author = get_concept_metadata(attributes.conVersion.authorSequence, view_params)
 
         if author == 'user'
             author = 'System User'
@@ -89,8 +89,8 @@ module ConceptConcern
 
         return_attributes << {label: 'Author', value: author}
 
-        return_attributes << {label: 'Module', value: get_concept_metadata(attributes.conVersion.moduleSequence)}
-        return_attributes << {label: 'Path', value: get_concept_metadata(attributes.conVersion.pathSequence)}
+        return_attributes << {label: 'Module', value: get_concept_metadata(attributes.conVersion.moduleSequence, view_params)}
+        return_attributes << {label: 'Path', value: get_concept_metadata(attributes.conVersion.pathSequence, view_params)}
 
         return return_attributes
     end
@@ -125,9 +125,9 @@ module ConceptConcern
             description_id = description.sememeChronology.identifiers.uuids.first
             description_state = description.sememeVersion.state.enumName
             description_time = DateTime.strptime((description.sememeVersion.time / 1000).to_s, '%s').strftime('%m/%d/%Y')
-            description_author = get_concept_metadata(description.sememeVersion.authorSequence)
-            description_module = get_concept_metadata(description.sememeVersion.moduleSequence)
-            description_path = get_concept_metadata(description.sememeVersion.pathSequence)
+            description_author = get_concept_metadata(description.sememeVersion.authorSequence, view_params)
+            description_module = get_concept_metadata(description.sememeVersion.moduleSequence, view_params)
+            description_path = get_concept_metadata(description.sememeVersion.pathSequence, view_params)
 
             if description_author == 'user'
                 description_author = 'System User'
@@ -172,9 +172,9 @@ module ConceptConcern
 
                 dialect_state = dialect.sememeVersion.state.enumName
                 dialect_time = DateTime.strptime((dialect.sememeVersion.time / 1000).to_s, '%s').strftime('%m/%d/%Y')
-                dialect_author = get_concept_metadata(dialect.sememeVersion.authorSequence)
-                dialect_module = get_concept_metadata(dialect.sememeVersion.moduleSequence)
-                dialect_path = get_concept_metadata(dialect.sememeVersion.pathSequence)
+                dialect_author = get_concept_metadata(dialect.sememeVersion.authorSequence, view_params)
+                dialect_module = get_concept_metadata(dialect.sememeVersion.moduleSequence, view_params)
+                dialect_path = get_concept_metadata(dialect.sememeVersion.pathSequence, view_params)
                 dialect_definition_id = dialect.sememeChronology.assemblage.uuids.first
                 dialect_name = find_metadata_by_id(dialect_definition_id)
 
@@ -214,7 +214,7 @@ module ConceptConcern
 
             # process descriptions types
             description_info[:description_type_id] = description.descriptionTypeConcept.uuids.first
-            description_info[:description_type] = get_concept_metadata(description_info[:description_type_id])
+            description_info[:description_type] = get_concept_metadata(description_info[:description_type_id], view_params)
 
             case description_info[:description_type]
 
@@ -236,7 +236,7 @@ module ConceptConcern
 
             # process languages
             description_info[:language_id] = description.languageConcept.uuids.first
-            description_info[:language] = get_concept_metadata(description_info[:language_id])
+            description_info[:language] = get_concept_metadata(description_info[:language_id], view_params)
 
             case description_info[:language]
 
@@ -249,7 +249,7 @@ module ConceptConcern
 
             # process case
             description_info[:case_significance_id] = description.caseSignificanceConcept.uuids.first
-            description_info[:case_significance] = get_concept_metadata(description_info[:case_significance_id])
+            description_info[:case_significance] = get_concept_metadata(description_info[:case_significance_id], view_params)
 
             case description_info[:case_significance]
 
@@ -329,9 +329,9 @@ module ConceptConcern
             target_taxonomy_type = 'vhat'
             state = association.associationItemStamp.state.enumName
             time = DateTime.strptime((association.associationItemStamp.time / 1000).to_s, '%s').strftime('%m/%d/%Y')
-            author = get_concept_metadata(association.associationItemStamp.authorSequence)
-            association_module = get_concept_metadata(association.associationItemStamp.moduleSequence)
-            path = get_concept_metadata(association.associationItemStamp.pathSequence)
+            author = get_concept_metadata(association.associationItemStamp.authorSequence, view_params)
+            association_module = get_concept_metadata(association.associationItemStamp.moduleSequence, view_params)
+            path = get_concept_metadata(association.associationItemStamp.pathSequence, view_params)
 
             return_associations << {id: id, type_id: type_id, type_text: type_text, target_id: target_id, target_text: target_text, target_taxonomy_type: target_taxonomy_type, state: state, time: time, author: author, association_module: association_module, path: path}
         end

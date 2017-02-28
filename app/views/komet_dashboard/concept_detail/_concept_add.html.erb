@@ -11,6 +11,13 @@
                 New Concept
             </span>
 
+            <div class="komet-panel-tools-control hide">
+                <div id='komet_concept_stamp_date_<%= @viewer_id %>'>
+                    <input type='hidden' class="form-control" aria-label="STAMP Date Preference" title="STAMP Date Preference" value="<%= @view_params[:time] %>">
+                </div>
+                <input id='komet_concept_stated_<%= @viewer_id %>' type='hidden' class="form-control" aria-label="Stated View" title="Stated View" checked="<%= @view_params[:stated] %>">
+            </div>
+
             <div class="komet-panel-tools">
                 <button type="button" class="komet-link-button" aria-label="Close Viewer" onclick="WindowManager.closeViewer('<%= @viewer_id %>')" title="Close Viewer">
                     <div class="komet-action-icon glyphicon glyphicon-remove"></div>

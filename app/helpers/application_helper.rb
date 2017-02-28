@@ -29,10 +29,11 @@ module ApplicationHelper
         user_session(UserSession::TOKEN)
     end
 
-    def get_concept_metadata(id)
+    def get_concept_metadata(id, view_params)
 
         coordinates_token = session[:coordinates_token].token
         additional_req_params = {coordToken: coordinates_token}
+        additional_req_params.merge!(view_params)
 
         version = ConceptRest.get_concept(action: ConceptRestActions::ACTION_DESCRIPTIONS, uuid: id, additional_req_params: additional_req_params)
 
@@ -52,26 +53,33 @@ module ApplicationHelper
     end
 
     # make sure the passed view params have all components, if it doesn't add the missing components from the default params stored in the session
-    def check_view_params(view_params)
+    def check_view_params(view_params, use_view_params = true)
+
+        # see if we are using the default view params or the edit params
+        if use_view_params
+            params = session[:default_view_params]
+        else
+            params = session[:edit_view_params]
+        end
 
         # if the passed params are empty return the entire default object
-        if view_params == nil
-            return session[:default_view_params]
+        if view_params == nil || view_params == ''
+            return params
         end
 
         # check the stated param
         if view_params[:stated] == nil
-            view_params[:stated] = session[:default_view_params][:stated]
+            view_params[:stated] = params[:stated]
         end
 
         # check the stamp date param
         if view_params[:time] == nil
-            view_params[:time] = session[:default_view_params][:time]
+            view_params[:time] = params[:time]
         end
 
         # check the states param
         if view_params[:allowedStates] == nil
-            view_params[:allowedStates] = session[:default_view_params][:allowedStates]
+            view_params[:allowedStates] = params[:allowedStates]
         end
 
         return view_params

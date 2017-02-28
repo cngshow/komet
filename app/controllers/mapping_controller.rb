@@ -39,10 +39,10 @@ class MappingController < ApplicationController
         coordinates_token = session[:coordinates_token].token
         text_filter = params[:text_filter]
         set_filter = params[:set_filter]
-        view_params = params[:view_params]
+        view_params = check_view_params(params[:view_params])
         mapping_tree = []
 
-        map_sets_results = MappingApis::get_mapping_api(action: MappingApiActions::ACTION_SETS,  additional_req_params: {coordToken: coordinates_token, allowedStates: view_params[:allowedStates], CommonRest::CacheRequest => false} )
+        map_sets_results = MappingApis::get_mapping_api(action: MappingApiActions::ACTION_SETS,  additional_req_params: {coordToken: coordinates_token, CommonRest::CacheRequest => false}.merge!(view_params) )
 
         map_sets_results.each do |set|
 
@@ -86,16 +86,17 @@ class MappingController < ApplicationController
         @viewer_title = 'Mapping Sets'
         @mapping_action = params[:mapping_action]
         @viewer_id =  params[:viewer_id]
-        @view_params = params[:view_params]
-
-        if @view_params == nil
-            @view_params = {allowedStates: 'active,inactive'}
-        end
 
         if @viewer_id == nil || @viewer_id == '' || @viewer_id == 'new'
             @viewer_id = get_next_id.to_s
         end
 
+        if @mapping_action == 'create_set' || @mapping_action == 'edit_set'
+            @view_params = session[:edit_view_params]
+        else
+            @view_params = check_view_params(params[:view_params])
+        end
+        
         if @mapping_action == 'set_details' || @mapping_action == 'create_set' || @mapping_action == 'edit_set'
             map_set_editor
         end
@@ -112,9 +113,9 @@ class MappingController < ApplicationController
         show_inactive = params[:show_inactive]
         page_size = 1000 #params[:overview_sets_page_size]
         page_number = 1 #params[:overview_sets_page_number]
-        view_params = params[:view_params]
+        view_params = check_view_params(params[:view_params])
 
-        map_sets_results = MappingApis::get_mapping_api(action: MappingApiActions::ACTION_SETS,  additional_req_params: {coordToken: coordinates_token, allowedStates: view_params[:allowedStates], CommonRest::CacheRequest => false} )
+        map_sets_results = MappingApis::get_mapping_api(action: MappingApiActions::ACTION_SETS,  additional_req_params: {coordToken: coordinates_token, CommonRest::CacheRequest => false}.merge!(view_params) )
 
         map_sets_results.each do |set|
 
@@ -125,9 +126,9 @@ class MappingController < ApplicationController
             set_hash[:description] = set.description
             set_hash[:state] = set.mappingSetStamp.state.enumName
             set_hash[:time] = DateTime.strptime((set.mappingSetStamp.time / 1000).to_s, '%s').strftime('%m/%d/%Y')
-            set_hash[:author] = get_concept_metadata(set.mappingSetStamp.authorSequence)
-            set_hash[:module] = get_concept_metadata(set.mappingSetStamp.moduleSequence)
-            set_hash[:path] = get_concept_metadata(set.mappingSetStamp.pathSequence)
+            set_hash[:author] = get_concept_metadata(set.mappingSetStamp.authorSequence, view_params)
+            set_hash[:module] = get_concept_metadata(set.mappingSetStamp.moduleSequence, view_params)
+            set_hash[:path] = get_concept_metadata(set.mappingSetStamp.pathSequence, view_params)
 
             data << set_hash
         end
@@ -199,13 +200,13 @@ class MappingController < ApplicationController
             # add the definitions for the template map fields
             @map_set[:include_fields] = [source_system_id, source_version_id, target_system_id, target_version_id]
 
-            set = MappingApis::get_mapping_api(action: MappingApiActions::ACTION_SET, uuid_or_id: @set_id,  additional_req_params: {coordToken: coordinates_token, expand: 'comments'})
+            set = MappingApis::get_mapping_api(action: MappingApiActions::ACTION_SET, uuid_or_id: @set_id,  additional_req_params: {coordToken: coordinates_token, expand: 'comments'}.merge!(@view_params))
 
             if set.is_a? CommonRest::UnexpectedResponse
                 return @map_set
             end
 
-            vuid = IdAPIsRest.get_id(uuid_or_id: @set_id, action: IdAPIsRestActions::ACTION_TRANSLATE, additional_req_params: {outputType: 'vuid'})
+            vuid = IdAPIsRest.get_id(uuid_or_id: @set_id, action: IdAPIsRestActions::ACTION_TRANSLATE, additional_req_params: {outputType: 'vuid'}.merge!(@view_params))
 
             if vuid.respond_to?(:value)
                 @map_set[:vuid] = vuid.value
@@ -385,9 +386,9 @@ class MappingController < ApplicationController
             @map_set[:description] = html_escape(set.description)
             @map_set[:state] = set.mappingSetStamp.state.enumName
             @map_set[:time] = DateTime.strptime((set.mappingSetStamp.time / 1000).to_s, '%s').strftime('%m/%d/%Y')
-            @map_set[:author] = get_concept_metadata(set.mappingSetStamp.authorSequence)
-            @map_set[:module] = get_concept_metadata(set.mappingSetStamp.moduleSequence)
-            @map_set[:path] = get_concept_metadata(set.mappingSetStamp.pathSequence)
+            @map_set[:author] = get_concept_metadata(set.mappingSetStamp.authorSequence, @view_params)
+            @map_set[:module] = get_concept_metadata(set.mappingSetStamp.moduleSequence, @view_params)
+            @map_set[:path] = get_concept_metadata(set.mappingSetStamp.pathSequence, @view_params)
 
             if set.comments.length == 0
                 @map_set[:comment] = ''
@@ -432,7 +433,7 @@ class MappingController < ApplicationController
         end
 
         # Get the complete list of available calculated fields
-        calculated_fields = MappingApis::get_mapping_api(action: MappingApiActions::ACTION_FIELDS,  additional_req_params: {coordToken: coordinates_token})
+        calculated_fields = MappingApis::get_mapping_api(action: MappingApiActions::ACTION_FIELDS,  additional_req_params: {coordToken: coordinates_token}.merge!(session[:edit_view_params]))
 
         @map_set[:all_calculated_fields] = []
 
@@ -473,7 +474,7 @@ class MappingController < ApplicationController
         source_name = ''
         target_name = ''
 
-        items = MappingApis::get_mapping_api(action: MappingApiActions::ACTION_ITEMS, uuid_or_id: set_id,  additional_req_params: {coordToken: coordinates_token, allowedStates: view_params[:allowedStates], expand: 'referencedDetails,comments '}) # CommonRest::CacheRequest => false
+        items = MappingApis::get_mapping_api(action: MappingApiActions::ACTION_ITEMS, uuid_or_id: set_id,  additional_req_params: {coordToken: coordinates_token, expand: 'referencedDetails, comments'}.merge!(view_params)) # CommonRest::CacheRequest => false
 
         if items.is_a? CommonRest::UnexpectedResponse
             return {total_number: 0, data: []}
@@ -488,9 +489,9 @@ class MappingController < ApplicationController
             item_hash[:item_id] = item.identifiers.uuids.first
             item_hash[:state] = item.mappingItemStamp.state.enumName
             item_hash[:time] = DateTime.strptime((item.mappingItemStamp.time / 1000).to_s, '%s').strftime('%m/%d/%Y')
-            item_hash[:author] = get_concept_metadata(item.mappingItemStamp.authorSequence)
-            item_hash[:module] = get_concept_metadata(item.mappingItemStamp.moduleSequence)
-            item_hash[:path] = get_concept_metadata(item.mappingItemStamp.pathSequence)
+            item_hash[:author] = get_concept_metadata(item.mappingItemStamp.authorSequence, view_params)
+            item_hash[:module] = get_concept_metadata(item.mappingItemStamp.moduleSequence, view_params)
+            item_hash[:path] = get_concept_metadata(item.mappingItemStamp.pathSequence, view_params)
 
             if item.comments.length == 0
                 item_hash[:comment] = ''

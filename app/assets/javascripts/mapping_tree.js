@@ -30,7 +30,7 @@ var KometMappingTree = function(treeID, viewParams, windowType){
     KometMappingTree.prototype.buildMappingTree = function(viewParams, selectItem) {
 
         if (viewParams === undefined || viewParams === null) {
-            viewParams = {allowedStates: MappingModule.getTreeStatesToView()};
+            viewParams = {allowedStates: MappingModule.getTreeAllowedStates()};
         }
 
         if (selectItem == null){

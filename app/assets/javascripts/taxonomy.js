@@ -31,39 +31,42 @@ var TaxonomyModule = (function () {
 
         var stamp_date = $("#komet_taxonomy_tree_stamp_date").find("input").val();
 
-        if (stamp_date == '') {
+        if (stamp_date == '' || stamp_date == 'latest') {
             return 'latest';
         } else {
             return new Date(stamp_date).getTime().toString();
         }
     };
 
-    // function to set the initial state of the view param fields when the viewer content changes
+    // function to set the initial state of the view param fields
     function initViewParams(view_params) {
 
         // get the stated field group
         var stated = $("#komet_taxonomy_panel").find("input[name='komet_taxonomy_stated_inferred']");
 
-        // create the function to reload the viewer with the new view params, that will be run when the view param fields change.
-        var viewParamChange = function (){
-            TaxonomyModule.reloadTree();
-        }.bind(this);
-
         // initialize the stated field
-        UIHelper.initStatedField(stated, view_params.stated, viewParamChange);
-
-        // create the function to reload the viewer with the new view params, that will be run when the STAMP date changes.
-        var dateChange = function (event) {
-            TaxonomyModule.reloadTree();
-        }.bind(this);
+        UIHelper.initStatedField(stated, view_params.stated);
 
         // initialize the STAMP date field
-        UIHelper.initDatePicker("#komet_taxonomy_tree_stamp_date", view_params.time, dateChange);
+        UIHelper.initDatePicker("#komet_taxonomy_tree_stamp_date", view_params.time);
 
     }
 
     function getViewParams (){
         return {stated: getStatedView(), time: getStampDate()};
+    }
+
+    // function to change the view param values and then reload the tree
+    function setViewParams(view_params) {
+
+        // set the stated field
+        UIHelper.setStatedField($("#komet_taxonomy_panel").find("input[name='komet_taxonomy_stated_inferred']"), view_params.stated);
+
+        // set the STAMP date field
+        UIHelper.setStampDate($("#komet_taxonomy_tree_stamp_date"), view_params.time);
+
+        // reload the tree
+        this.reloadTree();
     }
 
     function reloadTree() {
@@ -86,6 +89,7 @@ var TaxonomyModule = (function () {
         getStampDate: getStampDate,
         initViewParams: initViewParams,
         getViewParams: getViewParams,
+        setViewParams: setViewParams,
         reloadTree: reloadTree
     };
 

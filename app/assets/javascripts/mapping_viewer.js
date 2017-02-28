@@ -42,6 +42,42 @@ var MappingViewer = function(viewerID, currentSetID, viewerAction) {
         this.UNLINKED_TEXT = "Viewer not linked to Mapping Tree. Click to link.";
     };
 
+    MappingViewer.prototype.getStampDate = function(){
+
+        var stamp_date = $("#komet_mapping_stamp_date_" + this.viewerID).find("input").val();
+
+        if (stamp_date == '' || stamp_date == 'latest') {
+            return 'latest';
+        } else {
+            return new Date(stamp_date).getTime().toString();
+        }
+    };
+
+    MappingViewer.prototype.getAllowedStates = function(){
+        return $("#komet_viewer_" + this.viewerID).find("input[name='komet_mapping_states_to_view']:checked").val();
+    };
+
+    // function to set the initial state of the view param fields when the viewer content changes
+    MappingViewer.prototype.initViewParams = function(view_params) {
+
+        // initialize the STAMP date field
+        UIHelper.initDatePicker("#komet_mapping_stamp_date_" + this.viewerID, view_params.time);
+
+        // get the allowed states field group
+        var allowedStates = $("#komet_viewer_" + this.viewerID).find("input[name='komet_mapping_states_to_view']");
+
+        // initialize the allowed states field
+        UIHelper.initAllowedStatesField(allowedStates, view_params.allowedStates);
+    };
+
+    MappingViewer.prototype.reloadViewer = function() {
+        MappingModule.callLoadViewerData(this.currentSetID, this.getViewParams(), this.viewerAction, this.viewerID);
+    };
+
+    MappingViewer.prototype.getViewParams = function(){
+        return {time: this.getStampDate(), allowedStates: this.getAllowedStates()};
+    };
+
     MappingViewer.prototype.togglePanelDetails = function(panelID, callback, preserveState) {
 
         // get the panel's expander icon, or all expander icons if this is the top level expander
@@ -142,14 +178,6 @@ var MappingViewer = function(viewerID, currentSetID, viewerAction) {
         $('#komet_mapping_panel_tree_show_' + this.viewerID).toggle();
     };
 
-    MappingViewer.prototype.getStatesToView = function(){
-        return $("#komet_viewer_" + this.viewerID).find("input[name='komet_mapping_states_to_view']:checked").val();
-    };
-
-    MappingViewer.prototype.getViewParams = function(){
-        return {allowedStates: this.getStatesToView()};
-    };
-
     MappingViewer.prototype.loadOverviewSetsGrid = function(){
 
         Common.cursor_wait();
@@ -171,7 +199,7 @@ var MappingViewer = function(viewerID, currentSetID, viewerAction) {
             onSelectionChanged: this.onOverviewSetsGridSelection,
             onRowDoubleClicked: this.onOverviewSetsGridDoubleClick,
             onGridReady: this.onGridReady,
-            rowModelType: 'normal',
+            rowModelType: 'pagination',
             columnDefs: [
                 {field: "set_id", headerName: 'ID', hide: 'true'},
                 {field: "name", headerName: 'Name'},
@@ -206,11 +234,11 @@ var MappingViewer = function(viewerID, currentSetID, viewerAction) {
         }
 
         var pageSize = Number(page_size);
+        this.overviewSetsGridOptions.paginationPageSize = pageSize;
 
         // set the grid datasource options, including processing the data rows
         var dataSource = {
 
-            pageSize: pageSize,
             getRows: function (params) {
 
                 var pageNumber = params.endRow / pageSize;
@@ -478,6 +506,7 @@ var MappingViewer = function(viewerID, currentSetID, viewerAction) {
 
                         $("#komet_viewer_" + viewerID).off('unsavedCheck');
                         setSection.before(UIHelper.generatePageMessage("All changes were processed successfully."));
+                        MappingModule.setTreeViewParams(thisViewer.getViewParams());
                         $.publish(KometChannels.Mapping.mappingTreeNodeSelectedChannel, ["", data.set_id, thisViewer.getViewParams(), thisViewer.viewerID, WindowManager.INLINE, MappingModule.SET_DETAILS]);
                     }
                 }

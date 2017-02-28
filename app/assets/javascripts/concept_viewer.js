@@ -42,7 +42,7 @@ var ConceptViewer = function(viewerID, currentConceptID, viewerAction) {
 
         var stamp_date = $("#komet_concept_stamp_date_" + this.viewerID).find("input").val();
 
-        if (stamp_date == '') {
+        if (stamp_date == '' || stamp_date == 'latest') {
             return 'latest';
         } else {
             return new Date(stamp_date).getTime().toString();
@@ -55,28 +55,16 @@ var ConceptViewer = function(viewerID, currentConceptID, viewerAction) {
         // get the stated field group
         var stated = $("#komet_viewer_" + this.viewerID).find("input[name='komet_concept_stated_inferred']");
 
-        // create the function to reload the viewer with the new view params, that will be run when the view param fields change.
-        var viewParamChange = function (){
-            this.setViewParams();
-        }.bind(this);
-
         // initialize the stated field
-        UIHelper.initStatedField(stated, view_params.stated, viewParamChange);
-
-        // create the function to reload the viewer with the new view params, that will be run when the STAMP date changes.
-        var dateChange = function (event) {
-
-            console.log("%%%% STAMP Date Change %%%%");
-            this.setViewParams();
-        }.bind(this);
+        UIHelper.initStatedField(stated, view_params.stated);
 
         // initialize the STAMP date field
-        UIHelper.initDatePicker("#komet_concept_stamp_date_" + this.viewerID, view_params.time, dateChange);
+        UIHelper.initDatePicker("#komet_concept_stamp_date_" + this.viewerID, view_params.time);
 
     };
 
-    ConceptViewer.prototype.setViewParams = function() {
-        ConceptsModule.loadViewerData(this.currentConceptID, this.getViewParams(), ConceptsModule.VIEW, this.viewerID);
+    ConceptViewer.prototype.reloadViewer = function() {
+        ConceptsModule.callLoadViewerData(this.currentConceptID, this.getViewParams(), ConceptsModule.VIEW, this.viewerID);
     };
 
     ConceptViewer.prototype.getViewParams = function(){
@@ -530,7 +518,7 @@ var ConceptViewer = function(viewerID, currentConceptID, viewerAction) {
                     } else {
 
                         $("#komet_viewer_" + viewerID).off('unsavedCheck');
-                        TaxonomyModule.tree.reloadTree(TaxonomyModule.getViewParams(), false);
+                        TaxonomyModule.setViewParams(thisViewer.getViewParams());
                         $.publish(KometChannels.Taxonomy.taxonomyConceptEditorChannel, [ConceptsModule.EDIT, data.concept_id, thisViewer.viewerID, WindowManager.INLINE]);
                     }
                 }
@@ -739,8 +727,8 @@ var ConceptViewer = function(viewerID, currentConceptID, viewerAction) {
                     } else {
 
                         $("#komet_viewer_" + viewerID).off('unsavedCheck');
-                        TaxonomyModule.tree.reloadTree(TaxonomyModule.getViewParams(), false);
-                        $.publish(KometChannels.Taxonomy.taxonomyTreeNodeSelectedChannel, [null, data.concept_id, TaxonomyModule.getViewParams(), thisViewer.viewerID, WindowManager.INLINE]);
+                        TaxonomyModule.setViewParams(thisViewer.getViewParams());
+                        $.publish(KometChannels.Taxonomy.taxonomyTreeNodeSelectedChannel, [null, data.concept_id, thisViewer.getViewParams(), thisViewer.viewerID, WindowManager.INLINE]);
                     }
                 }
             });
