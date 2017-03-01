@@ -247,6 +247,17 @@ var UIHelper = (function () {
         });
     }
 
+    // function to the the position of an element from the edge of the viewpoint
+    function getOffset(element) {
+
+        element = element.getBoundingClientRect();
+
+        return {
+            left: element.left + window.scrollX,
+            top: element.top + window.scrollY
+        }
+    }
+
     function getActiveTabId(tabControlId) {
         var id = "#" + tabControlId;
         var idx = $(id).tabs("option", "active");
@@ -1406,6 +1417,7 @@ var UIHelper = (function () {
         setStatedField: setStatedField,
         setStampDate: setStampDate,
         setAllowedStatesField: setAllowedStatesField,
+        getOffset: getOffset,
         getActiveTabId: getActiveTabId,
         isTabActive: isTabActive,
         initializeContextMenus: initializeContextMenus,
