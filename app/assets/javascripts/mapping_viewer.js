@@ -411,7 +411,7 @@ var MappingViewer = function(viewerID, currentSetID, viewerAction) {
 
         var itemsDialogRightColumn = $('#' + this.ITEMS_INCLUDE_FIELD_DIALOG).find(".komet-add-fields-dialog-right-column");
 
-        var calculatedFieldsSelection = '<div class="komet-add-fields-dialog-body-header">Add From Calculated Fields</div>'
+        var calculatedFieldsSelection = '<div class="komet-add-fields-dialog-body-header"><label for="komet_mapping_set_editor_items_add_fields_calculated_field_' + this.viewerID + '">Add From Calculated Fields</label></div>'
             + '<div><select id="komet_mapping_set_editor_items_add_fields_calculated_field_' + this.viewerID + '" class="form-control"><option value="" selected></option>';
 
         for (var i = 0; i < this.setEditorMapSet["all_calculated_fields"].length; i++){
@@ -665,6 +665,9 @@ var MappingViewer = function(viewerID, currentSetID, viewerAction) {
 
             this.setEditorOriginalIncludedFields = $("#" + this.SET_INCLUDE_FIELD_CHECKBOX_SECTION).html();
         }
+
+        // set the focus onto the dialog for accessibility
+        dialog.find("input:first")[0].focus();
     };
 
     MappingViewer.prototype.cancelIncludeSetFieldsDialog = function(){
@@ -896,6 +899,9 @@ var MappingViewer = function(viewerID, currentSetID, viewerAction) {
 
             this.setEditorOriginalItemsIncludedFields = $("#" + this.ITEMS_INCLUDE_FIELD_CHECKBOX_SECTION).html();
         }
+
+        // set the focus onto the dialog for accessibility
+        dialog.find("select:first")[0].focus();
     };
 
     MappingViewer.prototype.cancelIncludeSetItemsFieldsDialog = function(){
@@ -1207,7 +1213,7 @@ var MappingViewer = function(viewerID, currentSetID, viewerAction) {
 
         var comment = $("#komet_mapping_item_" + itemID + "_comment");
 
-        var commentFieldString = '<textarea class="form-control" id="komet_mapping_item_edit_comment_' + this.viewerID + '" aria-label="Enter or edit comment" >' + comment.val() + '</textarea>';
+        var commentFieldString = '<textarea class="form-control" id="komet_mapping_item_edit_comment_' + this.viewerID + '" aria-label="Enter or edit comment" autofocus="true">' + comment.val() + '</textarea>';
 
         var confirmCallback = function(buttonClicked){
 

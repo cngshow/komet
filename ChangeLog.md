@@ -5,6 +5,8 @@ where provided, and the git commit history.
 
 * 2017/02/?? - 1.65 - PENDING
     * Added STAMP date to taxonomy tree, concept viewer, mapping tree, and mapping viewer. All related functions now take whatever per panel view params are passed from the GUI. Many css, renaming, code cleanup, and other refactors as part of this.
+    * Added labels to "Add more map item fields" dialog
+    * Made sure dialogs in map editor get the focus when they are displayed (Jazz: 469408)
 
 * 2017/02/17 - 1.64
     * Fixed refset CSV export so data is shown and is not encoded. Also fixed paging issues on grid so all results can be accessed and true total row number is displayed (jazz: 369888)

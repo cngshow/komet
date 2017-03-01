@@ -361,7 +361,6 @@ var UIHelper = (function () {
                     }
                 },
                 OK: {
-                    "autofocus": "true",
                     text: buttonText,
                     "class": "btn btn-primary",
                     click: function () {
