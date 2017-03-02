@@ -8,6 +8,9 @@ where provided, and the git commit history.
     * Added labels to "Add more map item fields" dialog
     * Made sure dialogs in map editor get the focus when they are displayed (Jazz: 469408)
     * Context and Mapping trees expand and collapse are accessible using left and right arrow keys and space bar. Context menu on tree is accessible using accent (`), Context Menu, and "Shift + F10" keys. Made sure tree does not retain respond to key commands when menu is open, and regains focus when menu is closed. (Jazz: 469240)
+    * Added aria-labels to tree items, and aria-labels and tooltips to tree flags.
+    * Added better arial-labels and either tooltips, placeholder text, label tags to autosuggest fields. (Jazz: 469395)
+    * Added placeholder text to Description Value field in edit concept. (Jazz: 469395)
 
 * 2017/02/17 - 1.64
     * Fixed refset CSV export so data is shown and is not encoded. Also fixed paging issues on grid so all results can be accessed and true total row number is displayed (jazz: 369888)

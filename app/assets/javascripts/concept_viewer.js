@@ -817,7 +817,7 @@ var ConceptViewer = function(viewerID, currentConceptID, viewerAction) {
             + '<div class="komet-concept-section-panel-details">'
             + '<div class="komet-concept-edit-row komet-concept-edit-description-row komet-changeable">'
             + '<div>' + this.createSelectField(descriptionID + "_description_type_" + this.viewerID, namePrefix + "[description_type]", this.selectFieldOptions.descriptionType, type, "Description Type") + '</div>'
-            + '<div><input type="text" id="komet_concept_edit_description_type_' + descriptionID + '_' + this.viewerID + '" name="' + namePrefix + '[text]" value="' + text + '" class="form-control komet_concept_edit_description_type" aria-label="Description Type"></div>'
+            + '<div><input type="text" id="komet_concept_edit_description_type_' + descriptionID + '_' + this.viewerID + '" name="' + namePrefix + '[text]" value="' + text + '" class="form-control komet_concept_edit_description_type" aria-label="Description Value" placeholder="Description Value"></div>'
             + '<div>' + this.createSelectField(descriptionID + "_description_language_" + this.viewerID, namePrefix + "[description_language]", this.selectFieldOptions.language, language, "Description Language") + '</div>'
             + '<div>' + this.createSelectField(descriptionID + "_description_case_significance_" + this.viewerID, namePrefix + "[description_case_significance]", this.selectFieldOptions.caseSignificance, caseSignificance, "Description Case Significance") + '</div>'
             + '<div>' + this.createSelectField(descriptionID + "_description_state_" + this.viewerID, namePrefix + "[description_state]", this.selectFieldOptions.state, state, "Description State") + '</div>';
@@ -1029,6 +1029,9 @@ var ConceptViewer = function(viewerID, currentConceptID, viewerAction) {
         rowString += '<div id="' + rowID + '" class="komet-concept-edit-row komet-concept-edit-association-row komet-changeable">'
             + '<div>' + typeDisplay + '</div>'
             + '<div><autosuggest id-base="komet_concept_edit_association_value_' + associationID + '" '
+            + 'id-postfix="_' + this.viewerID + '" '
+            + 'label="Association Value" '
+            + 'label-display="placeholder" '
             + 'id-postfix="_' + this.viewerID + '" '
             + 'name="associations[' + associationID + '][target" '
             + 'name-format="array" '

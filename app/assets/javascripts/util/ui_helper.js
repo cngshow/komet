@@ -606,16 +606,29 @@ var UIHelper = (function () {
         });
     };
 
-    var createAutoSuggestField = function (fieldIDBase, fieldIDPostfix, label, name, nameFormat, idValue, displayValue, typeValue, fieldClasses, tabIndex) {
+    var createAutoSuggestField = function (fieldIDBase, fieldIDPostfix, label, labelDisplay, name, nameFormat, idValue, displayValue, typeValue, fieldClasses, tabIndex) {
 
         if (fieldIDPostfix == null) {
             fieldIDPostfix = "";
         }
 
-        if (label == null) {
-            label = "";
-        } else {
-            label = '<label for="' + fieldIDBase + '_display' + fieldIDPostfix + '">' + label + '</label>';
+        var labelTag = "";
+        var caption = "";
+
+        if (label != null) {
+
+            caption = ' aria-label="' + label + '" ';
+
+            if (labelDisplay == null || labelDisplay == 'label') {
+                labelTag = '<label for="' + fieldIDBase + '_display' + fieldIDPostfix + '">' + label + '</label>';
+
+            } else if (labelDisplay == 'tooltip') {
+                caption += 'title="' + label + '" ';
+
+            } else {
+                caption += 'placeholder="' + label + '" ';
+            }
+
         }
 
         var idName = fieldIDBase;
@@ -665,11 +678,11 @@ var UIHelper = (function () {
 
         // use the hide class to hide the ID and Type fields so that the hasFormChanged() function can pick up the changed values.
         // add type=hidden to inputs with class=hidden.
-        var fieldString = label
+        var fieldString = labelTag
             + '<input type="hidden" id="' + fieldIDBase + fieldIDPostfix + '" name="' + idName + '" class="hide" value="' + idValue + '">'
             + '<input type="hidden" id="' + fieldIDBase + '_type' + fieldIDPostfix + '" name="' + typeName + '" class="hide" value="' + typeValue + '">'
             + '<div id="' + fieldIDBase + '_fields' + fieldIDPostfix + '" class="komet-autosuggest input-group ' + fieldClasses + '">'
-            + '<input id="' + fieldIDBase + '_display' + fieldIDPostfix + '" name="' + displayName + '" aria-label="'+ displayName +'" class="form-control komet-context-menu" '
+            + '<input id="' + fieldIDBase + '_display' + fieldIDPostfix + '" name="' + displayName + '" ' + caption + ' class="form-control komet-context-menu" '
             + 'data-menu-type="paste_target" data-menu-id-field="' + fieldIDBase + fieldIDPostfix + '" data-menu-display-field="' + fieldIDBase + '_display' + fieldIDPostfix + '" '
             + 'data-menu-taxonomy-type-field="' + fieldIDBase + '_type' + fieldIDPostfix + '" value="' + displayValue + '"' + fieldTabIndex + '>'
             + '<div id="' + fieldIDBase + '_recents_button' + fieldIDPostfix + '"  class="input-group-btn komet-search-combo-field">'
@@ -699,6 +712,7 @@ var UIHelper = (function () {
             var fieldIDBase = tag.getAttribute("id-base");
             var fieldIDPostfix = tag.getAttribute("id-postfix");
             var label = tag.getAttribute("label");
+            var labelDisplay = tag.getAttribute("label-display");
             var name = tag.getAttribute("name");
             var nameFormat = tag.getAttribute("name-format");
             var idValue = tag.getAttribute("value");
@@ -729,7 +743,7 @@ var UIHelper = (function () {
                 restrictSearch = "";
             }
 
-            var autoSuggest = UIHelper.createAutoSuggestField(fieldIDBase, fieldIDPostfix, label, name, nameFormat, idValue, displayValue, typeValue, fieldClasses, tabIndex);
+            var autoSuggest = UIHelper.createAutoSuggestField(fieldIDBase, fieldIDPostfix, label, labelDisplay, name, nameFormat, idValue, displayValue, typeValue, fieldClasses, tabIndex);
 
             $(tag).replaceWith(autoSuggest);
 

@@ -16,12 +16,14 @@ module TaxonomyHelper
             flags.each do |flag|
 
                 shape = ''
+                caption = 'aria-label="' + flag[1]['text']  + ' Flag" title="' + flag[1]['text']  + ' Flag"'
+
                 $log.debug("get_tree_node_flag flag[1]['shape'] #{flag[1]['shape']}")
 
                 if flag[1]['shape'].downcase != 'none'
-                    return_flags = ' <span class="' + flag[1]['shape']  + '" style="color: ' + flag[1]['color'] + ';"></span>'
+                    return_flags = ' <span class="' + flag[1]['shape']  + '" style="color: ' + flag[1]['color'] + ';" ' + caption + '></span>'
                 else
-                    return_flags = ' <span class="komet-node-' + flag_name + '-flag" style="border-color: ' + flag[1]['color'] + ';"></span>'
+                    return_flags = ' <span class="komet-node-' + flag_name + '-flag" style="border-color: ' + flag[1]['color'] + ';" ' + caption + '></span>'
                 end
 
             end

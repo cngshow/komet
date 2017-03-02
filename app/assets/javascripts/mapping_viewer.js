@@ -420,7 +420,7 @@ var MappingViewer = function(viewerID, currentSetID, viewerAction) {
             calculatedFieldsSelection += '<option data-component-type="' + field_info.component_type + '" value="' + field_info.id + '">' + field_info.text + '</option>';
         }
 
-        calculatedFieldsSelection += '</select></div><div><button type="button" class="btn btn-default" aria-label="Add field" onclick="WindowManager.viewers[' + this.viewerID + '].addSetItemsCalculatedField();">Add Field</button></div>'
+        calculatedFieldsSelection += '</select></div><div><button type="button" class="btn btn-default" aria-label="Add Calculated field" onclick="WindowManager.viewers[' + this.viewerID + '].addSetItemsCalculatedField();">Add Field</button></div>'
             + '<br><div class="komet-add-fields-dialog-body-header">OR</div><br>';
 
         itemsDialogRightColumn.prepend(calculatedFieldsSelection);
