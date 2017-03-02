@@ -182,6 +182,16 @@ var MappingViewer = function(viewerID, currentSetID, viewerAction) {
 
         Common.cursor_wait();
 
+        // TODO - figure out how to stop having tab navigate through the grid, takes forever to get out of it
+        $("#komet_mapping_overview_sets_tab_trigger_" + this.viewerID).focus(function(){
+
+            if (this.overviewSetsGridOptions && this.overviewSetsGridOptions.api.rowModel.rowsToDisplay.length > 0){
+
+                this.overviewSetsGridOptions.api.ensureIndexVisible(0);
+                this.overviewSetsGridOptions.api.setFocusedCell(0, "name");
+            }
+        }.bind(this));
+
         // If a grid already exists destroy it or it will create a second grid
         if (this.overviewSetsGridOptions) {
             this.overviewSetsGridOptions.api.destroy();
@@ -194,7 +204,7 @@ var MappingViewer = function(viewerID, currentSetID, viewerAction) {
         this.overviewSetsGridOptions = {
             enableColResize: true,
             enableSorting: true,
-            suppressCellSelection: true,
+            suppressCellSelection: false,
             rowSelection: "single",
             onSelectionChanged: this.onOverviewSetsGridSelection,
             onRowDoubleClicked: this.onOverviewSetsGridDoubleClick,
