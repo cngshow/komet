@@ -12,6 +12,7 @@ where provided, and the git commit history.
     * Added aria-labels to tree items, and aria-labels and tooltips to tree flags.
     * Added better arial-labels and either tooltips, placeholder text, label tags to autosuggest fields. (Jazz: 469395)
     * Added placeholder text to Description Value field in edit concept. (Jazz: 469395)
+    * Added more complete descriptions to the aria labels in the concept and mapping editors. In some instances a more detailed description isn't possible if it's a new entry. (Jazz: 469387, 469403)
 
 
 * 2017/02/17 - 1.64
