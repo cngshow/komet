@@ -3,7 +3,7 @@ Komet Changelog
 This changelog summarizes changes and fixes which are a part of each revision.  For more details on the fixes, refer tracking numbers 
 where provided, and the git commit history.
 
-* 2017/02/?? - 1.65 - PENDING
+* 2017/03/02 - 1.65
     * Added STAMP date to taxonomy tree, concept viewer, mapping tree, and mapping viewer. All related functions now take whatever per panel view params are passed from the GUI. Many css, renaming, code cleanup, and other refactors as part of this.
     * Added labels to "Add more map item fields" dialog
     * Made sure dialogs in map editor get the focus when they are displayed (Jazz: 469408)
