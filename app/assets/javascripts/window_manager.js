@@ -252,7 +252,7 @@ var WindowManager = (function () {
     return {
         initialize: init,
         createViewer: createViewer,
-        loadViewerData: loadViewerData,
+        callLoadViewerData: loadViewerData,
         registerPreviousViewerContent: registerPreviousViewerContent,
         cancelEditMode: cancelEditMode,
         closeViewer: closeViewer,

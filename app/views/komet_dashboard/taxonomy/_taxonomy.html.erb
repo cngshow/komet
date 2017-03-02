@@ -2,18 +2,29 @@
   <fieldset>
     <div class="panel-heading">
         <div class="komet-panel-tools">
-            <legend style="width: 0px;height:0px">&nbsp;</legend>
-            <div class="btn-group" data-toggle="buttons">
-                <label class="btn btn-default" for="komet_taxonomy_stated">
-                    <input type="radio" name="komet_taxonomy_stated_inferred" id="komet_taxonomy_stated" value="true" autocomplete="off" title="Stated View"> Stated
-                </label>
-                <label  class="btn btn-default" for="komet_taxonomy_inferred">
-                    <input type="radio" name="komet_taxonomy_stated_inferred"  id="komet_taxonomy_inferred" value="false"  autocomplete="off" title="Inferred View"> Inferred
-                </label>
+
+            <div class="komet-panel-tools-control">
+                <div class='input-group date' id='komet_taxonomy_tree_stamp_date'>
+                    <input type='text' class="form-control" aria-label="STAMP Date Preference" title="STAMP Date Preference">
+                    <span class="input-group-addon">
+                        <span class="fa fa-calendar"></span>
+                    </span>
+                </div>
             </div>
 
-            <button type="button" class="komet-link-button" aria-label="Refresh Taxonomy Tree"  onclick="TaxonomyModule.tree.reloadTree(TaxonomyModule.getViewParams(), false);" title="Refresh Taxonomy Tree">
-                <div class="glyphicon glyphicon-refresh"   title="Refresh Taxonomy Tree"></div>
+            <div class="komet-panel-tools-control">
+                <div class="btn-group" data-toggle="buttons">
+                    <label class="btn btn-default" for="komet_taxonomy_stated">
+                        <input type="radio" name="komet_taxonomy_stated_inferred" id="komet_taxonomy_stated" value="true" autocomplete="off" title="Stated View" aria-label="Stated View"> Stated
+                    </label>
+                    <label  class="btn btn-default" for="komet_taxonomy_inferred">
+                        <input type="radio" name="komet_taxonomy_stated_inferred" id="komet_taxonomy_inferred" value="false" autocomplete="off" title="Inferred View" aria-label="Inferred View"> Inferred
+                    </label>
+                </div>
+            </div>
+
+            <button type="button" class="komet-link-button" onclick="TaxonomyModule.tree.reloadTree(TaxonomyModule.getViewParams(), false);" title="Refresh Taxonomy Tree with Selected Parameters" aria-label="Refresh Taxonomy Tree with Selected Parameters">
+                <div class="komet-action-icon glyphicon glyphicon-refresh"></div>
             </button>
 
         </div>
@@ -27,28 +38,8 @@
 
     $(document).ready(function () {
 
-        var stated = $("#komet_taxonomy_panel").find("input[name='komet_taxonomy_stated_inferred']");
-
-        stated.change(function(){
-
-            stated.parent().toggleClass("btn-primary btn-default");
-            TaxonomyModule.reloadTree();
-        });
-
-        // since the stated buttons are in an initial state, loop through them to select the correct default value and set styles appropriately
-        stated.each(function(index, button){
-
-             if (button.value == "<%= @view_params[:stated] %>"){
-
-                 var buttonParent = button.parentElement;
-
-                 button.checked = true;
-                 buttonParent.classList.add('btn-primary');
-                 $(buttonParent).removeClass("btn-default");
-             }
-        });
-
         WindowManager.initialize();
+        TaxonomyModule.initViewParams(<%= raw @view_params.to_json %>);
         TaxonomyModule.initialize();
         ConceptsModule.initialize();
     });

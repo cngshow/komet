@@ -19,6 +19,15 @@
             </select>-->
 
             <div class="komet-panel-tools-control">
+                <div class='input-group date' id='komet_mapping_tree_stamp_date'>
+                    <input type='text' class="form-control" aria-label="STAMP Date Preference" title="STAMP Date Preference">
+                    <span class="input-group-addon">
+                        <span class="fa fa-calendar"></span>
+                    </span>
+                </div>
+            </div>
+
+            <div class="komet-panel-tools-control">
                 <div class="btn-group" data-toggle="buttons">
                     <label class="btn btn-default" for="komet_mapping_tree_state_active">
                         <input type="radio" name="komet_mapping_tree_states_to_view" id="komet_mapping_tree_state_active" value="active" autocomplete="off" title="Show Only Active Concepts"> Active
@@ -32,8 +41,8 @@
                 </div>
             </div>
 
-            <button type="button" class="komet-link-button" onclick="MappingModule.tree.reloadTree(MappingModule.getTreeViewParams());" title="Reload Mapping Tree" aria-label="Reload Mapping Tree">
-                <div id="komet_mapping_tree_reload" alt="Reload Mapping Tree" class="fa fa-refresh" ></div>
+            <button type="button" class="komet-link-button" onclick="MappingModule.tree.reloadTree(MappingModule.getTreeViewParams());" title="Reload Mapping Tree with Selected Parameters" aria-label="Reload Mapping Tree with Selected Parameters">
+                <div id="komet_mapping_tree_reload" alt="Reload Mapping Tree with Selected Parameters" class="komet-action-icon fa fa-refresh" ></div>
             </button>
 
         </div>
@@ -52,15 +61,7 @@
 
     $(document).ready(function () {
 
-        var statesToView = $("#komet_mapping_tree_panel").find("input[name='komet_mapping_tree_states_to_view']");
-
-        statesToView.change(function(){
-
-            MappingModule.toggleTreeStatesToView(statesToView, this.value);
-            MappingModule.setTreeStatesToView(this);
-        });
-
-        MappingModule.toggleTreeStatesToView(statesToView, "<%= @view_params[:states_to_view] %>");
+        MappingModule.initTreeViewParams(<%= raw @view_params.to_json %>);
         MappingModule.initialize();
     });
 

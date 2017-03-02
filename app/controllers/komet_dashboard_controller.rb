@@ -46,31 +46,26 @@ class KometDashboardController < ApplicationController
     #@return [json] the tree nodes to insert into the tree at the parent node passed in the request
     def load_tree_data
 
-#    roles = session[Roles::SESSION_ROLES_ROOT][Roles::SESSION_USER_ROLES]
-#    if(roles.include?(Roles::DEV_SUPER_USER))
-#      #do something
-#    end
-#        CRIS, test flash code
-#        resp = CoordinateRest.get_coordinate(action: CoordinateRestActions::ACTION_COORDINATES_TOKEN, additional_req_params: {foo: 'faa'})
-#resp.rest_exception.flash_error
-#resp.flash_error   (both work)
-# if resp.is_a? CommonRest::UnexpectedResponse
-#     resp.flash_error
-# end
-
-#resp.flash_error if resp.respond_to? :flash_error
+        # roles = session[Roles::SESSION_ROLES_ROOT][Roles::SESSION_USER_ROLES]
+        # if(roles.include?(Roles::DEV_SUPER_USER))
+        #   #do something
+        # end
+        # CRIS, test flash code
+        # resp = CoordinateRest.get_coordinate(action: CoordinateRestActions::ACTION_COORDINATES_TOKEN, additional_req_params: {foo: 'faa'})
+        # resp.rest_exception.flash_error
+        # resp.flash_error   (both work)
+        # if resp.is_a? CommonRest::UnexpectedResponse
+        #   resp.flash_error
+        # end
+        #
+        # resp.flash_error if resp.respond_to? :flash_error
 
         selected_concept_id = params[:concept_id]
         parent_search = params[:parent_search]
         parent_reversed = params[:parent_reversed]
         tree_walk_levels = params[:tree_walk_levels]
         multi_path = params[:multi_path]
-        @view_params = params[:view_params]
-
-        # check to make sure the view parameters were passed in
-        if @view_params == nil
-            @view_params = session[:default_view_params]
-        end
+        @view_params = check_view_params(params[:view_params])
 
         # check to make the number of levels to walk the tree was passed in
         if tree_walk_levels == nil
@@ -91,10 +86,11 @@ class KometDashboardController < ApplicationController
 
     def populate_tree(selected_concept_id, parent_search, parent_reversed, tree_walk_levels, multi_path)
 
-        coordinates_token = session[:coordinatestoken].token
+        coordinates_token = session[:coordinates_token].token
         root = selected_concept_id.eql?('#')
 
-        additional_req_params = {coordToken: coordinates_token, stated: @view_params['stated'], sememeMembership: true}
+        additional_req_params = {coordToken: coordinates_token, sememeMembership: true}
+        additional_req_params.merge!(@view_params)
 
         if boolean(parent_search)
             tree_walk_levels = 100
@@ -295,7 +291,8 @@ class KometDashboardController < ApplicationController
                                   'data-menu-uuid' => raw_node[:id],
                                   'data-menu-state' => raw_node[:state],
                                   'data-menu-concept-text' => raw_node[:text],
-                                  'data-menu-concept-terminology-type' => raw_node[:terminology_type]
+                                  'data-menu-concept-terminology-type' => raw_node[:terminology_type],
+                                  'aria-label' => raw_node[:text]
             }
             parent_search = parent_search_param
             parent_reversed = parent_reversed_param
@@ -378,21 +375,22 @@ class KometDashboardController < ApplicationController
         @concept_id = params[:concept_id]
         @viewer_id =  params[:viewer_id]
         @viewer_action = params[:viewer_action]
-        @view_params = params[:view_params]
-
-        # check to make sure the view parameters were passed in
-        if @view_params == nil
-            @view_params = session[:default_view_params]
-        end
+        @view_params = check_view_params(params[:view_params])
 
         if @viewer_id == nil || @viewer_id == '' || @viewer_id == 'new'
             @viewer_id = get_next_id
         end
 
         get_concept_attributes(@concept_id, @view_params)
-        get_concept_descriptions(@concept_id, @view_params)
-        get_concept_sememes(@concept_id, @view_params)
-        get_concept_refsets(@concept_id, @view_params)
+
+        # get the rest of the concept information unless the attributes were not returned
+        unless @concept_text == nil
+
+            get_concept_descriptions(@concept_id, @view_params)
+            get_concept_sememes(@concept_id, @view_params)
+            get_concept_refsets(@concept_id, @view_params)
+        end
+
         render partial: params[:partial]
     end
 
@@ -409,7 +407,7 @@ class KometDashboardController < ApplicationController
         end
 
         if view_params == nil && params[:view_params]
-            view_params = params[:view_params]
+            view_params = check_view_params(params[:view_params])
         end
 
         @attributes =  get_attributes(concept_id, view_params, clone)
@@ -428,7 +426,7 @@ class KometDashboardController < ApplicationController
         end
 
         if view_params == nil && params[:view_params]
-            view_params = params[:view_params]
+            view_params = check_view_params(params[:view_params])
         end
 
         @descriptions =  get_descriptions(concept_id, view_params, clone)
@@ -447,7 +445,7 @@ class KometDashboardController < ApplicationController
         end
 
         if view_params == nil && params[:view_params]
-            view_params = params[:view_params]
+            view_params = check_view_params(params[:view_params])
         end
 
         @associations =  get_associations(concept_id, view_params, clone)
@@ -466,7 +464,7 @@ class KometDashboardController < ApplicationController
         end
 
         if view_params == nil && params[:view_params]
-            view_params = params[:view_params]
+            view_params = check_view_params(params[:view_params])
         end
 
         @concept_sememes = get_attached_sememes(concept_id, view_params, clone)
@@ -488,7 +486,7 @@ class KometDashboardController < ApplicationController
         end
 
         if view_params == nil && params[:view_params]
-            view_params = params[:view_params]
+            view_params = check_view_params(params[:view_params])
         end
 
         @concept_refsets = get_refsets(concept_id, view_params)
@@ -499,13 +497,13 @@ class KometDashboardController < ApplicationController
         end
     end
 
-    def get_concept_children(concept_id: nil, return_json: true, remove_semantic_tag: false)
+    def get_concept_children(concept_id: nil, return_json: true, remove_semantic_tag: false, view_params: {})
 
         if concept_id == nil
             concept_id = params[:uuid]
         end
 
-        children = get_direct_children(concept_id, !return_json, remove_semantic_tag)
+        children = get_direct_children(concept_id, !return_json, remove_semantic_tag, view_params)
 
         if return_json
             render json: children
@@ -515,68 +513,45 @@ class KometDashboardController < ApplicationController
 
     end
 
-    # gets default/ users preference coordinates
-    def get_coordinates
+    # sets the coordinate token from the user preferences parameters and puts the resulting token in the session
+    def set_coordinates_token
 
-        coordinates_token = session[:coordinatestoken].token
-        $log.debug("token get_coordinates #{coordinates_token}" )
-
-        # get the details of what is in the coordinates token
-        coordinates_params = CoordinateRest.get_coordinate(action: CoordinateRestActions::ACTION_COORDINATES,additional_req_params: {coordToken: coordinates_token})
-
-        coordinates_params = JSON.parse(coordinates_params.to_json)
-        user_prefs = user_session(UserSession::USER_PREFERENCES)
-
-        unless user_prefs.nil?
-
-            user_prefs = user_session(UserSession::USER_PREFERENCES)
-            coordinates_params[:module_flags] = user_prefs[:module_flags]
-            coordinates_params[:path_flags] = user_prefs[:path_flags]
-            coordinates_params[:refset_flags] = user_prefs[:refset_flags]
-
-            $log.info("get_coordinates module_flags is #{user_prefs[:module_flags]}")
-            $log.info("get_coordinates path_flags is #{user_prefs[:path_flags]}")
-            $log.info("get_coordinates refset_flags is #{user_prefs[:refset_flags]}")
-        end
-
-        $log.info("get_coordinates coordinates_params is #{coordinates_params.to_json}")
-        render json:  coordinates_params.to_json
-    end
-
-    def get_coordinatestoken
-
+        # set the params for the API call from the request
         additional_req_params = {}
         additional_req_params[:language] = params[:language]
-        additional_req_params[:time] = params[:stamp_date]
+        additional_req_params[:time] = params[:time]
         additional_req_params[:dialectPrefs] = params[:dialectPrefs]
         additional_req_params[:descriptionTypePrefs] = params[:descriptionTypePrefs]
         additional_req_params[:allowedStates] = params[:allowedStates]
         additional_req_params.merge!(CommonRest::CacheRequest::PARAMS_NO_CACHE)
 
-        $log.debug("get_coordinatestoken additional_req_params #{additional_req_params}")
-        $log.debug("get_coordinatestoken  params[:module_list] #{ params[:module_flags]}")
-        $log.debug("get_coordinatestoken params[:path_list] #{params[:path_flags]}")
-        $log.debug("get_coordinatestoken  params[:refset_flags] #{ params[:refset_flags]}")
+        $log.debug("set_coordinates_token additional_req_params #{additional_req_params}")
+        $log.debug("set_coordinates_token  params[:module_list] #{ params[:module_flags]}")
+        $log.debug("set_coordinates_token params[:path_list] #{params[:path_flags]}")
+        $log.debug("set_coordinates_token  params[:refset_flags] #{ params[:refset_flags]}")
 
-        session[:coordinatestoken] = CoordinateRest.get_coordinate(action: CoordinateRestActions::ACTION_COORDINATES_TOKEN, additional_req_params: additional_req_params)
-        $log.info("get_coordinatestoken session[:coordinatestoken] #{ session[:coordinatestoken]}")
+        # make the call to set the token and put the retuned token into the session
+        session[:coordinates_token] = CoordinateRest.get_coordinate(action: CoordinateRestActions::ACTION_COORDINATES_TOKEN, additional_req_params: additional_req_params)
+        $log.info("set_coordinates_token session[:coordinates_token] #{ session[:coordinates_token]}")
 
+        # set the user choices for concept flags into the session for retrieval during concept display
         user_prefs = HashWithIndifferentAccess.new
         user_prefs[:module_flags] = params[:module_flags]
         user_prefs[:path_flags] = params[:path_flags]
         user_prefs[:refset_flags] = params[:refset_flags]
         user_session(UserSession::USER_PREFERENCES, user_prefs)
 
-        render json: session[:coordinatestoken].to_json
+        # update the default view params in the session
+        session[:default_view_params][:time] = params[:time]
+
+        render json: session[:coordinates_token].to_json
 
     end
 
     def get_user_preference_info
 
-        # clear_user_session
-
         # get the coordinates token from the session
-        coordinates_token = session[:coordinatestoken].token
+        coordinates_token = session[:coordinates_token].token
         additional_req_params = {coordToken: coordinates_token}
         $log.debug("get_user_preference_info token #{coordinates_token}")
 
@@ -584,7 +559,7 @@ class KometDashboardController < ApplicationController
         coordinates_params = CoordinateRest.get_coordinate(action: CoordinateRestActions::ACTION_COORDINATES,additional_req_params: additional_req_params)
 
         # get the full list of dialects
-        unsorted_dialect_options = get_concept_children(concept_id: $isaac_metadata_auxiliary['DIALECT_ASSEMBLAGE']['uuids'].first[:uuid], return_json: false, remove_semantic_tag: true)
+        unsorted_dialect_options = get_concept_children(concept_id: $isaac_metadata_auxiliary['DIALECT_ASSEMBLAGE']['uuids'].first[:uuid], return_json: false, remove_semantic_tag: true, view_params: session[:edit_view_params])
         $log.debug("get_user_preference_info @unsorted_dialect_options #{unsorted_dialect_options}")
 
         # get the list of user preferred dialects
@@ -612,7 +587,7 @@ class KometDashboardController < ApplicationController
         $log.debug("get_user_preference_info @dialect_options #{@dialect_options}")
 
         # get the full list of description types
-        unsorted_description_type_options = get_concept_children(concept_id: $isaac_metadata_auxiliary['DESCRIPTION_TYPE']['uuids'].first[:uuid], return_json: false, remove_semantic_tag: true)
+        unsorted_description_type_options = get_concept_children(concept_id: $isaac_metadata_auxiliary['DESCRIPTION_TYPE']['uuids'].first[:uuid], return_json: false, remove_semantic_tag: true, view_params: session[:edit_view_params])
         $log.debug("get_user_preference_info @description_type_options #{unsorted_description_type_options}")
 
         # get the list of user preferred description types
@@ -640,15 +615,20 @@ class KometDashboardController < ApplicationController
         $log.debug("get_user_preference_info @description_type_options #{@description_type_options}")
 
         # get the full list of languages
-        @language_options = get_concept_children(concept_id: $isaac_metadata_auxiliary['LANGUAGE']['uuids'].first[:uuid], return_json: false, remove_semantic_tag: true)
+        @language_options = get_concept_children(concept_id: $isaac_metadata_auxiliary['LANGUAGE']['uuids'].first[:uuid], return_json: false, remove_semantic_tag: true, view_params: session[:edit_view_params])
         $log.debug("get_user_preference_info @language_options #{@language_options}")
 
         # get the user selected language
         @language_coordinate = coordinates_params.languageCoordinate.language
         $log.debug("get_user_preference_info @language_coordinate #{@language_coordinate}")
 
-        # get the user selected STAMP date they wish to view
-        @stamp_date = coordinates_params.taxonomyCoordinate.stampCoordinate.time
+        # get the user selected STAMP date they wish to view - if it is the max java date use the string 'latest'
+        if java.lang.Long::MAX_VALUE == coordinates_params.taxonomyCoordinate.stampCoordinate.time
+            @stamp_date = 'latest'
+        else
+            @stamp_date = coordinates_params.taxonomyCoordinate.stampCoordinate.time
+        end
+
         $log.debug("get_user_preference_info @stamp_date #{@stamp_date}")
 
         # get the user selected view state preference
@@ -681,7 +661,7 @@ class KometDashboardController < ApplicationController
         @path_flags = []
 
         # get the full list of paths
-        path_list = get_concept_children(concept_id: $isaac_metadata_auxiliary['PATH']['uuids'].first[:uuid], return_json: false, remove_semantic_tag: true)
+        path_list = get_concept_children(concept_id: $isaac_metadata_auxiliary['PATH']['uuids'].first[:uuid], return_json: false, remove_semantic_tag: true, view_params: session[:edit_view_params])
         $log.debug("get_user_preference_info path_list #{path_list}")
 
         # if the user doesn't have current preferences loop thru the full path list to build an array of flag options, otherwise loop thru their preferences
@@ -700,7 +680,7 @@ class KometDashboardController < ApplicationController
         @module_flags = []
 
         # get the full list of modules
-        module_list = get_concept_children(concept_id: $isaac_metadata_auxiliary['MODULE']['uuids'].first[:uuid], return_json: false, remove_semantic_tag: true)
+        module_list = get_concept_children(concept_id: $isaac_metadata_auxiliary['MODULE']['uuids'].first[:uuid], return_json: false, remove_semantic_tag: true, view_params: session[:edit_view_params])
         $log.debug("get_user_preference_info module_list #{module_list}")
 
         # if the user doesn't have current preferences loop thru the full module list to build an array of flag options, otherwise loop thru their preferences
@@ -716,7 +696,8 @@ class KometDashboardController < ApplicationController
 
         $log.debug("get_user_preference_info @module_flags #{@module_flags}")
 
-        additional_req_params.merge!({stated: @view_params['stated'], childDepth: 50})
+        additional_req_params[:childDepth] = 50
+        additional_req_params.merge!(session[:edit_view_params])
 
         # get the assemblage concept so we can get all children (refset concepts) from it
         assemblages = TaxonomyRest.get_isaac_concept(uuid: $isaac_metadata_auxiliary['ASSEMBLAGE']['uuids'].first[:uuid], additional_req_params: additional_req_params)
@@ -759,29 +740,6 @@ class KometDashboardController < ApplicationController
         end
     end
 
-    # [Object] view_params - various parameters related to the view filters the user wants to apply - see full definition comment at top of komet_dashboard_controller file
-    def get_refset_list
-
-        coordinates_token = session[:coordinatestoken].token
-        @view_params = params[:view_params]
-
-        # check to make sure the view parameters were passed in
-        if @view_params == nil
-            @view_params = session[:default_view_params]
-        end
-
-        additional_req_params = {coordToken: coordinates_token, stated: @view_params['stated'], childDepth: 50}
-        refsets = TaxonomyRest.get_isaac_concept(uuid: $isaac_metadata_auxiliary['ASSEMBLAGE']['uuids'].first[:uuid], additional_req_params: additional_req_params)
-
-        if refsets.is_a? CommonRest::UnexpectedResponse
-            render json: [] and return
-        end
-
-        processed_refsets = process_refset_list(refsets)
-        render json: processed_refsets.to_json
-
-    end
-
     def process_refset_list(concept)
 
         refset_nodes = {}
@@ -808,11 +766,11 @@ class KometDashboardController < ApplicationController
 
     def get_concept_description_types
 
-        coordinates_token = session[:coordinatestoken].token
+        coordinates_token = session[:coordinates_token].token
         containing_concept_id = 'fc134ddd-9a15-5540-8fcc-987bf2af9198'
         types = []
 
-        description_types = TaxonomyRest.get_isaac_concept(uuid: containing_concept_id, additional_req_params: {coordToken: coordinates_token})
+        description_types = TaxonomyRest.get_isaac_concept(uuid: containing_concept_id, additional_req_params: {coordToken: coordinates_token}.merge!(session[:edit_view_params]))
 
         if !description_types.is_a? CommonRest::UnexpectedResponse
 
@@ -831,6 +789,7 @@ class KometDashboardController < ApplicationController
         @parent_id = params[:parent_id]
         @parent_text = params[:parent_text]
         @parent_type = params[:parent_type]
+        @view_params = session[:edit_view_params]
         @description_types = get_concept_description_types
         @viewer_action = params[:viewer_action]
         @viewer_previous_content_id = params[:viewer_previous_content_id]
@@ -914,15 +873,15 @@ class KometDashboardController < ApplicationController
         get_concept_descriptions(@concept_id, @view_params, clone)
         get_concept_associations(@concept_id, @view_params, clone)
 
-        @language_options = get_concept_children(concept_id: $isaac_metadata_auxiliary['LANGUAGE']['uuids'].first[:uuid], return_json: false, remove_semantic_tag: true)
+        @language_options = get_concept_children(concept_id: $isaac_metadata_auxiliary['LANGUAGE']['uuids'].first[:uuid], return_json: false, remove_semantic_tag: true, view_params: @view_params)
         # TODO - Change get_concept_children function to pull all leaf nodes so we can stop hardcoding this uuid
-        @dialect_options = get_concept_children(concept_id: $isaac_metadata_auxiliary['DIALECT_ASSEMBLAGE']['uuids'].first[:uuid], return_json: false, remove_semantic_tag: true)
-        @case_options = get_concept_children(concept_id: $isaac_metadata_auxiliary['DESCRIPTION_CASE_SIGNIFICANCE']['uuids'].first[:uuid], return_json: false, remove_semantic_tag: true)
-        @acceptability_options = get_concept_children(concept_id: $isaac_metadata_auxiliary['DESCRIPTION_ACCEPTABILITY']['uuids'].first[:uuid], return_json: false, remove_semantic_tag: true)
-        @description_type_options = get_concept_children(concept_id: $isaac_metadata_auxiliary['DESCRIPTION_TYPE']['uuids'].first[:uuid], return_json: false, remove_semantic_tag: true)
+        @dialect_options = get_concept_children(concept_id: $isaac_metadata_auxiliary['DIALECT_ASSEMBLAGE']['uuids'].first[:uuid], return_json: false, remove_semantic_tag: true, view_params: @view_params)
+        @case_options = get_concept_children(concept_id: $isaac_metadata_auxiliary['DESCRIPTION_CASE_SIGNIFICANCE']['uuids'].first[:uuid], return_json: false, remove_semantic_tag: true, view_params: @view_params)
+        @acceptability_options = get_concept_children(concept_id: $isaac_metadata_auxiliary['DESCRIPTION_ACCEPTABILITY']['uuids'].first[:uuid], return_json: false, remove_semantic_tag: true, view_params: @view_params)
+        @description_type_options = get_concept_children(concept_id: $isaac_metadata_auxiliary['DESCRIPTION_TYPE']['uuids'].first[:uuid], return_json: false, remove_semantic_tag: true, view_params: @view_params)
         # TODO - Change get_concept_children function to pull all leaf nodes so we can stop hardcoding this uuid
-        @description_extended_type_options = get_concept_children(concept_id: '09c43aa9-eaed-5217-bc5f-23cacca4df38', return_json: false, remove_semantic_tag: true)
-        @association_type_options = get_association_types
+        @description_extended_type_options = get_concept_children(concept_id: '09c43aa9-eaed-5217-bc5f-23cacca4df38', return_json: false, remove_semantic_tag: true, view_params: @view_params)
+        @association_type_options = get_association_types(@view_params)
 
         if clone
             @concept_id = get_next_id
@@ -937,7 +896,7 @@ class KometDashboardController < ApplicationController
         sememe_text = params[:sememe_display]
         sememe_type = params[:sememe_type]
 
-        sememe = get_sememe_definition_details(sememe_id)
+        sememe = get_sememe_definition_details(sememe_id, session[:edit_view_params])
 
         if sememe[:data].empty?
             render json: {} and return
@@ -1312,14 +1271,17 @@ class KometDashboardController < ApplicationController
 
     ##
     # get_concept_suggestions - RESTful route for populating a suggested list of assemblages as a user types into a field via http :GET
+    # @param [Object] params[:view_params] - various parameters related to the view filters the user wants to apply - see full definition comment at top of komet_dashboard_controller file
     # @param [String] params[:term] - The term entered by the user to prefix the concept search with
     # @return [json] a list of matching concept text and ids - array of hashes {label:, value:}
     def get_concept_suggestions
 
-        coordinates_token = session[:coordinatestoken].token
+        coordinates_token = session[:coordinates_token].token
+        view_params = check_view_params(params[:view_params], false)
         search_term = params[:term]
         concept_suggestions_data = []
         additional_req_params = {coordToken: coordinates_token, query: search_term, maxPageSize: 25, expand: 'referencedConcept', mergeOnConcept: true}
+        additional_req_params.merge!(view_params)
         restrict_search = params[:restrict_search]
 
         if search_term.length >= 3 && restrict_search != nil && restrict_search != ''
@@ -1359,17 +1321,25 @@ class KometDashboardController < ApplicationController
     def dashboard
         # user_session(UserSession::WORKFLOW_UUID, '6457fb1f-b67b-4679-8f56-fa811e1e2a6b')
 
-        @view_params = {stated: true, states_to_view: 'active,inactive'}
+        # if the view params are already in the session put them into a variable for the GUI, otherwise set the default values
+        if session[:default_view_params]
+            @view_params = session[:default_view_params]
+        else
 
-        # set variables for default view parameters that can be accessed from any controller or module
-        session[:default_view_params] = @view_params
-        session[:edit_view_params] = @view_params
+            @view_params = {stated: true, allowedStates: 'active,inactive', time: 'latest'}
 
-        if !session[:coordinatestoken]
-            session[:coordinatestoken] = CoordinateRest.get_coordinate(action: CoordinateRestActions::ACTION_COORDINATES_TOKEN)
+            # set variables for default view parameters that can be accessed from any controller or module
+            session[:default_view_params] = @view_params.clone
+            # set a variable for view params to be used when pulling data for edits, which should always be the least restricted possible
+            session[:edit_view_params] = @view_params.clone
         end
+
+        unless session[:coordinates_token]
+            session[:coordinates_token] = CoordinateRest.get_coordinate(action: CoordinateRestActions::ACTION_COORDINATES_TOKEN)
+        end
+
         get_user_preference_info
-        $log.debug("token initial #{session[:coordinatestoken].token}" )
+        $log.debug("token initial #{session[:coordinates_token].token}" )
 
     end
 

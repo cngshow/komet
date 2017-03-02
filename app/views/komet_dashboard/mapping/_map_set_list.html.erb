@@ -1,36 +1,37 @@
 <script>
-  //function mapping_viewer_<%= @viewer_id %>(){
-  //var viewer = WindowManager.viewers[<%= @viewer_id %>];
+    //function mapping_viewer_<%= @viewer_id %>(){
+    //var viewer = WindowManager.viewers[<%= @viewer_id %>];
 </script>
 
 <div id="komet_mapping_section_<%= @viewer_id %>">
 
-  <div id="komet_mapping_overview_sets_<%= @viewer_id %>" style="height: 450px;" class="ag-fresh"></div>
+    <span id="komet_mapping_overview_sets_tab_trigger_<%= @viewer_id %>" tabindex="0"></span>
+    <div id="komet_mapping_overview_sets_<%= @viewer_id %>" style="height: 450px;" class="ag-fresh"></div>
 
-  <div>
-    <button type="button" class="komet-link-button" onclick="MappingModule.createNewMapSet(false);" title="Create New Map Set" aria-label="Create New Map Set">
-      <div class="fa fa-plus" title="Create New Map Set"></div>
-    </button>
-    <% if controller.can_edit_concept? %>
-        <button type="button" class="komet-link-button" disabled onclick="WindowManager.viewers[<%= @viewer_id %>].loadOverviewSetsGridSelectedSet(MappingModule.SET_EDITOR);" title="Edit Selected Map Set" aria-label="Edit Selected Map Set">
-          <div id="komet_mapping_overview_set_edit_<%= @viewer_id %>" class="fa fa-pencil " title="Edit Selected Map Set"></div>
+    <div>
+        <button type="button" class="komet-link-button" onclick="MappingModule.createNewMapSet(false);" title="Create New Map Set" aria-label="Create New Map Set">
+            <div class="fa fa-plus" title="Create New Map Set"></div>
         </button>
-    <% end %>
-    <button type="button" class="komet-link-button hide" disabled data-state="false" title="Inactivate Selected Map Set" aria-label="Inactive Selected Map Set">
-      <div id="komet_mapping_overview_set_state_<%= @viewer_id %>" class="glyphicon glyphicon-ban-circle" title="Inactivate Selected Map Set"></div>
-    </button>
+        <% if controller.can_edit_concept? && @view_params[:time] == 'latest' %>
+            <button type="button" class="komet-link-button" disabled onclick="WindowManager.viewers[<%= @viewer_id %>].loadOverviewSetsGridSelectedSet(MappingModule.SET_EDITOR);" title="Edit Selected Map Set" aria-label="Edit Selected Map Set">
+                <div id="komet_mapping_overview_set_edit_<%= @viewer_id %>" class="fa fa-pencil " title="Edit Selected Map Set"></div>
+            </button>
+        <% end %>
+        <button type="button" class="komet-link-button hide" disabled data-state="false" title="Inactivate Selected Map Set" aria-label="Inactive Selected Map Set">
+            <div id="komet_mapping_overview_set_state_<%= @viewer_id %>" class="glyphicon glyphicon-ban-circle" title="Inactivate Selected Map Set"></div>
+        </button>
 
-    <span title="Mapping Items count" class="hide" id="komet_mapping_overview_set_item_count_<%= @viewer_id %>">0 Mapping Items</span>
-  </div>
+        <span title="Mapping Items count" class="hide" id="komet_mapping_overview_set_item_count_<%= @viewer_id %>">0 Mapping Items</span>
+    </div>
 
 </div>
 
 <script>
-  //}();
+    //}();
 
-  $(document).ready(function () {
+    $(document).ready(function () {
 
-    WindowManager.viewers[<%= @viewer_id %>].loadOverviewSetsGrid();
-  });
+        WindowManager.viewers[<%= @viewer_id %>].loadOverviewSetsGrid();
+    });
 
 </script>

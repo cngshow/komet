@@ -100,7 +100,7 @@ var ConceptsModule = (function () {
 
                 onSuccess();
 
-                WindowManager.loadViewerData(data, viewerID, "concept", windowType);
+                WindowManager.callLoadViewerData(data, viewerID, "concept", windowType);
 
                 // only resolve waiting requests if this is an inline viewer. New and popup viewers still have more processing.
                 if (windowType != WindowManager.NEW && windowType != WindowManager.POPUP) {
@@ -126,15 +126,10 @@ var ConceptsModule = (function () {
         WindowManager.deferred.resolve();
     }
 
-    function setStatedView(viewerID) {
-        loadViewerData(WindowManager.viewers[viewerID].currentConceptID, WindowManager.viewers[viewerID].getViewParams(), VIEW, viewerID);
-    }
-
     return {
         initialize: init,
         createViewer: createViewer,
-        loadViewerData: loadViewerData,
-        setStatedView: setStatedView,
+        callLoadViewerData: callLoadViewerData,
         VIEW: VIEW,
         EDIT: EDIT,
         CREATE: CREATE,

@@ -23,6 +23,13 @@
 
             <div class="komet-panel-tools">
 
+                <div class="komet-panel-tools-control hide">
+                    <div id='komet_concept_stamp_date_<%= @viewer_id %>'>
+                        <input type='hidden' class="form-control" aria-label="STAMP Date Preference" title="STAMP Date Preference" value="<%= @view_params[:time] %>">
+                    </div>
+                    <input id='komet_concept_stated_<%= @viewer_id %>' type='hidden' class="form-control" aria-label="Stated View" title="Stated View" checked="<%= @view_params[:stated] %>">
+                </div>
+
                 <div class="komet-panel-tools-control">
                     <label for="komet_concept_editor_show_changes_<%= @viewer_id %>">Show Changes</label>
                     <input type="checkbox" id="komet_concept_editor_show_changes_<%= @viewer_id %>" onclick="WindowManager.viewers[<%= @viewer_id %>].toggleEditorChangeHighlights(this)">
@@ -34,7 +41,7 @@
                 </div>
 
                 <button type="button" class="komet-link-button" onclick="WindowManager.closeViewer('<%= @viewer_id %>')" aria-label="Close Viewer" title="Close Viewer">
-                    <div class="glyphicon glyphicon-remove"></div>
+                    <div class="komet-action-icon glyphicon glyphicon-remove"></div>
                 </button>
             </div>
         </div>

@@ -27,12 +27,46 @@ var TaxonomyModule = (function () {
         return $("#komet_taxonomy_stated").prop("checked");
     }
 
-    function toggleStatedView(statedField){
-        statedField.parent().toggleClass("btn-primary btn-default");
+    function getStampDate(){
+
+        var stamp_date = $("#komet_taxonomy_tree_stamp_date").find("input").val();
+
+        if (stamp_date == '' || stamp_date == 'latest') {
+            return 'latest';
+        } else {
+            return new Date(stamp_date).getTime().toString();
+        }
+    };
+
+    // function to set the initial state of the view param fields
+    function initViewParams(view_params) {
+
+        // get the stated field group
+        var stated = $("#komet_taxonomy_panel").find("input[name='komet_taxonomy_stated_inferred']");
+
+        // initialize the stated field
+        UIHelper.initStatedField(stated, view_params.stated);
+
+        // initialize the STAMP date field
+        UIHelper.initDatePicker("#komet_taxonomy_tree_stamp_date", view_params.time);
+
     }
 
     function getViewParams (){
-        return {stated: getStatedView()};
+        return {stated: getStatedView(), time: getStampDate()};
+    }
+
+    // function to change the view param values and then reload the tree
+    function setViewParams(view_params) {
+
+        // set the stated field
+        UIHelper.setStatedField($("#komet_taxonomy_panel").find("input[name='komet_taxonomy_stated_inferred']"), view_params.stated);
+
+        // set the STAMP date field
+        UIHelper.setStampDate($("#komet_taxonomy_tree_stamp_date"), view_params.time);
+
+        // reload the tree
+        this.reloadTree();
     }
 
     function reloadTree() {
@@ -40,18 +74,22 @@ var TaxonomyModule = (function () {
         var selectedID = null;
         var linkedViewerID = WindowManager.getLinkedViewerID();
 
+        // if there is a linked concept viewer get its concept ID to try to find the node and select it again after reload, without triggering the change event
         if (linkedViewerID != null && linkedViewerID != WindowManager.NEW && WindowManager.viewers[linkedViewerID].currentConceptID){
             selectedID = WindowManager.viewers[linkedViewerID].currentConceptID;
         }
 
-        this.tree.reloadTree(getViewParams(), false);
+        // reload the tree, trying to reselect a linked concept if there was one
+        this.tree.reloadTree(getViewParams(), false, selectedID);
     }
 
     return {
         initialize: init,
         getStatedView: getStatedView,
-        toggleStatedView: toggleStatedView,
+        getStampDate: getStampDate,
+        initViewParams: initViewParams,
         getViewParams: getViewParams,
+        setViewParams: setViewParams,
         reloadTree: reloadTree
     };
 

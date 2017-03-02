@@ -75,6 +75,7 @@ at_exit do
   context = ($CONTEXT.eql?('/')) ? '' : $CONTEXT
   $log.always_n(PrismeLogEvent::LIFECYCLE_TAG, "#{Rails.application.class.parent_name}/#{context} has been ruthlessly executed!", false) unless $rake
 end
+KOMET_NAME = $PROPS['KOMET.komet_name']
 
 # Thread.new do
 #   sleep 3

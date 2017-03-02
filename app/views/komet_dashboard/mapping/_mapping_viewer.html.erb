@@ -26,13 +26,22 @@
 
             <% if @mapping_action == 'set_list' %>
                 <button type="button" id="komet_mapping_overview_sets_refresh_<%= @viewer_id %>" class="komet-link-button komet-panel-tools-control" onclick="WindowManager.viewers[<%= @viewer_id %>].loadOverviewSetsGrid();" title="Reload Mapping Set Grid" aria-label="Reload Mapping Set Grid">
-                    <div title="Reload Mapping Set Grid" class="fa fa-refresh"></div>
+                    <div title="Reload Mapping Set Grid" class="komet-action-icon fa fa-refresh"></div>
                 </button>
             <% end %>
 
             <div class="komet-panel-tools-control">
                 <label for="komet_mapping_show_stamp_<%= @viewer_id %>">Show STAMP</label>
                 <input type="checkbox" checked id="komet_mapping_show_stamp_<%= @viewer_id %>" onclick="WindowManager.viewers[<%= @viewer_id %>].toggleSTAMP();" value="true">
+            </div>
+
+            <div class="komet-panel-tools-control">
+                <div class='input-group date' id='komet_mapping_stamp_date_<%= @viewer_id %>'>
+                    <input type='text' class="form-control" aria-label="STAMP Date Preference" title="STAMP Date Preference">
+                    <span class="input-group-addon">
+                        <span class="fa fa-calendar"></span>
+                    </span>
+                </div>
             </div>
 
             <div class="komet-panel-tools-control">
@@ -48,14 +57,13 @@
                     </label>
                 </div>
             </div>
-            <!--<div id="komet_mapping_overview_sets_inactive_<%#= @viewer_id %>" title="Toggle Inactive Concepts" class="fa-stack small" onclick="WindowManager.viewers[<%#= @viewer_id %>].toggleOverviewInactiveConcepts();">
-            <div class="fa fa-square fa-stack-2x"></div>
-            <div class="fa fa-code-fork fa-stack-1x fa-inverse"></div>
-        </div>-->
 
+            <button type="button" class="komet-link-button" onclick="WindowManager.viewers[<%= @viewer_id %>].reloadViewer();" title="Refresh Viewer with Selected Parameters" aria-label="Refresh Viewer with Selected Parameters">
+                <div class="komet-action-icon glyphicon glyphicon-refresh"></div>
+            </button>
 
             <button type="button" class="komet-link-button" aria-label="Close Viewer" onclick="WindowManager.closeViewer('<%= @viewer_id %>')" title="Close Viewer">
-                <div class="glyphicon glyphicon-remove"></div>
+                <div class="komet-action-icon glyphicon glyphicon-remove"></div>
             </button>
         </div>
     </div>
@@ -64,16 +72,6 @@
   </fieldset>
 
     <script>
-
-        var statesToView = $("#komet_viewer_<%= @viewer_id %>").find("input[name='komet_mapping_states_to_view']");
-
-        statesToView.change(function(){
-
-            MappingModule.toggleTreeStatesToView(statesToView, this.value);
-            MappingModule.setViewerStatesToView("<%= @viewer_id %>");
-        });
-
-        MappingModule.toggleTreeStatesToView(statesToView, "<%= @view_params[:states_to_view] %>");
 
         if (!WindowManager.viewers.hasOwnProperty('<%= @viewer_id %>') || !(WindowManager.viewers[<%= @viewer_id %>] instanceof MappingViewer)) {
             MappingModule.createViewer("<%= @viewer_id %>", "<%= @set_id %>", "<%= @mapping_action %>");
@@ -108,6 +106,7 @@
 
         $(document).ready(function () {
 
+            WindowManager.viewers[<%= @viewer_id %>].initViewParams(<%= raw @view_params.to_json %>);
             WindowManager.viewers[<%= @viewer_id %>].restorePanelStates();
             UIHelper.initializeContextMenus();
         });

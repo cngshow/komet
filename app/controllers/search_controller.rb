@@ -34,7 +34,7 @@ class SearchController < ApplicationController
     #@return [json] a list of matching assemblage text and ids - array of hashes {label:, value:}
     def get_assemblage_suggestions
 
-        coordinates_token = session[:coordinatestoken].token
+        coordinates_token = session[:coordinates_token].token
         search_term = params[:term]
         assemblage_suggestions_data = []
 
@@ -77,7 +77,7 @@ class SearchController < ApplicationController
     #@return [json] the search results - an array of hashes {id:, matching_text:, concept_status:, score:}
     def get_search_results
 
-        coordinates_token = session[:coordinatestoken].token
+        coordinates_token = session[:coordinates_token].token
         search_results = {}
         search_data = []
         search_text = params[:taxonomy_search_text]

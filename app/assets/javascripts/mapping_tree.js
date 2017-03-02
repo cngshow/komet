@@ -30,7 +30,7 @@ var KometMappingTree = function(treeID, viewParams, windowType){
     KometMappingTree.prototype.buildMappingTree = function(viewParams, selectItem) {
 
         if (viewParams === undefined || viewParams === null) {
-            viewParams = {states_to_view: MappingModule.getTreeStatesToView()};
+            viewParams = {allowedStates: MappingModule.getTreeAllowedStates()};
         }
 
         if (selectItem == null){
@@ -85,6 +85,36 @@ var KometMappingTree = function(treeID, viewParams, windowType){
 
             // set ui to regular cursor
             Common.cursor_auto();
+
+            // listen for keypresses
+            this.tree.on('keydown.jstree', '.jstree-anchor', function (event) {
+
+                // if the key pressed was space open the node
+                if (event.keyCode == 32){
+
+                    event.preventDefault();
+                    $.jstree.reference(this).toggle_node(this);
+
+                } else if (event.keyCode == 192 || event.keyCode == 93 || (event.keyCode == 121 && event.shiftKey)){
+                    // if the accent (`), the Context Menu, or "Shift + F10" key was pressed
+
+                    // prevent the default action
+                    event.preventDefault();
+
+                    // trigger the context menu and make sure to remove the focus from the tree or it will also respond to commands while the menu is open
+                    $(this).trigger($.Event('contextmenu', {pageX: UIHelper.getOffset(this).left, pageY: UIHelper.getOffset(this).top}));
+                    this.blur();
+
+                    // highlight the first option of the context menu
+                    var contextMenu = $('.context-menu-list');
+                    contextMenu.trigger('nextcommand');
+
+                    // make sure when the menu is closed that the focus is returned to the tree element that the menu opened on
+                    contextMenu.on("contextmenu:hide", function(event){
+                        this.focus();
+                    }.bind(this));
+                }
+            });
         }.bind(this));
 
 

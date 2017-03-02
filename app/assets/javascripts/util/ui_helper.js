@@ -35,6 +35,229 @@ var UIHelper = (function () {
     const RECENTS_SEMEME = 'sememe';
     const RECENTS_METADATA = 'metadata';
 
+    /*
+     * initStatedField - Initialize a Stated field radio button group
+     * @param [object or string] elementOrSelector - Either a jquery object or the class or ID selector (including the "#" or "." prefix) that represents the radio button group we are initializing.
+     * @param [string] startingValue - the value to set the initial state of the field to, options are 'true' or 'false'. Default is 'true'
+     * @param [function] onChangeFunction - a function object that will be run when the field is changed (does not take parameters)
+     */
+    function initStatedField(elementOrSelector, startingValue, onChangeFunction) {
+
+        var statedGroup;
+
+        // If the type of the first parameter is a string, then use it as a jquery selector, otherwise use as is
+        if (typeof elementOrSelector === "string") {
+            statedGroup = $(elementOrSelector);
+        } else {
+            statedGroup = elementOrSelector;
+        }
+
+        // if the starting value was not passed in then set it to the default
+        if (startingValue != null || startingValue != undefined){
+            startingValue = 'true';
+        }
+
+        // set the stated field value
+        setStatedField(statedGroup, startingValue);
+
+        // set the field change function to set the appropriate classes
+        statedGroup.change(function(){
+
+            statedGroup.parent().toggleClass("btn-primary btn-default");
+
+            // If it was passed run the supplied onChange function
+            if (onChangeFunction != null || onChangeFunction != undefined){
+                onChangeFunction();
+            }
+        });
+    }
+
+    /*
+     * initDatePicker - Initialize a date picker input group to with a starting date
+     * @param [object or string] elementOrSelector - Either a jquery object or the class or ID selector (including the "#" or "." prefix) that represents the date picker input group we are initializing.
+     * @param [Number or string] startingDate - a long number that represents the date in milliseconds since the epoch, or the string 'latest'
+     * @param [function] onChangeFunction - a function object that will be run when the date is changed (takes an event parameter which includes .oldDate and .date (the new date)
+     */
+    function initDatePicker(elementOrSelector, startingDate, onChangeFunction) {
+
+        var datePicker;
+
+        // If the type of the first parameter is a string, then use it as a jquery selector, otherwise use as is
+        if (typeof elementOrSelector === "string") {
+            datePicker = $(elementOrSelector);
+        } else {
+            datePicker = elementOrSelector;
+        }
+
+        // get the date field input field
+        var input_field = datePicker.find("input");
+
+        // set the params for the date field
+        var date_params = {
+            useCurrent: false,
+            showClear: true,
+            showTodayButton: true,
+            icons: {
+                time: "fa fa-clock-o",
+                date: "fa fa-calendar",
+                up: "fa fa-arrow-up",
+                down: "fa fa-arrow-down"
+            }
+        };
+
+        // if the starting date is not 'latest' then set the default date param to the starting value. The plus is in case the value is a string
+        if (startingDate != null && startingDate != undefined && startingDate != 'latest'){
+            date_params.defaultDate = moment(+startingDate);
+        }
+
+        // create the date field
+        input_field.datetimepicker(date_params);
+
+        // If it was passed in, set the field onChange function to the passed in function
+        if (onChangeFunction != null && onChangeFunction != undefined){
+            input_field.on("dp.change", onChangeFunction);
+        }
+    }
+
+    /*
+     * initAllowedStatesField - Initialize an Allowed States field radio button group
+     * @param [object or string] elementOrSelector - Either a jquery object or the class or ID selector (including the "#" or "." prefix) that represents the radio button group we are initializing.
+     * @param [string] startingValue - the value to set the initial state of the field to, options are 'active', 'inactive', or 'active,inactive'. Default is 'active,inactive'
+     * @param [function] onChangeFunction - a function object that will be run when the field is changed (does not take parameters)
+     */
+    function initAllowedStatesField(elementOrSelector, startingValue, onChangeFunction) {
+
+        var allowedStatesGroup;
+
+        // If the type of the first parameter is a string, then use it as a jquery selector, otherwise use as is
+        if (typeof elementOrSelector === "string") {
+            allowedStatesGroup = $(elementOrSelector);
+        } else {
+            allowedStatesGroup = elementOrSelector;
+        }
+
+        // if the starting value was not passed in then set it to the default
+        if (startingValue != null || startingValue != undefined){
+            startingValue = 'active,inactive';
+        }
+
+        // set the stated field value
+        setAllowedStatesField(allowedStatesGroup, startingValue);
+
+        // set the field change function to set the appropriate classes
+        allowedStatesGroup.change(function(){
+
+            UIHelper.setAllowedStatesField(allowedStatesGroup, this.value);
+
+            // If it was passed run the supplied onChange function
+            if (onChangeFunction != null || onChangeFunction != undefined){
+                onChangeFunction();
+            }
+        });
+    }
+
+    /*
+     * setStatedField - set the value of a Stated field radio button group
+     * @param [object or string] elementOrSelector - Either a jquery object or the class or ID selector (including the "#" or "." prefix) that represents the radio button group whose value we are setting.
+     * @param [string] newValue - the value to set the state of the field to, options are 'true' or 'false'. Default is 'true'
+     */
+    function setStatedField(elementOrSelector, newValue) {
+
+        var statedGroup;
+
+        // If the type of the first parameter is a string, then use it as a jquery selector, otherwise use as is
+        if (typeof elementOrSelector === "string") {
+            statedGroup = $(elementOrSelector);
+        } else {
+            statedGroup = elementOrSelector;
+        }
+
+
+        // set the field value and classes by looping through each component and checking it's value against the passed in value
+        statedGroup.each(function (index, button) {
+
+            if (button.value == newValue) {
+
+                var buttonParent = button.parentElement;
+
+                button.checked = true;
+                buttonParent.classList.add('btn-primary');
+                $(buttonParent).removeClass("btn-default");
+            }
+        });
+    }
+
+    /*
+     * setStampDate - set the value of a Stated field radio button group
+     * @param [object or string] elementOrSelector - Either a jquery object or the class or ID selector (including the "#" or "." prefix) that represents the date picker input group whose value we are setting.
+     * @param [string] newValue - the value to set the value of the field to
+     */
+    function setStampDate(elementOrSelector, newValue) {
+
+        var dateGroup;
+
+        // If the type of the first parameter is a string, then use it as a jquery selector, otherwise use as is
+        if (typeof elementOrSelector === "string") {
+            dateGroup = $(elementOrSelector);
+        } else {
+            dateGroup = elementOrSelector;
+        }
+
+        if (newValue == 'latest'){
+            newValue = '';
+        }
+
+        // set the date input value
+        dateGroup.find("input").val(newValue);
+    }
+
+    /*
+     * setAllowedStatesField - set the value of an Allowed States field radio button group
+     * @param [object or string] elementOrSelector - Either a jquery object or the class or ID selector (including the "#" or "." prefix) that represents the radio button group whose value we are setting.
+     * @param [string] newValue - the value to set the state of the field to, options are 'true' or 'false'. Default is 'true'
+     */
+    function setAllowedStatesField(elementOrSelector, newValue) {
+
+        var allowedStatesGroup;
+
+        // If the type of the first parameter is a string, then use it as a jquery selector, otherwise use as is
+        if (typeof elementOrSelector === "string") {
+            allowedStatesGroup = $(elementOrSelector);
+        } else {
+            allowedStatesGroup = elementOrSelector;
+        }
+
+
+        // set the field value and classes by looping through each component and checking it's value against the passed in value
+        allowedStatesGroup.each(function(index, button) {
+
+            var buttonParent = button.parentElement;
+
+            if (button.value == newValue) {
+
+                button.checked = true;
+                buttonParent.classList.add('btn-primary');
+                $(buttonParent).removeClass("btn-default");
+            } else {
+
+                button.checked = false;
+                buttonParent.classList.add("btn-default");
+                $(buttonParent).removeClass("btn-primary");
+            }
+        });
+    }
+
+    // function to the the position of an element from the edge of the viewpoint
+    function getOffset(element) {
+
+        element = element.getBoundingClientRect();
+
+        return {
+            left: element.left + window.scrollX,
+            top: element.top + window.scrollY
+        }
+    }
+
     function getActiveTabId(tabControlId) {
         var id = "#" + tabControlId;
         var idx = $(id).tabs("option", "active");
@@ -149,7 +372,6 @@ var UIHelper = (function () {
                     }
                 },
                 OK: {
-                    "autofocus": "true",
                     text: buttonText,
                     "class": "btn btn-primary",
                     click: function () {
@@ -384,16 +606,29 @@ var UIHelper = (function () {
         });
     };
 
-    var createAutoSuggestField = function (fieldIDBase, fieldIDPostfix, label, name, nameFormat, idValue, displayValue, typeValue, fieldClasses, tabIndex) {
+    var createAutoSuggestField = function (fieldIDBase, fieldIDPostfix, label, labelDisplay, name, nameFormat, idValue, displayValue, typeValue, fieldClasses, tabIndex) {
 
         if (fieldIDPostfix == null) {
             fieldIDPostfix = "";
         }
 
-        if (label == null) {
-            label = "";
-        } else {
-            label = '<label for="' + fieldIDBase + '_display' + fieldIDPostfix + '">' + label + '</label>';
+        var labelTag = "";
+        var caption = "";
+
+        if (label != null) {
+
+            caption = ' aria-label="' + label + '" ';
+
+            if (labelDisplay == null || labelDisplay == 'label') {
+                labelTag = '<label for="' + fieldIDBase + '_display' + fieldIDPostfix + '">' + label + '</label>';
+
+            } else if (labelDisplay == 'tooltip') {
+                caption += 'title="' + label + '" ';
+
+            } else {
+                caption += 'placeholder="' + label + '" ';
+            }
+
         }
 
         var idName = fieldIDBase;
@@ -443,11 +678,11 @@ var UIHelper = (function () {
 
         // use the hide class to hide the ID and Type fields so that the hasFormChanged() function can pick up the changed values.
         // add type=hidden to inputs with class=hidden.
-        var fieldString = label
+        var fieldString = labelTag
             + '<input type="hidden" id="' + fieldIDBase + fieldIDPostfix + '" name="' + idName + '" class="hide" value="' + idValue + '">'
             + '<input type="hidden" id="' + fieldIDBase + '_type' + fieldIDPostfix + '" name="' + typeName + '" class="hide" value="' + typeValue + '">'
             + '<div id="' + fieldIDBase + '_fields' + fieldIDPostfix + '" class="komet-autosuggest input-group ' + fieldClasses + '">'
-            + '<input id="' + fieldIDBase + '_display' + fieldIDPostfix + '" name="' + displayName + '" aria-label="'+ displayName +'" class="form-control komet-context-menu" '
+            + '<input id="' + fieldIDBase + '_display' + fieldIDPostfix + '" name="' + displayName + '" ' + caption + ' class="form-control komet-context-menu" '
             + 'data-menu-type="paste_target" data-menu-id-field="' + fieldIDBase + fieldIDPostfix + '" data-menu-display-field="' + fieldIDBase + '_display' + fieldIDPostfix + '" '
             + 'data-menu-taxonomy-type-field="' + fieldIDBase + '_type' + fieldIDPostfix + '" value="' + displayValue + '"' + fieldTabIndex + '>'
             + '<div id="' + fieldIDBase + '_recents_button' + fieldIDPostfix + '"  class="input-group-btn komet-search-combo-field">'
@@ -477,6 +712,7 @@ var UIHelper = (function () {
             var fieldIDBase = tag.getAttribute("id-base");
             var fieldIDPostfix = tag.getAttribute("id-postfix");
             var label = tag.getAttribute("label");
+            var labelDisplay = tag.getAttribute("label-display");
             var name = tag.getAttribute("name");
             var nameFormat = tag.getAttribute("name-format");
             var idValue = tag.getAttribute("value");
@@ -489,6 +725,7 @@ var UIHelper = (function () {
             var useRecentsCache = tag.getAttribute("use-recents-cache");
             var characterTriggerLimit = tag.getAttribute("character-trigger-limit");
             var restrictSearch = tag.getAttribute("restrict-search");
+            var viewParams = tag.getAttribute("view_params");
 
             if (fieldIDPostfix == null) {
                 fieldIDPostfix = "";
@@ -506,15 +743,14 @@ var UIHelper = (function () {
                 restrictSearch = "";
             }
 
-            var autoSuggest = UIHelper.createAutoSuggestField(fieldIDBase, fieldIDPostfix, label, name, nameFormat, idValue, displayValue, typeValue, fieldClasses, tabIndex);
+            var autoSuggest = UIHelper.createAutoSuggestField(fieldIDBase, fieldIDPostfix, label, labelDisplay, name, nameFormat, idValue, displayValue, typeValue, fieldClasses, tabIndex);
 
             $(tag).replaceWith(autoSuggest);
 
             var displayField = $("#" + fieldIDBase + "_display" + fieldIDPostfix);
 
-
             displayField.autocomplete({
-                source: gon.routes[suggestionRestVariable] + '?restrict_search=' + restrictSearch,
+                source: gon.routes[suggestionRestVariable] + '?restrict_search=' + restrictSearch + '&' + jQuery.param({view_params: viewParams}),
                 minLength: characterTriggerLimit,
                 select: onAutoSuggestSelection
                 , change: onAutoSuggestChange(characterTriggerLimit)
@@ -1049,8 +1285,8 @@ var UIHelper = (function () {
 
         return function () {
 
-            var stated;
             var viewerPanel = element.parents("div[id^=komet_viewer_]");
+            var viewParams;
 
             // if the viewerID was not passed it (but not if it is null), look up what it should be
             if (viewerID === undefined) {
@@ -1063,12 +1299,12 @@ var UIHelper = (function () {
             }
 
             if (viewerPanel.length > 0) {
-                stated = WindowManager.viewers[viewerID].getStatedView();
+                viewParams = WindowManager.viewers[viewerID].getViewParams();
             } else {
-                stated = TaxonomyModule.getStatedView();
+                viewParams = TaxonomyModule.getViewParams();
             }
 
-            $.publish(KometChannels.Taxonomy.taxonomyTreeNodeSelectedChannel, ["", id, stated, viewerID, windowType]);
+            $.publish(KometChannels.Taxonomy.taxonomyTreeNodeSelectedChannel, ["", id, viewParams, viewerID, windowType]);
         };
     }
 
@@ -1189,6 +1425,13 @@ var UIHelper = (function () {
     }
 
     return {
+        initStatedField: initStatedField,
+        initDatePicker: initDatePicker,
+        initAllowedStatesField: initAllowedStatesField,
+        setStatedField: setStatedField,
+        setStampDate: setStampDate,
+        setAllowedStatesField: setAllowedStatesField,
+        getOffset: getOffset,
         getActiveTabId: getActiveTabId,
         isTabActive: isTabActive,
         initializeContextMenus: initializeContextMenus,

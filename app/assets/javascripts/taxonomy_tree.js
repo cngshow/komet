@@ -122,6 +122,36 @@ var KometTaxonomyTree = function(treeID, viewParams, parentSearch, startingConce
 
             // set ui to regular cursor
             Common.cursor_auto();
+
+            // listen for keypresses
+            this.tree.on('keydown.jstree', '.jstree-anchor', function (event) {
+
+                // if the key pressed was space open the node
+                if (event.keyCode == 32){
+
+                    event.preventDefault();
+                    $.jstree.reference(this).toggle_node(this);
+
+                } else if (event.keyCode == 192 || event.keyCode == 93 || (event.keyCode == 121 && event.shiftKey)){
+                    // if the accent (`), the Context Menu, or "Shift + F10" key was pressed
+
+                    // prevent the default action
+                    event.preventDefault();
+
+                    // trigger the context menu and make sure to remove the focus from the tree or it will also respond to commands while the menu is open
+                    $(this).trigger($.Event('contextmenu', {pageX: UIHelper.getOffset(this).left, pageY: UIHelper.getOffset(this).top}));
+                    this.blur();
+
+                    // highlight the first option of the context menu
+                    var contextMenu = $('.context-menu-list');
+                    contextMenu.trigger('nextcommand');
+
+                    // make sure when the menu is closed that the focus is returned to the tree element that the menu opened on
+                    contextMenu.on("contextmenu:hide", function(event){
+                        this.focus();
+                    }.bind(this));
+                }
+            });
         }.bind(this));
 
         function onAfterOpen(node, selected) {
@@ -152,7 +182,7 @@ var KometTaxonomyTree = function(treeID, viewParams, parentSearch, startingConce
     };
 
     // destroy the current tree and reload it using the specified view params
-    KometTaxonomyTree.prototype.reloadTree = function(viewParams, selectItem) {
+    KometTaxonomyTree.prototype.reloadTree = function(viewParams, selectItem, conceptID) {
 
         if (selectItem == undefined || selectItem == null) {
             selectItem = this.selectItem;
@@ -160,6 +190,11 @@ var KometTaxonomyTree = function(treeID, viewParams, parentSearch, startingConce
 
         this.tree.jstree(true).destroy();
         this.buildTaxonomyTree(viewParams, this.parentSearch, this.startingConceptID, selectItem, this.multiPath);
+
+        // if a concept ID was passed in then try to find the node and select it again, without triggering the change event
+        if (conceptID != null){
+            this.findNodeInTree(conceptID, viewParams)
+        }
     };
 
     // destroy the current tree and reload it using the conceptID as a starting point
@@ -201,15 +236,15 @@ var KometTaxonomyTree = function(treeID, viewParams, parentSearch, startingConce
         // an array of callback functions to handle cleanup of each node we touch once we find the target node
         var cleanUpNodes = [];
 
-        if (selectTheNode == undefined){
+        if (selectTheNode == null || selectTheNode == undefined){
             selectTheNode = true;
         }
 
-        if (suppressChangeEvent == undefined){
+        if (suppressChangeEvent == null || suppressChangeEvent == undefined){
             suppressChangeEvent = true;
         }
 
-        if (returnFunction == undefined){
+        if (returnFunction == null || returnFunction == undefined){
             returnFunction = function(){};
         }
 
@@ -220,7 +255,7 @@ var KometTaxonomyTree = function(treeID, viewParams, parentSearch, startingConce
         if (nodeID == undefined){
 
             var tree = this.tree.jstree(true);
-            var params = '?parent_search=true&parent_reversed=true&tree_walk_levels=100&concept_id=' + conceptID + '&view_params=' + viewParams;
+            var params = '?parent_search=true&parent_reversed=true&tree_walk_levels=100&concept_id=' + conceptID + '&' + jQuery.param({view_params: viewParams});
 
             var processNodeParents = function(data){
 

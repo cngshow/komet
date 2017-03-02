@@ -3,6 +3,18 @@ Komet Changelog
 This changelog summarizes changes and fixes which are a part of each revision.  For more details on the fixes, refer tracking numbers 
 where provided, and the git commit history.
 
+* 2017/03/02 - 1.65
+    * Added STAMP date to taxonomy tree, concept viewer, mapping tree, and mapping viewer. All related functions now take whatever per panel view params are passed from the GUI. Many css, renaming, code cleanup, and other refactors as part of this.
+    * Added labels to "Add more map item fields" dialog
+    * Made sure dialogs in map editor get the focus when they are displayed (Jazz: 469408)
+    * Context and Mapping trees expand and collapse are accessible using left and right arrow keys and space bar. Context menu on tree is accessible using accent (`), Context Menu, and "Shift + F10" keys. Made sure tree does not retain respond to key commands when menu is open, and regains focus when menu is closed. (Jazz: 469240)
+    * Made map set list grid able to be tabbed into (Jazz: 469240)
+    * Added aria-labels to tree items, and aria-labels and tooltips to tree flags.
+    * Added better arial-labels and either tooltips, placeholder text, label tags to autosuggest fields. (Jazz: 469395)
+    * Added placeholder text to Description Value field in edit concept. (Jazz: 469395)
+    * Added more complete descriptions to the aria labels in the concept and mapping editors. In some instances a more detailed description isn't possible if it's a new entry. (Jazz: 469387, 469403)
+
+
 * 2017/02/17 - 1.64
     * Fixed refset CSV export so data is shown and is not encoded. Also fixed paging issues on grid so all results can be accessed and true total row number is displayed (jazz: 369888)
     * Fixed issue with mapping item template fields or matching calculated fields (ie: Source Code and Target Code) all having the same column name.

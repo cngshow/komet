@@ -1,9 +1,9 @@
 <link rel="stylesheet" href="//code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css">
-<h1 class="hide">KOMET Tooling</h1>
+<h1 class="hide"><%=KOMET_NAME%></h1>
 <nav class="komet-navbar" role="navigation" aria-label="Main menu">
 
   <div class="komet-navbar-header" role="navigation">
-    <div class="komet-logo-komet">KOMET</div>
+    <div class="komet-logo-komet"><%=KOMET_NAME%></div>
     <div class="komet-logo-tooling">Tooling</div>
   </div>
 
@@ -114,25 +114,9 @@
 <% end %>
 
 <script>
-  $(document).ready(function () {
+    $(document).ready(function () {
 
-
-      $('#komet_user_preference_form').html("<%= j(render(:partial => 'komet_dashboard/userspreference')) %>");
-
-
-
-
-    ExportModule.initialize();
-
-    $('#stamp_date').datetimepicker({
-      showClear: true,
-      showTodayButton: true,
-      icons: {
-        time: "fa fa-clock-o",
-        date: "fa fa-calendar",
-        up: "fa fa-arrow-up",
-        down: "fa fa-arrow-down"
-      }
+        $('#komet_user_preference_form').html("<%= j(render(:partial => 'komet_dashboard/userspreference')) %>");
+        ExportModule.initialize();
     });
-  });
 </script>
