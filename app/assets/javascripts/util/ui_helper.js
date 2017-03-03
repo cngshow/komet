@@ -296,8 +296,8 @@ var UIHelper = (function () {
 
         var id = window.performance.now().toString().replace(".", "");
 
-        return '<div id="komet_' + id + '" class="' + classLevel + ' ' + messageType + '">' + icon + '<div class="komet-page-message-container">' + message + '</div>'
-            + '<div class="komet-flex-right"><div class="glyphicon glyphicon-remove" onclick="$(\'#komet_' + id + '\').remove();" title="Remove message"></div></div></div>';
+        return '<div id="komet_' + id + '" class="' + classLevel + ' ' + messageType + '">' + icon + '<div class="komet-page-message-container" role="alert">' + message + '</div>'
+            + '<div class="komet-flex-right"><button type="button" class="komet-link-button" title="Remove message" aria-label="Remove alert: ' + message + '" onclick="$(\'#komet_' + id + '\').remove();"><div class="glyphicon glyphicon-remove"  ></div></button></div></div>';
     }
 
     function removePageMessages(containerElementOrSelector) {
@@ -349,12 +349,23 @@ var UIHelper = (function () {
 
         body.prepend(dialogString);
 
+        // create a function to put focus on the first input field
+        var onDialogOpen = function(){
+            $("#" + dialogID).find("input:not(.hide):first").focus();
+        };
+
         var dialog = $("#" + dialogID);
 
         dialog.dialog({
-            beforeClose: function (e) {
+            beforeClose: function () {
+
                 closeCallback(buttonClicked);
                 dialog.remove();
+            },
+            open: function () {
+
+                // use setTimeout because the first field could be an autosuggest that needs to get built first.
+                setTimeout(onDialogOpen, 50);
             },
             title: title,
             resizable: false,
