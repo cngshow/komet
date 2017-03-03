@@ -108,21 +108,35 @@ var ConceptViewer = function(viewerID, currentConceptID, viewerAction) {
 
             expander.removeClass("glyphicon-plus-sign");
             expander.addClass("glyphicon-minus-sign");
-            expander.parent().attr("title", "Collapse");
+
+            var replaceText = function (index, oldValue){
+                return oldValue.replace("Expand", "Collapse");
+            };
+
+            expander.parent().attr("title", replaceText);
+            expander.parent().attr("aria-label", replaceText);
+
             drawer.show();
 
         } else {
 
             expander.removeClass("glyphicon-minus-sign");
             expander.addClass("glyphicon-plus-sign");
-            expander.parent().attr("title", "Expand");
+
+            var replaceText = function (index, oldValue){
+                return oldValue.replace("Collapse", "Expand");
+            };
+
+            expander.parent().attr("title", replaceText);
+            expander.parent().attr("aria-label", replaceText);
+
             drawer.hide();
         }
 
         // save state if needed, and if there is a callback run it, passing the panel ID, open state, and concept ID.
         if(topLevelExpander){
 
-            expanderParent.title = newText;
+            //expanderParent.title = newText;
 
             // if this is the top level loop through all saved panel states and run the callback if it has one
             for (var key in this.panelStates) {

@@ -21,14 +21,14 @@
         <legend style="width: 0px;height:0px">&nbsp;</legend>
         <div class="komet-panel-tools">
 
-            <button type="button" class="komet-link-button komet-panel-tools-control" onclick="WindowManager.viewers[<%= @viewer_id %>].togglePanelDetails('komet_viewer_<%= @viewer_id %>')" title="Expand All">
-                <div class="komet-action-icon glyphicon glyphicon-plus-sign" title="Expand All"></div>
+            <button type="button" class="komet-link-button komet-panel-tools-control" onclick="WindowManager.viewers[<%= @viewer_id %>].togglePanelDetails('komet_viewer_<%= @viewer_id %>')" title="Expand All" aria-label="Expand All Sections">
+                <div class="komet-action-icon glyphicon glyphicon-plus-sign"></div>
                 <span>Expand All</span>
             </button>
 
             <% if controller.can_edit_concept? %>
-                <button type="button" class="komet-link-button komet-panel-tools-control" onclick="$.publish(KometChannels.Taxonomy.taxonomyConceptEditorChannel, [ConceptsModule.EDIT, '<%= @concept_id %>', '<%= @viewer_id %>', WindowManager.INLINE]);"  title="Edit Concept">
-                    <div class="komet-action-icon fa fa-pencil-square" title="Edit Concept"></div>
+                <button type="button" class="komet-link-button komet-panel-tools-control" onclick="$.publish(KometChannels.Taxonomy.taxonomyConceptEditorChannel, [ConceptsModule.EDIT, '<%= @concept_id %>', '<%= @viewer_id %>', WindowManager.INLINE]);" title="Edit Concept">
+                    <div class="komet-action-icon fa fa-pencil-square"></div>
                     <span>Edit Concept</span>
                 </button>
             <% end %>
