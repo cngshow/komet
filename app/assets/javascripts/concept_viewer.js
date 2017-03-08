@@ -108,21 +108,35 @@ var ConceptViewer = function(viewerID, currentConceptID, viewerAction) {
 
             expander.removeClass("glyphicon-plus-sign");
             expander.addClass("glyphicon-minus-sign");
-            expander.parent().attr("title", "Collapse");
+
+            var replaceText = function (index, oldValue){
+                return oldValue.replace("Expand", "Collapse");
+            };
+
+            expander.parent().attr("title", replaceText);
+            expander.parent().attr("aria-label", replaceText);
+
             drawer.show();
 
         } else {
 
             expander.removeClass("glyphicon-minus-sign");
             expander.addClass("glyphicon-plus-sign");
-            expander.parent().attr("title", "Expand");
+
+            var replaceText = function (index, oldValue){
+                return oldValue.replace("Collapse", "Expand");
+            };
+
+            expander.parent().attr("title", replaceText);
+            expander.parent().attr("aria-label", replaceText);
+
             drawer.hide();
         }
 
         // save state if needed, and if there is a callback run it, passing the panel ID, open state, and concept ID.
         if(topLevelExpander){
 
-            expanderParent.title = newText;
+            //expanderParent.title = newText;
 
             // if this is the top level loop through all saved panel states and run the callback if it has one
             for (var key in this.panelStates) {
@@ -687,7 +701,7 @@ var ConceptViewer = function(viewerID, currentConceptID, viewerAction) {
 
                         var editorSection = $("#komet_concept_editor_section_" + thisViewer.viewerID);
 
-                        var errorString = "Errors occurred, all changes not listed were processed. The following updates were not successful: ";
+                        var errorString = "Errors occurred, all changes not listed were processed. Error messages will be placed above each unprocessed section. The following updates were not successful: ";
 
                         for (var i = 0; i < data.failed.length; i++){
 
@@ -695,29 +709,29 @@ var ConceptViewer = function(viewerID, currentConceptID, viewerAction) {
 
                             if (data.failed[i].type == "concept") {
 
-                                editorSection.find("div[id^='komet_concept_edit_concept_row_']").before(UIHelper.generatePageMessage("The status of the concept was not changed."));
+                                editorSection.find("div[id^='komet_concept_edit_concept_row_']").before(UIHelper.generatePageMessage("The status of the following concept was not changed."));
 
                             } else if (data.failed[i].type == "concept property") {
 
-                                editorSection.find("div[id^='komet_concept_edit_concept_properties_row_" + data.failed[i].id + "']").before(UIHelper.generatePageMessage("This property was not processed."));
+                                editorSection.find("div[id^='komet_concept_edit_concept_properties_row_" + data.failed[i].id + "']").before(UIHelper.generatePageMessage("The following concept property was not processed."));
 
                             } else if (data.failed[i].type == "description"){
 
                                 var descriptionPanel = editorSection.find("div[id^='komet_concept_description_panel_" + data.failed[i].id + "']");
-                                descriptionPanel.before(UIHelper.generatePageMessage("This description was not processed, and none of its properties or dialects were attempted to be processed."));
+                                descriptionPanel.before(UIHelper.generatePageMessage("The following description was not processed, and none of its properties or dialects were attempted to be processed."));
                                 descriptionPanel.css("margin-top", "0px");
 
                             } else if (data.failed[i].type == "description property"){
 
-                                editorSection.find("div[id^='komet_concept_edit_description_properties_row_" + data.failed[i].id + "']").before(UIHelper.generatePageMessage("This description property was not processed."));
+                                editorSection.find("div[id^='komet_concept_edit_description_properties_row_" + data.failed[i].id + "']").before(UIHelper.generatePageMessage("The following description property was not processed."));
 
                             } else if (data.failed[i].type == "dialect"){
 
-                                editorSection.find("div[id^='komet_concept_edit_description_dialect_row_" + data.failed[i].id + "']").before(UIHelper.generatePageMessage("This dialect was not processed."));
+                                editorSection.find("div[id^='komet_concept_edit_description_dialect_row_" + data.failed[i].id + "']").before(UIHelper.generatePageMessage("The following description dialect was not processed."));
 
                             } else if (data.failed[i].type == "association"){
 
-                                editorSection.find("div[id^='komet_concept_association_row_" + data.failed[i].id + "']").before(UIHelper.generatePageMessage("This association was not processed."));
+                                editorSection.find("div[id^='komet_concept_association_row_" + data.failed[i].id + "']").before(UIHelper.generatePageMessage("The following association was not processed."));
                             }
                         }
 
@@ -838,7 +852,7 @@ var ConceptViewer = function(viewerID, currentConceptID, viewerAction) {
             + '<div class="komet-indent-block komet-concept-description-dialect-section">'
             + '<div class="komet-concept-section-title komet-concept-description-title">Dialects'
             + '<div class="komet-flex-right">'
-            + '<button type="button" class="komet-link-button komet-concept-add-description-dialect" onclick="WindowManager.viewers[' + this.viewerID + '].addDialectRow(\'' + descriptionID + '\', \'' + componentLabelPrefix + '\')">Add Dialect'
+            + '<button type="button" class="komet-link-button komet-concept-add-description-dialect" onclick="WindowManager.viewers[' + this.viewerID + '].addDialectRow(\'' + descriptionID + '\', \'' + componentLabelPrefix + '\')">Add Dialect '
             + '<div class="glyphicon glyphicon-plus-sign"></div></button></div>';
 
         rowString += '</div>';

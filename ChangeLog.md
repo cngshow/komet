@@ -3,6 +3,10 @@ Komet Changelog
 This changelog summarizes changes and fixes which are a part of each revision.  For more details on the fixes, refer tracking numbers 
 where provided, and the git commit history.
 
+* 2017/03/08 - 1.66
+    * Added role "alert" to error messages so they will be read by screen readers. They do not take the focus so that they don't interrupt the user flow, and because we add multiple at a time. Some messages can't contain detailed descriptions of the item affected if it is a new item. (Jazz: 469380)
+    * Made concept viewer expand/collapse aria labels more descriptive of the sections they control. (Jazz: 469194)
+
 * 2017/03/02 - 1.65
     * Added STAMP date to taxonomy tree, concept viewer, mapping tree, and mapping viewer. All related functions now take whatever per panel view params are passed from the GUI. Many css, renaming, code cleanup, and other refactors as part of this.
     * Added labels to "Add more map item fields" dialog
