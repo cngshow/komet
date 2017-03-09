@@ -513,7 +513,7 @@ var MappingViewer = function(viewerID, currentSetID, viewerAction) {
                     } else {
 
                         $("#komet_viewer_" + viewerID).off('unsavedCheck');
-                        setSection.before(UIHelper.generatePageMessage("All changes were processed successfully."));
+                        setSection.before(UIHelper.generatePageMessage("All changes were processed successfully.", true, "success"));
                         MappingModule.setTreeViewParams(thisViewer.getViewParams());
                         $.publish(KometChannels.Mapping.mappingTreeNodeSelectedChannel, ["", data.set_id, thisViewer.getViewParams(), thisViewer.viewerID, WindowManager.INLINE, MappingModule.SET_DETAILS]);
                     }
