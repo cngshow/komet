@@ -65,8 +65,8 @@ html, body{
     padding:0px;
     // overflow: auto; TODO - need to put back in - date picker gets cut off with this on - taxonomy tree has issues in IE if the panel is really narrow with it off
 }
-.ui-tabs .ui-tabs-panel{
-    padding:0px;
+.ui-tabs .ui-tabs-panel.ui-widget-content{
+    padding: 0px;
 }
 .ui-autocomplete {
     max-height: 140px;
@@ -393,6 +393,7 @@ div.komet-confirmation-dialog{
     background-color: #414cba;
     display: flex;
     flex-wrap: wrap;
+    flex: 1 1 auto;
     //overflow-x: auto;
     color: white;
 }
@@ -402,12 +403,23 @@ div.komet-confirmation-dialog{
 .komet-panel .komet-section-title .glyphicon, .komet-panel .komet-section-title .fa{
     margin-right: 4px;
 }
+.komet-panel .komet-panel-header-row{
+    width: 100%;
+    display: flex;
+    flex: 1 1 auto;
+    margin: 2px 0px;
+}
 .komet-panel .komet-panel-tools{
     flex: 1 1 auto;
+    flex-wrap: wrap;
     text-align: end;
     display: flex;
     justify-content: flex-end;
     align-items: center;
+}
+.komet-panel .komet-panel-tools.komet-left{
+    text-align: start;
+    justify-content: flex-start;
 }
 .komet-panel .komet-panel-tools .fa{
     font-size: larger;
@@ -430,7 +442,7 @@ div.komet-confirmation-dialog{
 .komet-panel .komet-panel-tools-control{
     display: flex;
     align-items: center;
-    margin: 0px 10px;
+    margin: 0px 4px;
     cursor: pointer;
 }
 .komet-panel .komet-panel-tools-control .input-group.date {
@@ -447,6 +459,18 @@ div.komet-confirmation-dialog{
 }
 .komet-panel .komet-panel-tools-control .input-group.date .input-group-addon {
     padding: 3px 6px;
+}
+.komet-panel .komet-panel-tools-control .form-control {
+    height: 25px;
+    font-size: 14px;
+    padding: 2px 4px;
+}
+.komet-panel .komet-panel-tools-control .komet-preference-stated{
+    width: 84px;
+}
+.komet-panel .komet-panel-tools-control .komet-preference-modules{
+    width: 170px;
+    height: 45px;
 }
 .komet-panel .komet-panel-tools .komet-action-icon {
     margin-left: 10px;

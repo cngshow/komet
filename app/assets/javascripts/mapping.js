@@ -129,7 +129,11 @@ var MappingModule = (function () {
     }
 
     function getTreeAllowedStates (){
-        return $("#komet_mapping_tree_panel").find("input[name='komet_mapping_tree_states_to_view']:checked").val();
+        return $("#komet_mapping_tree_allowed_states").val();
+    }
+
+    function getTreeStampModules (){
+        return $("#komet_mapping_tree_stamp_module").val();
     }
 
     // function to set the initial state of the view param fields when the viewer content changes
@@ -137,16 +141,10 @@ var MappingModule = (function () {
 
         // initialize the STAMP date field
         UIHelper.initDatePicker("#komet_mapping_tree_stamp_date", view_params.time);
-
-        // get the allowed states field group
-        var allowedStates = $("#komet_mapping_tree_panel").find("input[name='komet_mapping_tree_states_to_view']");
-
-        // initialize the allowed states field
-        UIHelper.initAllowedStatesField(allowedStates, view_params.allowedStates);
     }
 
     function getTreeViewParams (){
-        return {time: getTreeStampDate(), allowedStates: getTreeAllowedStates()};
+        return {time: getTreeStampDate(), allowedStates: getTreeAllowedStates(), modules: getTreeStampModules()};
     }
 
     // function to change the view param values and then reload the tree
@@ -156,7 +154,10 @@ var MappingModule = (function () {
         UIHelper.setStampDate($("#komet_mapping_tree_stamp_date"), view_params.time);
 
         // set the Allowed States field
-        UIHelper.setAllowedStatesField($("#komet_mapping_tree_panel").find("input[name='komet_mapping_tree_states_to_view']"), view_params.allowedStates);
+        $("#komet_mapping_tree_allowed_states").val(view_params.allowedStates);
+
+        // set the modules field
+        $("#komet_mapping_tree_stamp_module").val(view_params.modules);
 
         // reload the tree
         this.reloadTree();
@@ -183,8 +184,8 @@ var MappingModule = (function () {
         openSetEditor: openSetEditor,
         createNewMapSet: createNewMapSet,
         getTreeStampDate: getTreeStampDate,
-        //setViewerStatesToView: setViewerStatesToView,
         getTreeAllowedStates: getTreeAllowedStates,
+        getTreeStampModules: getTreeStampModules,
         initTreeViewParams: initTreeViewParams,
         getTreeViewParams: getTreeViewParams,
         setTreeViewParams: setTreeViewParams,

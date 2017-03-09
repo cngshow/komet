@@ -35,7 +35,7 @@ var ConceptViewer = function(viewerID, currentConceptID, viewerAction) {
     };
 
     ConceptViewer.prototype.getStatedView = function(){
-        return $('#komet_concept_stated_' + this.viewerID).prop("checked");
+        return $('#komet_concept_stated_' + this.viewerID).val();
     };
 
     ConceptViewer.prototype.getStampDate = function(){
@@ -49,18 +49,15 @@ var ConceptViewer = function(viewerID, currentConceptID, viewerAction) {
         }
     };
 
+    ConceptViewer.prototype.getStampModules = function(){
+        return $('#komet_concept_stamp_module_' + this.viewerID).val();
+    };
+
     // function to set the initial state of the view param fields when the viewer content changes
     ConceptViewer.prototype.initViewParams = function(view_params) {
 
-        // get the stated field group
-        var stated = $("#komet_viewer_" + this.viewerID).find("input[name='komet_concept_stated_inferred']");
-
-        // initialize the stated field
-        UIHelper.initStatedField(stated, view_params.stated);
-
         // initialize the STAMP date field
         UIHelper.initDatePicker("#komet_concept_stamp_date_" + this.viewerID, view_params.time);
-
     };
 
     ConceptViewer.prototype.reloadViewer = function() {
@@ -68,7 +65,7 @@ var ConceptViewer = function(viewerID, currentConceptID, viewerAction) {
     };
 
     ConceptViewer.prototype.getViewParams = function(){
-        return {stated: this.getStatedView(), time: this.getStampDate()};
+        return {stated: this.getStatedView(), time: this.getStampDate(), modules: this.getStampModules()};
     };
 
     ConceptViewer.prototype.togglePanelDetails = function(panelID, callback, preserveState) {

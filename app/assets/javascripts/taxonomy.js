@@ -24,7 +24,7 @@ var TaxonomyModule = (function () {
     }
 
     function getStatedView(){
-        return $("#komet_taxonomy_stated").prop("checked");
+        return $("#komet_taxonomy_stated").val();
     }
 
     function getStampDate(){
@@ -38,22 +38,19 @@ var TaxonomyModule = (function () {
         }
     };
 
+    function getStampModules(){
+        return $('#komet_taxonomy_stamp_module').val();
+    }
+
     // function to set the initial state of the view param fields
     function initViewParams(view_params) {
 
-        // get the stated field group
-        var stated = $("#komet_taxonomy_panel").find("input[name='komet_taxonomy_stated_inferred']");
-
-        // initialize the stated field
-        UIHelper.initStatedField(stated, view_params.stated);
-
         // initialize the STAMP date field
         UIHelper.initDatePicker("#komet_taxonomy_tree_stamp_date", view_params.time);
-
     }
 
     function getViewParams (){
-        return {stated: getStatedView(), time: getStampDate()};
+        return {stated: getStatedView(), time: getStampDate(), modules: getStampModules()};
     }
 
     // function to change the view param values and then reload the tree
@@ -87,6 +84,7 @@ var TaxonomyModule = (function () {
         initialize: init,
         getStatedView: getStatedView,
         getStampDate: getStampDate,
+        getStampModules: getStampModules,
         initViewParams: initViewParams,
         getViewParams: getViewParams,
         setViewParams: setViewParams,

@@ -54,7 +54,11 @@ var MappingViewer = function(viewerID, currentSetID, viewerAction) {
     };
 
     MappingViewer.prototype.getAllowedStates = function(){
-        return $("#komet_viewer_" + this.viewerID).find("input[name='komet_mapping_states_to_view']:checked").val();
+        return $("#komet_mapping_allowed_states_" + this.viewerID).val();
+    };
+
+    MappingViewer.prototype.getStampModules = function(){
+        return $('#komet_mapping_stamp_module_' + this.viewerID).val();
     };
 
     // function to set the initial state of the view param fields when the viewer content changes
@@ -62,12 +66,6 @@ var MappingViewer = function(viewerID, currentSetID, viewerAction) {
 
         // initialize the STAMP date field
         UIHelper.initDatePicker("#komet_mapping_stamp_date_" + this.viewerID, view_params.time);
-
-        // get the allowed states field group
-        var allowedStates = $("#komet_viewer_" + this.viewerID).find("input[name='komet_mapping_states_to_view']");
-
-        // initialize the allowed states field
-        UIHelper.initAllowedStatesField(allowedStates, view_params.allowedStates);
     };
 
     MappingViewer.prototype.reloadViewer = function() {
@@ -75,7 +73,7 @@ var MappingViewer = function(viewerID, currentSetID, viewerAction) {
     };
 
     MappingViewer.prototype.getViewParams = function(){
-        return {time: this.getStampDate(), allowedStates: this.getAllowedStates()};
+        return {time: this.getStampDate(), allowedStates: this.getAllowedStates(), modules: this.getStampModules()};
     };
 
     MappingViewer.prototype.togglePanelDetails = function(panelID, callback, preserveState) {
