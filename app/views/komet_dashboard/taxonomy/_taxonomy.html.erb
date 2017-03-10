@@ -12,6 +12,10 @@
             </div>
 
             <div class="komet-panel-tools-control">
+                <%= select_tag('komet_taxonomy_allowed_states', options_for_select(session[:komet_allowed_states_options], @view_params[:allowedStates]), class: 'form-control komet-preference-allowed-states', 'aria-label' => 'Choose an active status to view', title: 'Choose an active status to view') %>
+            </div>
+
+            <div class="komet-panel-tools-control">
                 <%= select_tag('komet_taxonomy_stated', options_for_select(session[:komet_stated_options], @view_params[:stated]), class: 'form-control komet-preference-stated', 'aria-label' => 'Choose Stated or Inferred view', title: 'Choose Stated or Inferred view') %>
             </div>
 

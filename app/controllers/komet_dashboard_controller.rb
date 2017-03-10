@@ -1357,7 +1357,7 @@ class KometDashboardController < ApplicationController
             session[:komet_stated_options] = [['Stated', 'true'],['Inferred', 'false']]
 
             # create the options for stated/inferred preference controls
-            session[:komet_allowed_states_options] = [['Active', 'active'],['Inactive', 'inactive'],['Both', 'active,inactive']]
+            session[:komet_allowed_states_options] = [['All', 'active,inactive'],['Active', 'active']]
 
             session[:komet_module_options] = []
 

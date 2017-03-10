@@ -34,6 +34,10 @@ var ConceptViewer = function(viewerID, currentConceptID, viewerAction) {
         this.UNLINKED_TEXT = "Viewer not linked to Taxonomy Tree. Click to link.";
     };
 
+    ConceptViewer.prototype.getAllowedStates = function(){
+        return $("#komet_concept_allowed_states_" + this.viewerID).val();
+    };
+
     ConceptViewer.prototype.getStatedView = function(){
         return $('#komet_concept_stated_' + this.viewerID).val();
     };
@@ -65,7 +69,7 @@ var ConceptViewer = function(viewerID, currentConceptID, viewerAction) {
     };
 
     ConceptViewer.prototype.getViewParams = function(){
-        return {stated: this.getStatedView(), time: this.getStampDate(), modules: this.getStampModules()};
+        return {stated: this.getStatedView(), allowedStates: this.getAllowedStates(), time: this.getStampDate(), modules: this.getStampModules()};
     };
 
     ConceptViewer.prototype.togglePanelDetails = function(panelID, callback, preserveState) {
