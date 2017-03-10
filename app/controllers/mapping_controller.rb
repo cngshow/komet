@@ -650,6 +650,7 @@ class MappingController < ApplicationController
 
             body_params[:mapSetExtendedFields] = set_extended_fields
 
+            # if this is an existing mapset
             if set_id && set_id != ''
 
                 return_value =  MappingApis::get_mapping_api(uuid_or_id: set_id, action: MappingApiActions::ACTION_UPDATE_SET, additional_req_params: request_params, body_params: body_params)
@@ -660,7 +661,6 @@ class MappingController < ApplicationController
                     successful_writes += 1
                 end
             else
-
 
                 if params['komet_mapping_set_editor_items_include_fields'] != nil
 

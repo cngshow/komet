@@ -10,6 +10,7 @@ where provided, and the git commit history.
     * Changed status preference to only include Active and All (Jazz: 461738)
     * Fixed concept create and edit to properly transfer view params to the tree after editing a concept (Jazz: 461738)
     * Added path preference to view params for taxonomy, concepts, and mapping, though field is hidden currently  (Jazz: 461738)
+    * Added descriptive error messages if the two required fields for a mapset are not filled in. (Jazz: 476665)
 
 * 2017/03/08 - 1.66
     * Added role "alert" to error messages so they will be read by screen readers. They do not take the focus so that they don't interrupt the user flow, and because we add multiple at a time. Some messages can't contain detailed descriptions of the item affected if it is a new item. (Jazz: 469380)

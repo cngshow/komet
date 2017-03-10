@@ -530,7 +530,37 @@ var MappingViewer = function(viewerID, currentSetID, viewerAction) {
 
     };
 
-    /********* Map Set Additional Fields Methods */
+    MappingViewer.prototype.validateEditForm = function(){
+
+        var form = $("#komet_mapping_set_editor_form_" + this.viewerID);
+        UIHelper.removePageMessages(form);
+
+        var name = $("#komet_mapping_set_editor_name_" + this.viewerID);
+        var description = $("#komet_mapping_set_editor_description_" + this.viewerID);
+        var hasErrors = false;
+
+        if (name.val() == undefined || name.val() == ""){
+
+            name.before(UIHelper.generatePageMessage("The Name field must be filled in."));
+            hasErrors = true;
+        }
+
+        if (description.val() == undefined || description.val() == ""){
+
+            description.before(UIHelper.generatePageMessage("The Purpose field must be filled in."));
+            hasErrors = true;
+        }
+
+        if (hasErrors){
+
+            $("#komet_mapping_set_panel_" + this.viewerID).prepend(UIHelper.generatePageMessage("Please fix the errors below."));
+            return false;
+        }
+
+        form.submit();
+    };
+
+    /********* Map Set Additional Fields Methods *****/
 
     MappingViewer.prototype.generateSetEditorDialogIncludeSection = function(fieldID, fieldInfo){
 
