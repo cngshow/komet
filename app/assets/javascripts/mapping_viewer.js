@@ -61,6 +61,10 @@ var MappingViewer = function(viewerID, currentSetID, viewerAction) {
         return $('#komet_mapping_stamp_module_' + this.viewerID).val();
     };
 
+    MappingViewer.prototype.getStampPath = function(){
+        return $('#komet_mapping_stamp_path_' + this.viewerID).val();
+    };
+
     // function to set the initial state of the view param fields when the viewer content changes
     MappingViewer.prototype.initViewParams = function(view_params) {
 
@@ -73,7 +77,7 @@ var MappingViewer = function(viewerID, currentSetID, viewerAction) {
     };
 
     MappingViewer.prototype.getViewParams = function(){
-        return {time: this.getStampDate(), allowedStates: this.getAllowedStates(), modules: this.getStampModules()};
+        return {time: this.getStampDate(), allowedStates: this.getAllowedStates(), modules: this.getStampModules(), path: this.getStampPath()};
     };
 
     MappingViewer.prototype.togglePanelDetails = function(panelID, callback, preserveState) {

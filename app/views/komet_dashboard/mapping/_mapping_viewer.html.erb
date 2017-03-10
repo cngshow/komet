@@ -57,6 +57,10 @@
                     <%= select_tag('komet_mapping_stamp_module_' + @viewer_id, options_for_select(session[:komet_module_options], @view_params[:modules]), include_blank: true, multiple: true, class: 'form-control komet-preference-modules', 'aria-label' => 'Choose modules to view', title: 'Choose modules to view') %>
                 </div>
 
+                <div class="komet-panel-tools-control hide">
+                    <%= select_tag('komet_mapping_stamp_path_' + @viewer_id, options_for_select(session[:komet_path_options], @view_params[:path]), include_blank: true, class: 'form-control komet-preference-path', 'aria-label' => 'Choose path to view', title: 'Choose path to view') %>
+                </div>
+
                 <button type="button" class="komet-link-button" onclick="WindowManager.viewers[<%= @viewer_id %>].reloadViewer();" title="Refresh Viewer with Selected Parameters" aria-label="Refresh Viewer with Selected Parameters">
                     <div class="komet-action-icon glyphicon glyphicon-refresh"></div>
                 </button>

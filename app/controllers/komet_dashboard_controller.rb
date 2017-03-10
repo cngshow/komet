@@ -1346,7 +1346,7 @@ class KometDashboardController < ApplicationController
             @view_params = session[:default_view_params]
         else
 
-            @view_params = {stated: true, allowedStates: 'active,inactive', time: 'latest', modules: ''}
+            @view_params = {stated: true, allowedStates: 'active,inactive', time: 'latest', modules: '', path: $isaac_metadata_auxiliary['DEVELOPMENT_PATH']['uuids'].first[:uuid]}
 
             # set variables for default view parameters that can be accessed from any controller or module
             session[:default_view_params] = @view_params.clone
@@ -1366,7 +1366,17 @@ class KometDashboardController < ApplicationController
 
             # loop thru the full module list to build an array of options in the session
             module_list.each do |komet_module|
-                session[:komet_module_options] << [komet_module[:text], komet_module[:concept_sequence]]
+                session[:komet_module_options] << [komet_module[:text], komet_module[:concept_id]]
+            end
+
+            session[:komet_path_options] = []
+
+            # get the full list of paths
+            path_list = get_concept_children(concept_id: $isaac_metadata_auxiliary['PATH']['uuids'].first[:uuid], return_json: false, remove_semantic_tag: true, view_params: session[:edit_view_params])
+
+            # loop thru the full path list to build an array of options in the session
+            path_list.each do |path|
+                session[:komet_path_options] << [path[:text], path[:concept_id]]
             end
         end
 

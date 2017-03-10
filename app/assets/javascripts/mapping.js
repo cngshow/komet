@@ -136,6 +136,10 @@ var MappingModule = (function () {
         return $("#komet_mapping_tree_stamp_module").val();
     }
 
+    function getTreeStampPath (){
+        return $("#komet_mapping_tree_stamp_path").val();
+    }
+
     // function to set the initial state of the view param fields when the viewer content changes
     function initTreeViewParams(view_params) {
 
@@ -144,7 +148,7 @@ var MappingModule = (function () {
     }
 
     function getTreeViewParams (){
-        return {time: getTreeStampDate(), allowedStates: getTreeAllowedStates(), modules: getTreeStampModules()};
+        return {time: getTreeStampDate(), allowedStates: getTreeAllowedStates(), modules: getTreeStampModules(), path: getTreeStampPath()};
     }
 
     // function to change the view param values and then reload the tree
@@ -158,6 +162,9 @@ var MappingModule = (function () {
 
         // set the modules field
         $("#komet_mapping_tree_stamp_module").val(view_params.modules);
+
+        // set the path field
+        $("#komet_mapping_tree_stamp_path").val(view_params.path);
 
         // reload the tree
         this.reloadTree();
@@ -186,6 +193,7 @@ var MappingModule = (function () {
         getTreeStampDate: getTreeStampDate,
         getTreeAllowedStates: getTreeAllowedStates,
         getTreeStampModules: getTreeStampModules,
+        getTreeStampPath: getTreeStampPath,
         initTreeViewParams: initTreeViewParams,
         getTreeViewParams: getTreeViewParams,
         setTreeViewParams: setTreeViewParams,

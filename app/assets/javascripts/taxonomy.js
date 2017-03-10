@@ -46,6 +46,10 @@ var TaxonomyModule = (function () {
         return $('#komet_taxonomy_stamp_module').val();
     }
 
+    function getStampPath(){
+        return $('#komet_taxonomy_stamp_path').val();
+    }
+
     // function to set the initial state of the view param fields
     function initViewParams(view_params) {
 
@@ -54,7 +58,7 @@ var TaxonomyModule = (function () {
     }
 
     function getViewParams (){
-        return {stated: getStatedView(), allowedStates: getAllowedStates(), time: getStampDate(), modules: getStampModules()};
+        return {stated: getStatedView(), allowedStates: getAllowedStates(), time: getStampDate(), modules: getStampModules(), path: getStampPath()};
     }
 
     // function to change the view param values and then reload the tree
@@ -71,6 +75,9 @@ var TaxonomyModule = (function () {
 
         // set the modules field
         $("#komet_taxonomy_stamp_module").val(view_params.modules);
+
+        // set the path field
+        $("#komet_taxonomy_stamp_path").val(view_params.path);
 
         // reload the tree
         this.reloadTree();
@@ -96,6 +103,7 @@ var TaxonomyModule = (function () {
         getStatedView: getStatedView,
         getStampDate: getStampDate,
         getStampModules: getStampModules,
+        getStampPath: getStampPath,
         initViewParams: initViewParams,
         getViewParams: getViewParams,
         setViewParams: setViewParams,

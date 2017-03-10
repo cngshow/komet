@@ -89,16 +89,21 @@ module ApplicationHelper
         elsif view_params[:modules].kind_of?(Array)
 
             # make sure that the Issac Module is included or things will break
-            unless view_params[:modules].include?($isaac_metadata_auxiliary['ISAAC_MODULE']['uuids'].first[:translation]['value'])
-                view_params[:modules] << $isaac_metadata_auxiliary['ISAAC_MODULE']['uuids'].first[:translation]['value']
+            unless view_params[:modules].include?($isaac_metadata_auxiliary['ISAAC_MODULE']['uuids'].first[:uuid])
+                view_params[:modules] << $isaac_metadata_auxiliary['ISAAC_MODULE']['uuids'].first[:uuid]
             end
 
             # make sure that the VHA Module is included or things may break
-            unless view_params[:modules].include?($isaac_metadata_auxiliary['VHA_MODULE']['uuids'].first[:translation]['value'])
-                view_params[:modules] << $isaac_metadata_auxiliary['VHA_MODULE']['uuids'].first[:translation]['value']
+            unless view_params[:modules].include?($isaac_metadata_auxiliary['VHA_MODULE']['uuids'].first[:uuid])
+                view_params[:modules] << $isaac_metadata_auxiliary['VHA_MODULE']['uuids'].first[:uuid]
             end
 
             view_params[:modules] = view_params['modules'] * ','
+        end
+
+        # check the path param
+        if view_params[:path] == nil
+            view_params[:path] = params[:path]
         end
 
         return view_params

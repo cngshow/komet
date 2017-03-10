@@ -57,6 +57,10 @@ var ConceptViewer = function(viewerID, currentConceptID, viewerAction) {
         return $('#komet_concept_stamp_module_' + this.viewerID).val();
     };
 
+    ConceptViewer.prototype.getStampPath = function(){
+        return $('#komet_concept_stamp_path_' + this.viewerID).val();
+    };
+
     // function to set the initial state of the view param fields when the viewer content changes
     ConceptViewer.prototype.initViewParams = function(view_params) {
 
@@ -69,7 +73,7 @@ var ConceptViewer = function(viewerID, currentConceptID, viewerAction) {
     };
 
     ConceptViewer.prototype.getViewParams = function(){
-        return {stated: this.getStatedView(), allowedStates: this.getAllowedStates(), time: this.getStampDate(), modules: this.getStampModules()};
+        return {stated: this.getStatedView(), allowedStates: this.getAllowedStates(), time: this.getStampDate(), modules: this.getStampModules(), path: this.getStampPath()};
     };
 
     ConceptViewer.prototype.togglePanelDetails = function(panelID, callback, preserveState) {
