@@ -112,7 +112,10 @@ module ApplicationHelper
     # handle any processing needed so the view_params can be used in the GUI
     def get_gui_view_params (view_params)
 
-        view_params[:modules] = view_params[:modules].split(',')
+        if (view_params[:modules])
+            view_params[:modules] = view_params[:modules].split(',')
+        end
+
         return view_params
     end
 
