@@ -115,7 +115,7 @@ var WindowManager = (function () {
                 console.log("*** cancelEditMode ConceptViewer");
                 console.log("*** cancelEditMode ConceptViewer View Params: " + TaxonomyModule.getStatedView());
 
-                $.publish(KometChannels.Taxonomy.taxonomyTreeNodeSelectedChannel, ["", WindowManager.viewers[viewerID].viewer_previous_content_id, TaxonomyModule.getStatedView(), viewerID, WindowManager.INLINE]);
+                $.publish(KometChannels.Taxonomy.taxonomyTreeNodeSelectedChannel, ["", WindowManager.viewers[viewerID].viewer_previous_content_id, TaxonomyModule.getViewParams(), viewerID, WindowManager.INLINE]);
                 return false;
 
             } else if (WindowManager.viewers[viewerID].viewer_previous_content_type == "MappingViewer"){
