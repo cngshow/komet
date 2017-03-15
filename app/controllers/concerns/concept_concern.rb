@@ -191,6 +191,11 @@ module ConceptConcern
                 # TODO switch to using only uuids once REST APIs support it
                 acceptability_id = dialect.dataColumns.first.dataIdentified.uuids.first
                 acceptability_text = dialect.dataColumns.first.conceptDescription
+
+                if acceptability_text == nil
+                    acceptability_text = ''
+                end
+
                 acceptability_text.slice!(' (ISAAC)')
                 header_dialects += ' (' + acceptability_text + ')'
 

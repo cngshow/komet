@@ -23,8 +23,12 @@ var TaxonomyModule = (function () {
         this.tree = new KometTaxonomyTree("taxonomy_tree", getViewParams(), false, null, true, null);
     }
 
+    function getAllowedStates (){
+        return $("#komet_taxonomy_allowed_states").val();
+    }
+
     function getStatedView(){
-        return $("#komet_taxonomy_stated").prop("checked");
+        return $("#komet_taxonomy_stated").val();
     }
 
     function getStampDate(){
@@ -38,32 +42,42 @@ var TaxonomyModule = (function () {
         }
     };
 
+    function getStampModules(){
+        return $('#komet_taxonomy_stamp_module').val();
+    }
+
+    function getStampPath(){
+        return $('#komet_taxonomy_stamp_path').val();
+    }
+
     // function to set the initial state of the view param fields
     function initViewParams(view_params) {
 
-        // get the stated field group
-        var stated = $("#komet_taxonomy_panel").find("input[name='komet_taxonomy_stated_inferred']");
-
-        // initialize the stated field
-        UIHelper.initStatedField(stated, view_params.stated);
-
         // initialize the STAMP date field
         UIHelper.initDatePicker("#komet_taxonomy_tree_stamp_date", view_params.time);
-
     }
 
     function getViewParams (){
-        return {stated: getStatedView(), time: getStampDate()};
+        return {stated: getStatedView(), allowedStates: getAllowedStates(), time: getStampDate(), modules: getStampModules(), path: getStampPath()};
     }
 
     // function to change the view param values and then reload the tree
     function setViewParams(view_params) {
 
+        // set the Allowed States field
+        $("#komet_taxonomy_allowed_states").val(view_params.allowedStates);
+
         // set the stated field
-        UIHelper.setStatedField($("#komet_taxonomy_panel").find("input[name='komet_taxonomy_stated_inferred']"), view_params.stated);
+        $("#komet_taxonomy_stated").val(view_params.stated);
 
         // set the STAMP date field
         UIHelper.setStampDate($("#komet_taxonomy_tree_stamp_date"), view_params.time);
+
+        // set the modules field
+        $("#komet_taxonomy_stamp_module").val(view_params.modules);
+
+        // set the path field
+        $("#komet_taxonomy_stamp_path").val(view_params.path);
 
         // reload the tree
         this.reloadTree();
@@ -85,8 +99,11 @@ var TaxonomyModule = (function () {
 
     return {
         initialize: init,
+        getAllowedStates: getAllowedStates,
         getStatedView: getStatedView,
         getStampDate: getStampDate,
+        getStampModules: getStampModules,
+        getStampPath: getStampPath,
         initViewParams: initViewParams,
         getViewParams: getViewParams,
         setViewParams: setViewParams,

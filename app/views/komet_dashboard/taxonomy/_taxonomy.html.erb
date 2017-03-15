@@ -1,7 +1,6 @@
 <div class="panel panel-default komet-no-margins komet-panel" id="komet_taxonomy_panel">
-  <fieldset>
     <div class="panel-heading">
-        <div class="komet-panel-tools">
+        <div class="komet-panel-tools komet-left">
 
             <div class="komet-panel-tools-control">
                 <div class='input-group date' id='komet_taxonomy_tree_stamp_date'>
@@ -13,14 +12,19 @@
             </div>
 
             <div class="komet-panel-tools-control">
-                <div class="btn-group" data-toggle="buttons">
-                    <label class="btn btn-default" for="komet_taxonomy_stated">
-                        <input type="radio" name="komet_taxonomy_stated_inferred" id="komet_taxonomy_stated" value="true" autocomplete="off" title="Stated View" aria-label="Stated View"> Stated
-                    </label>
-                    <label  class="btn btn-default" for="komet_taxonomy_inferred">
-                        <input type="radio" name="komet_taxonomy_stated_inferred" id="komet_taxonomy_inferred" value="false" autocomplete="off" title="Inferred View" aria-label="Inferred View"> Inferred
-                    </label>
-                </div>
+                <%= select_tag('komet_taxonomy_allowed_states', options_for_select(session[:komet_allowed_states_options], @view_params[:allowedStates]), class: 'form-control komet-preference-allowed-states', 'aria-label' => 'Choose an active status to view', title: 'Choose an active status to view') %>
+            </div>
+
+            <div class="komet-panel-tools-control">
+                <%= select_tag('komet_taxonomy_stated', options_for_select(session[:komet_stated_options], @view_params[:stated]), class: 'form-control komet-preference-stated', 'aria-label' => 'Choose Stated or Inferred view', title: 'Choose Stated or Inferred view') %>
+            </div>
+
+            <div class="komet-panel-tools-control">
+                <%= select_tag('komet_taxonomy_stamp_module', options_for_select(session[:komet_module_options], @view_params[:modules]), include_blank: true, multiple: true, class: 'form-control komet-preference-modules', 'aria-label' => 'Choose modules to view', title: 'Choose modules to view') %>
+            </div>
+
+            <div class="komet-panel-tools-control hide">
+                <%= select_tag('komet_concept_stamp_path', options_for_select(session[:komet_path_options], @view_params[:path]), include_blank: true, class: 'form-control komet-preference-path', 'aria-label' => 'Choose path to view', title: 'Choose path to view') %>
             </div>
 
             <button type="button" class="komet-link-button" onclick="TaxonomyModule.tree.reloadTree(TaxonomyModule.getViewParams(), false);" title="Refresh Taxonomy Tree with Selected Parameters" aria-label="Refresh Taxonomy Tree with Selected Parameters">
@@ -28,11 +32,12 @@
             </button>
 
         </div>
+    </div>
 
-    </div> </fieldset>
+    <div class="panel-body komet-panel-body-small-padding">
+        <div id='taxonomy_tree'></div>
+    </div>
 </div>
-
-<div id='taxonomy_tree'></div>
 
 <script>
 

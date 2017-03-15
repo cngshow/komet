@@ -44,6 +44,10 @@ class MappingController < ApplicationController
 
         map_sets_results = MappingApis::get_mapping_api(action: MappingApiActions::ACTION_SETS,  additional_req_params: {coordToken: coordinates_token, CommonRest::CacheRequest => false}.merge!(view_params) )
 
+        if map_sets_results.is_a? CommonRest::UnexpectedResponse
+            render json: [] and return
+        end
+
         map_sets_results.each do |set|
 
             set_hash = {}
@@ -100,6 +104,9 @@ class MappingController < ApplicationController
         if @mapping_action == 'set_details' || @mapping_action == 'create_set' || @mapping_action == 'edit_set'
             map_set_editor
         end
+
+        # do any view_param processing needed for the GUI - always call this last before rendering
+        @view_params = get_gui_view_params(@view_params)
 
         render partial: params[:partial]
     end
@@ -203,7 +210,7 @@ class MappingController < ApplicationController
             set = MappingApis::get_mapping_api(action: MappingApiActions::ACTION_SET, uuid_or_id: @set_id,  additional_req_params: {coordToken: coordinates_token, expand: 'comments'}.merge!(@view_params))
 
             if set.is_a? CommonRest::UnexpectedResponse
-                return @map_set
+                return @map_set = nil
             end
 
             vuid = IdAPIsRest.get_id(uuid_or_id: @set_id, action: IdAPIsRestActions::ACTION_TRANSLATE, additional_req_params: {outputType: 'vuid'}.merge!(@view_params))
@@ -643,6 +650,7 @@ class MappingController < ApplicationController
 
             body_params[:mapSetExtendedFields] = set_extended_fields
 
+            # if this is an existing mapset
             if set_id && set_id != ''
 
                 return_value =  MappingApis::get_mapping_api(uuid_or_id: set_id, action: MappingApiActions::ACTION_UPDATE_SET, additional_req_params: request_params, body_params: body_params)
@@ -653,7 +661,6 @@ class MappingController < ApplicationController
                     successful_writes += 1
                 end
             else
-
 
                 if params['komet_mapping_set_editor_items_include_fields'] != nil
 

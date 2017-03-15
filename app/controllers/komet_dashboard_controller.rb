@@ -391,6 +391,9 @@ class KometDashboardController < ApplicationController
             get_concept_refsets(@concept_id, @view_params)
         end
 
+        # do any view_param processing needed for the GUI - always call this last before rendering
+        @view_params = get_gui_view_params(@view_params)
+
         render partial: params[:partial]
     end
 
@@ -660,16 +663,20 @@ class KometDashboardController < ApplicationController
 
         @path_flags = []
 
-        # get the full list of paths
-        path_list = get_concept_children(concept_id: $isaac_metadata_auxiliary['PATH']['uuids'].first[:uuid], return_json: false, remove_semantic_tag: true, view_params: session[:edit_view_params])
-        $log.debug("get_user_preference_info path_list #{path_list}")
-
-        # if the user doesn't have current preferences loop thru the full path list to build an array of flag options, otherwise loop thru their preferences
+        # if the user doesn't have current preferences
         if path_flag_preferences.nil?
+
+            # get the full list of paths
+            path_list = get_concept_children(concept_id: $isaac_metadata_auxiliary['PATH']['uuids'].first[:uuid], return_json: false, remove_semantic_tag: true, view_params: session[:edit_view_params])
+            $log.debug("get_user_preference_info path_list #{path_list}")
+
+            # loop thru the full path list to build an array of flag options
             path_list.each do |path|
                 @path_flags << {id: path[:concept_sequence], text: path[:text], color: '', shape: 'None', shape_name: 'None'}
             end
         else
+
+            # loop thru their preferences to build an array of flag options
             path_flag_preferences.each do |preference|
                 @path_flags << {id: preference[1][:id], text: preference[1][:text], color: preference[1][:color], shape: preference[1][:shape], shape_name: get_shape_name(preference[1][:shape])}
             end
@@ -679,16 +686,20 @@ class KometDashboardController < ApplicationController
 
         @module_flags = []
 
-        # get the full list of modules
-        module_list = get_concept_children(concept_id: $isaac_metadata_auxiliary['MODULE']['uuids'].first[:uuid], return_json: false, remove_semantic_tag: true, view_params: session[:edit_view_params])
-        $log.debug("get_user_preference_info module_list #{module_list}")
-
-        # if the user doesn't have current preferences loop thru the full module list to build an array of flag options, otherwise loop thru their preferences
+        # if the user doesn't have current preferences
         if module_flag_preferences.nil?
+
+            # get the full list of modules
+            module_list = get_concept_children(concept_id: $isaac_metadata_auxiliary['MODULE']['uuids'].first[:uuid], return_json: false, remove_semantic_tag: true, view_params: session[:edit_view_params])
+            $log.debug("get_user_preference_info module_list #{module_list}")
+
+            # loop thru the full module list to build an array of flag options
             module_list.each do |komet_module|
                 @module_flags << {id: komet_module[:concept_sequence], text: komet_module[:text], color: '', shape: 'None', shape_name: 'None'}
             end
         else
+
+            # loop thru their preferences to build an array of flag options
             module_flag_preferences.each do |preference|
                 @module_flags << {id: preference[1][:id], text: preference[1][:text], color: preference[1][:color], shape: preference[1][:shape], shape_name: get_shape_name(preference[1][:shape])}
             end
@@ -806,8 +817,10 @@ class KometDashboardController < ApplicationController
             @viewer_id = get_next_id
         end
 
-        render partial: params[:partial]
+        # do any view_param processing needed for the GUI - always call this last before rendering
+        @view_params = get_gui_view_params(@view_params)
 
+        render partial: params[:partial]
     end
 
     def create_concept
@@ -886,6 +899,9 @@ class KometDashboardController < ApplicationController
         if clone
             @concept_id = get_next_id
         end
+
+        # do any view_param processing needed for the GUI - always call this last before rendering
+        @view_params = get_gui_view_params(@view_params)
 
         render partial: params[:partial]
     end
@@ -1321,26 +1337,54 @@ class KometDashboardController < ApplicationController
     def dashboard
         # user_session(UserSession::WORKFLOW_UUID, '6457fb1f-b67b-4679-8f56-fa811e1e2a6b')
 
+        unless session[:coordinates_token]
+            session[:coordinates_token] = CoordinateRest.get_coordinate(action: CoordinateRestActions::ACTION_COORDINATES_TOKEN)
+        end
+
         # if the view params are already in the session put them into a variable for the GUI, otherwise set the default values
         if session[:default_view_params]
             @view_params = session[:default_view_params]
         else
 
-            @view_params = {stated: true, allowedStates: 'active,inactive', time: 'latest'}
+            @view_params = {stated: true, allowedStates: 'active,inactive', time: 'latest', modules: '', path: $isaac_metadata_auxiliary['DEVELOPMENT_PATH']['uuids'].first[:uuid]}
 
             # set variables for default view parameters that can be accessed from any controller or module
             session[:default_view_params] = @view_params.clone
             # set a variable for view params to be used when pulling data for edits, which should always be the least restricted possible
             session[:edit_view_params] = @view_params.clone
-        end
 
-        unless session[:coordinates_token]
-            session[:coordinates_token] = CoordinateRest.get_coordinate(action: CoordinateRestActions::ACTION_COORDINATES_TOKEN)
+            # create the options for stated/inferred preference controls
+            session[:komet_stated_options] = [['Stated', 'true'],['Inferred', 'false']]
+
+            # create the options for stated/inferred preference controls
+            session[:komet_allowed_states_options] = [['All', 'active,inactive'],['Active', 'active']]
+
+            session[:komet_module_options] = []
+
+            # get the full list of modules
+            module_list = get_concept_children(concept_id: $isaac_metadata_auxiliary['MODULE']['uuids'].first[:uuid], return_json: false, remove_semantic_tag: true, view_params: session[:edit_view_params])
+
+            # loop thru the full module list to build an array of options in the session
+            module_list.each do |komet_module|
+                session[:komet_module_options] << [komet_module[:text], komet_module[:concept_id]]
+            end
+
+            session[:komet_path_options] = []
+
+            # get the full list of paths
+            path_list = get_concept_children(concept_id: $isaac_metadata_auxiliary['PATH']['uuids'].first[:uuid], return_json: false, remove_semantic_tag: true, view_params: session[:edit_view_params])
+
+            # loop thru the full path list to build an array of options in the session
+            path_list.each do |path|
+                session[:komet_path_options] << [path[:text], path[:concept_id]]
+            end
         end
 
         get_user_preference_info
         $log.debug("token initial #{session[:coordinates_token].token}" )
 
+        # do any view_param processing needed for the GUI - always call this last before rendering
+        @view_params = get_gui_view_params(@view_params)
     end
 
     # this action is called via javascript if/when the user's session has timed out

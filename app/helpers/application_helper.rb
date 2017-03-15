@@ -33,7 +33,7 @@ module ApplicationHelper
 
         coordinates_token = session[:coordinates_token].token
         additional_req_params = {coordToken: coordinates_token}
-        additional_req_params.merge!(view_params)
+        additional_req_params.merge!(get_view_params_for_metadata(view_params))
 
         version = ConceptRest.get_concept(action: ConceptRestActions::ACTION_DESCRIPTIONS, uuid: id, additional_req_params: additional_req_params)
 
@@ -82,7 +82,50 @@ module ApplicationHelper
             view_params[:allowedStates] = params[:allowedStates]
         end
 
+        # check the modules param
+        if view_params[:modules] == nil
+            view_params[:modules] = params[:modules]
+
+        elsif view_params[:modules].kind_of?(Array)
+
+            # make sure that the Issac Module is included or things will break
+            unless view_params[:modules].include?($isaac_metadata_auxiliary['ISAAC_MODULE']['uuids'].first[:uuid])
+                view_params[:modules] << $isaac_metadata_auxiliary['ISAAC_MODULE']['uuids'].first[:uuid]
+            end
+
+            # make sure that the VHA Module is included or things may break
+            unless view_params[:modules].include?($isaac_metadata_auxiliary['VHA_MODULE']['uuids'].first[:uuid])
+                view_params[:modules] << $isaac_metadata_auxiliary['VHA_MODULE']['uuids'].first[:uuid]
+            end
+
+            view_params[:modules] = view_params['modules'] * ','
+        end
+
+        # check the path param
+        if view_params[:path] == nil
+            view_params[:path] = params[:path]
+        end
+
         return view_params
+    end
+
+    # handle any processing needed so the view_params can be used in the GUI
+    def get_gui_view_params (view_params)
+
+        if (view_params[:modules])
+            view_params[:modules] = view_params[:modules].split(',')
+        end
+
+        return view_params
+    end
+
+    # remove keys that would stop metadata calls from working properly from view params
+    def get_view_params_for_metadata(view_params)
+
+        # clone the passed in params so we don't overwrite their value and then delete the unnecessary keys
+        metadata_view_params = view_params.clone
+        metadata_view_params.delete(:modules)
+        return metadata_view_params
     end
 
     def proxy_sensitive(url_string)

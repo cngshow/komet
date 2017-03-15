@@ -13,9 +13,12 @@
 
             <div class="komet-panel-tools-control hide">
                 <div id='komet_concept_stamp_date_<%= @viewer_id %>'>
-                    <input type='hidden' class="form-control" aria-label="STAMP Date Preference" title="STAMP Date Preference" value="<%= @view_params[:time] %>">
+                    <input type='hidden' value="<%= @view_params[:time] %>">
                 </div>
-                <input id='komet_concept_stated_<%= @viewer_id %>' type='hidden' class="form-control" aria-label="Stated View" title="Stated View" checked="<%= @view_params[:stated] %>">
+                <input id='komet_concept_stated_<%= @viewer_id %>' type='hidden' value="<%= @view_params[:stated] %>">
+                <input id='komet_concept_allowed_states_<%= @viewer_id %>' type='hidden' value="<%= @view_params[:allowedStates] %>">
+                <input id='komet_concept_modules_<%= @viewer_id %>' type='hidden' value="<%= @view_params[:modules] %>">
+                <input id='komet_concept_path_<%= @viewer_id %>' type='hidden' value="<%= @view_params[:path] %>">
             </div>
 
             <div class="komet-panel-tools">

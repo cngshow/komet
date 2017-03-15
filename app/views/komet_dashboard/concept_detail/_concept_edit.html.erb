@@ -4,7 +4,7 @@
     <%= form_tag(taxonomy_edit_concept_path, method: 'post', id: "komet_concept_editor_form_#{@viewer_id}") do %>
 
         <input type="hidden" name="concept_id" value="<%= @concept_id %>">
-      <fieldset><legend style="width: 0px;height:0px">&nbsp;</legend>
+
         <div class="panel-heading">
             <span class="panel-title komet-section-title">
                 <button type="button" class="komet-link-button" onclick="WindowManager.toggleViewerLinkage('<%= @viewer_id %>', WindowManager.getLinkedViewerID() != '<%= @viewer_id %>');" aria-label="Viewer linked to Taxonomy Tree. Click to unlink." title="Viewer linked to Taxonomy Tree. Click to unlink.">
@@ -25,9 +25,12 @@
 
                 <div class="komet-panel-tools-control hide">
                     <div id='komet_concept_stamp_date_<%= @viewer_id %>'>
-                        <input type='hidden' class="form-control" aria-label="STAMP Date Preference" title="STAMP Date Preference" value="<%= @view_params[:time] %>">
+                        <input type='hidden' value="<%= @view_params[:time] %>">
                     </div>
-                    <input id='komet_concept_stated_<%= @viewer_id %>' type='hidden' class="form-control" aria-label="Stated View" title="Stated View" checked="<%= @view_params[:stated] %>">
+                    <input id='komet_concept_stated_<%= @viewer_id %>' type='hidden' value="<%= @view_params[:stated] %>">
+                    <input id='komet_concept_allowed_states_<%= @viewer_id %>' type='hidden' value="<%= @view_params[:allowedStates] %>">
+                    <input id='komet_concept_modules_<%= @viewer_id %>' type='hidden' value="<%= @view_params[:modules] %>">
+                    <input id='komet_concept_path_<%= @viewer_id %>' type='hidden' value="<%= @view_params[:path] %>">
                 </div>
 
                 <div class="komet-panel-tools-control">
@@ -45,7 +48,7 @@
                 </button>
             </div>
         </div>
-        </fieldset>
+
         <div class="panel-body" id="komet_concept_editor_section_<%= @viewer_id %>">
 
             <div id="komet_concept_save_section_<%= @viewer_id %>">

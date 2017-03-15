@@ -34,8 +34,12 @@ var ConceptViewer = function(viewerID, currentConceptID, viewerAction) {
         this.UNLINKED_TEXT = "Viewer not linked to Taxonomy Tree. Click to link.";
     };
 
+    ConceptViewer.prototype.getAllowedStates = function(){
+        return $("#komet_concept_allowed_states_" + this.viewerID).val();
+    };
+
     ConceptViewer.prototype.getStatedView = function(){
-        return $('#komet_concept_stated_' + this.viewerID).prop("checked");
+        return $('#komet_concept_stated_' + this.viewerID).val();
     };
 
     ConceptViewer.prototype.getStampDate = function(){
@@ -49,18 +53,19 @@ var ConceptViewer = function(viewerID, currentConceptID, viewerAction) {
         }
     };
 
+    ConceptViewer.prototype.getStampModules = function(){
+        return $('#komet_concept_stamp_module_' + this.viewerID).val();
+    };
+
+    ConceptViewer.prototype.getStampPath = function(){
+        return $('#komet_concept_stamp_path_' + this.viewerID).val();
+    };
+
     // function to set the initial state of the view param fields when the viewer content changes
     ConceptViewer.prototype.initViewParams = function(view_params) {
 
-        // get the stated field group
-        var stated = $("#komet_viewer_" + this.viewerID).find("input[name='komet_concept_stated_inferred']");
-
-        // initialize the stated field
-        UIHelper.initStatedField(stated, view_params.stated);
-
         // initialize the STAMP date field
         UIHelper.initDatePicker("#komet_concept_stamp_date_" + this.viewerID, view_params.time);
-
     };
 
     ConceptViewer.prototype.reloadViewer = function() {
@@ -68,7 +73,7 @@ var ConceptViewer = function(viewerID, currentConceptID, viewerAction) {
     };
 
     ConceptViewer.prototype.getViewParams = function(){
-        return {stated: this.getStatedView(), time: this.getStampDate()};
+        return {stated: this.getStatedView(), allowedStates: this.getAllowedStates(), time: this.getStampDate(), modules: this.getStampModules(), path: this.getStampPath()};
     };
 
     ConceptViewer.prototype.togglePanelDetails = function(panelID, callback, preserveState) {
@@ -455,16 +460,15 @@ var ConceptViewer = function(viewerID, currentConceptID, viewerAction) {
         }
 
         this.setCreateSaveButtonState(parentField.val(), preferred_name);
-
-        // set the Preferred Name display text [Description]
-        // $("#komet_create_concept_preferred_name_" + this.viewerID).html(preferred_name);
     }.bind(this);
 
     ConceptViewer.prototype.createConcept = function() {
 
         var editorSection = $("#komet_concept_editor_section_" + this.viewerID);
+        var conceptViewer = $("#komet_viewer_" + this.viewerID);
+        var editorForm = $("#komet_concept_editor_form_" + this.viewerID);
 
-        $("#komet_viewer_" + this.viewerID).on( 'unsavedCheck', function(event){
+        conceptViewer.on( 'unsavedCheck', function(event){
 
             var changed = UIHelper.hasFormChanged(editorSection, false, false);
             var shouldStay = false
@@ -475,7 +479,6 @@ var ConceptViewer = function(viewerID, currentConceptID, viewerAction) {
 
             return shouldStay;
         });
-
 
         UIHelper.processAutoSuggestTags("#komet_concept_associations_panel_" + this.viewerID);
 
@@ -503,18 +506,15 @@ var ConceptViewer = function(viewerID, currentConceptID, viewerAction) {
             }
 
             this.setCreateSaveButtonState(parentField.val(), event.currentTarget.value);
-
-            // set the Preferred Name display text [Description]
-            // $("#komet_create_concept_preferred_name_" + this.viewerID).html(event.currentTarget.value);
         }.bind(this));
 
         var thisViewer = this;
 
-        $("#komet_concept_editor_form_" + this.viewerID).submit(function () {
+        editorForm.submit(function () {
 
             Common.cursor_wait();
 
-            UIHelper.removePageMessages("#komet_concept_editor_form_" + this.viewerID);
+            UIHelper.removePageMessages(editorForm);
 
             $.ajax({
                 type: "POST",
@@ -523,16 +523,16 @@ var ConceptViewer = function(viewerID, currentConceptID, viewerAction) {
                 error: function (){Common.cursor_auto();},
                 success: function (data) {
 
-                    console.log(data);
-
                     if (data.concept_id == null){
 
-                        $("#komet_concept_editor_section_" + thisViewer.viewerID).prepend(UIHelper.generatePageMessage("An error has occurred. The concept was not created."));
+                        editorSection.prepend(UIHelper.generatePageMessage("An error has occurred. The concept was not created."));
                         Common.cursor_auto();
                     } else {
 
-                        $("#komet_viewer_" + viewerID).off('unsavedCheck');
+                        editorSection.prepend(UIHelper.generatePageMessage("The concept was created successfully.", true, "success"));
+                        conceptViewer.off('unsavedCheck');
                         TaxonomyModule.setViewParams(thisViewer.getViewParams());
+
                         $.publish(KometChannels.Taxonomy.taxonomyConceptEditorChannel, [ConceptsModule.EDIT, data.concept_id, thisViewer.viewerID, WindowManager.INLINE]);
                     }
                 }
@@ -609,8 +609,9 @@ var ConceptViewer = function(viewerID, currentConceptID, viewerAction) {
     ConceptViewer.prototype.editConcept = function(attributes, conceptProperties, descriptions, associations, selectOptions){
 
         var editorSection = $("#komet_concept_editor_section_" + this.viewerID);
+        var conceptViewer = $("#komet_viewer_" + this.viewerID);
 
-        $("#komet_viewer_" + this.viewerID).on( 'unsavedCheck', function(event){
+        conceptViewer.on( 'unsavedCheck', function(event){
 
             var changed = UIHelper.hasFormChanged(editorSection, false, false);
             var shouldStay = false
@@ -699,8 +700,6 @@ var ConceptViewer = function(viewerID, currentConceptID, viewerAction) {
 
                     if (data.failed.length > 0){
 
-                        var editorSection = $("#komet_concept_editor_section_" + thisViewer.viewerID);
-
                         var errorString = "Errors occurred, all changes not listed were processed. Error messages will be placed above each unprocessed section. The following updates were not successful: ";
 
                         for (var i = 0; i < data.failed.length; i++){
@@ -740,7 +739,8 @@ var ConceptViewer = function(viewerID, currentConceptID, viewerAction) {
                         Common.cursor_auto();
                     } else {
 
-                        $("#komet_viewer_" + viewerID).off('unsavedCheck');
+                        editorSection.prepend(UIHelper.generatePageMessage("The concept was updated successfully", true, "success"));
+                        conceptViewer.off('unsavedCheck');
                         TaxonomyModule.setViewParams(thisViewer.getViewParams());
                         $.publish(KometChannels.Taxonomy.taxonomyTreeNodeSelectedChannel, [null, data.concept_id, thisViewer.getViewParams(), thisViewer.viewerID, WindowManager.INLINE]);
                     }

@@ -54,7 +54,15 @@ var MappingViewer = function(viewerID, currentSetID, viewerAction) {
     };
 
     MappingViewer.prototype.getAllowedStates = function(){
-        return $("#komet_viewer_" + this.viewerID).find("input[name='komet_mapping_states_to_view']:checked").val();
+        return $("#komet_mapping_allowed_states_" + this.viewerID).val();
+    };
+
+    MappingViewer.prototype.getStampModules = function(){
+        return $('#komet_mapping_stamp_module_' + this.viewerID).val();
+    };
+
+    MappingViewer.prototype.getStampPath = function(){
+        return $('#komet_mapping_stamp_path_' + this.viewerID).val();
     };
 
     // function to set the initial state of the view param fields when the viewer content changes
@@ -62,12 +70,6 @@ var MappingViewer = function(viewerID, currentSetID, viewerAction) {
 
         // initialize the STAMP date field
         UIHelper.initDatePicker("#komet_mapping_stamp_date_" + this.viewerID, view_params.time);
-
-        // get the allowed states field group
-        var allowedStates = $("#komet_viewer_" + this.viewerID).find("input[name='komet_mapping_states_to_view']");
-
-        // initialize the allowed states field
-        UIHelper.initAllowedStatesField(allowedStates, view_params.allowedStates);
     };
 
     MappingViewer.prototype.reloadViewer = function() {
@@ -75,7 +77,7 @@ var MappingViewer = function(viewerID, currentSetID, viewerAction) {
     };
 
     MappingViewer.prototype.getViewParams = function(){
-        return {time: this.getStampDate(), allowedStates: this.getAllowedStates()};
+        return {time: this.getStampDate(), allowedStates: this.getAllowedStates(), modules: this.getStampModules(), path: this.getStampPath()};
     };
 
     MappingViewer.prototype.togglePanelDetails = function(panelID, callback, preserveState) {
@@ -515,7 +517,7 @@ var MappingViewer = function(viewerID, currentSetID, viewerAction) {
                     } else {
 
                         $("#komet_viewer_" + viewerID).off('unsavedCheck');
-                        setSection.before(UIHelper.generatePageMessage("All changes were processed successfully."));
+                        setSection.before(UIHelper.generatePageMessage("All changes were processed successfully.", true, "success"));
                         MappingModule.setTreeViewParams(thisViewer.getViewParams());
                         $.publish(KometChannels.Mapping.mappingTreeNodeSelectedChannel, ["", data.set_id, thisViewer.getViewParams(), thisViewer.viewerID, WindowManager.INLINE, MappingModule.SET_DETAILS]);
                     }
@@ -528,7 +530,37 @@ var MappingViewer = function(viewerID, currentSetID, viewerAction) {
 
     };
 
-    /********* Map Set Additional Fields Methods */
+    MappingViewer.prototype.validateEditForm = function(){
+
+        var form = $("#komet_mapping_set_editor_form_" + this.viewerID);
+        UIHelper.removePageMessages(form);
+
+        var name = $("#komet_mapping_set_editor_name_" + this.viewerID);
+        var description = $("#komet_mapping_set_editor_description_" + this.viewerID);
+        var hasErrors = false;
+
+        if (name.val() == undefined || name.val() == ""){
+
+            name.before(UIHelper.generatePageMessage("The Name field must be filled in."));
+            hasErrors = true;
+        }
+
+        if (description.val() == undefined || description.val() == ""){
+
+            description.before(UIHelper.generatePageMessage("The Purpose field must be filled in."));
+            hasErrors = true;
+        }
+
+        if (hasErrors){
+
+            $("#komet_mapping_set_panel_" + this.viewerID).prepend(UIHelper.generatePageMessage("Please fix the errors below."));
+            return false;
+        }
+
+        form.submit();
+    };
+
+    /********* Map Set Additional Fields Methods *****/
 
     MappingViewer.prototype.generateSetEditorDialogIncludeSection = function(fieldID, fieldInfo){
 
