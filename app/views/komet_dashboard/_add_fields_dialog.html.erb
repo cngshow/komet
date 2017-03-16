@@ -50,26 +50,10 @@
       </button>
 
     </div>
-  <fieldset><legend style="width: 0px;height:0px">&nbsp;</legend>
+
     <div class="komet-add-fields-dialog-body">
 
         <div class="komet-add-fields-dialog-left-column">
-
-            <% if show_templates %>
-
-                <div class="komet-add-fields-dialog-body-header"><label for="<%= id_prefix %>add_fields_template<%= id_postfix %>">Add Fields from Template</label></div>
-                <div class="komet-indent-block">
-                    <div>
-                        <select id="<%= id_prefix %>add_fields_template<%= id_postfix %>" class="form-control">
-                            <option value="" selected></option>
-                        </select>
-                    </div>
-                    <div>
-                        <button type="button" class="btn btn-default" aria-label="Use Template" onclick="<%= javascript_object + '.add' + javascript_function_qualifier + 'Template()' %>">Use Template</button>
-                    </div>
-                </div>
-                <br>
-            <% end %>
 
             <div class="komet-add-fields-dialog-body-header">Added Fields</div>
 
@@ -80,14 +64,27 @@
         </div>
 
         <div class="komet-add-fields-dialog-middle-column">
-
-            <div class="komet-add-fields-dialog-body-header">OR</div>
             <hr>
         </div>
 
         <div class="komet-add-fields-dialog-right-column">
 
-            <div class="komet-add-fields-dialog-body-header">Add from Existing Code Sets</div>
+            <% if show_templates %>
+
+                <div class="komet-add-fields-dialog-body-header komet-add-fields-template"><label for="<%= id_prefix %>add_fields_template<%= id_postfix %>">Add Fields from Template</label></div>
+                    <div>
+                        <select id="<%= id_prefix %>add_fields_template<%= id_postfix %>" class="form-control">
+                            <option value="" selected></option>
+                        </select>
+                    </div>
+                    <div>
+                        <button type="button" class="btn btn-default" aria-label="Use Template" onclick="<%= javascript_object + '.add' + javascript_function_qualifier + 'Template()' %>">Use Template</button>
+                    </div>
+
+                <hr>
+            <% end %>
+
+            <div class="komet-add-fields-dialog-body-header komet-add-fields-manual">Add from Existing Code Sets</div>
 
             <div>
                 <label for="<%= id_prefix %>add_fields_data_type<%= id_postfix %>">Type</label>
@@ -122,7 +119,7 @@
         </div>
 
     </div>
-    </fieldset>
+
     <div class="komet-add-fields-dialog-footer">
 
         <button class="btn btn-default" type="button" aria-label="Save button" onclick="<%= javascript_object + '.cancelInclude' + javascript_function_qualifier + 'FieldsDialog()' %>">Cancel</button>

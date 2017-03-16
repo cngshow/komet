@@ -379,7 +379,7 @@ module ConceptConcern
 
         coordinates_token = session[:coordinates_token].token
 
-        sememes = SememeRest.get_sememe(action: SememeRestActions::ACTION_BY_REFERENCED_COMPONENT, uuid_or_id: uuid, additional_req_params: {coordToken: coordinates_token, expand: 'chronology,nestedSememes'}.merge!(view_params))
+        sememes = SememeRest.get_sememe(action: SememeRestActions::ACTION_BY_REFERENCED_COMPONENT, uuid_or_id: uuid, additional_req_params: {coordToken: coordinates_token, expand: 'chronology,nestedSememes', includeDescriptions: true}.merge!(view_params))
 
         display_data = process_attached_sememes(view_params, sememes, [], {}, 1, clone)
 
@@ -532,7 +532,7 @@ module ConceptConcern
         sememes.each do |sememe|
 
             # process dynamic sememe version types
-            if sememe.class == Gov::Vha::Isaac::Rest::Api1::Data::Sememe::RestDynamicSememeVersion
+            if sememe.class == Gov::Vha::Isaac::Rest::Api1::Data::Sememe::RestDynamicSememeVersion || true
 
                 assemblage_id = sememe.sememeChronology.assemblage.uuids.first
                 sememe_instance_id = sememe.sememeChronology.identifiers.uuids.first
@@ -605,7 +605,7 @@ module ConceptConcern
                         list_index = (used_column_list.length) - 1
                     end
 
-                    data_column = sememe.dataColumns[row_column.columnOrder]
+                    data_column = sememe.dataColumns[row_column.columnOrder] unless !sememe.respond_to?(:dataColumns)
                     column_data = {}
                     taxonomy_ids = []
 
