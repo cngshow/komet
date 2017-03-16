@@ -566,7 +566,7 @@ var MappingViewer = function(viewerID, currentSetID, viewerAction) {
 
         var sectionString = '<div role="group" aria-labelledby="' + this.SET_INCLUDE_FIELD_PREFIX + fieldID + '_field_label' + this.viewerID + '" class="' + this.INCLUDE_FIELD_CLASS_PREFIX + fieldID + '">'
             + '<input type="checkbox" name="' + this.SET_INCLUDE_FIELD_PREFIX.slice(0, -1) + '[]" class="form-control" '
-            + 'id="' + this.SET_INCLUDE_FIELD_PREFIX + fieldID + '_' + this.viewerID + '" value="' + fieldID + '" ';
+            + 'id="' + this.SET_INCLUDE_FIELD_PREFIX + fieldID + '_' + this.viewerID + '" value="' + fieldID + '" title="Show Field" aria-label="Show ' + fieldInfo.text + ' Field" ';
 
         if (fieldInfo.display){
             sectionString += 'checked="checked"';
@@ -575,7 +575,7 @@ var MappingViewer = function(viewerID, currentSetID, viewerAction) {
         sectionString += '><label id="' + this.SET_INCLUDE_FIELD_PREFIX + fieldID + '_field_label' + this.viewerID + '" for="' + this.SET_INCLUDE_FIELD_PREFIX + fieldID + '_' + this.viewerID + '">' + fieldInfo.text + '</label>';
 
         if (fieldInfo.removable){
-            sectionString += '<button type="button" class="komet-link-button komet-flex-right" onclick="WindowManager.viewers[' + this.viewerID + '].removeSetIncludedField(\'' + fieldID + '\');" aria-label="Remove">'
+            sectionString += '<button type="button" class="komet-link-button komet-flex-right" onclick="WindowManager.viewers[' + this.viewerID + '].removeSetIncludedField(\'' + fieldID + '\');" title="Remove Field" aria-label="Remove ' + fieldInfo.text + ' Field">'
                 + '<div class="glyphicon glyphicon-remove"></div></button>';
         }
 
@@ -700,24 +700,30 @@ var MappingViewer = function(viewerID, currentSetID, viewerAction) {
     MappingViewer.prototype.showIncludeSetFieldsDialog = function(){
 
         var dialog = $('#' + this.SET_INCLUDE_FIELD_DIALOG);
+        var includeSection = $("#" + this.SET_INCLUDE_FIELD_CHECKBOX_SECTION);
         dialog.removeClass("hide");
         dialog.position({my: "right top", at: "right bottom", of: "#komet_mapping_set_editor_save_" + this.viewerID});
 
         if (this.setEditorOriginalIncludedFields == null) {
 
-            this.setEditorOriginalIncludedFields = $("#" + this.SET_INCLUDE_FIELD_CHECKBOX_SECTION).html();
+            this.setEditorOriginalIncludedFields = includeSection.html();
         }
 
         // set the focus onto the dialog for accessibility
         dialog.find("input:first")[0].focus();
+
+        // copy the include section and mapset javascript object so we can return them to this state if the user cancels the dialog
+        this.setEditorSetIncludeSectionCopy = includeSection.html();
+        this.setEditorMapSetCopy = jQuery.extend(true, {}, this.setEditorMapSet);
     };
 
     MappingViewer.prototype.cancelIncludeSetFieldsDialog = function(){
 
-        var dialog = $('#' + this.SET_INCLUDE_FIELD_DIALOG);
-        dialog.addClass("hide");
+        $('#' + this.SET_INCLUDE_FIELD_DIALOG).addClass("hide");
 
-        UIHelper.resetFormChanges("#" + this.SET_INCLUDE_FIELD_DIALOG);
+        // use the copy of the include section and mapset javascript object to return them to their prior state
+        $("#" + this.SET_INCLUDE_FIELD_CHECKBOX_SECTION).html(this.setEditorSetIncludeSectionCopy);
+        this.setEditorMapSet = jQuery.extend({}, this.setEditorMapSetCopy);
     };
 
     MappingViewer.prototype.saveIncludeSetFieldsDialog = function(){
@@ -805,10 +811,10 @@ var MappingViewer = function(viewerID, currentSetID, viewerAction) {
         var formFieldID = fieldID;// + '_' + fieldInfo.component_type;
 
         var sectionString = '<div class="' + this.INCLUDE_FIELD_CLASS_PREFIX + formFieldID + '" id="' + fieldSection + '">'
-            + '<div><div class="glyphicon glyphicon-arrow-up komet-mapping-change-order-icon" onclick="WindowManager.viewers[' + this.viewerID + '].changeFieldOrder(\'' + fieldSection + '\', \'up\');"></div></div> '
-            + '<div><div class="glyphicon glyphicon-arrow-down komet-mapping-change-order-icon" onclick="WindowManager.viewers[' + this.viewerID + '].changeFieldOrder(\'' + fieldSection + '\', \'down\');"></div></div> '
+            + '<button type="button" class="komet-link-button" onclick="WindowManager.viewers[' + this.viewerID + '].changeFieldOrder(\'' + fieldSection + '\', \'up\');" title="Move Field Order Up" aria-label="Move ' + fieldInfo.text + ' Field Order Up"><div class="glyphicon glyphicon-arrow-up komet-mapping-change-order-icon"></div></button> '
+            + '<button type="button" class="komet-link-button" onclick="WindowManager.viewers[' + this.viewerID + '].changeFieldOrder(\'' + fieldSection + '\', \'down\');" title="Move Field Order Down" aria-label="Move ' + fieldInfo.text + ' Field Order Down"><div class="glyphicon glyphicon-arrow-down komet-mapping-change-order-icon"></div></button> '
             + '<input type="checkbox" name="' + this.ITEMS_INCLUDE_FIELD_PREFIX.slice(0, -1) + '[]" class="form-control" '
-            + 'id="' + this.ITEMS_INCLUDE_FIELD_PREFIX + formFieldID + '_' + this.viewerID + '" value="' + fieldID + '" ';
+            + 'id="' + this.ITEMS_INCLUDE_FIELD_PREFIX + formFieldID + '_' + this.viewerID + '" value="' + fieldID + '" title="Show Field" aria-label="Show ' + fieldInfo.text + ' Field" ';
 
         if (fieldInfo.display){
             sectionString += 'checked="checked"';
@@ -817,7 +823,7 @@ var MappingViewer = function(viewerID, currentSetID, viewerAction) {
         sectionString += '><label for="' + this.ITEMS_INCLUDE_FIELD_PREFIX + formFieldID + '_' + this.viewerID + '">' + fieldInfo.text + '</label>';
 
         if (fieldInfo.removable){
-            sectionString += '<button type="button" class="komet-link-button komet-flex-right" onclick="WindowManager.viewers[' + this.viewerID + '].removeSetItemsIncludedField(\'' + formFieldID + '\');" title="Remove Field" aria-label="Remove Field">'
+            sectionString += '<button type="button" class="komet-link-button komet-flex-right" onclick="WindowManager.viewers[' + this.viewerID + '].removeSetItemsIncludedField(\'' + formFieldID + '\');" title="Remove Field" aria-label="Remove ' + fieldInfo.text + ' Field">'
                 + '<div class="glyphicon glyphicon-remove"></div></button>';
         }
 
@@ -935,24 +941,30 @@ var MappingViewer = function(viewerID, currentSetID, viewerAction) {
     MappingViewer.prototype.showIncludeSetItemsFieldsDialog = function(){
 
         var dialog = $('#' + this.ITEMS_INCLUDE_FIELD_DIALOG);
+        var includeSection = $("#" + this.ITEMS_INCLUDE_FIELD_CHECKBOX_SECTION);
         dialog.removeClass("hide");
         dialog.position({my: "right top", at: "right bottom", of: "#komet_mapping_set_editor_save_" + this.viewerID});
 
         if (this.setEditorOriginalItemsIncludedFields == null) {
 
-            this.setEditorOriginalItemsIncludedFields = $("#" + this.ITEMS_INCLUDE_FIELD_CHECKBOX_SECTION).html();
+            this.setEditorOriginalItemsIncludedFields = includeSection.html();
         }
 
         // set the focus onto the dialog for accessibility
         dialog.find("select:first")[0].focus();
+
+        // copy the include section and mapset javascript object so we can return them to this state if the user cancels the dialog
+        this.setEditorItemIncludeSectionCopy = includeSection.html();
+        this.setEditorMapSetCopy = jQuery.extend(true, {}, this.setEditorMapSet);
     };
 
     MappingViewer.prototype.cancelIncludeSetItemsFieldsDialog = function(){
 
-        var dialog = $('#' + this.ITEMS_INCLUDE_FIELD_DIALOG);
-        dialog.addClass("hide");
+        $('#' + this.ITEMS_INCLUDE_FIELD_DIALOG).addClass("hide");
 
-        UIHelper.resetFormChanges("#" + this.ITEMS_INCLUDE_FIELD_DIALOG);
+        // use the copy of the include section and mapset javascript object to return them to their prior state
+        $("#" + this.ITEMS_INCLUDE_FIELD_CHECKBOX_SECTION).html(this.setEditorItemIncludeSectionCopy);
+        this.setEditorMapSet = jQuery.extend({}, this.setEditorMapSetCopy);
     };
 
     MappingViewer.prototype.saveIncludeSetItemsFieldsDialog = function(){
