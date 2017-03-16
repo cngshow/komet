@@ -3,6 +3,9 @@ Komet Changelog
 This changelog summarizes changes and fixes which are a part of each revision.  For more details on the fixes, refer tracking numbers 
 where provided, and the git commit history.
 
+* 2017/03/?? - 1.69 - PENDING
+    * 
+
 * 2017/03/16 - 1.68
     * Mapset include dialogs will now behave as expected if cancel is clicked, by returning to the state they were in prior to any changes. Fixed bug in that code that caused a previously added but cancelled field from being added again. (Jazz: 480730)
     * Added descriptive tooltips and aria-labels to mapset include dialog Change Order and Remove links.
