@@ -1050,6 +1050,7 @@ div.komet-mapping-change-order-icon.glyphicon{
     margin: 4px;
     flex: 1 1 auto;
     text-align: right;
+    position: relative;
 }
 .komet-mapping-set-definition-item{
     margin: 4px;
@@ -1201,6 +1202,8 @@ div.komet-mapping-change-order-icon.glyphicon{
     font-size: small;
     z-index: 1;
     background-color: white;
+    top: 0px;
+    left: 30%;
 }
 .komet-add-fields-dialog hr{
     border-top: 1px solid black;

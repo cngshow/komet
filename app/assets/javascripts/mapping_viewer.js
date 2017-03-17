@@ -702,7 +702,6 @@ var MappingViewer = function(viewerID, currentSetID, viewerAction) {
         var dialog = $('#' + this.SET_INCLUDE_FIELD_DIALOG);
         var includeSection = $("#" + this.SET_INCLUDE_FIELD_CHECKBOX_SECTION);
         dialog.removeClass("hide");
-        dialog.position({my: "right top", at: "right bottom", of: "#komet_mapping_set_editor_save_" + this.viewerID});
 
         if (this.setEditorOriginalIncludedFields == null) {
 
@@ -943,7 +942,6 @@ var MappingViewer = function(viewerID, currentSetID, viewerAction) {
         var dialog = $('#' + this.ITEMS_INCLUDE_FIELD_DIALOG);
         var includeSection = $("#" + this.ITEMS_INCLUDE_FIELD_CHECKBOX_SECTION);
         dialog.removeClass("hide");
-        dialog.position({my: "right top", at: "right bottom", of: "#komet_mapping_set_editor_save_" + this.viewerID});
 
         if (this.setEditorOriginalItemsIncludedFields == null) {
 

@@ -6,6 +6,7 @@ where provided, and the git commit history.
 * 2017/03/?? - 1.69 - PENDING
     * Fixed issue with nested rows not expanding in concept viewer attached sememes. Also fixed layout problems with nested rows in Chrome.
     * Fixed layout issues with mapping add fields dialog
+    * Changed mapping add fields dialog positioning so it will cause a scrollbar to appear if the window shrinks. (Jazz: 482590)
 
 * 2017/03/16 - 1.68
     * Mapset include dialogs will now behave as expected if cancel is clicked, by returning to the state they were in prior to any changes. Fixed bug in that code that caused a previously added but cancelled field from being added again. (Jazz: 480730)

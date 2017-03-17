@@ -60,19 +60,19 @@
 
                         <div id="komet_mapping_set_definition_tab_<%= @viewer_id %>" class="komet-mapping-set-tab-body">
 
-                            <!-- add the dialog form for including new fields into a mapset -->
-                            <%= render(partial: 'komet_dashboard/add_fields_dialog', locals: {
-                                dialog_title: 'Add Set Fields',
-                                id_prefix: 'komet_mapping_set_editor_',
-                                id_postfix: '_' + @viewer_id,
-                                javascript_object: 'WindowManager.viewers[' + @viewer_id + ']',
-                                javascript_function_qualifier: 'Set'
-                            }) %>
-
                             <div class="komet-mapping-set-definition-controls">
                                 <button class="btn btn-default komet-mapping-show-on-edit komet-mapping-show-on-create-only" type="button" onclick="WindowManager.viewers[<%= @viewer_id %>].showIncludeSetFieldsDialog()">Add
                                     More Fields
                                 </button>
+
+                                <!-- add the dialog form for including new fields into a mapset -->
+                                <%= render(partial: 'komet_dashboard/add_fields_dialog', locals: {
+                                    dialog_title: 'Add Set Fields',
+                                    id_prefix: 'komet_mapping_set_editor_',
+                                    id_postfix: '_' + @viewer_id,
+                                    javascript_object: 'WindowManager.viewers[' + @viewer_id + ']',
+                                    javascript_function_qualifier: 'Set'
+                                }) %>
                             </div>
 
                             <div class="komet-mapping-set-definition-row">
@@ -140,20 +140,20 @@
 
                         <div id="komet_mapping_set_items_tab_<%= @viewer_id %>" class="komet-mapping-set-tab-body">
 
-                            <!-- add the dialog form for including new fields into a mapset -->
-                            <%= render(partial: 'komet_dashboard/add_fields_dialog', locals: {
-                                dialog_title: 'Add Item Fields',
-                                id_prefix: 'komet_mapping_set_editor_items_',
-                                id_postfix: '_' + @viewer_id,
-                                javascript_object: 'WindowManager.viewers[' + @viewer_id + ']',
-                                javascript_function_qualifier: 'SetItems',
-                                show_templates: true
-                            }) %>
-
                             <div class="komet-mapping-set-definition-controls">
                                 <button class="btn btn-default komet-mapping-show-on-edit komet-mapping-show-on-create-only" type="button" onclick="WindowManager.viewers[<%= @viewer_id %>].showIncludeSetItemsFieldsDialog()">Add
                                     More Fields to Map Items
                                 </button>
+
+                                <!-- add the dialog form for including new fields into a mapset -->
+                                <%= render(partial: 'komet_dashboard/add_fields_dialog', locals: {
+                                    dialog_title: 'Add Item Fields',
+                                    id_prefix: 'komet_mapping_set_editor_items_',
+                                    id_postfix: '_' + @viewer_id,
+                                    javascript_object: 'WindowManager.viewers[' + @viewer_id + ']',
+                                    javascript_function_qualifier: 'SetItems',
+                                    show_templates: true
+                                }) %>
                             </div>
 
                             <div class="komet-mapping-set-definition-row">
