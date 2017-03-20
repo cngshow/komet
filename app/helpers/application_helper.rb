@@ -94,8 +94,8 @@ module ApplicationHelper
             end
 
             # make sure that the VHA Module is included or things may break
-            unless view_params[:modules].include?($isaac_metadata_auxiliary['VHA_MODULE']['uuids'].first[:uuid])
-                view_params[:modules] << $isaac_metadata_auxiliary['VHA_MODULE']['uuids'].first[:uuid]
+            unless view_params[:modules].include?($isaac_metadata_auxiliary['VHA_MODULES']['uuids'].first[:uuid])
+                view_params[:modules] << $isaac_metadata_auxiliary['VHA_MODULES']['uuids'].first[:uuid]
             end
 
             view_params[:modules] = view_params['modules'] * ','
