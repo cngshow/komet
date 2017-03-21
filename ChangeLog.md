@@ -3,6 +3,9 @@ Komet Changelog
 This changelog summarizes changes and fixes which are a part of each revision.  For more details on the fixes, refer tracking numbers 
 where provided, and the git commit history.
 
+* 2017/03/?? - 3.1 - PENDING
+    *
+
 * 2017/03/21 - 3.0.1
     * Rebuild of Release 3
 
