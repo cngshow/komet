@@ -2,7 +2,7 @@ source 'https://rubygems.org'
 
 
 # Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
-gem 'rails', '4.2.5'
+gem 'rails', '4.2.8'
 # Use jdbcsqlite3 as the database for Active Record
 gem 'activerecord-jdbcsqlite3-adapter'
 # Use SCSS for stylesheets
@@ -49,7 +49,7 @@ gem 'trinidad', require: nil
 gem 'jquery-ui-rails'
 gem 'logging', '~> 2.0'
 gem 'gon'
-gem 'warbler', '>= 2.0.0.pre3'
+gem 'warbler', '~> 2.0.0'
 gem 'faraday', '~> 0.9.2'
 gem 'ci_reporter_test_unit'
 gem 'jquery-minicolors-rails'

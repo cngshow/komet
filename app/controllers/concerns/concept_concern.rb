@@ -605,7 +605,7 @@ module ConceptConcern
                         list_index = (used_column_list.length) - 1
                     end
 
-                    data_column = sememe.dataColumns[row_column.columnOrder]
+                    data_column = sememe.dataColumns[row_column.columnOrder] unless !sememe.respond_to?(:dataColumns)
                     column_data = {}
                     taxonomy_ids = []
 

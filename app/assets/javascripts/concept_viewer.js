@@ -240,21 +240,21 @@ var ConceptViewer = function(viewerID, currentConceptID, viewerAction) {
     ConceptViewer.prototype.toggleNestedTableRows = function(image, id){
         // TODO - Look into what happens when two rows have the same name (ex: Pediatex CT)
         // get reference to the block of nested rows
-        var nestedRows = $("#komet_concept_table_nested_row_" + this.viewerID + "_" + id);
+        var nestedRows = $("#komet_attached_sememes_table_" + this.viewerID).find(".komet-nested-row-" + id);
 
         // change the displayed image and nested rows visibility
         if (image.hasClass("glyphicon-arrow-right")){
 
             image.removeClass("glyphicon-arrow-right");
             image.addClass("glyphicon-arrow-down");
-            nestedRows.show();
+            nestedRows.removeClass("hide");
             image.parent().addClass("komet-concept-table-nested-indicator-open");
 
         } else {
 
             image.removeClass("glyphicon-arrow-down");
             image.addClass("glyphicon-arrow-right");
-            nestedRows.hide();
+            nestedRows.addClass("hide");
             image.parent().removeClass("komet-concept-table-nested-indicator-open");
         }
     };

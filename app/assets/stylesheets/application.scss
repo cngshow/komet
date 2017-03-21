@@ -686,9 +686,6 @@ div.komet-confirmation-dialog{
 .komet-concept-info-button{
     display: block;
 }
-.komet-concept-table-nested-row{
-    display: none;
-}
 .komet-concept-table-nested-row .komet-concept-table-nested-indicator{
     border-top: none;
     border-bottom: none;
@@ -1053,6 +1050,7 @@ div.komet-mapping-change-order-icon.glyphicon{
     margin: 4px;
     flex: 1 1 auto;
     text-align: right;
+    position: relative;
 }
 .komet-mapping-set-definition-item{
     margin: 4px;
@@ -1204,6 +1202,15 @@ div.komet-mapping-change-order-icon.glyphicon{
     font-size: small;
     z-index: 1;
     background-color: white;
+    top: 0px;
+    left: 30%;
+}
+.komet-add-fields-dialog hr{
+    border-top: 1px solid black;
+    margin: 5px 0px;
+}
+.komet-add-fields-dialog .komet-autosuggest .btn{
+    height: 26px;
 }
 .komet-add-fields-dialog input[type='checkbox']{
     height: 14px;
@@ -1214,6 +1221,11 @@ div.komet-mapping-change-order-icon.glyphicon{
 .komet-add-fields-dialog label{
     font-size: smaller;
     margin: 0px 0px 0px 5px
+}
+.komet-add-fields-dialog .komet-add-fields-manual {
+    font-size: smaller;
+    font-weight: bold;
+    margin-left: 5px;
 }
 .komet-add-fields-dialog button{
     padding: 2px 8px;

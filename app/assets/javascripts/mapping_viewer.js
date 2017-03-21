@@ -423,7 +423,7 @@ var MappingViewer = function(viewerID, currentSetID, viewerAction) {
 
         var itemsDialogRightColumn = $('#' + this.ITEMS_INCLUDE_FIELD_DIALOG).find(".komet-add-fields-dialog-right-column");
 
-        var calculatedFieldsSelection = '<div class="komet-add-fields-dialog-body-header"><label for="komet_mapping_set_editor_items_add_fields_calculated_field_' + this.viewerID + '">Add From Calculated Fields</label></div>'
+        var calculatedFieldsSelection = '<div class="komet-add-fields-dialog-body-header komet-add-fields-calculated"><label for="komet_mapping_set_editor_items_add_fields_calculated_field_' + this.viewerID + '">Add From Calculated Fields</label></div>'
             + '<div><select id="komet_mapping_set_editor_items_add_fields_calculated_field_' + this.viewerID + '" class="form-control"><option value="" selected></option>';
 
         for (var i = 0; i < this.setEditorMapSet["all_calculated_fields"].length; i++){
@@ -433,7 +433,7 @@ var MappingViewer = function(viewerID, currentSetID, viewerAction) {
         }
 
         calculatedFieldsSelection += '</select></div><div><button type="button" class="btn btn-default" aria-label="Add Calculated field" onclick="WindowManager.viewers[' + this.viewerID + '].addSetItemsCalculatedField();">Add Field</button></div>'
-            + '<br><div class="komet-add-fields-dialog-body-header">OR</div><br>';
+            + '<hr>';
 
         itemsDialogRightColumn.prepend(calculatedFieldsSelection);
 
@@ -538,22 +538,29 @@ var MappingViewer = function(viewerID, currentSetID, viewerAction) {
         var name = $("#komet_mapping_set_editor_name_" + this.viewerID);
         var description = $("#komet_mapping_set_editor_description_" + this.viewerID);
         var hasErrors = false;
+        var problemFields = ''
 
         if (name.val() == undefined || name.val() == ""){
 
+            problemFields += 'Name';
             name.before(UIHelper.generatePageMessage("The Name field must be filled in."));
             hasErrors = true;
         }
 
         if (description.val() == undefined || description.val() == ""){
 
+            if (problemFields != ''){
+                problemFields += ' and ';
+            }
+
+            problemFields += 'Purpose';
             description.before(UIHelper.generatePageMessage("The Purpose field must be filled in."));
             hasErrors = true;
         }
 
         if (hasErrors){
 
-            $("#komet_mapping_set_panel_" + this.viewerID).prepend(UIHelper.generatePageMessage("Please fix the errors below."));
+            $("#komet_mapping_set_panel_" + this.viewerID).prepend(UIHelper.generatePageMessage("Please fix the errors below with the following fields: " + problemFields + "."));
             return false;
         }
 
@@ -702,7 +709,6 @@ var MappingViewer = function(viewerID, currentSetID, viewerAction) {
         var dialog = $('#' + this.SET_INCLUDE_FIELD_DIALOG);
         var includeSection = $("#" + this.SET_INCLUDE_FIELD_CHECKBOX_SECTION);
         dialog.removeClass("hide");
-        dialog.position({my: "right top", at: "right bottom", of: "#komet_mapping_set_editor_save_" + this.viewerID});
 
         if (this.setEditorOriginalIncludedFields == null) {
 
@@ -943,7 +949,6 @@ var MappingViewer = function(viewerID, currentSetID, viewerAction) {
         var dialog = $('#' + this.ITEMS_INCLUDE_FIELD_DIALOG);
         var includeSection = $("#" + this.ITEMS_INCLUDE_FIELD_CHECKBOX_SECTION);
         dialog.removeClass("hide");
-        dialog.position({my: "right top", at: "right bottom", of: "#komet_mapping_set_editor_save_" + this.viewerID});
 
         if (this.setEditorOriginalItemsIncludedFields == null) {
 
@@ -1026,23 +1031,27 @@ var MappingViewer = function(viewerID, currentSetID, viewerAction) {
 
         if (templateField.val() == ""){
 
-            dialog.find(".komet-add-fields-dialog-left-column").prepend(UIHelper.generatePageMessage("You must select a template to add."));
+            dialog.find(".komet-add-fields-template").prepend(UIHelper.generatePageMessage("You must select a template to add."));
             return;
         }
 
         var template = this.setEditorMapSet.item_templates[templateField.val()];
         var includeItemFields = "";
+        var showAlreadyExistsMessage = false;
 
         for (var i = 0; i < template.length; i++){
 
-            var fieldID = template[i].id + "_" + template[i].component_type
+            var fieldID = template[i].id + "_" + template[i].component_type;
 
-            if (!this.setEditorMapSet.item_fields[fieldID]){
+            // if the field is not already in the mapset add it, otherwise display a message
+            if (this.setEditorMapSet.item_fields.indexOf(fieldID) < 0){
 
                 this.setEditorMapSet.item_fields.push(fieldID);
                 this.setEditorMapSet["item_field_" + fieldID] = template[i];
 
                 includeItemFields += this.generateSetEditorItemsDialogIncludeSection(fieldID, template[i]);
+            } else {
+                showAlreadyExistsMessage = true;
             }
         }
 
@@ -1051,11 +1060,17 @@ var MappingViewer = function(viewerID, currentSetID, viewerAction) {
 
         // reset the template field
         templateField.val("");
+
+        // if any of the fields were already present display a message
+        if (showAlreadyExistsMessage){
+            dialog.find(".komet-add-fields-template").prepend(UIHelper.generatePageMessage("Some fields were already present in this mapset so they were not added again."));
+        }
     };
 
     MappingViewer.prototype.addSetItemsCalculatedField = function(){
 
-        UIHelper.removePageMessages("#" + this.ITEMS_INCLUDE_FIELD_DIALOG);
+        var dialog = $("#" + this.ITEMS_INCLUDE_FIELD_DIALOG);
+        UIHelper.removePageMessages(dialog);
 
         var calculatedField = $("#komet_mapping_set_editor_items_add_fields_calculated_field_" + this.viewerID);
 
@@ -1063,7 +1078,7 @@ var MappingViewer = function(viewerID, currentSetID, viewerAction) {
 
         if (id == ""){
 
-            calculatedField.after(UIHelper.generatePageMessage("A Calculated field must be selected."));
+            dialog.find(".komet-add-fields-calculated").prepend(UIHelper.generatePageMessage("A Calculated field must be selected."));
             return;
         }
 
@@ -1079,6 +1094,12 @@ var MappingViewer = function(viewerID, currentSetID, viewerAction) {
         };
 
         var fieldID = id + "_" + fieldInfo.component_type;
+
+        if (this.setEditorMapSet.item_fields.indexOf(fieldID) >= 0){
+
+            dialog.find(".komet-add-fields-calculated").prepend(UIHelper.generatePageMessage("The field was not added because there is another field in this mapset with this label."));
+            return;
+        }
 
         this.setEditorMapSet.item_fields.push(fieldID);
         this.setEditorMapSet["item_field_" + fieldID] = fieldInfo;
@@ -1105,7 +1126,7 @@ var MappingViewer = function(viewerID, currentSetID, viewerAction) {
 
         if (dataTypeField.val() == "" || labelField.val() == ""){
 
-            dialog.find(".komet-add-fields-dialog-right-column .komet-add-fields-dialog-body-header").filter(":last").prepend(UIHelper.generatePageMessage("The field was not added. All fields below must be filled in."));
+            dialog.find(".komet-add-fields-manual").prepend(UIHelper.generatePageMessage("The field was not added. All fields below must be filled in."));
             return;
         }
 
@@ -1116,7 +1137,7 @@ var MappingViewer = function(viewerID, currentSetID, viewerAction) {
 
         if (this.setEditorMapSet.item_fields.indexOf(fieldID) >= 0){
 
-            dialog.find(".komet-add-fields-dialog-right-column .komet-add-fields-dialog-body-header").filter(":last").prepend(UIHelper.generatePageMessage("The field was not added. The label must be unique. There is another field in this mapset with this label."));
+            dialog.find(".komet-add-fields-manual").prepend(UIHelper.generatePageMessage("The field was not added. The label must be unique. There is another field in this mapset with this label."));
             return;
         }
 
