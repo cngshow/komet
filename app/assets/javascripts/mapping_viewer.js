@@ -538,22 +538,29 @@ var MappingViewer = function(viewerID, currentSetID, viewerAction) {
         var name = $("#komet_mapping_set_editor_name_" + this.viewerID);
         var description = $("#komet_mapping_set_editor_description_" + this.viewerID);
         var hasErrors = false;
+        var problemFields = ''
 
         if (name.val() == undefined || name.val() == ""){
 
+            problemFields += 'Name';
             name.before(UIHelper.generatePageMessage("The Name field must be filled in."));
             hasErrors = true;
         }
 
         if (description.val() == undefined || description.val() == ""){
 
+            if (problemFields != ''){
+                problemFields += ' and ';
+            }
+
+            problemFields += 'Purpose';
             description.before(UIHelper.generatePageMessage("The Purpose field must be filled in."));
             hasErrors = true;
         }
 
         if (hasErrors){
 
-            $("#komet_mapping_set_panel_" + this.viewerID).prepend(UIHelper.generatePageMessage("Please fix the errors below."));
+            $("#komet_mapping_set_panel_" + this.viewerID).prepend(UIHelper.generatePageMessage("Please fix the errors below with the following fields: " + problemFields + "."));
             return false;
         }
 
