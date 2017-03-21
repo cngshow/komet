@@ -153,10 +153,13 @@ var UIHelper = (function () {
             classLevel = "komet-page-message";
         }
 
-        var id = window.performance.now().toString().replace(".", "");
+        var alertContainerID = "komet_" + window.performance.now().toString().replace(".", "");
+        var alertMessageID = "komet_" + window.performance.now().toString().replace(".", "");
 
-        return '<div id="komet_' + id + '" class="' + classLevel + ' ' + messageType + '">' + icon + '<div class="komet-page-message-container" role="alert">' + message + '</div>'
-            + '<div class="komet-flex-right"><button type="button" class="komet-link-button" title="Remove message" aria-label="Remove alert: ' + message + '" onclick="$(\'#komet_' + id + '\').remove();"><div class="glyphicon glyphicon-remove"  ></div></button></div></div>';
+        return '<div id="' + alertContainerID + '" class="' + classLevel + ' ' + messageType + '" role="alert">' + icon + '<div id="' + alertMessageID + '" class="komet-page-message-container" tabindex="0"></div>'
+            + '<div class="komet-flex-right"><button type="button" class="komet-link-button" title="Remove message" aria-label="Remove alert: ' + message + '" onclick="UIHelper.focusNextElement(); $(\'#' + alertContainerID + '\').remove();"><div class="glyphicon glyphicon-remove"></div></button></div></div>'
+            + '<script>var alertMessage = document.getElementById("' + alertMessageID + '"); alertMessage.setAttribute("role", "alert"); var alertText = document.createTextNode("' + message + '"); '
+            + 'alertMessage.appendChild(alertText); alertMessage.style.display="none"; alertMessage.style.display="inline";</script>';
     }
 
     function removePageMessages(containerElementOrSelector) {
@@ -171,6 +174,24 @@ var UIHelper = (function () {
         }
 
         element.find(".komet-page-message, .komet-page-field-message").remove();
+    }
+
+    function focusNextElement() {
+
+        //add all elements we want to include in our selection
+        var focusableElements = 'a:not([disabled]), button:not([disabled]), input:not([disabled]), select:not([disabled]), [tabindex]:not([disabled]):not([tabindex="-1"])';
+
+        if (document.activeElement && document.activeElement.form) {
+
+            var focusable = Array.prototype.filter.call(document.activeElement.form.querySelectorAll(focusableElements),
+                function (element) {
+                    //check for visibility while always include the current activeElement
+                    return element.offsetWidth > 0 || element.offsetHeight > 0 || element === document.activeElement
+                });
+
+            var index = focusable.indexOf(document.activeElement);
+            focusable[index + 1].focus();
+        }
     }
 
     function generateConfirmationDialog(title, message, closeCallback, buttonText, positioningElementOrSelector, formID) {
@@ -1303,6 +1324,7 @@ var UIHelper = (function () {
         initializeContextMenus: initializeContextMenus,
         generatePageMessage: generatePageMessage,
         removePageMessages: removePageMessages,
+        focusNextElement: focusNextElement,
         generateConfirmationDialog: generateConfirmationDialog,
         toggleChangeHighlights: toggleChangeHighlights,
         toggleFieldAvailability: toggleFieldAvailability,
