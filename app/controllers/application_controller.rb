@@ -166,7 +166,7 @@ class ApplicationController < ActionController::Base
 
   def setup_headers
     roles = pundit_user[:roles].to_json
-    response.headers['ROLES'] = roles
+    response.headers[BootstrapNotifier::AJAX_HDR_ROLES] = roles
   end
 
   def self.parse_isaac_metadata_auxiliary
