@@ -61,6 +61,8 @@ function flash_notify(options, settings) {
 }
 
 (function () {
+    $.ajaxSetup({ cache: false });
+
     // read ajax response header for roles to compare against the roles in gon to see if they have been changed in PRISME
     var time_between_role_notifications = <%=$PROPS['KOMET.role_change_notification_time_interval']%>;
     var last_notification_time = null;

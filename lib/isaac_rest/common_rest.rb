@@ -32,13 +32,13 @@ module CommonRest
 
   def self.clear_cache(rest_module:)
     begin
-      if (rest_module.constants.include?(:ROOT_PATH))
+      if rest_module.constants.include?(:ROOT_PATH)
         $rest_cache.clear_cache(key_starts_with: rest_module::ROOT_PATH)
         $log.info("Cache cleared for #{rest_module}")
         true
       end
     rescue => ex
-      $log.warn("Did you call the clear cache method with a Rest module with constant ROOT_PATH?  Not doing anything...")
+      $log.warn('Did you call the clear cache method with a Rest module with constant ROOT_PATH?  Not doing anything...')
       $log.warn(ex.message)
       $log.warn(ex.backtrace.join("\n"))
       false
@@ -100,7 +100,7 @@ module CommonRest
       json = JSON.parse response.body
     rescue JSON::ParserError => ex
 
-      if (http_method == CommonActionSyms::HTTP_METHOD_GET && response.status.eql?(200))
+      if http_method == CommonActionSyms::HTTP_METHOD_GET && response.status.eql?(200)
         $rest_cache[cache_lookup] = response.body
         return response.body
       end
@@ -175,7 +175,7 @@ module CommonRestBase
 
     def get_rest_class(json)
 
-      if (json.nil? || json['@class'].nil?)
+      if json.nil? || json['@class'].nil?
         clazz = action_constants.fetch(action).fetch(CLAZZ_SYM)
       else
 
@@ -184,12 +184,12 @@ module CommonRestBase
 
         clazz_package = clazz_array_parts.map do |e|
           e[0] = e.first.capitalize; e
-        end.join("::")
+        end.join('::')
 
-        clazz = clazz_package + "::" + short_clazz
+        clazz = clazz_package + '::' + short_clazz
         clazz = Object.const_get clazz
-        $log.debug("Using the class from the json it is " + clazz.to_s)
-        $log.debug("It would have been " + action_constants.fetch(action).fetch(CLAZZ_SYM).to_s)
+        $log.debug('Using the class from the json it is ' + clazz.to_s)
+        $log.debug('It would have been ' + action_constants.fetch(action).fetch(CLAZZ_SYM).to_s)
       end
       clazz
     end
@@ -205,7 +205,7 @@ module CommonRestBase
     #see https://github.com/stoicflame/enunciate/
     def enunciate_json(json)
 
-      if (json.class.eql?(CommonRest::UnexpectedResponse))
+      if json.class.eql?(CommonRest::UnexpectedResponse)
         return json
       end
 
@@ -224,7 +224,7 @@ module CommonRestBase
         clazz = get_rest_class(json)
         r_val = clazz.send(:from_json, json)
       end
-      if (r_val.is_a? RestExceptionResponse)
+      if r_val.is_a? RestExceptionResponse
 
         $log.warn("A RestExceptionResponse response was sent from ISAAC. Message is #{r_val.verboseMessage}, status was #{r_val.status}")
         r_val = CommonRest::UnexpectedResponse.new(r_val.conciseMessage, r_val.status, r_val )
@@ -237,7 +237,7 @@ module CommonRestBase
       @@rest_modules ||= {}
       paths = {}
 
-      unless (@@rest_modules.has_key? rest_module)
+      unless @@rest_modules.has_key? rest_module
 
         hash = rest_module.const_get :ACTION_CONSTANTS
 
@@ -294,14 +294,14 @@ module CommonRestBase
             url = url.chop if (url.last.eql? '/') #let us not let trailing /'s effect anything.
             $log.debug("2: #{act_sym} => #{act_path}")
 
-            if (act_path.eql? url)
+            if act_path.eql? url
 
               invocation_found = true
               $log.debug('inv found 1')
 
-            elsif (act_path =~ /\{\w+\}/)
+            elsif act_path =~ /\{\w+\}/
               id = parse_id(act_path, url)
-              if (id)
+              if id
                 invocation_found = true
                 $log.debug('inv found #{id}')
               end
@@ -317,7 +317,7 @@ module CommonRestBase
           end
         end
 
-        if (invocation_found)
+        if invocation_found
 
           $log.debug('Invocation found!!')
           args_hash = {action: action, id: id, params: params}
@@ -334,12 +334,12 @@ module CommonRestBase
     #This method will need to be made recursive if the day comes that we have multiple ids in a url.
     def self.parse_id(url_id_template, url_with_id)
       id = nil
-      if (url_id_template =~ /\{(\w+)\}/)
+      if url_id_template =~ /\{(\w+)\}/
         path_part = "{#{$1}}"
         a = url_id_template.split(path_part)
         first = a[0]
         second = a[1].to_s #nil goes to ""
-        if ((url_with_id.start_with? first) && (url_with_id.end_with? second))
+        if (url_with_id.start_with? first) && (url_with_id.end_with? second)
           id = url_with_id.sub(first, '').sub(second, '')
         end
       end
