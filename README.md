@@ -99,6 +99,12 @@ To launch isaac-rest: 'rake isaac:launch_isaac_rest'.
 To do it all: 'rake isaac:build_and_launch_isaac_rest'
 Make sure you have configured your setup.bat (first) as outlined in setup.bat.template.  Make sure maven is on your path.
 
+By the way, you need to have your git credentials stored locally so run...
+
+```
+git config --global credential.helper wincred
+```
+
 
 Developer addded config variables:
 
