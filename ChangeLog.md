@@ -3,6 +3,9 @@ Komet Changelog
 This changelog summarizes changes and fixes which are a part of each revision.  For more details on the fixes, refer tracking numbers 
 where provided, and the git commit history.
 
+* JRuby upgrade branch from 9.0.4 to 9.1.8 (March 28th 2017)
+  * follow all instructions in prisme tied to the upgrade
+
 * 2017/03/21 - 3.0.1
     * Rebuild of Release 3
 
