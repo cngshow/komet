@@ -2,12 +2,12 @@
 
 You need to first get JRuby, here is the link to the 64 bit msi installer:
 
-https://s3.amazonaws.com/jruby.org/downloads/9.0.4.0/jruby_windows_x64_9_0_4_0.exe
+https://s3.amazonaws.com/jruby.org/downloads/9.1.8.0/jruby_windows_x64_9_1_8_0.exe
 
 Get JRuby's complete jar file.  You can put it anywhere you want just remember where you put it!
 I put it in the directory where JRuby is installed.
 
-https://s3.amazonaws.com/jruby.org/downloads/9.0.4.0/jruby-complete-9.0.4.0.jar
+https://s3.amazonaws.com/jruby.org/downloads/9.1.8.0/jruby-complete-9.1.8.0.jar
 
 You also need Maven: https://maven.apache.org/download.cgi
 Place where you would like
