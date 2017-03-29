@@ -66,6 +66,26 @@ var ConceptViewer = function(viewerID, currentConceptID, viewerAction) {
 
         // initialize the STAMP date field
         UIHelper.initDatePicker("#komet_concept_stamp_date_" + this.viewerID, view_params.time);
+
+        //var moduleField = $('#komet_concept_stamp_module_' + this.viewerID);
+        // add an on change handler for the module preference field to select all children if a parent node is selected
+        //moduleField.on("change", function(event){
+        //
+        //    // check to see if the selected option has children (options that follow right after it that have a higher level)
+        //    if (this.selectedIndex != -1 && this.selectedIndex < this.length - 1 && this[this.selectedIndex].dataset.level < this[this.selectedIndex + 1].dataset.level){
+        //
+        //        // loop through the options that follow the selected option
+        //        for (var i = this.selectedIndex + 1; i < this.length; i++){
+        //
+        //            // if this option is at a higher level then the selected option it is a child and should be selected, otherwise end the loop
+        //            if (this[this.selectedIndex].dataset.level < this[i].dataset.level){
+        //                this[i].selected = true
+        //            } else {
+        //                break;
+        //            }
+        //        }
+        //    }
+        //});
     };
 
     ConceptViewer.prototype.reloadViewer = function() {

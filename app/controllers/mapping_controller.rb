@@ -195,7 +195,7 @@ class MappingController < ApplicationController
             # get the options to populate the Equivalence Type dropdown
             equivalence_options = [{value: '', label: 'No Restrictions'}]
 
-            get_direct_children($isaac_metadata_auxiliary['EQUIVALENCE_TYPES']['uuids'].first[:uuid], true, true, true, session[:edit_view_params]).each do |option|
+            get_direct_children($isaac_metadata_auxiliary['EQUIVALENCE_TYPES']['uuids'].first[:uuid], true, true, true, false, session[:edit_view_params]).each do |option|
                 equivalence_options << {value: option[:concept_id], label: option[:text], tooltip: option[:definition]}
             end
         end

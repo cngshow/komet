@@ -5,6 +5,7 @@ where provided, and the git commit history.
 
 * JRuby upgrade branch from 9.0.4 to 9.1.8 (March 28th 2017)
   * follow all instructions in prisme tied to the upgrade
+  * Allowed nested modules to be shown in the view parameters so all concepts can be displayed when choosing specific views (Jazz: 486439)
 
 * 2017/03/21 - 3.0.1
     * Rebuild of Release 3

@@ -500,13 +500,13 @@ class KometDashboardController < ApplicationController
         end
     end
 
-    def get_concept_children(concept_id: nil, return_json: true, remove_semantic_tag: false, view_params: {})
+    def get_concept_children(concept_id: nil, return_json: true, remove_semantic_tag: false, include_definition: false, include_nested: false, view_params: {})
 
         if concept_id == nil
             concept_id = params[:uuid]
         end
 
-        children = get_direct_children(concept_id, !return_json, remove_semantic_tag, view_params)
+        children = get_direct_children(concept_id, !return_json, remove_semantic_tag, include_definition, include_nested, view_params)
 
         if return_json
             render json: children
@@ -1342,7 +1342,7 @@ class KometDashboardController < ApplicationController
         end
 
         # if the view params are already in the session put them into a variable for the GUI, otherwise set the default values
-        if session[:default_view_params]
+        if false #session[:default_view_params]
             @view_params = session[:default_view_params]
         else
 
@@ -1362,11 +1362,13 @@ class KometDashboardController < ApplicationController
             session[:komet_module_options] = []
 
             # get the full list of modules
-            module_list = get_concept_children(concept_id: $isaac_metadata_auxiliary['MODULE']['uuids'].first[:uuid], return_json: false, remove_semantic_tag: true, view_params: session[:edit_view_params])
+            module_list = get_concept_children(concept_id: $isaac_metadata_auxiliary['MODULE']['uuids'].first[:uuid], return_json: false, remove_semantic_tag: true, include_nested: true, view_params: session[:edit_view_params])
 
             # loop thru the full module list to build an array of options in the session
             module_list.each do |komet_module|
-                session[:komet_module_options] << [komet_module[:text], komet_module[:concept_id]]
+
+                indent = ('-' * komet_module[:level]) + ' '
+                session[:komet_module_options] << [indent + komet_module[:text], komet_module[:concept_id], {'data-level': komet_module[:level]}]
             end
 
             session[:komet_path_options] = []
