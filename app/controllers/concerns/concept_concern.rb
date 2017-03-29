@@ -798,6 +798,7 @@ module ConceptConcern
     # @param [Boolean] remove_semantic_tag - Should semantic tags be removed (Just 'ISAAC' at the moment)
     # @param [Boolean] include_definition - should definition descriptions be looked up and included in the results
     # @param [Boolean] include_nested - should nested children be included in the results
+    # %param [Number] level - the level of nested concepts that is currently being processing
     # @return [object] an array of children
     def get_direct_children(concept_id, format_results = false, remove_semantic_tag = false, include_definition = false, include_nested = false, view_params = {}, level = 0)
 
@@ -835,6 +836,7 @@ module ConceptConcern
                 # if desired remove certain semantic tags from the concept description
                 if remove_semantic_tag
                     text.slice!(' (ISAAC)')
+                    text.slice!(' (core metadata concept)')
                 end
 
                 # if we are including the definition
@@ -865,7 +867,7 @@ module ConceptConcern
                 # if we are grabbing nested children and this concept has children recursively call this function passing in the ID of this concept
                 if include_nested && child.childCount > 0
 
-                    child_array.concat(get_direct_children(child.conChronology.identifiers.uuids.first, format_results, remove_semantic_tag, include_definition, include_nested, view_params, level += 1))
+                    child_array.concat(get_direct_children(child.conChronology.identifiers.uuids.first, format_results, remove_semantic_tag, include_definition, include_nested, view_params, level + 1))
                 end
             end
 

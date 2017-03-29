@@ -1342,7 +1342,7 @@ class KometDashboardController < ApplicationController
         end
 
         # if the view params are already in the session put them into a variable for the GUI, otherwise set the default values
-        if false #session[:default_view_params]
+        if session[:default_view_params]
             @view_params = session[:default_view_params]
         else
 
@@ -1364,11 +1364,11 @@ class KometDashboardController < ApplicationController
             # get the full list of modules
             module_list = get_concept_children(concept_id: $isaac_metadata_auxiliary['MODULE']['uuids'].first[:uuid], return_json: false, remove_semantic_tag: true, include_nested: true, view_params: session[:edit_view_params])
 
-            # loop thru the full module list to build an array of options in the session
+            # loop thru the full module list to build an array of options in the session, including the nested level of each module
             module_list.each do |komet_module|
 
                 indent = ('-' * komet_module[:level]) + ' '
-                session[:komet_module_options] << [indent + komet_module[:text], komet_module[:concept_id], {'data-level': komet_module[:level]}]
+                session[:komet_module_options] << [indent + komet_module[:text], komet_module[:concept_id], {title: komet_module[:text], 'data-level': komet_module[:level]}]
             end
 
             session[:komet_path_options] = []

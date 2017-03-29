@@ -469,7 +469,8 @@ div.komet-confirmation-dialog{
     width: 84px;
 }
 .komet-panel .komet-panel-tools-control .komet-preference-modules{
-    width: 170px;
+    min-width: 170px;
+    max-width: 300px;
     height: 45px;
 }
 .komet-panel .komet-panel-tools .komet-action-icon {
