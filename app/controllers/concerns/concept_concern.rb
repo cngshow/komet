@@ -609,15 +609,8 @@ module ConceptConcern
                     column_data = {}
                     taxonomy_ids = []
 
-                    ['LOINC_NUM', 'RXCUI', 'SCTID', 'VUID', 'CODE'].each{ |taxonomy|
-
-                        if $isaac_metadata_auxiliary[taxonomy]
-                            taxonomy_ids << $isaac_metadata_auxiliary[taxonomy]['uuids'].first[:uuid]
-                        end
-                    }
-
                     # if the column data is not empty process the data
-                    if data_column != nil && (!clone || (clone && !taxonomy_ids.include?(used_column_data[:sememe_definition_id])))
+                    if data_column != nil && (!clone || (clone && !session[:komet_taxonomy_ids].include?(used_column_data[:sememe_definition_id])))
 
                         # mark in our column lists that this column has data in at least one row
                         used_column_list[list_index][:column_used] = true

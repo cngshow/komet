@@ -5,10 +5,13 @@ where provided, and the git commit history.
 
 * 2017/?? - 3.1 - PENDING
     * Allowed nested modules to be shown in the view parameters so all concepts can be displayed when choosing specific views (Jazz: 486439)
+    * Updated to latest enunciate
+    * changes to support latest metadata updates (module constants removed)
+    * added support for new ID API method 'ids'
 
 * JRuby upgrade branch from 9.0.4 to 9.1.8 (March 28th 2017)
   * follow all instructions in prisme tied to the upgrade
-  
+
 * 2017/03/21 - 3.0.1
     * Rebuild of Release 3
 

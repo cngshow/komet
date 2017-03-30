@@ -21,6 +21,7 @@ require './lib/isaac_rest/common_rest'
 module IdAPIsRestActions
   ACTION_TYPES = :types
   ACTION_TRANSLATE = :translate
+  ACTION_IDS = :ids
 end
 
 module IdAPIsRest
@@ -32,17 +33,16 @@ module IdAPIsRest
   ROOT_PATH = ISAAC_ROOT + 'rest/1/id/'
   TYPES_PATH = ROOT_PATH + 'types'
   TYPES_TRANSLATE_PATH = ROOT_PATH + 'translate/{id}'
+  IDS_PATH = ROOT_PATH + 'ids'
 
   TEST_UUID = '0418a591-f75b-39ad-be2c-3ab849326da9'#'406e872b-2e19-5f5e-a71d-e4e4b2c68fe5'
 
-  TYPES_STARTING_PARAMS = {}
-  TYPES_TRANSLATE_STARTING_PARAMS = {}
+  TYPES_EMPTY_STARTING_PARAMS = {}
 
-  #NOTE!!  The use of JSON as a class is a marker only.  It means, just return the straight JSON.  The JSON will be parsed
-  # so expect an Array, a Hash, a String, or a FixNum!!!
   ACTION_CONSTANTS = {
-      ACTION_TYPES => {PATH_SYM => TYPES_PATH, STARTING_PARAMS_SYM => TYPES_STARTING_PARAMS, CLAZZ_SYM => Gov::Vha::Isaac::Rest::Api1::Data::Enumerations::RestSupportedIdType},
-      ACTION_TRANSLATE => {PATH_SYM => TYPES_TRANSLATE_PATH, STARTING_PARAMS_SYM => TYPES_TRANSLATE_STARTING_PARAMS, CLAZZ_SYM => Gov::Vha::Isaac::Rest::Api1::Data::RestId},
+      ACTION_TYPES => {PATH_SYM => TYPES_PATH, STARTING_PARAMS_SYM => TYPES_EMPTY_STARTING_PARAMS, CLAZZ_SYM => Gov::Vha::Isaac::Rest::Api1::Data::Enumerations::RestSupportedIdType},
+      ACTION_TRANSLATE => {PATH_SYM => TYPES_TRANSLATE_PATH, STARTING_PARAMS_SYM => TYPES_EMPTY_STARTING_PARAMS, CLAZZ_SYM => Gov::Vha::Isaac::Rest::Api1::Data::RestId},
+      ACTION_IDS => {PATH_SYM => IDS_PATH, STARTING_PARAMS_SYM => TYPES_EMPTY_STARTING_PARAMS, CLAZZ_SYM => Gov::Vha::Isaac::Rest::Api1::Data::Concept::RestConceptChronology}
  }
 
   class << self
@@ -57,7 +57,7 @@ module IdAPIsRest
 
     def initialize(uuid:, params:, action:, action_constants:)
       @uuid = uuid.to_s unless uuid.nil?
-      uuid_check uuid: uuid unless action.eql?(IdAPIsRestActions::ACTION_TYPES)
+      uuid_check uuid: uuid unless [IdAPIsRestActions::ACTION_TYPES, IdAPIsRestActions::ACTION_IDS].include?(action)
       super(params: params, action: action, action_constants: action_constants)
     end
 
@@ -86,5 +86,6 @@ b = IdAPIsRest::get_id(action: IdAPIsRestActions::ACTION_TRANSLATE,uuid_or_id: I
 c = IdAPIsRest::get_id(action: IdAPIsRestActions::ACTION_TRANSLATE,uuid_or_id: IdAPIsRest::TEST_UUID,additional_req_params: {"outputType" => "nid"})
 d = IdAPIsRest::get_id(action: IdAPIsRestActions::ACTION_TRANSLATE,uuid_or_id: "-2146638749",additional_req_params: {"outputType" => "uuid", "inputType" => "nid"})
 e = IdAPIsRest::get_id(action: IdAPIsRestActions::ACTION_TRANSLATE,uuid_or_id: "bad_uuid",additional_req_params: {"outputType" => "nid"})#test type
+f = IdAPIsRest::get_id(action: IdAPIsRestActions::ACTION_IDS)
 =end
 

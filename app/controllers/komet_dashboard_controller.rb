@@ -1341,8 +1341,8 @@ class KometDashboardController < ApplicationController
             session[:coordinates_token] = CoordinateRest.get_coordinate(action: CoordinateRestActions::ACTION_COORDINATES_TOKEN)
         end
 
-        # if the view params are already in the session put them into a variable for the GUI, otherwise set the default values
-        if session[:default_view_params]
+        # if the view params are already in the session put them into a variable for the GUI, otherwise set the default values for view params and other items
+        if false #session[:default_view_params]
             @view_params = session[:default_view_params]
         else
 
@@ -1380,6 +1380,28 @@ class KometDashboardController < ApplicationController
             path_list.each do |path|
                 session[:komet_path_options] << [path[:text], path[:concept_id]]
             end
+
+            # get the list of taxonomy IDs and store them in the session
+            session[:komet_taxonomy_ids] = []
+            session[:komet_taxonomy_options] = []
+            taxonomies = IdAPIsRest.get_id(action: IdAPIsRestActions::ACTION_IDS)
+
+            # if the taxonomy results are not empty process them, otherwise build a short list from what is in the metadata
+            if !taxonomies.is_a? CommonRest::UnexpectedResponse
+
+                # loop thru the taxonmy results to build an array in the session TODO - remove the slice once the API no longer includes the semantic tag
+                taxonomies.each do |taxonomy|
+
+                    taxonomy.description.slice!(' (ISAAC)')
+                    session[:komet_taxonomy_ids] << taxonomy.identifiers.uuids.first
+                    session[:komet_taxonomy_options] << [taxonomy.description, taxonomy.identifiers.uuids.first]
+                end
+            else
+
+                session[:komet_taxonomy_ids] = [$isaac_metadata_auxiliary['SCTID']['uuids'].first[:uuid], $isaac_metadata_auxiliary['SCTID']['uuids'].first[:uuid]]
+                session[:komet_taxonomy_options] = [['SCTID', $isaac_metadata_auxiliary['SCTID']['uuids'].first[:uuid]], ['VUID', $isaac_metadata_auxiliary['SCTID']['uuids'].first[:uuid]]]
+            end
+
         end
 
         get_user_preference_info
