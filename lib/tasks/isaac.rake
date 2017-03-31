@@ -9,7 +9,7 @@ namespace :isaac do
 
   # set ISAAC_PATH=<path to isaac workspace>
   local_isaac = ENV['ISAAC_PATH']
-  local_isaac_rest = ENV['ISAAC_PATH'] + '/ISAAC-rest'
+  local_isaac_rest = ENV['ISAAC_PATH'].to_s + '/ISAAC-rest'
 
   desc 'Build local isaac rest project'
   task :build_isaac_rest do |task|
