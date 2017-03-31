@@ -9,8 +9,9 @@ where provided, and the git commit history.
     * changes to support latest metadata updates (module constants removed)
     * added support for new ID API method 'ids'
 
-* JRuby upgrade branch from 9.0.4 to 9.1.8 (March 28th 2017)
-  * follow all instructions in prisme tied to the upgrade
+    * JRuby upgrade branch from 9.0.4 to 9.1.8 (March 28th 2017)
+      follow all instructions in prisme tied to the upgrade - especially related to installing a tool like http://www.issihosts.com/haveged/ to
+      ensure that any linux boxes have proper entropy available.
 
 * 2017/03/21 - 3.0.1
     * Rebuild of Release 3
