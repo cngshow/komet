@@ -110,11 +110,12 @@ var ConceptsModule = (function () {
                 Common.cursor_auto();
             }
             catch (err) {
+
                 console.log("*******  ERROR **********");
                 console.log(err.message);
+                Common.cursor_auto();
                 throw err;
             }
-
         });
     }
 

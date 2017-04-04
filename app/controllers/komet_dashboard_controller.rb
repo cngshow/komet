@@ -732,6 +732,9 @@ class KometDashboardController < ApplicationController
 
             $log.debug("get_user_preference_info @refset_flags #{@refset_flags}")
         end
+
+        # render the partial that was passing in to this function
+        render partial: params[:partial]
     end
 
     def get_shape_name(classname)
@@ -1404,7 +1407,6 @@ class KometDashboardController < ApplicationController
 
         end
 
-        get_user_preference_info
         $log.debug("token initial #{session[:coordinates_token].token}" )
 
         # do any view_param processing needed for the GUI - always call this last before rendering
