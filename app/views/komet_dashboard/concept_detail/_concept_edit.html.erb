@@ -23,16 +23,6 @@
 
             <div class="komet-panel-tools">
 
-                <div class="komet-panel-tools-control hide">
-                    <div id='komet_concept_stamp_date_<%= @viewer_id %>'>
-                        <input type='hidden' value="<%= @view_params[:time] %>">
-                    </div>
-                    <input id='komet_concept_stated_<%= @viewer_id %>' type='hidden' value="<%= @view_params[:stated] %>">
-                    <input id='komet_concept_allowed_states_<%= @viewer_id %>' type='hidden' value="<%= @view_params[:allowedStates] %>">
-                    <input id='komet_concept_modules_<%= @viewer_id %>' type='hidden' value="<%= @view_params[:modules] %>">
-                    <input id='komet_concept_path_<%= @viewer_id %>' type='hidden' value="<%= @view_params[:path] %>">
-                </div>
-
                 <div class="komet-panel-tools-control">
                     <label for="komet_concept_editor_show_changes_<%= @viewer_id %>">Show Changes</label>
                     <input type="checkbox" id="komet_concept_editor_show_changes_<%= @viewer_id %>" onclick="WindowManager.viewers[<%= @viewer_id %>].toggleEditorChangeHighlights(this)">
@@ -46,6 +36,41 @@
                 <button type="button" class="komet-link-button" onclick="WindowManager.closeViewer('<%= @viewer_id %>')" aria-label="Close Viewer" title="Close Viewer">
                     <div class="komet-action-icon glyphicon glyphicon-remove"></div>
                 </button>
+            </div>
+
+            <div class="komet-panel-header-row">
+
+                <div class="komet-panel-tools komet-left">
+
+                    <div class="komet-panel-tools-control">
+                        <div class='input-group date' id='komet_concept_stamp_date_<%= @viewer_id %>'>
+                            <input type='text' name="view_params[time]" class="form-control" aria-label="STAMP Date Preference" title="STAMP Date Preference">
+                        <span class="input-group-addon">
+                            <span class="fa fa-calendar"></span>
+                        </span>
+                        </div>
+                    </div>
+
+                    <div class="komet-panel-tools-control">
+                        <%= select_tag('view_params[allowedStates]', options_for_select(session[:komet_allowed_states_options], @view_params[:allowedStates]), id: 'komet_concept_allowed_states_' + @viewer_id, class: 'form-control komet-preference-allowed-states', 'aria-label' => 'Choose an active status to view', title: 'Choose an active status to view') %>
+                    </div>
+
+                    <div class="komet-panel-tools-control">
+                        <%= select_tag('view_params[stated]', options_for_select(session[:komet_stated_options], @view_params[:stated]), id: 'komet_concept_stated_' + @viewer_id, class: 'form-control komet-preference-stated', 'aria-label' => 'Choose Stated or Inferred view', title: 'Choose Stated or Inferred view') %>
+                    </div>
+
+                    <div class="komet-panel-tools-control">
+                        <%= select_tag('view_params[modules]', options_for_select(session[:komet_module_options], @view_params[:modules]), id: 'komet_concept_stamp_modules_' + @viewer_id, include_blank: true, multiple: true, class: 'form-control komet-preference-modules', 'aria-label' => 'Choose module to view', title: 'Choose module to view') %>
+                    </div>
+
+                    <div class="komet-panel-tools-control hide">
+                        <%= select_tag('view_params[path]', options_for_select(session[:komet_path_options], @view_params[:path]), id: 'komet_concept_stamp_path_' + @viewer_id, include_blank: true, class: 'form-control komet-preference-path', 'aria-label' => 'Choose path to view', title: 'Choose path to view') %>
+                    </div>
+
+                    <button type="button" class="komet-link-button" onclick="WindowManager.viewers[<%= @viewer_id %>].reloadViewer();" title="Refresh Viewer with Selected Parameters" aria-label="Refresh Viewer with Selected Parameters">
+                        <div class="komet-action-icon glyphicon glyphicon-refresh"></div>
+                    </button>
+                </div>
             </div>
         </div>
 

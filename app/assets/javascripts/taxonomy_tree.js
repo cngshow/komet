@@ -17,12 +17,13 @@
  limitations under the License.
  */
 
-var KometTaxonomyTree = function(treeID, viewParams, parentSearch, startingConceptID, selectItem, windowType, multiPath){
+var KometTaxonomyTree = function(treeID, viewerID, viewParams, parentSearch, startingConceptID, selectItem, windowType, multiPath){
 
-    KometTaxonomyTree.prototype.init = function(treeID, viewParams, parentSearch, startingConceptID, selectItem, windowType, multiPath){
+    KometTaxonomyTree.prototype.init = function(treeID, viewerID, viewParams, parentSearch, startingConceptID, selectItem, windowType, multiPath){
 
         this.treeID = treeID;
         this.windowType = windowType;
+        this.viewerID = viewerID;
 
         this.buildTaxonomyTree(viewParams, parentSearch, startingConceptID, selectItem, multiPath);
     };
@@ -92,6 +93,8 @@ var KometTaxonomyTree = function(treeID, viewParams, parentSearch, startingConce
                     'multi_path' : multiPath
                 };
             }
+
+            params.viewer_id = this.viewerID;
 
             startingConceptID = null;
 
@@ -169,9 +172,11 @@ var KometTaxonomyTree = function(treeID, viewParams, parentSearch, startingConce
 
             var conceptID = selectedObject.node.original.concept_id;
             var viewerID = WindowManager.getLinkedViewerID();
+
+            // figure out if this is viewer and which one it is because it could be an unlinked viewer (even if there is only one viewer).
             var viewer = this.tree.parents("div[id^=komet_viewer_]");
 
-            if (viewer.length > 0){
+            if (viewer.length > 0) {
                 viewerID = viewer.first().attr("data-komet-viewer-id");
             }
 
@@ -371,5 +376,5 @@ var KometTaxonomyTree = function(treeID, viewParams, parentSearch, startingConce
     };
 
     // call our constructor function
-    this.init(treeID, viewParams, parentSearch, startingConceptID, selectItem, windowType, multiPath);
+    this.init(treeID, viewerID, viewParams, parentSearch, startingConceptID, selectItem, windowType, multiPath);
 };

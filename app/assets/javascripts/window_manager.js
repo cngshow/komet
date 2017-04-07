@@ -120,9 +120,9 @@ var WindowManager = (function () {
 
             } else if (WindowManager.viewers[viewerID].viewer_previous_content_type == "MappingViewer"){
                 console.log("*** cancelEditMode MappingViewer");
-                console.log("*** cancelEditMode MappingViewer View Params: " + MappingModule.getTreeViewParams());
+                console.log("*** cancelEditMode MappingViewer View Params: " + MappingModule.getViewParams());
 
-                $.publish(KometChannels.Mapping.mappingTreeNodeSelectedChannel, ["", WindowManager.viewers[viewerID].viewer_previous_content_id, MappingModule.getTreeViewParams(), viewerID, WindowManager.INLINE]);
+                $.publish(KometChannels.Mapping.mappingTreeNodeSelectedChannel, ["", WindowManager.viewers[viewerID].viewer_previous_content_id, MappingModule.getViewParams(), viewerID, WindowManager.INLINE]);
                 return false;
             }
         }

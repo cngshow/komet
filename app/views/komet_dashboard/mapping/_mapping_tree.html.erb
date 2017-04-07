@@ -18,14 +18,14 @@
             </div>
 
             <div class="komet-panel-tools-control">
-                <%= select_tag('komet_mapping_tree_stamp_module', options_for_select(session[:komet_module_options], @view_params[:modules]), include_blank: true, multiple: true, class: 'form-control komet-preference-modules', 'aria-label' => 'Choose modules to view', title: 'Choose modules to view') %>
+                <%= select_tag('komet_mapping_tree_stamp_modules', options_for_select(session[:komet_module_options], @view_params[:modules]), include_blank: true, multiple: true, class: 'form-control komet-preference-modules', 'aria-label' => 'Choose modules to view', title: 'Choose modules to view') %>
             </div>
 
             <div class="komet-panel-tools-control hide">
                 <%= select_tag('komet_mapping_tree_stamp_path', options_for_select(session[:komet_path_options], @view_params[:path]), include_blank: true, class: 'form-control komet-preference-path', 'aria-label' => 'Choose path to view', title: 'Choose path to view') %>
             </div>
 
-            <button type="button" class="komet-link-button" onclick="MappingModule.tree.reloadTree(MappingModule.getTreeViewParams());" title="Reload Mapping Tree with Selected Parameters" aria-label="Reload Mapping Tree with Selected Parameters">
+            <button type="button" class="komet-link-button" onclick="MappingModule.tree.reloadTree(MappingModule.getViewParams());" title="Reload Mapping Tree with Selected Parameters" aria-label="Reload Mapping Tree with Selected Parameters">
                 <div id="komet_mapping_tree_reload" alt="Reload Mapping Tree with Selected Parameters" class="komet-action-icon fa fa-refresh" ></div>
             </button>
 
@@ -45,7 +45,7 @@
 
     $(document).ready(function () {
 
-        MappingModule.initTreeViewParams(<%= raw @view_params.to_json %>);
+        MappingModule.initViewParams(<%= raw @view_params.to_json %>);
         MappingModule.initialize();
     });
 

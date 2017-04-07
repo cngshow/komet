@@ -21,6 +21,7 @@
                      data-menu-concept-text="<%= description[:text] %>"
                      data-menu-concept-terminology-type="<%= description[:terminology_type] %>"
                      data-menu-state="<%= description[:state] %>"
+                     data-menu-js-object="<%= @viewer_id %>"
                 >
                     <b><%= description[:text] %></b>
                 </div>
@@ -69,7 +70,7 @@
 
                     <%
                        if attribute[:label] == 'UUID'
-                           tag_details = 'class="komet-concept-description-details-name komet-context-menu" data-menu-type="concept" data-menu-uuid="' + description[:description_id] + '"'
+                           tag_details = 'class="komet-concept-description-details-name komet-context-menu" data-menu-type="concept" data-menu-uuid="' + description[:description_id] + '" data-menu-js-object="' + @viewer_id + '"'
                        else
                            tag_details = 'class="komet-concept-description-details-name"'
                        end

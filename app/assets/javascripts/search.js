@@ -66,7 +66,7 @@ var TaxonomySearchModule = (function () {
                 {field: "id", headerName: 'ID', hide: 'true'},
                 {field: "matching_concept", headerName: "Matching Concept", cellRenderer: function(params) {
                     return '<span class="komet-context-menu" data-menu-type="concept" data-menu-uuid="' + params.data.id + '" '
-                        + 'data-menu-state="' + params.data.concept_status + '" data-menu-concept-text="' + params.data.matching_concept + '">' + params.value + '</span>';
+                        + 'data-menu-state="' + params.data.concept_status + '" data-menu-concept-text="' + params.data.matching_concept + '" data-menu-js-object="search">' + params.value + '</span>';
                 }},
                 {field: "matching_terms", headerName: "Matching Terms"},
                 {field: "concept_status", headerName: "Status"},

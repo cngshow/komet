@@ -54,7 +54,7 @@ var ConceptViewer = function(viewerID, currentConceptID, viewerAction) {
     };
 
     ConceptViewer.prototype.getStampModules = function(){
-        return $('#komet_concept_stamp_module_' + this.viewerID).val();
+        return $('#komet_concept_stamp_modules_' + this.viewerID).val();
     };
 
     ConceptViewer.prototype.getStampPath = function(){
@@ -67,7 +67,7 @@ var ConceptViewer = function(viewerID, currentConceptID, viewerAction) {
         // initialize the STAMP date field
         UIHelper.initDatePicker("#komet_concept_stamp_date_" + this.viewerID, view_params.time);
 
-        //var moduleField = $('#komet_concept_stamp_module_' + this.viewerID);
+        //var moduleField = $('#komet_concept_stamp_modules_' + this.viewerID);
         // add an on change handler for the module preference field to select all children if a parent node is selected
         //moduleField.on("change", function(event){
         //
@@ -89,7 +89,7 @@ var ConceptViewer = function(viewerID, currentConceptID, viewerAction) {
     };
 
     ConceptViewer.prototype.reloadViewer = function() {
-        ConceptsModule.callLoadViewerData(this.currentConceptID, this.getViewParams(), ConceptsModule.VIEW, this.viewerID);
+        ConceptsModule.callLoadViewerData(this.currentConceptID, this.getViewParams(), this.viewerAction, this.viewerID);
     };
 
     ConceptViewer.prototype.getViewParams = function(){
@@ -233,8 +233,8 @@ var ConceptViewer = function(viewerID, currentConceptID, viewerAction) {
             this.trees[this.CHILDREN_TREE].tree.jstree(true).destroy();
         }
 
-        this.trees[this.PARENTS_TREE] = new KometTaxonomyTree(this.PARENTS_TREE, viewParams, true, this.currentConceptID, false, this.viewerID);
-        this.trees[this.CHILDREN_TREE] = new KometTaxonomyTree(this.CHILDREN_TREE, viewParams, false, this.currentConceptID, false, this.viewerID, false);
+        this.trees[this.PARENTS_TREE] = new KometTaxonomyTree(this.PARENTS_TREE, this.viewerID, viewParams, true, this.currentConceptID, false, WindowManager.INLINE);
+        this.trees[this.CHILDREN_TREE] = new KometTaxonomyTree(this.CHILDREN_TREE, this.viewerID, viewParams, false, this.currentConceptID, false, WindowManager.INLINE, false);
 
         this.trees[this.PARENTS_TREE].tree.bind('ready.jstree', function (event, data) {
 
@@ -357,7 +357,7 @@ var ConceptViewer = function(viewerID, currentConceptID, viewerAction) {
                     menu_attributes = "data-menu-type='value' data-menu-copy-value='" + cell_display + "'"
                 }
 
-                return '<div class="komet-concept-table-cell-content komet-context-menu" ' + menu_attributes + tooltip + ' >' + cell_display + ' </div>'
+                return '<div class="komet-concept-table-cell-content komet-context-menu" data-menu-js-object="' + this.viewerID + '" ' + menu_attributes + tooltip + ' >' + cell_display + ' </div>'
             }
         }
 

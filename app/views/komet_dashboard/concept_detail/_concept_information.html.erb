@@ -10,6 +10,7 @@
                   data-menu-concept-text="<%= @concept_text %>"
                   data-menu-concept-terminology-type="<%= @concept_terminology_type %>"
                   data-menu-state="<%= @concept_state %>"
+                  data-menu-js-object="<%= @viewer_id %>"
             >
                 <button type="button" aria-controls="button" class="komet-link-button" onclick="WindowManager.toggleViewerLinkage('<%= @viewer_id %>', WindowManager.getLinkedViewerID() != '<%= @viewer_id %>');" aria-label="Viewer linked to Taxonomy Tree. Click to unlink."  title="Viewer linked to Taxonomy Tree. Click to unlink.">
                     <span id="komet_concept_panel_tree_link_<%= @viewer_id %>" class="fa fa-chain-broken"></span>
@@ -28,7 +29,7 @@
                 </button>
 
                 <% if controller.can_edit_concept? %>
-                    <button type="button" class="komet-link-button komet-panel-tools-control" onclick="$.publish(KometChannels.Taxonomy.taxonomyConceptEditorChannel, [ConceptsModule.EDIT, '<%= @concept_id %>', '<%= @viewer_id %>', WindowManager.INLINE]);" title="Edit Concept" aria-label="Edit Concept">
+                    <button type="button" class="komet-link-button komet-panel-tools-control" onclick="$.publish(KometChannels.Taxonomy.taxonomyConceptEditorChannel, [ConceptsModule.EDIT, '<%= @concept_id %>', WindowManager.viewers[<%= @viewer_id %>].getViewParams(), '<%= @viewer_id %>', WindowManager.INLINE]);" title="Edit Concept" aria-label="Edit Concept">
                         <div class="komet-action-icon fa fa-pencil-square"></div>
                         <span>Edit</span>
                     </button>
@@ -62,7 +63,7 @@
                 </div>
 
                 <div class="komet-panel-tools-control">
-                    <%= select_tag('komet_concept_stamp_module_' + @viewer_id, options_for_select(session[:komet_module_options], @view_params[:modules]), include_blank: true, multiple: true, class: 'form-control komet-preference-modules', 'aria-label' => 'Choose module to view', title: 'Choose module to view') %>
+                    <%= select_tag('komet_concept_stamp_modules_' + @viewer_id, options_for_select(session[:komet_module_options], @view_params[:modules]), include_blank: true, multiple: true, class: 'form-control komet-preference-modules', 'aria-label' => 'Choose module to view', title: 'Choose module to view') %>
                 </div>
 
                 <div class="komet-panel-tools-control hide">

@@ -11,6 +11,8 @@ where provided, and the git commit history.
     * Changed preference window so preference queries are not run until the window is opened, instead of when the dashboard is loaded. (Jazz: 452386)
     * Updated to latest Enuniciate
     * Changes for edit tokens
+    * Added view params to edit forms, passing view params to all API update calls. Changes to support this include modifying the trees to pass viewer information, pub/sub calls to support viewer info and
+      view params, fixes for various places that were not correctly passing view params around.
     * JRuby upgrade branch from 9.0.4 to 9.1.8 (March 28th 2017)
       follow all instructions in prisme tied to the upgrade - especially related to installing a tool like http://www.issihosts.com/haveged/ to
       ensure that any linux boxes have proper entropy available.

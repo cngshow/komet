@@ -60,6 +60,7 @@ class KometDashboardController < ApplicationController
         #
         # resp.flash_error if resp.respond_to? :flash_error
 
+        # TODO - see if some of these can just be referenced everywhere as params[*] instead of passing variables to all sub functions
         selected_concept_id = params[:concept_id]
         parent_search = params[:parent_search]
         parent_reversed = params[:parent_reversed]
@@ -122,7 +123,7 @@ class KometDashboardController < ApplicationController
             # TODO - remove the hard-coding of type to 'vhat' when the type flags are implemented in the REST APIs
             root_anchor_attributes = { class: 'komet-context-menu' + inactive_class, 'data-menu-type' => 'concept', 'data-menu-uuid' => isaac_concept.conChronology.identifiers.uuids.first,
                                        'data-menu-state' => isaac_concept.conVersion.state.enumName, 'data-menu-concept-text' => isaac_concept.conChronology.description,
-                                       'data-menu-concept-terminology-type' => 'vhat'}
+                                       'data-menu-concept-terminology-type' => 'vhat', 'data-menu-js-object' => params[:viewer_id]}
             root_node = {id: 0, concept_id: isaac_concept.conChronology.identifiers.uuids.first, text: isaac_concept.conChronology.description, parent_reversed: false, parent_search: parent_search, icon: 'komet-tree-node-icon komet-tree-node-primitive', a_attr: root_anchor_attributes, state: {opened: 'true'}}
         else
             isaac_concept = TaxonomyRest.get_isaac_concept(uuid: selected_concept_id, additional_req_params: additional_req_params)
@@ -292,6 +293,7 @@ class KometDashboardController < ApplicationController
                                   'data-menu-state' => raw_node[:state],
                                   'data-menu-concept-text' => raw_node[:text],
                                   'data-menu-concept-terminology-type' => raw_node[:terminology_type],
+                                  'data-menu-js-object' => params[:viewer_id],
                                   'aria-label' => raw_node[:text]
             }
             parent_search = parent_search_param
@@ -803,7 +805,7 @@ class KometDashboardController < ApplicationController
         @parent_id = params[:parent_id]
         @parent_text = params[:parent_text]
         @parent_type = params[:parent_type]
-        @view_params = session[:edit_view_params]
+        @view_params = session[:edit_view_params].clone
         @description_types = get_concept_description_types
         @viewer_action = params[:viewer_action]
         @viewer_previous_content_id = params[:viewer_previous_content_id]
@@ -873,7 +875,7 @@ class KometDashboardController < ApplicationController
         @viewer_action = params[:viewer_action]
         @viewer_previous_content_id = params[:viewer_previous_content_id]
         @viewer_previous_content_type = params[:viewer_previous_content_type]
-        @view_params = session[:edit_view_params]
+        @view_params = check_view_params(params[:view_params])
         clone = false
 
         if @viewer_id == nil || @viewer_id == '' || @viewer_id == 'new'
@@ -890,7 +892,6 @@ class KometDashboardController < ApplicationController
         get_concept_associations(@concept_id, @view_params, clone)
 
         @language_options = get_concept_children(concept_id: $isaac_metadata_auxiliary['LANGUAGE']['uuids'].first[:uuid], return_json: false, remove_semantic_tag: true, view_params: @view_params)
-        # TODO - Change get_concept_children function to pull all leaf nodes so we can stop hardcoding this uuid
         @dialect_options = get_concept_children(concept_id: $isaac_metadata_auxiliary['DIALECT_ASSEMBLAGE']['uuids'].first[:uuid], return_json: false, remove_semantic_tag: true, view_params: @view_params)
         @case_options = get_concept_children(concept_id: $isaac_metadata_auxiliary['DESCRIPTION_CASE_SIGNIFICANCE']['uuids'].first[:uuid], return_json: false, remove_semantic_tag: true, view_params: @view_params)
         @acceptability_options = get_concept_children(concept_id: $isaac_metadata_auxiliary['DESCRIPTION_ACCEPTABILITY']['uuids'].first[:uuid], return_json: false, remove_semantic_tag: true, view_params: @view_params)
@@ -931,6 +932,11 @@ class KometDashboardController < ApplicationController
 
         concept_id =  params[:concept_id]
         failed_writes = []
+        coordinates_token = session[:coordinates_token].token
+        view_params = check_view_params(params[:view_params])
+        view_params.delete('time')
+        view_params.delete('allowedStates')
+        additional_req_params = {}
 
         # this is a lambda to be used to process sememes nested under the concept and descriptions
         process_sememes = ->(referenced_id, sememes, type, error_text_prefix = '') {
@@ -961,7 +967,7 @@ class KometDashboardController < ApplicationController
                     sememe.delete('state')
 
                     body_params = {active: active, columnData: []}
-                    additional_req_params = {editToken: get_edit_token}
+                    additional_req_params[:editToken] = get_edit_token
 
                     sememe.each do |field_id, field|
                         body_params[:columnData] << {columnNumber: field['column_number'], data: field['value'], '@class' => field['data_type_class']}
@@ -1038,8 +1044,9 @@ class KometDashboardController < ApplicationController
 
                             # add the preferred dialects from the FSN
                             body_params[:descriptionPreferredInDialectAssemblagesConceptIds] = dialects
+                            additional_req_params[:editToken] = get_edit_token
 
-                            new_concept_id = ConceptRest::get_concept(action: ConceptRestActions::ACTION_CREATE, additional_req_params: {editToken: get_edit_token}, body_params: body_params )
+                            new_concept_id = ConceptRest::get_concept(action: ConceptRestActions::ACTION_CREATE, additional_req_params: additional_req_params, body_params: body_params )
 
                             # if the concept create failed, break out of the loop
                             if new_concept_id.is_a? CommonRest::UnexpectedResponse
@@ -1070,14 +1077,17 @@ class KometDashboardController < ApplicationController
                     fsn[:dialects].delete(dialect['dialect_id'])
                 end
 
-                # Copy the FSN into a new additional_req_params entry using the returned ID from the newly created FSN, then delete the old key
+                # Copy the FSN into a new description entry using the returned ID from the newly created FSN, then delete the old key
                 params[:descriptions][new_concept_id.fsnDescriptionSememe.uuids.first] = fsn
                 params[:descriptions].delete(fsn_id)
 
             else
-                render json: {concept_id: concept_id, failed: {id: concept_id, text: 'Clone Concept: The new concept was unable to be created.' , type: 'clone'}} and return
+                render json: {concept_id: concept_id, failed: [{id: concept_id, text: 'Clone Concept: The new concept was unable to be created.' , type: 'clone'}]} and return
             end
         end
+
+        additional_req_params = {coordToken: coordinates_token}
+        additional_req_params.merge!(view_params)
 
         if params[:concept_state]
 
@@ -1087,7 +1097,9 @@ class KometDashboardController < ApplicationController
                 active = false
             end
 
-            return_value = ComponentRest::get_component(action: ComponentRestActions::ACTION_UPDATE_STATE, uuid_or_id: concept_id, additional_req_params: {editToken: get_edit_token, active: active})
+            additional_req_params[:editToken] = get_edit_token
+
+            return_value = ComponentRest::get_component(action: ComponentRestActions::ACTION_UPDATE_STATE, uuid_or_id: concept_id, additional_req_params: {active: active}.merge(additional_req_params))
 
             # if the concept state change failed, mark it
             if return_value.is_a? CommonRest::UnexpectedResponse
@@ -1102,8 +1114,6 @@ class KometDashboardController < ApplicationController
         if params[:descriptions]
 
             params[:descriptions].each do |description_id, description|
-
-                additional_req_params = {editToken: get_edit_token}
 
                 if description['description_state'].downcase == 'active'
                     active = true
@@ -1122,6 +1132,8 @@ class KometDashboardController < ApplicationController
                 # if the description ID is a UUID, then it is an existing description to be updated, otherwise it is a new description to be created
                 if is_id?(description_id)
 
+                    additional_req_params[:editToken] = get_edit_token
+
                     return_value = SememeRest::get_sememe(action: SememeRestActions::ACTION_DESCRIPTION_UPDATE, uuid_or_id: description_id, additional_req_params: additional_req_params, body_params: body_params)
 
                     # if the description create or update failed, mark it and skip to the next description. Do not process its dialects or properties.
@@ -1136,6 +1148,8 @@ class KometDashboardController < ApplicationController
 
                         description[:dialects].each do |dialect_id, dialect|
 
+                            additional_req_params[:editToken] = get_edit_token
+
                             if is_id?(dialect_id)
 
                                 if dialect['state'].downcase == 'active'
@@ -1144,7 +1158,7 @@ class KometDashboardController < ApplicationController
                                     active = false
                                 end
 
-                                return_value = ComponentRest::get_component(action: ComponentRestActions::ACTION_UPDATE_STATE, uuid_or_id: dialect_id, additional_req_params: {editToken: get_edit_token, active: active})
+                                return_value = ComponentRest::get_component(action: ComponentRestActions::ACTION_UPDATE_STATE, uuid_or_id: dialect_id, additional_req_params: {active: active}.merge(additional_req_params))
                             else
 
                                 body_params = {
@@ -1153,7 +1167,7 @@ class KometDashboardController < ApplicationController
                                     columnData: [{columnNumber: 0, data: dialect['acceptability'], '@class' => 'gov.vha.isaac.rest.api1.data.sememe.dataTypes.RestDynamicSememeUUID'}]
                                 }
 
-                                return_value = SememeRest::get_sememe(action: SememeRestActions::ACTION_SEMEME_CREATE, additional_req_params: {editToken: get_edit_token}, body_params: body_params)
+                                return_value = SememeRest::get_sememe(action: SememeRestActions::ACTION_SEMEME_CREATE, additional_req_params: additional_req_params, body_params: body_params)
                             end
 
                             # if the dialect create or update failed, mark it.
@@ -1192,6 +1206,7 @@ class KometDashboardController < ApplicationController
                     end
 
                     body_params[:referencedComponentId] = concept_id
+                    additional_req_params[:editToken] = get_edit_token
 
                     return_value = SememeRest::get_sememe(action: SememeRestActions::ACTION_DESCRIPTION_CREATE, additional_req_params: additional_req_params, body_params: body_params)
 
@@ -1217,6 +1232,7 @@ class KometDashboardController < ApplicationController
             params[:associations].each do |association_id, association|
 
                 body_params = {targetId: association['target']}
+                additional_req_params[:editToken] = get_edit_token
 
                 if association['association_state'].downcase == 'active'
                     body_params[:active] = true
@@ -1227,7 +1243,7 @@ class KometDashboardController < ApplicationController
                 # if the association ID is a UUID, then it is an existing association to be updated, otherwise it is a new association to be created
                 if is_id?(association_id)
 
-                    return_value = AssociationRest::get_association(action: AssociationRestActions::ACTION_ITEM_UPDATE, uuid_or_id: association_id, additional_req_params: {editToken: get_edit_token}, body_params: body_params)
+                    return_value = AssociationRest::get_association(action: AssociationRestActions::ACTION_ITEM_UPDATE, uuid_or_id: association_id, additional_req_params: additional_req_params, body_params: body_params)
 
                     if return_value.is_a? CommonRest::UnexpectedResponse
                         failed_writes << {id: association_id, text: association['target_display'], type: 'association'}
@@ -1239,7 +1255,7 @@ class KometDashboardController < ApplicationController
                     body_params[:associationType] = association['association_type']
                     body_params[:sourceId] = concept_id
 
-                    return_value = AssociationRest::get_association(action: AssociationRestActions::ACTION_ITEM_CREATE, additional_req_params: {editToken: get_edit_token}, body_params: body_params)
+                    return_value = AssociationRest::get_association(action: AssociationRestActions::ACTION_ITEM_CREATE, additional_req_params: additional_req_params, body_params: body_params)
 
                     if return_value.is_a? CommonRest::UnexpectedResponse
                         failed_writes << {id: association_id, text: association['target_display'], type: 'association'}
@@ -1255,7 +1271,10 @@ class KometDashboardController < ApplicationController
         if params[:remove]
 
             params[:remove].each do |remove_concept_id, value|
-                ComponentRest::get_component(action: ComponentRestActions::ACTION_UPDATE_STATE, uuid_or_id: remove_concept_id, additional_req_params: {editToken: get_edit_token, active: false})
+
+                additional_req_params[:editToken] = get_edit_token
+
+                ComponentRest::get_component(action: ComponentRestActions::ACTION_UPDATE_STATE, uuid_or_id: remove_concept_id, additional_req_params: {active: false}.merge(additional_req_params))
 
                 # if the concept state change failed, mark it
                 if return_value.is_a? CommonRest::UnexpectedResponse
@@ -1346,7 +1365,7 @@ class KometDashboardController < ApplicationController
 
         # if the view params are already in the session put them into a variable for the GUI, otherwise set the default values for view params and other items
         if false #session[:default_view_params]
-            @view_params = session[:default_view_params]
+            @view_params = session[:default_view_params].clone
         else
 
             @view_params = {stated: true, allowedStates: 'active,inactive', time: 'latest', modules: '', path: $isaac_metadata_auxiliary['DEVELOPMENT_PATH']['uuids'].first[:uuid]}

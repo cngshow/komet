@@ -23,7 +23,7 @@ var MappingModule = (function () {
             callLoadViewerData(setID, viewParams, action, viewerID, windowType);
         });
 
-        this.tree = new KometMappingTree("komet_mapping_tree", getTreeViewParams(), null);
+        this.tree = new KometMappingTree("komet_mapping_tree", getViewParams(), null);
     }
 
     function callLoadViewerData(setID, viewParams, viewerAction, viewerID, windowType) {
@@ -108,7 +108,7 @@ var MappingModule = (function () {
             $("#komet_dashboard_tabs").tabs({active:1});
         }
 
-        $.publish(KometChannels.Mapping.mappingTreeNodeSelectedChannel, ["", null, MappingModule.getTreeViewParams(), WindowManager.getLinkedViewerID(), WindowManager.INLINE, MappingModule.CREATE_SET]);
+        $.publish(KometChannels.Mapping.mappingTreeNodeSelectedChannel, ["", null, MappingModule.getViewParams(), WindowManager.getLinkedViewerID(), WindowManager.INLINE, MappingModule.CREATE_SET]);
     }
 
     //function setViewerStatesToView(viewerID) {
@@ -117,7 +117,7 @@ var MappingModule = (function () {
     //    $.publish(KometChannels.Mapping.mappingTreeNodeSelectedChannel, ["", WindowManager.viewers[viewerID].currentSetID, viewParams, viewerID, WindowManager.INLINE, WindowManager.viewers[viewerID].mapping_action]);
     //}
 
-    function getTreeStampDate() {
+    function getStampDate() {
 
         var stamp_date = $("#komet_mapping_tree_stamp_date").find("input").val();
 
@@ -128,31 +128,31 @@ var MappingModule = (function () {
         }
     }
 
-    function getTreeAllowedStates (){
+    function getAllowedStates(){
         return $("#komet_mapping_tree_allowed_states").val();
     }
 
-    function getTreeStampModules (){
-        return $("#komet_mapping_tree_stamp_module").val();
+    function getStampModules (){
+        return $("#komet_mapping_tree_stamp_modules").val();
     }
 
-    function getTreeStampPath (){
+    function getStampPath (){
         return $("#komet_mapping_tree_stamp_path").val();
     }
 
     // function to set the initial state of the view param fields when the viewer content changes
-    function initTreeViewParams(view_params) {
+    function initViewParams(view_params) {
 
         // initialize the STAMP date field
         UIHelper.initDatePicker("#komet_mapping_tree_stamp_date", view_params.time);
     }
 
-    function getTreeViewParams (){
-        return {time: getTreeStampDate(), allowedStates: getTreeAllowedStates(), modules: getTreeStampModules(), path: getTreeStampPath()};
+    function getViewParams (){
+        return {time: getStampDate(), allowedStates: getAllowedStates(), modules: getStampModules(), path: getStampPath()};
     }
 
     // function to change the view param values and then reload the tree
-    function setTreeViewParams(view_params) {
+    function setViewParams(view_params) {
 
         // set the STAMP date field
         UIHelper.setStampDate($("#komet_mapping_tree_stamp_date"), view_params.time);
@@ -161,7 +161,7 @@ var MappingModule = (function () {
         $("#komet_mapping_tree_allowed_states").val(view_params.allowedStates);
 
         // set the modules field
-        $("#komet_mapping_tree_stamp_module").val(view_params.modules);
+        $("#komet_mapping_tree_stamp_modules").val(view_params.modules);
 
         // set the path field
         $("#komet_mapping_tree_stamp_path").val(view_params.path);
@@ -181,7 +181,7 @@ var MappingModule = (function () {
         }
 
         // reload the tree, trying to reselect a linked concept if there was one
-        this.tree.reloadTree(getTreeViewParams(), false, selectedID);
+        this.tree.reloadTree(getViewParams(), false, selectedID);
     }
 
     return {
@@ -190,13 +190,13 @@ var MappingModule = (function () {
         createViewer: createViewer,
         openSetEditor: openSetEditor,
         createNewMapSet: createNewMapSet,
-        getTreeStampDate: getTreeStampDate,
-        getTreeAllowedStates: getTreeAllowedStates,
-        getTreeStampModules: getTreeStampModules,
-        getTreeStampPath: getTreeStampPath,
-        initTreeViewParams: initTreeViewParams,
-        getTreeViewParams: getTreeViewParams,
-        setTreeViewParams: setTreeViewParams,
+        getStampDate: getStampDate,
+        getAllowedStates: getAllowedStates,
+        getStampModules: getStampModules,
+        getStampPath: getStampPath,
+        initViewParams: initViewParams,
+        getViewParams: getViewParams,
+        setViewParams: setViewParams,
         reloadTree: reloadTree,
         SET_LIST: SET_LIST,
         SET_DETAILS: SET_DETAILS,

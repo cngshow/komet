@@ -68,7 +68,8 @@ class MappingController < ApplicationController
                                  'data-menu-uuid' => set_hash[:set_id],
                                  'data-menu-concept-text' => set_hash[:text],
                                  'data-menu-state' => set_hash[:state],
-                                 'data-menu-concept-terminology-type' => set_hash[:terminology_type]
+                                 'data-menu-concept-terminology-type' => set_hash[:terminology_type],
+                                 'data-menu-js-object' => 'mapping'
             }
 
             if set_hash[:state].downcase.eql?('inactive')
@@ -607,6 +608,11 @@ class MappingController < ApplicationController
         failed_writes = {set: [], items: []}
         successful_writes = 0
         description_id = $isaac_metadata_auxiliary['DESCRIPTION']['uuids'].first[:uuid]
+        coordinates_token = session[:coordinates_token].token
+        view_params = check_view_params(params[:view_params])
+        view_params.delete('time')
+        view_params.delete('allowedStates')
+        additional_req_params = {}
 
         begin
 
@@ -617,7 +623,6 @@ class MappingController < ApplicationController
             end
 
             body_params = {name: set_name, description: description, active: active}
-            request_params = {editToken: get_edit_token}
 
             set_extended_fields = []
             item_extended_fields = []
@@ -653,7 +658,10 @@ class MappingController < ApplicationController
             # if this is an existing mapset
             if set_id && set_id != ''
 
-                return_value =  MappingApis::get_mapping_api(uuid_or_id: set_id, action: MappingApiActions::ACTION_UPDATE_SET, additional_req_params: request_params, body_params: body_params)
+                additional_req_params = {editToken: get_edit_token, coordToken: coordinates_token}
+                additional_req_params.merge!(view_params)
+
+                return_value =  MappingApis::get_mapping_api(uuid_or_id: set_id, action: MappingApiActions::ACTION_UPDATE_SET, additional_req_params: additional_req_params, body_params: body_params)
 
                 if return_value.is_a? CommonRest::UnexpectedResponse
                     failed_writes[:set] << {id: :set, error: 'The set was unable to be updated.'}
@@ -693,7 +701,9 @@ class MappingController < ApplicationController
                     body_params[:displayFields] = item_display_fields
                 end
 
-                return_value = MappingApis::get_mapping_api(action: MappingApiActions::ACTION_CREATE_SET, additional_req_params: request_params, body_params: body_params )
+                additional_req_params = {editToken: get_edit_token}
+
+                return_value = MappingApis::get_mapping_api(action: MappingApiActions::ACTION_CREATE_SET, additional_req_params: additional_req_params, body_params: body_params )
 
                 if return_value.is_a? CommonRest::UnexpectedResponse
 
@@ -711,11 +721,16 @@ class MappingController < ApplicationController
 
             if comment_id == '0' && comment != ''
 
-                comment_return = CommentApis.get_comment_api(action: CommentApiActions::ACTION_CREATE, additional_req_params: {editToken: get_edit_token}, body_params: {comment: comment, commentedItem: set_id})
+                additional_req_params = {editToken: get_edit_token}
+
+                comment_return = CommentApis.get_comment_api(action: CommentApiActions::ACTION_CREATE, additional_req_params: additional_req_params, body_params: {comment: comment, commentedItem: set_id})
 
             elsif comment_id != '0'
 
-                comment_return = CommentApis.get_comment_api(uuid_or_id: comment_id, action: CommentApiActions::ACTION_UPDATE, additional_req_params: {editToken: get_edit_token}, body_params: {comment: comment})
+                additional_req_params = {editToken: get_edit_token, coordToken: coordinates_token}
+                additional_req_params.merge!(view_params)
+
+                comment_return = CommentApis.get_comment_api(uuid_or_id: comment_id, action: CommentApiActions::ACTION_UPDATE, additional_req_params: additional_req_params, body_params: {comment: comment})
             end
 
             if comment_return.is_a? CommonRest::UnexpectedResponse
@@ -758,8 +773,6 @@ class MappingController < ApplicationController
                     else
                         active = false
                     end
-
-
 
                     if item['qualifier_concept'] != nil && item['qualifier_concept'] != ''
                         qualifier_concept = item['qualifier_concept']
@@ -832,7 +845,10 @@ class MappingController < ApplicationController
                     # if the item ID is a UUID, then it is an existing item to be updated, otherwise it is a new item to be created
                     if is_id?(item_id)
 
-                        return_value = MappingApis::get_mapping_api(action: MappingApiActions::ACTION_UPDATE_ITEM, uuid_or_id: item_id, additional_req_params: {editToken: get_edit_token}, body_params: body_params)
+                        additional_req_params = {editToken: get_edit_token, coordToken: coordinates_token}
+                        additional_req_params.merge!(view_params)
+
+                        return_value = MappingApis::get_mapping_api(action: MappingApiActions::ACTION_UPDATE_ITEM, uuid_or_id: item_id, additional_req_params: additional_req_params, body_params: body_params)
 
                         if return_value.is_a? CommonRest::UnexpectedResponse
                             item_error << 'The map item below was not updated. '
@@ -844,7 +860,9 @@ class MappingController < ApplicationController
                         body_params[:mapSetConcept] = set_id
                         body_params[:sourceConcept] = source_concept
 
-                        return_value = MappingApis::get_mapping_api(action: MappingApiActions::ACTION_CREATE_ITEM, additional_req_params: {editToken: get_edit_token}, body_params: body_params)
+                        additional_req_params = {editToken: get_edit_token}
+
+                        return_value = MappingApis::get_mapping_api(action: MappingApiActions::ACTION_CREATE_ITEM, additional_req_params: additional_req_params, body_params: body_params)
 
                         if return_value.is_a? CommonRest::UnexpectedResponse
                             item_error << 'The map item below was not created. '
@@ -863,11 +881,16 @@ class MappingController < ApplicationController
 
                         if comment_id == '0' && comment != ''
 
-                            comment_return = CommentApis.get_comment_api(action: CommentApiActions::ACTION_CREATE, additional_req_params: {editToken: get_edit_token}, body_params: {comment: comment, commentedItem: item_id})
+                            additional_req_params = {editToken: get_edit_token}
+
+                            comment_return = CommentApis.get_comment_api(action: CommentApiActions::ACTION_CREATE, additional_req_params: additional_req_params, body_params: {comment: comment, commentedItem: item_id})
 
                         elsif comment_id != '0'
 
-                            comment_return = CommentApis.get_comment_api(uuid_or_id: comment_id, action: CommentApiActions::ACTION_UPDATE, additional_req_params: {editToken: get_edit_token}, body_params: {comment: comment})
+                            additional_req_params = {editToken: get_edit_token, coordToken: coordinates_token}
+                            additional_req_params.merge!(view_params)
+
+                            comment_return = CommentApis.get_comment_api(uuid_or_id: comment_id, action: CommentApiActions::ACTION_UPDATE, additional_req_params: additional_req_params, body_params: {comment: comment})
                         end
 
                         if comment_return.is_a? CommonRest::UnexpectedResponse
