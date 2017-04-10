@@ -282,6 +282,7 @@ var ConceptViewer = function(viewerID, currentConceptID, viewerAction) {
     // show this concept in the taxonomy tree
     ConceptViewer.prototype.showInTaxonomyTree = function() {
 
+        console.log("*** concept viewer.showInTaxonomyTree() Current Concept ID: ", JSON.stringify(this.currentConceptID));
         TaxonomyModule.tree.findNodeInTree(
             this.currentConceptID,
             TaxonomyModule.getViewParams(),

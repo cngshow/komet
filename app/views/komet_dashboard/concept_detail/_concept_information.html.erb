@@ -109,6 +109,12 @@
             }
         }
 
+        console.log("*** Viewer ID: <%= @viewer_id %>");
+        console.log("*** Window Manager: ", JSON.stringify(WindowManager));
+        console.log("*** Window Manager Viewers: ", JSON.stringify(WindowManager.viewers));
+        console.log("*** Window Manager this viewer (number): ", JSON.stringify(WindowManager.viewers[<%= @viewer_id %>]));
+        console.log("*** Window Manager this viewer (string): ", JSON.stringify(WindowManager.viewers["<%= @viewer_id %>"]));
+
         if (WindowManager.getLinkedViewerID() == "<%= @viewer_id %>" && TaxonomyModule.tree.selectedConceptID != WindowManager.viewers[<%= @viewer_id %>].currentConceptID) {
             WindowManager.viewers[<%= @viewer_id %>].showInTaxonomyTree();
         }
