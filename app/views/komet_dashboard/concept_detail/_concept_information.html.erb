@@ -15,7 +15,7 @@
                 <button type="button" aria-controls="button" class="komet-link-button" onclick="WindowManager.toggleViewerLinkage('<%= @viewer_id %>', WindowManager.getLinkedViewerID() != '<%= @viewer_id %>');" aria-label="Viewer linked to Taxonomy Tree. Click to unlink."  title="Viewer linked to Taxonomy Tree. Click to unlink.">
                     <span id="komet_concept_panel_tree_link_<%= @viewer_id %>" class="fa fa-chain-broken"></span>
                 </button>
-                <button type="button" id="komet_concept_panel_tree_show_<%= @viewer_id %>" class="komet-link-button" onclick="WindowManager.viewers[<%= @viewer_id %>].showInTaxonomyTree();" aria-label="Show in Taxonomy Tree" title="Show in Taxonomy Tree">
+                <button type="button" id="komet_concept_panel_tree_show_<%= @viewer_id %>" class="komet-link-button" onclick="WindowManager.viewers['<%= @viewer_id %>'].showInTaxonomyTree();" aria-label="Show in Taxonomy Tree" title="Show in Taxonomy Tree">
                     <span class="fa fa-tree"></span>
                 </button>
                 <%= @concept_text %>
@@ -23,7 +23,7 @@
 
             <div class="komet-panel-tools">
 
-                <button type="button" class="komet-link-button komet-panel-tools-control" onclick="WindowManager.viewers[<%= @viewer_id %>].togglePanelDetails('komet_viewer_<%= @viewer_id %>')" title="Expand All" aria-label="Expand All Sections">
+                <button type="button" class="komet-link-button komet-panel-tools-control" onclick="WindowManager.viewers['<%= @viewer_id %>'].togglePanelDetails('komet_viewer_<%= @viewer_id %>')" title="Expand All" aria-label="Expand All Sections">
                     <div class="komet-action-icon glyphicon glyphicon-plus-sign"></div>
                     <span>Expand All</span>
                 </button>
@@ -70,7 +70,7 @@
                     <%= select_tag('komet_concept_stamp_path_' + @viewer_id, options_for_select(session[:komet_path_options], @view_params[:path]), include_blank: true, class: 'form-control komet-preference-path', 'aria-label' => 'Choose path to view', title: 'Choose path to view') %>
                 </div>
 
-                <button type="button" class="komet-link-button" onclick="WindowManager.viewers[<%= @viewer_id %>].reloadViewer();" title="Refresh Viewer with Selected Parameters" aria-label="Refresh Viewer with Selected Parameters">
+                <button type="button" class="komet-link-button" onclick="WindowManager.viewers['<%= @viewer_id %>'].reloadViewer();" title="Refresh Viewer with Selected Parameters" aria-label="Refresh Viewer with Selected Parameters">
                     <div class="komet-action-icon glyphicon glyphicon-refresh"></div>
                 </button>
             </div>
@@ -97,12 +97,12 @@
 
     <script>
 
-        if (!WindowManager.viewers.hasOwnProperty('<%= @viewer_id %>') || !(WindowManager.viewers[<%= @viewer_id %>] instanceof ConceptViewer)) {
+        if (!WindowManager.viewers.hasOwnProperty("<%= @viewer_id %>") || !(WindowManager.viewers["<%= @viewer_id %>"] instanceof ConceptViewer)) {
             ConceptsModule.createViewer("<%= @viewer_id %>", "<%= @concept_id %>", "<%= @viewer_action %>");
         } else {
 
-            WindowManager.viewers[<%= @viewer_id %>].currentConceptID = "<%= @concept_id %>";
-            WindowManager.viewers[<%= @viewer_id %>].viewerAction = "<%= @viewer_action %>";
+            WindowManager.viewers["<%= @viewer_id %>"].currentConceptID = "<%= @concept_id %>";
+            WindowManager.viewers["<%= @viewer_id %>"].viewerAction = "<%= @viewer_action %>";
 
             if (WindowManager.getLinkedViewerID() == "<%= @viewer_id %>") {
                 WindowManager.viewers["<%= @viewer_id %>"].swapLinkIcon(true);
@@ -115,8 +115,8 @@
         console.log("*** Window Manager this viewer (number): ", JSON.stringify(WindowManager.viewers[<%= @viewer_id %>]));
         console.log("*** Window Manager this viewer (string): ", JSON.stringify(WindowManager.viewers["<%= @viewer_id %>"]));
 
-        if (WindowManager.getLinkedViewerID() == "<%= @viewer_id %>" && TaxonomyModule.tree.selectedConceptID != WindowManager.viewers[<%= @viewer_id %>].currentConceptID) {
-            WindowManager.viewers[<%= @viewer_id %>].showInTaxonomyTree();
+        if (WindowManager.getLinkedViewerID() == "<%= @viewer_id %>" && TaxonomyModule.tree.selectedConceptID != WindowManager.viewers["<%= @viewer_id %>"].currentConceptID) {
+            WindowManager.viewers["<%= @viewer_id %>"].showInTaxonomyTree();
         }
 
         <% if @concept_text != nil %>
@@ -131,12 +131,12 @@
 
         $(document).ready(function () {
 
-            WindowManager.viewers[<%= @viewer_id %>].initViewParams(<%= raw @view_params.to_json %>);
+            WindowManager.viewers["<%= @viewer_id %>"].initViewParams(<%= raw @view_params.to_json %>);
 
             <% if @concept_text != nil %>
 
-                WindowManager.viewers[<%= @viewer_id %>].restorePanelStates();
-                WindowManager.viewers[<%= @viewer_id %>].loadLineageTrees();
+                WindowManager.viewers["<%= @viewer_id %>"].restorePanelStates();
+                WindowManager.viewers["<%= @viewer_id %>"].loadLineageTrees();
                 UIHelper.initializeContextMenus();
             <% end %>
         });
