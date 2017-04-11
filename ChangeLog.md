@@ -3,7 +3,7 @@ Komet Changelog
 This changelog summarizes changes and fixes which are a part of each revision.  For more details on the fixes, refer tracking numbers 
 where provided, and the git commit history.
 
-* 2017/?? - 3.1 - PENDING
+* 2017/04/11 - 3.1
     * Allowed nested modules to be shown in the view parameters so all concepts can be displayed when choosing specific views (Jazz: 486439)
     * Updated to latest enunciate
     * changes to support latest metadata updates (module constants removed)
