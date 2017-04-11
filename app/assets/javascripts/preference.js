@@ -22,6 +22,30 @@ var PreferenceModule = (function () {
     var refsetRows = [];
     var rowCount = 0;
 
+    function loadPreferences() {
+
+        Common.cursor_wait();
+
+        // make an ajax call to get the data for user preferences and pass it the name of a partial file to render
+        $.get(gon.routes.taxonomy_get_user_preference_info_path, {partial: 'komet_dashboard/userspreference'}, function (data) {
+
+            try {
+
+                var documentFragment = document.createRange().createContextualFragment(data);
+                $('#komet_main_navigation').after(documentFragment);
+
+                Common.cursor_auto();
+            }
+            catch (err) {
+
+                console.log("*******  ERROR **********");
+                console.log(err.message);
+                Common.cursor_auto();
+                throw err;
+            }
+        });
+    }
+
     function init() {
 
         var stampDateField = $('#stamp_date');
@@ -40,10 +64,12 @@ var PreferenceModule = (function () {
         refsetList = {};
         refsetRows = [];
         $.minicolors.defaults.position = 'bottom right';
-        var dialog, form;
+
+        var dialog = $("#komet_user_preference_form");
+        var form = dialog.find("form");
 
         // create the dialog form
-        dialog = $("#komet_user_preference_form").dialog({
+        dialog.dialog({
             autoOpen: false,
             closeOnEscape: false,
             position: {my: "right top", at: "left bottom", of: "#komet_user_preference_link"},
@@ -62,39 +88,22 @@ var PreferenceModule = (function () {
             buttons: {
                 "Apply changes": applyChanges,
                 Cancel: function() {
-                    dialog.dialog( "close" );
+                    dialog.remove();
                 }
             },
             close: function() {
-                form[0].reset();
+                dialog.remove();
             }
         });
 
         dialog.parent().children().children(".ui-dialog-titlebar-close").remove();
 
-        form = dialog.find("form").on("submit", function(event) {
+        form.on("submit", function(event) {
 
             event.preventDefault();
             applyChanges();
         });
 
-        $("#komet_user_preference_link").on("click", function() {
-
-            dialog.dialog("open");
-
-            // get the hidden stamp date field value TODO - remove this field
-            var stampDate = $('#stampedDt').val();
-
-            if (stampDate !== 'latest') {
-                stampDateField.data("DateTimePicker").date(moment(+stampDate));
-            }
-
-            $(document).on("click", "#applybtn", function () {
-
-                var refsetSelectionField = $("#komet_preferences_refset_id").find("option:selected");
-                addRefsetRow(refsetSelectionField.text(), $("#color_id").val(), refsetSelectionField.val(), $("#komet_preferences_shape_refset").val());
-            });
-        });
 
         //this event is used to rank the description type and dialect rows
         $(document).on("click", ".change-rank.up", function () {
@@ -128,69 +137,88 @@ var PreferenceModule = (function () {
             }
         });
 
-        // passes the users preference to get coordinatetoken api and creates sessions
-        function applyChanges() {
-            var description_values ="";
-            var dialect_values ="";
-            var language_values=$( "#komet_concept_language" ).val();
+        dialog.dialog("open");
 
-            // get the stamp_date and if it is not set then use the max long in gon
-            var stamp_date = stampDateField.find("input").val();
-            if (stamp_date == '') {
-                stamp_date = 'latest';
-            } else {
-                stamp_date = new Date(stamp_date).getTime().toString();
-            }
+        // get the hidden stamp date field value TODO - remove this field
+        var stampDate = $('#stampedDt').val();
 
-            var allowedStates=$('input[name=status]:checked').val();
-            var module_flags=[];
-            var path_flags=[];
-            var params = "";
-            var moduleid="";
-            var refset_flags = [];
-            $('input[name=description_type]').each(function() {
-                description_values += this.value + ',' ;
-            });
-            $('input[name=dialecttbl]').each(function() {
-                dialect_values += this.value + ',' ;
-            });
-
-            $('input[name=module_id]').each(function() {
-                module_flags.push({id: this.value, text: $("#komet_preferences_text_" + this.value).val(), color: $("#komet_preferences_color_" + this.value).val(), shape: $("#komet_preferences_shape_" + this.value).val()});
-            });
-
-            $('input[name=path_id]').each(function() {
-                path_flags.push({id: this.value, text: $("#komet_preferences_text_" + this.value).val(), color: $("#komet_preferences_color_" + this.value).val(), shape: $("#komet_preferences_shape_" + this.value).val()});
-            });
-
-            $('input[name=colorrefsets]').each(function() {
-                var splitvalue = this.id.split('~');
-                refset_flags.push({text: splitvalue[0], id: splitvalue[1], color: this.value, shape: splitvalue[2]}) ;
-            });
-
-            dialect_values = dialect_values.substring(0, dialect_values.length -1); // removing comma from end of the string
-            description_values = description_values.substring(0, description_values.length -1);// removing comma from end of the string
-            console.log(module_flags);
-            console.log(path_flags);
-            console.log(refset_flags);
-            params = {
-                language: language_values,
-                time: stamp_date,
-                dialectPrefs: dialect_values,
-                descriptionTypePrefs: description_values,
-                allowedStates: allowedStates,
-                module_flags: module_flags,
-                path_flags: path_flags,
-                refset_flags: refset_flags
-            };
-            $.post( gon.routes.taxonomy_set_coordinates_token_path, params, function( results ) {
-                console.log(results);
-                dialog.dialog( "close" );
-                location.replace(gon.routes.komet_dashboard_dashboard_path);
-
-            });
-
+        if (stampDate !== 'latest') {
+            stampDateField.data("DateTimePicker").date(moment(+stampDate));
         }
+
+        $(document).on("click", "#applybtn", function () {
+
+            var refsetSelectionField = $("#komet_preferences_refset_id").find("option:selected");
+            addRefsetRow(refsetSelectionField.text(), $("#color_id").val(), refsetSelectionField.val(), $("#komet_preferences_shape_refset").val());
+        });
+    }
+
+    // passes the users preference to set_coordinates_token api and creates set preference info in the session
+    function applyChanges() {
+
+        Common.cursor_wait();
+
+        var description_values ="";
+        var dialect_values ="";
+        var language_values=$( "#komet_concept_language" ).val();
+
+        // get the stamp_date and if it is not set then use the max long in gon
+        var stamp_date = $('#stamp_date').find("input").val();
+
+        if (stamp_date == '') {
+            stamp_date = 'latest';
+        } else {
+            stamp_date = new Date(stamp_date).getTime().toString();
+        }
+
+        var allowedStates=$('input[name=status]:checked').val();
+        var module_flags=[];
+        var path_flags=[];
+        var params = "";
+        var moduleid="";
+        var refset_flags = [];
+        $('input[name=description_type]').each(function() {
+            description_values += this.value + ',' ;
+        });
+        $('input[name=dialecttbl]').each(function() {
+            dialect_values += this.value + ',' ;
+        });
+
+        $('input[name=module_id]').each(function() {
+            module_flags.push({id: this.value, text: $("#komet_preferences_text_" + this.value).val(), color: $("#komet_preferences_color_" + this.value).val(), shape: $("#komet_preferences_shape_" + this.value).val()});
+        });
+
+        $('input[name=path_id]').each(function() {
+            path_flags.push({id: this.value, text: $("#komet_preferences_text_" + this.value).val(), color: $("#komet_preferences_color_" + this.value).val(), shape: $("#komet_preferences_shape_" + this.value).val()});
+        });
+
+        $('input[name=colorrefsets]').each(function() {
+            var splitvalue = this.id.split('~');
+            refset_flags.push({text: splitvalue[0], id: splitvalue[1], color: this.value, shape: splitvalue[2]}) ;
+        });
+
+        dialect_values = dialect_values.substring(0, dialect_values.length -1); // removing comma from end of the string
+        description_values = description_values.substring(0, description_values.length -1);// removing comma from end of the string
+        console.log(module_flags);
+        console.log(path_flags);
+        console.log(refset_flags);
+        params = {
+            language: language_values,
+            time: stamp_date,
+            dialectPrefs: dialect_values,
+            descriptionTypePrefs: description_values,
+            allowedStates: allowedStates,
+            module_flags: module_flags,
+            path_flags: path_flags,
+            refset_flags: refset_flags
+        };
+
+        $.post( gon.routes.taxonomy_set_coordinates_token_path, params, function( results ) {
+
+            console.log(results);
+            location.replace(gon.routes.komet_dashboard_dashboard_path);
+
+        });
     }
 
     function deleteRefsetFieldRow(rowID){
@@ -315,6 +343,7 @@ var PreferenceModule = (function () {
 
     return {
 
+        loadPreferences: loadPreferences,
         initialize: init,
         addRefsetRow: addRefsetRow,
         deleteRefsetFieldRow: deleteRefsetFieldRow,

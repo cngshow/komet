@@ -57,9 +57,9 @@ module ApplicationHelper
 
         # see if we are using the default view params or the edit params
         if use_view_params
-            params = session[:default_view_params]
+            params = session[:default_view_params].clone
         else
-            params = session[:edit_view_params]
+            params = session[:edit_view_params].clone
         end
 
         # if the passed params are empty return the entire default object

@@ -2,12 +2,12 @@
 
 You need to first get JRuby, here is the link to the 64 bit msi installer:
 
-https://s3.amazonaws.com/jruby.org/downloads/9.0.4.0/jruby_windows_x64_9_0_4_0.exe
+https://s3.amazonaws.com/jruby.org/downloads/9.1.8.0/jruby_windows_x64_9_1_8_0.exe
 
 Get JRuby's complete jar file.  You can put it anywhere you want just remember where you put it!
 I put it in the directory where JRuby is installed.
 
-https://s3.amazonaws.com/jruby.org/downloads/9.0.4.0/jruby-complete-9.0.4.0.jar
+https://s3.amazonaws.com/jruby.org/downloads/9.1.8.0/jruby-complete-9.1.8.0.jar
 
 You also need Maven: https://maven.apache.org/download.cgi
 Place where you would like
@@ -86,69 +86,24 @@ You can now bring up the server:
 startup.bat
 ```
 
-Your rails server will come listening on port 3000.  Just hit:<BR>
+Your rails server will come listening on port 3000 or 3001.  Just hit:<BR>
 (Be aware that the server will show a harmless exception when it comes up.)
 
 http://localhost:3000
 
-notes for deployment to production:
+**Working with Isaac-Rest:**
+
+Isaac-rest can be managed in your ruby mine IDE.  To build isaac rest, in your IDE run 'rake isaac:build_isaac_rest'
+This will build isaac rest and generate the auxiliary metadata file.
+To launch isaac-rest: 'rake isaac:launch_isaac_rest'.
+To do it all: 'rake isaac:build_and_launch_isaac_rest'
+Make sure you have configured your setup.bat (first) as outlined in setup.bat.template.  Make sure maven is on your path.
+
+By the way, you need to have your git credentials stored locally so run...
 
 ```
-set RAILS_ENV=production
+git config --global credential.helper wincred
 ```
-
-```
-set RAILS_SERVE_STATIC_FILES=true (if and only if you do not have apache or nginx serving static files)
-```
-
-```
-rake assets:precompile
-```
-
-
-How do you run this in a J2EE server like GlassFish?  Here are some GlassFish instructions!  These instructions have been tested on GlassFish version 4.1.1.  You can obtain it here:
-
-https://glassfish.java.net/download.html
-
-Follow the install instructions on the site (you pretty much unzip it).
-
-Before bringing up GlassFish, ensure that <b>jruby-complete-9.0.4.0.jar</b> is placed into the domain you intend to deploy your application.  In my case, on my box, in the directory:
-```
-C:\work\KOMET\glassfish\glassfish4\glassfish\domains\domain1\lib\ext
-```
-
-You will want to bring GlassFish up via:
-```
-glassfish4/bin/asadmin start-domain
-```
-
-GlassFish deploys war files, so we will end up converting our rails app into a war file using the warbler gem.  Before running warbler though you need to run the asset pipeline to properly set up the application's javascript, css, and images for the war file.  In addition to that, if you intend to have a context root other than '/' you need to tell the asset pipeline!  By default the  the context root will be 'rails_komet', so you should do this (from rails root):
-
-```
-set RAILS_RELATIVE_URL_ROOT=/rails_komet
-```
-
-Then run the asset pipeline:
-```
-rake assets:precompile
-```
-
-Note:  Warbler uses 'production' as the default rails environment if you haven't set the appropriate environment variable.  Thus, if you wish to build a war file that defaults to test or development before running warble do this:
-```
-set RAILS_ENV=test
-```
-
-
-Now you can run warbler to generate your war:
-
-```
-warble
-```
-
-
-You will have a war file named rails_komet.war.  Deploy it to GlassFish!!
-
-http://localhost:4848/common/index.jsf
 
 
 Developer addded config variables:

@@ -34,6 +34,7 @@ class ApplicationController < ActionController::Base
   before_action :set_up_thread_locals
   before_action :ensure_rest_version
   before_action :ensure_roles
+  before_action :setup_headers #must be after ensure_roles
   before_action :read_only # must be after ensure_roles
   # todo tried testing with reviewer? and could not get to the login page
 
@@ -161,6 +162,11 @@ class ApplicationController < ActionController::Base
     end
     $log.trace("The roles for user #{user_session(UserSession::LOGIN)} are #{user_session(UserSession::ROLES)}")
     user_session(UserSession::ROLES)
+  end
+
+  def setup_headers
+    roles = pundit_user[:roles].to_json
+    response.headers[BootstrapNotifier::AJAX_HDR_ROLES] = roles
   end
 
   def self.parse_isaac_metadata_auxiliary

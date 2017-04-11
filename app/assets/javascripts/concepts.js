@@ -18,8 +18,8 @@ var ConceptsModule = (function () {
         });
 
         // listen for the onChange event broadcast for creating or editing a concept.
-        $.subscribe(KometChannels.Taxonomy.taxonomyConceptEditorChannel, function (e, viewerAction, conceptID, viewerID, windowType, params) {
-            callLoadViewerData(conceptID, TaxonomyModule.getViewParams(), viewerAction, viewerID, windowType, params);
+        $.subscribe(KometChannels.Taxonomy.taxonomyConceptEditorChannel, function (e, viewerAction, conceptID, viewParams, viewerID, windowType, params) {
+            callLoadViewerData(conceptID, viewParams, viewerAction, viewerID, windowType, params);
         });
     }
 
@@ -110,11 +110,12 @@ var ConceptsModule = (function () {
                 Common.cursor_auto();
             }
             catch (err) {
+
                 console.log("*******  ERROR **********");
                 console.log(err.message);
+                Common.cursor_auto();
                 throw err;
             }
-
         });
     }
 

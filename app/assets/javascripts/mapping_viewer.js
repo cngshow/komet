@@ -58,7 +58,7 @@ var MappingViewer = function(viewerID, currentSetID, viewerAction) {
     };
 
     MappingViewer.prototype.getStampModules = function(){
-        return $('#komet_mapping_stamp_module_' + this.viewerID).val();
+        return $('#komet_mapping_stamp_modules_' + this.viewerID).val();
     };
 
     MappingViewer.prototype.getStampPath = function(){
@@ -475,7 +475,7 @@ var MappingViewer = function(viewerID, currentSetID, viewerAction) {
 
             $.ajax({
                 type: "POST",
-                url: $(this).attr("action"),
+                url: $(this).attr("action") + "?" + jQuery.param({view_params: thisViewer.getViewParams()}),
                 data: $(this).serialize(), //new FormData($(this)[0]),
                 error: function(){Common.cursor_auto();},
                 success: function (data) {
@@ -518,7 +518,7 @@ var MappingViewer = function(viewerID, currentSetID, viewerAction) {
 
                         $("#komet_viewer_" + viewerID).off('unsavedCheck');
                         setSection.before(UIHelper.generatePageMessage("All changes were processed successfully.", true, "success"));
-                        MappingModule.setTreeViewParams(thisViewer.getViewParams());
+                        MappingModule.setViewParams(thisViewer.getViewParams());
                         $.publish(KometChannels.Mapping.mappingTreeNodeSelectedChannel, ["", data.set_id, thisViewer.getViewParams(), thisViewer.viewerID, WindowManager.INLINE, MappingModule.SET_DETAILS]);
                     }
                 }

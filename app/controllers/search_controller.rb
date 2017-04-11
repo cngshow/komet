@@ -107,7 +107,7 @@ class SearchController < ApplicationController
             # perform a description search with the parameters we set
             results = SearchApis.get_search_api(action: ACTION_DESCRIPTIONS, additional_req_params: additional_params)
 
-        elsif search_type.eql?('sememes') || (search_type.eql?('identifiers') && (!['UUID', 'Any'].include?(params[:taxonomy_search_id_type]) || (params[:taxonomy_search_id_type] == 'Any' && !term_is_id)))
+        elsif search_type.eql?('sememes') || (search_type.eql?('identifiers') && (![$isaac_metadata_auxiliary['GENERATED_UUID']['uuids'].first[:uuid], 'Any'].include?(params[:taxonomy_search_id_type]) || (params[:taxonomy_search_id_type] == 'Any' && !term_is_id)))
 
             # if this is a sememe search get the params from the request, if this is an ID search treatAsString is yes and the assemblage depends on the ID type
             if search_type.eql?('sememes')
@@ -121,7 +121,7 @@ class SearchController < ApplicationController
                 if params[:taxonomy_search_id_type] == 'Any'
                     assemblage = ''
                 else
-                    assemblage = $isaac_metadata_auxiliary[params[:taxonomy_search_id_type]]['uuids'].first[:uuid]
+                    assemblage = params[:taxonomy_search_id_type]
                 end
             end
 

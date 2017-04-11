@@ -497,7 +497,7 @@ module ConceptConcern
                     if field_info[assemblage_id + '_' + column_id][:sememe_definition_id] == $isaac_metadata_auxiliary['EXTENDED_DESCRIPTION_TYPE']['uuids'].first[:uuid]
 
                         field_info[assemblage_id + '_' + column_id][:column_display] = 'dropdown'
-                        field_info[assemblage_id + '_' + column_id][:dropdown_options] = get_direct_children('fc134ddd-9a15-5540-8fcc-987bf2af9198', true, true, session[:edit_view_params])
+                        field_info[assemblage_id + '_' + column_id][:dropdown_options] = get_direct_children('fc134ddd-9a15-5540-8fcc-987bf2af9198', true, true, false, false, session[:edit_view_params])
                         # elsif used_column_data[:data_type] == 'UUID'
 
                     else
@@ -593,7 +593,7 @@ module ConceptConcern
                         if used_column_data[:sememe_definition_id] == $isaac_metadata_auxiliary['EXTENDED_DESCRIPTION_TYPE']['uuids'].first[:uuid]
 
                             used_column_data[:column_display] = 'dropdown'
-                            used_column_data[:dropdown_options] = get_direct_children('fc134ddd-9a15-5540-8fcc-987bf2af9198', true, true, session[:edit_view_params])
+                            used_column_data[:dropdown_options] = get_direct_children('fc134ddd-9a15-5540-8fcc-987bf2af9198', true, true, false, false, session[:edit_view_params])
                        # elsif used_column_data[:data_type] == 'UUID'
 
                         else
@@ -609,15 +609,8 @@ module ConceptConcern
                     column_data = {}
                     taxonomy_ids = []
 
-                    ['LOINC_NUM', 'RXCUI', 'SCTID', 'VUID', 'CODE'].each{ |taxonomy|
-
-                        if $isaac_metadata_auxiliary[taxonomy]
-                            taxonomy_ids << $isaac_metadata_auxiliary[taxonomy]['uuids'].first[:uuid]
-                        end
-                    }
-
                     # if the column data is not empty process the data
-                    if data_column != nil && (!clone || (clone && !taxonomy_ids.include?(used_column_data[:sememe_definition_id])))
+                    if data_column != nil && (!clone || (clone && !session[:komet_taxonomy_ids].include?(used_column_data[:sememe_definition_id])))
 
                         # mark in our column lists that this column has data in at least one row
                         used_column_list[list_index][:column_used] = true
@@ -797,42 +790,61 @@ module ConceptConcern
     # @param [Boolean] format_results - Should the results be processed
     # @param [Boolean] remove_semantic_tag - Should semantic tags be removed (Just 'ISAAC' at the moment)
     # @param [Boolean] include_definition - should definition descriptions be looked up and included in the results
+    # @param [Boolean] include_nested - should nested children be included in the results
+    # %param [Number] level - the level of nested concepts that is currently being processing
     # @return [object] an array of children
-    def get_direct_children(concept_id, format_results = false, remove_semantic_tag = false, include_definition = false, view_params = {})
+    def get_direct_children(concept_id, format_results = false, remove_semantic_tag = false, include_definition = false, include_nested = false, view_params = {}, level = 0)
 
-        additional_req_params = {coordToken: session[:coordinates_token].token}
+        # set the request params for the taxonomy call - getting one level of children along with a count of how many children each of them has
+        additional_req_params = {coordToken: session[:coordinates_token].token, childDepth: 1, countChildren: true}
         additional_req_params.merge!(view_params)
 
-        children = ConceptRest.get_concept(action: ConceptRestActions::ACTION_VERSION, uuid: concept_id, additional_req_params: additional_req_params.merge({includeChildren: 'true'}))
+        # get the children of the passed in concept
+        children = TaxonomyRest.get_isaac_concept(uuid: concept_id, additional_req_params: additional_req_params)
 
+        # if there was an error return a blank array
         if children.is_a? CommonRest::UnexpectedResponse
             return []
         end
 
+        # set the request params for the call to get definitions
+        additional_req_params = {coordToken: session[:coordinates_token].token, includeAttributes: false}
+        additional_req_params.merge!(view_params)
+
         children = children.children
 
+        # if we are processing the child list
         if format_results
 
             child_array = []
 
+            # loop through all of the children
             children.each do |child|
 
+                # get the concept description
                 text = child.conChronology.description
                 definition = ''
 
                 # TODO - replace with regex that handles any semantic tag: start with /\s\(([^)]+)\)/ (regex101.com)
+                # if desired remove certain semantic tags from the concept description
                 if remove_semantic_tag
                     text.slice!(' (ISAAC)')
+                    text.slice!(' (core metadata concept)')
                 end
 
+                # if we are including the definition
                 if include_definition
 
-                    descriptions = ConceptRest.get_concept(action: ConceptRestActions::ACTION_DESCRIPTIONS, uuid: child.conChronology.identifiers.uuids.first, additional_req_params: additional_req_params.merge({includeAttributes: false}))
+                    # make a call to get the descriptions for this concept
+                    descriptions = ConceptRest.get_concept(action: ConceptRestActions::ACTION_DESCRIPTIONS, uuid: child.conChronology.identifiers.uuids.first, additional_req_params: additional_req_params)
 
+                    # as long as we didn't get an error process the results
                     unless descriptions.is_a? CommonRest::UnexpectedResponse
 
+                        # loop through each description
                         descriptions.each do |description|
 
+                            # if the description is a definition copy the description text and end the loop
                             if description.descriptionTypeConcept.uuids.first == $isaac_metadata_auxiliary['DEFINITION_DESCRIPTION_TYPE']['uuids'].first[:uuid]
 
                                 definition = description.text
@@ -842,13 +854,20 @@ module ConceptConcern
                     end
                 end
 
-                child_array << {concept_id: child.conChronology.identifiers.uuids.first, concept_sequence: child.conChronology.identifiers.sequence, text: text, definition: definition}
+                # add the concept information to the end of the child array
+                child_array << {concept_id: child.conChronology.identifiers.uuids.first, concept_sequence: child.conChronology.identifiers.sequence, text: text, definition: definition, level: level}
+
+                # if we are grabbing nested children and this concept has children recursively call this function passing in the ID of this concept
+                if include_nested && child.childCount > 0
+
+                    child_array.concat(get_direct_children(child.conChronology.identifiers.uuids.first, format_results, remove_semantic_tag, include_definition, include_nested, view_params, level + 1))
+                end
             end
 
-            return child_array
-        else
-            return children
+            children = child_array
         end
+
+        return children
 
     end
 

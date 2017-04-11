@@ -22,7 +22,7 @@
 </main>
 <footer class="komet-workflow-action-bar">
   <%=KOMET_NAME%> <%= $PROPS['PRISME.war_version'] ? $PROPS['PRISME.war_version'] : 'Unversioned by PRISME.' %>
-  <%=' - ' + @aitc_environment %>
+  <%= " - #{@aitc_environment}" %>
 <%#= render partial: 'layouts/workflow_footer'%>
 </footer>
 </body>

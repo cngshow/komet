@@ -9,12 +9,14 @@ namespace :isaac do
 
   # set ISAAC_PATH=<path to isaac workspace>
   local_isaac = ENV['ISAAC_PATH']
+  local_isaac_rest = ENV['ISAAC_PATH'].to_s + '/ISAAC-rest'
 
   desc 'Build local isaac rest project'
   task :build_isaac_rest do |task|
     if local_isaac
-      sh "cd #{local_isaac}/ISAAC-rest && git pull"
-      sh "cd #{local_isaac}/ISAAC-rest && mvn clean install"
+      sh "cd #{local_isaac_rest} && git pull"
+      sh "cd #{local_isaac_rest} && mvn clean install"
+      Rake::Task['isaac:generate_metadata_auxiliary'].invoke
     else
       puts 'set ISAAC_PATH to your local isaac workspace in this shell before executing the rake task'
     end
@@ -28,9 +30,9 @@ namespace :isaac do
       #puts "Files is: #{files} for #{local_isaac}"
       built = []
       files.each do |directory|
-       # puts "Examining #{directory}"
+        # puts "Examining #{directory}"
         if (File.directory?(directory) && File.exists?(directory + java.io.File.separator + 'pom.xml'))
-        #  puts "here"
+          #  puts "here"
           sh "cd #{directory} && git pull"
           sh "cd #{directory} && mvn clean install"
           built << directory
@@ -43,18 +45,21 @@ namespace :isaac do
     end
   end
 
-  desc 'This task hits the isaac rest server. Builds all Isaac metadata + translations. Maven (mvn) must be on your path'
-  task :metadata_auxiliary => :environment do
-    raise "Issac root is not defined.  You can set the environment variable ISAAC_ROOT=http://my.isaac.instance.com" if ISAAC_ROOT.empty?
-    system('mvn -U initialize')
-    puts("Starting rest calls, a tails of the log will let you observer the progress...")
-    require_all './lib/isaac_rest/'
-    ApplicationController.parse_isaac_metadata_auxiliary
-    dump = Marshal.dump($isaac_metadata_auxiliary)
-    open(ApplicationController::METADATA_DUMP_FILE, 'wb') { |f| f.puts dump }
-    puts("Done!")
+  desc 'This task generates IsaacMetadataAuxiliary.yaml'
+  task :generate_metadata_auxiliary do
+    sh 'mvn -U initialize'
   end
 
+  desc 'This task launches isaac rest'
+  task :launch_isaac_rest do
+    sh "cd #{local_isaac_rest}/ && mvn compile -Pstart-server"
+  end
+
+  desc 'This task builds isaac rest, generates the metadata file and launches isaac rest'
+  task :build_and_launch_isaac_rest do
+    Rake::Task['isaac:build_isaac_rest'].invoke
+    Rake::Task['isaac:launch_isaac_rest'].invoke
+  end
 
   desc 'Build local isaac rest project'
   task :build_r => :build_isaac_rest
@@ -63,5 +68,8 @@ namespace :isaac do
 
   desc 'Build local isaac rest project'
   task :b => :build_all
+
+  desc 'This task builds isaac rest, generates the metadata file and launches isaac rest'
+  task :bal => :build_and_launch_isaac_rest
 
 end

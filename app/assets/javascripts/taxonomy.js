@@ -20,7 +20,7 @@ Copyright Notice
 var TaxonomyModule = (function () {
 
     function init() {
-        this.tree = new KometTaxonomyTree("taxonomy_tree", getViewParams(), false, null, true, null);
+        this.tree = new KometTaxonomyTree("taxonomy_tree", "taxonomy", getViewParams(), false, null, true, null);
     }
 
     function getAllowedStates (){
@@ -43,7 +43,7 @@ var TaxonomyModule = (function () {
     };
 
     function getStampModules(){
-        return $('#komet_taxonomy_stamp_module').val();
+        return $('#komet_taxonomy_stamp_modules').val();
     }
 
     function getStampPath(){
@@ -74,7 +74,7 @@ var TaxonomyModule = (function () {
         UIHelper.setStampDate($("#komet_taxonomy_tree_stamp_date"), view_params.time);
 
         // set the modules field
-        $("#komet_taxonomy_stamp_module").val(view_params.modules);
+        $("#komet_taxonomy_stamp_modules").val(view_params.modules);
 
         // set the path field
         $("#komet_taxonomy_stamp_path").val(view_params.path);

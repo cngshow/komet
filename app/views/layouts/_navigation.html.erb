@@ -1,112 +1,108 @@
 <link rel="stylesheet" href="//code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css">
 <h1 class="hide"><%=KOMET_NAME%></h1>
-<nav class="komet-navbar" role="navigation" aria-label="Main menu">
+<nav class="komet-navbar" id="komet_main_navigation" role="navigation" aria-label="Main menu">
 
-  <div class="komet-navbar-header" role="navigation">
-    <div class="komet-logo-komet"><%=KOMET_NAME%></div>
-    <div class="komet-logo-tooling">Tooling</div>
-  </div>
-
-  <div class="komet-navbar-navigation" role="navigation">
-
-    <div>
-      <button type="button" class="komet-link-button" onclick="location.replace('<%= komet_dashboard_dashboard_path %>')" title="Taxonomy Dashboard" role="navigation">Taxonomy
-        Dashboard
-      </button>
+    <div class="komet-navbar-header" role="navigation">
+        <div class="komet-logo-komet"><%=KOMET_NAME%></div>
+        <div class="komet-logo-tooling">Tooling</div>
     </div>
 
-    <!--<div>-->
-    <!--<button type="button" class="komet-link-button" onclick="location.replace('<%#= workflow_dashboard_path %>')" title="Workflows" role="navigation">Workflows</button>-->
-    <!--</div>-->
+    <div class="komet-navbar-navigation" role="navigation">
 
-    <% if controller.can_edit_concept? %>
-        <div class="dropdown" role="presentation">
-          <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false" title="Actions">Actions
-            <span class="caret"></span></a>
-          <ul class="dropdown-menu" aria-hidden="true" aria-label="submenu">
-            <li role="menuitem">
-              <a href="#" onclick="$.publish(KometChannels.Taxonomy.taxonomyConceptEditorChannel, [ConceptsModule.CREATE, null, WindowManager.getLinkedViewerID(), WindowManager.INLINE]); return false;" title="Create New Concept">Create
-                New Concept</a></li>
-            <li role="menuitem">
-              <a href="#" onclick="MappingModule.createNewMapSet(true); return false;" title="Create New Map">Create New
-                Map</a></li>
-          </ul>
+        <div>
+            <button type="button" class="komet-link-button" onclick="location.replace('<%= komet_dashboard_dashboard_path %>')" title="Taxonomy Dashboard" role="navigation">Taxonomy
+                Dashboard
+            </button>
         </div>
-    <% end %>
-  </div>
 
-  <div class="komet-navbar-tools" role="navigation">
-    <div>
-      <button type="button" class="komet-link-button" role="button" aria-label="VHAT XML Export" title="VHAT XML Export" id="komet_export_link" role="navigation">
-        <div class="glyphicon glyphicon-export" title="VHAT XML Export"></div>
-      </button>
+        <!--<div>-->
+        <!--<button type="button" class="komet-link-button" onclick="location.replace('<%#= workflow_dashboard_path %>')" title="Workflows" role="navigation">Workflows</button>-->
+        <!--</div>-->
+
+        <% if controller.can_edit_concept? %>
+            <div class="dropdown" role="presentation">
+                <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false" title="Actions">Actions
+                    <span class="caret"></span></a>
+                <ul class="dropdown-menu" aria-hidden="true" aria-label="submenu">
+                    <li role="menuitem">
+                        <a href="#" onclick="$.publish(KometChannels.Taxonomy.taxonomyConceptEditorChannel, [ConceptsModule.CREATE, null, WindowManager.getLinkedViewerID(), WindowManager.INLINE]); return false;" title="Create New Concept">Create
+                            New Concept</a></li>
+                    <li role="menuitem">
+                        <a href="#" onclick="MappingModule.createNewMapSet(true); return false;" title="Create New Map">Create New
+                            Map</a></li>
+                </ul>
+            </div>
+        <% end %>
     </div>
 
-    <div>
-      <button type="button" class="komet-link-button" role="button" aria-label="Settings" title="Settings" id="komet_user_preference_link" role="navigation">
-        <div class="glyphicon glyphicon-cog" title="Settings"></div>
-      </button>
-    </div>
+    <div class="komet-navbar-tools" role="navigation">
+        <div>
+            <button type="button" class="komet-link-button" role="button" aria-label="VHAT XML Export" title="VHAT XML Export" id="komet_export_link" role="navigation">
+                <div class="glyphicon glyphicon-export" title="VHAT XML Export"></div>
+            </button>
+        </div>
 
-<!--    508 fix - states the title or labels but preference would be for Jaws to actually read the actual user id is possible -->
+        <div>
+            <button type="button" class="komet-link-button" role="button" aria-label="Settings" title="Settings" id="komet_user_preference_link" onclick="PreferenceModule.loadPreferences()" role="navigation">
+                <div class="glyphicon glyphicon-cog" title="Settings"></div>
+            </button>
+        </div>
 
-    <div>
-      <a href="#userid" class="komet-link-button" id="userid" title="You are Logged In" role="navigation">
-        <div class="glyphicon glyphicon-user" title="You are Logged In"></div>
-        <%= raw komet_user %>
-      </a>
-    </div>
+        <!--    508 fix - states the title or labels but preference would be for Jaws to actually read the actual user id is possible -->
 
-    <div>
-      <button type="button" class="komet-link-button" id="logout" onclick="location.replace('<%= logout_path %>')" title="Logout" role="navigation">
-        <div class="glyphicon glyphicon-log-out" title="Logout"></div>
-        Logout
-      </button>
+        <div>
+            <a href="#userid" class="komet-link-button" id="userid" title="You are Logged In" role="navigation">
+                <div class="glyphicon glyphicon-user" title="You are Logged In"></div>
+                <%= raw komet_user %>
+            </a>
+        </div>
+
+        <div>
+            <button type="button" class="komet-link-button" id="logout" onclick="location.replace('<%= logout_path %>')" title="Logout" role="navigation">
+                <div class="glyphicon glyphicon-log-out" title="Logout"></div>
+                Logout
+            </button>
+        </div>
     </div>
-  </div>
 
 </nav>
 
-<div id="komet_user_preference_form" title="User's Preference">
-
-</div>
-
 <!--modal window for exporting new and updated concepts -->
 <div id="export_modal" class="modal fade modal-wide" data-backdrop="static" role="dialog">
-  <div class="modal-dialog">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h2 class="modal-title">VHAT XML Export</h2>
-      </div>
-      <div class="modal-body">
-        <%= form_tag(export_path, method: :post, id: 'export_modal_form', name: 'export_modal_form') do %>
-            <%= label_tag 'start_date_input', 'Start Date' %>
-            <div class='input-group date' id='start_date'>
-              <input id='start_date_input' name="start_date_input" type='text' class="form-control" placeholder="Enter the start date for this export" required/>
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title">VHAT XML Export</h2>
+            </div>
+            <div class="modal-body">
+                <%= form_tag(export_path, method: :post, id: 'export_modal_form', name: 'export_modal_form') do %>
+                    <%= label_tag 'start_date_input', 'Start Date' %>
+                    <div class='input-group date' id='start_date'>
+                        <input id='start_date_input' name="start_date_input" type='text' class="form-control" placeholder="Enter the start date for this export" required/>
               <span class="input-group-addon">
                 <span class="fa fa-calendar"></span>
               </span>
-            </div>
-            <br>
-            <%= label_tag 'end_date_input', 'End Date' %>
-            <div class='input-group date' id='end_date'>
-              <input id="end_date_input" name="end_date_input" type='text' class="form-control" placeholder="Enter the end date for this export (Optional)"/>
+                    </div>
+                    <br>
+                    <%= label_tag 'end_date_input', 'End Date' %>
+                    <div class='input-group date' id='end_date'>
+                        <input id="end_date_input" name="end_date_input" type='text' class="form-control" placeholder="Enter the end date for this export (Optional)"/>
               <span class="input-group-addon">
                 <span class="fa fa-calendar"></span>
               </span>
+                    </div>
+                    <br>
+                <% end %>
             </div>
-            <br>
-        <% end %>
-      </div>
-      <hr>
-      <div align="center" style="padding-bottom: 10px">
-        <div id="buttons_div">
-          <button type="button" class="btn btn-default" onclick="ExportModule.cancel_export();">Cancel</button>
-          <button type="button" class="btn btn-default" onclick="ExportModule.submit_export();">Submit</button>
+            <hr>
+            <div align="center" style="padding-bottom: 10px">
+                <div id="buttons_div">
+                    <button type="button" class="btn btn-default" onclick="ExportModule.cancel_export();">Cancel</button>
+                    <button type="button" class="btn btn-default" onclick="ExportModule.submit_export();">Submit</button>
+                </div>
+            </div>
         </div>
-      </div>
     </div>
-  </div>
 </div>
 
 <% if controller.ssoi? %>
@@ -115,8 +111,6 @@
 
 <script>
     $(document).ready(function () {
-
-        $('#komet_user_preference_form').html("<%= j(render(:partial => 'komet_dashboard/userspreference')) %>");
         ExportModule.initialize();
     });
 </script>

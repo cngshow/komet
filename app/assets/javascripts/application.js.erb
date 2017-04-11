@@ -57,38 +57,34 @@
 //= require_tree .
 
 function flash_notify(options, settings) {
-  $.notify(options, settings);
+    $.notify(options, settings);
 }
 
-var time_between_role_notifications = <%=$PROPS['KOMET.role_change_notification_time_interval']%>;
-var time_between_role_checks = <%=$PROPS['KOMET.role_change_check_time_interval']%>;
-var last_notification_time = null;
-var last_role_check = null;
-$(document).ajaxSend(function (event, jqXHR, ajaxOptions) {
-  var url = ajaxOptions.url;
-  var patt = new RegExp(gon.routes.flash_notifier_roles_path);
-  var flash_notifier_role_match = patt.test(url);
-  var res = !(flash_notifier_role_match);
+(function () {
+    $.ajaxSetup({ cache: false });
 
-  // only make the rest call for routes that are NOT the flash notifier call, or the the role check itself
-  var secs_between_checks = (new Date() - last_role_check)/1000;
-  if (res && (secs_between_checks > time_between_role_checks)) {
-    $.get(gon.routes.flash_notifier_roles_path, function (results) {
-      last_role_check = new Date();
+    // read ajax response header for roles to compare against the roles in gon to see if they have been changed in PRISME
+    var time_between_role_notifications = <%=$PROPS['KOMET.role_change_notification_time_interval']%>;
+    var last_notification_time = null;
 
-      if (Common.arr_diff(gon.roles, results).length != 0) {
-        var time_delta = (new Date() - last_notification_time)/1000;
-        if ( time_delta > time_between_role_notifications) {
-          flash_notify({message: '<%=BootstrapNotifier::ROLE_CHANGE%>'}, {
-            type: 'danger',
-            delay: 0
-          });
-          last_notification_time = new Date();
+    $(document).ajaxComplete(function (event, jqXHR, ajaxOptions) {
+        var responseRoles = jqXHR.getResponseHeader('<%= BootstrapNotifier::AJAX_HDR_ROLES %>');
+        var roles = JSON.parse(responseRoles);
+
+        if (Common.arr_diff(gon.roles, roles).length != 0) {
+            var secs_bt_notifications = (new Date() - last_notification_time) / 1000;
+            var show_flash = (time_between_role_notifications === null ? true : secs_bt_notifications > time_between_role_notifications);
+
+            if (show_flash) {
+                flash_notify({message: '<%=BootstrapNotifier::ROLE_CHANGE%>'}, {
+                    type: 'danger',
+                    delay: 0
+                });
+                last_notification_time = new Date();
+            }
         }
-      }
     });
-  }
-});
+})();
 
 //** javascript plugin overrides
 
@@ -99,25 +95,25 @@ $(document).ajaxSend(function (event, jqXHR, ajaxOptions) {
 
 // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/findIndex
 if (!Array.prototype.findIndex) {
-  Array.prototype.findIndex = function (predicate) {
-    'use strict';
-    if (this == null) {
-      throw new TypeError('Array.prototype.findIndex called on null or undefined');
-    }
-    if (typeof predicate !== 'function') {
-      throw new TypeError('predicate must be a function');
-    }
-    var list = Object(this);
-    var length = list.length >>> 0;
-    var thisArg = arguments[1];
-    var value;
+    Array.prototype.findIndex = function (predicate) {
+        'use strict';
+        if (this == null) {
+            throw new TypeError('Array.prototype.findIndex called on null or undefined');
+        }
+        if (typeof predicate !== 'function') {
+            throw new TypeError('predicate must be a function');
+        }
+        var list = Object(this);
+        var length = list.length >>> 0;
+        var thisArg = arguments[1];
+        var value;
 
-    for (var i = 0; i < length; i++) {
-      value = list[i];
-      if (predicate.call(thisArg, value, i, list)) {
-        return i;
-      }
-    }
-    return -1;
-  };
+        for (var i = 0; i < length; i++) {
+            value = list[i];
+            if (predicate.call(thisArg, value, i, list)) {
+                return i;
+            }
+        }
+        return -1;
+    };
 }

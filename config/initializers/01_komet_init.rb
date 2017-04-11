@@ -76,6 +76,7 @@ at_exit do
   $log.always_n(PrismeLogEvent::LIFECYCLE_TAG, "#{Rails.application.class.parent_name}/#{context} has been ruthlessly executed!", false) unless $rake
 end
 KOMET_NAME = $PROPS['KOMET.komet_name']
+$log.always("JRuby version is #{JRUBY_VERSION}")
 
 # Thread.new do
 #   sleep 3

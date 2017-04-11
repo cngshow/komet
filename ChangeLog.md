@@ -3,6 +3,20 @@ Komet Changelog
 This changelog summarizes changes and fixes which are a part of each revision.  For more details on the fixes, refer tracking numbers 
 where provided, and the git commit history.
 
+* 2017/04/11 - 3.1
+    * Allowed nested modules to be shown in the view parameters so all concepts can be displayed when choosing specific views (Jazz: 486439)
+    * Updated to latest enunciate
+    * changes to support latest metadata updates (module constants removed)
+    * added support for new ID API method 'ids'
+    * Changed preference window so preference queries are not run until the window is opened, instead of when the dashboard is loaded. (Jazz: 452386)
+    * Updated to latest Enuniciate
+    * Changes for edit tokens
+    * Added view params to edit forms, passing view params to all API update calls. Changes to support this include modifying the trees to pass viewer information, pub/sub calls to support viewer info and
+      view params, fixes for various places that were not correctly passing view params around.
+    * JRuby upgrade branch from 9.0.4 to 9.1.8 (March 28th 2017)
+      follow all instructions in prisme tied to the upgrade - especially related to installing a tool like http://www.issihosts.com/haveged/ to
+      ensure that any linux boxes have proper entropy available.
+
 * 2017/03/21 - 3.0.1
     * Rebuild of Release 3
 

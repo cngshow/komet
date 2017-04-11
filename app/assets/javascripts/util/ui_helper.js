@@ -928,6 +928,22 @@ var UIHelper = (function () {
         }
     };
 
+    function getViewParams(jsObject) {
+
+        if (jsObject == "taxonomy"){
+            return TaxonomyModule.getViewParams();
+
+        } else if (jsObject == "mapping"){
+            return MappingModule.getViewParams();
+
+        } else if (jsObject == "search"){
+            return null;
+
+        } else {
+            return WindowManager.viewers[this.viewerID].getViewParams();
+        }
+    }
+
     // TODO - Fix z-index of menus in IE - splitter bars cutting through it
     function initializeContextMenus() {
 
@@ -954,6 +970,7 @@ var UIHelper = (function () {
                     var conceptText = $triggerElement.attr("data-menu-concept-text");
                     var conceptTerminologyType = $triggerElement.attr("data-menu-concept-terminology-type");
                     var conceptState = $triggerElement.attr("data-menu-state");
+                    var jsObject = $triggerElement.attr("data-menu-js-object");
                     var unlinkedViewerID = WindowManager.getUnlinkedViewerID();
 
                     if (conceptText == undefined || conceptText == "") {
@@ -971,7 +988,7 @@ var UIHelper = (function () {
                     items.openConcept = {
                         name: "Open Concept",
                         icon: "context-menu-icon glyphicon-list-alt",
-                        callback: openConcept($triggerElement, uuid)
+                        callback: openConcept($triggerElement, uuid, jsObject)
                     };
 
                     if (WindowManager.viewers.inlineViewers.length < WindowManager.viewers.maxInlineViewers) {
@@ -979,7 +996,7 @@ var UIHelper = (function () {
                         items.openNewConceptViwer = {
                             name: "Open in New Concept Viewer",
                             icon: "context-menu-icon glyphicon-list-alt",
-                            callback: openConcept($triggerElement, uuid, WindowManager.NEW, WindowManager.NEW)
+                            callback: openConcept($triggerElement, uuid, jsObject, WindowManager.NEW, WindowManager.NEW)
                         };
                     }
 
@@ -988,7 +1005,7 @@ var UIHelper = (function () {
                         items.openUnlinkedConceptViwer = {
                             name: "Open in Unlinked Concept Viewer",
                             icon: "context-menu-icon glyphicon-list-alt",
-                            callback: openConcept($triggerElement, uuid, unlinkedViewerID)
+                            callback: openConcept($triggerElement, uuid, jsObject, unlinkedViewerID)
                         };
                     }
 
@@ -1001,7 +1018,7 @@ var UIHelper = (function () {
                         items.openMapSet = {
                             name: "Open Mapping",
                             icon: "context-menu-icon glyphicon-list-alt",
-                            callback: openMapSet($triggerElement, uuid)
+                            callback: openMapSet($triggerElement, uuid, jsObject)
                         };
 
                         if (WindowManager.viewers.inlineViewers.length < WindowManager.viewers.maxInlineViewers) {
@@ -1009,7 +1026,7 @@ var UIHelper = (function () {
                             items.openNewMappingViwer = {
                                 name: "Open in New Mapping Viewer",
                                 icon: "context-menu-icon glyphicon-list-alt",
-                                callback: openMapSet($triggerElement, uuid, WindowManager.NEW, WindowManager.NEW)
+                                callback: openMapSet($triggerElement, uuid, jsObject, WindowManager.NEW, WindowManager.NEW)
                             };
                         }
 
@@ -1018,7 +1035,7 @@ var UIHelper = (function () {
                             items.openUnlinkedMappingViwer = {
                                 name: "Open in Unlinked Mapping Viewer",
                                 icon: "context-menu-icon glyphicon-list-alt",
-                                callback: openMapSet($triggerElement, uuid, unlinkedViewerID)
+                                callback: openMapSet($triggerElement, uuid, jsObject, unlinkedViewerID)
                             };
                         }
                     }
@@ -1047,7 +1064,7 @@ var UIHelper = (function () {
                         items.editConcept = {
                             name: "Edit Concept",
                             icon: "context-menu-icon glyphicon-pencil",
-                            callback: openConceptEditor($triggerElement, ConceptsModule.EDIT, uuid)
+                            callback: openConceptEditor($triggerElement, ConceptsModule.EDIT, uuid, jsObject)
                         };
 
                         if (WindowManager.viewers.inlineViewers.length < WindowManager.viewers.maxInlineViewers) {
@@ -1055,7 +1072,7 @@ var UIHelper = (function () {
                             items.editConceptNewViewer = {
                                 name: "Edit Concept in New Viewer",
                                 icon: "context-menu-icon glyphicon-pencil",
-                                callback: openConceptEditor($triggerElement, ConceptsModule.EDIT, uuid, WindowManager.NEW, WindowManager.NEW)
+                                callback: openConceptEditor($triggerElement, ConceptsModule.EDIT, uuid, jsObject, WindowManager.NEW, WindowManager.NEW)
                             };
                         }
 
@@ -1064,14 +1081,14 @@ var UIHelper = (function () {
                             items.editConceptUnlinkedViewer = {
                                 name: "Edit Concept in Unlinked Viewer",
                                 icon: "context-menu-icon glyphicon-pencil",
-                                callback: openConceptEditor($triggerElement, ConceptsModule.EDIT, uuid, unlinkedViewerID)
+                                callback: openConceptEditor($triggerElement, ConceptsModule.EDIT, uuid, jsObject, unlinkedViewerID)
                             };
                         }
 
                         items.cloneConcept = {
                             name: "Clone Concept",
                             icon: "context-menu-icon glyphicon-share",
-                            callback: openConceptEditor($triggerElement, ConceptsModule.CLONE, uuid)
+                            callback: openConceptEditor($triggerElement, ConceptsModule.CLONE, uuid, jsObject)
                         };
 
                         if (WindowManager.viewers.inlineViewers.length < WindowManager.viewers.maxInlineViewers) {
@@ -1079,7 +1096,7 @@ var UIHelper = (function () {
                             items.cloneConceptNewViewer = {
                                 name: "Clone Concept in New Viewer",
                                 icon: "context-menu-icon glyphicon-share",
-                                callback: openConceptEditor($triggerElement, ConceptsModule.CLONE, uuid, WindowManager.NEW, WindowManager.NEW)
+                                callback: openConceptEditor($triggerElement, ConceptsModule.CLONE, uuid, jsObject, WindowManager.NEW, WindowManager.NEW)
                             };
                         }
 
@@ -1088,7 +1105,7 @@ var UIHelper = (function () {
                             items.cloneConceptUnlinkedViewer = {
                                 name: "Clone Concept in Unlinked Viewer",
                                 icon: "context-menu-icon glyphicon-share",
-                                callback: openConceptEditor($triggerElement, ConceptsModule.CLONE, uuid, unlinkedViewerID)
+                                callback: openConceptEditor($triggerElement, ConceptsModule.CLONE, uuid, jsObject, unlinkedViewerID)
                             };
                         }
 
@@ -1097,7 +1114,7 @@ var UIHelper = (function () {
                             items.createChildConcept = {
                                 name: "Create Child Concept",
                                 icon: "context-menu-icon glyphicon-plus",
-                                callback: openConceptEditor($triggerElement, ConceptsModule.CREATE, null, WindowManager.getLinkedViewerID(), WindowManager.INLINE, uuid, conceptText, conceptTerminologyType)
+                                callback: openConceptEditor($triggerElement, ConceptsModule.CREATE, null, jsObject, WindowManager.getLinkedViewerID(), WindowManager.INLINE, uuid, conceptText, conceptTerminologyType)
                             };
 
                             if (WindowManager.viewers.inlineViewers.length < WindowManager.viewers.maxInlineViewers) {
@@ -1105,7 +1122,7 @@ var UIHelper = (function () {
                                 items.createChildConceptNewViewer = {
                                     name: "Create Child Concept in New Viewer",
                                     icon: "context-menu-icon glyphicon-plus",
-                                    callback: openConceptEditor($triggerElement, ConceptsModule.CREATE, null, WindowManager.NEW, WindowManager.NEW, uuid, conceptText, conceptTerminologyType)
+                                    callback: openConceptEditor($triggerElement, ConceptsModule.CREATE, null, jsObject, WindowManager.NEW, WindowManager.NEW, uuid, conceptText, conceptTerminologyType)
                                 };
                             }
 
@@ -1114,7 +1131,7 @@ var UIHelper = (function () {
                                 items.createChildConceptUnlinkedViewer = {
                                     name: "Create Child Concept in Unlinked Viewer",
                                     icon: "context-menu-icon glyphicon-plus",
-                                    callback: openConceptEditor($triggerElement, ConceptsModule.CREATE, null, unlinkedViewerID, WindowManager.INLINE, uuid, conceptText, conceptTerminologyType)
+                                    callback: openConceptEditor($triggerElement, ConceptsModule.CREATE, null, jsObject, unlinkedViewerID, WindowManager.INLINE, uuid, conceptText, conceptTerminologyType)
                                 };
                             }
                         }
@@ -1172,12 +1189,11 @@ var UIHelper = (function () {
 
     // Context menu functions
 
-    function openConcept(element, id, viewerID, windowType) {
+    function openConcept(element, id, jsObject, viewerID, windowType) {
 
         return function () {
 
             var viewerPanel = element.parents("div[id^=komet_viewer_]");
-            var viewParams;
 
             // if the viewerID was not passed it (but not if it is null), look up what it should be
             if (viewerID === undefined) {
@@ -1189,38 +1205,28 @@ var UIHelper = (function () {
                 }
             }
 
-            if (viewerPanel.length > 0) {
-                viewParams = WindowManager.viewers[viewerID].getViewParams();
-            } else {
-                viewParams = TaxonomyModule.getViewParams();
-            }
-
-            $.publish(KometChannels.Taxonomy.taxonomyTreeNodeSelectedChannel, ["", id, viewParams, viewerID, windowType]);
+            $.publish(KometChannels.Taxonomy.taxonomyTreeNodeSelectedChannel, ["", id, UIHelper.getViewParams(jsObject), viewerID, windowType]);
         };
     }
 
-    function openMapSet(element, id, viewerID, windowType) {
+    function openMapSet(element, id, jsObject, viewerID, windowType) {
 
         return function () {
 
             var viewerPanel = element.parents("div[id^=komet_viewer_]");
-            var viewParams;
 
             // if the viewerID was not passed it (but not if it is null), look up what it should be
             if (viewerID === undefined) {
 
                 if (viewerPanel.length > 0) {
-
                     viewerID = viewerPanel.first().attr("data-komet-viewer-id");
-                    viewParams = WindowManager.viewers[viewerID].getViewParams();
                 } else {
 
                     viewerID = WindowManager.getLinkedViewerID();
-                    viewParams =  MappingModule.getTreeViewParams();
                 }
             }
 
-            $.publish(KometChannels.Mapping.mappingTreeNodeSelectedChannel, ["", id, viewParams, viewerID, windowType]);
+            $.publish(KometChannels.Mapping.mappingTreeNodeSelectedChannel, ["", id, UIHelper.getViewParams(jsObject), viewerID, windowType]);
         };
     }
 
@@ -1245,7 +1251,7 @@ var UIHelper = (function () {
         };
     }
 
-    function openConceptEditor(element, action, id, viewerID, windowType, parentID, parentText, parentType) {
+    function openConceptEditor(element, action, id, jsObject, viewerID, windowType, parentID, parentText, parentType) {
 
         return function () {
 
@@ -1261,7 +1267,7 @@ var UIHelper = (function () {
                 }
             }
 
-            $.publish(KometChannels.Taxonomy.taxonomyConceptEditorChannel, [action, id, viewerID, windowType, {
+            $.publish(KometChannels.Taxonomy.taxonomyConceptEditorChannel, [action, id, UIHelper.getViewParams(jsObject), viewerID, windowType, {
                 parentID: parentID,
                 parentText: parentText,
                 parentType: parentType
@@ -1294,7 +1300,7 @@ var UIHelper = (function () {
 
                     // if the mapping module has been loaded then refresh the mapping tree
                     if (MappingModule.tree){
-                        MappingModule.tree.reloadTree(MappingModule.getTreeViewParams());
+                        MappingModule.tree.reloadTree(MappingModule.getViewParams());
                     }
 
                 } else {
@@ -1340,6 +1346,7 @@ var UIHelper = (function () {
         createSelectFieldString: createSelectFieldString,
         getPreDefinedOptionsForSelect: getPreDefinedOptionsForSelect,
         getElementRightFromWindow: getElementRightFromWindow,
+        getViewParams: getViewParams,
         VHAT: VHAT,
         SNOMED: SNOMED,
         LOINC: LOINC,
