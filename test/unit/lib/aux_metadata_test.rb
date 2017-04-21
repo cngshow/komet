@@ -17,8 +17,6 @@ class AuxilliaryMetadataTest  < Test::Unit::TestCase
     assert(AuxilliaryMetadata.major_version_ok? , "The expected major version is #{AUXILIARY_METADATA_MAJOR_VERSION}.  I am being built with #{AuxilliaryMetadata.auxilliary_yaml[AUXILLIARY_VERSION_KEY]}")
   end
 
-  # Called after every test method runs. Can be used to tear
-  # down fixture information.
 
   def teardown
     # Do nothing

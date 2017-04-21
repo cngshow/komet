@@ -11,7 +11,7 @@ module AuxilliaryMetadata
 
     def major_version_ok?
       AuxilliaryMetadata.auxilliary_yaml ||= YAML.load_file(AUXILIARY_METADATA_FILE)
-      version = auxilliary_yaml[AUXILLIARY_VERSION_KEY].to_s
+      version = auxilliary_yaml.fetch(AUXILLIARY_VERSION_KEY).to_s
       major_version = version.split('.').first
       AUXILIARY_METADATA_MAJOR_VERSION.eql? major_version
     end
