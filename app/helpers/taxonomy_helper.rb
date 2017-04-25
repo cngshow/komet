@@ -8,22 +8,32 @@ module TaxonomyHelper
 
         if user_prefs[flag_name + '_flags']
 
-            flags = user_prefs[flag_name + '_flags'].find_all{|key, hash|
-                hash['id'].to_i.in?(ids_to_match) && hash['color'] != ''
+            flags = user_prefs[flag_name + '_flags'].select{|key, hash|
+                hash['id'].to_i.in?(ids_to_match) && (hash['color'] != '' || hash['shape_name'].downcase != 'none')
             }
 
             $log.info("get_tree_node_flag flags #{flags}")
             flags.each do |flag|
 
-                shape = ''
-                caption = 'aria-label="' + flag[1]['text']  + ' Flag" title="' + flag[1]['text']  + ' Flag"'
+                shape = 'rectangle'
+                color = 'black'
 
-                $log.debug("get_tree_node_flag flag[1]['shape'] #{flag[1]['shape']}")
+                if flag[1]['shape_name'].downcase != 'none'
+                    shape = flag[1]['shape_name']
+                end
 
-                if flag[1]['shape'].downcase != 'none'
-                    return_flags = ' <span class="' + flag[1]['shape']  + '" style="color: ' + flag[1]['color'] + ';" ' + caption + '></span>'
+                if flag[1]['color'] != ''
+                    color = flag[1]['color']
+                end
+
+                caption = 'aria-label="' + flag[1]['text']  + ' Flag, Color: ' + color + ', Shape: ' + shape + '" title="' + flag[1]['text']  + ' Flag"'
+
+                $log.debug("get_tree_node_flag flag[1]['shape'] #{flag[1]['shape_class']}")
+
+                if flag[1]['shape_class'].downcase != 'none'
+                    return_flags << ' <span class="' + flag[1]['shape_class']  + '" style="color: ' + flag[1]['color'] + ';" ' + caption + '></span>'
                 else
-                    return_flags = ' <span class="komet-node-' + flag_name + '-flag" style="border-color: ' + flag[1]['color'] + ';" ' + caption + '></span>'
+                    return_flags << ' <span class="komet-node-' + flag_name + '-flag" style="border-color: ' + flag[1]['color'] + ';" ' + caption + '></span>'
                 end
 
             end

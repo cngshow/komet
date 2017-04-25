@@ -1,0 +1,171 @@
+<%
+   # This is a partial template for producing a flag control widget.
+   #
+   # The following are the local variable this template expects to be set in order to function:
+   # dialog_title: The displayed title of the dialog (optional)
+   # id_prefix - A string that will be prepended to all ID attributes. Needs to be unique to the page
+   # id_postfix - A string that will appended to all ID attributes. Mainly needed if in a viewer panel, as there could be multiple of the same panels. (optional)
+   # javascript_object - The javascript object that will contain the functions to be run
+   # javascript_function_qualifier - A string that will make the javascript function names unique in their containing object. (optional)
+   # show_templates - A boolean to indicate if predefined field templates should be shown to the user. (optional)
+   #
+   # Four javascript functions must be created to handle the events this template generates. The following names assume 'javascript_function_qualifier' is set to "Sample":
+   # cancelInclude_javascript_function_qualifier_FieldsDialog()    [cancelIncludeSampleFieldsDialog()]
+   # changed_javascript_function_qualifier_AddFieldsType(value)    [changedSampleAddFieldsType(value)]
+   # add_javascript_function_qualifier_Field()                     [addSampleField()]
+   # saveInclude_javascript_function_qualifier_FieldsDialog()      [saveIncludeSampleFieldsDialog()]
+   #
+   # This javascript function is only required if the show_templates variable is true. The options for the templates must also be set programmatically
+   # add_javascript_function_qualifier_Template                    [addSampleTemplate()]
+   #
+   # This form is hidden (with the .hide class) and absolutely positioned by default. The form will need to be displayed and positioned in javascript
+   # A javascript function will also be needed that generates the list of checkboxes that represent the fields the user wants to add to the form in the select_included_fields section
+
+   flag_control_id = java.lang.System.nanoTime.to_s
+
+   if !defined?(flag_data)
+       flag_data = []
+   end
+
+   if !defined?(field_id_prefix)
+       field_id_prefix = 'flag'
+   end
+
+   if !defined?(field_id_postfix)
+       field_id_postfix = ''
+   end
+
+   if !defined?(field_name_prefix)
+       field_name_prefix = 'flags'
+   end
+
+   if !defined?(flag_item_header)
+       flag_item_header = 'Item'
+   end
+
+   if !defined?(use_template_rows)
+       use_template_rows = false
+   end
+
+   if use_template_rows
+
+       flag_data[:template_entry] = {id: 'komet_flag_template_id', color: '', shape: 'None', shape_name: 'None', text: 'komet_flag_template_text'}
+%>
+    <div class="komet-row komet-flag-control-add-row" id="komet_flag_control_add_row_<%= flag_control_id %>">
+
+        <div class="komet-flag-control-add-field">
+            <autosuggest
+                id-base="<%= field_id_prefix %>"
+                id-postfix = "<%= field_id_postfix %>"
+                label="Select <%= flag_item_header %>:"
+                restrict-search="sememe"
+            ></autosuggest>
+        </div>
+
+        <button type="button" aria-label="Add <%= flag_item_header %> Flag Row" onclick="UIHelper.addFlagRow('<%= flag_control_id %>', '<%= field_id_prefix %>', '<%= field_id_postfix %>')">Add Row</button>
+    </div>
+
+<% end %>
+
+<div class="komet-row komet-flag-control-header">
+
+    <div class="komet-flag-control-text"><%= flag_item_header %></div>
+    <div class="komet-flag-control-color">Color</div>
+    <div class="komet-flag-control-shape">Shape</div>
+
+</div>
+
+<div class="komet-flag-control-body" id="komet_flag_control_body_<%= flag_control_id %>">
+
+    <% flag_data.each do |key, flag| %>
+<% $log.debug(flag) %>
+        <div class="komet-row" id="komet_flag_control_row_<%= flag[:id].to_s + '_' + flag_control_id.to_s %>">
+
+            <input type="hidden" name="<%= field_name_prefix + '[' + flag[:id].to_s%>][id]" value="<%= flag[:id]%>"/>
+            <input type="hidden" name="<%= field_name_prefix + '[' + flag[:id].to_s%>][text]" value="<%= flag[:text]%>"/>
+
+            <div class="komet-flag-control-text">
+                <%= flag[:text]%>
+            </div>
+
+            <div class="komet-flag-control-color">
+
+                <input
+                    id="<%= field_id_prefix %>_color_<%= flag[:id] %><%= field_id_postfix %>"
+                    name="<%= field_name_prefix + '[' + flag[:id].to_s%>][color]"
+                    value="<%= flag[:color]%>"
+                    class="komet-color-picker"
+                    title="Click here to change color"
+                    aria-label="Change <%= flag[:text] %> color"
+                    type="text"
+                    size="6"
+                    data-control="hue"
+                />
+
+                <button type="button"
+                    class="komet-link-button komet-flag-control-clear <%= flag[:color] == '' ? 'ui-state-disabled' : ''%>"
+                    onclick="UIHelper.clearColorFlagControl('<%= field_id_prefix %>_color_<%= flag[:id] %><%= field_id_postfix %>')"
+                    aria-label="Clear <%= flag[:text] %> Color Value"
+                    <%= flag[:color] == '' ? 'disabled' : ''%>
+                    title="Clear Color Value"
+                >
+                    <div class="glyphicon glyphicon-erase komet-delete"></div>
+                </button>
+
+            </div>
+
+            <div class="komet-flag-control-shape" data-id-prefix="<%= field_id_prefix %>" data-id-postfix="<%= flag[:id].to_s + field_id_postfix %>">
+
+                <input type="hidden" id="<%= field_id_prefix %>_shape_class_<%= flag[:id] %><%= field_id_postfix %>" name="<%= field_name_prefix + '[' + flag[:id].to_s%>][shape_class]" value="<%= flag[:shape_class]%>"/>
+                <input type="hidden" id="<%= field_id_prefix %>_shape_name_<%= flag[:id] %><%= field_id_postfix %>" name="<%= field_name_prefix + '[' + flag[:id].to_s%>][shape_name]" value="<%= flag[:shape_name]%>"/>
+
+                <div class="dropdown">
+
+                    <span class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+                        <div class="glyphicon <%= flag[:shape_class]%>" id="<%= field_id_prefix %>_shape_example_<%= flag[:id] %><%= field_id_postfix %>"></div>
+                        <span id="<%= field_id_prefix %>_shape_name_example_<%= flag[:id] %><%= field_id_postfix %>"><%= flag[:shape_name] %></span>
+                        <span class="caret"></span>
+                    </span>
+
+                    <ul class="dropdown-menu dropdown-menu-right" aria-label="select shape">
+
+                        <li><a href="#" onclick="UIHelper.setFlagShape(this, 'None')" href="#" aria-label="Set shape to None">None</a></li>
+                        <li><a href="#" onclick="UIHelper.setFlagShape(this, 'Square')" aria-label="Set shape to Square"><div aria-hidden="true" class="glyphicon glyphicon-stop"></div>Square</a></li>
+                        <li><a href="#" onclick="UIHelper.setFlagShape(this, 'Star')" aria-label="Set shape to Star"><div aria-hidden="true" class="glyphicon glyphicon-star"></div>Star</a></li>
+                        <li><a href="#" onclick="UIHelper.setFlagShape(this, 'Triangle')" aria-label="Set shape to Triangle"><div aria-hidden="true" class="glyphicon glyphicon-triangle-top"></div>Triangle</a></li>
+                        <li><a href="#" onclick="UIHelper.setFlagShape(this, 'Asterisk')" aria-label="Set shape to Asterisk"><div aria-hidden="true" class="glyphicon glyphicon-asterisk"></div>Asterisk</a></li>
+                        <li><a href="#" onclick="UIHelper.setFlagShape(this, 'Circle')" aria-label="Set shape to Circle"><div aria-hidden="true" class="fa fa-circle"></div>Circle</a></li>
+                    </ul>
+                </div>
+
+                <% if use_template_rows %>
+
+                    <button type="button" class="komet-link-button komet-flex-right" onclick="UIHelper.deleteFlagRow('<%= flag[:id].to_s + '_' + flag_control_id.to_s %>')" aria-label="Delete <%= flag[:text] %> Flag" title="Delete Flag">
+                        <div class="glyphicon glyphicon-remove komet-delete"></div>
+                    </button>
+
+                <% end %>
+
+            </div>
+        </div>
+
+    <%
+       end
+
+       if use_template_rows
+    %>
+
+        <script>
+
+            (function(){
+
+                var templateRow = $("#komet_flag_control_row_komet_flag_template_id_<%= flag_control_id %>");
+
+                UIHelper.addFlagRowTemplate("<%= flag_control_id %>", templateRow.prop('outerHTML'));
+                templateRow.remove();
+            }());
+
+        </script>
+
+    <% end %>
+</div>

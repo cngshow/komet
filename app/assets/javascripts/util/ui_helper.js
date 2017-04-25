@@ -24,6 +24,7 @@ var UIHelper = (function () {
     var conceptClipboard = {};
     var autoSuggestRecentCache = {};
     var deferredRecentsCalls = null;
+    var flagControlRowTemplates = {};
     const VHAT = "vhat";
     const SNOMED = "snomed";
     const LOINC = "loinc";
@@ -34,6 +35,7 @@ var UIHelper = (function () {
     const RECENTS_MAPSET = 'mapset';
     const RECENTS_SEMEME = 'sememe';
     const RECENTS_METADATA = 'metadata';
+    const FLAG_SHAPES = {'None': '', 'Square': 'glyphicon glyphicon-stop', 'Star': 'glyphicon glyphicon-star', 'Triangle': 'glyphicon glyphicon-triangle-top', 'Asterisk': 'glyphicon glyphicon-asterisk', 'Circle': 'fa fa-circle'};
 
     /*
      * initDatePicker - Initialize a date picker input group to with a starting date
@@ -115,6 +117,224 @@ var UIHelper = (function () {
             left: element.left + window.scrollX,
             top: element.top + window.scrollY
         }
+    }
+
+    function escapeRegEx(regExString) {
+        return regExString.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"); // $& means the whole matched string
+    }
+
+    /*
+     * initOrderControls - Initialize order control widgets in an area of the page - must be set up using komet order control classes (komet-row, komet-order-control-body, komet-change-order-up, komet-change-order-down)
+     * @param [object or string] elementOrSelector - Either a jquery object or the class or ID selector (including the "#" or "." prefix) that represents the area containing order controls to initialize.
+     */
+    function initOrderControls(elementOrSelector){
+
+        var orderControls;
+        var orderControlRows;
+
+        // If the type of the first parameter is a string, then use it as a jquery selector, otherwise use as is
+        if (typeof elementOrSelector === "string") {
+            orderControls = $(elementOrSelector).find(".komet-order-control-body");
+        } else {
+            orderControls = elementOrSelector.find(".komet-order-control-body");
+        }
+
+        // loop over each order control
+        orderControls.each(function(){
+
+            // get all the rows in the control
+            orderControlRows = $(this).children();
+
+            // disable the up button on the first row
+            var firstRowButton = orderControlRows.first().find(".komet-change-order-up");
+            firstRowButton.addClass("ui-state-disabled");
+            firstRowButton.prop("disabled", true);
+
+            // disable the down button on the last row
+            var lastRowButton = orderControlRows.last().find(".komet-change-order-down");
+            lastRowButton.addClass("ui-state-disabled");
+            lastRowButton.prop("disabled", true);
+        });
+    }
+
+    /*
+     * moveRowOrderControl - Move a row in an order control widget when an up or down button is selected
+     * @param [object] button - the button object that was selected.
+     * @param [string] direction - the direction in the list to move the selected row. Options are 'up' and 'down'.
+     */
+    function moveRowOrderControl(button, direction) {
+
+        // get the row that surrounds the button that was selected
+        var selectedRow = $(button).closest("div.komet-row");
+        var targetRow;
+        var moveAction;
+        var targetAction;
+
+        // if we are moving the row up set actions to before and previous, else to after and next
+        if (direction == 'up'){
+
+            moveAction = 'before';
+            targetAction = "prev";
+
+        } else {
+
+            moveAction = 'after';
+            targetAction = "next";
+        }
+
+        // get the row we are moving the selected row relative to
+        targetRow = selectedRow[targetAction]();
+
+        // if the target exists
+        if (targetRow.length) {
+
+            // use the appropriate move action method on the target to move the selected row
+            targetRow[moveAction](selectedRow);
+
+            // see if there is a disabled button in the selected row
+            var selectedOppositeButton = selectedRow.find(".ui-state-disabled");
+
+            // if there is a disabled button in the selected row then it started at one end of the list
+            if (selectedOppositeButton.length){
+
+                // enable the button since it will no longer be at that end of the list
+                selectedOppositeButton.removeClass("ui-state-disabled");
+                selectedOppositeButton.prop("disabled", false);
+
+                // the target row is now at the end of the list so disable the appropriate button
+                var targetOppositeButton = targetRow.find("." + selectedOppositeButton.attr('class').split(" ").join("."));
+                targetOppositeButton.addClass("ui-state-disabled");
+                targetOppositeButton.prop("disabled", true);
+            }
+
+            // see if there is another row in the chosen direction (if the selected row is now at one end of the list)
+            var atEnd = selectedRow[targetAction]().length;
+
+            // if the selected row is at one end of the list
+            if (atEnd == 0){
+
+                // disable the appropriate button on the selected row
+                var selectedButton = selectedRow.find(".komet-change-order-" + direction);
+                selectedButton.addClass("ui-state-disabled");
+                selectedButton.prop("disabled", true);
+
+                // enable the appropriate button on the target row since it is no longer at one end of the list
+                var targetButton = targetRow.find(".komet-change-order-" + direction);
+                targetButton.removeClass("ui-state-disabled");
+                targetButton.prop("disabled", false);
+            }
+        }
+    }
+
+    /*
+     * initFlagControls - Initialize flag control widgets in an area of the page - must be set up using komet flag control classes (komet-row, komet-flag-control-body, komet_color_picker)
+     * @param [object or string] elementOrSelector - Either a jquery object or the class or ID selector (including the "#" or "." prefix) that represents the area containing controls to initialize.
+     */
+    function initFlagControls(elementOrSelector){
+
+        var flagControls;
+
+        // If the type of the first parameter is a string, then use it as a jquery selector, otherwise use as is
+        if (typeof elementOrSelector === "string") {
+            flagControls = $(elementOrSelector);
+        } else {
+            flagControls = elementOrSelector;
+        }
+
+        if (flagControls.attr("id").indexOf("komet_flag_control_row") == -1){
+            flagControls = flagControls.find(".komet-flag-control-body");
+        }
+
+        flagControls.find('.komet-color-picker').minicolors({
+
+                position: 'bottom right',
+                change: function() {
+
+                    var clearButton = $(this).parent().next(".komet-flag-control-clear");
+                    clearButton.removeClass("ui-state-disabled");
+                    clearButton.prop("disabled", false);
+                }
+
+        });
+
+        //$.minicolors.defaults.position = 'bottom right';
+    }
+
+    //clear color value
+    function clearColorFlagControl(fieldID) {
+
+        var colorField = $("#" + fieldID);
+        colorField.val("");
+        colorField.css("backgroundColor", "");
+
+        colorField.next().find('.minicolors-swatch-color').css("background-color", "");
+
+        var clearButton = $(colorField).parent().next(".komet-flag-control-clear");
+        clearButton.addClass("ui-state-disabled");
+        clearButton.prop("disabled", true);
+
+    }
+
+    /*
+     * setFlagShape - Sets the appropriate elements of a flag control widget when the user selects a shape
+     * @param [object] selectedOption - the shape option that was selected.
+     * @param [string] shapeName - the name of the shape that was selected. Must be in the UIHelper.FLAG_SHAPES variable
+     */
+    function setFlagShape(selectedOption, shapeName) {
+
+        var shapeRow = $(selectedOption).closest('.komet-flag-control-shape');
+        var shapeClassField = shapeRow.find("#" + shapeRow[0].dataset.idPrefix + "_shape_class_" + shapeRow[0].dataset.idPostfix);
+        var shapeNameField = shapeRow.find("#" + shapeRow[0].dataset.idPrefix + "_shape_name_" + shapeRow[0].dataset.idPostfix);
+        var shapeExampleField = shapeRow.find("#" + shapeRow[0].dataset.idPrefix + "_shape_example_" + shapeRow[0].dataset.idPostfix);
+        var shapeNameExampleField = shapeRow.find("#" + shapeRow[0].dataset.idPrefix + "_shape_name_example_" + shapeRow[0].dataset.idPostfix);
+
+        shapeNameField.val(shapeName);
+        shapeClassField.val(FLAG_SHAPES[shapeName]);
+
+        shapeExampleField.removeClass();
+        shapeExampleField.addClass("glyphicon " + FLAG_SHAPES[shapeName]);
+        shapeNameExampleField.html(shapeName);
+    }
+
+    function addFlagRowTemplate(flagControlID, template){
+        flagControlRowTemplates[flagControlID] = template;
+    }
+
+    function addFlagRow(flagControlID, fieldIDPrefix, fieldIDPostfix){
+
+        var controlRow = $("#komet_flag_control_add_row_" + flagControlID);
+        removePageMessages(controlRow);
+
+        var flagControlBody = $("#komet_flag_control_body_" + flagControlID);
+        var addItemIDField = $("#" + fieldIDPrefix + fieldIDPostfix);
+
+        if ($("#komet_flag_control_row_" + addItemIDField.val() + "_" + flagControlID).length != 0){
+
+            controlRow.prepend(generatePageMessage("This item already exists below."));
+            return false;
+        }
+
+        var addItemDisplayField = $("#" + fieldIDPrefix + "_display" + fieldIDPostfix);
+        var newRow = flagControlRowTemplates[flagControlID];
+        var idRegEx = new RegExp('komet_flag_template_id', 'g');
+        var textRegEx = new RegExp('komet_flag_template_text', 'g');
+
+        newRow = newRow.replace(idRegEx, addItemIDField.val());
+        newRow = newRow.replace(textRegEx, addItemDisplayField.val());
+
+        flagControlBody.append(newRow);
+
+        var addedRow = $("#komet_flag_control_row_" + addItemIDField.val() + "_" + flagControlID);
+        initFlagControls(addedRow);
+
+        addItemIDField.val('');
+        addItemDisplayField.val('');
+
+    }
+
+    // TODO - add confirmation dialog
+    function deleteFlagRow(flagRowID){
+        $("#komet_flag_control_row_" + flagRowID).remove();
     }
 
     function getActiveTabId(tabControlId) {
@@ -1325,6 +1545,14 @@ var UIHelper = (function () {
         initDatePicker: initDatePicker,
         setStampDate: setStampDate,
         getOffset: getOffset,
+        moveRowOrderControl: moveRowOrderControl,
+        initOrderControls: initOrderControls,
+        initFlagControls: initFlagControls,
+        clearColorFlagControl: clearColorFlagControl,
+        setFlagShape: setFlagShape,
+        addFlagRowTemplate: addFlagRowTemplate,
+        addFlagRow: addFlagRow,
+        deleteFlagRow: deleteFlagRow,
         getActiveTabId: getActiveTabId,
         isTabActive: isTabActive,
         initializeContextMenus: initializeContextMenus,
@@ -1356,7 +1584,8 @@ var UIHelper = (function () {
         RECENTS_ASSOCIATION: RECENTS_ASSOCIATION,
         RECENTS_MAPSET: RECENTS_MAPSET,
         RECENTS_SEMEME: RECENTS_SEMEME,
-        RECENTS_METADATA: RECENTS_METADATA
+        RECENTS_METADATA: RECENTS_METADATA,
+        FLAG_SHAPES: FLAG_SHAPES
     };
 })();
 

@@ -5,6 +5,7 @@ where provided, and the git commit history.
 
 * 2017/04/?? - 3.2 - PENDING
     *Build will break when the auxilliary metadat major version changes.  Komet dev will know to make the right changes.(Tied to the build process not for test)
+    * Rewrote global preferences to make code reusable, easy to read and debug, and more user friendly. (Jazz: 452386)
 
 * 2017/04/11 - 3.1
     * Allowed nested modules to be shown in the view parameters so all concepts can be displayed when choosing specific views (Jazz: 486439)

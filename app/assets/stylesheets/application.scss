@@ -49,6 +49,9 @@ html, body{
     display: flex;
     flex-direction: column;
 }
+body.komet_dashboard, body.komet_dashboard .ui-widget, body.komet_dashboard .ui-widget button{
+    font-size: 14px;
+}
 
 //jquery validation error
 .error {
@@ -153,6 +156,34 @@ body > header, body > footer{
     height: 1%;
     flex: 1 1 auto;
 }
+label:not(.btn){
+    margin-right: 4px;
+    margin-bottom: 0px;
+}
+.btn-group{
+    height: 25px;
+    font-size: smaller !important;
+}
+.btn{
+    height: 25px;
+    padding: 3px 12px;
+}
+.form-control {
+    height: 25px;
+    font-size: 14px;
+    padding: 2px 4px;
+}
+.input-group.date {
+    width: 210px;
+    color: black;
+    margin: 0px;
+}
+.input-group.date .glyphicon, .input-group.date .fa{
+    margin: 0px;
+}
+.input-group.date .input-group-addon {
+    padding: 3px 6px;
+}
 .komet-no-margins{
     margin: 0px;
 }
@@ -165,6 +196,19 @@ body > header, body > footer{
     text-align: right;
     justify-content: flex-end;
     display: flex;
+}
+.komet-row{
+    display: flex;
+    flex-wrap: wrap;
+    flex: 1 1 auto;
+    margin: 2px 0px;
+    padding: 0px 2px;
+    align-items: center;
+}
+.komet-row-item{
+    display: flex;
+    flex-wrap: wrap;
+    flex: 1 1 auto;
 }
 .komet-main div.komet-containing-block{
     display: flex;
@@ -196,6 +240,16 @@ body > header, body > footer{
 }
 .komet-icon-stack .glyphicon {
     font-size: 1em;
+}
+.komet-label{
+    font-weight: bold;
+    margin-right: 5px;
+    flex: 0 1 auto;
+}
+.komet-field{
+    flex: 1 1 auto;
+    display: flex;
+    flex-direction: column;
 }
 .komet-stated-inferred{
     width: 150px;
@@ -288,6 +342,91 @@ div.komet-confirmation-dialog{
     height: 26px;
     padding: 3px 5px;
 }
+.komet-flag-control-add-field{
+    flex: 1 1 60%;
+    display: flex;
+}
+.komet-flag-control-add-field label{
+    display: inline-block;
+}
+.komet-flag-control-add-field .komet-autosuggest{
+    width: 70%;
+}
+.komet-order-control-header{
+    color: white;
+    background-color: #414cba;
+    margin: 0px;
+}
+.komet-order-control-body{
+    border: 1px solid #414cba;
+    margin-bottom: 5px;
+}
+.komet-order-control-body .komet-row:nth-child(even){
+    background: #CCC
+}
+.komet-order-control-body .komet-row:nth-child(odd){
+    background: #FFF
+}
+.komet-order-control-rank{
+    flex: 0 1 60px;
+}
+.komet-order-control-text{
+    flex: 1 1 auto;
+}
+.komet-flag-control-header{
+    color: white;
+    background-color: #414cba;
+    margin: 0px;
+}
+.komet-flag-control-body{
+    border: 1px solid #414cba;
+    margin-bottom: 5px;
+}
+.komet-flag-control-body .komet-row:nth-child(even){
+    background: #CCC
+}
+.komet-flag-control-body .komet-row:nth-child(odd){
+    background: #FFF
+}
+.komet-flag-control-body .glyphicon, .komet-flag-control-body .fa{
+    display: inline-block;
+    margin-left: 5px;
+}
+.komet-flag-control-text{
+    flex: 1 0 56%;
+    display: flex;
+}
+.komet-flag-control-color{
+    flex: 0 0 24%;
+    max-width: 140px;
+    display: flex;
+}
+.komet-flag-control-color input.komet-color-picker{
+    height: 30px;
+}
+.komet-flag-control-shape{
+    flex: 0 0 20%;
+    max-width: 120px;
+    display: flex;
+}
+.komet-flag-control-shape .dropdown-menu{
+    min-width: 130px;
+    max-width: 130px;
+}
+.komet-flag-control-shape .dropdown .glyphicon, .komet-flag-control-shape .dropdown .fa{
+    display: inline-block;
+    margin-left: 0px;
+    margin-right: 5px;
+}
+.komet-flag-control-shape .dropdown a{
+    display: inline-block;
+}
+.komet-color-picker{
+    height: 30px;
+}
+.komet-delete{
+    color:red;
+}
 
 // KOMET Navigation styles
 .komet-navbar{
@@ -378,6 +517,21 @@ div.komet-confirmation-dialog{
 .komet-navbar-tools .glyphicon, .komet-navbar-tools .fa{
     margin-right: 5px;
     padding-bottom: 4px;
+}
+
+// KOMET Preference Dialog Styles
+#komet_preferences_language{
+    width: 225px;
+}
+.komet-preference-label{
+    flex: 0 1 170px;
+}
+#komet_user_preference_form{
+    min-height: 400px;
+    max-height: 650px;
+}
+#komet_user_preference_form .komet-flag-control-body{
+    //margin-bottom: 150px;
 }
 
 // KOMET Dashboard Styles
@@ -971,7 +1125,7 @@ td.komet-concept-table-nested-indicator.komet-concept-table-nested-indicator-ope
     width: 100px;
 }
 
-    // Search Styles
+// Search Styles
 #komet_search_tab {
     padding: 2px;
 }
@@ -993,12 +1147,6 @@ td.komet-concept-table-nested-indicator.komet-concept-table-nested-indicator-ope
     height: 20px;
     font-size: .75em;
     display: none;
-}
-.change-rank.up:after {
-    content: attr(data-icon);
-}
-.change-rank.down:after {
-    content: attr(data-icon);
 }
 .no-close .ui-dialog-titlebar-close {
     display: none;
@@ -1221,7 +1369,7 @@ div.komet-mapping-change-order-icon.glyphicon{
 }
 .komet-add-fields-dialog label{
     font-size: smaller;
-    margin: 0px 0px 0px 5px
+    margin: 0px 0px 0px 5px;
 }
 .komet-add-fields-dialog .komet-add-fields-manual {
     font-size: smaller;

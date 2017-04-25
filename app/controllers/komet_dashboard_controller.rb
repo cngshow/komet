@@ -525,8 +525,8 @@ class KometDashboardController < ApplicationController
         additional_req_params = {}
         additional_req_params[:language] = params[:language]
         additional_req_params[:time] = params[:time]
-        additional_req_params[:dialectPrefs] = params[:dialectPrefs]
-        additional_req_params[:descriptionTypePrefs] = params[:descriptionTypePrefs]
+        additional_req_params[:dialectPrefs] = params[:dialect].keys * ','
+        additional_req_params[:descriptionTypePrefs] = params[:description_type].keys * ','
         additional_req_params[:allowedStates] = params[:allowedStates]
         additional_req_params.merge!(CommonRest::CacheRequest::PARAMS_NO_CACHE)
 
@@ -619,8 +619,19 @@ class KometDashboardController < ApplicationController
         @description_type_options = preferred_items + unsorted_description_type_options
         $log.debug("get_user_preference_info @description_type_options #{@description_type_options}")
 
-        # get the full list of languages
-        @language_options = get_concept_children(concept_id: $isaac_metadata_auxiliary['LANGUAGE']['uuids'].first[:uuid], return_json: false, remove_semantic_tag: true, view_params: session[:edit_view_params])
+
+        # get the full list of languages and store it in the session if it isn't already there
+        if session[:komet_language_options] == nil
+
+            session[:komet_language_options] = []
+            language_list = get_concept_children(concept_id: $isaac_metadata_auxiliary['LANGUAGE']['uuids'].first[:uuid], return_json: false, remove_semantic_tag: true, view_params: session[:edit_view_params])
+
+            # loop thru the full languages list to build an array of options
+            language_list.each do |language|
+                session[:komet_language_options] << [language[:text], language[:concept_sequence]]
+            end
+        end
+
         $log.debug("get_user_preference_info @language_options #{@language_options}")
 
         # get the user selected language
@@ -663,7 +674,7 @@ class KometDashboardController < ApplicationController
         $log.debug("get_user_preference_info path_flag_preferences #{path_flag_preferences}")
         $log.debug("get_user_preference_info refset_flag_preferences #{refset_flag_preferences}")
 
-        @path_flags = []
+        @path_flags = {}
 
         # if the user doesn't have current preferences
         if path_flag_preferences.nil?
@@ -674,19 +685,15 @@ class KometDashboardController < ApplicationController
 
             # loop thru the full path list to build an array of flag options
             path_list.each do |path|
-                @path_flags << {id: path[:concept_sequence], text: path[:text], color: '', shape: 'None', shape_name: 'None'}
+                @path_flags[path[:concept_sequence]] = {id: path[:concept_sequence], text: path[:text], color: '', shape_class: 'None', shape_name: 'None'}
             end
         else
-
-            # loop thru their preferences to build an array of flag options
-            path_flag_preferences.each do |preference|
-                @path_flags << {id: preference[1][:id], text: preference[1][:text], color: preference[1][:color], shape: preference[1][:shape], shape_name: get_shape_name(preference[1][:shape])}
-            end
+            @path_flags = path_flag_preferences
         end
 
         $log.debug("get_user_preference_info @path_flags #{@path_flags}")
 
-        @module_flags = []
+        @module_flags = {}
 
         # if the user doesn't have current preferences
         if module_flag_preferences.nil?
@@ -697,14 +704,10 @@ class KometDashboardController < ApplicationController
 
             # loop thru the full module list to build an array of flag options
             module_list.each do |komet_module|
-                @module_flags << {id: komet_module[:concept_sequence], text: komet_module[:text], color: '', shape: 'None', shape_name: 'None'}
+                @module_flags[komet_module[:concept_sequence]] = {id: komet_module[:concept_sequence], text: komet_module[:text], color: '', shape_class: 'None', shape_name: 'None'}
             end
         else
-
-            # loop thru their preferences to build an array of flag options
-            module_flag_preferences.each do |preference|
-                @module_flags << {id: preference[1][:id], text: preference[1][:text], color: preference[1][:color], shape: preference[1][:shape], shape_name: get_shape_name(preference[1][:shape])}
-            end
+            @module_flags = module_flag_preferences
         end
 
         $log.debug("get_user_preference_info @module_flags #{@module_flags}")
@@ -712,28 +715,15 @@ class KometDashboardController < ApplicationController
         additional_req_params[:childDepth] = 50
         additional_req_params.merge!(session[:edit_view_params])
 
-        # get the assemblage concept so we can get all children (refset concepts) from it
-        assemblages = TaxonomyRest.get_isaac_concept(uuid: $isaac_metadata_auxiliary['ASSEMBLAGE']['uuids'].first[:uuid], additional_req_params: additional_req_params)
 
-        # if the assemblage concept is loaded
-        unless assemblages.is_a? CommonRest::UnexpectedResponse
+        @refset_flags = {}
 
-            # process the children of the assemblage concept into a full list of refsets
-            @refset_options = process_refset_list(assemblages)
-            $log.debug("get_user_preference_info @refset_options #{@refset_options}")
-
-            @refset_flags = []
-
-            # if the user has current preferences loop thru them to build an array of flag options
-            unless refset_flag_preferences.nil?
-
-                refset_flag_preferences.each do |preference|
-                    @refset_flags << {id: preference[1][:id], text: preference[1][:text], color: preference[1][:color], shape: preference[1][:shape], shape_name: get_shape_name(preference[1][:shape])}
-                end
-            end
-
-            $log.debug("get_user_preference_info @refset_flags #{@refset_flags}")
+        # if the user has current refset preferences add them as flag options
+        unless refset_flag_preferences.nil?
+            @refset_flags = refset_flag_preferences
         end
+
+        $log.debug("get_user_preference_info @refset_flags #{@refset_flags}")
 
         # render the partial that was passing in to this function
         render partial: params[:partial]
