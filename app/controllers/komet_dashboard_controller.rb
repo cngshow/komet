@@ -235,7 +235,7 @@ class KometDashboardController < ApplicationController
                 node[:terminology_type] = 'vhat'
 
                 if node[:parent_count] != 0
-                    parent_node[:badge] = "&nbsp;&nbsp;<span class=\"badge badge-success\" title=\"#{parent_node[:parent_count]} parents\">#{parent_node[:parent_count]}</span>"
+                    parent_node[:badge] = "&nbsp;&nbsp;<span class=\"badge badge-success\" aria-label=\"#{parent_node[:parent_count]} parents\">#{parent_node[:parent_count]}</span>"
                 end
 
                 if parent_node[:defined].nil?
@@ -699,7 +699,6 @@ class KometDashboardController < ApplicationController
         if module_flag_preferences.nil?
 
             # get the full list of modules
-            # module_list = get_concept_children(concept_id: $isaac_metadata_auxiliary['MODULE']['uuids'].first[:uuid], return_json: false, remove_semantic_tag: true, view_params: session[:edit_view_params])
             module_list = get_concept_children(concept_id: $isaac_metadata_auxiliary['MODULE']['uuids'].first[:uuid], return_json: false, remove_semantic_tag: true, include_nested: true, view_params: session[:edit_view_params])
             $log.debug("get_user_preference_info module_list #{module_list}")
 
