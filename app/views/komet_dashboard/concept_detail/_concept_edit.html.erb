@@ -109,23 +109,27 @@
                         <% else %>
 
                             <div class="komet-concept-attributes-details-name">
-                              <caption title='UUID: <%= @concept_id %>'><b>UUID:</b>&nbsp;&nbsp;<%= @concept_id %></caption>
+                              <b>UUID:</b> &nbsp;<%= @concept_id %>
                             </div>
 
                         <% end %>
 
                         <!-- Defined -->
                         <div>
-                            <% if @concept_defined == 'Primitive' %>
-                                <div id="lbl_<%= @concept_defined %>" class="komet-tree-node-icon komet-tree-node-primitive"></div> &nbsp; <%= @concept_defined %>
-                            <% else %>
-                                <div id="lbl_<%= @concept_defined %>" class="komet-tree-node-icon komet-tree-node-defined"></div> &nbsp; <%= @concept_defined %>
-                            <% end %>
+
+                            <% if @concept_defined == 'Primitive'
+                                   concept_defined_class = 'primitive'
+                               else
+                                   concept_defined_class = 'defined'
+                               end
+                            %>
+
+                            <div aria-label="<%= @concept_defined %>" title="<%= @concept_defined %>" class="komet-tree-node-icon komet-tree-node-<%= concept_defined_class %>"></div> &nbsp;<%= @concept_defined %>
                         </div>
 
                         <!-- Status -->
                         <div class="komet-concept-attributes-status">
-                            <select name="concept_state" aria-labelledby="lbl_<%= @concept_defined %>">
+                            <select name="concept_state" aria-label="Concept Status" title="Concept Status">
                                 <option value="Active" <% if @concept_state.downcase == 'active' %> selected <% end %>>Active</option>
                                 <option value="Inactive"<% if @concept_state.downcase == 'inactive' %> selected <% end %>>Inactive</option>
                             </select>

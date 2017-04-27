@@ -1,294 +1,163 @@
 <div id="komet_user_preference_form">
     <div id="komet_preferences_tabs" role="tab">
         <ul>
-            <li><a href='#useroptions'>Options</a></li>
-            <li><a href='#komet_preferences_module_section'>Color Module</a></li>
-            <li><a href='#komet_preferences_path_section'>Color Path</a></li>
-            <li><a href='#komet_preferences_refsets_colors'>Color Refsets</a></li>
+            <li><a href='#komet_preferences_general_tab'>General Options</a></li>
+            <li><a href='#komet_preferences_module_tab'>Module Flags</a></li>
+            <li><a href='#komet_preferences_path_tab'>Path Flags</a></li>
+            <li><a href='#komet_preferences_refset_tab'>Refset Flags</a></li>
         </ul>
-        <div id="useroptions">
-            <form>
-                <div style="height: 45px">
-                    <div style="font-weight: bold; width: 40%; text-align: right; vertical-align: middle; float: left">Select Language:&nbsp;&nbsp;</div>
-                    <div style="width: 60%; float: right">
-                        <select id="komet_concept_language" class="form-control" aria-label="Select Language" aria-expanded="true" role="listbox">
-                            <% @language_options.each do |type| %>
-                                <% if @language_coordinate == type[:concept_sequence] %>
-                                    <option selected value="<%= type[:concept_sequence] %>"><%= type[:text] %></option>
-                                <%else%>
-                                    <option  value="<%= type[:concept_sequence] %>"><%= type[:text] %></option>
-                                <% end %>
-                            <% end %>
-                        </select>           </div>
+
+        <form action="<%= taxonomy_set_coordinates_token_path %>">
+
+            <div id="komet_preferences_general_tab">
+
+                <div class="komet-row">
+                    <label for="komet_preferences_language" class="komet-preference-label">Select Language:</label>
+                    <%= select_tag :komet_preferences_language, options_for_select(session[:komet_language_options], @language_coordinate), class: 'form-control', 'aria-label' => 'Select Language' %>
                 </div>
-                <div style="height: 45px">
-                    <input id="stampedDt" type="hidden" value="<%=@stamp_date%>">
-                    <div id="stamp_date_label" style="font-weight: bold; width: 40%; text-align: right; vertical-align: middle; float: left">STAMP as of Date:&nbsp;&nbsp;</div>
-                    <div style="width: 60%; float: right">
-                        <div class='input-group date' id='stamp_date'>
-                            <input type='text' class="form-control" aria-labelledby="stamp_date_label">
+
+                <div class="komet-row">
+
+                    <label for="komet_preferences_stamp_date_field" class="komet-preference-label">STAMP as of Date:</label>
+
+                    <div class='input-group date' id='komet_preferences_stamp_date'>
+                        <input type='text' id="komet_preferences_stamp_date_field" name="time" class="form-control" aria-label="STAMP Date">
                         <span class="input-group-addon">
                             <span class="fa fa-calendar"></span>
                         </span>
-                        </div>
                     </div>
+
                 </div>
-                <br><br>
 
-                <table id="description_type" width='80%' style="z-index:990" cellpadding='2' cellspacing='3'>
-                    <tr id="heading1" style="background-color: #0000a2;color:white">
-                        <td>Rank</td>
-                        <td>Description Type</td>
-                    </tr>
-                    <% descriptioncounter = descriptioncounter.to_i  -%>
-                    <% @description_type_options.each do |type| %>
-                        <% descriptioncounter = descriptioncounter + 1 -%>
-                        <tr id="Tr<%=descriptioncounter %>"  data-cnt="<%=descriptioncounter%>">
-                            <td><a style="cursor: default"  class="change-rank up" data-icon="&#9650;"></a>&nbsp<a  style="cursor: default"   class="change-rank down" data-icon="&#9660;"></a></td>
-                            <td><%= type[:text] %></td>
-                            <td><input   type="hidden" name="description_type" id="rank_<%=descriptioncounter %>" size="2" value="<%= type[:concept_sequence] %>" /></td>
-                        </tr>
-                    <% end %>
-                </table>
-                <br><br>
+                <div class="komet-row">
 
-                <table id="dialecttbl" width='80%' style="z-index:990" cellpadding='2' cellspacing='3'>
-                    <tr id="heading2" style="background-color: #0000a2;color:white">
-                        <td>Rank</td>
-                        <td>Dialect Preference</td>
-                    </tr>
+                    <div class="komet-label komet-preference-label">Allowed States:</div>
 
+                    <div>
+                        <input type="radio" id="komet_allowed_states_both" name="allowed_states" aria-label="Show All States" value="active,inactive"> <label for="komet_allowed_states_both">All</label>
+                        <input type="radio" id="komet_allowed_states_active" name="allowed_states" aria-label="Show Active States" value="active" class="komet-indent-block"> <label for="komet_allowed_states_active">Active</label>
+                    </div>
 
-                    <% dialect_optionscounter = dialect_optionscounter.to_i  -%>
-                    <% @dialect_options.each do |type| %>
-                        <% dialect_optionscounter = dialect_optionscounter + 1 -%>
-                        <tr id="Tr<%=dialect_optionscounter %>"  data-cnt="<%=dialect_optionscounter%>">
-                            <td><a style="cursor: default"  class="change-rank up" data-icon="&#9650;"></a>&nbsp<a  style="cursor: default"   class="change-rank down" data-icon="&#9660;"></a></td>
-                            <td><%= type[:text] %></td>
-                            <td><input   type="hidden" name="dialecttbl" id="rank_<%=dialect_optionscounter%>" size="2" value="<%= type[:concept_sequence] %>" /></td>
-                        </tr>
-
-                    <% end %>
-                </table>
-
-                <br><br>
-
-                <div>
-                    <fieldset  width='60%'>
-                        <div width='60%' style="background-color: #0000a2;color:white;z-index:990">Status</div>
-                        <legend style="width: 0px;height:0px">&nbsp;</legend>
-
-                        <input type="radio" id="komet_allowed_states_active" name="status" aria-checked="false" aria-label="Active" role="radio" value="Active">Active<br>
-                        <input type="radio" id="komet_allowed_states_inactive" name="status" aria-checked="false" aria-label="Inactive" role="radio" value="Inactive">Inactive<br>
-                        <input type="radio" id="komet_allowed_states_both" name="status" aria-checked="false" aria-label="Active,Inactive" role="radio" value="Active,Inactive">Both<br>
-
-                    </fieldset>
                 </div>
-            </form>
-        </div>
 
-        <div id="komet_preferences_module_section" style="height: 650px;">
-            <div>Please click on <span style="color: red; ">X</span> to clear color</div>
+                <!-- start Description Type order control -->
+                <div class="komet-row komet-order-control-header">
+                    <div class="komet-order-control-rank">Rank</div>
+                    <div class="komet-order-control-text">Description Type</div>
+                </div>
 
-            <table id="komet_preferences_module_table" width='90%' cellpadding='2' border='0' cellspacing='3'>
+                <div class="komet-order-control-body">
 
-                <tr style="background-color: #0000a2;color:white">
-                    <td>Module</td>
-                    <td>Color</td>
-                    <td>Shape</td>
-                </tr>
+                    <% @description_type_options.each do |description_type| %>
 
-                <% @module_flags.each do |module_flag| %>
+                        <div class="komet-row">
 
-                    <tr id="komet_preferences_row_<%= module_flag[:id] %>">
+                            <div class="komet-order-control-rank">
 
-                        <td><%= module_flag[:text] %></td>
-                        <td>
-                            <input type="hidden" id="komet_preferences_id_<%= module_flag[:id] %>" name="module_id" value="<%= module_flag[:id]%>"/>
-                            <input type="hidden" id="komet_preferences_text_<%= module_flag[:id] %>" name="module_text" value="<%= module_flag[:text]%>"/>
-                            <a
-                            title="clear color"
-                            style="padding:2px;color:red"
-                            aria-label="clear <%= module_flag[:text] %> color"
-                            onclick="PreferenceModule.removeColor('<%= module_flag[:id]%>');PreferenceModule.setShape('None','None','<%= module_flag[:id] %>')"
-                            >X</a>&nbsp;
+                                <button type="button" class="komet-link-button komet-change-order komet-change-order-up" onclick="UIHelper.moveRowOrderControl(this, 'up')" aria-label="Move <%= description_type[:text] %> Rank Up" title="Move Up">
+                                    <div class="glyphicon glyphicon-arrow-up"></div>
+                                </button>
 
-                            <input
-                            id="komet_preferences_color_<%= module_flag[:id] %>"
-                            name="module_color"
-                            value="<%= module_flag[:color]%>"
-                            class="komet_color_picker"
-                            title="Click here to change color"
-                            aria-label="Change <%= module_flag[:text] %> color"
-                            type="text"
-                            size="6"
-                            style="height:30px"
-                            data-control="hue"
-                            />
-                        </td>
+                                <button type="button" class="komet-link-button komet-change-order komet-change-order-down" onclick="UIHelper.moveRowOrderControl(this, 'down')" aria-label="Move <%= description_type[:text] %> Rank Down" title="Move Down">
+                                    <div class="glyphicon glyphicon-arrow-down"></div>
+                                </button>
 
-                        <td>
-                            <div class="dropdown">
-
-                                <div class="<%= module_flag[:shape]%>" style="display: inline-block" id="komet_preferences_shape_example_<%= module_flag[:id] %>"><%= module_flag[:shape_name] %></div>
-
-                                <input type="hidden" id="komet_preferences_shape_<%= module_flag[:id] %>" name="module_shape" value="<%= module_flag[:shape]%>"/>
-
-                                <span class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"><span class="caret"></span></span>
-
-                                <ul class="dropdown-menu" aria-label="select shape">
-
-                                    <li><a style="display: inline-block" onclick="PreferenceModule.setShape('None','None','<%= module_flag[:id] %>')" href="#">None</a></li>
-                                    <li aria-hidden="true" class="glyphicon glyphicon-stop" ><a href="#" style="display: inline-block" onclick="PreferenceModule.setShape('glyphicon glyphicon-stop', 'Square', '<%= module_flag[:id] %>')">Square</a></li>
-                                    <li aria-hidden="true" class="glyphicon glyphicon-star"><a href="#" style="display: inline-block" onclick="PreferenceModule.setShape('glyphicon glyphicon-star', 'Star', '<%= module_flag[:id] %>')">Star</a></li>
-                                    <li aria-hidden="true" class="glyphicon glyphicon-triangle-top"><a href="#" style="display: inline-block" onclick="PreferenceModule.setShape('glyphicon glyphicon-triangle-top', 'Triangle', '<%= module_flag[:id] %>')">Triangle</a></li>
-                                    <li aria-hidden="true" class="glyphicon glyphicon-asterisk"><a href="#" style="display: inline-block" onclick="PreferenceModule.setShape('glyphicon glyphicon-asterisk', 'Asterisk', '<%= module_flag[:id] %>')">Asterisk</a></li>
-                                    <li aria-hidden="true" class="fa fa-circle"><a href="#" style="display: inline-block" onclick="PreferenceModule.setShape('fa fa-circle', 'Circle', '<%= module_flag[:id] %>')">Circle</a></li>
-                                </ul>
                             </div>
-                        </td>
-                    </tr>
-                <% end %>
-            </table>
-        </div>
 
-        <div id="komet_preferences_path_section" style="height: 650px;">
-            <div>Please click on <span style="color: red; ">X</span> to clear color</div>
-
-            <table id="komet_preferences_path_table" width='90%' cellpadding='2' border='0' cellspacing='3'>
-
-                <tr style="background-color: #0000a2;color:white">
-                    <td>Path</td>
-                    <td>Color</td>
-                    <td>Shape</td>
-                </tr>
-
-                <% @path_flags.each do |path_flag| %>
-
-                    <tr id="komet_preferences_row_<%= path_flag[:id] %>">
-
-                        <td><%= path_flag[:text] %></td>
-                        <td>
-                            <input type="hidden" id="komet_preferences_id_<%= path_flag[:id] %>" name="path_id" value="<%= path_flag[:id]%>"/>
-                            <input type="hidden" id="komet_preferences_text_<%= path_flag[:id] %>" name="path_text" value="<%= path_flag[:text]%>"/>
-                            <a
-                            title="clear color"
-                            style="padding:2px;color:red"
-                            aria-label="clear <%= path_flag[:text] %> color"
-                            onclick="PreferenceModule.removeColor('<%= path_flag[:id]%>');PreferenceModule.setShape('None','None','<%= path_flag[:id] %>')"
-                            >X</a>&nbsp;
-
-                            <input
-                            id="komet_preferences_color_<%= path_flag[:id] %>"
-                            name="path_color"
-                            value="<%= path_flag[:color]%>"
-                            class="komet_color_picker"
-                            title="Click here to change color"
-                            aria-label="Change <%= path_flag[:text] %> color"
-                            type="text"
-                            size="6"
-                            style="height:30px"
-                            data-control="hue"
-                            />
-                        </td>
-
-                        <td>
-                            <div class="dropdown">
-
-                                <div class="<%= path_flag[:shape]%>" style="display: inline-block" id="komet_preferences_shape_example_<%= path_flag[:id] %>"><%= path_flag[:shape_name] %></div>
-
-                                <input type="hidden" id="komet_preferences_shape_<%= path_flag[:id] %>" name="path_shape" value="<%= path_flag[:shape]%>"/>
-
-                                <span class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"><span class="caret"></span></span>
-
-                                <ul class="dropdown-menu" aria-label="select shape">
-
-                                    <li><a style="display: inline-block" onclick="PreferenceModule.setShape('None','None','<%= path_flag[:id] %>')" href="#">None</a></li>
-                                    <li aria-hidden="true" class="glyphicon glyphicon-stop" ><a href="#" style="display: inline-block" onclick="PreferenceModule.setShape('glyphicon glyphicon-stop', 'Square', '<%= path_flag[:id] %>')">Square</a></li>
-                                    <li aria-hidden="true" class="glyphicon glyphicon-star"><a href="#" style="display: inline-block" onclick="PreferenceModule.setShape('glyphicon glyphicon-star', 'Star', '<%= path_flag[:id] %>')">Star</a></li>
-                                    <li aria-hidden="true" class="glyphicon glyphicon-triangle-top"><a href="#" style="display: inline-block" onclick="PreferenceModule.setShape('glyphicon glyphicon-triangle-top', 'Triangle', '<%= path_flag[:id] %>')">Triangle</a></li>
-                                    <li aria-hidden="true" class="glyphicon glyphicon-asterisk"><a href="#" style="display: inline-block" onclick="PreferenceModule.setShape('glyphicon glyphicon-asterisk', 'Asterisk', '<%= path_flag[:id] %>')">Asterisk</a></li>
-                                    <li aria-hidden="true" class="fa fa-circle"><a href="#" style="display: inline-block" onclick="PreferenceModule.setShape('fa fa-circle', 'Circle', '<%= path_flag[:id] %>')">Circle</a></li>
-                                </ul>
+                            <div class="komet-order-control-text">
+                                <%= description_type[:text] %>
+                                <input type="hidden" name="description_type[<%= description_type[:concept_sequence] %>]" value="<%= description_type[:concept_sequence] %>" />
                             </div>
-                        </td>
-                    </tr>
-                <% end %>
-            </table>
-        </div>
 
-        <div id="komet_preferences_refsets_colors" style="height: 450px;">
-            <table border="0" style="display: inline-block ">
-                <tr>
-
-                    <td style="width: 30%">
-                        <label for="komet_preferences_refset_id">Select Refset: </label>
-                        <select style="width:270px"  id="komet_preferences_refset_id">
-
-                            <% @refset_options.each do |refset| %>
-                                <option value="<%= refset[0] %>"><%= refset[1] %></option>
-                            <% end %>
-                        </select>
-                    </td>
-                    <td style="padding-left: 5px;text-align: center;margin-left: 2px">
-                        &nbsp;&nbsp;<input name="refsetcolor_id" class="komet_color_picker" title="Click here to change color" aria-label="Change color" type="hidden" id="color_id" size="1" style="height:25px" data-control="hue" value=""/>
-                    </td>
-                    <td>
-                        <% refset_shape_div_id =  "refset" %>
-
-                        <div class="dropdown" ><div class="none" style="display: inline-block" id="komet_preferences_shape_example_<%= refset_shape_div_id%>">none </div>
-                            <input name="colormodule_shape" value="none"  type="hidden" id="komet_preferences_shape_<%= refset_shape_div_id%>" />
-                            <span  class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" id="shapeid" aria-expanded="false">
-                            <span class="caret"></span></span>
-                            <ul class="dropdown-menu"   aria-label="select shape">
-                                <li><a style="display: inline-block" onclick="PreferenceModule.setShape('None','None','<%=refset_shape_div_id%>')" href="#">None</a></li>
-                                <li aria-hidden="true"  class="glyphicon glyphicon-stop" ><a style="display: inline-block" onclick="PreferenceModule.setShape('glyphicon glyphicon-stop','Square','<%=refset_shape_div_id%>')" href="#">Square</a></li>
-                                <li aria-hidden="true" class="glyphicon glyphicon-star"><a href="#" style="display: inline-block" onclick="PreferenceModule.setShape('glyphicon glyphicon-star','Star','<%=refset_shape_div_id%>')">Star</a></li>
-                                <li aria-hidden="true" class="glyphicon glyphicon-triangle-top"><a href="#" style="display: inline-block" onclick="PreferenceModule.setShape('glyphicon glyphicon-triangle-top','Triangle','<%=refset_shape_div_id%>')">Triangle</a></li>
-                                <li aria-hidden="true" class="glyphicon glyphicon-asterisk"><a href="#" style="display: inline-block" onclick="PreferenceModule.setShape('glyphicon glyphicon-asterisk','Asterisk','<%=refset_shape_div_id%>')">Asterisk</a></li>
-                                <li aria-hidden="true" class="fa fa-circle"><a href="#" style="display: inline-block" onclick="PreferenceModule.setShape('fa fa-circle','Circle','<%=refset_shape_div_id%>')">Circle</a></li>
-                            </ul>
                         </div>
 
-                    </td>
-                    <td><input name="applybtn" id="applybtn" type="button" value="Apply"/></td>
-                </tr>
-            </table>
-            <BR><BR>
-            <table width="90%" cellpadding="5" cellspacing="0" id="komet_preferences_refsets_table">
-                <tr style="background-color: #0000a2;color:white">
-                    <td>ID</td>
-                    <td>Color</td>
-                    <td>Shape</td>
-                    <td>Refset</td>
-                    <td>Delete</td>
-                </tr>
-                <%if !@refset_flags.nil?
-                      rcounter = rcounter.to_i
-                      @refset_flags.each do |refsets|
-                          rcounter = rcounter + 10000%>
+                    <% end %>
+                </div>
+                <!-- end Description Type order control -->
 
-                        <tr id="tr<%=rcounter %>">
-                            <td> <%=refsets[:id]%></td>
-                            <td style="border:outset 1px black;width:15px;background-color:<%=refsets[:color]%>">&nbsp;
-                                <input name="colorrefsets"  type="hidden" id="<%=refsets[:id]%>~<%=refsets[:id]%>~<%=refsets[:shape_name]%>" size="6" style="height:30px" data-control="hue" value="<%=refsets[:color]%>"  /></td>
-                            <td style="text-align: center" ><div  class="<%=refsets[:shape]%>"></div></td>
-                            <td> <%=refsets[:text]%></td>
-                            <td style="text-align: center" ><a tooltip="remove refset" name="removeRow" onclick="PreferenceModule.deleteRefsetFieldRow(<%=rcounter %>)">X</a></td>
-                        </tr>
-                    <% end
+                <!-- start Dialect order control -->
+                <div class="komet-row komet-order-control-header">
+                    <div class="komet-order-control-rank">Rank</div>
+                    <div class="komet-order-control-text">Dialect</div>
+                </div>
 
-                       end %>
-            </table>
-        </div>
+                <div class="komet-order-control-body">
+
+                    <% @dialect_options.each do |dialect| %>
+
+                        <div class="komet-row">
+
+                            <div class="komet-order-control-rank">
+
+                                <button type="button" class="komet-link-button komet-change-order komet-change-order-up" onclick="UIHelper.moveRowOrderControl(this, 'up')" aria-label="Move <%= dialect[:text] %> Rank Up" title="Move Up">
+                                    <div class="glyphicon glyphicon-arrow-up"></div>
+                                </button>
+
+                                <button type="button" class="komet-link-button komet-change-order komet-change-order-down" onclick="UIHelper.moveRowOrderControl(this, 'down')" aria-label="Move <%= dialect[:text] %> Rank Down" title="Move Down">
+                                    <div class="glyphicon glyphicon-arrow-down"></div>
+                                </button>
+
+                            </div>
+
+                            <div class="komet-order-control-text">
+                                <%= dialect[:text] %>
+                                <input type="hidden" name="dialect[<%= dialect[:concept_sequence] %>]" value="<%= dialect[:concept_sequence] %>" />
+                            </div>
+
+                        </div>
+
+                    <% end %>
+                </div>
+                <!-- end Description Type order control -->
+
+            </div>
+
+            <!-- start Module Flags section -->
+            <div id="komet_preferences_module_tab">
+
+                <!-- add the flag control widget for modules -->
+                <%= render(partial: 'komet_dashboard/flag_control_template', locals: {
+                    flag_data: @module_flags,
+                    field_id_prefix: 'komet_preferences_module',
+                    field_name_prefix: 'module_flags',
+                    flag_item_header: 'Module'
+                }) %>
+
+            </div>
+
+            <div id="komet_preferences_path_tab">
+
+                <!-- add the flag control widget for paths -->
+                <%= render(partial: 'komet_dashboard/flag_control_template', locals: {
+                    flag_data: @path_flags,
+                    field_id_prefix: 'komet_preferences_path',
+                    field_name_prefix: 'path_flags',
+                    flag_item_header: 'Path'
+                }) %>
+
+            </div>
+
+            <div id="komet_preferences_refset_tab">
+
+                <!-- add the flag control widget for paths -->
+                <%= render(partial: 'komet_dashboard/flag_control_template', locals: {
+                    flag_data: @refset_flags,
+                    field_id_prefix: 'komet_preferences_refset',
+                    field_name_prefix: 'refset_flags',
+                    flag_item_header: 'Refset',
+                    use_template_rows: true
+                }) %>
+
+            </div>
+
+        </form>
     </div>
 </div>
 <script>
     $(document).ready(function () {
-        $("#komet_preferences_tabs").tabs();
-        $('.komet_color_picker').minicolors();
-        $("#komet_allowed_states_<%= @allowed_states %>")[0].checked = true;
 
-        PreferenceModule.initialize();
+        $("#komet_allowed_states_<%= @allowed_states %>")[0].checked = true;
+        $("#komet_preferences_path_tab").find('.komet_color_picker').minicolors();
+        PreferenceModule.initialize("<%= @stamp_date%>");
     });
 </script>

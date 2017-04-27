@@ -4,6 +4,7 @@ require 'openssl'
 require './lib/rails_common/roles/ssoi'
 require './lib/rails_common/roles/user_session'
 require './lib/rails_common/util/servlet_support'
+require './lib/isaac_rest/auxilliary_metadata/constants'
 
 OpenSSL::SSL::VERIFY_PEER = OpenSSL::SSL::VERIFY_NONE
 
@@ -14,6 +15,7 @@ class ApplicationController < ActionController::Base
   include SSOI
   include UserSession
   include ServletSupport
+  include AuxilliaryMetadata
   include Gov::Vha::Isaac::Rest::Api::Exceptions
   append_view_path 'lib/rails_common/views'
 
@@ -23,6 +25,8 @@ class ApplicationController < ActionController::Base
   CACHE_TYPE_ALL = [CACHE_TYPE_TAXONOMY, CACHE_TYPE_SYSTEM].flatten.freeze
 
   METADATA_DUMP_FILE = "#{Rails.root}/tmp/isaac_metadata_auxiliary.dump"
+  #in the file Rails.root/config/generated/yaml/IsaacMetadataAuxiliary.yaml you will find a key called METADATA_VERSION
+
 
   # Prevent CSRF attacks by raising an exception.
   # For APIs, you may want to use :null_session instead.
@@ -172,9 +176,13 @@ class ApplicationController < ActionController::Base
   def self.parse_isaac_metadata_auxiliary
     check_for_metadata_auxiliary_dump
     if $isaac_metadata_auxiliary.nil?
-      constants_file = './config/generated/yaml/IsaacMetadataAuxiliary.yaml'
-      prefix = File.basename(constants_file).split('.').first.to_sym
-      json = YAML.load_file constants_file
+      aux_version_ok = AuxilliaryMetadata.major_version_ok? #as a side effect this loads the yml file
+      json = AuxilliaryMetadata.auxilliary_yaml #side effect of major_version_ok?
+      version = json[AUXILLIARY_VERSION_KEY]
+      unless version.eql? AUXILLIARY_VERSION
+        warn_message = "The file #{AUXILIARY_METADATA_FILE} has an unexpected version.  Got #{version}.  Expected #{AUXILLIARY_VERSION}"
+        $log.warn(warn_message)
+      end
       translated_hash = add_translations(json)
       $isaac_metadata_auxiliary = translated_hash
       $isaac_metadata_auxiliary.freeze
@@ -183,6 +191,9 @@ class ApplicationController < ActionController::Base
 
   def setup_constants
     ApplicationController.parse_isaac_metadata_auxiliary
+    unless AuxilliaryMetadata.major_version_ok?
+      flash_alert(message:'There is a major version mismatch in the AuxilliaryMetadata!')
+    end
     gon.IsaacMetadataAuxiliary = $isaac_metadata_auxiliary
     gon.roles = pundit_user[:roles]
     behind_proxy = !root_url.eql?(non_proxy_url(path_string: root_path))
@@ -246,6 +257,7 @@ class ApplicationController < ActionController::Base
   def self.add_translations(json)
     translated_hash = json.deep_dup
     json.keys.each do |k|
+      next if k.eql? AUXILLIARY_VERSION_KEY
       translated_array = []
       json[k]['uuids'].each do |uuid|
         translation = JSON.parse IdAPIsRest::get_id(action: IdAPIsRestActions::ACTION_TRANSLATE, uuid_or_id: uuid, additional_req_params: {'outputType' => 'conceptSequence'}).to_json
