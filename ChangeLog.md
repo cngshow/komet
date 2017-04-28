@@ -3,7 +3,7 @@ Komet Changelog
 This changelog summarizes changes and fixes which are a part of each revision.  For more details on the fixes, refer tracking numbers 
 where provided, and the git commit history.
 
-* 2017/??/?? - 3.3 - PENDING
+* 2017/04/28 - 4.0
     * Fixed issue with processing the metadata version number since it doesn't have the same object format as the rest of the metadata
     * Changed global preference module query to pull all nested modules
     * Concept lineage section now shows number of children in both the linage and children tree headers (Jazz: 388563)
