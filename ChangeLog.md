@@ -7,6 +7,7 @@ where provided, and the git commit history.
     * Fixed issue with processing the metadata version number since it doesn't have the same object format as the rest of the metadata
     * Changed global preference module query to pull all nested modules
     * Concept lineage section now shows number of children in both the linage and children tree headers (Jazz: 388563)
+    * Added nested properties to descriptions in the concept viewer
 
 * 2017/04/27 - 3.2
     * Build will break when the auxilliary metadat major version changes.  Komet dev will know to make the right changes.(Tied to the build process not for test)
