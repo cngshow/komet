@@ -66,7 +66,7 @@
                     <hr class="komet-concept-details-hr" />
                 <% end %>
 
-                <div class="komet-concept-description-details-row">
+                <div class="komet-row">
 
                     <%
                        if attribute[:label] == 'UUID'
@@ -80,32 +80,62 @@
                         <b><%= attribute[:label] %>:</b> <%= attribute[:text] %>
                     </div>
 
+
                     <% if attribute[:label] == 'Dialect' %>
 
-                        <div class="komet-concept-description-details-acceptability">
+                        <div class="komet-concept-description-details-item">
                             <b>Acceptability:</b> <%= attribute[:acceptability_text] %>
                         </div>
 
                     <% end %>
 
-                    <div class="komet-concept-description-details-state">
+                    <div class="komet-concept-description-details-item">
                         <b>State:</b> <%= attribute[:state] %>
                     </div>
 
-                    <div class="komet-concept-description-details-time">
+                    <div class="komet-concept-description-details-item">
                         <b>Time:</b> <%= attribute[:time] %>
                     </div>
 
-                    <div class="komet-concept-description-details-author">
+                    <div class="komet-concept-description-details-item">
                         <b>Author:</b> <%= attribute[:author] %>
                     </div>
 
-                    <div class="komet-concept-description-details-path">
-                        <b>Path:</b> <%= attribute[:path] %>
+                    <div class="komet-concept-description-details-item">
+                        <b>Module:</b> <%= attribute[:module] %>
                     </div>
 
+                    <div class="komet-concept-description-details-item">
+                        <b>Path:</b> <%= attribute[:path] %>
+                    </div>
                 </div>
 
+            <% end %>
+
+            <% if description[:nested_properties] %>
+
+                <!-- loop through the description nested properties -->
+                <% description[:nested_properties][:data].each_with_index do |property, property_index| %>
+
+                    <hr class="komet-concept-details-hr" />
+
+                    <div class="komet-row">
+
+                        <div class="komet-concept-description-details-name">
+                            <b><%= property[:sememe_name] %></b>
+                        </div>
+
+                        <% property[:columns].each do |column_id, column_data| %>
+
+                            <div class="komet-concept-description-details-item">
+                                <b><%= description[:nested_properties][:field_info][property[:sememe_definition_id] + '_' + column_id][:name] %>:</b> <%= column_data[:data] %>
+                            </div>
+
+                        <% end %>
+
+                    </div>
+
+                <% end %>
             <% end %>
 
         </div>

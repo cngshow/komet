@@ -878,6 +878,9 @@ td.komet-concept-table-nested-indicator.komet-concept-table-nested-indicator-ope
 .komet-concept-description-panel{
     border-left: 4px solid #264b03;
 }
+.komet-concept-description-panel .komet-row{
+    align-content: flex-start;
+}
 .komet-concept-description-panel ~ .komet-concept-description-panel{
     margin-top: 10px;
 }
@@ -907,19 +910,19 @@ td.komet-concept-table-nested-indicator.komet-concept-table-nested-indicator-ope
 .komet-concept-description-text{
     flex: 1 1 auto;
 }
-.komet-concept-description-details-row{
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: space-between;
-}
-.komet-concept-description-details-row div{
-    margin-right: 10px;
-}
 .komet-concept-description-details-name{
-    flex: 1 0 100px;
+    flex: 1 0 100%;
+    margin-bottom: 5px;
 }
-.komet-concept-description-details-time{
-    margin-right: 20px;
+.komet-concept-description-details-item{
+    flex: 0 0 25%;
+    max-width: 200px;
+    margin-right: 10px;
+    margin-bottom: 5px;
+}
+.komet-concept-description-details-item:last-child:nth-child(2){
+    max-width: initial;
+    flex: 0 0 100%;
 }
 
 // Concept Viewer Lineage Styles

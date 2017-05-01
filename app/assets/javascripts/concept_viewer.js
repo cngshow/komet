@@ -236,23 +236,31 @@ var ConceptViewer = function(viewerID, currentConceptID, viewerAction) {
         this.trees[this.PARENTS_TREE] = new KometTaxonomyTree(this.PARENTS_TREE, this.viewerID, viewParams, true, this.currentConceptID, false, WindowManager.INLINE);
         this.trees[this.CHILDREN_TREE] = new KometTaxonomyTree(this.CHILDREN_TREE, this.viewerID, viewParams, false, this.currentConceptID, false, WindowManager.INLINE, false);
 
+        var lineageHeader = $("#concept_lineage_header_text_" + this.viewerID);
+
         this.trees[this.PARENTS_TREE].tree.bind('ready.jstree', function (event, data) {
 
             // should use data.instance._cnt, but never has count anymore
             if (data.instance._model.data["#"].children.length == 0) {
 
                 this.trees[this.PARENTS_TREE].tree.html("<div class='komet-reverse-tree-node'>No Parents</div>");
-                $("#concept_lineage_header_text_" + this.viewerID).html("No Parent");
+                lineageHeader.html("No Parent");
             } else{
-                $("#concept_lineage_header_text_" + this.viewerID).html(data.instance.get_node('ul > li:first').text);
+                lineageHeader.html(data.instance.get_node('ul > li:first').text);
             }
         }.bind(this));
 
         this.trees[this.CHILDREN_TREE].tree.bind('ready.jstree', function (event, data) {
 
+            var childCount = data.instance._model.data["#"].children.length;
             // should use data.instance._cnt, but never has count anymore
-            if (data.instance._model.data["#"].children.length == 0) {
+            if (childCount == 0) {
                 this.trees[this.CHILDREN_TREE].tree.html("No Children");
+            } else {
+
+                var childLabel = 'Children &nbsp;&nbsp;<span class="badge badge-success" aria-label="' + childCount + ' children">' + childCount + '</span>';
+                $("#concept_lineage_children_header_text_" + this.viewerID).html(childLabel);
+                lineageHeader.html(lineageHeader.html() + ' - ' + childLabel);
             }
         }.bind(this));
     };
