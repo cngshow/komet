@@ -173,19 +173,23 @@ class ApplicationController < ActionController::Base
     response.headers[BootstrapNotifier::AJAX_HDR_ROLES] = roles
   end
 
+  #only one thread ever needs to set up the metadata.  It is cached for the duration of Komet's life in tomcat.
+  @@isaac_metadata_auxiliary_lock ||= Mutex.new
   def self.parse_isaac_metadata_auxiliary
-    check_for_metadata_auxiliary_dump
-    if $isaac_metadata_auxiliary.nil?
-      aux_version_ok = AuxilliaryMetadata.major_version_ok? #as a side effect this loads the yml file
-      json = AuxilliaryMetadata.auxilliary_yaml #side effect of major_version_ok?
-      version = json[AUXILLIARY_VERSION_KEY]
-      unless version.eql? AUXILLIARY_VERSION
-        warn_message = "The file #{AUXILIARY_METADATA_FILE} has an unexpected version.  Got #{version}.  Expected #{AUXILLIARY_VERSION}"
-        $log.warn(warn_message)
+    #check_for_metadata_auxiliary_dump
+    @@isaac_metadata_auxiliary_lock.synchronize do
+      if $isaac_metadata_auxiliary.nil?
+        aux_version_ok = AuxilliaryMetadata.major_version_ok? #as a side effect this loads the yml file
+        json = AuxilliaryMetadata.auxilliary_yaml #side effect of major_version_ok?
+        version = json[AUXILLIARY_VERSION_KEY]
+        unless version.eql? AUXILLIARY_VERSION
+          warn_message = "The file #{AUXILIARY_METADATA_FILE} has an unexpected version.  Got #{version}.  Expected #{AUXILLIARY_VERSION}"
+          $log.warn(warn_message)
+        end
+        translated_hash = add_translations(json)
+        $isaac_metadata_auxiliary = translated_hash
+        $isaac_metadata_auxiliary.freeze
       end
-      translated_hash = add_translations(json)
-      $isaac_metadata_auxiliary = translated_hash
-      $isaac_metadata_auxiliary.freeze
     end
   end
 
