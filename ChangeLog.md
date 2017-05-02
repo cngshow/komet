@@ -3,6 +3,8 @@ Komet Changelog
 This changelog summarizes changes and fixes which are a part of each revision.  For more details on the fixes, refer tracking numbers 
 where provided, and the git commit history.
 
+* 2017/05/?? - 4.2 - PENDING
+
 * 2017/05/02 - 4.1
     * Fix a threading issue that prevented komet from deploying in certain circumstances.
 
