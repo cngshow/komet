@@ -68,6 +68,31 @@
 
         <% end %>
 
+
+
+            <!-- loop through the description nested properties -->
+            <% @concept_sememes[:rows].each_with_index do |property, property_index| %>
+
+                <hr class="komet-concept-details-hr" />
+
+                <div class="komet-row">
+
+                    <div class="komet-concept-attributes-details-name">
+                        <b><%= property[:sememe_name] %></b>
+                    </div>
+
+                    <% property[:columns].each do |column_id, column_data| %>
+
+                        <div class="komet-concept-attributes-details-item">
+                            <b><%= @concept_sememes[:field_info][property[:sememe_definition_id] + '_' + column_id][:name] %>:</b> <%= column_data[:data] %>
+                        </div>
+
+                    <% end %>
+
+                </div>
+
+            <% end %>
+
     </div>
 
 </div>

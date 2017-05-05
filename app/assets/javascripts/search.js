@@ -2,7 +2,7 @@ var TaxonomySearchModule = (function () {
 
     var gridOptions;
 
-    function init() {
+    function init(view_params) {
 
         // setup the advanced search options accordion
         $("#taxonomy_search_options_pane").accordion({
@@ -34,6 +34,36 @@ var TaxonomySearchModule = (function () {
                 gridOptions.api.setFocusedCell(0, "matching_concept");
             }
         }.bind(this));
+
+        // initialize the STAMP date field
+        UIHelper.initDatePicker("#komet_taxonomy_search_stamp_date", view_params.time);
+    }
+
+    function getAllowedStates (){
+        return $("#komet_taxonomy_search_allowed_states").val();
+    }
+
+    function getStampDate(){
+
+        var stamp_date = $("#komet_taxonomy_search_stamp_date").find("input").val();
+
+        if (stamp_date == '' || stamp_date == 'latest') {
+            return 'latest';
+        } else {
+            return new Date(stamp_date).getTime().toString();
+        }
+    };
+
+    function getStampModules(){
+        return $('#komet_taxonomy_search_stamp_modules').val();
+    }
+
+    function getStampPath(){
+        return $('#komet_taxonomy_search_stamp_path').val();
+    }
+
+    function getViewParams (){
+        return {allowedStates: getAllowedStates(), time: getStampDate(), modules: getStampModules(), path: getStampPath()};
     }
 
     function loadResultGrid() {
@@ -84,7 +114,7 @@ var TaxonomySearchModule = (function () {
         var search_type = $("#taxonomy_search_type");
         var page_size = $("#taxonomy_search_page_size");
 
-        var searchParams = "?taxonomy_search_text=" + $("#taxonomy_search_text").val() + "&taxonomy_search_page_size=" + page_size.val() + "&taxonomy_search_type=" + search_type.val();
+        var searchParams = "?taxonomy_search_text=" + $("#taxonomy_search_text").val() + "&taxonomy_search_page_size=" + page_size.val() + "&taxonomy_search_type=" + search_type.val() + "&" + jQuery.param({view_params: getViewParams()});
 
         // set only the parameters needed based on the search type
         if (search_type.val() === "descriptions"){
@@ -141,7 +171,15 @@ var TaxonomySearchModule = (function () {
         selectedRows.forEach( function(selectedRow, index) {
 
             console.log('Row with ID ' + selectedRow.id + ' ' + selectedRow.concept_status + '.');
-            $.publish(KometChannels.Taxonomy.taxonomySearchResultSelectedChannel, [selectedRow.id, WindowManager.getLinkedViewerID()]);
+
+            var viewParams = getViewParams();
+
+            // make sure we pass all instead of inactive or the concept queries won't work
+            if (viewParams.allowedStates == "inactive"){
+                viewParams.allowedStates = "active,inactive";
+            }
+
+            $.publish(KometChannels.Taxonomy.taxonomySearchResultSelectedChannel, [selectedRow.id, viewParams, WindowManager.getLinkedViewerID()]);
         });
     }
 
@@ -200,7 +238,7 @@ var TaxonomySearchModule = (function () {
         // load the parameters from the form to add to the query string sent in the ajax data call
         var search_type = $("#taxonomy_search_type");
 
-        var searchParams = "?taxonomy_search_text=" + $("#taxonomy_search_text").val() + "&taxonomy_search_page_number=1&taxonomy_search_page_size=10000000&taxonomy_search_type=" + search_type.val();
+        var searchParams = "?taxonomy_search_text=" + $("#taxonomy_search_text").val() + "&taxonomy_search_page_number=1&taxonomy_search_page_size=10000000&taxonomy_search_type=" + search_type.val() + "&" + jQuery.param({view_params: getViewParams()});
 
         // set only the parameters needed based on the search type
         if (search_type.val() === "descriptions"){
@@ -223,6 +261,11 @@ var TaxonomySearchModule = (function () {
 
     return {
         initialize: init,
+        getAllowedStates: getAllowedStates,
+        getStampDate: getStampDate,
+        getStampModules: getStampModules,
+        getStampPath: getStampPath,
+        getViewParams: getViewParams,
         loadResultGrid: loadResultGrid,
         changeSearchType: changeSearchType,
         exportCSV: exportCSV

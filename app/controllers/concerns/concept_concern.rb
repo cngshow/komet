@@ -141,23 +141,23 @@ module ConceptConcern
 
             attributes << {label: 'UUID', text: description_id, state: description_state, time: description_time, author: description_author, module: description_module, path: description_path}
 
-            if !clone
-
-                # get the description SCTID information if there is one and add it to the attributes array
-                coding_id = IdAPIsRest.get_id(uuid_or_id: description_id, action: IdAPIsRestActions::ACTION_TRANSLATE, additional_req_params: {outputType: 'sctid', coordToken: coordinates_token}.merge!(view_params))
-
-                if coding_id.respond_to?(:value)
-                    attributes << {label: 'SCTID', text: coding_id.value, state: description_state, time: description_time, author: description_author, module: description_module, path: description_path}
-                else
-
-                    # else get the concept VUID information if there is one
-                    coding_id = IdAPIsRest.get_id(uuid_or_id: uuid, action: IdAPIsRestActions::ACTION_TRANSLATE, additional_req_params: {outputType: 'vuid', coordToken: coordinates_token}.merge!(view_params))
-
-                    if coding_id.respond_to?(:value)
-                        attributes << {label: 'VUID', text: coding_id.value, state: description_state, time: description_time, author: description_author, module: description_module, path: description_path}
-                    end
-                end
-            end
+            # if !clone
+            #
+            #     # get the description SCTID information if there is one and add it to the attributes array
+            #     coding_id = IdAPIsRest.get_id(uuid_or_id: description_id, action: IdAPIsRestActions::ACTION_TRANSLATE, additional_req_params: {outputType: 'sctid', coordToken: coordinates_token}.merge!(view_params))
+            #
+            #     if coding_id.respond_to?(:value)
+            #         attributes << {label: 'SCTID', text: coding_id.value, state: description_state, time: description_time, author: description_author, module: description_module, path: description_path}
+            #     else
+            #
+            #         # else get the concept VUID information if there is one
+            #         coding_id = IdAPIsRest.get_id(uuid_or_id: uuid, action: IdAPIsRestActions::ACTION_TRANSLATE, additional_req_params: {outputType: 'vuid', coordToken: coordinates_token}.merge!(view_params))
+            #
+            #         if coding_id.respond_to?(:value)
+            #             attributes << {label: 'VUID', text: coding_id.value, state: description_state, time: description_time, author: description_author, module: description_module, path: description_path}
+            #         end
+            #     end
+            # end
 
             header_dialects = ''
 

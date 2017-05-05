@@ -4,6 +4,10 @@ This changelog summarizes changes and fixes which are a part of each revision.  
 where provided, and the git commit history.
 
 * 2017/05/?? - 4.2 - PENDING
+    * Added nested properties to the concept section in the concept viewer.
+    * Added null role check in javascript security poll code to stop autosuggest error
+    * Renamed State to Status in mapsets (Jazz: 440205)
+    * Added STAMP fields to search options (Jazz: 485603)
 
 * 2017/05/02 - 4.1
     * Fix a threading issue that prevented komet from deploying in certain circumstances.
