@@ -13,8 +13,8 @@ var ConceptsModule = (function () {
         });
 
         // listen for the onChange event broadcast by selecting a search result.
-        $.subscribe(KometChannels.Taxonomy.taxonomySearchResultSelectedChannel, function (e, conceptID, viewerID, windowType) {
-            callLoadViewerData(conceptID, TaxonomyModule.getViewParams(), VIEW, viewerID, windowType);
+        $.subscribe(KometChannels.Taxonomy.taxonomySearchResultSelectedChannel, function (e, conceptID, viewParams, viewerID, windowType) {
+            callLoadViewerData(conceptID, viewParams, VIEW, viewerID, windowType);
         });
 
         // listen for the onChange event broadcast for creating or editing a concept.

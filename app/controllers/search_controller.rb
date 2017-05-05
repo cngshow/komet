@@ -80,11 +80,13 @@ class SearchController < ApplicationController
         coordinates_token = session[:coordinates_token].token
         search_results = {}
         search_data = []
+        view_params = check_view_params(params[:view_params])
         search_text = params[:taxonomy_search_text]
         search_type = params[:taxonomy_search_type]
         page_size = params[:taxonomy_search_page_size]
         page_number = params[:taxonomy_search_page_number]
         additional_params = {coordToken: coordinates_token, query: search_text, expand: 'referencedConcept,versionsLatestOnly', pageNum: page_number}
+        additional_params.merge!(view_params)
 
         if search_text == nil || search_text == ''
             render json: {total_rows: 0, page_data: []} and return
@@ -159,7 +161,13 @@ class SearchController < ApplicationController
         results.results.each do |result|
 
             # add the information to the search array to be returned
-            search_data << {id: result.referencedConcept.identifiers.uuids.first, matching_concept: result.referencedConcept.description, matching_terms: result.matchText, concept_status: result.referencedConcept.versions.first.conVersion.state.enumName, match_score: result.score}
+            result_row = {id: result.referencedConcept.identifiers.uuids.first, matching_concept: result.referencedConcept.description, concept_status: 'INACTIVE', matching_terms: result.matchText, match_score: result.score}
+
+            if result.referencedConcept.versions.length > 0
+                result_row[:concept_status] = result.referencedConcept.versions.first.conVersion.state.enumName
+            end
+
+            search_data << result_row
         end
 
         search_results[:data] = search_data

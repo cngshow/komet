@@ -1354,7 +1354,7 @@ class KometDashboardController < ApplicationController
         end
 
         # if the view params are already in the session put them into a variable for the GUI, otherwise set the default values for view params and other items
-        if false #session[:default_view_params]
+        if session[:default_view_params]
             @view_params = session[:default_view_params].clone
         else
 
@@ -1370,6 +1370,7 @@ class KometDashboardController < ApplicationController
 
             # create the options for stated/inferred preference controls
             session[:komet_allowed_states_options] = [['All', 'active,inactive'],['Active', 'active']]
+            session[:komet_all_allowed_states_options] = [['All', 'active,inactive'],['Active', 'active'],['Inactive', 'inactive']]
 
             session[:komet_module_options] = []
 

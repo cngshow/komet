@@ -71,7 +71,7 @@ function flash_notify(options, settings) {
         var responseRoles = jqXHR.getResponseHeader('<%= BootstrapNotifier::AJAX_HDR_ROLES %>');
         var roles = JSON.parse(responseRoles);
 
-        if (Common.arr_diff(gon.roles, roles).length != 0) {
+        if (roles != null && Common.arr_diff(gon.roles, roles).length != 0) {
             var secs_bt_notifications = (new Date() - last_notification_time) / 1000;
             var show_flash = (time_between_role_notifications === null ? true : secs_bt_notifications > time_between_role_notifications);
 

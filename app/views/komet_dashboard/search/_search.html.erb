@@ -53,6 +53,7 @@
             <div id="taxonomy_search_id_fields">
 
                 <div>
+
                     <%= label_tag :taxonomy_search_id_type, 'Type of ID:' %>
                     <%= select_tag :taxonomy_search_id_type, options_for_select([['Any']].concat(session[:komet_taxonomy_options]), 'Any') %>
 
@@ -60,22 +61,56 @@
 
             </div>
 
+            <div class="komet-row">
+
+                <div>
+                    <%= label_tag :komet_taxonomy_search_stamp_date_field, 'STAMP Date:' %>
+                    <div class='input-group date' id='komet_taxonomy_search_stamp_date'>
+                        <input type='text' class="form-control" aria-label="STAMP Date Preference" id='komet_taxonomy_search_stamp_date_field' title="STAMP Date Preference">
+                        <span class="input-group-addon">
+                            <span class="fa fa-calendar"></span>
+                        </span>
+                    </div>
+                </div>
+
+                <div class="komet-flex-right">
+
+                    <div>
+                    <%= label_tag :komet_taxonomy_search_allowed_states, 'Allowed States:' %>
+                    <%= select_tag('komet_taxonomy_search_allowed_states', options_for_select(session[:komet_all_allowed_states_options], @view_params[:allowedStates]), class: 'form-control komet-preference-allowed-states', 'aria-label' => 'Choose an active status to view', title: 'Choose an active status to view') %>
+                    </div>
+                </div>
+            </div>
+
+            <div class="komet-row">
+
+                <%= label_tag :komet_taxonomy_search_stamp_modules, 'Modules:' %>
+                <%= select_tag('komet_taxonomy_search_stamp_modules', options_for_select(session[:komet_module_options], @view_params[:modules]), include_blank: true, multiple: true, class: 'form-control komet-preference-modules', 'aria-label' => 'Choose module to view', title: 'Choose module to view') %>
+
+            </div>
+
+            <div class="komet-row hide">
+
+                 <%= label_tag :komet_taxonomy_search_stamp_path, 'Path:' %>
+                 <%= select_tag('komet_taxonomy_search_stamp_path', options_for_select(session[:komet_path_options], @view_params[:path]), include_blank: true, class: 'form-control komet-preference-path', 'aria-label' => 'Choose path to view', title: 'Choose path to view') %>
+
+            </div>
+
         </div>
 
     </div>
-
 
 <% end %>
 
 <br>
 <button type="button" id="taxonomy_search_export" onclick="TaxonomySearchModule.exportCSV()">CSV Export</button>
-<span id="komet_search_tab_trigger" tabindex="0"></span>
+<span id="komet_taxonomy_search_tab_trigger" tabindex="0"></span>
 <div id="taxonomy_search_results" style="height: 450px;" class="ag-fresh"></div>
 <div id="taxonomy_search_results_export" class="ag-fresh hide" ></div>
 <script>
 
     $(document).ready(function () {
-        TaxonomySearchModule.initialize();
+        TaxonomySearchModule.initialize(<%= raw @view_params.to_json %>);
     });
 
 </script>
