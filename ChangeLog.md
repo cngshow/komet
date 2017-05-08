@@ -3,6 +3,8 @@ Komet Changelog
 This changelog summarizes changes and fixes which are a part of each revision.  For more details on the fixes, refer tracking numbers 
 where provided, and the git commit history.
 
+* 2017/05/?? - 4.3 - PENDING
+
 * 2017/05/05 - 4.2 
     * Added nested properties to the concept section in the concept viewer.
     * Added null role check in javascript security poll code to stop autosuggest error
