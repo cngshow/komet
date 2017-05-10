@@ -84,7 +84,7 @@
                     <% property[:columns].each do |column_id, column_data| %>
 
                         <div class="komet-concept-attributes-details-item">
-                            <b><%= @concept_sememes[:field_info][property[:sememe_definition_id] + '_' + column_id][:name] %>:</b> <%= column_data[:data] %>
+                            <b><%= @concept_sememes[:field_info][column_id][:name] %>:</b> <%= column_data[:data] %>
                         </div>
 
                     <% end %>
