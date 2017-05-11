@@ -473,7 +473,7 @@ module ConceptConcern
                 column_id = row_column.columnLabelConcept.uuids.first
 
                 # If not added to our hash of columns then add it
-                if row_column && ! field_info[assemblage_id + '_' + column_id]
+                if row_column && ! field_info[column_id]
 
                     # get the column data type from the validator data if it exists, otherwise use string
                     if row_column.columnDataType.classType
@@ -482,8 +482,7 @@ module ConceptConcern
                         data_type_class = 'gov.vha.isaac.rest.api1.data.sememe.dataTypes.RestDynamicSememeString'
                     end
 
-                    field_info[assemblage_id + '_' + column_id] = {
-                        sememe_definition_id: assemblage_id,
+                    field_info[column_id] = {
                         column_id: column_id,
                         name: row_column.columnName,
                         description: row_column.columnDescription,
@@ -494,14 +493,14 @@ module ConceptConcern
                         column_used: false
                     }
 
-                    if field_info[assemblage_id + '_' + column_id][:sememe_definition_id] == $isaac_metadata_auxiliary['EXTENDED_DESCRIPTION_TYPE']['uuids'].first[:uuid]
+                    if field_info[column_id][:sememe_definition_id] == $isaac_metadata_auxiliary['EXTENDED_DESCRIPTION_TYPE']['uuids'].first[:uuid]
 
-                        field_info[assemblage_id + '_' + column_id][:column_display] = 'dropdown'
-                        field_info[assemblage_id + '_' + column_id][:dropdown_options] = get_direct_children('fc134ddd-9a15-5540-8fcc-987bf2af9198', true, true, false, false, session[:edit_view_params])
+                        field_info[column_id][:column_display] = 'dropdown'
+                        field_info[column_id][:dropdown_options] = get_direct_children('fc134ddd-9a15-5540-8fcc-987bf2af9198', true, true, false, false, session[:edit_view_params])
                         # elsif used_column_data[:data_type] == 'UUID'
 
                     else
-                        field_info[assemblage_id + '_' + column_id][:column_display] = 'text'
+                        field_info[column_id][:column_display] = 'text'
                     end
 
                     data_row[:columns][column_id] = {}
@@ -565,7 +564,7 @@ module ConceptConcern
 
                     # search to see if we have already added this column to our list of used columns.
                     list_index = used_column_list.find_index {|list_column|
-                        list_column[:sememe_definition_id] == assemblage_id && list_column[:column_id] == column_id
+                        list_column[:column_id] == column_id
                     }
 
                     # If not added to our list of used columns add it to the end of the list
@@ -579,7 +578,6 @@ module ConceptConcern
                         end
 
                         used_column_data = {
-                            sememe_definition_id: assemblage_id,
                             column_id: column_id,
                             name: row_column.columnName,
                             description: row_column.columnDescription,
@@ -590,7 +588,7 @@ module ConceptConcern
                             column_used: false
                         }
 
-                        if used_column_data[:sememe_definition_id] == $isaac_metadata_auxiliary['EXTENDED_DESCRIPTION_TYPE']['uuids'].first[:uuid]
+                        if assemblage_id == $isaac_metadata_auxiliary['EXTENDED_DESCRIPTION_TYPE']['uuids'].first[:uuid]
 
                             used_column_data[:column_display] = 'dropdown'
                             used_column_data[:dropdown_options] = get_direct_children('fc134ddd-9a15-5540-8fcc-987bf2af9198', true, true, false, false, session[:edit_view_params])
@@ -601,7 +599,7 @@ module ConceptConcern
                         end
 
                         used_column_list << used_column_data
-                        used_column_hash[assemblage_id + '_' + column_id] = used_column_data
+                        used_column_hash[column_id] = used_column_data
                         list_index = (used_column_list.length) - 1
                     end
 
@@ -614,7 +612,7 @@ module ConceptConcern
 
                         # mark in our column lists that this column has data in at least one row
                         used_column_list[list_index][:column_used] = true
-                        used_column_hash[assemblage_id + '_' + column_id][:column_used] = true
+                        used_column_hash[column_id][:column_used] = true
 
                         data = data_column.data
                         converted_value = ''

@@ -773,8 +773,7 @@ var ConceptViewer = function(viewerID, currentConceptID, viewerAction) {
         $.each(rowData.columns, function (fieldID, field) {
 
             var viewerFieldID = rowData.sememe_instance_id + '_' + fieldID + '_' + this.viewerID;
-            var fieldInfoKey = rowData.sememe_definition_id + '_' + fieldID;
-            var fieldLabel = fieldInfo[fieldInfoKey].name;
+            var fieldLabel = fieldInfo[fieldID].name;
             var fieldAriaLabel = rowData.sememe_name + " " + fieldLabel;
 
             var data = "";
@@ -783,8 +782,8 @@ var ConceptViewer = function(viewerID, currentConceptID, viewerAction) {
                 data = field.data;
             }
 
-            rowString += '<input type="hidden" name="[properties][' + rowData.sememe_instance_id + '][' + fieldID + '][column_number]" value="' + fieldInfo[fieldInfoKey].column_number + '">'
-                + '<input type="hidden" name="[properties][' + rowData.sememe_instance_id + '][' + fieldID + '][data_type_class]" value="' + fieldInfo[fieldInfoKey].data_type_class + '">'
+            rowString += '<input type="hidden" name="[properties][' + rowData.sememe_instance_id + '][' + fieldID + '][column_number]" value="' + fieldInfo[fieldID].column_number + '">'
+                + '<input type="hidden" name="[properties][' + rowData.sememe_instance_id + '][' + fieldID + '][data_type_class]" value="' + fieldInfo[fieldID].data_type_class + '">'
                 + '<div class="input-group"><label for="komet_concept_edit_concept_properties_' + viewerFieldID + '" class="input-group-addon" aria-label="' + fieldAriaLabel + '">' + fieldLabel + '</label>'
                 + '<input type="text" id="komet_concept_edit_concept_properties_' + viewerFieldID + '" name="[properties][' + rowData.sememe_instance_id + '][' + fieldID + '][value]" value="' + data + '" class="form-control komet_concept_edit_concept_properties_field">'
                 + '</div>';
@@ -927,8 +926,7 @@ var ConceptViewer = function(viewerID, currentConceptID, viewerAction) {
         $.each(rowData.columns, function (fieldID, field) {
 
             var viewerFieldID = propertyID + '_' + fieldID + '_' + this.viewerID;
-            var fieldInfoKey = rowData.sememe_definition_id + '_' + fieldID;
-            var fieldLabel = fieldInfo[fieldInfoKey].name;
+            var fieldLabel = fieldInfo[fieldID].name;
             var fieldAriaLabel = labelPrefix + fieldLabel;
 
             var data = "";
@@ -937,17 +935,17 @@ var ConceptViewer = function(viewerID, currentConceptID, viewerAction) {
                 data = field.data;
             }
 
-            rowString += '<input type="hidden" name="' + namePrefix + '[' + fieldID + '][column_number]" value="' + fieldInfo[fieldInfoKey].column_number + '">'
-                + '<input type="hidden" name="' + namePrefix + '[' + fieldID + '][data_type_class]" value="' + fieldInfo[fieldInfoKey].data_type_class + '">'
+            rowString += '<input type="hidden" name="' + namePrefix + '[' + fieldID + '][column_number]" value="' + fieldInfo[fieldID].column_number + '">'
+                + '<input type="hidden" name="' + namePrefix + '[' + fieldID + '][data_type_class]" value="' + fieldInfo[fieldID].data_type_class + '">'
                 + '<div class="input-group"><label for="komet_concept_edit_description_properties_' + viewerFieldID + '" aria-label="' + fieldAriaLabel + '" class="input-group-addon">' + fieldLabel + '</label>';
 
-            if (fieldInfo[fieldInfoKey].column_display == 'text'){
+            if (fieldInfo[fieldID].column_display == 'text'){
 
                 rowString += '<input type="text" id="komet_concept_edit_description_properties_' + viewerFieldID + '" name="' + namePrefix + '[' + fieldID + '][value]" aria-label="' + fieldAriaLabel + '" value="' + data + '" class="form-control komet_concept_edit_description_properties_field">'
                     + '</div>';
             } else {
 
-                var dropdownOptions = this.createSelectFieldOptions(fieldInfo[fieldInfoKey].dropdown_options);
+                var dropdownOptions = this.createSelectFieldOptions(fieldInfo[fieldID].dropdown_options);
                 rowString += this.createSelectField("description_properties_" + viewerFieldID, namePrefix + "[" + fieldID + "][value]", dropdownOptions, data, fieldAriaLabel, "komet_concept_edit_description_properties_field")
                     + '</div>';
             }
