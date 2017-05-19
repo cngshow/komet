@@ -60,7 +60,7 @@
                     </div>
 
                     <div class="komet-panel-tools-control">
-                        <%= select_tag('view_params[modules]', options_for_select(session[:komet_module_options], @view_params[:modules]), id: 'komet_concept_stamp_modules_' + @viewer_id, include_blank: true, multiple: true, class: 'form-control komet-preference-modules', 'aria-label' => 'Choose module to view', title: 'Choose module to view') %>
+                        <%= select_tag('view_params[modules]', options_for_select(session[:komet_module_options], @view_params[:modules]), id: 'komet_concept_stamp_modules_' + @viewer_id, multiple: true, class: 'form-control komet-preference-modules', 'aria-label' => 'Choose module to view', title: 'Choose module to view') %>
                     </div>
 
                     <div class="komet-panel-tools-control hide">
@@ -100,7 +100,7 @@
                                 label="Parent"
                                 value="<%= @parent_id %>"
                                 display-value="<%= @parent_text %>"
-                                type-value="<%= @parent_type %>"
+                                terminology-types="<%= @parent_terminology_types %>"
                                 suggestion-onchange-function="WindowManager.viewers[<%= @viewer_id %>].conceptEditorParentOnChange()"
                                 classes="komet-concept-edit-parent"
                                 ></autosuggest>
@@ -201,6 +201,11 @@
             if (WindowManager.getLinkedViewerID() == "<%= @viewer_id %>") {
                 WindowManager.viewers[<%= @viewer_id %>].swapLinkIcon(true);
             }
+        }
+
+        // if we are not cloning the concept set the terminology types of the concept
+        if ("<%= @viewer_action %>" != ConceptsModule.CLONE){
+            WindowManager.viewers[<%= @viewer_id %>].terminology_types = "<%= @concept_terminology_types %>";
         }
 
         if (WindowManager.getLinkedViewerID() == "<%= @viewer_id %>" && TaxonomyModule.tree.selectedConceptID != WindowManager.viewers[<%= @viewer_id %>].currentConceptID) {

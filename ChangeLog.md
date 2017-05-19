@@ -4,7 +4,11 @@ This changelog summarizes changes and fixes which are a part of each revision.  
 where provided, and the git commit history.
 
 * 2017/05/?? - 4.4 - PENDING
-    *
+    * Updated to latest enunicate
+    * Incorporated changes to rest calls returning UUIDs in coordinates, taxonomy, concept APIs
+    * Added VUID/CODE auto generation for vhat concepts (Jazz: 436924, 501726)
+    * Fixed issue with search_term using extended description type field options (Jazz: 515733)
+    * Fixed concept create issue
 
 * 2017/05/11 - 4.3
     * Fixed so multiple properties that have the same column name don't create duplicate columns

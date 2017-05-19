@@ -8,9 +8,32 @@ module TaxonomyHelper
 
         if user_prefs[flag_name + '_flags']
 
-            flags = user_prefs[flag_name + '_flags'].select{|key, hash|
-                hash['id'].to_i.in?(ids_to_match) && (hash['color'] != '' || hash['shape_name'].downcase != 'none')
-            }
+            # TODO - Switch to this code once the coord code and stamp sequences are switched to passing UUIDS
+            if flag_name == 'refset'
+
+                flags = user_prefs[flag_name + '_flags'].select{|key, hash|
+
+                    found = false
+
+                    $log.debug("^^^^^^^^^^^ get_tree_node_flag hash #{hash}")
+                    $log.debug("^^^^^^^^^^^ get_tree_node_flag key #{key}")
+
+                    ids_to_match.each { |id|
+
+                        if id.uuids.first == hash['id'] && (hash['color'] != '' || hash['shape_name'].downcase != 'none')
+                            found = true
+                            break
+                        end
+                    }
+
+                    found
+                }
+            else
+
+                flags = user_prefs[flag_name + '_flags'].select{|key, hash|
+                    hash['id'].to_i.in?(ids_to_match) && (hash['color'] != '' || hash['shape_name'].downcase != 'none')
+                }
+            end
 
             $log.info("get_tree_node_flag flags #{flags}")
             flags.each do |flag|

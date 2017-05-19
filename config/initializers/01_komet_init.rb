@@ -3,7 +3,7 @@
 #
 
 # Only add one number after the decimal for the API version match
-REST_API_VERSIONS = [:"1.9"].freeze
+REST_API_VERSIONS = [:"1.14"].freeze
 
 require './lib/rails_common/props/prop_loader'
 require './lib/rails_common/logging/open_logging'
@@ -55,6 +55,7 @@ unless $rake
       require './lib/isaac_rest/coordinate_rest'
       require './lib/isaac_rest/mapping_apis_rest'
       require './lib/isaac_rest/comment_apis_rest'
+      require './lib/isaac_rest/vuid_rest'
       #require './lib/isaac_rest/workflow_rest'
       require './lib/isaac_rest/export_rest'
       ######### COMMON REST IMPORTS GO HERE!!!!!!

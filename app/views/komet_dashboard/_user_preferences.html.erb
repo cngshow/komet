@@ -40,6 +40,17 @@
 
                 </div>
 
+                <div class="komet-row">
+
+                    <div class="komet-label komet-preference-label">Auto Assign VUID:</div>
+
+                    <div>
+                        <input type="radio" id="komet_generate_vuid_true" name="generate_vuid" aria-label="Auto Assign VUID On" value="true"> <label for="komet_generate_vuid_true">On</label>
+                        <input type="radio" id="komet_generate_vuid_false" name="generate_vuid" aria-label="Auto Assign VUID Off" value="false" class="komet-indent-block"> <label for="komet_generate_vuid_false">Off</label>
+                    </div>
+
+                </div>
+
                 <!-- start Description Type order control -->
                 <div class="komet-row komet-order-control-header">
                     <div class="komet-order-control-rank">Rank</div>
@@ -157,6 +168,7 @@
     $(document).ready(function () {
 
         $("#komet_allowed_states_<%= @allowed_states %>")[0].checked = true;
+        $("#komet_generate_vuid_<%= @generate_vuid %>")[0].checked = true;
         $("#komet_preferences_path_tab").find('.komet_color_picker').minicolors();
         PreferenceModule.initialize("<%= @stamp_date%>");
     });

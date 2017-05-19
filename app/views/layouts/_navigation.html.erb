@@ -25,7 +25,7 @@
                     <span class="caret"></span></a>
                 <ul class="dropdown-menu" aria-hidden="true" aria-label="submenu">
                     <li role="menuitem">
-                        <a href="#" onclick="$.publish(KometChannels.Taxonomy.taxonomyConceptEditorChannel, [ConceptsModule.CREATE, null, WindowManager.getLinkedViewerID(), WindowManager.INLINE]); return false;" title="Create New Concept">Create
+                        <a href="#" onclick="$.publish(KometChannels.Taxonomy.taxonomyConceptEditorChannel, [ConceptsModule.CREATE, null, TaxonomyModule.getViewParams(), WindowManager.getLinkedViewerID(), WindowManager.INLINE]); return false;" title="Create New Concept">Create
                             New Concept</a></li>
                     <li role="menuitem">
                         <a href="#" onclick="MappingModule.createNewMapSet(true); return false;" title="Create New Map">Create New

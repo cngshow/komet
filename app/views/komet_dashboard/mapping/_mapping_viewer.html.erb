@@ -54,7 +54,7 @@
                 </div>
 
                 <div class="komet-panel-tools-control">
-                    <%= select_tag('komet_mapping_stamp_modules_' + @viewer_id, options_for_select(session[:komet_module_options], @view_params[:modules]), include_blank: true, multiple: true, class: 'form-control komet-preference-modules', 'aria-label' => 'Choose modules to view', title: 'Choose modules to view') %>
+                    <%= select_tag('komet_mapping_stamp_modules_' + @viewer_id, options_for_select(session[:komet_module_options], @view_params[:modules]), multiple: true, class: 'form-control komet-preference-modules', 'aria-label' => 'Choose modules to view', title: 'Choose modules to view') %>
                 </div>
 
                 <div class="komet-panel-tools-control hide">

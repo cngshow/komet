@@ -87,6 +87,11 @@ var ConceptsModule = (function () {
 
             restPath = gon.routes.taxonomy_get_concept_edit_info_path;
             restParameters.partial = 'komet_dashboard/concept_detail/concept_edit';
+
+            // check if the new concept param was passed and push it though to the rest call
+            if (params != null && params.newConcept){
+                restParameters.new_concept = true;
+            }
         }
 
         if ((viewerAction == EDIT || viewerAction == CREATE || viewerAction == CLONE) && WindowManager.viewers.inlineViewers.length > 0  && (windowType == null || windowType == WindowManager.INLINE)){

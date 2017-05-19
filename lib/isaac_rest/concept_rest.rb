@@ -42,11 +42,12 @@ module ConceptRest
     TEST_UUID = 'a60bd881-9010-3260-9653-0c85716b4391' #useful for testing
 
     PARAMS_EMPTY = {}
+    PARAMS_TERMINOLOGY = {terminologyType: true}
 
     ACTION_CONSTANTS = {
         ACTION_VERSION => {
             PATH_SYM => PATH_VERSION_CONCEPT,
-            STARTING_PARAMS_SYM => PARAMS_EMPTY,
+            STARTING_PARAMS_SYM => PARAMS_TERMINOLOGY,
             CLAZZ_SYM => Gov::Vha::Isaac::Rest::Api1::Data::Concept::RestConceptVersion},
         ACTION_DESCRIPTIONS => {
             PATH_SYM => PATH_DESCRIPTIONS_CONCEPT,

@@ -25,10 +25,10 @@ var UIHelper = (function () {
     var autoSuggestRecentCache = {};
     var deferredRecentsCalls = null;
     var flagControlRowTemplates = {};
-    const VHAT = "vhat";
-    const SNOMED = "snomed";
-    const LOINC = "loinc";
-    const RXNORM = "rxnorm";
+    const VHAT = gon.IsaacMetadataAuxiliary.VHAT_MODULES.uuids[0].uuid;
+    const SNOMED = gon.IsaacMetadataAuxiliary.SNOMED_CT_CORE_MODULES.uuids[0].uuid;
+    const LOINC = gon.IsaacMetadataAuxiliary.LOINC_MODULES.uuids[0].uuid;
+    const RXNORM = gon.IsaacMetadataAuxiliary.RXNORM_MODULES.uuids[0].uuid;
     const CHANGEABLE_CLASS = "komet-changeable";
     const CHANGE_HIGHLIGHT_CLASS = "komet-highlight-changes";
     const RECENTS_ASSOCIATION = 'association';
@@ -717,7 +717,7 @@ var UIHelper = (function () {
         });
     };
 
-    var createAutoSuggestField = function (fieldIDBase, fieldIDPostfix, label, labelDisplay, name, nameFormat, idValue, displayValue, typeValue, fieldClasses, tabIndex) {
+    var createAutoSuggestField = function (fieldIDBase, fieldIDPostfix, label, labelDisplay, name, nameFormat, idValue, displayValue, terminoloyTypes, fieldClasses, tabIndex) {
 
         if (fieldIDPostfix == null) {
             fieldIDPostfix = "";
@@ -770,8 +770,8 @@ var UIHelper = (function () {
             displayValue = "";
         }
 
-        if (typeValue == null) {
-            typeValue = "";
+        if (terminoloyTypes == null) {
+            terminoloyTypes = "";
         }
 
         if (fieldClasses == null) {
@@ -791,7 +791,7 @@ var UIHelper = (function () {
         // add type=hidden to inputs with class=hidden.
         var fieldString = labelTag
             + '<input type="hidden" id="' + fieldIDBase + fieldIDPostfix + '" name="' + idName + '" class="hide" value="' + idValue + '">'
-            + '<input type="hidden" id="' + fieldIDBase + '_type' + fieldIDPostfix + '" name="' + typeName + '" class="hide" value="' + typeValue + '">'
+            + '<input type="hidden" id="' + fieldIDBase + '_terminology_types' + fieldIDPostfix + '" name="' + typeName + '" class="hide" value="' + terminoloyTypes + '">'
             + '<div id="' + fieldIDBase + '_fields' + fieldIDPostfix + '" class="komet-autosuggest input-group ' + fieldClasses + '">'
             + '<input id="' + fieldIDBase + '_display' + fieldIDPostfix + '" name="' + displayName + '" ' + caption + ' class="form-control komet-context-menu" '
             + 'data-menu-type="paste_target" data-menu-id-field="' + fieldIDBase + fieldIDPostfix + '" data-menu-display-field="' + fieldIDBase + '_display' + fieldIDPostfix + '" '
@@ -828,7 +828,7 @@ var UIHelper = (function () {
             var nameFormat = tag.getAttribute("name-format");
             var idValue = tag.getAttribute("value");
             var displayValue = tag.getAttribute("display-value");
-            var typeValue = tag.getAttribute("type-value");
+            var terminologyTypes = tag.getAttribute("terminology-types");
             var fieldClasses = tag.getAttribute("classes");
             var tabIndex = tag.getAttribute("tab-index");
             var suggestionRestVariable = tag.getAttribute("suggestion-rest-variable");
@@ -854,7 +854,7 @@ var UIHelper = (function () {
                 restrictSearch = "";
             }
 
-            var autoSuggest = UIHelper.createAutoSuggestField(fieldIDBase, fieldIDPostfix, label, labelDisplay, name, nameFormat, idValue, displayValue, typeValue, fieldClasses, tabIndex);
+            var autoSuggest = UIHelper.createAutoSuggestField(fieldIDBase, fieldIDPostfix, label, labelDisplay, name, nameFormat, idValue, displayValue, terminologyTypes, fieldClasses, tabIndex);
 
             $(tag).replaceWith(autoSuggest);
 
@@ -919,15 +919,15 @@ var UIHelper = (function () {
 
                         var autoSuggestIDField = this.id.replace("_recents", "");
                         var autoSuggestDisplayField = this.id.replace("_recents", "_display");
-                        var autoSuggestTypeField = this.id.replace("_recents", "_type");
+                        var autoSuggestTerminologyTypesField = this.id.replace("_recents", "_terminology_types");
 
                         // use the html function to escape any html that may have been entered by the user
                         var valueText = $("<li>").text(value.text).html();
 
                         // TODO - remove this reassignment when the type flags are implemented in the REST APIs
-                        value.type = UIHelper.VHAT;
+                        value.terminology_types = UIHelper.VHAT;
 
-                        options += '<li><a style="cursor: default"  onclick=\'UIHelper.useAutoSuggestRecent("' + autoSuggestIDField + '", "' + autoSuggestDisplayField + '", "' + autoSuggestTypeField + '"'
+                        options += '<li><a style="cursor: default"  onclick=\'UIHelper.useAutoSuggestRecent("' + autoSuggestIDField + '", "' + autoSuggestDisplayField + '", "' + autoSuggestTerminologyTypesField + '"'
                             + ', "' + value.id + '", "' + valueText + '", "' + value.type + '")\'>' + valueText + '</a></li>';
                     }.bind(this));
 
@@ -964,9 +964,9 @@ var UIHelper = (function () {
         idField.val(ui.item.value);
         idField.change();
 
-        var typeField = $("#" + this.id.replace("_display", "_type"));
-        typeField.val(ui.item.type);
-        typeField.change();
+        var terminologyTypesField = $("#" + this.id.replace("_display", "_terminology_types"));
+        terminologyTypesField.val(ui.item.terminology_types);
+        terminologyTypesField.change();
 
         return false;
     };
@@ -981,9 +981,9 @@ var UIHelper = (function () {
                 idField.val("");
                 idField.change();
 
-                var typeField = $("#" + this.id.replace("_display", "_type"));
-                typeField.val("");
-                typeField.change();
+                var terminologyTypesField = $("#" + this.id.replace("_display", "_terminology_types"));
+                terminologyTypesField.val("");
+                terminologyTypesField.change();
 
                 // make sure this is last, as there may be an onchange event on the display field that requires the other fields to be set.
                 var labelField = $(this);
@@ -1021,15 +1021,15 @@ var UIHelper = (function () {
 
                 var autoSuggestIDField = recentsID.replace("_recents", "");
                 var autoSuggestDisplayField = recentsID.replace("_recents", "_display");
-                var autoSuggestTypeField = recentsID.replace("_recents", "_type");
+                var autoSuggestTerminologyTypesField = recentsID.replace("_recents", "_terminology_types");
 
                 // use the html function to escape any html that may have been entered by the user
                 var valueText = $("<li>").text(value.text).html();
 
                 // TODO - remove this reassignment when the type flags are implemented in the REST APIs
-                value.type = UIHelper.VHAT;
+                value.terminology_types = UIHelper.VHAT;
 
-                options += '<li><a style="cursor: default"  onclick=\'UIHelper.useAutoSuggestRecent("' + autoSuggestIDField + '", "' + autoSuggestDisplayField + '", "' + autoSuggestTypeField + '"'
+                options += '<li><a style="cursor: default"  onclick=\'UIHelper.useAutoSuggestRecent("' + autoSuggestIDField + '", "' + autoSuggestDisplayField + '", "' + autoSuggestTerminologyTypesField + '"'
                     + ', "' + value.id + '", "' + valueText + '", "' + value.type + '")\'>' + valueText + '</a></li>';
             });
 
@@ -1053,15 +1053,15 @@ var UIHelper = (function () {
         }
     };
 
-    var useAutoSuggestRecent = function (autoSuggestID, autoSuggestDisplayField, autoSuggestTypeField, id, text, type) {
+    var useAutoSuggestRecent = function (autoSuggestID, autoSuggestDisplayField, autoSuggestTerminologyTypesField, id, text, terminologyTypes) {
 
         var idField = $("#" + autoSuggestID);
         idField.val(id);
         idField.change();
 
-        var typeField = $("#" + autoSuggestTypeField);
-        typeField.val(type);
-        typeField.change();
+        var terminologyTypesField = $("#" + autoSuggestTerminologyTypesField);
+        terminologyTypesField.val(terminologyTypes);
+        terminologyTypesField.change();
 
         // make sure this is last, as there may be an onchange event on the display field that requires the other fields to be set.
         var displayField = $("#" + autoSuggestDisplayField);
@@ -1188,7 +1188,7 @@ var UIHelper = (function () {
 
                     var uuid = $triggerElement.attr("data-menu-uuid");
                     var conceptText = $triggerElement.attr("data-menu-concept-text");
-                    var conceptTerminologyType = $triggerElement.attr("data-menu-concept-terminology-type");
+                    var conceptTerminologyTypes = $triggerElement.attr("data-menu-concept-terminology-type");
                     var conceptState = $triggerElement.attr("data-menu-state");
                     var jsObject = $triggerElement.attr("data-menu-js-object");
                     var unlinkedViewerID = WindowManager.getUnlinkedViewerID();
@@ -1201,8 +1201,8 @@ var UIHelper = (function () {
                         conceptState = null;
                     }
 
-                    if (conceptTerminologyType == undefined || conceptTerminologyType == "") {
-                        conceptTerminologyType = null;
+                    if (conceptTerminologyTypes == undefined || conceptTerminologyTypes == "") {
+                        conceptTerminologyTypes = null;
                     }
 
                     items.openConcept = {
@@ -1262,11 +1262,11 @@ var UIHelper = (function () {
 
                     items.separatorCopy = {type: "cm_separator"};
 
-                    if (conceptText != null && conceptTerminologyType != null) {
+                    if (conceptText != null && conceptTerminologyTypes != null) {
                         items.copyConcept = {
                             name: "Copy Concept",
                             icon: "context-menu-icon glyphicon-copy",
-                            callback: copyConcept(uuid, conceptText, conceptTerminologyType)
+                            callback: copyConcept(uuid, conceptText, conceptTerminologyTypes)
                         };
                     }
 
@@ -1329,12 +1329,12 @@ var UIHelper = (function () {
                             };
                         }
 
-                        if (conceptText != null && conceptTerminologyType != null) {
+                        if (conceptText != null && conceptTerminologyTypes != null) {
 
                             items.createChildConcept = {
                                 name: "Create Child Concept",
                                 icon: "context-menu-icon glyphicon-plus",
-                                callback: openConceptEditor($triggerElement, ConceptsModule.CREATE, null, jsObject, WindowManager.getLinkedViewerID(), WindowManager.INLINE, uuid, conceptText, conceptTerminologyType)
+                                callback: openConceptEditor($triggerElement, ConceptsModule.CREATE, null, jsObject, WindowManager.getLinkedViewerID(), WindowManager.INLINE, uuid, conceptText, conceptTerminologyTypes)
                             };
 
                             if (WindowManager.viewers.inlineViewers.length < WindowManager.viewers.maxInlineViewers) {
@@ -1342,7 +1342,7 @@ var UIHelper = (function () {
                                 items.createChildConceptNewViewer = {
                                     name: "Create Child Concept in New Viewer",
                                     icon: "context-menu-icon glyphicon-plus",
-                                    callback: openConceptEditor($triggerElement, ConceptsModule.CREATE, null, jsObject, WindowManager.NEW, WindowManager.NEW, uuid, conceptText, conceptTerminologyType)
+                                    callback: openConceptEditor($triggerElement, ConceptsModule.CREATE, null, jsObject, WindowManager.NEW, WindowManager.NEW, uuid, conceptText, conceptTerminologyTypes)
                                 };
                             }
 
@@ -1351,7 +1351,7 @@ var UIHelper = (function () {
                                 items.createChildConceptUnlinkedViewer = {
                                     name: "Create Child Concept in Unlinked Viewer",
                                     icon: "context-menu-icon glyphicon-plus",
-                                    callback: openConceptEditor($triggerElement, ConceptsModule.CREATE, null, jsObject, unlinkedViewerID, WindowManager.INLINE, uuid, conceptText, conceptTerminologyType)
+                                    callback: openConceptEditor($triggerElement, ConceptsModule.CREATE, null, jsObject, unlinkedViewerID, WindowManager.INLINE, uuid, conceptText, conceptTerminologyTypes)
                                 };
                             }
                         }
@@ -1379,14 +1379,14 @@ var UIHelper = (function () {
 
                     var idField = $triggerElement.attr("data-menu-id-field");
                     var displayField = $triggerElement.attr("data-menu-display-field");
-                    var typeField = $triggerElement.attr("data-menu-taxonomy-type-field");
+                    var terminologyTypesField = $triggerElement.attr("data-menu-terminology-types-field");
 
                     if (conceptClipboard.id != undefined) {
                         items.pasteConcept = {
                             name: "Paste Concept: " + conceptClipboard.conceptText,
                             isHtmlName: true,
                             icon: "context-menu-icon glyphicon-paste",
-                            callback: pasteConcept(idField, displayField, typeField)
+                            callback: pasteConcept(idField, displayField, terminologyTypesField)
                         }
                     }
 
@@ -1450,10 +1450,10 @@ var UIHelper = (function () {
         };
     }
 
-    function copyConcept(id, conceptText, conceptType) {
+    function copyConcept(id, conceptText, conceptTerminologyTypes) {
 
         return function () {
-            conceptClipboard = {id: id, conceptText: conceptText, conceptType: conceptType};
+            conceptClipboard = {id: id, conceptText: conceptText, conceptTerminologyTypes: conceptTerminologyTypes};
         };
     }
 
@@ -1471,7 +1471,7 @@ var UIHelper = (function () {
         };
     }
 
-    function openConceptEditor(element, action, id, jsObject, viewerID, windowType, parentID, parentText, parentType) {
+    function openConceptEditor(element, action, id, jsObject, viewerID, windowType, parentID, parentText, parentTerminologyTypes) {
 
         return function () {
 
@@ -1490,7 +1490,7 @@ var UIHelper = (function () {
             $.publish(KometChannels.Taxonomy.taxonomyConceptEditorChannel, [action, id, UIHelper.getViewParams(jsObject), viewerID, windowType, {
                 parentID: parentID,
                 parentText: parentText,
-                parentType: parentType
+                parentType: parentTerminologyTypes
             }]);
         };
     }
@@ -1531,13 +1531,13 @@ var UIHelper = (function () {
         };
     }
 
-    function pasteConcept(idField, displayField, typeField) {
+    function pasteConcept(idField, displayField, terminologyTypesField) {
 
         return function () {
 
             $("#" + idField).val(conceptClipboard.id);
             $("#" + displayField).val(conceptClipboard.conceptText);
-            $("#" + typeField).val(conceptClipboard.conceptType);
+            $("#" + terminologyTypesField).val(conceptClipboard.conceptTerminologyTypes);
         };
     }
 
