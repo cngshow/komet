@@ -28,7 +28,7 @@ module VuidRest
   extend self
 
   #always name the root_path ROOT_PATH!
-  ROOT_PATH = ISAAC_ROOT + 'rest/1/vuids/'
+  ROOT_PATH = ISAAC_ROOT + 'rest/write/1/vuids/'
   PATH_ALLOCATE = ROOT_PATH + 'allocate'
 
   # these are not used!!
@@ -38,7 +38,8 @@ module VuidRest
       ACTION_ALLOCATE => {
           PATH_SYM => PATH_ALLOCATE,
           STARTING_PARAMS_SYM => PARAMS_EMPTY,
-          CLAZZ_SYM => Gov::Vha::Isaac::Rest::Api::Data::Vuid::RestVuidBlockData}
+          CLAZZ_SYM => Gov::Vha::Isaac::Rest::Api::Data::Vuid::RestVuidBlockData,
+          HTTP_METHOD_KEY => HTTP_METHOD_POST}
   }
 
   class << self

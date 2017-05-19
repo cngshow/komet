@@ -1480,7 +1480,7 @@ class KometDashboardController < ApplicationController
             if user_prefs.nil?
 
                 user_prefs = HashWithIndifferentAccess.new
-                user_prefs[:generate_vuid] = 'true'
+                user_prefs[:generate_vuid] = 'false'
                 user_session(UserSession::USER_PREFERENCES, user_prefs)
             end
 
