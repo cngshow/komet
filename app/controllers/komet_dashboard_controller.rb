@@ -1409,7 +1409,7 @@ class KometDashboardController < ApplicationController
         end
 
         # if the view params are already in the session put them into a variable for the GUI, otherwise set the default values for view params and other items
-        if false #session[:default_view_params] && session[:view_params_changed] != true
+        if session[:default_view_params] && session[:view_params_changed] != true
             @view_params = session[:default_view_params].clone
         else
 
