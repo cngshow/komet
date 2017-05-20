@@ -513,9 +513,10 @@ module ConceptConcern
     # @param [Array] used_column_list - an array of data columns for display (for easier sequential access)
     # @param [Hash] used_column_hash - a hash of data columns for display (for easier random access)
     # @param [Number] level - the level of recursion we are at.
-    # @param [Boolean] clone - Are we cloning a concept, if so we will replace the sememe IDs with placeholders
+    # @param [Boolean] clone - Are we cloning a concept, if so we will replace the sememe IDs with placeholders. Optional, defaults to false
+    # @param [String] terminology_types - A comma seperated string of terminology type IDs. Optional, defaults to the instance variable @concept_terminology_types
     # @return [object] a hash that contains an array of all the columns to be displayed and an array of all the data
-    def process_attached_sememes(view_params, sememes, used_column_list, used_column_hash, level, clone = false)
+    def process_attached_sememes(view_params, sememes, used_column_list, used_column_hash, level, clone = false, terminology_types = @concept_terminology_types)
 
         additional_req_params = {coordToken: session[:coordinates_token].token}
         additional_req_params.merge!(view_params)
@@ -584,13 +585,40 @@ module ConceptConcern
                             column_used: false
                         }
 
+                        # if this is an extended description type field then do some custom processing to provide a dropdown field. TODO - eventually this should be handled based on the field data
                         if assemblage_id == $isaac_metadata_auxiliary['EXTENDED_DESCRIPTION_TYPE']['uuids'].first[:uuid]
 
-                            # add a modifier to the column ID so that our custom column properties we are adding here don't cross over to other fields with the same label
-                            column_id += '_EXTENDED'
-                            used_column_data[:column_id] += '_EXTENDED'
-                            used_column_data[:column_display] = 'dropdown'
-                            used_column_data[:dropdown_options] = get_direct_children('fc134ddd-9a15-5540-8fcc-987bf2af9198', true, true, false, false, session[:edit_view_params])
+                            # get the extended types based on the terminologies that the concept belongs to
+                            used_column_data[:dropdown_options] = []
+                            terminology_types_array = terminology_types.split(/\s*,\s*/)
+
+                            options_found = false
+
+                            # loop thru the terminology types, get the module name from the metadata, and then add the type options from the session to our options variable
+                            terminology_types_array.each { |terminology_type|
+
+                                module_name = find_metadata_by_id(terminology_type)
+                                extended_type_options = session[('komet_extended_description_type_' + module_name).to_sym]
+
+                                # if there are options for this terminology type add the to the column's options variable and set the found flag
+                                if extended_type_options != nil
+
+                                    used_column_data[:dropdown_options].concat(session[('komet_extended_description_type_' + module_name).to_sym])
+                                    options_found = true
+                                end
+                            }
+
+                            # only proceed if dropdown options were found, otherwise we should leave the field along so the user can hopefully enter a string
+                            if options_found
+
+                                # add a modifier to the column ID so that our custom column properties we are adding here don't cross over to other fields with the same label
+                                column_id += '_EXTENDED'
+                                used_column_data[:column_id] += '_EXTENDED'
+                                used_column_data[:column_display] = 'dropdown'
+                            else
+                                used_column_data[:column_display] = 'text'
+                            end
+
                        # elsif used_column_data[:data_type] == 'UUID'
 
                         else
@@ -617,7 +645,7 @@ module ConceptConcern
                         converted_value = ''
 
                         # if the column is one of a specific set, make sure it has string data and see if it contains IDs. If it does look up their description
-                        if (['column name', 'target'].include?(row_column.columnName) && (data_column.data.kind_of? String) && find_ids(data_column.data)) || (data_column.respond_to?('dataIdentified') && data_column.dataIdentified.type.enumName == 'CONCEPT')
+                        if ((['column name', 'target'].include?(row_column.columnName) || used_column_hash[column_id][:data_type] == 'UUID') && (data_column.data.kind_of? String) && find_ids(data_column.data)) || (data_column.respond_to?('dataIdentified') && data_column.dataIdentified.type.enumName == 'CONCEPT')
 
                             # the description should be included, but if not look it up
                             if data_column.respond_to?('conceptDescription')
@@ -647,8 +675,8 @@ module ConceptConcern
                         # store the data for the column
                         column_data = {data: html_escape(data), display: converted_value}
 
-                    # else if we are cloning and it is a VHAT ID and we are auto generating VHAT IDs then get a new ID for the column
-                    elsif clone && user_session(UserSession::USER_PREFERENCES)[:generate_vuid] == 'true' && session[:komet_vhat_ids].include?(assemblage_id)
+                    # else if we are cloning and it is a VHAT ID on a VHAT concept, and we are auto generating VHAT IDs then get a new ID for the column
+                    elsif clone && user_session(UserSession::USER_PREFERENCES)[:generate_vuid] == 'true' && terminology_types.include?($isaac_metadata_auxiliary['VHAT_MODULES']['uuids'].first[:uuid]) && session[:komet_vhat_ids].include?(assemblage_id)
 
                         # if a vuid hasn't already been generated then generate one
                         if generated_vuid == nil
@@ -945,7 +973,7 @@ module ConceptConcern
             end
 
             # add the concept information to the end of the child array
-            types_array << {concept_id: description_type.identifiers.uuids.first, concept_sequence: description_type.identifiers.sequence, text: text, qualifier: qualifier, definition: definition, level: level}
+            types_array << {concept_id: description_type.identifiers.uuids.first, concept_sequence: description_type.identifiers.sequence, text: text, qualifier: qualifier, definition: definition, level: 0}
         end
 
         return types_array
@@ -981,13 +1009,17 @@ module ConceptConcern
     # @return [String] the generated vuid
     def request_vuid()
 
-        vuid = VuidRest.get_vuid_api(action: VuidRestActions::ACTION_ALLOCATE, additional_req_params: {blockSize: 1, reason: 'KOMET Request', sso: get_user_token})
+        vuid = VuidRest.get_vuid_api(action: VuidRestActions::ACTION_ALLOCATE, additional_req_params: {blockSize: 1, reason: 'KOMET Request', ssoToken: get_user_token})
 
         if vuid.is_a? CommonRest::UnexpectedResponse
+
             $log.error('Error getting VUID from Rest server')
+            vuid = ''
+        else
+            vuid = vuid.startInclusive
         end
 
-        return 'temp_id_' + java.lang.System.nanoTime.to_s
+        return vuid
     end
 
 

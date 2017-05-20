@@ -128,7 +128,20 @@
                         <% property[:columns].each do |column_id, column_data| %>
 
                             <div class="komet-concept-description-details-item">
-                                <b><%= description[:nested_properties][:field_info][column_id][:name] %>:</b> <%= column_data[:data] %>
+                                <b><%= description[:nested_properties][:field_info][column_id][:name] %>:</b>
+
+                                <!-- if this row has a display value show that in place of the row data and put a tooltip to show the row data, otherwise just show the data -->
+                                <% if column_data[:display] == '' %>
+
+                                    <%= column_data[:data] %>
+
+                                <% else %>
+
+                                    <span class="komet-context-menu" data-menu-js-object="<%= @viewer_id %>" data-menu-type="sememe" data-menu-uuid="<%= column_data[:data] %>" title="<%= column_data[:data] %>">
+                                        <%= column_data[:display] %>
+                                    </span>
+
+                                <% end %>
                             </div>
 
                         <% end %>

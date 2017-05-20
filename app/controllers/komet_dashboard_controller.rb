@@ -923,16 +923,7 @@ class KometDashboardController < ApplicationController
         @description_type_options = get_concept_children(concept_id: $isaac_metadata_auxiliary['DESCRIPTION_TYPE']['uuids'].first[:uuid], return_json: false, remove_semantic_tag: true, view_params: @view_params)
         @association_type_options = get_association_types(@view_params)
 
-        # get the extended types based on the terminologies that the concept belongs to
-        @description_extended_type_options = []
-        terminology_types_array = @concept_terminology_types.split(/\s*,\s*/)
 
-        # loop thru the terminology types, get the module name from the metadata, and then add the type options from the session to our options variable
-        terminology_types_array.each { |terminology_type|
-
-            module_name = find_metadata_by_id(terminology_type)
-            @description_extended_type_options.concat(session[('komet_extended_description_type_' + module_name).to_sym])
-        }
 
         # if we are cloning a concept replace the concept ID with a placeholder
         if clone
@@ -950,8 +941,15 @@ class KometDashboardController < ApplicationController
         sememe_id = params[:sememe]
         sememe_text = params[:sememe_display]
         sememe_terminology_types = params[:sememe_terminology_types]
+        concept_terminology_types = params[:concept_terminology_types]
+        generate_vuid = false
 
-        sememe = get_sememe_definition_details(sememe_id, session[:edit_view_params])
+        # if this is a new VHAT concept add the VHAT ID properties
+        if concept_terminology_types.include?($isaac_metadata_auxiliary['VHAT_MODULES']['uuids'].first[:uuid])
+            generate_vuid = true
+        end
+
+        sememe = get_sememe_definition_details(sememe_id, session[:edit_view_params], generate_vuid)
 
         if sememe[:data].empty?
             render json: {} and return
@@ -1411,7 +1409,7 @@ class KometDashboardController < ApplicationController
         end
 
         # if the view params are already in the session put them into a variable for the GUI, otherwise set the default values for view params and other items
-        if session[:default_view_params] && session[:view_params_changed] != true
+        if false #session[:default_view_params] && session[:view_params_changed] != true
             @view_params = session[:default_view_params].clone
         else
 
@@ -1455,7 +1453,11 @@ class KometDashboardController < ApplicationController
                 session[:komet_module_options] << [indent + komet_module[:text], komet_module[:concept_id], {title: komet_module[:text], 'data-level': komet_module[:level]}]
 
                 # also build a list of the extended description types that apply to concepts belonging to this module
-                session[('komet_extended_description_type_' + komet_module[:text]).to_sym] = get_extended_description_types(komet_module[:concept_id], true, false, session[:edit_view_params], komet_module[:text])
+                extended_description_types = get_extended_description_types(komet_module[:concept_id], true, false, {}, komet_module[:text])
+
+                if extended_description_types.length > 0
+                    session[('komet_extended_description_type_' + komet_module[:text]).to_sym] = extended_description_types
+                end
             end
 
             session[:komet_path_options] = []
@@ -1501,9 +1503,6 @@ class KometDashboardController < ApplicationController
                 session[:komet_taxonomy_ids] = [$isaac_metadata_auxiliary['SCTID']['uuids'].first[:uuid], $isaac_metadata_auxiliary['VUID']['uuids'].first[:uuid], $isaac_metadata_auxiliary['CODE']['uuids'].first[:uuid]]
                 session[:komet_taxonomy_options] = [['SCTID', $isaac_metadata_auxiliary['SCTID']['uuids'].first[:uuid]], ['VUID', $isaac_metadata_auxiliary['VUID']['uuids'].first[:uuid]]]
             end
-
-
-
         end
 
         $log.debug("token initial #{session[:coordinates_token].token}" )

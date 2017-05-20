@@ -808,9 +808,18 @@ var ConceptViewer = function(viewerID, currentConceptID, viewerAction) {
 
             rowString += '<input type="hidden" name="[properties][' + rowData.sememe_instance_id + '][' + fieldID + '][column_number]" value="' + fieldInfo[fieldID].column_number + '">'
                 + '<input type="hidden" name="[properties][' + rowData.sememe_instance_id + '][' + fieldID + '][data_type_class]" value="' + fieldInfo[fieldID].data_type_class + '">'
-                + '<div class="input-group"><label for="komet_concept_edit_concept_properties_' + viewerFieldID + '" class="input-group-addon" aria-label="' + fieldAriaLabel + '">' + fieldLabel + '</label>'
-                + '<input type="text" id="komet_concept_edit_concept_properties_' + viewerFieldID + '" name="[properties][' + rowData.sememe_instance_id + '][' + fieldID + '][value]" value="' + data + '" class="form-control komet_concept_edit_concept_properties_field">'
-                + '</div>';
+                + '<div class="input-group"><label for="komet_concept_edit_concept_properties_' + viewerFieldID + '" class="input-group-addon" aria-label="' + fieldAriaLabel + '">' + fieldLabel + '</label>';
+
+            if (fieldInfo[fieldID].column_display == 'text'){
+
+                rowString += '<input type="text" id="komet_concept_edit_concept_properties_' + viewerFieldID + '" name="[properties][' + rowData.sememe_instance_id + '][' + fieldID + '][value]" value="' + data + '" class="form-control komet_concept_edit_concept_properties_field">'
+                    + '</div>';
+            } else {
+
+                var dropdownOptions = this.createSelectFieldOptions(fieldInfo[fieldID].dropdown_options);
+                rowString += this.createSelectField("concept_properties_" + viewerFieldID, "[properties][" + rowData.sememe_instance_id + "][" + fieldID + "][value]", dropdownOptions, data, fieldAriaLabel, "komet_concept_edit_concept_properties_field")
+                    + '</div>';
+            }
 
         }.bind(this));
 
@@ -1163,7 +1172,7 @@ var ConceptViewer = function(viewerID, currentConceptID, viewerAction) {
                     $.ajax({
                         type: "POST",
                         url: $(this).attr("action"),
-                        data: $(this).serialize(),
+                        data: $(this).serialize() + "&concept_terminology_types=" + thisViewer.terminology_types,
                         success: function (sememe_info) {
 
                             var editorSection = $("#komet_concept_editor_section_" + thisViewer.viewerID);

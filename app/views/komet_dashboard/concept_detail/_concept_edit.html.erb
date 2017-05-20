@@ -203,10 +203,8 @@
             }
         }
 
-        // if we are not cloning the concept set the terminology types of the concept
-        if ("<%= @viewer_action %>" != ConceptsModule.CLONE){
-            WindowManager.viewers[<%= @viewer_id %>].terminology_types = "<%= @concept_terminology_types %>";
-        }
+        // set the terminology types of the concept
+        WindowManager.viewers[<%= @viewer_id %>].terminology_types = "<%= @concept_terminology_types %>";
 
         if (WindowManager.getLinkedViewerID() == "<%= @viewer_id %>" && TaxonomyModule.tree.selectedConceptID != WindowManager.viewers[<%= @viewer_id %>].currentConceptID) {
             WindowManager.viewers[<%= @viewer_id %>].showInTaxonomyTree();
