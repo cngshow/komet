@@ -3,6 +3,8 @@ Komet Changelog
 This changelog summarizes changes and fixes which are a part of each revision.  For more details on the fixes, refer tracking numbers 
 where provided, and the git commit history.
 
+* 2017/05/?? - 4.5 - PENDING
+
 * 2017/05/21 - 4.4
     * Updated to latest enunicate
     * Incorporated changes to rest calls returning UUIDs in coordinates, taxonomy, concept APIs
