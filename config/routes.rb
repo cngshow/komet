@@ -32,6 +32,8 @@ Rails.application.routes.draw do
     get 'komet_dashboard/get_concept_edit_info', :as => :taxonomy_get_concept_edit_info
     post 'komet_dashboard/create_concept', :as => :taxonomy_create_concept
     post 'komet_dashboard/get_new_property_info', :as => :taxonomy_get_new_property_info
+    get 'komet_dashboard/get_generated_vhat_properties', :as => :taxonomy_get_generated_vhat_properties
+    post 'komet_dashboard/get_generated_vhat_ids', :as => :taxonomy_get_generated_vhat_ids
     post 'komet_dashboard/edit_concept', :as => :taxonomy_edit_concept
     get 'komet_dashboard/change_concept_state', :as => :taxonomy_change_concept_state
 

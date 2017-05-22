@@ -85,7 +85,7 @@
             <div class="komet-row">
 
                 <%= label_tag :komet_taxonomy_search_stamp_modules, 'Modules:' %>
-                <%= select_tag('komet_taxonomy_search_stamp_modules', options_for_select(session[:komet_module_options], @view_params[:modules]), include_blank: true, multiple: true, class: 'form-control komet-preference-modules', 'aria-label' => 'Choose module to view', title: 'Choose module to view') %>
+                <%= select_tag('komet_taxonomy_search_stamp_modules', options_for_select(session[:komet_module_options], @view_params[:modules]), multiple: true, class: 'form-control komet-preference-modules', 'aria-label' => 'Choose module to view', title: 'Choose module to view') %>
 
             </div>
 

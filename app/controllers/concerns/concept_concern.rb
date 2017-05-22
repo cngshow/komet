@@ -21,6 +21,8 @@ require './lib/isaac_rest/association_rest'
 require './lib/isaac_rest/concept_rest'
 require './lib/isaac_rest/sememe_rest'
 require './lib/isaac_rest/id_apis_rest'
+require './lib/isaac_rest/vuid_rest'
+require './lib/isaac_rest/system_apis_rest'
 require './lib/rails_common/util/helpers'
 require './app/helpers/application_helper' #build broken w/o this
 
@@ -51,7 +53,7 @@ module ConceptConcern
         @concept_state = attributes.conVersion.state.enumName
 
         # TODO - remove the hard-coding of type to 'vhat' when the type flags are implemented in the REST APIs
-        @concept_terminology_type =  'vhat'
+        @concept_terminology_types = get_uuids_from_identified_objects(attributes.terminologyTypes)
 
         if attributes.isConceptDefined.nil? || !boolean(attributes.isConceptDefined)
             defined = 'Primitive'
@@ -81,7 +83,7 @@ module ConceptConcern
 
         return_attributes << {label: 'Time', value: DateTime.strptime((attributes.conVersion.time / 1000).to_s, '%s').strftime('%m/%d/%Y')}
 
-        author = get_concept_metadata(attributes.conVersion.authorSequence, view_params)
+        author = get_concept_metadata(attributes.conVersion.authorUUID, view_params)
 
         if author == 'user'
             author = 'System User'
@@ -89,8 +91,8 @@ module ConceptConcern
 
         return_attributes << {label: 'Author', value: author}
 
-        return_attributes << {label: 'Module', value: get_concept_metadata(attributes.conVersion.moduleSequence, view_params)}
-        return_attributes << {label: 'Path', value: get_concept_metadata(attributes.conVersion.pathSequence, view_params)}
+        return_attributes << {label: 'Module', value: get_concept_metadata(attributes.conVersion.moduleUUID, view_params)}
+        return_attributes << {label: 'Path', value: get_concept_metadata(attributes.conVersion.pathUUID, view_params)}
 
         return return_attributes
     end
@@ -117,7 +119,7 @@ module ConceptConcern
             description_info = {text: html_escape(description.text)}
 
             # TODO - remove the hard-coding of type to 'vhat' when the type flags are implemented in the REST APIs
-            description_info[:terminology_type] = 'vhat'
+            description_info[:terminology_type] = $isaac_metadata_auxiliary['VHAT_MODULES']['uuids'].first[:uuid]
 
             attributes = []
 
@@ -125,9 +127,9 @@ module ConceptConcern
             description_id = description.sememeChronology.identifiers.uuids.first
             description_state = description.sememeVersion.state.enumName
             description_time = DateTime.strptime((description.sememeVersion.time / 1000).to_s, '%s').strftime('%m/%d/%Y')
-            description_author = get_concept_metadata(description.sememeVersion.authorSequence, view_params)
-            description_module = get_concept_metadata(description.sememeVersion.moduleSequence, view_params)
-            description_path = get_concept_metadata(description.sememeVersion.pathSequence, view_params)
+            description_author = get_concept_metadata(description.sememeVersion.authorUUID, view_params)
+            description_module = get_concept_metadata(description.sememeVersion.moduleUUID, view_params)
+            description_path = get_concept_metadata(description.sememeVersion.pathUUID, view_params)
 
             if description_author == 'user'
                 description_author = 'System User'
@@ -140,24 +142,6 @@ module ConceptConcern
             end
 
             attributes << {label: 'UUID', text: description_id, state: description_state, time: description_time, author: description_author, module: description_module, path: description_path}
-
-            # if !clone
-            #
-            #     # get the description SCTID information if there is one and add it to the attributes array
-            #     coding_id = IdAPIsRest.get_id(uuid_or_id: description_id, action: IdAPIsRestActions::ACTION_TRANSLATE, additional_req_params: {outputType: 'sctid', coordToken: coordinates_token}.merge!(view_params))
-            #
-            #     if coding_id.respond_to?(:value)
-            #         attributes << {label: 'SCTID', text: coding_id.value, state: description_state, time: description_time, author: description_author, module: description_module, path: description_path}
-            #     else
-            #
-            #         # else get the concept VUID information if there is one
-            #         coding_id = IdAPIsRest.get_id(uuid_or_id: uuid, action: IdAPIsRestActions::ACTION_TRANSLATE, additional_req_params: {outputType: 'vuid', coordToken: coordinates_token}.merge!(view_params))
-            #
-            #         if coding_id.respond_to?(:value)
-            #             attributes << {label: 'VUID', text: coding_id.value, state: description_state, time: description_time, author: description_author, module: description_module, path: description_path}
-            #         end
-            #     end
-            # end
 
             header_dialects = ''
 
@@ -172,9 +156,9 @@ module ConceptConcern
 
                 dialect_state = dialect.sememeVersion.state.enumName
                 dialect_time = DateTime.strptime((dialect.sememeVersion.time / 1000).to_s, '%s').strftime('%m/%d/%Y')
-                dialect_author = get_concept_metadata(dialect.sememeVersion.authorSequence, view_params)
-                dialect_module = get_concept_metadata(dialect.sememeVersion.moduleSequence, view_params)
-                dialect_path = get_concept_metadata(dialect.sememeVersion.pathSequence, view_params)
+                dialect_author = get_concept_metadata(dialect.sememeVersion.authorUUID, view_params)
+                dialect_module = get_concept_metadata(dialect.sememeVersion.moduleUUID, view_params)
+                dialect_path = get_concept_metadata(dialect.sememeVersion.pathUUID, view_params)
                 dialect_definition_id = dialect.sememeChronology.assemblage.uuids.first
                 dialect_name = find_metadata_by_id(dialect_definition_id)
 
@@ -331,14 +315,14 @@ module ConceptConcern
             end
 
             # TODO - remove the hard-coding of type to 'vhat' when the type flags are implemented in the REST APIs
-            target_taxonomy_type = 'vhat'
+            target_taxonomy_types = $isaac_metadata_auxiliary['VHAT_MODULES']['uuids'].first[:uuid]
             state = association.associationItemStamp.state.enumName
             time = DateTime.strptime((association.associationItemStamp.time / 1000).to_s, '%s').strftime('%m/%d/%Y')
-            author = get_concept_metadata(association.associationItemStamp.authorSequence, view_params)
-            association_module = get_concept_metadata(association.associationItemStamp.moduleSequence, view_params)
-            path = get_concept_metadata(association.associationItemStamp.pathSequence, view_params)
+            author = get_concept_metadata(association.associationItemStamp.authorUUID, view_params)
+            association_module = get_concept_metadata(association.associationItemStamp.moduleUUID, view_params)
+            path = get_concept_metadata(association.associationItemStamp.pathUUID, view_params)
 
-            return_associations << {id: id, type_id: type_id, type_text: type_text, target_id: target_id, target_text: target_text, target_taxonomy_type: target_taxonomy_type, state: state, time: time, author: author, association_module: association_module, path: path}
+            return_associations << {id: id, type_id: type_id, type_text: type_text, target_id: target_id, target_text: target_text, target_taxonomy_type: target_taxonomy_types, state: state, time: time, author: author, association_module: association_module, path: path}
         end
 
         return return_associations
@@ -445,7 +429,7 @@ module ConceptConcern
     # @param [String] uuid - The UUID to look up descriptions for
     # @param [Object] view_params - various parameters related to the view filters the user wants to apply - see full definition comment at top of komet_dashboard_controller file
     # @return [object] a RestSememeVersion object
-    def get_sememe_definition_details(uuid, view_params = {})
+    def get_sememe_definition_details(uuid, view_params = {}, generated_vuid = nil)
 
         coordinates_token = session[:coordinates_token].token
         additional_req_params = {coordToken: coordinates_token}
@@ -503,7 +487,18 @@ module ConceptConcern
                         field_info[column_id][:column_display] = 'text'
                     end
 
-                    data_row[:columns][column_id] = {}
+                    # if we are auto generating VHAT IDs and this is one of them then generate the IDs, otherwise there is no data
+                    if generated_vuid != false && user_session(UserSession::USER_PREFERENCES)[:generate_vuid] == 'true' && session[:komet_vhat_ids].include?(assemblage_id)
+
+                        if generated_vuid == nil
+                            generated_vuid = request_vuid
+                        end
+
+                        data_row[:columns][column_id] = {data: generated_vuid, display: ''}
+                    else
+                        data_row[:columns][column_id] = {}
+                    end
+
                 end
             }
         end
@@ -518,14 +513,16 @@ module ConceptConcern
     # @param [Array] used_column_list - an array of data columns for display (for easier sequential access)
     # @param [Hash] used_column_hash - a hash of data columns for display (for easier random access)
     # @param [Number] level - the level of recursion we are at.
-    # @param [Boolean] clone - Are we cloning a concept, if so we will replace the sememe IDs with placeholders
+    # @param [Boolean] clone - Are we cloning a concept, if so we will replace the sememe IDs with placeholders. Optional, defaults to false
+    # @param [String] terminology_types - A comma seperated string of terminology type IDs. Optional, defaults to the instance variable @concept_terminology_types
     # @return [object] a hash that contains an array of all the columns to be displayed and an array of all the data
-    def process_attached_sememes(view_params, sememes, used_column_list, used_column_hash, level, clone = false)
+    def process_attached_sememes(view_params, sememes, used_column_list, used_column_hash, level, clone = false, terminology_types = @concept_terminology_types)
 
         additional_req_params = {coordToken: session[:coordinates_token].token}
         additional_req_params.merge!(view_params)
         data_rows = []
         refset_rows = []
+        generated_vuid = nil
 
         # iterate over the array of sememes returned
         sememes.each do |sememe|
@@ -588,10 +585,40 @@ module ConceptConcern
                             column_used: false
                         }
 
+                        # if this is an extended description type field then do some custom processing to provide a dropdown field. TODO - eventually this should be handled based on the field data
                         if assemblage_id == $isaac_metadata_auxiliary['EXTENDED_DESCRIPTION_TYPE']['uuids'].first[:uuid]
 
-                            used_column_data[:column_display] = 'dropdown'
-                            used_column_data[:dropdown_options] = get_direct_children('fc134ddd-9a15-5540-8fcc-987bf2af9198', true, true, false, false, session[:edit_view_params])
+                            # get the extended types based on the terminologies that the concept belongs to
+                            used_column_data[:dropdown_options] = []
+                            terminology_types_array = terminology_types.split(/\s*,\s*/)
+
+                            options_found = false
+
+                            # loop thru the terminology types, get the module name from the metadata, and then add the type options from the session to our options variable
+                            terminology_types_array.each { |terminology_type|
+
+                                module_name = find_metadata_by_id(terminology_type)
+                                extended_type_options = session[('komet_extended_description_type_' + module_name).to_sym]
+
+                                # if there are options for this terminology type add the to the column's options variable and set the found flag
+                                if extended_type_options != nil
+
+                                    used_column_data[:dropdown_options].concat(session[('komet_extended_description_type_' + module_name).to_sym])
+                                    options_found = true
+                                end
+                            }
+
+                            # only proceed if dropdown options were found, otherwise we should leave the field along so the user can hopefully enter a string
+                            if options_found
+
+                                # add a modifier to the column ID so that our custom column properties we are adding here don't cross over to other fields with the same label
+                                column_id += '_EXTENDED'
+                                used_column_data[:column_id] += '_EXTENDED'
+                                used_column_data[:column_display] = 'dropdown'
+                            else
+                                used_column_data[:column_display] = 'text'
+                            end
+
                        # elsif used_column_data[:data_type] == 'UUID'
 
                         else
@@ -607,8 +634,8 @@ module ConceptConcern
                     column_data = {}
                     taxonomy_ids = []
 
-                    # if the column data is not empty process the data
-                    if data_column != nil && (!clone || (clone && !session[:komet_taxonomy_ids].include?(used_column_data[:sememe_definition_id])))
+                    # if the column data is not empty, or if we are cloning it is not a taxonomy ID, process the data
+                    if data_column != nil && (!clone || (clone && (!session[:komet_taxonomy_ids].include?(assemblage_id))))
 
                         # mark in our column lists that this column has data in at least one row
                         used_column_list[list_index][:column_used] = true
@@ -618,7 +645,7 @@ module ConceptConcern
                         converted_value = ''
 
                         # if the column is one of a specific set, make sure it has string data and see if it contains IDs. If it does look up their description
-                        if (['column name', 'target'].include?(row_column.columnName) && (data_column.data.kind_of? String) && find_ids(data_column.data)) || (data_column.respond_to?('dataIdentified') && data_column.dataIdentified.type.enumName == 'CONCEPT')
+                        if ((['column name', 'target'].include?(row_column.columnName) || used_column_hash[column_id][:data_type] == 'UUID') && (data_column.data.kind_of? String) && find_ids(data_column.data)) || (data_column.respond_to?('dataIdentified') && data_column.dataIdentified.type.enumName == 'CONCEPT')
 
                             # the description should be included, but if not look it up
                             if data_column.respond_to?('conceptDescription')
@@ -636,7 +663,7 @@ module ConceptConcern
                                 separator = ', '
 
                                 if index == 0
-                                    data = '';
+                                    data = ''
                                     separator = ''
                                 end
 
@@ -647,6 +674,16 @@ module ConceptConcern
 
                         # store the data for the column
                         column_data = {data: html_escape(data), display: converted_value}
+
+                    # else if we are cloning and it is a VHAT ID on a VHAT concept, and we are auto generating VHAT IDs then get a new ID for the column
+                    elsif clone && user_session(UserSession::USER_PREFERENCES)[:generate_vuid] == 'true' && terminology_types.include?($isaac_metadata_auxiliary['VHAT_MODULES']['uuids'].first[:uuid]) && session[:komet_vhat_ids].include?(assemblage_id)
+
+                        # if a vuid hasn't already been generated then generate one
+                        if generated_vuid == nil
+                            generated_vuid = request_vuid
+                        end
+
+                        column_data = {data: generated_vuid, display: ''}
                     end
 
                     # add the sememe column id and data to the sememe data row
@@ -785,13 +822,15 @@ module ConceptConcern
     ##
     # get_direct_children - takes a uuid and returns all of its direct children.
     # @param [String] concept_id - The UUID to look up children for
-    # @param [Boolean] format_results - Should the results be processed
-    # @param [Boolean] remove_semantic_tag - Should semantic tags be removed (Just 'ISAAC' at the moment)
-    # @param [Boolean] include_definition - should definition descriptions be looked up and included in the results
-    # @param [Boolean] include_nested - should nested children be included in the results
-    # %param [Number] level - the level of nested concepts that is currently being processing
+    # @param [Boolean] format_results - Should the results be processed. Optional, defaults to false
+    # @param [Boolean] remove_semantic_tag - Should semantic tags be removed (Just 'ISAAC' at the moment). Optional, defaults to false
+    # @param [Boolean] include_definition - should definition descriptions be looked up and included in the results. Optional, defaults to false
+    # @param [Boolean] include_nested - should nested children be included in the results. Optional, defaults to false
+    # @param [Object] view_params - various parameters related to the view filters the user wants to apply - see full definition comment at top of komet_dashboard_controller file. Optional
+    # @param [Number] level - the level of nested concepts that is currently being processing. Optional, defaults to 0
+    # @param [String] qualifier - a string to be included after the text of each entry to serve as a identifier. Optional
     # @return [object] an array of children
-    def get_direct_children(concept_id, format_results = false, remove_semantic_tag = false, include_definition = false, include_nested = false, view_params = {}, level = 0)
+    def get_direct_children(concept_id, format_results = false, remove_semantic_tag = false, include_definition = false, include_nested = false, view_params = {}, level = 0, qualifier = '')
 
         # set the request params for the taxonomy call - getting one level of children along with a count of how many children each of them has
         additional_req_params = {coordToken: session[:coordinates_token].token, childDepth: 1, countChildren: true}
@@ -825,7 +864,7 @@ module ConceptConcern
 
                 # TODO - replace with regex that handles any semantic tag: start with /\s\(([^)]+)\)/ (regex101.com)
                 # if desired remove certain semantic tags from the concept description
-                if remove_semantic_tag
+                if remove_semantic_tag && text
                     text.slice!(' (ISAAC)')
                     text.slice!(' (core metadata concept)')
                 end
@@ -853,12 +892,12 @@ module ConceptConcern
                 end
 
                 # add the concept information to the end of the child array
-                child_array << {concept_id: child.conChronology.identifiers.uuids.first, concept_sequence: child.conChronology.identifiers.sequence, text: text, definition: definition, level: level}
+                child_array << {concept_id: child.conChronology.identifiers.uuids.first, concept_sequence: child.conChronology.identifiers.sequence, text: text, qualifier: qualifier, definition: definition, level: level}
 
                 # if we are grabbing nested children and this concept has children recursively call this function passing in the ID of this concept
                 if include_nested && child.childCount > 0
 
-                    child_array.concat(get_direct_children(child.conChronology.identifiers.uuids.first, format_results, remove_semantic_tag, include_definition, include_nested, view_params, level + 1))
+                    child_array.concat(get_direct_children(child.conChronology.identifiers.uuids.first, format_results, remove_semantic_tag, include_definition, include_nested, view_params, level + 1, qualifier))
                 end
             end
 
@@ -868,5 +907,120 @@ module ConceptConcern
         return children
 
     end
+
+    ##
+    # get_extended_description_types - takes a uuid of a child of Module and returns all of its direct children.
+    # @param [String] module_id - The UUID to look up children for, should be a child of Module
+    # @param [Boolean] remove_semantic_tag - Should semantic tags be removed (Just 'ISAAC' at the moment). Optional, defaults to true
+    # @param [Boolean] include_definition - should definition descriptions be looked up and included in the results. Optional, defaults to false
+    # @param [Object] view_params - various parameters related to the view filters the user wants to apply - see full definition comment at top of komet_dashboard_controller file. Optional
+    # @param [String] qualifier - a string to be included after the text of each entry to serve as a identifier. Optional
+    # @return [object] an array of extended types
+    def get_extended_description_types(module_id, remove_semantic_tag = true, include_definition = false, view_params = {}, qualifier = '')
+
+        # set the request params for the call
+        additional_req_params = {coordToken: session[:coordinates_token].token}
+        additional_req_params.merge!(view_params)
+
+        # get the children of the passed in concept
+        description_types = SystemApis.get_system_api(action: SystemApiActions::ACTION_EXTENDED_DESCRIPTION_TYPES, uuid_or_id: module_id, additional_req_params: additional_req_params)
+
+        # if there was an error return a blank array
+        if description_types.is_a? CommonRest::UnexpectedResponse
+            return []
+        end
+
+        # set the request params for the call to get definitions
+        additional_req_params = {coordToken: session[:coordinates_token].token, includeAttributes: false}
+        additional_req_params.merge!(view_params)
+
+        types_array = []
+
+        # loop through all of the children
+        description_types.each do |description_type|
+
+            # get the concept description
+            text = description_type.description
+            definition = ''
+
+            # TODO - replace with regex that handles any semantic tag: start with /\s\(([^)]+)\)/ (regex101.com)
+            # if desired remove certain semantic tags from the concept description
+            if remove_semantic_tag && text
+                text.slice!(' (ISAAC)')
+                text.slice!(' (core metadata concept)')
+            end
+
+            # if we are including the definition
+            if include_definition
+
+                # make a call to get the descriptions for this concept
+                descriptions = ConceptRest.get_concept(action: ConceptRestActions::ACTION_DESCRIPTIONS, uuid: description_type.identifiers.uuids.first, additional_req_params: additional_req_params)
+
+                # as long as we didn't get an error process the results
+                unless descriptions.is_a? CommonRest::UnexpectedResponse
+
+                    # loop through each description
+                    descriptions.each do |description|
+
+                        # if the description is a definition copy the description text and end the loop
+                        if description.descriptionTypeConcept.uuids.first == $isaac_metadata_auxiliary['DEFINITION_DESCRIPTION_TYPE']['uuids'].first[:uuid]
+
+                            definition = description.text
+                            break
+                        end
+                    end
+                end
+            end
+
+            # add the concept information to the end of the child array
+            types_array << {concept_id: description_type.identifiers.uuids.first, concept_sequence: description_type.identifiers.sequence, text: text, qualifier: qualifier, definition: definition, level: 0}
+        end
+
+        return types_array
+
+    end
+
+    ##
+    # generate_vhat_ids - auto generate VHAT ID properties
+    # @return [object] a hash that contains an array of all the columns to be displayed and an array of all the sememes, and a string containing the generated vuid
+    def generate_vhat_properties(generate_ids = true)
+
+        # generate a vuid to use
+        if generate_ids
+            generated_vuid = request_vuid
+        else
+            generated_vuid = false
+        end
+
+        vhat_properties = {field_info: {}, data: [], generated_vuid: generated_vuid}
+
+        session[:komet_vhat_ids].each { |id|
+
+            new_property = get_sememe_definition_details(id, session[:edit_view_params], generated_vuid)
+            vhat_properties[:field_info].merge!(new_property[:field_info])
+            vhat_properties[:data] << new_property[:data]
+        }
+
+        return vhat_properties
+    end
+
+    ##
+    # generate_vuid - get a VUID from the rest server
+    # @return [String] the generated vuid
+    def request_vuid()
+
+        vuid = VuidRest.get_vuid_api(action: VuidRestActions::ACTION_ALLOCATE, additional_req_params: {blockSize: 1, reason: 'KOMET Request', ssoToken: get_user_token})
+
+        if vuid.is_a? CommonRest::UnexpectedResponse
+
+            $log.error('Error getting VUID from Rest server')
+            vuid = ''
+        else
+            vuid = vuid.startInclusive
+        end
+
+        return vuid
+    end
+
 
 end

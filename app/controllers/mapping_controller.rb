@@ -52,15 +52,15 @@ class MappingController < ApplicationController
 
             set_hash = {}
 
-            flags = get_tree_node_flag('module', [set.mappingSetStamp.moduleSequence])
-            flags << get_tree_node_flag('path', [set.mappingSetStamp.pathSequence])
+            flags = get_tree_node_flag('module', [set.mappingSetStamp.moduleUUID])
+            flags << get_tree_node_flag('path', [set.mappingSetStamp.pathUUID])
 
             set_hash[:id] = get_next_id
             set_hash[:set_id] = set.identifiers.uuids.first
             set_hash[:text] = CGI::escapeHTML(set.name) + flags
             set_hash[:state] = set.mappingSetStamp.state.enumName
             # TODO - remove the hard-coding of type to 'vhat' when the type flags are implemented in the REST APIs
-            set_hash[:terminology_type] = 'vhat'
+            set_hash[:terminology_types] = $isaac_metadata_auxiliary['VHAT_MODULES']['uuids'].first[:uuid]
             set_hash[:icon] = 'komet-tree-node-icon fa fa-folder'
 
             set_hash[:a_attr] = {class: 'komet-context-menu',
@@ -68,7 +68,7 @@ class MappingController < ApplicationController
                                  'data-menu-uuid' => set_hash[:set_id],
                                  'data-menu-concept-text' => set_hash[:text],
                                  'data-menu-state' => set_hash[:state],
-                                 'data-menu-concept-terminology-type' => set_hash[:terminology_type],
+                                 'data-menu-concept-terminology-types' => set_hash[:terminology_types],
                                  'data-menu-js-object' => 'mapping'
             }
 
@@ -134,9 +134,9 @@ class MappingController < ApplicationController
             set_hash[:description] = set.description
             set_hash[:state] = set.mappingSetStamp.state.enumName
             set_hash[:time] = DateTime.strptime((set.mappingSetStamp.time / 1000).to_s, '%s').strftime('%m/%d/%Y')
-            set_hash[:author] = get_concept_metadata(set.mappingSetStamp.authorSequence, view_params)
-            set_hash[:module] = get_concept_metadata(set.mappingSetStamp.moduleSequence, view_params)
-            set_hash[:path] = get_concept_metadata(set.mappingSetStamp.pathSequence, view_params)
+            set_hash[:author] = get_concept_metadata(set.mappingSetStamp.authorUUID, view_params)
+            set_hash[:module] = get_concept_metadata(set.mappingSetStamp.moduleUUID, view_params)
+            set_hash[:path] = get_concept_metadata(set.mappingSetStamp.pathUUID, view_params)
 
             data << set_hash
         end
@@ -394,9 +394,9 @@ class MappingController < ApplicationController
             @map_set[:description] = html_escape(set.description)
             @map_set[:state] = set.mappingSetStamp.state.enumName
             @map_set[:time] = DateTime.strptime((set.mappingSetStamp.time / 1000).to_s, '%s').strftime('%m/%d/%Y')
-            @map_set[:author] = get_concept_metadata(set.mappingSetStamp.authorSequence, @view_params)
-            @map_set[:module] = get_concept_metadata(set.mappingSetStamp.moduleSequence, @view_params)
-            @map_set[:path] = get_concept_metadata(set.mappingSetStamp.pathSequence, @view_params)
+            @map_set[:author] = get_concept_metadata(set.mappingSetStamp.authorUUID, @view_params)
+            @map_set[:module] = get_concept_metadata(set.mappingSetStamp.moduleUUID, @view_params)
+            @map_set[:path] = get_concept_metadata(set.mappingSetStamp.pathUUID, @view_params)
 
             if set.comments.length == 0
                 @map_set[:comment] = ''
@@ -497,9 +497,9 @@ class MappingController < ApplicationController
             item_hash[:item_id] = item.identifiers.uuids.first
             item_hash[:state] = item.mappingItemStamp.state.enumName
             item_hash[:time] = DateTime.strptime((item.mappingItemStamp.time / 1000).to_s, '%s').strftime('%m/%d/%Y')
-            item_hash[:author] = get_concept_metadata(item.mappingItemStamp.authorSequence, view_params)
-            item_hash[:module] = get_concept_metadata(item.mappingItemStamp.moduleSequence, view_params)
-            item_hash[:path] = get_concept_metadata(item.mappingItemStamp.pathSequence, view_params)
+            item_hash[:author] = get_concept_metadata(item.mappingItemStamp.authorUUID, view_params)
+            item_hash[:module] = get_concept_metadata(item.mappingItemStamp.moduleUUID, view_params)
+            item_hash[:path] = get_concept_metadata(item.mappingItemStamp.pathUUID, view_params)
 
             if item.comments.length == 0
                 item_hash[:comment] = ''

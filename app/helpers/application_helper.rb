@@ -44,6 +44,17 @@ module ApplicationHelper
         end
     end
 
+    def get_uuids_from_identified_objects(identified_objects)
+
+        uuids = ''
+
+        identified_objects.each { |identified_object|
+            uuids += identified_object.uuids.first + ','
+        }
+
+        return uuids
+    end
+
     def get_edit_token
         CoordinateRest.get_coordinate(action: CoordinateRestActions::ACTION_EDIT_TOKEN, additional_req_params: {ssoToken: get_user_token, CommonRest::CacheRequest => false}).token
     end
@@ -94,8 +105,8 @@ module ApplicationHelper
             end
 
             # make sure that the VHA Module is included or things may break
-            unless view_params[:modules].include?($isaac_metadata_auxiliary['VHA_MODULES']['uuids'].first[:uuid])
-                view_params[:modules] << $isaac_metadata_auxiliary['VHA_MODULES']['uuids'].first[:uuid]
+            unless view_params[:modules].include?($isaac_metadata_auxiliary['VHAT_MODULES']['uuids'].first[:uuid])
+                view_params[:modules] << $isaac_metadata_auxiliary['VHAT_MODULES']['uuids'].first[:uuid]
             end
 
             view_params[:modules] = view_params['modules'] * ','

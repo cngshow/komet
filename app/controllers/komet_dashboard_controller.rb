@@ -119,11 +119,13 @@ class KometDashboardController < ApplicationController
                 inactive_class = ' komet-inactive-tree-node'
             end
 
+            terminology_types = get_uuids_from_identified_objects(isaac_concept.terminologyTypes)
+
             # load the root node into our return variable
             # TODO - remove the hard-coding of type to 'vhat' when the type flags are implemented in the REST APIs
             root_anchor_attributes = { class: 'komet-context-menu' + inactive_class, 'data-menu-type' => 'concept', 'data-menu-uuid' => isaac_concept.conChronology.identifiers.uuids.first,
                                        'data-menu-state' => isaac_concept.conVersion.state.enumName, 'data-menu-concept-text' => isaac_concept.conChronology.description,
-                                       'data-menu-concept-terminology-type' => 'vhat', 'data-menu-js-object' => params[:viewer_id]}
+                                       'data-menu-concept-terminology-types' => terminology_types, 'data-menu-js-object' => params[:viewer_id]}
             root_node = {id: 0, concept_id: isaac_concept.conChronology.identifiers.uuids.first, text: isaac_concept.conChronology.description, parent_reversed: false, parent_search: parent_search, icon: 'komet-tree-node-icon komet-tree-node-primitive', a_attr: root_anchor_attributes, state: {opened: 'true'}}
         else
             isaac_concept = TaxonomyRest.get_isaac_concept(uuid: selected_concept_id, additional_req_params: additional_req_params)
@@ -156,12 +158,13 @@ class KometDashboardController < ApplicationController
         node[:has_children] = !concept.children.nil? && concept.children.length > 0
         node[:defined] = concept.isConceptDefined
         node[:state] = concept.conVersion.state.enumName
-        node[:author] = concept.conVersion.authorSequence
-        node[:module] = concept.conVersion.moduleSequence
-        node[:path] = concept.conVersion.pathSequence
+        node[:author] = concept.conVersion.authorUUID
+        node[:module] = concept.conVersion.moduleUUID
+        node[:path] = concept.conVersion.pathUUID
         node[:refsets] = concept.sememeMembership
+
         # TODO - remove the hard-coding of type to 'vhat' when the type flags are implemented in the REST APIs
-        node[:terminology_type] = 'vhat'
+        node[:terminology_types] = get_uuids_from_identified_objects(concept.terminologyTypes)
 
         if node[:text] == nil
             node[:text] = '[No Description]'
@@ -226,13 +229,13 @@ class KometDashboardController < ApplicationController
                 parent_node[:text] = parent.conChronology.description
                 parent_node[:defined] = parent.isConceptDefined
                 parent_node[:state] = parent.conVersion.state.enumName
-                parent_node[:author] = parent.conVersion.authorSequence
-                parent_node[:module] = parent.conVersion.moduleSequence
-                parent_node[:path] = parent.conVersion.pathSequence
+                parent_node[:author] = parent.conVersion.authorUUID
+                parent_node[:module] = parent.conVersion.moduleUUID
+                parent_node[:path] = parent.conVersion.pathUUID
                 parent_node[:has_parents] = parent.parentCount.to_i > 0
                 parent_node[:parent_count] = parent.parentCount
                 # TODO - remove the hard-coding of type to 'vhat' when the type flags are implemented in the REST APIs
-                node[:terminology_type] = 'vhat'
+                parent_node[:terminology_types] = get_uuids_from_identified_objects(parent.terminologyTypes)
 
                 if node[:parent_count] != 0
                     parent_node[:badge] = "&nbsp;&nbsp;<span class=\"badge badge-success\" aria-label=\"#{parent_node[:parent_count]} parents\">#{parent_node[:parent_count]}</span>"
@@ -502,13 +505,13 @@ class KometDashboardController < ApplicationController
         end
     end
 
-    def get_concept_children(concept_id: nil, return_json: true, remove_semantic_tag: false, include_definition: false, include_nested: false, view_params: {})
+    def get_concept_children(concept_id: nil, return_json: true, remove_semantic_tag: false, include_definition: false, include_nested: false, view_params: {}, qualifier: '')
 
         if concept_id == nil
             concept_id = params[:uuid]
         end
 
-        children = get_direct_children(concept_id, !return_json, remove_semantic_tag, include_definition, include_nested, view_params)
+        children = get_direct_children(concept_id, !return_json, remove_semantic_tag, include_definition, include_nested, view_params, 0, qualifier)
 
         if return_json
             render json: children
@@ -523,12 +526,16 @@ class KometDashboardController < ApplicationController
 
         # set the params for the API call from the request
         additional_req_params = {}
-        additional_req_params[:language] = params[:language]
+        additional_req_params[:language] = params[:'komet_preferences_language']
         additional_req_params[:time] = params[:time]
         additional_req_params[:dialectPrefs] = params[:dialect].keys * ','
         additional_req_params[:descriptionTypePrefs] = params[:description_type].keys * ','
-        additional_req_params[:allowedStates] = params[:allowedStates]
+        additional_req_params[:allowedStates] = params[:allowed_states]
         additional_req_params.merge!(CommonRest::CacheRequest::PARAMS_NO_CACHE)
+
+        if additional_req_params[:time].nil? || additional_req_params[:time] == ''
+            additional_req_params[:time] = 'latest'
+        end
 
         $log.debug("set_coordinates_token additional_req_params #{additional_req_params}")
         $log.debug("set_coordinates_token  params[:module_list] #{ params[:module_flags]}")
@@ -544,10 +551,15 @@ class KometDashboardController < ApplicationController
         user_prefs[:module_flags] = params[:module_flags]
         user_prefs[:path_flags] = params[:path_flags]
         user_prefs[:refset_flags] = params[:refset_flags]
+        user_prefs[:generate_vuid] = params[:generate_vuid]
         user_session(UserSession::USER_PREFERENCES, user_prefs)
 
         # update the default view params in the session
-        session[:default_view_params][:time] = params[:time]
+        session[:default_view_params][:time] = additional_req_params[:time]
+        session[:default_view_params][:allowedStates] = params[:allowed_states]
+
+        # set the flag that we've changed the params
+        session[:view_params_changed] = true
 
         render json: session[:coordinates_token].to_json
 
@@ -578,7 +590,7 @@ class KometDashboardController < ApplicationController
 
             unsorted_dialect_options.each_with_index do |dialect_option, index|
 
-                if dialect_option[:concept_sequence] == preference
+                if dialect_option[:concept_id] == preference.uuids.first
 
                     preferred_items << dialect_option
                     unsorted_dialect_options.delete_at(index)
@@ -606,7 +618,7 @@ class KometDashboardController < ApplicationController
 
             unsorted_description_type_options.each_with_index do |description_type_option, index|
 
-                if description_type_option[:concept_sequence] == preference
+                if description_type_option[:concept_id] == preference.uuids.first
 
                     preferred_items << description_type_option
                     unsorted_description_type_options.delete_at(index)
@@ -628,14 +640,14 @@ class KometDashboardController < ApplicationController
 
             # loop thru the full languages list to build an array of options
             language_list.each do |language|
-                session[:komet_language_options] << [language[:text], language[:concept_sequence]]
+                session[:komet_language_options] << [language[:text], language[:concept_id]]
             end
         end
 
         $log.debug("get_user_preference_info @language_options #{@language_options}")
 
         # get the user selected language
-        @language_coordinate = coordinates_params.languageCoordinate.language
+        @language_coordinate = coordinates_params.languageCoordinate.language.uuids.first
         $log.debug("get_user_preference_info @language_coordinate #{@language_coordinate}")
 
         # get the user selected STAMP date they wish to view - if it is the max java date use the string 'latest'
@@ -661,6 +673,13 @@ class KometDashboardController < ApplicationController
         $log.debug("get_user_preference_info @allowed_states #{@allowed_states}")
 
         user_prefs = user_session(UserSession::USER_PREFERENCES)
+
+        # generate_vuid preference
+        if user_prefs[:generate_vuid] == 'true'
+            @generate_vuid = 'true'
+        else
+            @generate_vuid = 'false'
+        end
 
         # if the user preferences from the session is not null, get the users flag preferences from it
         unless user_prefs.nil?
@@ -714,7 +733,6 @@ class KometDashboardController < ApplicationController
 
         additional_req_params[:childDepth] = 50
         additional_req_params.merge!(session[:edit_view_params])
-
 
         @refset_flags = {}
 
@@ -794,18 +812,18 @@ class KometDashboardController < ApplicationController
         @viewer_id = params[:viewer_id]
         @parent_id = params[:parent_id]
         @parent_text = params[:parent_text]
-        @parent_type = params[:parent_type]
+        @parent_terminology_types = params[:parent_terminology_types]
         @view_params = session[:edit_view_params].clone
         @description_types = get_concept_description_types
         @viewer_action = params[:viewer_action]
         @viewer_previous_content_id = params[:viewer_previous_content_id]
-        @viewer_previous_content_type = params[:viewer_previous_content_type]
+        @viewer_previous_content_terminology_types = params[:viewer_previous_content_terminology_types]
 
         if @parent_id == nil
 
             @parent_id = ''
             @parent_text = ''
-            @parent_type = ''
+            @parent_terminology_types = ''
         end
 
         if @viewer_id == nil || @viewer_id == '' || @viewer_id == 'new'
@@ -824,7 +842,7 @@ class KometDashboardController < ApplicationController
         preferred_term = params[:komet_create_concept_description]
         parent_concept_id = params[:komet_create_concept_parent]
         parent_concept_text = params[:komet_create_concept_parent_display]
-        parent_concept_type = params[:komet_create_concept_parent_type]
+        parent_concept_terminology_types = params[:komet_create_concept_parent_terminology_types]
 
         begin
             body_params = {
@@ -850,7 +868,7 @@ class KometDashboardController < ApplicationController
         end
 
         # add the parent concept to the concept recents array in the session
-        add_to_recents(CONCEPT_RECENTS, parent_concept_id, parent_concept_text, parent_concept_type)
+        add_to_recents(CONCEPT_RECENTS, parent_concept_id, parent_concept_text, parent_concept_terminology_types)
 
         # clear taxonomy caches after writing data
         clear_rest_caches
@@ -862,9 +880,10 @@ class KometDashboardController < ApplicationController
 
         @concept_id = params[:concept_id]
         @viewer_id =  params[:viewer_id]
+        @new_concept =  params[:new_concept]
         @viewer_action = params[:viewer_action]
         @viewer_previous_content_id = params[:viewer_previous_content_id]
-        @viewer_previous_content_type = params[:viewer_previous_content_type]
+        @viewer_previous_content_terminology_types = params[:viewer_previous_content_terminology_types]
         @view_params = check_view_params(params[:view_params])
         clone = false
 
@@ -876,20 +895,37 @@ class KometDashboardController < ApplicationController
             clone = true
         end
 
+        if @new_concept == nil || @new_concept == ''
+            @new_concept = false
+        end
+
         get_concept_attributes(@concept_id, @view_params, clone)
         get_concept_sememes(@concept_id, @view_params, clone)
         get_concept_descriptions(@concept_id, @view_params, clone)
         get_concept_associations(@concept_id, @view_params, clone)
+
+        # if this is a new VHAT concept add the VHAT ID properties
+        if @new_concept && @concept_terminology_types.include?($isaac_metadata_auxiliary['VHAT_MODULES']['uuids'].first[:uuid])
+
+            # add ID properties to the description
+            @descriptions.first[:nested_properties] = generate_vhat_properties
+
+            # add ID properties to the attached sememes
+            new_sememe_properties = generate_vhat_properties
+            @concept_sememes[:field_info].merge!(new_sememe_properties[:field_info])
+            @concept_sememes[:rows].concat(new_sememe_properties[:data])
+        end
 
         @language_options = get_concept_children(concept_id: $isaac_metadata_auxiliary['LANGUAGE']['uuids'].first[:uuid], return_json: false, remove_semantic_tag: true, view_params: @view_params)
         @dialect_options = get_concept_children(concept_id: $isaac_metadata_auxiliary['DIALECT_ASSEMBLAGE']['uuids'].first[:uuid], return_json: false, remove_semantic_tag: true, view_params: @view_params)
         @case_options = get_concept_children(concept_id: $isaac_metadata_auxiliary['DESCRIPTION_CASE_SIGNIFICANCE']['uuids'].first[:uuid], return_json: false, remove_semantic_tag: true, view_params: @view_params)
         @acceptability_options = get_concept_children(concept_id: $isaac_metadata_auxiliary['DESCRIPTION_ACCEPTABILITY']['uuids'].first[:uuid], return_json: false, remove_semantic_tag: true, view_params: @view_params)
         @description_type_options = get_concept_children(concept_id: $isaac_metadata_auxiliary['DESCRIPTION_TYPE']['uuids'].first[:uuid], return_json: false, remove_semantic_tag: true, view_params: @view_params)
-        # TODO - Change get_concept_children function to pull all leaf nodes so we can stop hardcoding this uuid
-        @description_extended_type_options = get_concept_children(concept_id: '09c43aa9-eaed-5217-bc5f-23cacca4df38', return_json: false, remove_semantic_tag: true, view_params: @view_params)
         @association_type_options = get_association_types(@view_params)
 
+
+
+        # if we are cloning a concept replace the concept ID with a placeholder
         if clone
             @concept_id = get_next_id
         end
@@ -904,18 +940,35 @@ class KometDashboardController < ApplicationController
 
         sememe_id = params[:sememe]
         sememe_text = params[:sememe_display]
-        sememe_type = params[:sememe_type]
+        sememe_terminology_types = params[:sememe_terminology_types]
+        concept_terminology_types = params[:concept_terminology_types]
+        generate_vuid = false
 
-        sememe = get_sememe_definition_details(sememe_id, session[:edit_view_params])
+        # if this is a new VHAT concept add the VHAT ID properties
+        if concept_terminology_types.include?($isaac_metadata_auxiliary['VHAT_MODULES']['uuids'].first[:uuid])
+            generate_vuid = true
+        end
+
+        sememe = get_sememe_definition_details(sememe_id, session[:edit_view_params], generate_vuid)
 
         if sememe[:data].empty?
             render json: {} and return
         end
 
         # add the parent concept to the concept recents array in the session
-        add_to_recents(CONCEPT_RECENTS + CONCEPT_RECENTS_SEMEME, sememe_id, sememe_text, sememe_type)
+        add_to_recents(CONCEPT_RECENTS + CONCEPT_RECENTS_SEMEME, sememe_id, sememe_text, sememe_terminology_types)
 
         render json: sememe
+    end
+
+    def get_generated_vhat_properties
+
+        render json: generate_vhat_properties
+    end
+
+    def get_generated_vhat_ids
+
+        render json: generate_vhat_properties
     end
 
     def edit_concept
@@ -1238,7 +1291,7 @@ class KometDashboardController < ApplicationController
                     if return_value.is_a? CommonRest::UnexpectedResponse
                         failed_writes << {id: association_id, text: association['target_display'], type: 'association'}
                     else
-                        add_to_recents(CONCEPT_RECENTS + CONCEPT_RECENTS_ASSOCIATION, association['target'], association['target_display'], association['target_type'])
+                        add_to_recents(CONCEPT_RECENTS + CONCEPT_RECENTS_ASSOCIATION, association['target'], association['target_display'], association['target_terminology_types'])
                     end
                 else
 
@@ -1250,7 +1303,7 @@ class KometDashboardController < ApplicationController
                     if return_value.is_a? CommonRest::UnexpectedResponse
                         failed_writes << {id: association_id, text: association['target_display'], type: 'association'}
                     else
-                        add_to_recents(CONCEPT_RECENTS + CONCEPT_RECENTS_ASSOCIATION, association['target'], association['target_display'], association['target_type'])
+                        add_to_recents(CONCEPT_RECENTS + CONCEPT_RECENTS_ASSOCIATION, association['target'], association['target_display'], association['target_terminology_types'])
                     end
                 end
 
@@ -1320,8 +1373,10 @@ class KometDashboardController < ApplicationController
 
         results.results.each do |result|
 
+            terminology_types = $isaac_metadata_auxiliary['VHAT_MODULES']['uuids'].first[:uuid]
+
             # TODO - remove the hard-coding of type to 'vhat' when the type flags are implemented in the REST APIs
-            concept_suggestions_data << {label: result.referencedConcept.description, value: result.referencedConcept.identifiers.uuids.first, type: 'vhat', matching_text: result.matchText}
+            concept_suggestions_data << {label: result.referencedConcept.description, value: result.referencedConcept.identifiers.uuids.first, terminology_types: terminology_types, matching_text: result.matchText}
         end
 
         render json: concept_suggestions_data
@@ -1354,23 +1409,33 @@ class KometDashboardController < ApplicationController
         end
 
         # if the view params are already in the session put them into a variable for the GUI, otherwise set the default values for view params and other items
-        if session[:default_view_params]
+        if session[:default_view_params] && session[:view_params_changed] != true
             @view_params = session[:default_view_params].clone
         else
 
-            @view_params = {stated: true, allowedStates: 'active,inactive', time: 'latest', modules: '', path: $isaac_metadata_auxiliary['DEVELOPMENT_PATH']['uuids'].first[:uuid]}
+            # if the view params haven't changed then this is the first hit on the daschboard and we should set vars, otherwise we should updated them
+            if session[:view_params_changed] != true
 
-            # set variables for default view parameters that can be accessed from any controller or module
-            session[:default_view_params] = @view_params.clone
-            # set a variable for view params to be used when pulling data for edits, which should always be the least restricted possible
-            session[:edit_view_params] = @view_params.clone
+                # set variables for default view parameters that can be accessed from any controller or module
+                @view_params = {stated: true, allowedStates: 'active,inactive', time: 'latest', modules: '', path: $isaac_metadata_auxiliary['DEVELOPMENT_PATH']['uuids'].first[:uuid]}
+                session[:default_view_params] = @view_params.clone
 
-            # create the options for stated/inferred preference controls
-            session[:komet_stated_options] = [['Stated', 'true'],['Inferred', 'false']]
+                # set a variable for view params to be used when pulling data for edits, which should always be the least restricted possible
+                session[:edit_view_params] = @view_params.clone
 
-            # create the options for stated/inferred preference controls
-            session[:komet_allowed_states_options] = [['All', 'active,inactive'],['Active', 'active']]
-            session[:komet_all_allowed_states_options] = [['All', 'active,inactive'],['Active', 'active'],['Inactive', 'inactive']]
+                # create the options for stated/inferred preference controls
+                session[:komet_stated_options] = [['Stated', 'true'],['Inferred', 'false']]
+
+                # create the options for stated/inferred preference controls
+                session[:komet_allowed_states_options] = [['All', 'active,inactive'],['Active', 'active']]
+                session[:komet_all_allowed_states_options] = [['All', 'active,inactive'],['Active', 'active'],['Inactive', 'inactive']]
+            else
+
+                # update variables for default view parameters that can be accessed from any controller or module
+                @view_params = session[:default_view_params].clone
+
+                session.delete(:view_params_changed)
+            end
 
             session[:komet_module_options] = []
 
@@ -1380,8 +1445,19 @@ class KometDashboardController < ApplicationController
             # loop thru the full module list to build an array of options in the session, including the nested level of each module
             module_list.each do |komet_module|
 
+                if komet_module[:text].nil?
+                    komet_module[:text] = 'No Text'
+                end
+
                 indent = ('-' * komet_module[:level]) + ' '
                 session[:komet_module_options] << [indent + komet_module[:text], komet_module[:concept_id], {title: komet_module[:text], 'data-level': komet_module[:level]}]
+
+                # also build a list of the extended description types that apply to concepts belonging to this module
+                extended_description_types = get_extended_description_types(komet_module[:concept_id], true, false, {}, komet_module[:text])
+
+                if extended_description_types.length > 0
+                    session[('komet_extended_description_type_' + komet_module[:text]).to_sym] = extended_description_types
+                end
             end
 
             session[:komet_path_options] = []
@@ -1397,12 +1473,25 @@ class KometDashboardController < ApplicationController
             # get the list of taxonomy IDs and store them in the session
             session[:komet_taxonomy_ids] = []
             session[:komet_taxonomy_options] = []
+            session[:komet_vhat_ids] = [$isaac_metadata_auxiliary['VUID']['uuids'].first[:uuid], $isaac_metadata_auxiliary['CODE']['uuids'].first[:uuid]]
+
+            # get the user preferences from the session
+            user_prefs = user_session(UserSession::USER_PREFERENCES)
+
+            # if there are no user preferences create a new hash that treats Strings and Symbols the same, load it with user data, and save it in the session
+            if user_prefs.nil?
+
+                user_prefs = HashWithIndifferentAccess.new
+                user_prefs[:generate_vuid] = 'false'
+                user_session(UserSession::USER_PREFERENCES, user_prefs)
+            end
+
             taxonomies = IdAPIsRest.get_id(action: IdAPIsRestActions::ACTION_IDS)
 
             # if the taxonomy results are not empty process them, otherwise build a short list from what is in the metadata
             if !taxonomies.is_a? CommonRest::UnexpectedResponse
 
-                # loop thru the taxonmy results to build an array in the session TODO - remove the slice once the API no longer includes the semantic tag
+                # loop thru the taxonomy results to build an array in the session TODO - remove the slice once the API no longer includes the semantic tag
                 taxonomies.each do |taxonomy|
 
                     taxonomy.description.slice!(' (ISAAC)')
@@ -1411,10 +1500,9 @@ class KometDashboardController < ApplicationController
                 end
             else
 
-                session[:komet_taxonomy_ids] = [$isaac_metadata_auxiliary['SCTID']['uuids'].first[:uuid], $isaac_metadata_auxiliary['SCTID']['uuids'].first[:uuid]]
-                session[:komet_taxonomy_options] = [['SCTID', $isaac_metadata_auxiliary['SCTID']['uuids'].first[:uuid]], ['VUID', $isaac_metadata_auxiliary['SCTID']['uuids'].first[:uuid]]]
+                session[:komet_taxonomy_ids] = [$isaac_metadata_auxiliary['SCTID']['uuids'].first[:uuid], $isaac_metadata_auxiliary['VUID']['uuids'].first[:uuid], $isaac_metadata_auxiliary['CODE']['uuids'].first[:uuid]]
+                session[:komet_taxonomy_options] = [['SCTID', $isaac_metadata_auxiliary['SCTID']['uuids'].first[:uuid]], ['VUID', $isaac_metadata_auxiliary['VUID']['uuids'].first[:uuid]]]
             end
-
         end
 
         $log.debug("token initial #{session[:coordinates_token].token}" )

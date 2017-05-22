@@ -27,7 +27,7 @@ var PreferenceModule = (function () {
         Common.cursor_wait();
 
         // make an ajax call to get the data for user preferences and pass it the name of a partial file to render
-        $.get(gon.routes.taxonomy_get_user_preference_info_path, {partial: 'komet_dashboard/userspreference'}, function (data) {
+        $.get(gon.routes.taxonomy_get_user_preference_info_path, {partial: 'komet_dashboard/user_preferences'}, function (data) {
 
             try {
 
@@ -89,7 +89,7 @@ var PreferenceModule = (function () {
             $.ajax({
                 type: "POST",
                 url: $(this).attr("action"),
-                data: $(this).serialize(),
+                data: $(this).serialize() + "&time=" + PreferenceModule.getStampDate(),
                 error: function (){Common.cursor_auto();},
                 success: function (data) {
 

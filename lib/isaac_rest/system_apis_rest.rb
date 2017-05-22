@@ -27,6 +27,8 @@ module SystemApiActions
   ACTION_NODE_SEMANTIC_TYPE = :node_semantic_type
   ACTION_SUPPORTED_ID_TYPES = :supported_id_types
   ACTION_OBJECT_CHRONOLOGY_TYPE_BY_ID = :object_chronology_type_by_id
+  ACTION_EXTENDED_DESCRIPTION_TYPES = :extended_description_types
+  ACTION_TERMINOLOGY_TYPES = :terminology_types
   ACTION_SYSTEM_INFO = :system_info
 end
 
@@ -39,66 +41,67 @@ module SystemApis
 
   #always name the root_path ROOT_PATH!
   ROOT_PATH = ISAAC_ROOT + "rest/1/system/"
+
+  PATH_OBJECT_CHRONOLOGY_TYPE_BY_ID = ROOT_PATH + "objectChronologyType/{id}"
+  PATH_EXTENDED_DESCRIPTION_TYPES = ROOT_PATH + "extendedDescriptionTypes/{id}"
+  PATH_TERMINOLOGY_TYPES = ROOT_PATH + "terminologyTypes"
+  PATH_SYSTEM_INFO = ROOT_PATH + "systemInfo"
+
   PATH_SYSTEM_API_ENUMERATION =ROOT_PATH + "enumeration/"
   PATH_DYNAMIC_SEMEME_VALIDATOR_TYPE = PATH_SYSTEM_API_ENUMERATION + "restDynamicSememeValidatorType"
   PATH_OBJECT_CHRONOLOGY_TYPE = PATH_SYSTEM_API_ENUMERATION + "restObjectChronologyType"
   PATH_SEMEME_TYPE = PATH_SYSTEM_API_ENUMERATION + "restSememeType"
   PATH_DYNAMIC_SEMEME_DATA_TYPE = PATH_SYSTEM_API_ENUMERATION + "restDynamicSememeDataType"
-
   PATH_CONCRETE_DOMAIN_OPERATOR_TYPES = PATH_SYSTEM_API_ENUMERATION + "restConcreteDomainOperatorTypes"
   PATH_NODE_SEMANTIC_TYPE = PATH_SYSTEM_API_ENUMERATION + "restNodeSemanticType"
   PATH_SUPPORTED_ID_TYPES = PATH_SYSTEM_API_ENUMERATION + "restSupportedIdTypes"
-  PATH_OBJECT_CHRONOLOGY_TYPE_BY_ID = ROOT_PATH + "objectChronologyType/{id}"
-  PATH_SYSTEM_INFO = ROOT_PATH + "systemInfo"
 
-  # these are not used!!
-  PARAMS_DYNAMIC_SEMEME_VALIDATOR_TYPE = {}
-  PARAMS_OBJECT_CHRONOLOGY_TYPE = {}
-  PARAMS_SEMEME_TYPE = {}
-  PARAMS_DYNAMIC_SEMEME_DATA_TYPE = {}
-
-  PARAMS_CONCRETE_DOMAIN_OPERATOR_TYPES = {}
-  PARAMS_NODE_SEMANTIC_TYPE = {}
-  PARAMS_SUPPORTED_ID_TYPES = {}
-  PARAMS_OBJECT_CHRONOLOGY_TYPE_BY_ID = {}
-  PARAMS_SYSTEM_INFO = {}
+  PARAMS_EMPTY = {}
 
   ACTION_CONSTANTS = {
       ACTION_DYNAMIC_SEMEME_VALIDATOR_TYPE => {
           PATH_SYM => PATH_DYNAMIC_SEMEME_VALIDATOR_TYPE,
-          STARTING_PARAMS_SYM => PARAMS_DYNAMIC_SEMEME_VALIDATOR_TYPE,
+          STARTING_PARAMS_SYM => PARAMS_EMPTY,
           CLAZZ_SYM => Gov::Vha::Isaac::Rest::Api1::Data::Enumerations::RestDynamicSememeValidatorType},
       ACTION_OBJECT_CHRONOLOGY_TYPE => {
           PATH_SYM => PATH_OBJECT_CHRONOLOGY_TYPE,
-          STARTING_PARAMS_SYM => PARAMS_OBJECT_CHRONOLOGY_TYPE,
+          STARTING_PARAMS_SYM => PARAMS_EMPTY,
           CLAZZ_SYM => Gov::Vha::Isaac::Rest::Api1::Data::Enumerations::RestObjectChronologyType},
       ACTION_SEMEME_TYPE => {
           PATH_SYM => PATH_SEMEME_TYPE,
-          STARTING_PARAMS_SYM => PARAMS_SEMEME_TYPE,
+          STARTING_PARAMS_SYM => PARAMS_EMPTY,
           CLAZZ_SYM => Gov::Vha::Isaac::Rest::Api1::Data::Enumerations::RestSememeType},
       ACTION_DYNAMIC_SEMEME_DATA_TYPE => {
           PATH_SYM => PATH_DYNAMIC_SEMEME_DATA_TYPE,
-          STARTING_PARAMS_SYM => PARAMS_DYNAMIC_SEMEME_DATA_TYPE,
+          STARTING_PARAMS_SYM => PARAMS_EMPTY,
           CLAZZ_SYM => Gov::Vha::Isaac::Rest::Api1::Data::Enumerations::RestDynamicSememeDataType},
       ACTION_CONCRETE_DOMAIN_OPERATOR_TYPES => {
           PATH_SYM => PATH_CONCRETE_DOMAIN_OPERATOR_TYPES,
-          STARTING_PARAMS_SYM => PARAMS_CONCRETE_DOMAIN_OPERATOR_TYPES,
+          STARTING_PARAMS_SYM => PARAMS_EMPTY,
           CLAZZ_SYM => Gov::Vha::Isaac::Rest::Api1::Data::Enumerations::RestConcreteDomainOperatorsType},
       ACTION_NODE_SEMANTIC_TYPE => {
           PATH_SYM => PATH_NODE_SEMANTIC_TYPE,
-          STARTING_PARAMS_SYM => PARAMS_NODE_SEMANTIC_TYPE,
+          STARTING_PARAMS_SYM => PARAMS_EMPTY,
           CLAZZ_SYM => Gov::Vha::Isaac::Rest::Api1::Data::Enumerations::RestNodeSemanticType},
       ACTION_SUPPORTED_ID_TYPES => {
           PATH_SYM => PATH_SUPPORTED_ID_TYPES,
-          STARTING_PARAMS_SYM => PARAMS_SUPPORTED_ID_TYPES,
+          STARTING_PARAMS_SYM => PARAMS_EMPTY,
           CLAZZ_SYM => Gov::Vha::Isaac::Rest::Api1::Data::Enumerations::RestSupportedIdType},
       ACTION_OBJECT_CHRONOLOGY_TYPE_BY_ID => {
           PATH_SYM => PATH_OBJECT_CHRONOLOGY_TYPE_BY_ID,
-          STARTING_PARAMS_SYM => PARAMS_OBJECT_CHRONOLOGY_TYPE_BY_ID,
+          STARTING_PARAMS_SYM => PARAMS_EMPTY,
           CLAZZ_SYM => Gov::Vha::Isaac::Rest::Api1::Data::Enumerations::RestObjectChronologyType},
+      ACTION_EXTENDED_DESCRIPTION_TYPES => {
+          PATH_SYM => PATH_EXTENDED_DESCRIPTION_TYPES,
+          STARTING_PARAMS_SYM => PARAMS_EMPTY,
+          CLAZZ_SYM => Gov::Vha::Isaac::Rest::Api1::Data::Enumerations::RestObjectChronologyType},
+      ACTION_TERMINOLOGY_TYPES => {
+          PATH_SYM => PATH_TERMINOLOGY_TYPES,
+          STARTING_PARAMS_SYM => PARAMS_EMPTY,
+          CLAZZ_SYM => Gov::Vha::Isaac::Rest::Api1::Data::Concept::RestTerminologyConcept},
       ACTION_SYSTEM_INFO => {
           PATH_SYM => PATH_SYSTEM_INFO,
-          STARTING_PARAMS_SYM => PARAMS_SYSTEM_INFO,
+          STARTING_PARAMS_SYM => PARAMS_EMPTY,
           CLAZZ_SYM => Gov::Vha::Isaac::Rest::Api1::Data::RestSystemInfo},
   }
 
@@ -112,10 +115,14 @@ module SystemApis
 
     attr_accessor :uuid
 
-    def initialize(uuid: nil, action:, action_constants:)
+    def initialize(uuid: nil, action:, params: {}, action_constants:)
       @uuid = uuid.to_s unless uuid.nil?
-      uuid_check uuid: uuid if action_constants == SystemApiActions::ACTION_OBJECT_CHRONOLOGY_TYPE_BY_ID
-      super(params: {}, action: action, action_constants: action_constants)
+
+      if [SystemApiActions::ACTION_OBJECT_CHRONOLOGY_TYPE_BY_ID, SystemApiActions::ACTION_EXTENDED_DESCRIPTION_TYPES].include?(action)
+        uuid_check uuid: uuid
+      end
+
+      super(params: params, action: action, action_constants: action_constants)
     end
 
     def rest_call
@@ -131,8 +138,8 @@ module SystemApis
   end
 
 
-  def get_system_api(action:, uuid_or_id: nil)
-    SystemApi.new(action: action, uuid: uuid_or_id, action_constants: ACTION_CONSTANTS).rest_call
+  def get_system_api(action:, uuid_or_id: nil, additional_req_params: nil)
+    SystemApi.new(action: action, uuid: uuid_or_id, params: additional_req_params, action_constants: ACTION_CONSTANTS).rest_call
   end
 end
 
@@ -148,5 +155,6 @@ f = SystemApis::get_system_api(action: SystemApiActions::ACTION_NODE_SEMANTIC_TY
 g = SystemApis::get_system_api(action: SystemApiActions::ACTION_SUPPORTED_ID_TYPES)
 h = SystemApis::get_system_api(action: SystemApiActions::ACTION_OBJECT_CHRONOLOGY_TYPE_BY_ID, uuid_or_id: SystemApis::TEST_UUID)
 i = SystemApis::get_system_api(action: SystemApiActions::ACTION_SYSTEM_INFO)
-
+j = SystemApis::get_system_api(action: SystemApiActions::ACTION_EXTENDED_DESCRIPTION_TYPES, uuid_or_id: SystemApis::TEST_UUID)
+k = SystemApis::get_system_api(action: SystemApiActions::TERMINOLOGY_TYPES)
 =end
