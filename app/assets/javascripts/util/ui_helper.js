@@ -1160,7 +1160,7 @@ var UIHelper = (function () {
             return null;
 
         } else {
-            return WindowManager.viewers[this.viewerID].getViewParams();
+            return WindowManager.viewers[jsObject].getViewParams();
         }
     }
 

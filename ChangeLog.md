@@ -3,6 +3,10 @@ Komet Changelog
 This changelog summarizes changes and fixes which are a part of each revision.  For more details on the fixes, refer tracking numbers 
 where provided, and the git commit history.
 
+* 2017/05/24 - 4.5
+    * When adding a new property of extended description type to a concept it will appear with the dropdown options instead of a text field.
+    * Fixed context menu on concept edit screen on concept and description properties that support it (mainly extended description type at the moment)
+
 * 2017/05/21 - 4.4
     * Updated to latest enunicate
     * Incorporated changes to rest calls returning UUIDs in coordinates, taxonomy, concept APIs
@@ -10,7 +14,8 @@ where provided, and the git commit history.
     * Fixed issue with search_term using extended description type field options (Jazz: 515733)
     * Fixed concept create issue
     * Extended types now work with their proper options for their terminology
-    * Extended description types and some other forms of UUID properties will now show the concept description in the view window, with the UUID in a tooltip and the concept sememe menu available
+    * Extended description types and some other forms of UUID properties will now show the concept description in the view window, with the UUID in a tooltip and 
+        the concept sememe menu available
     * VUID generation via the rest service is working
 
 * 2017/05/11 - 4.3
