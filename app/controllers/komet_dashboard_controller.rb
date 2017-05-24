@@ -946,10 +946,10 @@ class KometDashboardController < ApplicationController
 
         # if this is a new VHAT concept add the VHAT ID properties
         if concept_terminology_types.include?($isaac_metadata_auxiliary['VHAT_MODULES']['uuids'].first[:uuid])
-            generate_vuid = true
+            generate_vuid = nil
         end
 
-        sememe = get_sememe_definition_details(sememe_id, session[:edit_view_params], generate_vuid)
+        sememe = get_sememe_definition_details(sememe_id, session[:edit_view_params], generate_vuid, concept_terminology_types)
 
         if sememe[:data].empty?
             render json: {} and return

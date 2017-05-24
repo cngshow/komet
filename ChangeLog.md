@@ -4,6 +4,8 @@ This changelog summarizes changes and fixes which are a part of each revision.  
 where provided, and the git commit history.
 
 * 2017/05/?? - 4.5 - PENDING
+    * When adding a new property of extended description type to a concept it will appear with the dropdown options instead of a text field.
+    * Fixed context menu on concept edit screen on concept and description properties that support it (mainly extended description type at the moment)
 
 * 2017/05/21 - 4.4
     * Updated to latest enunicate
