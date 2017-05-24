@@ -428,8 +428,9 @@ module ConceptConcern
     # get_sememe_definition_details - takes a sememe uuid and returns all of the description concepts attached to it.
     # @param [String] uuid - The UUID to look up descriptions for
     # @param [Object] view_params - various parameters related to the view filters the user wants to apply - see full definition comment at top of komet_dashboard_controller file
+    # @param [String] terminology_types - A comma seperated string of terminology type IDs. Optional, defaults to the instance variable @concept_terminology_types
     # @return [object] a RestSememeVersion object
-    def get_sememe_definition_details(uuid, view_params = {}, generated_vuid = nil)
+    def get_sememe_definition_details(uuid, view_params = {}, generated_vuid = nil, terminology_types = nil)
 
         coordinates_token = session[:coordinates_token].token
         additional_req_params = {coordToken: coordinates_token}
@@ -477,11 +478,39 @@ module ConceptConcern
                         column_used: false
                     }
 
-                    if field_info[column_id][:sememe_definition_id] == $isaac_metadata_auxiliary['EXTENDED_DESCRIPTION_TYPE']['uuids'].first[:uuid]
+                    if assemblage_id == $isaac_metadata_auxiliary['EXTENDED_DESCRIPTION_TYPE']['uuids'].first[:uuid]
 
-                        field_info[column_id][:column_display] = 'dropdown'
-                        field_info[column_id][:dropdown_options] = get_direct_children('fc134ddd-9a15-5540-8fcc-987bf2af9198', true, true, false, false, session[:edit_view_params])
-                        # elsif used_column_data[:data_type] == 'UUID'
+                        # get the extended types based on the terminologies that the concept belongs to
+                        field_info[column_id][:dropdown_options] = []
+                        terminology_types_array = terminology_types.split(/\s*,\s*/)
+
+                        options_found = false
+
+                        # loop thru the terminology types, get the module name from the metadata, and then add the type options from the session to our options variable
+                        terminology_types_array.each { |terminology_type|
+
+                            module_name = find_metadata_by_id(terminology_type)
+                            extended_type_options = session[('komet_extended_description_type_' + module_name).to_sym]
+
+                            # if there are options for this terminology type add the to the column's options variable and set the found flag
+                            if extended_type_options != nil
+
+                                field_info[column_id][:dropdown_options].concat(session[('komet_extended_description_type_' + module_name).to_sym])
+                                options_found = true
+                            end
+                        }
+
+                        # only proceed if dropdown options were found, otherwise we should leave the field along so the user can hopefully enter a string
+                        if options_found
+
+                            # add a modifier to the column ID so that our custom column properties we are adding here don't cross over to other fields with the same label
+                            field_info[column_id + '_EXTENDED'] = field_info.delete(column_id)
+                            column_id += '_EXTENDED'
+                            field_info[column_id][:column_id] += '_EXTENDED'
+                            field_info[column_id][:column_display] = 'dropdown'
+                        else
+                            field_info[column_id][:column_display] = 'text'
+                        end
 
                     else
                         field_info[column_id][:column_display] = 'text'
