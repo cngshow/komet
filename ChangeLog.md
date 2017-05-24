@@ -12,7 +12,8 @@ where provided, and the git commit history.
     * Fixed issue with search_term using extended description type field options (Jazz: 515733)
     * Fixed concept create issue
     * Extended types now work with their proper options for their terminology
-    * Extended description types and some other forms of UUID properties will now show the concept description in the view window, with the UUID in a tooltip and the concept sememe menu available
+    * Extended description types and some other forms of UUID properties will now show the concept description in the view window, with the UUID in a tooltip and 
+        the concept sememe menu available
     * VUID generation via the rest service is working
 
 * 2017/05/11 - 4.3
