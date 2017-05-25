@@ -3,6 +3,9 @@ Komet Changelog
 This changelog summarizes changes and fixes which are a part of each revision.  For more details on the fixes, refer tracking numbers 
 where provided, and the git commit history.
 
+* 2017/06/?? - 4.7 - PENDING
+    *
+
 * 2017/05/25 - 4.6
     * Fixed issue were editing with more that one concept window open causes a javascript error and descriptions to not show. Removed unneeded bind() method from viewer objects. Optomized objects to only create prototype functions once.
     
