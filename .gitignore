@@ -24,3 +24,5 @@ rails_komet.war
 /config/generated/*
 .repository/
 /version.txt
+config/trinidad.yml
+config/initializers/rubymine_jruby_debug.rb
