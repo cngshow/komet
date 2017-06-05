@@ -197,19 +197,6 @@ label:not(.btn){
     justify-content: flex-end;
     display: flex;
 }
-.komet-row{
-    display: flex;
-    flex-wrap: wrap;
-    flex: 1 1 auto;
-    margin: 2px 0px;
-    padding: 0px 2px;
-    align-items: center;
-}
-.komet-row-item{
-    display: flex;
-    flex-wrap: wrap;
-    flex: 1 1 auto;
-}
 .komet-main div.komet-containing-block{
     display: flex;
     flex-wrap: wrap;
@@ -342,6 +329,43 @@ div.komet-confirmation-dialog{
     height: 26px;
     padding: 3px 5px;
 }
+.komet-table-header{
+    color: white;
+    background-color: #414cba;
+    margin: 0px;
+}
+.komet-table-body{
+    border: 1px solid #414cba;
+    margin-bottom: 5px;
+}
+.komet-table-body .komet-row:nth-child(even){
+    background: #CCC
+}
+.komet-table-body .komet-row:nth-child(odd){
+    background: #FFF
+}
+.komet-table-body .komet-row > div{
+    flex: 1 1 auto;
+}
+.komet-row{
+    display: flex;
+    flex-wrap: wrap;
+    flex: 1 1 auto;
+    margin: 2px 0px;
+    padding: 0px 2px;
+    align-items: center;
+}
+.komet-row-item{
+    display: flex;
+    flex-wrap: wrap;
+    flex: 1 1 auto;
+}
+.komet-row > div.komet-order-control-rank{
+    flex: 0 1 60px;
+}
+.komet-row > div.komet-order-control-text{
+    flex: 1 1 auto;
+}
 .komet-flag-control-add-field{
     flex: 1 1 60%;
     display: flex;
@@ -352,51 +376,15 @@ div.komet-confirmation-dialog{
 .komet-flag-control-add-field .komet-autosuggest{
     width: 70%;
 }
-.komet-order-control-header{
-    color: white;
-    background-color: #414cba;
-    margin: 0px;
-}
-.komet-order-control-body{
-    border: 1px solid #414cba;
-    margin-bottom: 5px;
-}
-.komet-order-control-body .komet-row:nth-child(even){
-    background: #CCC
-}
-.komet-order-control-body .komet-row:nth-child(odd){
-    background: #FFF
-}
-.komet-order-control-rank{
-    flex: 0 1 60px;
-}
-.komet-order-control-text{
-    flex: 1 1 auto;
-}
-.komet-flag-control-header{
-    color: white;
-    background-color: #414cba;
-    margin: 0px;
-}
-.komet-flag-control-body{
-    border: 1px solid #414cba;
-    margin-bottom: 5px;
-}
-.komet-flag-control-body .komet-row:nth-child(even){
-    background: #CCC
-}
-.komet-flag-control-body .komet-row:nth-child(odd){
-    background: #FFF
-}
 .komet-flag-control-body .glyphicon, .komet-flag-control-body .fa{
     display: inline-block;
     margin-left: 5px;
 }
-.komet-flag-control-text{
+.komet-row > div.komet-flag-control-text{
     flex: 1 0 56%;
     display: flex;
 }
-.komet-flag-control-color{
+.komet-row > div.komet-flag-control-color{
     flex: 0 0 24%;
     max-width: 140px;
     display: flex;
@@ -404,7 +392,7 @@ div.komet-confirmation-dialog{
 .komet-flag-control-color input.komet-color-picker{
     height: 30px;
 }
-.komet-flag-control-shape{
+.komet-row > div.komet-flag-control-shape{
     flex: 0 0 20%;
     max-width: 120px;
     display: flex;
@@ -823,6 +811,7 @@ div.komet-confirmation-dialog{
 }
 
 // Concept Viewer Table Styles
+// TODO - convert everything using this to use the komet-table-* and komet-row styles for consistency
 .komet-concept-table{
     width: 100%;
     overflow: auto;
@@ -1466,6 +1455,21 @@ div.komet-mapping-change-order-icon.glyphicon{
 }
 .komet-add-fields-dialog-footer button{
     margin-right: 5px;
+}
+
+// VUID Styles
+#komet_vuid_request_submit{
+    width: 150px;
+}
+#komet_vuid_request_dialog hr{
+    border-top: 1px solid black;
+    margin: 5px 0px;
+}
+.komet-row > div.komet-vuid-request-table-copy{
+    flex: 0 1 151px;
+}
+.komet-vuid-request-table-copy-button{
+    width: 150px;
 }
 
 // Workflow Styles

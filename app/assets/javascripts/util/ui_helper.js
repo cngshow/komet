@@ -894,51 +894,51 @@ var UIHelper = (function () {
             recentsDropdown = $("#" + fieldIDBase + "_recents" + fieldIDPostfix);
 
             // TODO - Switch to using this event so we can trigger menu reloading easily
-            recentsDropdown.on("recents:load", {restVariable: recentsRestVariable, useRecentsCache: useRecentsCache, recentsName: restrictSearch}, function(event) {
-
-                if (event.data.useRecentsCache == null){
-                    event.data.useRecentsCache = true;
-                }
-
-                // use the recents cache if it exists
-                if (event.data.useRecentsCache && thisHelper.autoSuggestRecentCache[event.data.recentsName] != null){
-
-                    $(this).html(thisHelper.autoSuggestRecentCache[event.data.recentsName]);
-                    return;
-                }
-
-                if (event.data.restVariable == null) {
-                    event.data.restVariable = "komet_dashboard_get_concept_recents_path";
-                }
-
-                $.get(gon.routes[event.data.restVariable] + '?recents_name=' + event.data.recentsName, function (data) {
-
-                    var options = "";
-
-                    $.each(data, function (index, value) {
-
-                        var autoSuggestIDField = this.id.replace("_recents", "");
-                        var autoSuggestDisplayField = this.id.replace("_recents", "_display");
-                        var autoSuggestTerminologyTypesField = this.id.replace("_recents", "_terminology_types");
-
-                        // use the html function to escape any html that may have been entered by the user
-                        var valueText = $("<li>").text(value.text).html();
-
-                        // TODO - remove this reassignment when the type flags are implemented in the REST APIs
-                        value.terminology_types = UIHelper.VHAT;
-
-                        options += '<li><a style="cursor: default"  onclick=\'UIHelper.useAutoSuggestRecent("' + autoSuggestIDField + '", "' + autoSuggestDisplayField + '", "' + autoSuggestTerminologyTypesField + '"'
-                            + ', "' + value.id + '", "' + valueText + '", "' + value.type + '")\'>' + valueText + '</a></li>';
-                    }.bind(this));
-
-                    $(this).html(options);
-
-                    if (event.data.useRecentsCache) {
-                        thisHelper.autoSuggestRecentCache[event.data.recentsName] = options;
-                    }
-
-                }.bind(this));
-            });
+            //recentsDropdown.on("recents:load", {restVariable: recentsRestVariable, useRecentsCache: useRecentsCache, recentsName: restrictSearch}, function(event) {
+            //
+            //    if (event.data.useRecentsCache == null){
+            //        event.data.useRecentsCache = true;
+            //    }
+            //
+            //    // use the recents cache if it exists
+            //    if (event.data.useRecentsCache && thisHelper.autoSuggestRecentCache[event.data.recentsName] != null){
+            //
+            //        $(this).html(thisHelper.autoSuggestRecentCache[event.data.recentsName]);
+            //        return;
+            //    }
+            //
+            //    if (event.data.restVariable == null) {
+            //        event.data.restVariable = "komet_dashboard_get_concept_recents_path";
+            //    }
+            //
+            //    $.get(gon.routes[event.data.restVariable] + '?recents_name=' + event.data.recentsName, function (data) {
+            //
+            //        var options = "";
+            //
+            //        $.each(data, function (index, value) {
+            //
+            //            var autoSuggestIDField = this.id.replace("_recents", "");
+            //            var autoSuggestDisplayField = this.id.replace("_recents", "_display");
+            //            var autoSuggestTerminologyTypesField = this.id.replace("_recents", "_terminology_types");
+            //
+            //            // use the html function to escape any html that may have been entered by the user
+            //            var valueText = $("<li>").text(value.text).html();
+            //
+            //            // TODO - remove this reassignment when the type flags are implemented in the REST APIs
+            //            value.terminology_types = UIHelper.VHAT;
+            //
+            //            options += '<li><a style="cursor: default"  onclick=\'UIHelper.useAutoSuggestRecent("' + autoSuggestIDField + '", "' + autoSuggestDisplayField + '", "' + autoSuggestTerminologyTypesField + '"'
+            //                + ', "' + value.id + '", "' + valueText + '", "' + value.type + '")\'>' + valueText + '</a></li>';
+            //        }.bind(this));
+            //
+            //        $(this).html(options);
+            //
+            //        if (event.data.useRecentsCache) {
+            //            thisHelper.autoSuggestRecentCache[event.data.recentsName] = options;
+            //        }
+            //
+            //    }.bind(this));
+            //});
 
             // recentsDropdown.trigger("recents:load");
 
@@ -1164,6 +1164,26 @@ var UIHelper = (function () {
         }
     }
 
+    function copyToClipboard(text, container) {
+
+        var elementToAppendTo = document.body
+
+        // if this is a model dialog we need to add the fake element to it or the copy wont work
+        if (container != undefined && container != null){
+            elementToAppendTo = document.getElementById(container)
+        }
+
+        // have to create a fake element with the value on the page to get copy to work
+        var textArea = document.createElement('textarea');
+        textArea.setAttribute('style', 'width:1px;border:0;opacity:0;');
+        textArea.setAttribute('contenteditable', 'true');
+        elementToAppendTo.appendChild(textArea);
+        textArea.value = text;
+        textArea.select();
+        document.execCommand('copy');
+        elementToAppendTo.removeChild(textArea);
+    }
+
     // TODO - Fix z-index of menus in IE - splitter bars cutting through it
     function initializeContextMenus() {
 
@@ -1273,7 +1293,7 @@ var UIHelper = (function () {
                     items.copyUuid = {
                         name: "Copy UUID",
                         icon: "context-menu-icon glyphicon-copy",
-                        callback: copyToClipboard(uuid)
+                        callback: contextCopyToClipboard(uuid)
                     };
 
                     // check the dynaimc role methods to see if the user can edit concepts
@@ -1394,7 +1414,7 @@ var UIHelper = (function () {
                     items.copy = {
                         name: "Copy",
                         icon: "context-menu-icon glyphicon-copy",
-                        callback: copyToClipboard($triggerElement.attr("data-menu-copy-value"))
+                        callback: contextCopyToClipboard($triggerElement.attr("data-menu-copy-value"))
                     };
                 }
 
@@ -1457,17 +1477,10 @@ var UIHelper = (function () {
         };
     }
 
-    function copyToClipboard(text) {
+    function contextCopyToClipboard(text) {
 
         return function () {
-            // have to create a fake element with the value on the page to get copy to work
-            var textArea = document.createElement('textarea');
-            textArea.setAttribute('style', 'width:1px;border:0;opacity:0;');
-            document.body.appendChild(textArea);
-            textArea.value = text;
-            textArea.select();
-            document.execCommand('copy');
-            document.body.removeChild(textArea);
+           UIHelper.copyToClipboard(text);
         };
     }
 
@@ -1575,6 +1588,7 @@ var UIHelper = (function () {
         getPreDefinedOptionsForSelect: getPreDefinedOptionsForSelect,
         getElementRightFromWindow: getElementRightFromWindow,
         getViewParams: getViewParams,
+        copyToClipboard: copyToClipboard,
         VHAT: VHAT,
         SNOMED: SNOMED,
         LOINC: LOINC,

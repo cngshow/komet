@@ -20,10 +20,12 @@ Copyright Notice
 require './lib/isaac_rest/concept_rest'
 require './lib/isaac_rest/coordinate_rest'
 require './lib/rails_common/roles/user_session'
+require './lib/rails_common/util/controller_helpers'
 
 module ApplicationHelper
     include UserSession
     include BootstrapNotifier
+    include CommonController
 
     def get_user_token
         user_session(UserSession::TOKEN)
@@ -48,11 +50,32 @@ module ApplicationHelper
 
         uuids = ''
 
-        identified_objects.each { |identified_object|
-            uuids += identified_object.uuids.first + ','
+        identified_objects.each_with_index { |identified_object, index|
+
+            if index > 0
+                uuids += ','
+            end
+
+            uuids += identified_object.uuids.first
         }
 
         return uuids
+    end
+
+    def get_terminology_description_list_from_identified_objects(identified_objects)
+
+        descriptions = ''
+
+        identified_objects.each_with_index { |identified_object, index|
+
+            if index > 0
+                descriptions += ','
+            end
+
+            descriptions += find_metadata_by_id(identified_object.uuids.first)
+        }
+
+        return descriptions
     end
 
     def get_edit_token

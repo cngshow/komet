@@ -4,7 +4,8 @@ This changelog summarizes changes and fixes which are a part of each revision.  
 where provided, and the git commit history.
 
 * 2017/06/?? - 4.7 - PENDING
-    *
+    * Added Generate VUID dialog (Jazz #501723)
+    * Added module and VUID to autosuggest results
 
 * 2017/05/25 - 4.6
     * Fixed issue were editing with more that one concept window open causes a javascript error and descriptions to not show. Removed unneeded bind() method from viewer objects. Optomized objects to only create prototype functions once.

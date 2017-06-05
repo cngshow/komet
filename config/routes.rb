@@ -7,6 +7,7 @@ Rails.application.routes.draw do
 
     match 'logic_graph/chronology/:id' => 'logic_graph#chronology', :as => :logic_graph_chronology, via: [:get]
     match 'logic_graph/version/:id' => 'logic_graph#version', :as => :logic_graph_version, via: [:get]
+    #match '/external/generate_vuid' => 'application#generateVuid', :as => :generate_vuid, via: [:get]
 
     post 'external/authenticate', as: :login
     get 'external/export', as: :export
