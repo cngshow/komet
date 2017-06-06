@@ -58,6 +58,7 @@ unless $rake
       require './lib/isaac_rest/vuid_rest'
       #require './lib/isaac_rest/workflow_rest'
       require './lib/isaac_rest/export_rest'
+      require './lib/isaac_rest/intake_rest'
       ######### COMMON REST IMPORTS GO HERE!!!!!!
       #####################################################
     end

@@ -88,7 +88,7 @@ module CommonRest
 
       if http_method == CommonActionSyms::HTTP_METHOD_POST || http_method == CommonActionSyms::HTTP_METHOD_PUT
         body_class = action_constants.fetch(action)[CommonActionSyms::BODY_CLASS]
-        if body_class == String
+        if body_class != String
           body_class = ruby_classname_to_java(class_name: action_constants.fetch(action)[CommonActionSyms::BODY_CLASS])
           body_params[:@class] = body_class
           req.body = body_params.to_json
@@ -140,7 +140,7 @@ end
 module CommonRestBase
   class RestBase
     include CommonActionSyms
-    attr_accessor :params, :body_params, :action, :action_constants
+    attr_accessor :params, :body_params, :action, :action_constants, :body_string
     include Gov::Vha::Isaac::Rest::Api::Exceptions
 
     def initialize(params:, body_params: {},body_string: nil, action:, action_constants:)
