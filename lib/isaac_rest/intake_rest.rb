@@ -39,18 +39,20 @@ module IntakeRest
       STARTING_PARAMS_SYM => PARAMS_EMPTY,
       CLAZZ_SYM => Gov::Vha::Isaac::Rest::Api::Data::Wrappers::RestWriteResponse,
       HTTP_METHOD_KEY => HTTP_METHOD_POST,
-      BODY_CLASS => Gov::Vha::Isaac::Rest::Api::Data::RestXML,
+      BODY_CLASS => String,
       CALLBACKS => [IntakeRest.clear_lambda]
     }
   }
 
-  def main_fetch(**hash)
-    puts "hello there"
-    get_intake(action: hash[:action], body_params: hash[:body_params], additional_req_params: hash[:params])
-  end
+  #main_fetch is only needed for get requests, For example:
+  #CommonRestBase::RestBase.invoke(url: "/rest/1/concept/version/5/")
+  #will call your impl of main_fetch
+  # def main_fetch(**hash)
+  #   get_intake(action: hash[:action], body_params: hash[:body_params], additional_req_params: hash[:params])
+  # end
 
-  def get_intake(action:, body_params:, additional_req_params: nil)
-      Intake.new(params: additional_req_params, body_params: body_params, action: action, action_constants: ACTION_CONSTANTS).rest_call
+  def get_intake(action:, body_string:, additional_req_params: nil)
+      Intake.new(params: additional_req_params, body_string: body_string, action: action, action_constants: ACTION_CONSTANTS).rest_call
   end
 end
 
@@ -59,25 +61,23 @@ class IntakeRest::Intake < CommonRestBase::RestBase
   register_rest(rest_module: IntakeRest, rest_actions: IntakeRestActions)
   attr_accessor :uuid
 
-  def initialize(body_params:, action:, action_constants:, params:)
+  def initialize(body_string:, action:, action_constants:, params:)
     @uuid = uuid.to_s unless uuid.nil?
-    uuid_check uuid: uuid unless [IntakeRestActions::ACTION_VETS_XML].include?(action)
-    super(body_params: body_params, action: action, action_constants: action_constants, params: params)
+    super(body_string: body_string, action: action, action_constants: action_constants, params: params)
   end
 
   def rest_call
-    url = get_url
-    url_string = url.gsub('{id}', uuid.to_s)
-    json = rest_fetch(url_string: url_string, params: get_params, body_params: body_params, raw_url: url)
-    enunciate_json(json)
+    rest_fetch(enunciate: false, url_string: get_url, params: get_params, body_params: body_params, raw_url: get_url,  content_type: 'application/xml')
   end
 end
 
 =begin
   load('./lib/isaac_rest/intake_rest.rb')
-  result = IntakeRest::get_intake(action: IntakeRest::ACTION_VETS_XML, body_params: {xml: '<xml></xml>'}, additional_req_params: additional_req_params)
-      #user_info = RolesTest::user_roles(user: 'devtest', password: 'devtest')
-      #token = user_info['token']
-      #b = CoordinateRest.get_coordinate(action: CoordinateRestActions::ACTION_EDIT_TOKEN, additional_req_params: {ssoToken: token, CommonRest::CacheRequest => false}).token
-      #additional_req_params ={editToken: b}
+      user_info = RolesTest::user_roles(user: 'devtest', password: 'devtest')
+      token = user_info['token']
+      b = CoordinateRest.get_coordinate(action: CoordinateRestActions::ACTION_EDIT_TOKEN, additional_req_params: {ssoToken: token, CommonRest::CacheRequest => false}).token
+      additional_req_params ={editToken: b}
+
+  result = IntakeRest::get_intake(action: IntakeRest::ACTION_VETS_XML, body_string: '<xml></xml>', additional_req_params: additional_req_params)
+
 =end
