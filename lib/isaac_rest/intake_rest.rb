@@ -39,7 +39,7 @@ module IntakeRest
       STARTING_PARAMS_SYM => PARAMS_EMPTY,
       CLAZZ_SYM => Gov::Vha::Isaac::Rest::Api::Data::Wrappers::RestWriteResponse,
       HTTP_METHOD_KEY => HTTP_METHOD_POST,
-      BODY_CLASS => String,
+      BODY_CLASS => String,#only supported for the body of a post!!
       CALLBACKS => [IntakeRest.clear_lambda]
     }
   }
