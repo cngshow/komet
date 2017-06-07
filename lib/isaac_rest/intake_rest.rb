@@ -40,7 +40,7 @@ module IntakeRest
       CLAZZ_SYM => Gov::Vha::Isaac::Rest::Api::Data::Wrappers::RestWriteResponse,
       HTTP_METHOD_KEY => HTTP_METHOD_POST,
       BODY_CLASS => String,#only supported for the body of a post!!
-      CALLBACKS => [IntakeRest.clear_lambda]
+      CALLBACKS => [IntakeRest.clear_lambda]#not needed, only gets are cached (I forgot this)
     }
   }
 
