@@ -65,7 +65,8 @@ class IntakeRest::Intake < CommonRestBase::RestBase
   end
 
   def rest_call
-    rest_fetch(enunciate: false, url_string: get_url, params: get_params, body_string: body_string, raw_url: get_url,  content_type: 'application/xml')
+    json = rest_fetch(url_string: get_url, params: get_params, body_string: body_string, raw_url: get_url,  content_type: 'application/xml')
+    enunciate_json(json)
   end
 end
 

@@ -35,7 +35,7 @@ module CommonRest
     begin
       if rest_module.constants.include?(:ROOT_PATH)
         $rest_cache.clear_cache(key_starts_with: rest_module::ROOT_PATH)
-        $log.info("Cache cleared for #{rest_module}")
+        $log.debug("Cache cleared for #{rest_module}")
         true
       end
     rescue => ex
@@ -55,7 +55,7 @@ module CommonRest
     end
   end
 
-  def rest_fetch(url_string:, params:, body_string: nil, body_params: {}, raw_url:, enunciate: true, content_type: 'application/json')
+  def rest_fetch(url_string:, params:, body_string: nil, body_params: {}, raw_url:, enunciate: true, content_type: 'application/json', accept_type: 'application/json')
 
     check_cache = params[CacheRequest]
     check_cache = check_cache.nil? ? true : check_cache
@@ -84,7 +84,7 @@ module CommonRest
       req.url url_string
       req.params = sending_params
       req.headers['Content-Type'] = content_type
-      req.headers['Accept'] = content_type
+      req.headers['Accept'] = accept_type
 
       if http_method == CommonActionSyms::HTTP_METHOD_POST || http_method == CommonActionSyms::HTTP_METHOD_PUT
         body_class = action_constants.fetch(action)[CommonActionSyms::BODY_CLASS]
