@@ -1,19 +1,22 @@
 var VUIDRequest = (function () {
 
     var requestWindow = null;
+    var exportData = [];
 
     function openRequestDialog() {
 
         //requestWindow = window.open(url, "VUIDRequest", "width=1200,height=800");
 
         var formID = "komet_vuid_request_form";
+        this.exportData = [];
 
         var formString = '<form action="' + gon.routes.taxonomy_get_generated_vhat_ids_path + '" id="' + formID + '" class="komet-vuid-request-form">'
             + '<div class="komet-row"><label for="komet_vuid_request_number">Number of VUIDs:</label><input id="komet_vuid_request_number" name="number_of_vuids" type="number" class="form-control" value="1"></div>'
             + '<div class="komet-row"><label for="komet_vuid_request_reason">Reason for Request:</label><textarea id="komet_vuid_request_reason" name="reason" class="form-control"></textarea></div>'
             + '<button type="submit" class="btn btn-primary form-control" id="komet_vuid_request_submit">Generate VUIDs</button></form><hr>'
+            + '<button type="button" class="btn btn-default form-control hide" id="komet_vuid_request_export" onclick="VUIDRequest.exportVUIDs()">Export</button>'
             + '<div id="komet_vuid_request_table"><div class="komet-row komet-table-header"><div class="komet-vuid-request-table-vuid">VUID</div>'
-            + '</div><div id="komet_vuid_request_table_body" class="komet-table-body"></div></div>';
+            + '</div><div id="komet_vuid_request_table_body" class="komet-table-body"></div><div id="komet_vuid_request_export_grid" class="hide"></div></div>';
 
         var dialogID = "komet_vuid_request_dialog";
         var dialogString = '<div id="' + dialogID + '"><div class="komet-vuid-request-dialog-body">' + formString + '</div></div>';
@@ -21,6 +24,7 @@ var VUIDRequest = (function () {
         $("body").prepend(dialogString);
 
         var dialog = $("#" + dialogID);
+        var thisViewer = this;
 
         dialog.dialog({
             beforeClose: function () {
@@ -35,8 +39,10 @@ var VUIDRequest = (function () {
                 // add a function to handle the form submission
                 $("#" + formID).submit(function () {
 
-                    // clear any current page messages
+                    // clear any current page messages and hide the export button
                     UIHelper.removePageMessages(dialog);
+                    var exportButton = $("#komet_vuid_request_export");
+                    exportButton.addClass("hide");
 
                     var errors = false;
 
@@ -79,7 +85,14 @@ var VUIDRequest = (function () {
                                     tableString += '<div class="komet-row"><div class="komet-vuid-request-table-vuid">' + i + '</div><div class="komet-vuid-request-table-copy">'
                                         + '<button type="button" onclick="UIHelper.copyToClipboard(\'' + i + '\', \'komet_vuid_request_dialog\')" class="komet-vuid-request-table-copy-button form-control" aria-label="Copy VUID ' + i + ' to Clipboard">'
                                         + 'Copy to Clipboard</button></div></div>';
+
+                                    // add the data to the export object
+                                    thisViewer.exportData.push({vuid: i});
                                 }
+
+                                // show the export button
+                                exportButton.removeClass("hide");
+
                             } else {
                                 tableString = UIHelper.generatePageMessage(data)
                             }
@@ -97,7 +110,7 @@ var VUIDRequest = (function () {
             resizable: false,
             height: 500,
             width: 500,
-            modal: true,
+            modal: false,
             position: {my: "right bottom", at: "left bottom", of: $("#komet_generate_vuid_link")},
             dialogClass: "komet-confirmation-dialog komet-dialog-no-close-button",
             buttons: {
@@ -112,8 +125,23 @@ var VUIDRequest = (function () {
         });
     }
 
+    function exportVUIDs() {
+
+        var gridOptionsExport = {
+            columnDefs:  [
+                {field: "vuid", headerName: 'VUID'}
+            ],
+            rowData: this.exportData
+        };
+
+        new agGrid.Grid($("#komet_vuid_request_export_grid").get(0), gridOptionsExport);
+        gridOptionsExport.api.exportDataAsCsv({allColumns: true});
+        gridOptionsExport.api.destroy();
+    }
+
     return {
-        openRequestDialog: openRequestDialog
+        openRequestDialog: openRequestDialog,
+        exportVUIDs: exportVUIDs
     };
 
 })();
