@@ -3,6 +3,9 @@ Komet Changelog
 This changelog summarizes changes and fixes which are a part of each revision.  For more details on the fixes, refer tracking numbers 
 where provided, and the git commit history.
 
+* 2017/06/?? - 4.8 - PENDING
+    *
+    
 * 2017/06/08 - 4.7
     * Added Generate VUID dialog (Jazz #501723)
     * Added module and VUID to autosuggest results
