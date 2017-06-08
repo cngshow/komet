@@ -520,7 +520,7 @@ module ConceptConcern
                     if generated_vuid != false && user_session(UserSession::USER_PREFERENCES)[:generate_vuid] == 'true' && session[:komet_vhat_ids].include?(assemblage_id)
 
                         if generated_vuid == nil
-                            generated_vuid = request_vuid
+                            generated_vuid = request_vuids
                         end
 
                         data_row[:columns][column_id] = {data: generated_vuid, display: ''}
@@ -709,7 +709,7 @@ module ConceptConcern
 
                         # if a vuid hasn't already been generated then generate one
                         if generated_vuid == nil
-                            generated_vuid = request_vuid
+                            generated_vuid = request_vuids
                         end
 
                         column_data = {data: generated_vuid, display: ''}
@@ -1014,14 +1014,25 @@ module ConceptConcern
     # @return [object] a hash that contains an array of all the columns to be displayed and an array of all the sememes, and a string containing the generated vuid
     def generate_vhat_properties(generate_ids = true)
 
+        vhat_properties = {field_info: {}, data: []}
+
         # generate a vuid to use
         if generate_ids
-            generated_vuid = request_vuid
+
+            generated_vuid = request_vuids
+
+            if generated_vuid.respond_to?('startInclusive')
+                generated_vuid = generated_vuid.startInclusive
+            else
+
+                vhat_properties[:error] = 'Error getting VUID from server: ' + generated_vuid.conciseMessage
+                generated_vuid = ''
+            end
         else
             generated_vuid = false
         end
 
-        vhat_properties = {field_info: {}, data: [], generated_vuid: generated_vuid}
+        vhat_properties[:generated_vuid] = generated_vuid
 
         session[:komet_vhat_ids].each { |id|
 
@@ -1035,20 +1046,19 @@ module ConceptConcern
 
     ##
     # generate_vuid - get a VUID from the rest server
-    # @return [String] the generated vuid
-    def request_vuid()
+    # @return [object] the generated vuids
+    def request_vuids(number_of_vuids = 1, reason = 'KOMET Request')
 
-        vuid = VuidRest.get_vuid_api(action: VuidRestActions::ACTION_ALLOCATE, additional_req_params: {blockSize: 1, reason: 'KOMET Request', ssoToken: get_user_token})
+        vuids = VuidRest.get_vuid_api(action: VuidRestActions::ACTION_ALLOCATE, additional_req_params: {blockSize: number_of_vuids, reason: reason, ssoToken: get_edit_token})
 
-        if vuid.is_a? CommonRest::UnexpectedResponse
+        if vuids.is_a? CommonRest::UnexpectedResponse
 
-            $log.error('Error getting VUID from Rest server')
-            vuid = ''
-        else
-            vuid = vuid.startInclusive
+            message = 'Error getting VUID from server: ' + vuids.rest_exception.conciseMessage
+            $log.error(message)
+            vuids = message
         end
 
-        return vuid
+        return vuids
     end
 
 

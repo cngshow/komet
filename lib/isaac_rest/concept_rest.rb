@@ -110,5 +110,5 @@ b = ConceptRest::get_concept(action: ConceptRestActions::ACTION_CHRONOLOGY,uuid:
 c = ConceptRest::get_concept(action: ConceptRestActions::ACTION_VERSION,uuid: 'cc0b2455-f546-48fa-90e8-e214cc8478d6')
 #TODO - need to figure out passing editToken into write calls
 #create = ConceptRest::get_concept(action: ConceptRestActions::ACTION_CREATE, additional_req_params: {editToken: }, body_params: {fsn: 'Concept Create Test 1', descriptionLanguageConceptId: 8, parentConceptIds: [11] } )
-#update = ConceptRest::get_concept(action: ConceptRestActions::ACTION_UPDATE, additional_req_params: {editToken: }, uuid: 'cc0b2455-f546-48fa-90e8-e214cc8478d6, body_params: {active: true})
+update = ConceptRest::get_concept(action: ConceptRestActions::ACTION_UPDATE, additional_req_params: {editToken: }, uuid: 'cc0b2455-f546-48fa-90e8-e214cc8478d6, body_params: {active: true})
 =end

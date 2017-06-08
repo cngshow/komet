@@ -3,7 +3,7 @@
 #
 
 # Only add one number after the decimal for the API version match
-REST_API_VERSIONS = [:"1.14"].freeze
+REST_API_VERSIONS = [:"1.15"].freeze
 
 require './lib/rails_common/props/prop_loader'
 require './lib/rails_common/logging/open_logging'
@@ -13,7 +13,7 @@ require './lib/rails_common/util/helpers'
 require './lib/rails_common/logging/prisme_log_event'
 require './lib/utilities/route_set_open'
 
-ISAAC_ROOT = ENV['ISAAC_ROOT'].nil? ? '' : ENV['ISAAC_ROOT']
+ISAAC_ROOT = ENV['ISAAC_ROOT'].to_s
 
 $isaac_hunter_mutex = Mutex.new #Not re-entrant, but lock acquires in 1/2 the time (After JVM is warm and toasty).
 
@@ -58,6 +58,7 @@ unless $rake
       require './lib/isaac_rest/vuid_rest'
       #require './lib/isaac_rest/workflow_rest'
       require './lib/isaac_rest/export_rest'
+      require './lib/isaac_rest/intake_rest'
       ######### COMMON REST IMPORTS GO HERE!!!!!!
       #####################################################
     end

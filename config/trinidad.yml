@@ -44,7 +44,7 @@
   java_classes: lib/java/classes # directory where compiled java classes can be found
   default_web_xml: config/trinidad-web.xml # if you are using a custom web.xml
   reload_strategy: default # alternatively you might use "rolling"
-  monitor: c:/temp/restart.txt
+  monitor: <%= RbConfig::CONFIG["host_os"].eql?('mswin32') ? 'c:/temp/restart.txt' : '/tmp/restart.txt' %>
   #monitor: /tmp/restart.txt
 
   #

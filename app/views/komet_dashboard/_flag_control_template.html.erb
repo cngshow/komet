@@ -67,7 +67,7 @@
 
 <% end %>
 
-<div class="komet-row komet-flag-control-header">
+<div class="komet-row komet-flag-control-header komet-table-header">
 
     <div class="komet-flag-control-text"><%= flag_item_header %></div>
     <div class="komet-flag-control-color">Color</div>
@@ -75,7 +75,7 @@
 
 </div>
 
-<div class="komet-flag-control-body" id="komet_flag_control_body_<%= flag_control_id %>">
+<div class="komet-flag-control-body komet-table-body" id="komet_flag_control_body_<%= flag_control_id %>">
 
     <% flag_data.each do |key, flag| %>
 <% $log.debug(flag) %>

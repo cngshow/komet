@@ -86,6 +86,38 @@ function flash_notify(options, settings) {
     });
 })();
 
+// When any ajax request is made this code will run allowing you to always run code at the start and end of the request.
+// Currently used to change the cursor
+//(function() {
+//
+//    // make a copy of the original XMLHttpRequest open function
+//    var originalOpenFunction = XMLHttpRequest.prototype.open;
+//
+//    // create our own XMLHttpRequest open function
+//    XMLHttpRequest.prototype.open = function() {
+//
+//        console.log('request started!');
+//        // change the cursor to a wait icon
+//        Common.cursor_wait();
+//
+//        // add a listener to the loadend event so our code will run no matter the state of the request when it closes. Use 'load' event if you only want requests that complete successfully
+//        this.addEventListener('loadend', function() {
+//
+//            // change the cursor to a normal icon
+//            Common.cursor_auto();
+//            console.log('request ended!');
+//
+//            // did the request complete successfully
+//            console.log(this.readyState);
+//
+//            // the response
+//            //console.log(this.responseText);
+//        });
+//
+//        originalOpenFunction.apply(this, arguments);
+//    };
+//})();
+
 //** javascript plugin overrides
 
 // turn off the autofocus feature of Jquery UI dialogs

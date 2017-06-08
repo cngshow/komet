@@ -7,7 +7,7 @@
 #prisme_roles_ssoi_url=https://localhost:443/roles/get_ssoi_roles.json
 #prisme_roles_by_token_url=https://localhost:443/roles/get_roles_by_token.json
 #prisme_config_url=https://localhost:443/utilities/prisme_config.json
-#prisme_notify_url=http://localhost:3000/log_event?security_token=%5B%22u%5Cf%5Cx92%5CxBC%5Cx17%7D%5CxD1%5CxE4%5CxFB%5CxE5%5Cx99%5CxA3%5C%22%5CxE8%5C%5CK%22%2C+%22%3E%5Cx16%5CxDE%5CxA8v%5Cx14%5CxFF%5CxD2%5CxC6%5CxDD%5CxAD%5Cx9F%5Cx1D%5CxD1cF%22%5D
+#prisme_notify_url=http://localhost:3000/log_event.json?security_token=%5B%22jh%5CxFF%5Cx84%5CxED%5Cx0FT%5Cx96F%5E%5Cx8Bi%5CxD8%5CxA4%5Cx024%22%2C+%22+x%5CxBF%5Cx90%5Cx8Cfz%5CxA0%7Bf%5CxBEP%5CxEC%5Cx9A69%22%5D
 #Edit this to true to default to the prisme instead of the test roles test harness.
 #war_group_id=gov.vha.isaac.gui.rails
 #war_artifact_id=rails_komet

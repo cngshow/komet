@@ -128,5 +128,6 @@ end
 =begin
 load('./lib/isaac_rest/association_rest.rb')
 # TODO - add write tests and need to figure out passing editToken into write calls
+# see intake_rest.rb on getting editToken
 =end
 

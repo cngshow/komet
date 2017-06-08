@@ -968,7 +968,9 @@ class KometDashboardController < ApplicationController
 
     def get_generated_vhat_ids
 
-        render json: generate_vhat_properties
+        vuids = request_vuids(params[:number_of_vuids], params[:reason])
+        # vuids.endInclusive = params[:number_of_vuids].to_i #debug in dev only
+        render json: vuids.to_json
     end
 
     def edit_concept
@@ -1365,18 +1367,38 @@ class KometDashboardController < ApplicationController
         additional_req_params.merge!(view_params)
         restrict_search = params[:restrict_search]
 
+        # only restict the search if the flag is set and there are at least three characters in the search term - otherwise performance is bad
         if search_term.length >= 3 && restrict_search != nil && restrict_search != ''
             additional_req_params[:restrictTo] = restrict_search;
         end
 
+        # get the search results
         results = SearchApis.get_search_api(action: ACTION_PREFIX, additional_req_params: additional_req_params)
 
+        # add the output type param for the translate calls when we loop through the results
+        additional_req_params[:outputType] = 'vuid'
+
+        # loop through each search result to build the return array
         results.results.each do |result|
 
-            terminology_types = $isaac_metadata_auxiliary['VHAT_MODULES']['uuids'].first[:uuid]
+            label = result.referencedConcept.description
+
+            # get the list of terminology type IDs and descriptions
+            terminology_types = get_uuids_from_identified_objects(result.referencedConcept.terminologyTypes)
+            terminology_type_descriptions = get_terminology_description_list_from_identified_objects(result.referencedConcept.terminologyTypes)
+
+            label += ' (' + terminology_type_descriptions + ')'
+
+            # if this is a VHAT concept add the VUID
+            if terminology_types.include?($isaac_metadata_auxiliary['VHAT_MODULES']['uuids'].first[:uuid])
+
+                terminology_id = IdAPIsRest.get_id(uuid_or_id: result.referencedConcept.identifiers.uuids.first, action: IdAPIsRestActions::ACTION_TRANSLATE, additional_req_params: {outputType: 'vuid', coordToken: coordinates_token}.merge!(view_params))
+                label += ' (VUID: ' + terminology_id.value + ')'
+            end
 
             # TODO - remove the hard-coding of type to 'vhat' when the type flags are implemented in the REST APIs
-            concept_suggestions_data << {label: result.referencedConcept.description, value: result.referencedConcept.identifiers.uuids.first, terminology_types: terminology_types, matching_text: result.matchText}
+            # build the return object for this search result and add it to our array
+            concept_suggestions_data << {label: label, value: result.referencedConcept.identifiers.uuids.first, terminology_types: terminology_types, matching_text: result.matchText}
         end
 
         render json: concept_suggestions_data

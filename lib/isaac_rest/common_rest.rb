@@ -30,11 +30,12 @@ module CommonRest
     #faraday.request  :basic_auth, @urls[:user], @urls[:password]
   end
 
+
   def self.clear_cache(rest_module:)
     begin
       if rest_module.constants.include?(:ROOT_PATH)
         $rest_cache.clear_cache(key_starts_with: rest_module::ROOT_PATH)
-        $log.info("Cache cleared for #{rest_module}")
+        $log.debug("Cache cleared for #{rest_module}")
         true
       end
     rescue => ex
@@ -54,7 +55,7 @@ module CommonRest
     end
   end
 
-  def rest_fetch(url_string:, params:, body_params: {}, raw_url:, enunciate: true, content_type: 'application/json')
+  def rest_fetch(url_string:, params:, body_string: nil, body_params: {}, raw_url:, enunciate: true, content_type: 'application/json', accept_type: 'application/json')
 
     check_cache = params[CacheRequest]
     check_cache = check_cache.nil? ? true : check_cache
@@ -83,17 +84,22 @@ module CommonRest
       req.url url_string
       req.params = sending_params
       req.headers['Content-Type'] = content_type
-      req.headers['Accept'] = content_type
+      req.headers['Accept'] = accept_type
 
       if http_method == CommonActionSyms::HTTP_METHOD_POST || http_method == CommonActionSyms::HTTP_METHOD_PUT
-        body_class = ruby_classname_to_java(class_name: action_constants.fetch(action)[CommonActionSyms::BODY_CLASS])
-        body_params[:@class] = body_class
-        req.body = body_params.to_json
-        $log.debug('Body Params: ' + body_params.to_s)
+        body_class = action_constants.fetch(action)[CommonActionSyms::BODY_CLASS]
+        if body_class != String
+          body_class = ruby_classname_to_java(class_name: body_class)
+          body_params[:@class] = body_class
+          req.body = body_params.to_json
+          $log.debug('Body Params: ' + body_params.to_s)
+        else
+          req.body = body_string
+        end
       end
     end
 
-    return response unless enunciate
+    return response.body unless enunciate
 
     json = nil
     begin
@@ -134,15 +140,16 @@ end
 module CommonRestBase
   class RestBase
     include CommonActionSyms
-    attr_accessor :params, :body_params, :action, :action_constants
+    attr_accessor :params, :body_params, :action, :action_constants, :body_string
     include Gov::Vha::Isaac::Rest::Api::Exceptions
 
-    def initialize(params:, body_params: {}, action:, action_constants:)
+    def initialize(params:, body_params: {},body_string: nil, action:, action_constants:)
       body_params = body_params.to_jaxb_json_hash if body_params.respond_to? :to_jaxb_json_hash
       @params = params
       @body_params = body_params
       @action = action
       @action_constants = action_constants
+      @body_string = body_string
     end
 
     def invoke_callbacks
