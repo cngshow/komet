@@ -21,6 +21,8 @@ Copyright Notice
 ##
 # ExternalController -
 # handles the login and all resources outside of login
+require './lib/isaac_rest/intake_rest'
+
 class ExternalController < ApplicationController
 
   # we cannot skip ensure roles on logout because we need to have @ssoi set to determine the redirect url
@@ -66,5 +68,23 @@ class ExternalController < ApplicationController
 
   def export
   #   here for form validation?! - which is not yet working
+  end
+
+  def import
+    body_string = { xml: read_xml_file }
+    additional_req_params ={ editToken: get_edit_token }
+    # response = IntakeRest::get_intake(action: IntakeRest::ACTION_VETS_XML, body_params: body_params)
+    response = IntakeRest::get_intake(action: IntakeRest::ACTION_VETS_XML, body_string: body_string, additional_req_params: additional_req_params)  
+    if response.class == CommonRest::UnexpectedResponse
+      clear_rest_caches
+      render json: { errors: { status: response.status, body: response.body } }, status: 422
+    else 
+      head :ok, content_type: "application/json"
+    end
+  end
+
+  private
+  def read_xml_file
+    params[:file].tempfile.read
   end
 end

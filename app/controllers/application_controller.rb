@@ -19,7 +19,7 @@ class ApplicationController < ActionController::Base
   include Gov::Vha::Isaac::Rest::Api::Exceptions
   append_view_path 'lib/rails_common/views'
 
-  CACHE_TYPE_TAXONOMY = [AssociationRest, CommentApis, ConceptRest, IdAPIsRest, LogicGraphRest, MappingApis, SearchApis, SememeRest, TaxonomyRest].freeze
+  CACHE_TYPE_TAXONOMY = [AssociationRest, CommentApis, ConceptRest, IdAPIsRest, LogicGraphRest, MappingApis, SearchApis, SememeRest, TaxonomyRest, IntakeRest].freeze
   CACHE_TYPE_SYSTEM = [CoordinateRest, SystemApis].freeze
   #CACHE_TYPE_WORKFLOW = [WorkflowRest].freeze
   CACHE_TYPE_ALL = [CACHE_TYPE_TAXONOMY, CACHE_TYPE_SYSTEM].flatten.freeze

@@ -1,0 +1,22 @@
+<div id="import_modal" class="modal fade modal-wide" data-backdrop="static" role="dialog">
+  <%= form_tag(import_path, method: :post, id: 'import_modal_form', name: 'import_modal_form', multipart: true) do %>
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h2 class="modal-title">VHAT XML Import</h2>
+        </div>
+        <div class="modal-body">
+          <h3 class="modal-title">Please choose file</h3>
+          <%= file_field_tag :file %>
+        </div>
+        <hr>
+        <div align="center" style="padding-bottom: 10px">
+          <div id="buttons_div">
+            <a class="btn btn-default cancel">Cancel</a>
+            <button type="submit" class="btn btn-default submit">Submit</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  <% end %>
+</div>

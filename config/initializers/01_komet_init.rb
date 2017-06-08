@@ -3,7 +3,7 @@
 #
 
 # Only add one number after the decimal for the API version match
-REST_API_VERSIONS = [:"1.14"].freeze
+REST_API_VERSIONS = [:"1.15"].freeze
 
 require './lib/rails_common/props/prop_loader'
 require './lib/rails_common/logging/open_logging'
