@@ -157,7 +157,21 @@
 							<args>devops:isaac_rest_test</args>
 						</configuration>
 					</execution>
-					
+
+					<execution>
+						<id>react on rails</id>
+						<phase>compile</phase>
+						<goals>
+							<goal>exec</goal>
+						</goals>
+						<configuration>
+							<jrubyVerbose>true</jrubyVerbose>
+							<jrubyJvmArgs>-Xmx4000m -Djava.awt.headless=true</jrubyJvmArgs>
+							<execArgs>RAILS_ENV=${railsMode}</execArgs>
+							<command>rake</command>
+							<args>build:set_up_react</args>
+						</configuration>
+					</execution>
 					<!-- Build 1 instances of the war for now during SNAPSHOT, build 3 during release - one each with a relative path of _a, _b and _c, 
 					  so we can deploy three times on the same server -->
 					<execution>

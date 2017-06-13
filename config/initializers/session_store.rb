@@ -1,4 +1,6 @@
 # Be sure to restart your server when you modify this file.
+return if $react_build
+
 context_file = "../context.txt"
 key = File.open(context_file).read.reverse.chop.reverse rescue "_komet_tooling_session"
 context = (key.eql? '_komet_tooling_session') ? '' : key
