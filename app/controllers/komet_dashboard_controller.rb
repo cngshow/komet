@@ -969,7 +969,6 @@ class KometDashboardController < ApplicationController
     def get_generated_vhat_ids
 
         vuids = request_vuids(params[:number_of_vuids], params[:reason])
-        # vuids.endInclusive = params[:number_of_vuids].to_i #debug in dev only
         render json: vuids.to_json
     end
 

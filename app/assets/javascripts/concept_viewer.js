@@ -836,6 +836,7 @@ ConceptViewer.prototype.createConceptPropertyRowString = function (rowData, fiel
 
         var viewerFieldID = rowData.sememe_instance_id + '_' + fieldID + '_' + this.viewerID;
         var fieldLabel = fieldInfo[fieldID].name;
+        var fieldLabelClass = "";
         var fieldAriaLabel = rowData.sememe_name + " " + fieldLabel;
 
         var data = "";
@@ -844,9 +845,14 @@ ConceptViewer.prototype.createConceptPropertyRowString = function (rowData, fiel
             data = field.data;
         }
 
+        // if this is a VHAT concept then don't show the field label
+        if (this.terminology_types.indexOf(UIHelper.VHAT) >= 0){
+            fieldLabelClass = " hide";
+        }
+
         rowString += '<input type="hidden" name="[properties][' + rowData.sememe_instance_id + '][' + fieldID + '][column_number]" value="' + fieldInfo[fieldID].column_number + '">'
             + '<input type="hidden" name="[properties][' + rowData.sememe_instance_id + '][' + fieldID + '][data_type_class]" value="' + fieldInfo[fieldID].data_type_class + '">'
-            + '<div class="input-group"><label for="komet_concept_edit_concept_properties_' + viewerFieldID + '" class="input-group-addon" aria-label="' + fieldAriaLabel + '">' + fieldLabel + '</label>';
+            + '<div class="input-group"><label for="komet_concept_edit_concept_properties_' + viewerFieldID + '" class="input-group-addon' + fieldLabelClass + '" aria-label="' + fieldAriaLabel + '">' + fieldLabel + '</label>';
 
         if (fieldInfo[fieldID].column_display == 'text'){
 
@@ -1024,6 +1030,7 @@ ConceptViewer.prototype.createDescriptionPropertyRowString = function (descripti
 
         var viewerFieldID = propertyID + '_' + fieldID + '_' + this.viewerID;
         var fieldLabel = fieldInfo[fieldID].name;
+        var fieldLabelClass = "";
         var fieldAriaLabel = labelPrefix + fieldLabel;
 
         var data = "";
@@ -1032,9 +1039,14 @@ ConceptViewer.prototype.createDescriptionPropertyRowString = function (descripti
             data = field.data;
         }
 
+        // if this is a VHAT concept then don't show the field label
+        if (this.terminology_types.indexOf(UIHelper.VHAT) >= 0){
+            fieldLabelClass = " hide";
+        }
+
         rowString += '<input type="hidden" name="' + namePrefix + '[' + fieldID + '][column_number]" value="' + fieldInfo[fieldID].column_number + '">'
             + '<input type="hidden" name="' + namePrefix + '[' + fieldID + '][data_type_class]" value="' + fieldInfo[fieldID].data_type_class + '">'
-            + '<div class="input-group"><label for="komet_concept_edit_description_properties_' + viewerFieldID + '" aria-label="' + fieldAriaLabel + '" class="input-group-addon">' + fieldLabel + '</label>';
+            + '<div class="input-group"><label for="komet_concept_edit_description_properties_' + viewerFieldID + '" aria-label="' + fieldAriaLabel + '" class="input-group-addon' + fieldLabelClass + '">' + fieldLabel + '</label>';
 
         if (fieldInfo[fieldID].column_display == 'text'){
 

@@ -80,14 +80,29 @@ var VUIDRequest = (function () {
                             // if the return has startInclusive then loop thru the start and end numbers and generate a row for each. Otherwise an error occurred and display that
                             if (data.hasOwnProperty("startInclusive")){
 
-                                for (var i = data.startInclusive; i <= data.endInclusive; i++){
+                                // if real vuids are being generated (non-negative numbers) then loop forward, otherwise loop backward
+                                if (data.startInclusive > 0){
 
-                                    tableString += '<div class="komet-row"><div class="komet-vuid-request-table-vuid">' + i + '</div><div class="komet-vuid-request-table-copy">'
-                                        + '<button type="button" onclick="UIHelper.copyToClipboard(\'' + i + '\', \'komet_vuid_request_dialog\')" class="komet-vuid-request-table-copy-button form-control" aria-label="Copy VUID ' + i + ' to Clipboard">'
-                                        + 'Copy to Clipboard</button></div></div>';
+                                    for (var i = data.startInclusive; i <= data.endInclusive; i++){
 
-                                    // add the data to the export object
-                                    thisViewer.exportData.push({vuid: i});
+                                        tableString += '<div class="komet-row"><div class="komet-vuid-request-table-vuid">' + i + '</div><div class="komet-vuid-request-table-copy">'
+                                            + '<button type="button" onclick="UIHelper.copyToClipboard(\'' + i + '\', \'komet_vuid_request_dialog\')" class="komet-vuid-request-table-copy-button form-control" aria-label="Copy VUID ' + i + ' to Clipboard">'
+                                            + 'Copy to Clipboard</button></div></div>';
+
+                                        // add the data to the export object
+                                        thisViewer.exportData.push({vuid: i});
+                                    }
+                                } else {
+
+                                    for (var i = data.startInclusive; i >= data.endInclusive; i--){
+
+                                        tableString += '<div class="komet-row"><div class="komet-vuid-request-table-vuid">' + i + '</div><div class="komet-vuid-request-table-copy">'
+                                            + '<button type="button" onclick="UIHelper.copyToClipboard(\'' + i + '\', \'komet_vuid_request_dialog\')" class="komet-vuid-request-table-copy-button form-control" aria-label="Copy VUID ' + i + ' to Clipboard">'
+                                            + 'Copy to Clipboard</button></div></div>';
+
+                                        // add the data to the export object
+                                        thisViewer.exportData.push({vuid: i});
+                                    }
                                 }
 
                                 // show the export button
