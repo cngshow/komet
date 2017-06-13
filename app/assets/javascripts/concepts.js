@@ -3,18 +3,19 @@ var ConceptsModule = (function () {
     const VIEW = 'view_concept';
     const CREATE = 'create_concept';
     const EDIT = 'edit_concept';
+    const EDIT_VIEW = 'edit_view_concept';
     const CLONE = 'clone_concept';
 
     function init() {
 
         // listen for the onChange event broadcast by any of the taxonomy trees.
         $.subscribe(KometChannels.Taxonomy.taxonomyTreeNodeSelectedChannel, function (e, treeID, conceptID, viewParams, viewerID, windowType) {
-            callLoadViewerData(conceptID, viewParams, VIEW, viewerID, windowType);
+            callLoadViewerData(conceptID, viewParams, EDIT_VIEW, viewerID, windowType);
         });
 
         // listen for the onChange event broadcast by selecting a search result.
         $.subscribe(KometChannels.Taxonomy.taxonomySearchResultSelectedChannel, function (e, conceptID, viewParams, viewerID, windowType) {
-            callLoadViewerData(conceptID, viewParams, VIEW, viewerID, windowType);
+            callLoadViewerData(conceptID, viewParams, EDIT_VIEW, viewerID, windowType);
         });
 
         // listen for the onChange event broadcast for creating or editing a concept.
@@ -52,16 +53,16 @@ var ConceptsModule = (function () {
         }
 
         if (viewerAction == undefined || viewerAction == null){
-            viewerAction = VIEW;
+            viewerAction = EDIT_VIEW;
         }
 
         // the path to a javascript partial file that will re-render all the appropriate partials once the ajax call returns
-        var restPath = gon.routes.taxonomy_get_concept_information_path;
-        var partial = "komet_dashboard/concept_detail/concept_information";
+        var restPath = gon.routes.taxonomy_get_concept_edit_info_path;
+        var partial = 'komet_dashboard/concept_detail/concept_edit';
         var restParameters = {concept_id: conceptID, view_params: viewParams, partial: partial, viewer_id: viewerID, viewer_action: viewerAction};
         var onSuccess = function() {};
 
-        if (viewerAction == VIEW) {
+        if (viewerAction == EDIT_VIEW) {
 
             onSuccess = function() {
 
@@ -94,7 +95,7 @@ var ConceptsModule = (function () {
             }
         }
 
-        if ((viewerAction == EDIT || viewerAction == CREATE || viewerAction == CLONE) && WindowManager.viewers.inlineViewers.length > 0  && (windowType == null || windowType == WindowManager.INLINE)){
+        if ((viewerAction == EDIT_VIEW || viewerAction == EDIT || viewerAction == CREATE || viewerAction == CLONE) && WindowManager.viewers.inlineViewers.length > 0  && (windowType == null || windowType == WindowManager.INLINE)){
             WindowManager.registerPreviousViewerContent(viewerID);
         }
 
@@ -124,9 +125,9 @@ var ConceptsModule = (function () {
         });
     }
 
-    function createViewer(viewerID, conceptID, viewerAction) {
+    function createViewer(viewerID, conceptID, viewerAction, terminologyTypes, extendedDescriptionTypes) {
 
-        WindowManager.createViewer(new ConceptViewer(viewerID, conceptID, viewerAction));
+        WindowManager.createViewer(new ConceptViewer(viewerID, conceptID, viewerAction, terminologyTypes, extendedDescriptionTypes));
 
         // resolve waiting requests now that processing is done.
         WindowManager.deferred.resolve();
@@ -138,6 +139,7 @@ var ConceptsModule = (function () {
         callLoadViewerData: callLoadViewerData,
         VIEW: VIEW,
         EDIT: EDIT,
+        EDIT_VIEW: EDIT_VIEW,
         CREATE: CREATE,
         CLONE: CLONE
     };

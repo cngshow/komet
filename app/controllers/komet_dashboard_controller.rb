@@ -437,7 +437,7 @@ class KometDashboardController < ApplicationController
             view_params = check_view_params(params[:view_params])
         end
 
-        @descriptions =  get_descriptions(concept_id, view_params, clone)
+        @descriptions =  get_descriptions(concept_id, @concept_terminology_types, view_params, clone)
     end
 
     ##
@@ -1170,7 +1170,8 @@ class KometDashboardController < ApplicationController
                     caseSignificanceConcept: description['description_case_significance'],
                     languageConcept: description['description_language'],
                     text: description['text'],
-                    descriptionTypeConcept: description['description_type'],
+                    descriptionTypeConcept:  description['description_type'], # $isaac_metadata_auxiliary['SYNONYM']['uuids'].first[:uuid],
+                    extendedDescriptionTypeConcept: description['extended_description_type'],
                     active: active
                 }
 
@@ -1393,7 +1394,10 @@ class KometDashboardController < ApplicationController
             if terminology_types.include?($isaac_metadata_auxiliary['VHAT_MODULES']['uuids'].first[:uuid])
 
                 terminology_id = IdAPIsRest.get_id(uuid_or_id: result.referencedConcept.identifiers.uuids.first, action: IdAPIsRestActions::ACTION_TRANSLATE, additional_req_params: {outputType: 'vuid', coordToken: coordinates_token}.merge!(view_params))
-                label += ' (VUID: ' + terminology_id.value + ')'
+
+                unless terminology_id.is_a? CommonRest::UnexpectedResponse
+                    label += ' (VUID: ' + terminology_id.value + ')'
+                end
             end
 
             # TODO - remove the hard-coding of type to 'vhat' when the type flags are implemented in the REST APIs
@@ -1460,6 +1464,7 @@ class KometDashboardController < ApplicationController
             end
 
             session[:komet_module_options] = []
+            session['komet_extended_description_types'] = {}
 
             # get the full list of modules
             module_list = get_concept_children(concept_id: $isaac_metadata_auxiliary['MODULE']['uuids'].first[:uuid], return_json: false, remove_semantic_tag: true, include_nested: true, view_params: session[:edit_view_params])
@@ -1478,9 +1483,12 @@ class KometDashboardController < ApplicationController
                 extended_description_types = get_extended_description_types(komet_module[:concept_id], true, false, {}, komet_module[:text])
 
                 if extended_description_types.length > 0
-                    session[('komet_extended_description_type_' + komet_module[:text]).to_sym] = extended_description_types
+                    session['komet_extended_description_types'][komet_module[:text].to_sym] = extended_description_types
                 end
             end
+
+            # get a list of regular description type options to be used if a concept module doesn't have extended type options
+            session['komet_extended_description_types'][:default] = get_concept_children(concept_id: $isaac_metadata_auxiliary['DESCRIPTION_TYPE']['uuids'].first[:uuid], return_json: false, remove_semantic_tag: true, view_params: session[:edit_view_params])
 
             session[:komet_path_options] = []
 

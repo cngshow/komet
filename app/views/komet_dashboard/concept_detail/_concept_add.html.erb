@@ -36,14 +36,14 @@
                 <button type="button" class="btn btn-primary ui-state-disabled" disabled id="komet_concept_save_<%= @viewer_id %>" onclick="WindowManager.viewers[<%= @viewer_id %>].showSaveSection('confirm')">Save</button>
             </div>
 
-            <div class="komet-concept-section-title komet-concept-associations-title">ASSOCIATIONS</div>
+            <div class="komet-concept-section-title komet-concept-associations-title">RELATIONSHIPS</div>
 
             <div id="komet_concept_associations_panel_<%= @viewer_id %>" class="komet-concept-section-panel komet-concept-associations-panel">
                 <div class="komet-concept-section-panel-details komet-changeable">
                     <autosuggest
                         id-base="komet_create_concept_parent"
                         id-postfix="_<%= @viewer_id %>"
-                        label="Parent"
+                        label="Has Parent"
                         value="<%= @parent_id %>"
                         display-value="<%= @parent_text %>"
                         terminology-types="<%= @parent_terminology_types %>"
@@ -52,28 +52,14 @@
                 </div>
             </div>
 
-            <div class="komet-concept-section-title komet-concept-description-title">DESCRIPTIONS</div>
+            <div class="komet-concept-section-title komet-concept-description-title">DESIGNATIONS</div>
 
             <div id="komet_concept_description_panel_<%= @viewer_id %>" class="komet-concept-section-panel komet-concept-description-panel">
 
                 <div class="komet-concept-section-panel-details">
 
                     <div class="komet-changeable">
-                        <div id="lbl_komet_create_concept_description_<%= @viewer_id %>">
-                            <b>Preferred Name</b>
-                            <span id="komet_create_concept_fsn_note_<%= @viewer_id %>"> (also used as FSN)</span>
-                        </div>
-                        <input name="komet_create_concept_description" id="komet_create_concept_description_<%= @viewer_id %>" class="form-control" aria-labelledby="lbl_komet_create_concept_description_<%= @viewer_id %>">
-                    </div>
-
-                    <div id="komet_create_concept_description_type_section_<%= @viewer_id %>" class="komet-changeable hide">
-                        <div id="lbl_komet_create_concept_description_type_<%= @viewer_id %>">
-                          <b>Extended Description Type: (optional)</b>
-                        </div>
-
-                        <select name="komet_create_concept_description_type" id="komet_create_concept_description_type_<%= @viewer_id %>" class="form-control" aria-labelledby="lbl_komet_create_concept_description_type_<%= @viewer_id %>">
-
-                            <option selected value=""></option>
+                        <select name="komet_create_concept_description_type" id="komet_create_concept_description_type_<%= @viewer_id %>" class="form-control" aria-label="Designation Type" title="Designation Type">
 
                             <% @description_types.each do |type| %>
 
@@ -81,12 +67,9 @@
                             <% end %>
 
                         </select>
+                        <input name="komet_create_concept_description" id="komet_create_concept_description_<%= @viewer_id %>" class="form-control" aria-label="Designation Text" title="Designation Text">
                     </div>
 
-                    <div id="komet_create_concept_description_display_<%= @viewer_id %>" class="hide">
-                        <div><b>Fully Specified Name:</b></div>
-                        <div id="komet_create_concept_fsn_<%= @viewer_id %>"></div>
-                    </div>
 
                 </div>
             </div>
@@ -96,11 +79,10 @@
     <script>
 
         if (!WindowManager.viewers.hasOwnProperty('<%= @viewer_id %>') || !(WindowManager.viewers[<%= @viewer_id %>] instanceof ConceptViewer)) {
-            ConceptsModule.createViewer("<%= @viewer_id %>", null, "<%= @viewer_action %>");
+            ConceptsModule.createViewer("<%= @viewer_id %>", null, "<%= @viewer_action %>", null, <%= raw session['komet_extended_description_types'].to_json %>);
         } else {
 
-            WindowManager.viewers[<%= @viewer_id %>].currentConceptID = null;
-            WindowManager.viewers[<%= @viewer_id %>].viewerAction = "<%= @viewer_action %>";
+            WindowManager.viewers[<%= @viewer_id %>].initConcept(null, "<%= @viewer_action %>", null, <%= raw session['komet_extended_description_types'].to_json %>);
 
             if (WindowManager.getLinkedViewerID() == "<%= @viewer_id %>") {
                 WindowManager.viewers["<%= @viewer_id %>"].swapLinkIcon(true);

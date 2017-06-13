@@ -3,8 +3,12 @@ Komet Changelog
 This changelog summarizes changes and fixes which are a part of each revision.  For more details on the fixes, refer tracking numbers 
 where provided, and the git commit history.
 
-* 2017/06/?? - 4.8 - PENDING
+* 2017/06/?? - 4.9 - PENDING
     *
+
+* 2017/06/13 - 4.8
+    * Changes to Create, View, and Edit concept to support VHAT usage. Includes label changes, dynamic extended type description options in create and edit, hiding or showing description type,
+       extended description type, and dialects depending on the terminology type, and other bug fixes. (Jazz: 529741)
     
 * 2017/06/08 - 4.7
     * Added Generate VUID dialog (Jazz #501723)

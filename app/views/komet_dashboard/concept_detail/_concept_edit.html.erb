@@ -14,7 +14,9 @@
                     <span class="fa fa-tree"></span>
                 </button>
 
-                <% if @viewer_action == 'edit_concept' %>
+                <% if @viewer_action == 'edit_view_concept' %>
+                    <%= @concept_text %>
+                <% elsif @viewer_action == 'edit_concept' %>
                     Edit: <%= @concept_text %>
                 <% else %>
                     Clone Concept: <%= @concept_text %>
@@ -23,7 +25,16 @@
 
             <div class="komet-panel-tools">
 
-                <div class="komet-panel-tools-control">
+                <% if controller.can_edit_concept? %>
+                    <div class="komet-panel-tools-control" id="komet_concept_editor_edit_section_<%= @viewer_id %>">
+                        <button type="button" class="komet-link-button komet-panel-tools-control" onclick="$.publish(KometChannels.Taxonomy.taxonomyConceptEditorChannel, [ConceptsModule.EDIT, '<%= @concept_id %>', WindowManager.viewers[<%= @viewer_id %>].getViewParams(), '<%= @viewer_id %>', WindowManager.INLINE]);" title="Edit Concept" aria-label="Edit Concept">
+                            <div class="komet-action-icon fa fa-pencil-square"></div>
+                            <span>Edit</span>
+                        </button>
+                    </div>
+                <% end %>
+
+                <div class="komet-panel-tools-control" id="komet_concept_editor_show_changes_section_<%= @viewer_id %>">
                     <label for="komet_concept_editor_show_changes_<%= @viewer_id %>">Show Changes</label>
                     <input type="checkbox" id="komet_concept_editor_show_changes_<%= @viewer_id %>" onclick="WindowManager.viewers[<%= @viewer_id %>].toggleEditorChangeHighlights(this)">
                 </div>
@@ -162,21 +173,21 @@
                 </div>
             </div>
 
-            <div class="komet-concept-section-title komet-concept-description-title" title="Descriptions" aria-label="Descriptions">
-                DESCRIPTIONS
+            <div class="komet-concept-section-title komet-concept-description-title" title="Designations" aria-label="Designations">
+                DESIGNATIONS
                 <div class="komet-flex-right">
                     <button type="button" class="komet-link-button komet-concept-add-description" onclick="WindowManager.viewers[<%= @viewer_id %>].addDescriptionRow()">
-                        Add Description
+                        Add Designation
                         <div class="glyphicon glyphicon-plus-sign"></div>
                     </button>
                 </div>
             </div>
 
-            <div class="komet-concept-section-title komet-concept-associations-title" title="Associations" aria-label="Associations">
-                ASSOCIATIONS
+            <div class="komet-concept-section-title komet-concept-associations-title" title="Relationships" aria-label="Relationships">
+                RELATIONSHIPS
                 <div class="komet-flex-right">
                     <button type="button" class="komet-link-button komet-concept-add-association" onclick="WindowManager.viewers[<%= @viewer_id %>].addAssociationRow()">
-                        Add Association
+                        Add Relationship
                         <div class="glyphicon glyphicon-plus-sign"></div>
                     </button>
                 </div>
@@ -192,19 +203,15 @@
     <script>
 
         if (!WindowManager.viewers.hasOwnProperty('<%= @viewer_id %>') || !(WindowManager.viewers[<%= @viewer_id %>] instanceof ConceptViewer)) {
-            ConceptsModule.createViewer("<%= @viewer_id %>", "<%= @concept_id %>", "<%= @viewer_action %>");
+            ConceptsModule.createViewer("<%= @viewer_id %>", "<%= @concept_id %>", "<%= @viewer_action %>", "<%= @concept_terminology_types %>", <%= raw session['komet_extended_description_types'].to_json %>);
         } else {
 
-            WindowManager.viewers[<%= @viewer_id %>].currentConceptID = "<%= @concept_id %>";
-            WindowManager.viewers[<%= @viewer_id %>].viewerAction = "<%= @viewer_action %>";
+            WindowManager.viewers[<%= @viewer_id %>].initConcept("<%= @concept_id %>", "<%= @viewer_action %>", "<%= @concept_terminology_types %>", <%= raw session['komet_extended_description_types'].to_json %>);
 
             if (WindowManager.getLinkedViewerID() == "<%= @viewer_id %>") {
                 WindowManager.viewers[<%= @viewer_id %>].swapLinkIcon(true);
             }
         }
-
-        // set the terminology types of the concept
-        WindowManager.viewers[<%= @viewer_id %>].terminology_types = "<%= @concept_terminology_types %>";
 
         if (WindowManager.getLinkedViewerID() == "<%= @viewer_id %>" && TaxonomyModule.tree.selectedConceptID != WindowManager.viewers[<%= @viewer_id %>].currentConceptID) {
             WindowManager.viewers[<%= @viewer_id %>].showInTaxonomyTree();
