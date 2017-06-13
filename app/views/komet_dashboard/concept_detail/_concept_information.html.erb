@@ -98,11 +98,10 @@
     <script>
 
         if (!WindowManager.viewers.hasOwnProperty("<%= @viewer_id %>") || !(WindowManager.viewers["<%= @viewer_id %>"] instanceof ConceptViewer)) {
-            ConceptsModule.createViewer("<%= @viewer_id %>", "<%= @concept_id %>", "<%= @viewer_action %>");
+            ConceptsModule.createViewer("<%= @viewer_id %>", "<%= @concept_id %>", "<%= @viewer_action %>", "<%= @concept_terminology_types %>", <%= raw session['komet_extended_description_types'].to_json %>);
         } else {
 
-            WindowManager.viewers["<%= @viewer_id %>"].currentConceptID = "<%= @concept_id %>";
-            WindowManager.viewers["<%= @viewer_id %>"].viewerAction = "<%= @viewer_action %>";
+            WindowManager.viewers[<%= @viewer_id %>].initConcept("<%= @concept_id %>", "<%= @viewer_action %>", "<%= @concept_terminology_types %>", <%= raw session['komet_extended_description_types'].to_json %>);
 
             if (WindowManager.getLinkedViewerID() == "<%= @viewer_id %>") {
                 WindowManager.viewers["<%= @viewer_id %>"].swapLinkIcon(true);

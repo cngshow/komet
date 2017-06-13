@@ -100,10 +100,11 @@ module ConceptConcern
     ##
     # get_descriptions - takes a uuid and returns all of the description concepts attached to it.
     # @param [String] uuid - The UUID to look up descriptions for
+    # @param [String] terminology_types - A comma separated list of terminology type IDs for the concept
     # @param [Object] view_params - various parameters related to the view filters the user wants to apply - see full definition comment at top of komet_dashboard_controller file
     # @param [Boolean] clone - Are we cloning a concept, if so we will replace the description and other sememe IDs with placeholders
     # @return [object] a hash that contains an array of all the descriptions
-    def get_descriptions(uuid, view_params, clone = false)
+    def get_descriptions(uuid, terminology_types, view_params, clone = false)
 
         coordinates_token = session[:coordinates_token].token
         return_descriptions = []
@@ -221,6 +222,34 @@ module ConceptConcern
 
                 else
                     description_info[:description_type_short] = description_info[:description_type]
+            end
+
+            description_info[:extended_description_type_id] = ''
+
+                # check to see if there is an extended description type
+            if description.descriptionExtendedTypeConcept
+
+                description_info[:extended_description_type_id] = description.descriptionExtendedTypeConcept.uuids.first
+
+                # get the extended types based on the terminologies that the concept belongs to
+                # description_info[:extended_description_type_options] = []
+                # terminology_types_array = terminology_types.split(/\s*,\s*/)
+                #
+                # # loop thru the terminology types, get the module name from the metadata, and then add the type options from the session to our options variable
+                # terminology_types_array.each { |terminology_type|
+                #
+                #     module_name = find_metadata_by_id(terminology_type)
+                #     extended_type_options = session['komet_extended_description_types'][module_name.to_sym]
+                #
+                #     # if there are options for this terminology type add the to the column's options variable
+                #     if extended_type_options != nil
+                #         description_info[:extended_description_type_options].concat(extended_type_options)
+                #     end
+                # }
+            else
+
+                # if there is no extended description type then just use the default options
+                # description_info[:extended_description_type_options] = session['komet_extended_description_types'][:default]
             end
 
             # process languages
@@ -490,12 +519,12 @@ module ConceptConcern
                         terminology_types_array.each { |terminology_type|
 
                             module_name = find_metadata_by_id(terminology_type)
-                            extended_type_options = session[('komet_extended_description_type_' + module_name).to_sym]
+                            extended_type_options = session['komet_extended_description_types'][module_name.to_sym]
 
                             # if there are options for this terminology type add the to the column's options variable and set the found flag
                             if extended_type_options != nil
 
-                                field_info[column_id][:dropdown_options].concat(session[('komet_extended_description_type_' + module_name).to_sym])
+                                field_info[column_id][:dropdown_options].concat(extended_type_options)
                                 options_found = true
                             end
                         }
@@ -627,12 +656,12 @@ module ConceptConcern
                             terminology_types_array.each { |terminology_type|
 
                                 module_name = find_metadata_by_id(terminology_type)
-                                extended_type_options = session[('komet_extended_description_type_' + module_name).to_sym]
+                                extended_type_options = session['komet_extended_description_types'][module_name.to_sym]
 
                                 # if there are options for this terminology type add the to the column's options variable and set the found flag
                                 if extended_type_options != nil
 
-                                    used_column_data[:dropdown_options].concat(session[('komet_extended_description_type_' + module_name).to_sym])
+                                    used_column_data[:dropdown_options].concat(extended_type_options)
                                     options_found = true
                                 end
                             }
