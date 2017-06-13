@@ -1164,9 +1164,57 @@ var UIHelper = (function () {
         }
     }
 
+    /*
+     * find_metadata_by_id - loops through the metadata and finds an entry containing the specified id.
+     * @param [String] id - the ID to search for
+     * @param [String] idType - the type of id search for. Options are 'uuid' (default), 'sequence'
+     * @param [boolean] returnDescription - Should the function return the FSN description (true) or the metadata key of the found value (false). Default is true
+     * @return [String] returns either the FSN description or the metadata object of the found value, as specified by return_description. If no entry matches returns nil.
+    */
+    function find_metadata_by_id(id, idType, returnDescription){
+
+        // set default value for idType
+        if (idType == undefined || idType == null){
+            idType = 'uuid';
+        }
+
+        // set default value for returnDescription
+        if (returnDescription == undefined || returnDescription == null){
+            returnDescription = true;
+        }
+
+        var found = false;
+        var result = null;
+
+        // loop through the metadata until find the entry we are interested in
+        $.each(gon.IsaacMetadataAuxiliary, function(key, value) {
+
+            //check to see if the passed id matches the specified id in the metadata
+            if (idType == 'uuid' && value.hasOwnProperty('uuids') && value.uuids[0].uuid == id) {
+                found = true;
+            } else if (idType == 'sequence' && value.hasOwnProperty('uuids') && value.uuids[0].translation.value == id) {
+                found = true;
+            }
+
+            // if this value was a match, return the specified object
+            if (found && returnDescription) {
+
+                result = value['fsn'];
+                return false;
+
+            } else if (found) {
+
+                result = value;
+                return false;
+            }
+        });
+
+        return result;
+    }
+
     function copyToClipboard(text, container) {
 
-        var elementToAppendTo = document.body
+        var elementToAppendTo = document.body;
 
         // if this is a model dialog we need to add the fake element to it or the copy wont work
         if (container != undefined && container != null){
@@ -1588,6 +1636,7 @@ var UIHelper = (function () {
         getPreDefinedOptionsForSelect: getPreDefinedOptionsForSelect,
         getElementRightFromWindow: getElementRightFromWindow,
         getViewParams: getViewParams,
+        find_metadata_by_id: find_metadata_by_id,
         copyToClipboard: copyToClipboard,
         VHAT: VHAT,
         SNOMED: SNOMED,

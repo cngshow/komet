@@ -162,21 +162,21 @@
                 </div>
             </div>
 
-            <div class="komet-concept-section-title komet-concept-description-title" title="Descriptions" aria-label="Descriptions">
-                DESCRIPTIONS
+            <div class="komet-concept-section-title komet-concept-description-title" title="Designations" aria-label="Designations">
+                DESIGNATIONS
                 <div class="komet-flex-right">
                     <button type="button" class="komet-link-button komet-concept-add-description" onclick="WindowManager.viewers[<%= @viewer_id %>].addDescriptionRow()">
-                        Add Description
+                        Add Designation
                         <div class="glyphicon glyphicon-plus-sign"></div>
                     </button>
                 </div>
             </div>
 
-            <div class="komet-concept-section-title komet-concept-associations-title" title="Associations" aria-label="Associations">
-                ASSOCIATIONS
+            <div class="komet-concept-section-title komet-concept-associations-title" title="Relationships" aria-label="Relationships">
+                RELATIONSHIPS
                 <div class="komet-flex-right">
                     <button type="button" class="komet-link-button komet-concept-add-association" onclick="WindowManager.viewers[<%= @viewer_id %>].addAssociationRow()">
-                        Add Association
+                        Add Relationship
                         <div class="glyphicon glyphicon-plus-sign"></div>
                     </button>
                 </div>
@@ -192,19 +192,15 @@
     <script>
 
         if (!WindowManager.viewers.hasOwnProperty('<%= @viewer_id %>') || !(WindowManager.viewers[<%= @viewer_id %>] instanceof ConceptViewer)) {
-            ConceptsModule.createViewer("<%= @viewer_id %>", "<%= @concept_id %>", "<%= @viewer_action %>");
+            ConceptsModule.createViewer("<%= @viewer_id %>", "<%= @concept_id %>", "<%= @viewer_action %>", "<%= @concept_terminology_types %>", <%= raw session['komet_extended_description_types'].to_json %>);
         } else {
 
-            WindowManager.viewers[<%= @viewer_id %>].currentConceptID = "<%= @concept_id %>";
-            WindowManager.viewers[<%= @viewer_id %>].viewerAction = "<%= @viewer_action %>";
+            WindowManager.viewers[<%= @viewer_id %>].initConcept("<%= @concept_id %>", "<%= @viewer_action %>", "<%= @concept_terminology_types %>", <%= raw session['komet_extended_description_types'].to_json %>);
 
             if (WindowManager.getLinkedViewerID() == "<%= @viewer_id %>") {
                 WindowManager.viewers[<%= @viewer_id %>].swapLinkIcon(true);
             }
         }
-
-        // set the terminology types of the concept
-        WindowManager.viewers[<%= @viewer_id %>].terminology_types = "<%= @concept_terminology_types %>";
 
         if (WindowManager.getLinkedViewerID() == "<%= @viewer_id %>" && TaxonomyModule.tree.selectedConceptID != WindowManager.viewers[<%= @viewer_id %>].currentConceptID) {
             WindowManager.viewers[<%= @viewer_id %>].showInTaxonomyTree();

@@ -124,9 +124,9 @@ var ConceptsModule = (function () {
         });
     }
 
-    function createViewer(viewerID, conceptID, viewerAction) {
+    function createViewer(viewerID, conceptID, viewerAction, terminologyTypes, extendedDescriptionTypes) {
 
-        WindowManager.createViewer(new ConceptViewer(viewerID, conceptID, viewerAction));
+        WindowManager.createViewer(new ConceptViewer(viewerID, conceptID, viewerAction, terminologyTypes, extendedDescriptionTypes));
 
         // resolve waiting requests now that processing is done.
         WindowManager.deferred.resolve();
