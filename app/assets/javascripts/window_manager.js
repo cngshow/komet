@@ -86,7 +86,7 @@ var WindowManager = (function () {
         console.log("*** registerPreviousViewerContent viewer ID: " + viewerID);
         console.log("*** registerPreviousViewerContent viewer action: " + WindowManager.viewers[viewerID].viewerAction);
 
-        if (WindowManager.viewers[viewerID].constructor.name = "ConceptViewer" && WindowManager.viewers[viewerID].viewerAction == ConceptsModule.VIEW){
+        if (WindowManager.viewers[viewerID].constructor.name = "ConceptViewer" && (WindowManager.viewers[viewerID].viewerAction == ConceptsModule.VIEW || WindowManager.viewers[viewerID].viewerAction == ConceptsModule.EDIT_VIEW)){
 
             WindowManager.viewers[viewerID].viewer_previous_content_id = WindowManager.viewers[viewerID].currentConceptID;
 

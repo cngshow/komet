@@ -809,6 +809,18 @@ ConceptViewer.prototype.editConcept = function(attributes, conceptProperties, de
         // have to return false to stop the form from posting twice.
         return false;
     });
+
+    if (this.viewerAction == ConceptsModule.EDIT_VIEW){
+
+        var editorSection = $("#komet_concept_editor_section_" + this.viewerID);
+
+        UIHelper.toggleFieldAvailability(editorSection.find("input, select, textarea"));
+        editorSection.find(".komet-link-button, #komet_concept_save_section_" + this.viewerID).addClass("hide");
+        $("#komet_concept_editor_show_changes_section_" + this.viewerID).addClass("hide");
+
+    } else {
+        $("#komet_concept_editor_edit_section_" + this.viewerID).addClass("hide");
+    }
 };
 
 ConceptViewer.prototype.createConceptPropertyRowString = function (rowData, fieldInfo) {
