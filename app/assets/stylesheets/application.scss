@@ -32,6 +32,7 @@ Copyright Notice
  *= require jquery.enhsplitter
  *= require jquery.minicolors
  *= require animate
+ *= require vha_import
  *= require_tree ../../../vendor/assets/stylesheets/contextMenu
  *= require_tree ../../../vendor/assets/stylesheets/jsTree
  */
@@ -487,7 +488,7 @@ div.komet-confirmation-dialog{
 .komet-navbar-tools > :first-child{
     border-left: 4px solid white;
 }
-.komet-navbar-tools > *{
+.komet-navbar-tools > div {
     display: flex;
     flex: 0 0 auto;
     align-items: center;

@@ -28,6 +28,7 @@
 // Read Sprockets README (https://github.com/rails/sprockets#sprockets-directives) for details
 // about supported directives.
 //
+//= require webpack-bundle
 //= require jquery2
 //= require jquery_ujs
 //= require jquery-ui
@@ -55,6 +56,7 @@
 // this is for ajax_flash notifications
 //= require bootstrap-notify
 //= require_tree .
+
 
 function flash_notify(options, settings) {
     $.notify(options, settings);

@@ -79,5 +79,4 @@ end
       additional_req_params ={editToken: b}
 
   result = IntakeRest::get_intake(action: IntakeRest::ACTION_VETS_XML, body_string: '<xml><cris>is cool</cris></xml>', additional_req_params: additional_req_params)
-
 =end

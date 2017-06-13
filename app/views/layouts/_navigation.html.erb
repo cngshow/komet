@@ -42,12 +42,7 @@
                 Generate VUID
             </a>
         </div>
-
-        <div>
-            <button type="button" class="komet-link-button" role="button" aria-label="VHAT XML Import" title="VHAT XML Import" id="komet_import_link" role="navigation">
-                <div class="glyphicon glyphicon-import" title="VHAT XML Import"></div>
-            </button>
-        </div>
+        <%= react_component("VhatXmlImport", props: {}, prerender: false) %>
         <div>
             <button type="button" class="komet-link-button" role="button" aria-label="VHAT XML Export" title="VHAT XML Export" id="komet_export_link" role="navigation">
                 <div class="glyphicon glyphicon-export" title="VHAT XML Export"></div>
