@@ -376,6 +376,7 @@ var UIHelper = (function () {
         var alertContainerID = "komet_" + window.performance.now().toString().replace(".", "");
         var alertMessageID = "komet_" + window.performance.now().toString().replace(".", "");
 
+        // TODO - figure out how to get html code to render in messages and still get voice reading to work - $(alertMessage).append("' + message + '");
         return '<div id="' + alertContainerID + '" class="' + classLevel + ' ' + messageType + '" role="alert">' + icon + '<div id="' + alertMessageID + '" class="komet-page-message-container" tabindex="0"></div>'
             + '<div class="komet-flex-right"><button type="button" class="komet-link-button" title="Remove message" aria-label="Remove alert: ' + message + '" onclick="UIHelper.focusNextElement(); $(\'#' + alertContainerID + '\').remove();"><div class="glyphicon glyphicon-remove"></div></button></div></div>'
             + '<script>var alertMessage = document.getElementById("' + alertMessageID + '"); alertMessage.setAttribute("role", "alert"); var alertText = document.createTextNode("' + message + '"); '

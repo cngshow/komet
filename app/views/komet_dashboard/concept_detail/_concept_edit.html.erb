@@ -126,7 +126,7 @@
                         <% end %>
 
                         <!-- Defined -->
-                        <div>
+                        <div id="komet_concept_defined_section_label_<%= @viewer_id %>">
 
                             <% if @concept_defined == 'Primitive'
                                    concept_defined_class = 'primitive'
@@ -174,20 +174,20 @@
             </div>
 
             <div class="komet-concept-section-title komet-concept-description-title" title="Designations" aria-label="Designations">
-                DESIGNATIONS
+                <span id="komet_concept_description_section_label_<%= @viewer_id %>">DESIGNATIONS</span>
                 <div class="komet-flex-right">
                     <button type="button" class="komet-link-button komet-concept-add-description" onclick="WindowManager.viewers[<%= @viewer_id %>].addDescriptionRow()">
-                        Add Designation
+                        <span id="komet_concept_add_description_label_<%= @viewer_id %>">Add Designation</span>
                         <div class="glyphicon glyphicon-plus-sign"></div>
                     </button>
                 </div>
             </div>
 
             <div class="komet-concept-section-title komet-concept-associations-title" title="Relationships" aria-label="Relationships">
-                RELATIONSHIPS
+                <span id="komet_concept_association_section_label_<%= @viewer_id %>">RELATIONSHIPS</span>
                 <div class="komet-flex-right">
                     <button type="button" class="komet-link-button komet-concept-add-association" onclick="WindowManager.viewers[<%= @viewer_id %>].addAssociationRow()">
-                        Add Relationship
+                        <span id="komet_concept_add_association_label_<%= @viewer_id %>">Add Relationship</span>
                         <div class="glyphicon glyphicon-plus-sign"></div>
                     </button>
                 </div>
