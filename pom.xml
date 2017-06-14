@@ -43,7 +43,7 @@
 		<dependency>
 			<groupId>rubygems</groupId>
 			<artifactId>rake</artifactId>
-			<version>10.4.2</version>
+			<version>12.0.0</version>
 			<type>gem</type>
 		</dependency>
 		<dependency>
