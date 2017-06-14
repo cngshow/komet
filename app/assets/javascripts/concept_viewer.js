@@ -60,6 +60,9 @@ ConceptViewer.prototype.setTerminologySpecificSettings = function (terminology_t
     this.showDescriptionType = true;
     this.showExtendedDescriptionType = true;
 
+    var definedSection = $("#komet_concept_defined_section_label_" + this.viewerID);
+    definedSection.removeClass("hide");
+
     // loop thru the terminology types, get the module name from the metadata, and then add the type options from the session to our options variable
     $.each(terminology_types_array, function(index, terminology_type) {
 
@@ -92,6 +95,9 @@ ConceptViewer.prototype.setTerminologySpecificSettings = function (terminology_t
         this.descriptionLabel = "Designation";
         this.associationLabel = "Relationship";
         this.descriptionRefsetLabel = "Subset Membership";
+
+        // hide the primitive/defined section
+        definedSection.addClass("hide");
     }
 
     // apply the static labels

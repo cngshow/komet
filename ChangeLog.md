@@ -5,7 +5,7 @@ where provided, and the git commit history.
 
 * 2017/06/?? - 4.9 - PENDING
     * Fixed Generate VUID dialog to work with negative numbered fake VUIDS. (Jazz #501723)
-    * Removed field labels from designations and concept properties for VHAT concepts. Made terminology specific labels dynamic. (Jazz: 529741)
+    * Removed field labels from designations and concept properties and defined/primitive for VHAT concepts. Made terminology specific labels dynamic. (Jazz: 529741)
     * Fixed issue with autosuggest results that don't match a terminology module
 
 * 2017/06/13 - 4.8
