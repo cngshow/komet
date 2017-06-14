@@ -41,8 +41,70 @@ ConceptViewer.prototype.initConcept = function(currentConceptID, viewerAction, t
     this.extendedDescriptionTypeOptions = [];
     this.showDescriptionType = true;
     this.showExtendedDescriptionType = true;
+    this.showDialects = true;
+    this.isVHAT = true;
+    this.descriptionLabel = "Description";
+    this.associationLabel = "Association";
+    this.descriptionRefsetLabel = "Resfset";
 
-    this.setExtendedDescriptionTypeOptions(this.terminology_types);
+    this.setTerminologySpecificSettings(this.terminology_types);
+};
+
+ConceptViewer.prototype.setTerminologySpecificSettings = function (terminology_types){
+
+    var terminology_types_array = terminology_types.split(/\s*,\s*/);
+    var options = [];
+
+    // reset the terminology specific flags
+    this.isVHAT = false;
+    this.showDescriptionType = true;
+    this.showExtendedDescriptionType = true;
+
+    // loop thru the terminology types, get the module name from the metadata, and then add the type options from the session to our options variable
+    $.each(terminology_types_array, function(index, terminology_type) {
+
+        var module_name = UIHelper.find_metadata_by_id(terminology_type);
+        var extended_type_options = this.extendedDescriptionTypes[module_name];
+
+        // if there are options for this terminology type add the to the column's options variable and set the found flag
+        if (extended_type_options != undefined) {
+            options = options.concat(extended_type_options);
+        }
+    }.bind(this));
+
+    // if there were no extended options found use the default description types instead and set the visibility to off
+    if (options.length == 0){
+
+        options = this.extendedDescriptionTypes.default;
+        this.showExtendedDescriptionType = false;
+    }
+
+    // if this concept is a VHAT concept then set VHAT specific options
+    if (this.terminology_types.indexOf(UIHelper.VHAT) >= 0){
+
+        this.isVHAT = true;
+
+        // don't show the description type field or dialect section
+        this.showDescriptionType = false;
+        this.showDialects = false;
+
+        // set VHAT specific labels
+        this.descriptionLabel = "Designation";
+        this.associationLabel = "Relationship";
+        this.descriptionRefsetLabel = "Subset Membership";
+    }
+
+    // apply the static labels
+    $("#komet_concept_description_section_label_" + this.viewerID).html(this.descriptionLabel.toUpperCase() + "S");
+    $("#komet_concept_add_description_label_" + this.viewerID).html("Add " + this.descriptionLabel);
+
+    $("#komet_concept_association_section_label_" + this.viewerID).html(this.associationLabel.toUpperCase() + "S");
+    $("#komet_concept_add_association_label_" + this.viewerID).html("Add " + this.associationLabel);
+
+    // create the option array and set it in the description type options variable.
+    this.extendedDescriptionTypeOptions = this.createSelectFieldOptions(options);
+
+    return options;
 };
 
 ConceptViewer.prototype.getAllowedStates = function(){
@@ -444,41 +506,6 @@ ConceptViewer.prototype.toggleTreeIcon = function(){
     $('#komet_concept_panel_tree_show_' + this.viewerID).toggle();
 };
 
-ConceptViewer.prototype.setExtendedDescriptionTypeOptions = function (terminology_types){
-
-    var terminology_types_array = terminology_types.split(/\s*,\s*/);
-    var options = [];
-
-    // loop thru the terminology types, get the module name from the metadata, and then add the type options from the session to our options variable
-    $.each(terminology_types_array, function(index, terminology_type) {
-
-        var module_name = UIHelper.find_metadata_by_id(terminology_type);
-        var extended_type_options = this.extendedDescriptionTypes[module_name];
-
-        // if there are options for this terminology type add the to the column's options variable and set the found flag
-        if (extended_type_options != undefined) {
-            options = options.concat(extended_type_options);
-        }
-    }.bind(this));
-
-    // if there were no extended options found use the default description types instead and set the visibility to off
-    if (options.length == 0){
-
-        options = this.extendedDescriptionTypes.default;
-        this.showExtendedDescriptionType = false;
-    }
-
-    // if this concept is a VHAT concept then don't show the description type field
-    if (this.terminology_types.indexOf(UIHelper.VHAT) >= 0){
-        this.showDescriptionType = false;
-    }
-
-    // create the option array and set it in the description type options variable.
-    this.extendedDescriptionTypeOptions = this.createSelectFieldOptions(options);
-
-    return options;
-};
-
 // This function is passed in to the Parent autosuggest tag as a string and is run when the parent field changes, after all other code executes
 ConceptViewer.prototype.conceptEditorParentOnChange = function(){
 
@@ -487,7 +514,7 @@ ConceptViewer.prototype.conceptEditorParentOnChange = function(){
     var parentField = $("#komet_create_concept_parent_display_" + this.viewerID);
     var preferred_name =  $("#komet_create_concept_description_" + this.viewerID).val();
 
-    var description_options = this.setExtendedDescriptionTypeOptions(terminologyTypes);
+    var description_options = this.setTerminologySpecificSettings(terminologyTypes);
     var option_tags = "";
 
     $.each(description_options, function (index, option){
@@ -671,7 +698,7 @@ ConceptViewer.prototype.editConcept = function(attributes, conceptProperties, de
     //
     //        var parentTerminologyTypes = $("#komet_concept_edit_parent_terminology_types" + this.viewerID);
     //
-    //        if (parentTerminologyTypes.indexOf(UIHelper.VHAT) >= 0){
+    //        if (this.isVHAT){
     //
     //            if (conceptProperties.serialize().indexOf(gon.IsaacMetadataAuxiliary.VUID.uuids[0].uuid)){
     //
@@ -759,11 +786,28 @@ ConceptViewer.prototype.editConcept = function(attributes, conceptProperties, de
 
                 if (data.failed.length > 0){
 
+                    // create variables for any terminology specific labels that may appear in the error messages
+                    var descriptionString = thisViewer.descriptionLabel.toLowerCase();
+                    var associationString = thisViewer.associationLabel.toLowerCase();
+
                     var errorString = "Errors occurred, all changes not listed were processed. Error messages will be placed above each unprocessed section. The following updates were not successful: ";
 
                     for (var i = 0; i < data.failed.length; i++){
 
-                        errorString += '<div>' + data.failed[i].type + ': ' + data.failed[i].text + '</div>';
+                        var errorType = data.failed[i].type;
+                        var errorText = data.failed[i].text;
+
+                        // replace any terminology specific labels that appear in the error messages
+                        if (data.failed[i].type == "description" || data.failed[i].type == "description property"){
+
+                            errorType = errorType.replace("description", descriptionString);
+                            errorText = errorText.replace("Description", thisViewer.descriptionLabel);
+
+                        } else if (data.failed[i].type == "association"){
+                            errorType = errorType.replace("association", associationString);
+                        }
+
+                        errorString += '<div>' + errorType + ': ' + errorText + '</div>';
 
                         if (data.failed[i].type == "concept") {
 
@@ -776,20 +820,20 @@ ConceptViewer.prototype.editConcept = function(attributes, conceptProperties, de
                         } else if (data.failed[i].type == "description"){
 
                             var descriptionPanel = editorSection.find("div[id^='komet_concept_description_panel_" + data.failed[i].id + "']");
-                            descriptionPanel.before(UIHelper.generatePageMessage("The following description was not processed, and none of its properties or dialects were attempted to be processed."));
+                            descriptionPanel.before(UIHelper.generatePageMessage("The following " + descriptionString + " was not processed, and none of its properties were attempted to be processed."));
                             descriptionPanel.css("margin-top", "0px");
 
                         } else if (data.failed[i].type == "description property"){
 
-                            editorSection.find("div[id^='komet_concept_edit_description_properties_row_" + data.failed[i].id + "']").before(UIHelper.generatePageMessage("The following description property was not processed."));
+                            editorSection.find("div[id^='komet_concept_edit_description_properties_row_" + data.failed[i].id + "']").before(UIHelper.generatePageMessage("The following " + descriptionString + " property was not processed."));
 
                         } else if (data.failed[i].type == "dialect"){
 
-                            editorSection.find("div[id^='komet_concept_edit_description_dialect_row_" + data.failed[i].id + "']").before(UIHelper.generatePageMessage("The following description dialect was not processed."));
+                            editorSection.find("div[id^='komet_concept_edit_description_dialect_row_" + data.failed[i].id + "']").before(UIHelper.generatePageMessage("The following " + descriptionString + " dialect was not processed."));
 
                         } else if (data.failed[i].type == "association"){
 
-                            editorSection.find("div[id^='komet_concept_association_row_" + data.failed[i].id + "']").before(UIHelper.generatePageMessage("The following association was not processed."));
+                            editorSection.find("div[id^='komet_concept_association_row_" + data.failed[i].id + "']").before(UIHelper.generatePageMessage("The following " + associationString + " was not processed."));
                         }
                     }
 
@@ -846,7 +890,7 @@ ConceptViewer.prototype.createConceptPropertyRowString = function (rowData, fiel
         }
 
         // if this is a VHAT concept then don't show the field label
-        if (this.terminology_types.indexOf(UIHelper.VHAT) >= 0){
+        if (this.isVHAT){
             fieldLabelClass = " hide";
         }
 
@@ -918,7 +962,7 @@ ConceptViewer.prototype.createDescriptionRowString = function (rowData) {
     var componentLabelPrefix = "";
 
     if (text != ""){
-        componentLabelPrefix = "Description: " + text + " ";
+        componentLabelPrefix = this.descriptionLabel + ": " + text + " ";
     }
 
     rowString += '<div id="' + rowID + '" class="komet-concept-section-panel komet-concept-description-panel">'
@@ -926,32 +970,32 @@ ConceptViewer.prototype.createDescriptionRowString = function (rowData) {
         + '<div class="komet-concept-edit-row komet-concept-edit-description-row komet-changeable">';
 
     if (this.showDescriptionType){
-        rowString += '<div>' + this.createSelectField(descriptionID + "_description_type_" + this.viewerID, namePrefix + "[description_type]", this.selectFieldOptions.descriptionType, description_type, "Description Type") + '</div>'
+        rowString += '<div>' + this.createSelectField(descriptionID + "_description_type_" + this.viewerID, namePrefix + "[description_type]", this.selectFieldOptions.descriptionType, description_type, this.descriptionLabel + " Type") + '</div>'
     } else {
-        rowString += '<input type="hidden" id="' + descriptionID + '_description_type_' + this.viewerID + '" name="' + namePrefix + '[description_type]" value="' + description_type + '" aria-label="Description Type">'
+        rowString += '<input type="hidden" id="' + descriptionID + '_description_type_' + this.viewerID + '" name="' + namePrefix + '[description_type]" value="' + description_type + '" aria-label="' + this.descriptionLabel + ' Type">'
     }
 
     if (this.showExtendedDescriptionType){
-        rowString += '<div>' + this.createSelectField(descriptionID + "_extended_description_type_" + this.viewerID, namePrefix + "[extended_description_type]", this.extendedDescriptionTypeOptions, extended_description_type, "Extended Description Type", null, true) + '</div>'
+        rowString += '<div>' + this.createSelectField(descriptionID + "_extended_description_type_" + this.viewerID, namePrefix + "[extended_description_type]", this.extendedDescriptionTypeOptions, extended_description_type, "Extended " + this.descriptionLabel + " Type", null, true) + '</div>'
     } else {
-        rowString += '<input type="hidden" id="' + descriptionID + '_extended_description_type_' + this.viewerID + '" name="' + namePrefix + '[extended_description_type]" value="' + extended_description_type + '" aria-label="Extended Description Type">'
+        rowString += '<input type="hidden" id="' + descriptionID + '_extended_description_type_' + this.viewerID + '" name="' + namePrefix + '[extended_description_type]" value="' + extended_description_type + '" aria-label="Extended ' + this.descriptionLabel + ' Type">'
     }
 
-    rowString += '<div><input type="text" id="komet_concept_edit_description_type_' + descriptionID + '_' + this.viewerID + '" name="' + namePrefix + '[text]" value="' + text + '" class="form-control komet_concept_edit_description_type" aria-label="Description Value" placeholder="Description Value"></div>'
-        + '<div>' + this.createSelectField(descriptionID + "_description_language_" + this.viewerID, namePrefix + "[description_language]", this.selectFieldOptions.language, language, "Description Language") + '</div>'
-        + '<div>' + this.createSelectField(descriptionID + "_description_case_significance_" + this.viewerID, namePrefix + "[description_case_significance]", this.selectFieldOptions.caseSignificance, caseSignificance, "Description Case Significance") + '</div>'
-        + '<div>' + this.createSelectField(descriptionID + "_description_state_" + this.viewerID, namePrefix + "[description_state]", this.selectFieldOptions.state, state, "Description State") + '</div>';
+    rowString += '<div><input type="text" id="komet_concept_edit_description_text_' + descriptionID + '_' + this.viewerID + '" name="' + namePrefix + '[text]" value="' + text + '" class="form-control komet_concept_edit_description_text" aria-label="' + this.descriptionLabel + ' Value" placeholder="' + this.descriptionLabel + ' Text"></div>'
+        + '<div>' + this.createSelectField(descriptionID + "_description_language_" + this.viewerID, namePrefix + "[description_language]", this.selectFieldOptions.language, language, this.descriptionLabel + " Language") + '</div>'
+        + '<div>' + this.createSelectField(descriptionID + "_description_case_significance_" + this.viewerID, namePrefix + "[description_case_significance]", this.selectFieldOptions.caseSignificance, caseSignificance, this.descriptionLabel + " Case Significance") + '</div>'
+        + '<div>' + this.createSelectField(descriptionID + "_description_state_" + this.viewerID, namePrefix + "[description_state]", this.selectFieldOptions.state, state, this.descriptionLabel + " State") + '</div>';
 
     if (isNew){
         rowString += '<div class="komet-concept-edit-row-tools">'
-            + '<button type="button" class="komet-link-button" onclick="WindowManager.viewers[' + this.viewerID + '].removeItemRow(\'' + descriptionID + '\', \'' + rowID + '\', \'description\', ' + isNew + ', this)" title="Remove row" aria-label="Remove row">'
+            + '<button type="button" class="komet-link-button" onclick="WindowManager.viewers[' + this.viewerID + '].removeItemRow(\'' + descriptionID + '\', \'' + rowID + '\', \'' + this.descriptionLabel.toLowerCase() + '\', ' + isNew + ', this)" title="Remove row" aria-label="Remove row">'
             + '<div class="glyphicon glyphicon-remove"></div></button></div>';
     }
 
     rowString += '</div>';
 
-    // if this is a VHAT concept do not show the dialect section
-    if (this.terminology_types.indexOf(UIHelper.VHAT) == -1) {
+    // depending on the flag show the dialect section
+    if (this.showDialects) {
 
         rowString += '<div class="komet-indent-block komet-concept-description-dialect-section">'
             + '<div class="komet-concept-section-title komet-concept-description-title">Dialects'
@@ -975,7 +1019,7 @@ ConceptViewer.prototype.createDescriptionRowString = function (rowData) {
     }
 
     rowString += '<div class="komet-indent-block komet-concept-description-properties-section' + propertiesSectionClass + '"><div class="komet-concept-section-title komet-concept-description-title">Properties'
-        + '<div class="komet-flex-right"><button type="button" class="komet-link-button komet-concept-add-description-property" onclick="WindowManager.viewers[' + this.viewerID + '].addPropertyRow(\'' + descriptionID + '\', this, \'description\', \'' + componentLabelPrefix + '\')">Add Property <div class="glyphicon glyphicon-plus-sign"></div></button></div></div>';
+        + '<div class="komet-flex-right"><button type="button" class="komet-link-button komet-concept-add-description-property" onclick="WindowManager.viewers[' + this.viewerID + '].addPropertyRow(\'' + descriptionID + '\', this, \'' + this.descriptionLabel.toLowerCase() + '\', \'' + componentLabelPrefix + '\')">Add Property <div class="glyphicon glyphicon-plus-sign"></div></button></div></div>';
 
     var propertyCount;
 
@@ -992,11 +1036,11 @@ ConceptViewer.prototype.createDescriptionRowString = function (rowData) {
     }
 
     rowString += '</div>'
-        + '<div class="komet-indent-block komet-concept-description-refsets-section' + propertiesSectionClass + '"><div class="komet-concept-section-title komet-concept-description-title">Subset Membership'
-        + '<div class="komet-flex-right"><button type="button" class="komet-link-button komet-concept-add-description-refset" onclick="WindowManager.viewers[' + this.viewerID + '].addPropertyRow(\'' + descriptionID + '\', this, \'description refset\', \'' + componentLabelPrefix + '\')">Add Subset Membership <div class="glyphicon glyphicon-plus-sign"></div></button></div></div>';
+        + '<div class="komet-indent-block komet-concept-description-refsets-section' + propertiesSectionClass + '"><div class="komet-concept-section-title komet-concept-description-title">' + this.descriptionRefsetLabel
+        + '<div class="komet-flex-right"><button type="button" class="komet-link-button komet-concept-add-description-refset" onclick="WindowManager.viewers[' + this.viewerID + '].addPropertyRow(\'' + descriptionID + '\', this, \'' + this.descriptionLabel.toLowerCase() + ' ' + this.descriptionRefsetLabel.toLowerCase() + '\', \'' + componentLabelPrefix + '\')">Add ' + this.descriptionRefsetLabel + ' <div class="glyphicon glyphicon-plus-sign"></div></button></div></div>';
 
     // if this is a new description on a VHAT concept then generate the VHAT properties
-    if (isNew && this.terminology_types.indexOf(UIHelper.VHAT) >= 0){
+    if (isNew && this.isVHAT){
 
         this.addGeneratedVhatProperties(descriptionID, componentLabelPrefix);
 
@@ -1040,7 +1084,7 @@ ConceptViewer.prototype.createDescriptionPropertyRowString = function (descripti
         }
 
         // if this is a VHAT concept then don't show the field label
-        if (this.terminology_types.indexOf(UIHelper.VHAT) >= 0){
+        if (this.isVHAT){
             fieldLabelClass = " hide";
         }
 
@@ -1066,7 +1110,7 @@ ConceptViewer.prototype.createDescriptionPropertyRowString = function (descripti
 
     if (rowData.new){
         rowString += '<div class="komet-concept-edit-row-tools">'
-            + '<button type="button" class="komet-link-button" onclick="WindowManager.viewers[' + this.viewerID + '].removeItemRow(\'' + rowData.sememe_instance_id + '\', \'' + rowID + '\', \'description property\', ' + rowData.new + ', this)" title="Remove row" aria-label="Remove row: ' + labelPrefix + '">'
+            + '<button type="button" class="komet-link-button" onclick="WindowManager.viewers[' + this.viewerID + '].removeItemRow(\'' + rowData.sememe_instance_id + '\', \'' + rowID + '\', \'' + this.descriptionLabel.toLowerCase() + ' property\', ' + rowData.new + ', this)" title="Remove row" aria-label="Remove row: ' + labelPrefix + '">'
             + '<div class="glyphicon glyphicon-remove"></div></button></div>';
     }
 
@@ -1162,7 +1206,7 @@ ConceptViewer.prototype.createAssociationRowString = function (rowData) {
 
         isNew = true;
         associationID = window.performance.now().toString().replace(".", "");
-        typeDisplay = this.createSelectField(associationID + "_association_type_" + this.viewerID, "associations[" + associationID + "][association_type]", this.selectFieldOptions.associationType, "", "Association type");
+        typeDisplay = this.createSelectField(associationID + "_association_type_" + this.viewerID, "associations[" + associationID + "][association_type]", this.selectFieldOptions.associationType, "", this.associationLabel + " type", "komet-concept-edit-association-type");
 
     }
 
@@ -1172,7 +1216,7 @@ ConceptViewer.prototype.createAssociationRowString = function (rowData) {
         + '<div>' + typeDisplay + '</div>'
         + '<div><autosuggest id-base="komet_concept_edit_association_value_' + associationID + '" '
         + 'id-postfix="_' + this.viewerID + '" '
-        + 'label="' + typeText + ' Association Value" '
+        + 'label="' + typeText + ' ' + this.associationLabel + ' Value" '
         + 'label-display="placeholder" '
         + 'id-postfix="_' + this.viewerID + '" '
         + 'name="associations[' + associationID + '][target" '
@@ -1182,11 +1226,11 @@ ConceptViewer.prototype.createAssociationRowString = function (rowData) {
         + 'terminology-types="' + targetTerminologyTypes + '" '
         + 'classes="komet-concept-edit-association-value">'
         + '</autosuggest></div>'
-        + '<div>' + this.createSelectField(associationID + "_association_state_" + this.viewerID, "associations[" + associationID + "][association_state]", this.selectFieldOptions.state, state, typeText + " Association State") + '</div>';
+        + '<div>' + this.createSelectField(associationID + "_association_state_" + this.viewerID, "associations[" + associationID + "][association_state]", this.selectFieldOptions.state, state, typeText + " " + this.associationLabel + " State") + '</div>';
 
     if (isNew){
         rowString += '<div class="komet-concept-edit-row-tools">'
-            + '<button type="button" class="komet-link-button" onclick="WindowManager.viewers[' + this.viewerID + '].removeItemRow(\'' + associationID + '\', \'' + rowID + '\', \'association\', ' + isNew + ', this)" title="Remove row" aria-label="Remove row">'
+            + '<button type="button" class="komet-link-button" onclick="WindowManager.viewers[' + this.viewerID + '].removeItemRow(\'' + associationID + '\', \'' + rowID + '\', \'' + this.associationLabel + '\', ' + isNew + ', this)" title="Remove row" aria-label="Remove row">'
             + '<div class="glyphicon glyphicon-remove"></div>'
             + '</button></div>';
     }
@@ -1257,12 +1301,12 @@ ConceptViewer.prototype.addPropertyRow = function (descriptionID, addElement, pr
                             var section = "";
                             var rowString = "";
 
-                            if (property_type == "description"){
+                            if (property_type == thisViewer.descriptionLabel.toLowerCase()){
 
                                 section = $("#komet_concept_description_panel_" + descriptionID + "_" + thisViewer.viewerID).find(".komet-concept-description-properties-section");
                                 rowString = thisViewer.createDescriptionPropertyRowString(descriptionID, sememe_info.data, sememe_info.field_info, labelPrefix);
 
-                            } else if (property_type == "description refset") {
+                            } else if (property_type == thisViewer.descriptionLabel.toLowerCase() + " " + thisViewer.descriptionRefsetLabel.toLowerCase()) {
 
                                 section = $("#komet_concept_description_panel_" + descriptionID + "_" + thisViewer.viewerID).find(".komet-concept-description-refsets-section");
                                 rowString = thisViewer.createDescriptionPropertyRowString(descriptionID, sememe_info.data, sememe_info.field_info, labelPrefix);
