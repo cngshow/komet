@@ -1,6 +1,6 @@
 require 'fileutils'
 
-namespace :build do
+namespace :devops do
   cleanup = 'Cleanup react on rails'
   setup = 'Set up react on rails'
   desc cleanup
@@ -24,7 +24,7 @@ namespace :build do
 
   desc setup
   task :set_up_react do
-    Rake::Task['build:cleanup_react'].invoke
+    Rake::Task['devops:cleanup_react'].invoke
     Dir.chdir('./client') do
       sh 'npm install'
       Rake::Task['react_on_rails:locale'].invoke

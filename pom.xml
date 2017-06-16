@@ -169,7 +169,7 @@
 							<jrubyJvmArgs>-Xmx4000m -Djava.awt.headless=true</jrubyJvmArgs>
 							<execArgs>RAILS_ENV=${railsMode}</execArgs>
 							<command>rake</command>
-							<args>build:set_up_react</args>
+							<args>devops:set_up_react</args>
 						</configuration>
 					</execution>
 					<!-- Build 1 instances of the war for now during SNAPSHOT, build 3 during release - one each with a relative path of _a, _b and _c, 
