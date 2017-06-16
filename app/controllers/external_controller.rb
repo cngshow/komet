@@ -75,7 +75,8 @@ class ExternalController < ApplicationController
     body_string = read_xml_file
     additional_req_params = { editToken: get_edit_token }
     response = IntakeRest.get_intake(action: IntakeRest::ACTION_VETS_XML, body_string: body_string, additional_req_params: additional_req_params)  
-    if response.is_a? CommonRest::UnexpectedResponse
+
+    if response.respond_to? :flash_error
       clear_rest_caches
       render json: { 
         errors: { 
