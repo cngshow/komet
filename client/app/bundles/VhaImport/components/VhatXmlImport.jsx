@@ -1,7 +1,7 @@
 import React from 'react';
-import Modal from './modal';
-import MessageBox from './messageBox';
-import ErrorBox from './ErrorBox';
+import Modal from './modal.jsx';
+import MessageBox from './messageBox.jsx';
+import ErrorBox from './errorBox.jsx';
 
 export default class VhatXmlImport extends React.Component {
   /**
