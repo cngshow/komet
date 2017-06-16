@@ -26,3 +26,12 @@ rails_komet.war
 /version.txt
 config/trinidad.yml
 config/initializers/rubymine_jruby_debug.rb
+
+# Generated js bundles
+/public/webpack/*
+/config/prisme.properties# React on Rails
+npm-debug.log*
+node_modules
+
+# Generated js bundles
+/app/assets/webpack/*
