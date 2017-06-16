@@ -20,7 +20,8 @@ export default class VhatXmlImport extends React.Component {
     });
   }; 
   onFormSubmit(form, body) {
-    api('/external/import', {
+    //gon.routes.export_path
+    api(gon.routes.export_path, {
       method: 'POST',
       body
     })
