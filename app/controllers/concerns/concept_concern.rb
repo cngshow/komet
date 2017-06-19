@@ -1078,7 +1078,7 @@ module ConceptConcern
     # @return [object] the generated vuids
     def request_vuids(number_of_vuids = 1, reason = 'KOMET Request')
 
-        vuids = VuidRest.get_vuid_api(action: VuidRestActions::ACTION_ALLOCATE, additional_req_params: {blockSize: number_of_vuids, reason: reason, ssoToken: get_edit_token})
+        vuids = VuidRest.get_vuid_api(action: VuidRestActions::ACTION_ALLOCATE, additional_req_params: {blockSize: number_of_vuids, reason: reason, ssoToken: get_user_token})
 
         if vuids.is_a? CommonRest::UnexpectedResponse
 

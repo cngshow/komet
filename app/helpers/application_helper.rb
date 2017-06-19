@@ -26,6 +26,11 @@ module ApplicationHelper
     include UserSession
     include BootstrapNotifier
     include CommonController
+    CONCEPT_RECENTS = 'general_concept_recents'
+    CONCEPT_RECENTS_ASSOCIATION = 'association'
+    CONCEPT_RECENTS_MAPSET = 'mapset'
+    CONCEPT_RECENTS_SEMEME = 'sememe'
+    CONCEPT_RECENTS_METADATA = 'metadata'
 
     def get_user_token
         user_session(UserSession::TOKEN)
@@ -189,6 +194,72 @@ module ApplicationHelper
     def my_controller
         return self if self.is_a? ApplicationController
         return controller
+    end
+
+    # get_next_id - generates a unique ID by using the systems nano-second time and date
+    # @return [String] returns a unique ID by using the systems nano-second time and date
+    def get_next_id
+        id = java.lang.System.nanoTime.to_s
+        $log.info("*** get_next_id: " + id)
+        return id
+    end
+
+    ##
+    # is_id? - tests to see if the provided ID is really an ID of the type specified
+    # @param [String] id - the ID to test
+    # @param [String] type - the type of id to test the passed value against. Options are 'uuid' (default), 'nid', 'sequence'
+    # @return [String] returns a unique ID by using the systems nano-second time and date
+    def is_id?(id, type: 'uuid')
+
+        is_id = false
+
+        # TODO - add support for other id types
+        if type == 'uuid'
+            is_id = id.to_s.match(/[0-9a-f]{8}-([0-9a-f]{4}-){3}[0-9a-f]{12}/) != nil
+        end
+
+        return is_id
+    end
+
+    ##
+    # add_to_recents - uses the standard fields for recently searched concepts to add an id and description to an array of these values in the session
+    # @param [Symbol] recent_name - The name of the array in the session as a symbol
+    # @param [String] id - The id of the searched concept
+    # @param [String] description - The description of the searched concept
+    # @param [String] type - The terminology type of the searched concept
+    # @param [Integer] max_items - The total number of items to store in the array. When array has reached the limit the oldest entry will be removed to make room. Optional, defaults to 20
+    # @return [Boolean] returns true if the values were added, false if they were not because they already existed in the array.
+    def add_to_recents(recent_name, id, description, type, max_items: 20)
+
+        recents_array = []
+        added = false
+
+        # see if the recents array already exists in the session
+        if session[recent_name]
+            recents_array = session[recent_name]
+        end
+
+        # only proceed if the array does not already contain the id and term that were searched for
+        already_exist = recents_array.find { |recent|
+            (recent[:id] == id && recent[:text] == description)
+        }
+
+        if already_exist == nil
+
+            # if the recents array has the max items remove the last item before adding a new one
+            if recents_array.length == max_items
+                recents_array.delete_at(max_items - 1)
+            end
+
+            # put the current items into the beginning of the array
+            recents_array.insert(0, {id: id, text: description, type: type})
+
+            # put the array into the session
+            session[recent_name] = recents_array
+            added = true
+        end
+
+        return added
     end
 
 end
