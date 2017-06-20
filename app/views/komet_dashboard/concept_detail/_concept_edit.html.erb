@@ -26,7 +26,7 @@
             <div class="komet-panel-tools">
 
                 <% if controller.can_edit_concept? %>
-                    <div class="komet-panel-tools-control" id="komet_concept_editor_edit_section_<%= @viewer_id %>">
+                    <div class="komet-panel-tools-control komet-show-on-view" id="komet_concept_editor_edit_section_<%= @viewer_id %>">
                         <button type="button" class="komet-link-button komet-panel-tools-control" onclick="$.publish(KometChannels.Taxonomy.taxonomyConceptEditorChannel, [ConceptsModule.EDIT, '<%= @concept_id %>', WindowManager.viewers[<%= @viewer_id %>].getViewParams(), '<%= @viewer_id %>', WindowManager.INLINE]);" title="Edit Concept" aria-label="Edit Concept">
                             <div class="komet-action-icon fa fa-pencil-square"></div>
                             <span>Edit</span>
@@ -34,7 +34,7 @@
                     </div>
                 <% end %>
 
-                <div class="komet-panel-tools-control" id="komet_concept_editor_show_changes_section_<%= @viewer_id %>">
+                <div class="komet-panel-tools-control komet-show-on-edit" id="komet_concept_editor_show_changes_section_<%= @viewer_id %>">
                     <label for="komet_concept_editor_show_changes_<%= @viewer_id %>">Show Changes</label>
                     <input type="checkbox" id="komet_concept_editor_show_changes_<%= @viewer_id %>" onclick="WindowManager.viewers[<%= @viewer_id %>].toggleEditorChangeHighlights(this)">
                 </div>
@@ -87,7 +87,7 @@
 
         <div class="panel-body" id="komet_concept_editor_section_<%= @viewer_id %>">
 
-            <div id="komet_concept_save_section_<%= @viewer_id %>">
+            <div class="komet-show-on-edit" id="komet_concept_save_section_<%= @viewer_id %>">
                 <h5 title="All Fields Required except if noted as Optional">All fields required except where noted as Optional.</h5>
                 <button type="button" class="btn btn-default" aria-label="Cancel Edit Mode" title="Cancel Editing Concept" id="komet_concept_edit_<%= @viewer_id %>" onclick="WindowManager.cancelEditMode('<%= @viewer_id %>')">Cancel</button>
                 <button type="button" class="btn btn-primary" aria-label="Save Edited Concept" title="Save Edited Concept" id="komet_concept_save_<%= @viewer_id %>" onclick="WindowManager.viewers[<%= @viewer_id %>].showSaveSection('confirm')">Save</button>
@@ -140,10 +140,13 @@
 
                         <!-- Status -->
                         <div class="komet-concept-attributes-status">
-                            <select name="concept_state" aria-label="Concept Status" title="Concept Status">
+
+                            <select name="concept_state" aria-label="Concept Status" title="Concept Status" class="komet-show-on-edit">
                                 <option value="Active" <% if @concept_state.downcase == 'active' %> selected <% end %>>Active</option>
                                 <option value="Inactive"<% if @concept_state.downcase == 'inactive' %> selected <% end %>>Inactive</option>
                             </select>
+
+                            <span class="komet-show-on-view"><%= @concept_state %></span>
                         </div>
 
                     </div>
@@ -152,7 +155,7 @@
                         <div class="komet-concept-section-title komet-concept-attributes-title" title="Properties">
                             Properties
                             <div class="komet-flex-right">
-                                <button type="button" class="komet-link-button komet-concept-add-concept-property" onclick="WindowManager.viewers[<%= @viewer_id %>].addPropertyRow('<%= @concept_id %>', this, 'concept')">
+                                <button type="button" class="komet-link-button komet-concept-add-concept-property komet-show-on-edit" onclick="WindowManager.viewers[<%= @viewer_id %>].addPropertyRow('<%= @concept_id %>', this, 'concept')">
                                     Add Property <div class="glyphicon glyphicon-plus-sign"></div>
                                 </button>
                             </div>
@@ -163,7 +166,7 @@
                         <div class="komet-concept-section-title komet-concept-attributes-title" title="Refsets">
                             Refsets
                             <div class="komet-flex-right">
-                                <button type="button" class="komet-link-button komet-concept-add-concept-refset" onclick="WindowManager.viewers[<%= @viewer_id %>].addPropertyRow('<%= @concept_id %>', this, 'concept refset')">
+                                <button type="button" class="komet-link-button komet-concept-add-concept-refset komet-show-on-edit" onclick="WindowManager.viewers[<%= @viewer_id %>].addPropertyRow('<%= @concept_id %>', this, 'concept refset')">
                                     Add Refset <div class="glyphicon glyphicon-plus-sign"></div>
                                 </button>
                             </div>
@@ -176,7 +179,7 @@
             <div class="komet-concept-section-title komet-concept-description-title" title="Designations" aria-label="Designations">
                 <span id="komet_concept_description_section_label_<%= @viewer_id %>">DESIGNATIONS</span>
                 <div class="komet-flex-right">
-                    <button type="button" class="komet-link-button komet-concept-add-description" onclick="WindowManager.viewers[<%= @viewer_id %>].addDescriptionRow()">
+                    <button type="button" class="komet-link-button komet-concept-add-description komet-show-on-edit" onclick="WindowManager.viewers[<%= @viewer_id %>].addDescriptionRow()">
                         <span id="komet_concept_add_description_label_<%= @viewer_id %>">Add Designation</span>
                         <div class="glyphicon glyphicon-plus-sign"></div>
                     </button>
@@ -186,7 +189,7 @@
             <div class="komet-concept-section-title komet-concept-associations-title" title="Relationships" aria-label="Relationships">
                 <span id="komet_concept_association_section_label_<%= @viewer_id %>">RELATIONSHIPS</span>
                 <div class="komet-flex-right">
-                    <button type="button" class="komet-link-button komet-concept-add-association" onclick="WindowManager.viewers[<%= @viewer_id %>].addAssociationRow()">
+                    <button type="button" class="komet-link-button komet-concept-add-association komet-show-on-edit" onclick="WindowManager.viewers[<%= @viewer_id %>].addAssociationRow()">
                         <span id="komet_concept_add_association_label_<%= @viewer_id %>">Add Relationship</span>
                         <div class="glyphicon glyphicon-plus-sign"></div>
                     </button>
