@@ -20,8 +20,7 @@ export default class VhatXmlImport extends React.Component {
     });
   }; 
   onFormSubmit(form, body) {
-    //gon.routes.export_path
-    api(gon.routes.export_path, {
+    api(gon.routes.import_path, {
       method: 'POST',
       body
     })
@@ -52,7 +51,8 @@ export default class VhatXmlImport extends React.Component {
       		aria-label="VHAT XML Import" 
       		title="VHAT XML Import" 
       		id="komet_import_link" 
-      		role="navigation">
+      		//role="navigation">
+            >
           	<div className="glyphicon glyphicon-import" title="VHAT XML Import">
           	</div>
         </button>
