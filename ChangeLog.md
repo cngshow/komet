@@ -7,6 +7,7 @@ where provided, and the git commit history.
 	* Fixed VUID generation errors
 	* Passing errors to the user if properties or descriptions do not add correctly
 	* Concept view mode now text based instead of form based
+	* Updating to use new token framework (test team should ensure edits still work)
 
 * 2017/06/16 - 4.10
 	* Refactoring changes.
