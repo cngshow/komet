@@ -159,7 +159,7 @@ class ApplicationController < ActionController::Base
       if user_info
         user_session(UserSession::LAST_ROLE_CHECK, Time.now)
         user_session(UserSession::ROLES, user_info['roles'])
-        user_session(UserSession::TOKEN, (CGI::unescape user_info['token']))
+        user_session(UserSession::TOKEN, user_info['token'])
         # user_session(UserSession::EMAIL, user_info['email'])
         # user_session(UserSession::USER_NAME, user_info['user_name'])
       end
