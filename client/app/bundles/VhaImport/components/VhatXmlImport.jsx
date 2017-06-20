@@ -51,7 +51,6 @@ export default class VhatXmlImport extends React.Component {
       		aria-label="VHAT XML Import" 
       		title="VHAT XML Import" 
       		id="komet_import_link" 
-      		//role="navigation">
             >
           	<div className="glyphicon glyphicon-import" title="VHAT XML Import">
           	</div>
@@ -78,13 +77,14 @@ export default class VhatXmlImport extends React.Component {
               </div>
               <hr />
               <div>
-                <div id="buttons_div">
+                <div className="btn-bar">
                   <button
                     className="btn btn-default cancel"
+                    role="button"
                     onClick={() => this.cancelButton() }>
                     Cancel
                   </button>
-                  <button type="submit" className="btn btn-default submit">Submit</button>
+                  <button type="submit" role="button" className="btn btn-default submit">Submit</button>
                 </div>
               </div>
             </form>

@@ -10,13 +10,13 @@
     <div class="komet-navbar-navigation" role="navigation">
 
         <div>
-            <button type="button" class="komet-link-button" onclick="location.replace('<%= komet_dashboard_dashboard_path %>')" title="Taxonomy Dashboard" role="navigation">Taxonomy
+            <button type="button" class="komet-link-button" onclick="location.replace('<%= komet_dashboard_dashboard_path %>')" title="Taxonomy Dashboard" role="button">Taxonomy
                 Dashboard
             </button>
         </div>
 
         <!--<div>-->
-        <!--<button type="button" class="komet-link-button" onclick="location.replace('<%#= workflow_dashboard_path %>')" title="Workflows" role="navigation">Workflows</button>-->
+        <!--<button type="button" class="komet-link-button" onclick="location.replace('<%#= workflow_dashboard_path %>')" title="Workflows" role="button">Workflows</button>-->
         <!--</div>-->
 
         <% if controller.can_edit_concept? %>
@@ -38,19 +38,19 @@
     <div class="komet-navbar-tools" role="navigation">
 
         <div>
-            <a href="#generateVuid" class="komet-link-button" id="komet_generate_vuid_link" aria-label="Generate VUID" role="navigation" onclick="VUIDRequest.openRequestDialog();return false;">
+            <a href="#generateVuid" class="komet-link-button" id="komet_generate_vuid_link" aria-label="Generate VUID" onclick="VUIDRequest.openRequestDialog();return false;">
                 Generate VUID
             </a>
         </div>
         <%= react_component("VhatXmlImport", props: {}, prerender: false) %>
         <div>
-            <button type="button" class="komet-link-button" role="button" aria-label="VHAT XML Export" title="VHAT XML Export" id="komet_export_link" role="navigation">
+            <button type="button" class="komet-link-button" role="button" aria-label="VHAT XML Export" title="VHAT XML Export" id="komet_export_link">
                 <div class="glyphicon glyphicon-export" title="VHAT XML Export"></div>
             </button>
         </div>
 
         <div>
-            <button type="button" class="komet-link-button" role="button" aria-label="Settings" title="Settings" id="komet_user_preference_link" onclick="PreferenceModule.loadPreferences()" role="navigation">
+            <button type="button" class="komet-link-button" role="button" aria-label="Settings" title="Settings" id="komet_user_preference_link" onclick="PreferenceModule.loadPreferences()">
                 <div class="glyphicon glyphicon-cog" title="Settings"></div>
             </button>
         </div>
@@ -58,14 +58,14 @@
         <!--    508 fix - states the title or labels but preference would be for Jaws to actually read the actual user id is possible -->
 
         <div>
-            <a href="#userid" class="komet-link-button" id="userid" title="You are Logged In" role="navigation">
+            <a href="#userid" class="komet-link-button" id="userid" title="You are Logged In" role="button">
                 <div class="glyphicon glyphicon-user" title="You are Logged In"></div>
                 <%= raw komet_user %>
             </a>
         </div>
 
         <div>
-            <button type="button" class="komet-link-button" id="logout" onclick="location.replace('<%= logout_path %>')" title="Logout" role="navigation">
+            <button type="button" class="komet-link-button" id="logout" onclick="location.replace('<%= logout_path %>')" title="Logout" role="button">
                 <div class="glyphicon glyphicon-log-out" title="Logout"></div>
                 Logout
             </button>
@@ -73,8 +73,6 @@
     </div>
 
 </nav>
-
-<%= render 'layouts/import_modal' %>
 
 <!--modal window for exporting new and updated concepts -->
 <div id="export_modal" class="modal fade modal-wide" data-backdrop="static" role="dialog">
@@ -104,11 +102,9 @@
                 <% end %>
             </div>
             <hr>
-            <div align="center" style="padding-bottom: 10px">
-                <div id="buttons_div">
-                    <button type="button" class="btn btn-default" onclick="ExportModule.cancel_export();">Cancel</button>
-                    <button type="button" class="btn btn-default" onclick="ExportModule.submit_export();">Submit</button>
-                </div>
+            <div class="btn-bar">
+                <button type="button" class="btn btn-default" onclick="ExportModule.cancel_export();">Cancel</button>
+                <button type="button" class="btn btn-default" onclick="ExportModule.submit_export();">Submit</button>
             </div>
         </div>
     </div>

@@ -1497,6 +1497,16 @@ div.komet-mapping-change-order-icon.glyphicon{
 {
   display:flex;
 }
+
+div.btn-bar {
+  text-align: center;
+  margin-bottom: 10px;
+  button {
+    display: inline;
+    margin: 1.5px;
+  }
+}
+
 // TODO - OLD STYLES THAT SHOULD BE DELETED (Make sure not being used)
 .komet_dashboard .navbar{
     margin-bottom: 0px;

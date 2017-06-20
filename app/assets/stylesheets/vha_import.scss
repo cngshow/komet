@@ -14,23 +14,15 @@
 		input[type=file] {
 			font-size: 0.8em;
 		}
-		#buttons_div {
-			width: 80%;
-	    margin: 0 auto 1em;
-	    text-align: center;
-	    button {
-	    	display: inline;
-	    }
-		}
 	}
 }
 
 .message-box, .error-box {
 	.bg-blue {
 		font-size: 1.2em;
-    padding: 1em;
-    font-weight: 400;
-    color: white;
-    background-color: #414cba;
+        padding: 1em;
+        font-weight: 400;
+        color: white;
+        background-color: #414cba;
 	}
 }
