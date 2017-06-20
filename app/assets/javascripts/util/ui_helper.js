@@ -374,13 +374,24 @@ var UIHelper = (function () {
         }
 
         var alertContainerID = "komet_" + window.performance.now().toString().replace(".", "");
-        var alertMessageID = "komet_" + window.performance.now().toString().replace(".", "");
+        var alertMessageID = "komet_" + alertContainerID + "_message";
 
-        // TODO - figure out how to get html code to render in messages and still get voice reading to work - $(alertMessage).append("' + message + '");
         return '<div id="' + alertContainerID + '" class="' + classLevel + ' ' + messageType + '" role="alert">' + icon + '<div id="' + alertMessageID + '" class="komet-page-message-container" tabindex="0"></div>'
             + '<div class="komet-flex-right"><button type="button" class="komet-link-button" title="Remove message" aria-label="Remove alert: ' + message + '" onclick="UIHelper.focusNextElement(); $(\'#' + alertContainerID + '\').remove();"><div class="glyphicon glyphicon-remove"></div></button></div></div>'
-            + '<script>var alertMessage = document.getElementById("' + alertMessageID + '"); alertMessage.setAttribute("role", "alert"); var alertText = document.createTextNode("' + message + '"); '
-            + 'alertMessage.appendChild(alertText); alertMessage.style.display="none"; alertMessage.style.display="inline";</script>';
+            + '<script>UIHelper.initPageMessage("' + alertMessageID + '", "' + message + '");</script>';
+    }
+
+    function initPageMessage(message_id, message) {
+
+        var alertMessage = document.getElementById(message_id);
+        var alertText = document.createTextNode(message);
+
+        // TODO - figure out how to get html code to render in messages and still get voice reading to work - $(alertMessage).append("' + message + '");
+        // must do this attribute juggling to get the alert to be read by accessibility software
+        alertMessage.setAttribute("role", "alert");
+        alertMessage.appendChild(alertText);
+        alertMessage.style.display="none";
+        alertMessage.style.display="inline";
     }
 
     function removePageMessages(containerElementOrSelector) {
@@ -460,8 +471,13 @@ var UIHelper = (function () {
         dialog.dialog({
             beforeClose: function () {
 
-                closeCallback(buttonClicked);
-                dialog.remove();
+                var keepOpen = closeCallback(buttonClicked);
+
+                if (keepOpen == undefined || !keepOpen){
+                    dialog.remove();
+                } else {
+                    return false;
+                }
             },
             open: function () {
 
@@ -1619,6 +1635,7 @@ var UIHelper = (function () {
         isTabActive: isTabActive,
         initializeContextMenus: initializeContextMenus,
         generatePageMessage: generatePageMessage,
+        initPageMessage: initPageMessage,
         removePageMessages: removePageMessages,
         focusNextElement: focusNextElement,
         generateConfirmationDialog: generateConfirmationDialog,

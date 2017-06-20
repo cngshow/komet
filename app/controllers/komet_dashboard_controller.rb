@@ -908,7 +908,9 @@ class KometDashboardController < ApplicationController
         if @new_concept && @concept_terminology_types.include?($isaac_metadata_auxiliary['VHAT_MODULES']['uuids'].first[:uuid])
 
             # add ID properties to the description
-            @descriptions.first[:nested_properties] = generate_vhat_properties
+            new_sememe_properties = generate_vhat_properties
+            @descriptions[:descriptions].first[:nested_properties] = new_sememe_properties
+            @descriptions[:errors].concat(new_sememe_properties[:errors])
 
             # add ID properties to the attached sememes
             new_sememe_properties = generate_vhat_properties
@@ -942,28 +944,33 @@ class KometDashboardController < ApplicationController
         sememe_text = params[:sememe_display]
         sememe_terminology_types = params[:sememe_terminology_types]
         concept_terminology_types = params[:concept_terminology_types]
-        generate_vuid = false
+        generated_vuid = false
 
         # if this is a new VHAT concept add the VHAT ID properties
         if concept_terminology_types.include?($isaac_metadata_auxiliary['VHAT_MODULES']['uuids'].first[:uuid])
-            generate_vuid = nil
+            generated_vuid = nil
         end
 
-        sememe = get_sememe_definition_details(sememe_id, session[:edit_view_params], generate_vuid, concept_terminology_types)
+        sememe = get_sememe_definition_details(sememe_id, session[:edit_view_params], generated_vuid, concept_terminology_types)
 
-        if sememe[:data].empty?
-            render json: {} and return
+        # if data was returned add the parent concept to the concept recents array in the session
+        if !sememe[:data].empty?
+            add_to_recents(CONCEPT_RECENTS + CONCEPT_RECENTS_SEMEME, sememe_id, sememe_text, sememe_terminology_types)
         end
-
-        # add the parent concept to the concept recents array in the session
-        add_to_recents(CONCEPT_RECENTS + CONCEPT_RECENTS_SEMEME, sememe_id, sememe_text, sememe_terminology_types)
 
         render json: sememe
     end
 
     def get_generated_vhat_properties
 
-        render json: generate_vhat_properties
+        # if the generate vuid flag is true then we want to request new VUID IDs
+        if user_session(UserSession::USER_PREFERENCES)[:generate_vuid] == 'true'
+            generate_ids = true
+        else
+            generate_ids = false
+        end
+
+        render json: generate_vhat_properties(generate_ids)
     end
 
     def get_generated_vhat_ids

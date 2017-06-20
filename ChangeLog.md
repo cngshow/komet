@@ -4,7 +4,9 @@ This changelog summarizes changes and fixes which are a part of each revision.  
 where provided, and the git commit history.
 
 * 2017/06/?? - 4.11 - PENDING
-	*
+	* Fixed VUID generation errors
+	* Passing errors to the user if properties or descriptions do not add correctly
+	* Concept view mode now text based instead of form based
 
 * 2017/06/16 - 4.10
 	* Refactoring changes.
