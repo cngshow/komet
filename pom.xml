@@ -71,6 +71,53 @@
 	<build>
 		<plugins>
 
+			<plugin>
+				<artifactId>maven-antrun-plugin</artifactId>
+				<executions>
+					<execution>
+						<phase>validate</phase>
+						<configuration>
+							<exportAntProperties>true</exportAntProperties>
+							<target>
+								<property environment="env" />
+								<available file="npm" filepath="${env.PATH}" property="npm.present" />
+								<available file="yarn" filepath="${env.PATH}" property="yarn.present" />
+							</target>
+						</configuration>
+						<goals>
+							<goal>run</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+		
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-enforcer-plugin</artifactId>
+				<version>1.4.1</version>
+				<executions>
+					<execution>
+						<id>enforce-property</id>
+						<goals>
+							<goal>enforce</goal>
+						</goals>
+						<configuration>
+							<rules>
+								<requireProperty>
+									<property>npm.present</property>
+									<message>You must have 'npm' on your path</message>
+								</requireProperty>
+								<requireProperty>
+									<property>yarn.present</property>
+									<message>"You must have 'yarn' on your path"</message>
+								</requireProperty>
+							</rules>
+							<fail>true</fail>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+
 			<!-- Extract the rails_common code into the correct place here, overwriting any existing version -->
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
