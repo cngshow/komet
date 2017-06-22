@@ -3,6 +3,9 @@ Komet Changelog
 This changelog summarizes changes and fixes which are a part of each revision.  For more details on the fixes, refer tracking numbers 
 where provided, and the git commit history.
 
+* 2017/06/?? - 4.12 - PENDING
+    *
+
 * 2017/06/22 - 4.11
     * XML export added.
     
