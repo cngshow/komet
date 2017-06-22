@@ -11,6 +11,7 @@ Rails.application.routes.draw do
 
     post 'external/authenticate', as: :login
     get 'external/export', as: :export
+    post 'external/import', as: :import
     get 'external/logout', :as => :logout
 
     get 'komet_dashboard/session_timeout', as: :session_timeout

@@ -1,0 +1,28 @@
+.vha-import-wrapper {
+	form {
+		.modal-header {
+			.modal-title {
+				font-size: 1.4em;
+			}
+		}
+		.modal-body {
+			.modal-title {
+				margin: 0.5em 0;
+		    font-size: 1.2em;
+			}
+		}
+		input[type=file] {
+			font-size: 0.8em;
+		}
+	}
+}
+
+.message-box, .error-box {
+	.bg-blue {
+		font-size: 1.2em;
+        padding: 1em;
+        font-weight: 400;
+        color: white;
+        background-color: #414cba;
+	}
+}

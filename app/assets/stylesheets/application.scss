@@ -32,6 +32,7 @@ Copyright Notice
  *= require jquery.enhsplitter
  *= require jquery.minicolors
  *= require animate
+ *= require vha_import
  *= require_tree ../../../vendor/assets/stylesheets/contextMenu
  *= require_tree ../../../vendor/assets/stylesheets/jsTree
  */
@@ -487,7 +488,7 @@ div.komet-confirmation-dialog{
 .komet-navbar-tools > :first-child{
     border-left: 4px solid white;
 }
-.komet-navbar-tools > *{
+.komet-navbar-tools > div {
     display: flex;
     flex: 0 0 auto;
     align-items: center;
@@ -1076,6 +1077,32 @@ td.komet-concept-table-nested-indicator.komet-concept-table-nested-indicator-ope
     color: red;
     cursor: pointer;
 }
+.komet-concept-edit .komet-containing-block{
+    flex-wrap: wrap;
+    flex: 1 1 auto;
+}
+.komet-concept-edit .komet-containing-block > div.komet-show-on-view{
+    display: flex;
+    margin-right: 5px;
+    font-size: small;
+}
+.komet-concept-edit .komet-containing-block > div.komet-show-on-view{
+    flex: 0 0 25%;
+}
+.komet-concept-edit .komet-containing-block > div.komet-show-on-view b{
+    margin-right: 5px;
+}
+.komet-concept-edit .komet-containing-block > div.komet-show-on-view label{
+    min-width: 50px;
+    width: 50px;
+    margin-right: 5px;
+    padding: initial;
+    height: 26px;
+    font-size: small;
+    background-color: initial;
+    color: initial;
+    overflow: hidden;
+}
 .komet-concept-edit input.form-control, .komet-concept-edit select.form-control {
     height: 26px;
     font-size: small;
@@ -1122,7 +1149,7 @@ td.komet-concept-table-nested-indicator.komet-concept-table-nested-indicator-ope
     width: 250px;
     font-size: small;
 }
-.komet_concept_edit_description_properties_field, .komet_concept_edit_concept_properties_field{
+.komet-concept-edit-properties-field{
     min-width: 150px;
     max-width: 250px;
 }
@@ -1496,6 +1523,16 @@ div.komet-mapping-change-order-icon.glyphicon{
 {
   display:flex;
 }
+
+div.btn-bar {
+  text-align: center;
+  margin-bottom: 10px;
+  button {
+    display: inline;
+    margin: 1.5px;
+  }
+}
+
 // TODO - OLD STYLES THAT SHOULD BE DELETED (Make sure not being used)
 .komet_dashboard .navbar{
     margin-bottom: 0px;

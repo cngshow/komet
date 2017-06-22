@@ -108,10 +108,11 @@ module ConceptConcern
 
         coordinates_token = session[:coordinates_token].token
         return_descriptions = []
+        errors = []
         descriptions = ConceptRest.get_concept(action: ConceptRestActions::ACTION_DESCRIPTIONS, uuid: uuid, additional_req_params: {coordToken: coordinates_token}.merge!(view_params))
 
         if descriptions.is_a? CommonRest::UnexpectedResponse
-            return return_descriptions
+            return {descriptions: return_descriptions, errors: ['There was a problem retrieving the descriptions.']}
         end
 
         # iterate over the array of Gov::Vha::Isaac::Rest::Api1::Data::Sememe::RestSememeDescriptionVersion returned
@@ -289,12 +290,13 @@ module ConceptConcern
 
                 nested_properties = process_attached_sememes(view_params, description.nestedSememes, [], {}, 1, clone)
                 description_info[:nested_properties] = {field_info: nested_properties[:used_column_hash], data: nested_properties[:data_rows]}
+                errors.concat(nested_properties[:errors])
             end
 
             return_descriptions << description_info
         end
 
-        return return_descriptions
+        return {descriptions: return_descriptions, errors: errors}
     end
 
     ##
@@ -464,12 +466,18 @@ module ConceptConcern
         coordinates_token = session[:coordinates_token].token
         additional_req_params = {coordToken: coordinates_token}
         additional_req_params.merge!(view_params)
-        data_row = {}
-        field_info = {}
+        sememe_details = {data: {}, field_info: {}, errors: []}
 
         # do a sememe_sememeDefinition call to get the columns that sememe has.
 
         sememe_definition = SememeRest.get_sememe(action: SememeRestActions::ACTION_SEMEME_DEFINITION, uuid_or_id: uuid, additional_req_params: additional_req_params)
+
+        # if there was an error then return that information
+        if sememe_definition.is_a? CommonRest::UnexpectedResponse
+
+            sememe_details[:errors] << 'There was an error trying to create the property for UUID ' + uuid + ': ' + sememe_definition.rest_exception.conciseMessage
+            return sememe_details
+        end
 
         # process dynamic sememe definition types
         if sememe_definition.class == Gov::Vha::Isaac::Rest::Api1::Data::Sememe::RestDynamicSememeDefinition
@@ -479,7 +487,7 @@ module ConceptConcern
             sememe_name = sememe_definition.assemblageConceptDescription
 
             # start loading the row of sememe data with everything besides the columns
-            data_row = {sememe_name: sememe_name, sememe_description: sememe_definition.sememeUsageDescription, sememe_instance_id: get_next_id, sememe_definition_id: assemblage_id, state: 'Active', level: 1, has_nested: false, columns: {}}
+            sememe_details[:data] = {sememe_name: sememe_name, sememe_description: sememe_definition.sememeUsageDescription, sememe_instance_id: get_next_id, sememe_definition_id: assemblage_id, state: 'Active', level: 1, has_nested: false, columns: {}}
 
             # loop through all of the sememe's columns
             sememe_definition.columnInfo.each{ |row_column|
@@ -487,7 +495,7 @@ module ConceptConcern
                 column_id = row_column.columnLabelConcept.uuids.first
 
                 # If not added to our hash of columns then add it
-                if row_column && ! field_info[column_id]
+                if row_column && ! sememe_details[:field_info][column_id]
 
                     # get the column data type from the validator data if it exists, otherwise use string
                     if row_column.columnDataType.classType
@@ -496,7 +504,7 @@ module ConceptConcern
                         data_type_class = 'gov.vha.isaac.rest.api1.data.sememe.dataTypes.RestDynamicSememeString'
                     end
 
-                    field_info[column_id] = {
+                    sememe_details[:field_info][column_id] = {
                         column_id: column_id,
                         name: row_column.columnName,
                         description: row_column.columnDescription,
@@ -510,7 +518,7 @@ module ConceptConcern
                     if assemblage_id == $isaac_metadata_auxiliary['EXTENDED_DESCRIPTION_TYPE']['uuids'].first[:uuid]
 
                         # get the extended types based on the terminologies that the concept belongs to
-                        field_info[column_id][:dropdown_options] = []
+                        sememe_details[:field_info][column_id][:dropdown_options] = []
                         terminology_types_array = terminology_types.split(/\s*,\s*/)
 
                         options_found = false
@@ -524,7 +532,7 @@ module ConceptConcern
                             # if there are options for this terminology type add the to the column's options variable and set the found flag
                             if extended_type_options != nil
 
-                                field_info[column_id][:dropdown_options].concat(extended_type_options)
+                                sememe_details[:field_info][column_id][:dropdown_options].concat(extended_type_options)
                                 options_found = true
                             end
                         }
@@ -533,35 +541,46 @@ module ConceptConcern
                         if options_found
 
                             # add a modifier to the column ID so that our custom column properties we are adding here don't cross over to other fields with the same label
-                            field_info[column_id + '_EXTENDED'] = field_info.delete(column_id)
+                            sememe_details[:field_info][column_id + '_EXTENDED'] = sememe_details[:field_info].delete(column_id)
                             column_id += '_EXTENDED'
-                            field_info[column_id][:column_id] += '_EXTENDED'
-                            field_info[column_id][:column_display] = 'dropdown'
+                            sememe_details[:field_info][column_id][:column_id] += '_EXTENDED'
+                            sememe_details[:field_info][column_id][:column_display] = 'dropdown'
                         else
-                            field_info[column_id][:column_display] = 'text'
+                            sememe_details[:field_info][column_id][:column_display] = 'text'
                         end
 
                     else
-                        field_info[column_id][:column_display] = 'text'
+                        sememe_details[:field_info][column_id][:column_display] = 'text'
                     end
 
                     # if we are auto generating VHAT IDs and this is one of them then generate the IDs, otherwise there is no data
                     if generated_vuid != false && user_session(UserSession::USER_PREFERENCES)[:generate_vuid] == 'true' && session[:komet_vhat_ids].include?(assemblage_id)
 
                         if generated_vuid == nil
+
                             generated_vuid = request_vuids
+
+                            # if the return has a property named startInclusive then everything was fine. If not an error occurred and should be passed along in the results
+                            if generated_vuid.respond_to?('startInclusive')
+                                generated_vuid = generated_vuid.startInclusive
+                            else
+
+                                sememe_details[:data][:error] = generated_vuid[:error]
+                                sememe_details[:errors] << generated_vuid[:error]
+                                generated_vuid = ''
+                            end
                         end
 
-                        data_row[:columns][column_id] = {data: generated_vuid, display: ''}
+                        sememe_details[:data][:columns][column_id] = {data: generated_vuid, display: ''}
                     else
-                        data_row[:columns][column_id] = {}
+                        sememe_details[:data][:columns][column_id] = {}
                     end
 
                 end
             }
         end
 
-        return {data: data_row, field_info: field_info}
+        return sememe_details
     end
 
     ##
@@ -581,6 +600,7 @@ module ConceptConcern
         data_rows = []
         refset_rows = []
         generated_vuid = nil
+        errors = []
 
         # iterate over the array of sememes returned
         sememes.each do |sememe|
@@ -594,7 +614,10 @@ module ConceptConcern
                 # use the assemblage to do a sememe_sememeDefinition call to get the columns that sememe has.
                 sememe_definition = SememeRest.get_sememe(action: SememeRestActions::ACTION_SEMEME_DEFINITION, uuid_or_id: assemblage_id, additional_req_params: additional_req_params)
 
+                # if there was an error then return that information
                 if sememe_definition.is_a? CommonRest::UnexpectedResponse
+
+                    errors << 'There was an error trying to create the property for UUID ' + assemblage_id
                     next
                 end
 
@@ -738,7 +761,15 @@ module ConceptConcern
 
                         # if a vuid hasn't already been generated then generate one
                         if generated_vuid == nil
-                            generated_vuid = request_vuids
+
+                            # if the return has a property named startInclusive then everything was fine. If not an error occurred and should be passed along in the results
+                            if generated_vuid.respond_to?('startInclusive')
+                                generated_vuid = generated_vuid.startInclusive
+                            else
+
+                                data_row[:error] = generated_vuid[:error]
+                                generated_vuid = ''
+                            end
                         end
 
                         column_data = {data: generated_vuid, display: ''}
@@ -773,7 +804,7 @@ module ConceptConcern
         # add any refsets to the array of return rows
         data_rows.concat(refset_rows)
 
-        return {data_rows: data_rows, used_column_list: used_column_list, used_column_hash: used_column_hash }
+        return {data_rows: data_rows, used_column_list: used_column_list, used_column_hash: used_column_hash, errors: errors}
 
     end
 
@@ -1043,18 +1074,21 @@ module ConceptConcern
     # @return [object] a hash that contains an array of all the columns to be displayed and an array of all the sememes, and a string containing the generated vuid
     def generate_vhat_properties(generate_ids = true)
 
-        vhat_properties = {field_info: {}, data: []}
+        vhat_properties = {field_info: {}, data: [], errors: []}
+        vuid_error = nil
 
         # generate a vuid to use
         if generate_ids
 
             generated_vuid = request_vuids
 
+            # if the return has a property named startInclusive then everything was fine. If not an error occurred and should be passed along in the results
             if generated_vuid.respond_to?('startInclusive')
                 generated_vuid = generated_vuid.startInclusive
             else
 
-                vhat_properties[:error] = 'Error getting VUID from server: ' + generated_vuid.conciseMessage
+                vuid_error = generated_vuid[:error]
+                vhat_properties[:errors] << vuid_error
                 generated_vuid = ''
             end
         else
@@ -1067,14 +1101,21 @@ module ConceptConcern
 
             new_property = get_sememe_definition_details(id, session[:edit_view_params], generated_vuid)
             vhat_properties[:field_info].merge!(new_property[:field_info])
+
+            # if there was an error generating the vuid include it with the data row
+            if vuid_error != nil
+                new_property[:data][:error] = vuid_error
+            end
+
             vhat_properties[:data] << new_property[:data]
+            vhat_properties[:errors].concat(new_property[:errors])
         }
 
         return vhat_properties
     end
 
     ##
-    # generate_vuid - get a VUID from the rest server
+    # request_vuids - get a VUID from the rest server
     # @return [object] the generated vuids
     def request_vuids(number_of_vuids = 1, reason = 'KOMET Request')
 
@@ -1082,9 +1123,9 @@ module ConceptConcern
 
         if vuids.is_a? CommonRest::UnexpectedResponse
 
-            message = 'Error getting VUID from server: ' + vuids.rest_exception.conciseMessage
-            $log.error(message)
-            vuids = message
+            error = 'Error getting VUID from server: ' + vuids.rest_exception.conciseMessage
+            $log.error(error)
+            vuids = {error: error}
         end
 
         return vuids

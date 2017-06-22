@@ -8,9 +8,7 @@
   <%= include_gon %>
   <%= proxy_sensitive(stylesheet_link_tag('application', media: 'all', 'data-turbolinks-track' => true)) %>
   <%= proxy_sensitive(javascript_include_tag('application', 'data-turbolinks-track' => true)) %>
-
   <%= csrf_meta_tags %>
-
 </head>
 <body class="<%= controller_name %> <%= action_name %>">
 <header>
