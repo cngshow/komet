@@ -109,7 +109,7 @@ var VUIDRequest = (function () {
                                 exportButton.removeClass("hide");
 
                             } else {
-                                tableString = UIHelper.generatePageMessage(data)
+                                tableString = UIHelper.generatePageMessage(data.error)
                             }
 
                             // display the results
