@@ -15,7 +15,7 @@ var VUIDRequest = (function () {
             + '<div class="komet-row"><label for="komet_vuid_request_reason">Reason for Request:</label><textarea id="komet_vuid_request_reason" name="reason" class="form-control"></textarea></div>'
             + '<button type="submit" class="btn btn-primary form-control" id="komet_vuid_request_submit">Generate VUIDs</button></form><hr>'
             + '<button type="button" class="btn btn-default form-control hide" id="komet_vuid_request_export" onclick="VUIDRequest.exportVUIDs()">Export</button>'
-            + '<div id="komet_vuid_request_table"><div class="komet-row komet-table-header"><div class="komet-vuid-request-table-vuid">VUID</div>'
+            + '<div id="komet_vuid_request_range_display"></div><div id="komet_vuid_request_table"><div class="komet-row komet-table-header"><div class="komet-vuid-request-table-vuid">VUID</div>'
             + '</div><div id="komet_vuid_request_table_body" class="komet-table-body"></div><div id="komet_vuid_request_export_grid" class="hide"></div></div>';
 
         var dialogID = "komet_vuid_request_dialog";
@@ -47,9 +47,9 @@ var VUIDRequest = (function () {
                     var errors = false;
 
                     // check to see if the request number is a valid number and generate an error message if it isn't
-                    if (request_number.val() < 1 ){
+                    if (request_number.val() < 1 || request_number.val() > 999){
 
-                        request_number.before(UIHelper.generatePageMessage("The 'Number of VUIDs' field must be a valid number greater then 0."));
+                        request_number.before(UIHelper.generatePageMessage("The 'Number of VUIDs' field must be a valid number greater then 0 and less then 1000."));
                         errors = true;
                     }
 
@@ -79,6 +79,8 @@ var VUIDRequest = (function () {
 
                             // if the return has startInclusive then loop thru the start and end numbers and generate a row for each. Otherwise an error occurred and display that
                             if (data.hasOwnProperty("startInclusive")){
+
+                                $("#komet_vuid_request_range_display").html("<b>Displaying VUIDs " + data.startInclusive + " through " + data.endInclusive + "</b>");
 
                                 // if real vuids are being generated (non-negative numbers) then loop forward, otherwise loop backward
                                 if (data.startInclusive > 0){

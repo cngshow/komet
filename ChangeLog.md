@@ -4,7 +4,8 @@ This changelog summarizes changes and fixes which are a part of each revision.  
 where provided, and the git commit history.
 
 * 2017/06/?? - 4.12 - PENDING
-    *
+    * Fixed Generate VUID error display, added VUID request upper limit, and displaying request range
+    * Updated react-on-rails install documentation
 
 * 2017/06/22 - 4.11
     * XML export added.
