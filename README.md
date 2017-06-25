@@ -115,25 +115,25 @@ set REST_CACHE_SIZE = 1000
 
 **Installing react_on_rails:**
 **Installing**
-    1. install yarn (https://yarnpkg.com/en/docs/install)
-    2. restart rubymine after yarn install
-	1. Make sure below exist
-		* root/client(directory)
-		* root/package.json
-		* root/Procfile.dev
-		* config/initializers/react_on_rails.rb
-	2. bundle install
-	3. cd client && npm install (from root)
-			*This installs dependencies on node_modules
+    1. Install yarn (https://yarnpkg.com/en/docs/install)
+    2. Restart rubymine after yarn install
+		3. Make sure below exist
+			* root/client(directory)
+			* root/client/package.json
+			* root/Procfile.dev
+			* config/initializers/react_on_rails.rb
+	  4. cd client && yarn ( from root)
+			* This installs dependencies on node_modules with versions listed in yarn.lock
+		5. yarn.lock needs to be in source control for correct version installs.
 **development**
 	1. if working with react
-		1. run command in Procfile.dev. This turns on webpack watch that builds and updates bundle.
+		* run command in Procfile.dev. This turns on webpack watch that builds and updates bundle.
 			sh -c 'rm app/assets/webpack/* || true && cd client && bundle exec rake react_on_rails:locale && yarn run build:development'
-		2. start rails serverrun rails s (from command line run rails s, or start from rubymine)
+		* start rails server
 	2. if not working with react
 		1. rake react_on_rails:assets:webpack (generates webpack bundle and makes sure it has latest changes)
-		2. start rails serverrun rails s (from command line run rails s, or start from rubymine)
+		2. start server 
 **Production**
+	*This step should already be automated when building for deployment.
 	1. rake react_on_rails:assets:webpack (generates app/assets/webpack/webpack-bundle.js)
-	2. rake assets:precompile(builds into public/assets including webpack bundle)
-
+	2. rake assets:precompile will build webpack bundle with rails assets into public dir
