@@ -1077,17 +1077,20 @@ td.komet-concept-table-nested-indicator.komet-concept-table-nested-indicator-ope
     color: red;
     cursor: pointer;
 }
-.komet-concept-edit .komet-containing-block{
+.komet-concept-edit div.komet-containing-block{
     flex-wrap: wrap;
     flex: 1 1 auto;
+
 }
 .komet-concept-edit .komet-containing-block > div.komet-show-on-view{
+
+}
+.komet-concept-edit .komet-containing-block > div{
+    flex: 0 0 33%;
+    flex-wrap: nowrap;
     display: flex;
     margin-right: 5px;
     font-size: small;
-}
-.komet-concept-edit .komet-containing-block > div.komet-show-on-view{
-    flex: 0 0 25%;
 }
 .komet-concept-edit .komet-containing-block > div.komet-show-on-view b{
     margin-right: 5px;
@@ -1128,7 +1131,7 @@ td.komet-concept-table-nested-indicator.komet-concept-table-nested-indicator-ope
 .komet-concept-description-dialect-section{
     margin-bottom: 8px;
 }
-.komet-concept-edit-description-properties-row, .komet-concept-edit-description-dialect-row, .komet-concept-edit-concept-properties-row{
+.komet-concept-edit-description-properties-row, .komet-concept-edit-description-dialect-row, .komet-concept-edit-concept-properties-row, .komet-concept-edit-association-row{
     flex-wrap: nowrap;
 }
 .komet-concept-edit-description-properties-row .input-group, .komet-concept-edit-description-dialect-row .input-group, .komet-concept-edit-concept-properties-row .input-group{

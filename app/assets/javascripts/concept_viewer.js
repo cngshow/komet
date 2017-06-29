@@ -42,10 +42,13 @@ ConceptViewer.prototype.initConcept = function(currentConceptID, viewerAction, t
     this.showDescriptionType = true;
     this.showExtendedDescriptionType = true;
     this.showDialects = true;
+    this.showLanguage = true;
+    this.showCaseSensitivity = true;
     this.isVHAT = true;
     this.descriptionLabel = "Description";
     this.associationLabel = "Association";
     this.descriptionRefsetLabel = "Resfset";
+    this.componentsToHideStamp = '';
 
     if (this.terminology_types != null) {
         this.setTerminologySpecificSettings(this.terminology_types);
@@ -62,6 +65,9 @@ ConceptViewer.prototype.setTerminologySpecificSettings = function (terminology_t
     this.isVHAT = false;
     this.showDescriptionType = true;
     this.showExtendedDescriptionType = true;
+    this.showLanguage = true;
+    this.showCaseSensitivity = true;
+    this.componentsToHideStamp = '';
 
     var definedSection = $("#komet_concept_defined_section_label_" + this.viewerID);
     definedSection.removeClass("hide");
@@ -93,6 +99,8 @@ ConceptViewer.prototype.setTerminologySpecificSettings = function (terminology_t
         // don't show the description type field or dialect section
         this.showDescriptionType = false;
         this.showDialects = false;
+        this.showLanguage = false;
+        this.showCaseSensitivity = false;
 
         // set VHAT specific labels
         this.descriptionLabel = "Designation";
@@ -101,6 +109,9 @@ ConceptViewer.prototype.setTerminologySpecificSettings = function (terminology_t
 
         // hide the primitive/defined section
         definedSection.addClass("hide");
+
+        // add a list of components to hide STAMP information
+        this.componentsToHideStamp = gon.IsaacMetadataAuxiliary.VUID.uuids[0].uuid + "," + gon.IsaacMetadataAuxiliary.CODE.uuids[0].uuid;
     }
 
     // apply the static labels
@@ -918,6 +929,7 @@ ConceptViewer.prototype.editConcept = function(attributes, conceptProperties, de
 ConceptViewer.prototype.createPropertyRowString = function (idPrefix, namePrefix, propertyType, rowData, fieldInfo, labelPrefix) {
 
     var rowString = '';
+    var hideStampClass = '';
     var rowID = 'komet_concept_edit_properties_row' + idPrefix + rowData.sememe_instance_id + '_' + this.viewerID;
     idPrefix = 'komet_concept_edit_properties_' + idPrefix + rowData.sememe_instance_id + '_';
     namePrefix += "[properties][" + rowData.sememe_instance_id + "]";
@@ -982,11 +994,24 @@ ConceptViewer.prototype.createPropertyRowString = function (idPrefix, namePrefix
 
     }.bind(this));
 
+    // determine if we should hide all STAMP information
+    if (this.componentsToHideStamp.indexOf(rowData.sememe_definition_id) >= 0){
+        hideStampClass = ' hide';
+    }
+
     // add the edit version of the state field
-    rowString +=  '<div class="komet-show-on-edit">' + this.createSelectField(idPrefix + "state_" + this.viewerID, namePrefix + "[state]", this.selectFieldOptions.state, rowData.state, labelPrefix + "state") + '</div>';
+    rowString +=  '<div class="komet-show-on-edit komet-stamp' + hideStampClass + '">' + this.createSelectField(idPrefix + "state_" + this.viewerID, namePrefix + "[state]", this.selectFieldOptions.state, rowData.state, labelPrefix + "state") + '</div>';
 
     // add the view version of the state field and the rest of the stamp data
-    rowString += '<div class="komet-show-on-view komet_stamp"><b></b>' + rowData.state + '</div>';
+    rowString += '<div class="komet-show-on-view komet_stamp' + hideStampClass + '"><b></b>' + rowData.state + '</div>';
+
+    // if the time field exists on the row data then show the rest of the STAMP information
+    if (rowData.hasOwnProperty("time") && hideStampClass == '') {
+
+        rowString += '<div class="komet-stamp">Time: ' + rowData.time + '</div>'
+            + '<div class="komet-stamp">Author: ' + rowData.author + '</div>'
+            + '<div class="komet-stamp">Module: ' + rowData.module + '</div>';
+    }
 
     // close the containing block
     rowString += '</div>';
@@ -1011,6 +1036,9 @@ ConceptViewer.prototype.createDescriptionRowString = function (rowData) {
     var extendedDescriptionTypeText = "";
     var text = "";
     var state = "";
+    var time = "";
+    var author = "";
+    var module = "";
     var language = "";
     var languageShort = "";
     var caseSignificance = "";
@@ -1027,6 +1055,9 @@ ConceptViewer.prototype.createDescriptionRowString = function (rowData) {
         extendedDescriptionTypeText = rowData.description_type;
         text = rowData.text;
         state = rowData.attributes[0].state;
+        time = rowData.attributes[0].time;
+        author = rowData.attributes[0].author;
+        module = rowData.attributes[0].module;
         language = rowData.language_id;
         languageShort = rowData.language_short;
         caseSignificance = rowData.case_significance_id;
@@ -1065,27 +1096,42 @@ ConceptViewer.prototype.createDescriptionRowString = function (rowData) {
         rowString += '<div class="komet-show-on-edit">' + this.createSelectField(descriptionID + "_extended_description_type_" + this.viewerID, namePrefix + "[extended_description_type]", this.extendedDescriptionTypeOptions, extendedDescriptionTypeID, "Extended " + this.descriptionLabel + " Type", null, true) + '</div>';
         rowString += '<div class="komet-show-on-view">' + this.getExtendedDescriptionTypeText(extendedDescriptionTypeID) + '</div>';
     } else {
-        rowString += '<input type="hidden" id="' + descriptionID + '_extended_description_type_' + this.viewerID + '" name="' + namePrefix + '[extended_description_type]" value="' + extendedDescriptionTypeID + '" aria-label="Extended ' + this.descriptionLabel + ' Type">'
+        rowString += '<input type="hidden" name="' + namePrefix + '[extended_description_type]" value="' + extendedDescriptionTypeID + '">'
     }
 
-    rowString += '<div class="komet-show-on-edit"><input type="text" id="komet_concept_edit_description_text_' + descriptionID + '_' + this.viewerID + '" name="' + namePrefix + '[text]" value="' + text + '" class="form-control komet_concept_edit_description_text" aria-label="' + this.descriptionLabel + ' Value" placeholder="' + this.descriptionLabel + ' Text"></div>';
-    rowString += '<div class="komet-show-on-view"><b>' + text + '</b></div>';
+    rowString += '<div class="komet-show-on-edit"><input type="text" id="komet_concept_edit_description_text_' + descriptionID + '_' + this.viewerID + '" name="' + namePrefix + '[text]" value="' + text + '" class="form-control komet_concept_edit_description_text" aria-label="' + this.descriptionLabel + ' Value" placeholder="' + this.descriptionLabel + ' Text"></div>'
+        + '<div class="komet-show-on-view"><b>' + text + '</b></div>'
+        + '<div><b>UUID: </b>' + descriptionID + '</div>';
 
-    rowString += '<div class="komet-show-on-edit">' + this.createSelectField(descriptionID + "_description_language_" + this.viewerID, namePrefix + "[description_language]", this.selectFieldOptions.language, language, this.descriptionLabel + " Language") + '</div>';
-    rowString += '<div class="komet-show-on-view">' + languageShort + '</div>';
+    if (this.showLanguage) {
+        rowString += '<div class="komet-show-on-edit">' + this.createSelectField(descriptionID + "_description_language_" + this.viewerID, namePrefix + "[description_language]", this.selectFieldOptions.language, language, this.descriptionLabel + " Language") + '</div>';
+        rowString += '<div class="komet-show-on-view">' + languageShort + '</div>';
+    }
 
-    rowString += '<div class="komet-show-on-edit">' + this.createSelectField(descriptionID + "_description_case_significance_" + this.viewerID, namePrefix + "[description_case_significance]", this.selectFieldOptions.caseSignificance, caseSignificance, this.descriptionLabel + " Case Significance") + '</div>';
+    if (this.showCaseSensitivity) {
+        rowString += '<div class="komet-show-on-edit">' + this.createSelectField(descriptionID + "_description_case_significance_" + this.viewerID, namePrefix + "[description_case_significance]", this.selectFieldOptions.caseSignificance, caseSignificance, this.descriptionLabel + " Case Significance") + '</div>';
 
-    if (caseSignificanceShort == 'true'){
-        rowString += '<div class="komet-show-on-view"><span class="glyphicon glyphicon-text-size" title="' + caseSignificanceText + '"></span></div>';
+        if (caseSignificanceShort == 'true') {
+            rowString += '<div class="komet-show-on-view"><span class="glyphicon glyphicon-text-size" title="' + caseSignificanceText + '"></span></div>';
+        } else {
+            rowString += '<div class="komet-show-on-view"><span class="komet-icon-stack" title="' + caseSignificanceText + '"><span class="glyphicon glyphicon-text-size komet-icon-stack-base"></span><span class="glyphicon glyphicon-ban-circle"></span></span></div>';
+        }
     } else {
-        rowString += '<div class="komet-show-on-view"><span class="komet-icon-stack" title="' + caseSignificanceText + '"><span class="glyphicon glyphicon-text-size komet-icon-stack-base"></span><span class="glyphicon glyphicon-ban-circle"></span></span></div>';
+        rowString += '<input type="hidden" name="' + namePrefix + '[description_case_significance]" value="' + caseSignificance + '">'
     }
 
     rowString += '<div class="komet-show-on-edit">' + this.createSelectField(descriptionID + "_description_state_" + this.viewerID, namePrefix + "[description_state]", this.selectFieldOptions.state, state, this.descriptionLabel + " State") + '</div>';
-    rowString += '<div class="komet-show-on-view">' + state + '</div>';
+
+    // if this is not a new description show the rest of the STAMP data
+    if (!isNew) {
+
+        rowString += '<div class="komet-stamp">Time: ' + time + '</div>'
+            + '<div class="komet-stamp">Author: ' + author + '</div>'
+            + '<div class="komet-stamp">Module: ' + module + '</div>';
+    }
 
     if (isNew){
+
         rowString += '<div class="komet-concept-edit-row-tools">'
             + '<button type="button" class="komet-link-button" onclick="WindowManager.viewers[' + this.viewerID + '].removeItemRow(\'' + descriptionID + '\', \'' + rowID + '\', \'' + this.descriptionLabel.toLowerCase() + '\', ' + isNew + ', this)" title="Remove row" aria-label="Remove row">'
             + '<div class="glyphicon glyphicon-remove"></div></button></div>';
@@ -1218,6 +1264,9 @@ ConceptViewer.prototype.createAssociationRowString = function (rowData) {
     var typeID = "";
     var typeText = "";
     var state = "";
+    var time = "";
+    var author = "";
+    var module = "";
     var targetID = "";
     var targetText = "";
     var targetTerminologyTypes = "";
@@ -1231,6 +1280,9 @@ ConceptViewer.prototype.createAssociationRowString = function (rowData) {
         typeDisplay = '<span class="komet-concept-edit-association-type"><input type="hidden" name="associations[' + associationID + '][association_type]" value="' + rowData.type_id + '">'
             + '<b>' + typeText + '</b></span>';
         state = rowData.state;
+        time = rowData.time;
+        author = rowData.author;
+        module = rowData.module;
 
         if (rowData.target_id){
 
@@ -1250,8 +1302,11 @@ ConceptViewer.prototype.createAssociationRowString = function (rowData) {
     var rowID = "komet_concept_association_row_" + associationID + "_" + this.viewerID;
 
     rowString += '<div id="' + rowID + '" class="komet-concept-edit-row komet-concept-edit-association-row komet-changeable">'
-        + '<div>' + typeDisplay + '</div>'
-        + '<div class="komet-show-on-edit"><autosuggest id-base="komet_concept_edit_association_value_' + associationID + '" '
+        + '<div>' + typeDisplay + '</div>';
+
+    rowString += '<div class="komet-containing-block">';
+
+    rowString += '<div class="komet-show-on-edit"><autosuggest id-base="komet_concept_edit_association_value_' + associationID + '" '
         + 'id-postfix="_' + this.viewerID + '" '
         + 'label="' + typeText + ' ' + this.associationLabel + ' Value" '
         + 'label-display="placeholder" '
@@ -1263,9 +1318,21 @@ ConceptViewer.prototype.createAssociationRowString = function (rowData) {
         + 'terminology-types="' + targetTerminologyTypes + '" '
         + 'classes="komet-concept-edit-association-value">'
         + '</autosuggest></div>'
-        + '<div class="komet-show-on-view">' + targetText + '</div>'
-        + '<div class="komet-show-on-edit">' + this.createSelectField(associationID + "_association_state_" + this.viewerID, "associations[" + associationID + "][association_state]", this.selectFieldOptions.state, state, typeText + " " + this.associationLabel + " State") + '</div>'
+        + '<div class="komet-show-on-view">' + targetText + '</div>';
+
+    rowString += '<div class="komet-show-on-edit">' + this.createSelectField(associationID + "_association_state_" + this.viewerID, "associations[" + associationID + "][association_state]", this.selectFieldOptions.state, state, typeText + " " + this.associationLabel + " State") + '</div>'
         + '<div class="komet-show-on-view komet_stamp"><b></b>' + state + '</div>';
+
+    // if this is not a new description show the rest of the STAMP data
+    if (!isNew) {
+
+        rowString += '<div class="komet-stamp">Time: ' + time + '</div>'
+            + '<div class="komet-stamp">Author: ' + author + '</div>'
+            + '<div class="komet-stamp">Module: ' + module + '</div>';
+    }
+
+    // close the containing block
+    rowString += '</div>';
 
     if (isNew){
         rowString += '<div class="komet-concept-edit-row-tools">'
@@ -1626,17 +1693,14 @@ ConceptViewer.prototype.validateEditForm = function () {
     //var description = $("#komet_create_concept_description_" + this.viewerID);
     var hasErrors = false;
 
-    //if (parent.val() == undefined || parent.val() == ""){
-    //
-    //    $("#komet_create_concept_parent_fields_" + this.viewerID).after(UIHelper.generatePageMessage("The Parent field must be filled in."));
-    //    hasErrors = true;
-    //}
-    //
-    //if (description.val() == undefined || description.val() == ""){
-    //
-    //    description.after(UIHelper.generatePageMessage("The Description field must be filled in."));
-    //    hasErrors = true;
-    //}
+    $("#komet_concept_editor_section_" + this.viewerID).find("input:not(:button):not([type=hidden])").each(function(index){
+
+        if (this.value == ""){
+
+            hasErrors = true;
+            $(this).closest("div").before(UIHelper.generatePageMessage("No value may be blank."));
+        }
+    });
 
     return hasErrors;
 };
