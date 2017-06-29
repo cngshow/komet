@@ -288,7 +288,7 @@ module ConceptConcern
             # process nested properties
             if description.nestedSememes.length > 0
 
-                nested_properties = process_attached_sememes(view_params, description.nestedSememes, [], {}, 1, clone)
+                nested_properties = process_attached_sememes(view_params, description.nestedSememes, [], {}, 1, clone, @concept_terminology_types, uuid)
                 description_info[:nested_properties] = {field_info: nested_properties[:used_column_hash], data: nested_properties[:data_rows]}
                 errors.concat(nested_properties[:errors])
             end
@@ -353,7 +353,7 @@ module ConceptConcern
             association_module = get_concept_metadata(association.associationItemStamp.moduleUUID, view_params)
             path = get_concept_metadata(association.associationItemStamp.pathUUID, view_params)
 
-            return_associations << {id: id, type_id: type_id, type_text: type_text, target_id: target_id, target_text: target_text, target_taxonomy_type: target_taxonomy_types, state: state, time: time, author: author, association_module: association_module, path: path}
+            return_associations << {id: id, type_id: type_id, type_text: type_text, target_id: target_id, target_text: target_text, target_taxonomy_type: target_taxonomy_types, state: state, time: time, author: author, module: association_module, path: path}
         end
 
         return return_associations
@@ -396,7 +396,7 @@ module ConceptConcern
 
         sememes = SememeRest.get_sememe(action: SememeRestActions::ACTION_BY_REFERENCED_COMPONENT, uuid_or_id: uuid, additional_req_params: {coordToken: coordinates_token, expand: 'chronology,nestedSememes'}.merge!(view_params))
 
-        display_data = process_attached_sememes(view_params, sememes, [], {}, 1, clone)
+        display_data = process_attached_sememes(view_params, sememes, [], {}, 1, clone, @concept_terminology_types, uuid)
 
         return {columns: display_data[:used_column_list], rows: display_data[:data_rows], field_info: display_data[:used_column_hash]}
 
@@ -461,7 +461,7 @@ module ConceptConcern
     # @param [Object] view_params - various parameters related to the view filters the user wants to apply - see full definition comment at top of komet_dashboard_controller file
     # @param [String] terminology_types - A comma seperated string of terminology type IDs. Optional, defaults to the instance variable @concept_terminology_types
     # @return [object] a RestSememeVersion object
-    def get_sememe_definition_details(uuid, view_params = {}, generated_vuid = nil, terminology_types = nil)
+    def get_sememe_definition_details(uuid, view_params = {}, generated_vuid = nil, terminology_types = nil, concept_id = nil)
 
         coordinates_token = session[:coordinates_token].token
         additional_req_params = {coordToken: coordinates_token}
@@ -558,7 +558,7 @@ module ConceptConcern
 
                         if generated_vuid == nil
 
-                            generated_vuid = request_vuids
+                            generated_vuid = request_vuids(1, 'Terminology Editor Request')
 
                             # if the return has a property named startInclusive then everything was fine. If not an error occurred and should be passed along in the results
                             if generated_vuid.respond_to?('startInclusive')
@@ -593,7 +593,7 @@ module ConceptConcern
     # @param [Boolean] clone - Are we cloning a concept, if so we will replace the sememe IDs with placeholders. Optional, defaults to false
     # @param [String] terminology_types - A comma seperated string of terminology type IDs. Optional, defaults to the instance variable @concept_terminology_types
     # @return [object] a hash that contains an array of all the columns to be displayed and an array of all the data
-    def process_attached_sememes(view_params, sememes, used_column_list, used_column_hash, level, clone = false, terminology_types = @concept_terminology_types)
+    def process_attached_sememes(view_params, sememes, used_column_list, used_column_hash, level, clone = false, terminology_types = @concept_terminology_types, concept_id = nil)
 
         additional_req_params = {coordToken: session[:coordinates_token].token}
         additional_req_params.merge!(view_params)
@@ -632,8 +632,27 @@ module ConceptConcern
                     has_nested = true
                 end
 
+                state = sememe.sememeVersion.state.enumName
+                time = DateTime.strptime((sememe.sememeVersion.time / 1000).to_s, '%s').strftime('%m/%d/%Y')
+                author = get_concept_metadata(sememe.sememeVersion.authorUUID, view_params)
+                sememe_module = get_concept_metadata(sememe.sememeVersion.moduleUUID, view_params)
+                path = get_concept_metadata(sememe.sememeVersion.pathUUID, view_params)
+
                 # start loading the row of sememe data with everything besides the data columns
-                data_row = {sememe_name: sememe_definition.assemblageConceptDescription, sememe_description: sememe_definition.sememeUsageDescription, sememe_instance_id: sememe_instance_id, sememe_definition_id: assemblage_id, state: sememe.sememeVersion.state.enumName, level: level, has_nested: has_nested, columns: {}}
+                data_row = {
+                    sememe_name: sememe_definition.assemblageConceptDescription,
+                    sememe_description: sememe_definition.sememeUsageDescription,
+                    sememe_instance_id: sememe_instance_id,
+                    sememe_definition_id: assemblage_id,
+                    state: state,
+                    time: time,
+                    author: author,
+                    module: sememe_module,
+                    path: path,
+                    level: level,
+                    has_nested: has_nested,
+                    columns: {}
+                }
 
                 # loop through all of the sememe's data columns
                 sememe_definition.columnInfo.each{ |row_column|
@@ -762,6 +781,8 @@ module ConceptConcern
                         # if a vuid hasn't already been generated then generate one
                         if generated_vuid == nil
 
+                            generated_vuid = request_vuids(1, 'Terminology Editor Request')
+
                             # if the return has a property named startInclusive then everything was fine. If not an error occurred and should be passed along in the results
                             if generated_vuid.respond_to?('startInclusive')
                                 generated_vuid = generated_vuid.startInclusive
@@ -785,7 +806,7 @@ module ConceptConcern
             if has_nested
 
                 sememes = sememe.nestedSememes
-                nested_sememe_data = process_attached_sememes(view_params, sememes, used_column_list, used_column_hash, level + 1, clone)
+                nested_sememe_data = process_attached_sememes(view_params, sememes, used_column_list, used_column_hash, level + 1, clone, terminology_types, concept_id)
 
                 data_row[:nested_rows] = nested_sememe_data[:data_rows]
 
@@ -1072,7 +1093,7 @@ module ConceptConcern
     ##
     # generate_vhat_ids - auto generate VHAT ID properties
     # @return [object] a hash that contains an array of all the columns to be displayed and an array of all the sememes, and a string containing the generated vuid
-    def generate_vhat_properties(generate_ids = true)
+    def generate_vhat_properties(generate_ids = true, request_reason = nil)
 
         vhat_properties = {field_info: {}, data: [], errors: []}
         vuid_error = nil
@@ -1117,7 +1138,7 @@ module ConceptConcern
     ##
     # request_vuids - get a VUID from the rest server
     # @return [object] the generated vuids
-    def request_vuids(number_of_vuids = 1, reason = 'KOMET Request')
+    def request_vuids(number_of_vuids = 1, reason = 'Terminology Editor Request')
 
         vuids = VuidRest.get_vuid_api(action: VuidRestActions::ACTION_ALLOCATE, additional_req_params: {blockSize: number_of_vuids, reason: reason, ssoToken: get_user_token})
 
