@@ -3,10 +3,10 @@ Komet Changelog
 This changelog summarizes changes and fixes which are a part of each revision.  For more details on the fixes, refer tracking numbers 
 where provided, and the git commit history.
 
-* 2017/06/?? - 4.13 - PENDING
+* 2017/06/29 - 4.13
     * Added UUID to Designations
     * added STAMP to concept, designations, properties (except VUID and Code), and relationships
-    * hid language and case sensitivity from designations
+    * Hid language and case sensitivity from designations
     * Concept editor does not allow blank input fields to be saved
 
 * 2017/06/26 - 4.12
