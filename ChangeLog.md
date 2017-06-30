@@ -4,7 +4,7 @@ This changelog summarizes changes and fixes which are a part of each revision.  
 where provided, and the git commit history.
 
 * 2017/07/?? - 4.14 - PENDING
-    *
+    * Allowed read-only role to see new concept view screen
 
 * 2017/06/29 - 4.13
     * Added UUID to Designations

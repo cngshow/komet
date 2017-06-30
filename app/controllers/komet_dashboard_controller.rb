@@ -35,7 +35,7 @@ class KometDashboardController < ApplicationController
     skip_before_action :ensure_roles, only: [:version]
     skip_after_action :verify_authorized, only: [:version]
     skip_before_action :read_only, only: [:version]
-    before_action :can_edit_concept, only: [:get_concept_create_info, :create_concept, :get_concept_edit_info, :edit_concept, :clone_concept, :change_concept_state]
+    before_action :can_edit_concept, only: [:get_concept_create_info, :create_concept, :edit_concept, :clone_concept, :change_concept_state]
 
     ##
     # load_tree_data - RESTful route for populating the taxonomy tree using an http :GET
@@ -924,8 +924,6 @@ class KometDashboardController < ApplicationController
         @acceptability_options = get_concept_children(concept_id: $isaac_metadata_auxiliary['DESCRIPTION_ACCEPTABILITY']['uuids'].first[:uuid], return_json: false, remove_semantic_tag: true, view_params: @view_params)
         @description_type_options = get_concept_children(concept_id: $isaac_metadata_auxiliary['DESCRIPTION_TYPE']['uuids'].first[:uuid], return_json: false, remove_semantic_tag: true, view_params: @view_params)
         @association_type_options = get_association_types(@view_params)
-
-
 
         # if we are cloning a concept replace the concept ID with a placeholder
         if clone
