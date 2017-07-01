@@ -295,7 +295,7 @@ class KometDashboardController < ApplicationController
                                   'data-menu-uuid' => raw_node[:id],
                                   'data-menu-state' => raw_node[:state],
                                   'data-menu-concept-text' => raw_node[:text],
-                                  'data-menu-concept-terminology-type' => raw_node[:terminology_types],
+                                  'data-menu-concept-terminology-types' => raw_node[:terminology_types],
                                   'data-menu-js-object' => params[:viewer_id],
                                   'aria-label' => raw_node[:text]
             }

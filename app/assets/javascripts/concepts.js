@@ -81,7 +81,7 @@ var ConceptsModule = (function () {
 
                 restParameters.parent_id = params.parentID;
                 restParameters.parent_text = params.parentText;
-                restParameters.parent_type = params.parentType;
+                restParameters.parent_terminology_types = params.parentTerminologyTypes;
             }
         }
         else if (viewerAction == EDIT || viewerAction == CLONE) {

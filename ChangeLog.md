@@ -6,6 +6,7 @@ where provided, and the git commit history.
 * 2017/07/?? - 4.14 - PENDING
     * Allowed read-only role to see new concept view screen
     * Fixed error message display on concept properties
+    * Fixed passing of terminology types when creating a child concept
 
 * 2017/06/29 - 4.13
     * Added UUID to Designations

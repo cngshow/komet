@@ -573,7 +573,7 @@ ConceptViewer.prototype.createConcept = function() {
     conceptViewer.on( 'unsavedCheck', function(event){
 
         var changed = UIHelper.hasFormChanged(editorSection, false, false);
-        var shouldStay = false
+        var shouldStay = false;
 
         if (changed){
             shouldStay = !confirm("You have unsaved changes. Are you sure you want to leave this page?");
@@ -585,6 +585,10 @@ ConceptViewer.prototype.createConcept = function() {
     UIHelper.processAutoSuggestTags("#komet_concept_associations_panel_" + this.viewerID);
 
     var parentField = $("#komet_create_concept_parent_display_" + this.viewerID);
+
+    if (parentField.val() != ""){
+        //this.conceptEditorParentOnChange();
+    }
 
     // TODO - clean up the calling of onchange function to autosuggest field. Do not need to pass function name into tag, remove code from UIHelper and HTML. convert this to anonymous function inside timeout.
     parentField.change(function(){
