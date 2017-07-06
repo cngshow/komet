@@ -573,7 +573,7 @@ ConceptViewer.prototype.createConcept = function() {
     conceptViewer.on( 'unsavedCheck', function(event){
 
         var changed = UIHelper.hasFormChanged(editorSection, false, false);
-        var shouldStay = false
+        var shouldStay = false;
 
         if (changed){
             shouldStay = !confirm("You have unsaved changes. Are you sure you want to leave this page?");
@@ -585,6 +585,10 @@ ConceptViewer.prototype.createConcept = function() {
     UIHelper.processAutoSuggestTags("#komet_concept_associations_panel_" + this.viewerID);
 
     var parentField = $("#komet_create_concept_parent_display_" + this.viewerID);
+
+    if (parentField.val() != ""){
+        //this.conceptEditorParentOnChange();
+    }
 
     // TODO - clean up the calling of onchange function to autosuggest field. Do not need to pass function name into tag, remove code from UIHelper and HTML. convert this to anonymous function inside timeout.
     parentField.change(function(){
@@ -861,14 +865,14 @@ ConceptViewer.prototype.editConcept = function(attributes, conceptProperties, de
                         // replace any terminology specific labels that appear in the error messages
                         if (data.failed[i].type == "description" || data.failed[i].type == "description property"){
 
-                            errorType = errorType.replace("description", descriptionString);
+                            errorText = errorText.replace("description", descriptionString);
                             errorText = errorText.replace("Description", thisViewer.descriptionLabel);
 
                         } else if (data.failed[i].type == "association"){
-                            errorType = errorType.replace("association", associationString);
+                            //errorType = errorType.replace("association", associationString);
                         }
 
-                        errorString += '<div>' + errorType + ': ' + errorText + '</div>';
+                        errorString += '<div>' + errorText + '</div>';
 
                         if (data.failed[i].type == "concept") {
 
@@ -876,7 +880,7 @@ ConceptViewer.prototype.editConcept = function(attributes, conceptProperties, de
 
                         } else if (data.failed[i].type == "concept property") {
 
-                            editorSection.find("div[id^='komet_concept_edit_concept_properties_row_" + data.failed[i].id + "']").before(UIHelper.generatePageMessage("The following concept property was not processed."));
+                            editorSection.find("div[id^='komet_concept_edit_properties_row_" + data.failed[i].id + "']").before(UIHelper.generatePageMessage("The following concept property was not processed."));
 
                         } else if (data.failed[i].type == "description"){
 
@@ -886,7 +890,7 @@ ConceptViewer.prototype.editConcept = function(attributes, conceptProperties, de
 
                         } else if (data.failed[i].type == "description property"){
 
-                            editorSection.find("div[id^='komet_concept_edit_description_properties_row_" + data.failed[i].id + "']").before(UIHelper.generatePageMessage("The following " + descriptionString + " property was not processed."));
+                            editorSection.find("div[id^='komet_concept_edit_properties_row_" + data.failed[i].id + "']").before(UIHelper.generatePageMessage("The following " + descriptionString + " property was not processed."));
 
                         } else if (data.failed[i].type == "dialect"){
 
@@ -930,7 +934,7 @@ ConceptViewer.prototype.createPropertyRowString = function (idPrefix, namePrefix
 
     var rowString = '';
     var hideStampClass = '';
-    var rowID = 'komet_concept_edit_properties_row' + idPrefix + rowData.sememe_instance_id + '_' + this.viewerID;
+    var rowID = 'komet_concept_edit_properties_row_' + idPrefix + rowData.sememe_instance_id + '_' + this.viewerID;
     idPrefix = 'komet_concept_edit_properties_' + idPrefix + rowData.sememe_instance_id + '_';
     namePrefix += "[properties][" + rowData.sememe_instance_id + "]";
     labelPrefix += "Property Name: " + rowData.sememe_name + " ";

@@ -35,7 +35,7 @@ class KometDashboardController < ApplicationController
     skip_before_action :ensure_roles, only: [:version]
     skip_after_action :verify_authorized, only: [:version]
     skip_before_action :read_only, only: [:version]
-    before_action :can_edit_concept, only: [:get_concept_create_info, :create_concept, :get_concept_edit_info, :edit_concept, :clone_concept, :change_concept_state]
+    before_action :can_edit_concept, only: [:get_concept_create_info, :create_concept, :edit_concept, :clone_concept, :change_concept_state]
 
     ##
     # load_tree_data - RESTful route for populating the taxonomy tree using an http :GET
@@ -295,7 +295,7 @@ class KometDashboardController < ApplicationController
                                   'data-menu-uuid' => raw_node[:id],
                                   'data-menu-state' => raw_node[:state],
                                   'data-menu-concept-text' => raw_node[:text],
-                                  'data-menu-concept-terminology-type' => raw_node[:terminology_types],
+                                  'data-menu-concept-terminology-types' => raw_node[:terminology_types],
                                   'data-menu-js-object' => params[:viewer_id],
                                   'aria-label' => raw_node[:text]
             }
@@ -925,8 +925,6 @@ class KometDashboardController < ApplicationController
         @description_type_options = get_concept_children(concept_id: $isaac_metadata_auxiliary['DESCRIPTION_TYPE']['uuids'].first[:uuid], return_json: false, remove_semantic_tag: true, view_params: @view_params)
         @association_type_options = get_association_types(@view_params)
 
-
-
         # if we are cloning a concept replace the concept ID with a placeholder
         if clone
             @concept_id = get_next_id
@@ -990,7 +988,11 @@ class KometDashboardController < ApplicationController
         additional_req_params = {}
 
         # this is a lambda to be used to process sememes nested under the concept and descriptions
-        process_sememes = ->(referenced_id, sememes, type, error_text_prefix = '') {
+        process_sememes = ->(referenced_id, sememes, type, error_text_prefix = '', referenced_temp_id = nil) {
+
+            if referenced_temp_id != nil
+                referenced_id_for_error = referenced_temp_id
+            end
 
             sememes.each do |sememe_instance_id, sememe|
 
@@ -1037,7 +1039,7 @@ class KometDashboardController < ApplicationController
 
                     # if the sememe create or update failed, mark it
                     if return_value.is_a? CommonRest::UnexpectedResponse
-                        failed_writes << {id: referenced_id + '_' + sememe_instance_id, text: error_text_prefix + type + ': ' + sememe_name, type: type}
+                        failed_writes << {id: referenced_id_for_error + '_' + sememe_instance_id, text: error_text_prefix + type + ': ' + sememe_name + ': ' + return_value.rest_exception.conciseMessage, type: type}
                     end
 
                 rescue => exception
@@ -1099,9 +1101,9 @@ class KometDashboardController < ApplicationController
 
                             new_concept_id = ConceptRest::get_concept(action: ConceptRestActions::ACTION_CREATE, additional_req_params: additional_req_params, body_params: body_params )
 
-                            # if the concept create failed, break out of the loop
+                            # if the concept create failed return with a failed message
                             if new_concept_id.is_a? CommonRest::UnexpectedResponse
-                                break
+                                render json: {concept_id: concept_id, failed: [{id: concept_id, text: 'Clone Concept: The new concept was unable to be created. ' + new_concept_id.rest_exception.conciseMessage , type: 'clone'}]} and return
                             end
 
                             fsn = description
@@ -1118,7 +1120,7 @@ class KometDashboardController < ApplicationController
                 create_success = false
             end
 
-            # if the concept create did not happen, return with a failed message, otherwise copy the new concept ID into the concept_id field to continue with the edit
+            # if the concept create did not happen return with a failed message, otherwise copy the new concept ID into the concept_id field to continue with the edit
             if create_success
                 concept_id = new_concept_id.uuid
 
@@ -1133,7 +1135,7 @@ class KometDashboardController < ApplicationController
                 params[:descriptions].delete(fsn_id)
 
             else
-                render json: {concept_id: concept_id, failed: [{id: concept_id, text: 'Clone Concept: The new concept was unable to be created.' , type: 'clone'}]} and return
+                render json: {concept_id: concept_id, failed: [{id: concept_id, text: 'Clone Concept: The new concept was unable to be created.', type: 'clone'}]} and return
             end
         end
 
@@ -1154,7 +1156,7 @@ class KometDashboardController < ApplicationController
 
             # if the concept state change failed, mark it
             if return_value.is_a? CommonRest::UnexpectedResponse
-                failed_writes << {id: concept_id, text: params[:concept_state], type: 'concept'}
+                failed_writes << {id: concept_id, text: params[:concept_state] + ': ' + return_value.rest_exception.conciseMessage, type: 'concept'}
             end
         end
 
@@ -1181,6 +1183,11 @@ class KometDashboardController < ApplicationController
                     active: active
                 }
 
+                # if there is no value for case significance then add the Not Sensitive value to the params
+                if description['description_case_significance'] == ''
+                    body_params[:caseSignificanceConcept] = $isaac_metadata_auxiliary['DESCRIPTION_NOT_CASE_SENSITIVE']['uuids'].first[:uuid]
+                end
+
                 # if the description ID is a UUID, then it is an existing description to be updated, otherwise it is a new description to be created
                 if is_id?(description_id)
 
@@ -1191,7 +1198,7 @@ class KometDashboardController < ApplicationController
                     # if the description create or update failed, mark it and skip to the next description. Do not process its dialects or properties.
                     if return_value.is_a? CommonRest::UnexpectedResponse
 
-                        failed_writes << {id: description_id, text: description['text'], type: 'description'}
+                        failed_writes << {id: description_id, text: description['text'] + ': ' + return_value.rest_exception.conciseMessage, type: 'description'}
                         next
                     end
 
@@ -1224,7 +1231,7 @@ class KometDashboardController < ApplicationController
 
                             # if the dialect create or update failed, mark it.
                             if return_value.is_a? CommonRest::UnexpectedResponse
-                                failed_writes << {id: description_id + '_' + dialect_id, text: 'Description: ' + description['text'] + ' : dialect', type: 'dialect'}
+                                failed_writes << {id: description_id + '_' + dialect_id, text: 'Description: ' + description['text'] + ' : dialect' + ': ' + return_value.rest_exception.conciseMessage, type: 'dialect'}
                             end
                         end
                     end
@@ -1265,15 +1272,18 @@ class KometDashboardController < ApplicationController
                     # if the description create or update failed, mark it and skip to the next description. Do not process its properties.
                     if return_value.is_a? CommonRest::UnexpectedResponse
 
-                        failed_writes << {id: description_id, text: description['text'], type: 'description'}
+                        failed_writes << {id: description_id, text: description['text'] + ': ' + return_value.rest_exception.conciseMessage, type: 'description'}
                         next
                     end
 
+                    # store the description temp ID in case we need to display an error on the GUI which would reference it
+                    temp_description_id = description_id
                     description_id = return_value.uuid
                 end
 
+                # process the properties
                 if description[:properties]
-                    process_sememes.call(description_id, description[:properties], 'description property', 'Description: ' + description['text'] + ' : ')
+                    process_sememes.call(description_id, description[:properties], 'description property', 'Description: ' + description['text'] + ' : ', temp_description_id)
                 end
 
             end
@@ -1298,7 +1308,7 @@ class KometDashboardController < ApplicationController
                     return_value = AssociationRest::get_association(action: AssociationRestActions::ACTION_ITEM_UPDATE, uuid_or_id: association_id, additional_req_params: additional_req_params, body_params: body_params)
 
                     if return_value.is_a? CommonRest::UnexpectedResponse
-                        failed_writes << {id: association_id, text: association['target_display'], type: 'association'}
+                        failed_writes << {id: association_id, text: 'Association: ' + association['target_display'] + ': ' + return_value.rest_exception.conciseMessage, type: 'association'}
                     else
                         add_to_recents(CONCEPT_RECENTS + CONCEPT_RECENTS_ASSOCIATION, association['target'], association['target_display'], association['target_terminology_types'])
                     end
@@ -1310,7 +1320,7 @@ class KometDashboardController < ApplicationController
                     return_value = AssociationRest::get_association(action: AssociationRestActions::ACTION_ITEM_CREATE, additional_req_params: additional_req_params, body_params: body_params)
 
                     if return_value.is_a? CommonRest::UnexpectedResponse
-                        failed_writes << {id: association_id, text: association['target_display'], type: 'association'}
+                        failed_writes << {id: association_id, text: 'Association: ' + association['target_display'] + ': ' + return_value.rest_exception.conciseMessage, type: 'association'}
                     else
                         add_to_recents(CONCEPT_RECENTS + CONCEPT_RECENTS_ASSOCIATION, association['target'], association['target_display'], association['target_terminology_types'])
                     end
@@ -1330,7 +1340,7 @@ class KometDashboardController < ApplicationController
 
                 # if the concept state change failed, mark it
                 if return_value.is_a? CommonRest::UnexpectedResponse
-                    failed_writes << {id: remove_concept_id, text: 'inactivate', type: 'inactivate'}
+                    failed_writes << {id: remove_concept_id, text: 'inactivate' + ': ' + return_value.rest_exception.conciseMessage, type: 'inactivate'}
                 end
             end
         end

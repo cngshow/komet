@@ -1273,7 +1273,7 @@ var UIHelper = (function () {
 
                     var uuid = $triggerElement.attr("data-menu-uuid");
                     var conceptText = $triggerElement.attr("data-menu-concept-text");
-                    var conceptTerminologyTypes = $triggerElement.attr("data-menu-concept-terminology-type");
+                    var conceptTerminologyTypes = $triggerElement.attr("data-menu-concept-terminology-types");
                     var conceptState = $triggerElement.attr("data-menu-state");
                     var jsObject = $triggerElement.attr("data-menu-js-object");
                     var unlinkedViewerID = WindowManager.getUnlinkedViewerID();
@@ -1568,7 +1568,7 @@ var UIHelper = (function () {
             $.publish(KometChannels.Taxonomy.taxonomyConceptEditorChannel, [action, id, UIHelper.getViewParams(jsObject), viewerID, windowType, {
                 parentID: parentID,
                 parentText: parentText,
-                parentType: parentTerminologyTypes
+                parentTerminologyTypes: parentTerminologyTypes
             }]);
         };
     }
