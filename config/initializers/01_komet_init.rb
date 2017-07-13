@@ -5,7 +5,7 @@
 # Only add one number after the decimal for the API version match
 return if $react_build
 
-REST_API_VERSIONS = [:"1.15"].freeze
+REST_API_VERSIONS = [:"1.16"].freeze
 
 require './lib/rails_common/props/prop_loader'
 require './lib/rails_common/logging/open_logging'

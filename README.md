@@ -79,7 +79,7 @@ Open a terminal and navigate to rails root and run the command:
 * Now run the following command to build the Isaac Rest project
 * bundle exec rake isaac:build_isaac_rest
 
-
+Copy the /config/props/primse.properties.template and save it as primse.properties. Uncomment the ISAAC_ROOT line and change it to the URL of your ISSAC REST server
 
 You can now bring up the server:
 ```
