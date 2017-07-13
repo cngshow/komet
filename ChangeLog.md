@@ -3,7 +3,7 @@ Komet Changelog
 This changelog summarizes changes and fixes which are a part of each revision.  For more details on the fixes, refer tracking numbers 
 where provided, and the git commit history.
 
-* 2017/07/?? - 4.15 - PENDING
+* 2017/07/13 - 4.15
     * Fixed Add Property so the dialog will close properly if you click Add, get an error, and then click Cancel.
     * Fixed so it will restrict the values a little better if you type less then 3 letters in an autocomplete box.
     * Fixed so there will be no VUID request when generating new VHAT properties with autogenerate vuid setting to false (Jazz: 555915).
