@@ -3,6 +3,7 @@
 #Edit prisme_root to use prisme for roles.
 #prisme_root=http://localhost:8080/rails_prisme
 #prisme_all_roles_url=https://localhost:443/roles/get_all_roles.json
+#comment the key below out to use test harness
 #prisme_roles_user_url=https://localhost:443/roles/get_user_roles.json
 #prisme_roles_ssoi_url=https://localhost:443/roles/get_ssoi_roles.json
 #prisme_roles_by_token_url=https://localhost:443/roles/get_roles_by_token.json
