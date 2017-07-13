@@ -30,6 +30,8 @@ class KometDashboardController < ApplicationController
     include TaxonomyConcern, ConceptConcern, InstrumentationConcern, SearchApis
     include CommonController, TaxonomyHelper
 
+    TAXONOMY_CHILD_PAGE_SIZE = 1000
+
     #before_action :setup_routes, :setup_constants, :only => [:dashboard] #todo Ask Tim why is this in app controller too?  OK to whack?
     after_filter :byte_size unless Rails.env.production?
     skip_before_action :ensure_roles, only: [:version]
@@ -90,7 +92,7 @@ class KometDashboardController < ApplicationController
         coordinates_token = session[:coordinates_token].token
         root = selected_concept_id.eql?('#')
 
-        additional_req_params = {coordToken: coordinates_token, sememeMembership: true}
+        additional_req_params = {coordToken: coordinates_token, sememeMembership: true, maxPageSize: TAXONOMY_CHILD_PAGE_SIZE}
         additional_req_params.merge!(@view_params)
 
         if boolean(parent_search)
@@ -155,7 +157,8 @@ class KometDashboardController < ApplicationController
         node = {}
         node[:id] = concept.conChronology.identifiers.uuids.first
         node[:text] = concept.conChronology.description
-        node[:has_children] = !concept.children.nil? && concept.children.length > 0
+        node[:has_children] = !concept.children.nil?
+        node[:has_unfetched_children] = false
         node[:defined] = concept.isConceptDefined
         node[:state] = concept.conVersion.state.enumName
         node[:author] = concept.conVersion.authorUUID
@@ -175,12 +178,11 @@ class KometDashboardController < ApplicationController
         end
 
         if node[:has_children]
-            node[:child_count] = concept.children.length
+            node[:child_count] = concept.children.paginationData.approximateTotal
 
         elsif tree_walk_levels == 0 && concept.childCount != 0
 
             node[:child_count] = concept.childCount
-            node[:has_children] = true
             node[:has_children] = true
 
         else
@@ -252,13 +254,13 @@ class KometDashboardController < ApplicationController
         relation = :children
 
         # if we are walking up the tree toward the root node get the parents of the current node, otherwise get the children
-        if tree_walk_levels > 0 && boolean(parent_search) && !concept.parents.nil?
+        if tree_walk_levels > 0 && boolean(parent_search) && node[:has_parents]
 
             relation = :parents
             related_concepts = concept.parents
 
-        elsif tree_walk_levels > 0 && !boolean(parent_search) && !concept.children.nil?
-            related_concepts = concept.children
+        elsif tree_walk_levels > 0 && !boolean(parent_search) && node[:has_children]
+            related_concepts = concept.children.results
         else
             related_concepts = []
         end
@@ -267,6 +269,20 @@ class KometDashboardController < ApplicationController
 
         related_concepts.each do |related_concept|
             processed_related_concepts.concat(process_rest_concept(related_concept, tree_walk_levels - 1, parent_search: parent_search, multi_path: multi_path))
+        end
+
+        # if the concept has children and the length of the child array is less then then total number of children, then there are paged results
+        if !concept.children.nil? && concept.children.results.length < concept.children.paginationData.approximateTotal
+
+            # get the page number for the next page of child results
+            nextPageNumber = /pageNum=(\d+)&/.match(concept.children.paginationData.nextUrl).captures[0]
+
+            # make sure we aren't on the last page of results
+            if nextPageNumber.to_i <= (concept.children.paginationData.approximateTotal / TAXONOMY_CHILD_PAGE_SIZE.to_f).ceil
+
+                # add a node to the end of the child concepts to alert the user that there are more children that haven't been loaded
+                processed_related_concepts << {id: node[:id], text: 'This concept has children that have not been fetched. Click here to load them.', next_page: nextPageNumber}
+            end
         end
 
         if first_level
@@ -278,7 +294,6 @@ class KometDashboardController < ApplicationController
             concept_nodes.concat(processed_related_concepts)
         else
 
-            $log.trace('*** data process: ' + node[:text].to_s)
             node[relation] = processed_related_concepts
             concept_nodes << node
         end
@@ -289,6 +304,12 @@ class KometDashboardController < ApplicationController
     def process_tree_level (raw_nodes, tree_nodes, parent_search_param, parent_reversed_param)
 
         raw_nodes.each do |raw_node|
+
+            if raw_node[:next_page]
+
+                tree_nodes << {id: get_next_id, concept_id: raw_node[:id], text: raw_node[:text], next_page: raw_node[:next_page], children: false, parent_reversed: false, parent_search: false, icon: 'komet-tree-node-icon komet-tree-node-defined', a_attr: {class: 'komet-tree-warning', 'aria-label' => raw_node[:text]}}
+                next
+            end
 
             anchor_attributes = { class: 'komet-context-menu',
                                   'data-menu-type' => 'concept',
@@ -537,14 +558,8 @@ class KometDashboardController < ApplicationController
             additional_req_params[:time] = 'latest'
         end
 
-        $log.debug("set_coordinates_token additional_req_params #{additional_req_params}")
-        $log.debug("set_coordinates_token  params[:module_list] #{ params[:module_flags]}")
-        $log.debug("set_coordinates_token params[:path_list] #{params[:path_flags]}")
-        $log.debug("set_coordinates_token  params[:refset_flags] #{ params[:refset_flags]}")
-
         # make the call to set the token and put the retuned token into the session
         session[:coordinates_token] = CoordinateRest.get_coordinate(action: CoordinateRestActions::ACTION_COORDINATES_TOKEN, additional_req_params: additional_req_params)
-        $log.info("set_coordinates_token session[:coordinates_token] #{ session[:coordinates_token]}")
 
         # set the user choices for concept flags into the session for retrieval during concept display
         user_prefs = HashWithIndifferentAccess.new
@@ -570,18 +585,15 @@ class KometDashboardController < ApplicationController
         # get the coordinates token from the session
         coordinates_token = session[:coordinates_token].token
         additional_req_params = {coordToken: coordinates_token}
-        $log.debug("get_user_preference_info token #{coordinates_token}")
 
         # get the details of what is in the coordinates token
         coordinates_params = CoordinateRest.get_coordinate(action: CoordinateRestActions::ACTION_COORDINATES,additional_req_params: additional_req_params)
 
         # get the full list of dialects
         unsorted_dialect_options = get_concept_children(concept_id: $isaac_metadata_auxiliary['DIALECT_ASSEMBLAGE']['uuids'].first[:uuid], return_json: false, remove_semantic_tag: true, view_params: session[:edit_view_params])
-        $log.debug("get_user_preference_info @unsorted_dialect_options #{unsorted_dialect_options}")
 
         # get the list of user preferred dialects
         dialect_assemblage_preferences = coordinates_params.languageCoordinate.dialectAssemblagePreferences
-        $log.debug("get_user_preference_info dialect_assemblage_preferences #{dialect_assemblage_preferences}")
 
         preferred_items = []
 
@@ -601,15 +613,12 @@ class KometDashboardController < ApplicationController
 
         # add what's left in the total dialect array to the end of the preferred dialects
         @dialect_options = preferred_items + unsorted_dialect_options
-        $log.debug("get_user_preference_info @dialect_options #{@dialect_options}")
 
         # get the full list of description types
         unsorted_description_type_options = get_concept_children(concept_id: $isaac_metadata_auxiliary['DESCRIPTION_TYPE']['uuids'].first[:uuid], return_json: false, remove_semantic_tag: true, view_params: session[:edit_view_params])
-        $log.debug("get_user_preference_info @description_type_options #{unsorted_description_type_options}")
 
         # get the list of user preferred description types
         description_type_preferences = coordinates_params.languageCoordinate.descriptionTypePreferences
-        $log.debug("get_user_preference_info description_type_preferences #{description_type_preferences}")
 
         preferred_items = []
 
@@ -629,8 +638,6 @@ class KometDashboardController < ApplicationController
 
         # add what's left in the total description type array to the end of the preferred description types
         @description_type_options = preferred_items + unsorted_description_type_options
-        $log.debug("get_user_preference_info @description_type_options #{@description_type_options}")
-
 
         # get the full list of languages and store it in the session if it isn't already there
         if session[:komet_language_options] == nil
@@ -644,11 +651,8 @@ class KometDashboardController < ApplicationController
             end
         end
 
-        $log.debug("get_user_preference_info @language_options #{@language_options}")
-
         # get the user selected language
         @language_coordinate = coordinates_params.languageCoordinate.language.uuids.first
-        $log.debug("get_user_preference_info @language_coordinate #{@language_coordinate}")
 
         # get the user selected STAMP date they wish to view - if it is the max java date use the string 'latest'
         if java.lang.Long::MAX_VALUE == coordinates_params.taxonomyCoordinate.stampCoordinate.time
@@ -657,11 +661,8 @@ class KometDashboardController < ApplicationController
             @stamp_date = coordinates_params.taxonomyCoordinate.stampCoordinate.time
         end
 
-        $log.debug("get_user_preference_info @stamp_date #{@stamp_date}")
-
         # get the user selected view state preference
         allowed_state_preference = coordinates_params.stampCoordinate.allowedStates
-        $log.debug("get_user_preference_info allowed_states #{allowed_state_preference}")
 
         # set the allowed_states variable based on the user preference
         if allowed_state_preference.length > 1
@@ -669,8 +670,6 @@ class KometDashboardController < ApplicationController
         else
             @allowed_states = allowed_state_preference.first.enumName.downcase
         end
-
-        $log.debug("get_user_preference_info @allowed_states #{@allowed_states}")
 
         user_prefs = user_session(UserSession::USER_PREFERENCES)
 
@@ -689,10 +688,6 @@ class KometDashboardController < ApplicationController
             refset_flag_preferences = user_prefs[:refset_flags]
         end
 
-        $log.debug("get_user_preference_info module_flag_preferences #{module_flag_preferences}")
-        $log.debug("get_user_preference_info path_flag_preferences #{path_flag_preferences}")
-        $log.debug("get_user_preference_info refset_flag_preferences #{refset_flag_preferences}")
-
         @path_flags = {}
 
         # if the user doesn't have current preferences
@@ -710,8 +705,6 @@ class KometDashboardController < ApplicationController
             @path_flags = path_flag_preferences
         end
 
-        $log.debug("get_user_preference_info @path_flags #{@path_flags}")
-
         @module_flags = {}
 
         # if the user doesn't have current preferences
@@ -719,7 +712,6 @@ class KometDashboardController < ApplicationController
 
             # get the full list of modules
             module_list = get_concept_children(concept_id: $isaac_metadata_auxiliary['MODULE']['uuids'].first[:uuid], return_json: false, remove_semantic_tag: true, include_nested: true, view_params: session[:edit_view_params])
-            $log.debug("get_user_preference_info module_list #{module_list}")
 
             # loop thru the full module list to build an array of flag options
             module_list.each do |komet_module|
@@ -728,8 +720,6 @@ class KometDashboardController < ApplicationController
         else
             @module_flags = module_flag_preferences
         end
-
-        $log.debug("get_user_preference_info @module_flags #{@module_flags}")
 
         additional_req_params[:childDepth] = 50
         additional_req_params.merge!(session[:edit_view_params])
@@ -740,8 +730,6 @@ class KometDashboardController < ApplicationController
         unless refset_flag_preferences.nil?
             @refset_flags = refset_flag_preferences
         end
-
-        $log.debug("get_user_preference_info @refset_flags #{@refset_flags}")
 
         # render the partial that was passing in to this function
         render partial: params[:partial]
@@ -798,7 +786,7 @@ class KometDashboardController < ApplicationController
 
         if !description_types.is_a? CommonRest::UnexpectedResponse
 
-            description_types.children.each do |description_type|
+            description_types.children.results.each do |description_type|
                 types << {concept_id: description_type.conChronology.identifiers.uuids.first, description: description_type.conChronology.description}
             end
 
@@ -904,16 +892,18 @@ class KometDashboardController < ApplicationController
         get_concept_descriptions(@concept_id, @view_params, clone)
         get_concept_associations(@concept_id, @view_params, clone)
 
-        # if this is a new VHAT concept add the VHAT ID properties
-        if @new_concept && @concept_terminology_types.include?($isaac_metadata_auxiliary['VHAT_MODULES']['uuids'].first[:uuid])
+        generate_vuid = user_session(UserSession::USER_PREFERENCES)[:generate_vuid] == 'true'
+
+        # if this is a new VHAT concept and not also a metadata concept add the VHAT ID properties
+        if @new_concept && @concept_terminology_types.include?($isaac_metadata_auxiliary['VHAT_MODULES']['uuids'].first[:uuid]) && !@concept_terminology_types.include?($isaac_metadata_auxiliary['ISAAC_MODULE']['uuids'].first[:uuid])
 
             # add ID properties to the description
-            new_sememe_properties = generate_vhat_properties
+            new_sememe_properties = generate_vhat_properties(generate_vuid)
             @descriptions[:descriptions].first[:nested_properties] = new_sememe_properties
             @descriptions[:errors].concat(new_sememe_properties[:errors])
 
             # add ID properties to the attached sememes
-            new_sememe_properties = generate_vhat_properties
+            new_sememe_properties = generate_vhat_properties(generate_vuid)
             @concept_sememes[:field_info].merge!(new_sememe_properties[:field_info])
             @concept_sememes[:rows].concat(new_sememe_properties[:data])
         end
@@ -944,8 +934,8 @@ class KometDashboardController < ApplicationController
         concept_terminology_types = params[:concept_terminology_types]
         generated_vuid = false
 
-        # if this is a new VHAT concept add the VHAT ID properties
-        if concept_terminology_types.include?($isaac_metadata_auxiliary['VHAT_MODULES']['uuids'].first[:uuid])
+        # if this is a VHAT concept and not also a metadata concept add the VHAT ID properties
+        if concept_terminology_types.include?($isaac_metadata_auxiliary['VHAT_MODULES']['uuids'].first[:uuid]) && !concept_terminology_types.include?($isaac_metadata_auxiliary['ISAAC_MODULE']['uuids'].first[:uuid])
             generated_vuid = nil
         end
 
@@ -1385,7 +1375,7 @@ class KometDashboardController < ApplicationController
         restrict_search = params[:restrict_search]
 
         # only restict the search if the flag is set and there are at least three characters in the search term - otherwise performance is bad
-        if search_term.length >= 3 && restrict_search != nil && restrict_search != ''
+        if restrict_search != nil && restrict_search != ''
             additional_req_params[:restrictTo] = restrict_search;
         end
 
@@ -1551,14 +1541,13 @@ class KometDashboardController < ApplicationController
             end
         end
 
-        $log.debug("token initial #{session[:coordinates_token].token}" )
-
         # do any view_param processing needed for the GUI - always call this last before rendering
         @view_params = get_gui_view_params(@view_params)
     end
 
     # this action is called via javascript if/when the user's session has timed out
     def session_timeout
+
         clear_user_session
         logout_url_string = ssoi? ? PrismeConfigConcern.logout_link : root_url
         redirect_to logout_url_string

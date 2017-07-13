@@ -775,8 +775,8 @@ module ConceptConcern
                         # store the data for the column
                         column_data = {data: html_escape(data), display: converted_value}
 
-                    # else if we are cloning and it is a VHAT ID on a VHAT concept, and we are auto generating VHAT IDs then get a new ID for the column
-                    elsif clone && user_session(UserSession::USER_PREFERENCES)[:generate_vuid] == 'true' && terminology_types.include?($isaac_metadata_auxiliary['VHAT_MODULES']['uuids'].first[:uuid]) && session[:komet_vhat_ids].include?(assemblage_id)
+                    # else if we are cloning and it is a VHAT ID on a VHAT concept and not also a metadata concept, and we are auto generating VHAT IDs then get a new ID for the column
+                    elsif clone && user_session(UserSession::USER_PREFERENCES)[:generate_vuid] == 'true' && terminology_types.include?($isaac_metadata_auxiliary['VHAT_MODULES']['uuids'].first[:uuid]) && !terminology_types.include?($isaac_metadata_auxiliary['ISAAC_MODULE']['uuids'].first[:uuid]) && session[:komet_vhat_ids].include?(assemblage_id)
 
                         # if a vuid hasn't already been generated then generate one
                         if generated_vuid == nil
@@ -958,7 +958,7 @@ module ConceptConcern
         additional_req_params = {coordToken: session[:coordinates_token].token, includeAttributes: false}
         additional_req_params.merge!(view_params)
 
-        children = children.children
+        children = children.children.results
 
         # if we are processing the child list
         if format_results
