@@ -4,7 +4,10 @@ This changelog summarizes changes and fixes which are a part of each revision.  
 where provided, and the git commit history.
 
 * 2017/07/?? - 4.15 - PENDING
-    *
+    * Fixed Add Property so the dialog will close properly if you click Add, get an error, and then click Cancel.
+    * Fixed so it will restrict the values a little better if you type less then 3 letters in an autocomplete box.
+    * Fixed so there will be no VUID request when generating new VHAT properties with autogenerate vuid setting to false (Jazz: 555915).
+    * Incorporated API changes for taxonomy tree paging. Concepts with more that 1000 children will display a note at the end of the child list. Note that changes are not finished, you can not request the additonal children yet> (Jazz: 554508)
 
 * 2017/07/06 - 4.14
     * Allowed read-only role to see new concept view screen

@@ -29,6 +29,7 @@ var UIHelper = (function () {
     const SNOMED = gon.IsaacMetadataAuxiliary.SNOMED_CT_CORE_MODULES.uuids[0].uuid;
     const LOINC = gon.IsaacMetadataAuxiliary.LOINC_MODULES.uuids[0].uuid;
     const RXNORM = gon.IsaacMetadataAuxiliary.RXNORM_MODULES.uuids[0].uuid;
+    const ISAAC = gon.IsaacMetadataAuxiliary.ISAAC_MODULE.uuids[0].uuid;
     const CHANGEABLE_CLASS = "komet-changeable";
     const CHANGE_HIGHLIGHT_CLASS = "komet-highlight-changes";
     const RECENTS_ASSOCIATION = 'association';
@@ -496,6 +497,8 @@ var UIHelper = (function () {
                     "class": "btn btn-default",
                     text: "Cancel",
                     click: function () {
+
+                        buttonClicked = "Cancel";
                         $(this).dialog("close");
                     }
                 },
@@ -1660,6 +1663,7 @@ var UIHelper = (function () {
         SNOMED: SNOMED,
         LOINC: LOINC,
         RXNORM: RXNORM,
+        ISAAC: ISAAC,
         CHANGEABLE_CLASS: CHANGEABLE_CLASS,
         CHANGE_HIGHLIGHT_CLASS: CHANGE_HIGHLIGHT_CLASS,
         RECENTS_ASSOCIATION: RECENTS_ASSOCIATION,

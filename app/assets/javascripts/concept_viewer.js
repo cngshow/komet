@@ -91,8 +91,8 @@ ConceptViewer.prototype.setTerminologySpecificSettings = function (terminology_t
         this.showExtendedDescriptionType = false;
     }
 
-    // if this concept is a VHAT concept then set VHAT specific options
-    if (this.terminology_types.indexOf(UIHelper.VHAT) >= 0){
+    // if this concept is a VHAT concept and is not also a metadata concept then set VHAT specific options
+    if (this.terminology_types.indexOf(UIHelper.VHAT) >= 0 && this.terminology_types.indexOf(UIHelper.ISAAC) < 0){
 
         this.isVHAT = true;
 
@@ -1394,7 +1394,7 @@ ConceptViewer.prototype.addPropertyRow = function (descriptionID, addElement, pr
 
     var confirmCallback = function(buttonClicked){
 
-        if (buttonClicked != 'cancel') {
+        if (buttonClicked.toLowerCase() != 'cancel') {
 
             var thisViewer = this;
             var form = $("#" + formID);
