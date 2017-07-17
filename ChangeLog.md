@@ -4,7 +4,8 @@ This changelog summarizes changes and fixes which are a part of each revision.  
 where provided, and the git commit history.
 
 * 2017/07/?? - 4.16 - PENDING
-    *
+    * Fixed javascript error when saving mapsets (Jazz: 550838)
+    * Updated mapsets to use new item paging API changes
 
 * 2017/07/13 - 4.15
     * Fixed Add Property so the dialog will close properly if you click Add, get an error, and then click Cancel.

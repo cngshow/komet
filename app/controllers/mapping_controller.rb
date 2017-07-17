@@ -488,7 +488,7 @@ class MappingController < ApplicationController
             return {total_number: 0, data: []}
         end
 
-        items.each do |item|
+        items.results.each do |item|
 
             item_hash = {}
             source_name = ''
@@ -589,7 +589,7 @@ class MappingController < ApplicationController
             item_data << item_hash
         end
 
-        results[:total_number] = items.length
+        results[:total_number] = items.results.length
         results[:data] = item_data
 
         if render_return
