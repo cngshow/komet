@@ -51,6 +51,16 @@
 
                 </div>
 
+                <div class="komet-row">
+
+                    <div class="komet-label komet-preference-label">Taxonomy Tree Page Size:</div>
+
+                    <div>
+                        <%= select_tag :komet_preferences_taxonomy_page_size, options_for_select([['250'], ['500'], ['1000']], session[:komet_taxonomy_page_size]), class: 'form-control', 'aria-label' => 'Select Taxonomy Tree Page Size' %>
+                    </div>
+
+                </div>
+
                 <!-- start Description Type order control -->
                 <div class="komet-row komet-order-control-header komet-table-header">
                     <div class="komet-order-control-rank">Rank</div>

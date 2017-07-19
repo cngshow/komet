@@ -167,8 +167,13 @@ KometTaxonomyTree.prototype.buildTaxonomyTree = function(viewParams, parentSearc
                 + "&multi_path=" + this.multiPath + "&next_page=" + selectedObject.node.original.next_page;
             var thisTree = this.tree.jstree(true);
 
+            var selectedHTMLNode = thisTree.get_node(selectedObject.node.id, true);
+            selectedHTMLNode.addClass("jstree-loading");
+
             // make an ajax call to get the data
-            $.get(gon.routes.taxonomy_load_tree_data_path + nextPageParams, function (results) {
+            var jqxhr = $.get(gon.routes.taxonomy_load_tree_data_path + nextPageParams, function (results) {
+
+                console.log("!***! START PROCESSS PAGE RESULTS " + window.performance.now().toString());
 
                 // loop through the returned children and for each one add a new node to the selected node's parent
                 $.each(results, function (index, value) {
@@ -178,15 +183,28 @@ KometTaxonomyTree.prototype.buildTaxonomyTree = function(viewParams, parentSearc
                 // delete the current paging node
                 thisTree.delete_node(selectedObject.node.id);
 
+                console.log("!***! END PROCESSS PAGE RESULTS " + window.performance.now().toString());
+
                 // sort the tree
                 //thisTree.sort()
             }.bind(this));
+
+            // make sure that we remove the loading text if the call failed.
+            jqxhr.fail(function() {
+                selectedHTMLNode.removeClass("jstree-loading");
+            });
 
             event.preventDefault();
         }
     }
 
     function onChanged(event, selectedObject) {
+
+        // if this is an indicator node for more paged children don't do anything
+        if (selectedObject.node.original.hasOwnProperty("next_page")){
+            event.preventDefault();
+            return false;
+        }
 
         var conceptID = selectedObject.node.original.concept_id;
         var viewerID = WindowManager.getLinkedViewerID();
