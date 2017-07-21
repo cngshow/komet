@@ -670,6 +670,14 @@ div.komet-confirmation-dialog{
 .komet-tree-node-primitive-arrow::before{
     content: image-url("icon_primitive_arrow.svg");
 }
+.komet-tree-warning{
+    background-color: green;
+    color: white;
+}
+a.komet-tree-warning.jstree-anchor{
+    background-color: green;
+    color: white;
+}
 .komet-reverse-tree{
     transform: scaleX(-1);
     transform: scaleY(-1);
