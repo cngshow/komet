@@ -70,7 +70,29 @@
 
 	<build>
 		<plugins>
-
+			<!-- Stomp any existing jar files in lib/jars to make sure an old version hanging around doesn't stomp us...-->
+			<plugin>
+				<artifactId>maven-clean-plugin</artifactId>
+				<version>3.0.0</version>
+				<configuration>
+					<filesets>
+						<fileset>
+							<directory>${basedir}/lib/jars/</directory>
+							<includes>
+								<include>**/*</include>
+							</includes>
+						</fileset>
+						<fileset>	<!-- Stomp this file that seems to be created during builds-->
+							<directory>${basedir}/db/data/</directory>
+							<includes>
+								<include>**/*</include>
+							</includes>
+						</fileset>
+						<!-- This really should be doing a stomp of rails_common as well, because the unpack, below, won't delete deleted files.
+						But that breaks the way that Cris / Greg checkout the common project as a submodule... conditional stomp, perhaps? -->
+					</filesets>
+				</configuration>
+			</plugin>
 			<plugin>
 				<artifactId>maven-antrun-plugin</artifactId>
 				<executions>
@@ -147,6 +169,23 @@
 							<outputDirectory>${basedir}/config/generated/yaml</outputDirectory>
 							<overWriteReleases>true</overWriteReleases>
 							<overWriteSnapshots>true</overWriteSnapshots>
+						</configuration>
+					</execution>
+					<execution>
+						<id>place-jars</id>
+						<phase>initialize</phase>
+						<goals>
+							<goal>copy-dependencies</goal>
+						</goals>
+						<configuration>
+							<!-- We really just want jenkins-client, cargo, isaac code and their transitive dependencies. -->
+							<excludeArtifactIds>
+								jruby-complete,rake,bundler,rails_common,junit,hamcrest-core,
+							</excludeArtifactIds>
+							<overWriteReleases>true</overWriteReleases>
+							<overWriteSnapshots>true</overWriteSnapshots>
+							<stripVersion>true</stripVersion>
+							<outputDirectory>${basedir}/lib/jars/</outputDirectory>
 						</configuration>
 					</execution>
 				</executions>
