@@ -3,8 +3,11 @@ Komet Changelog
 This changelog summarizes changes and fixes which are a part of each revision.  For more details on the fixes, refer tracking numbers 
 where provided, and the git commit history.
 
-* 2017/07/?? - 4.16 - PENDING
-    *
+* 2017/07/21 - 4.16
+    * Fixed javascript error when saving mapsets (Jazz: 550838)
+    * Updated mapsets to use new item paging API changes
+    * Taxonomy tree will now load additional pages of children, 250 at a time. (Jazz: 554508)
+    * Global preference option for setting taxonomy page size to 250, 500, 1000. (Jazz: 554508)
 
 * 2017/07/13 - 4.15
     * Fixed Add Property so the dialog will close properly if you click Add, get an error, and then click Cancel.

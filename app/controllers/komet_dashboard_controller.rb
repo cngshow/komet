@@ -30,8 +30,6 @@ class KometDashboardController < ApplicationController
     include TaxonomyConcern, ConceptConcern, InstrumentationConcern, SearchApis
     include CommonController, TaxonomyHelper
 
-    TAXONOMY_CHILD_PAGE_SIZE = 1000
-
     #before_action :setup_routes, :setup_constants, :only => [:dashboard] #todo Ask Tim why is this in app controller too?  OK to whack?
     after_filter :byte_size unless Rails.env.production?
     skip_before_action :ensure_roles, only: [:version]
@@ -45,22 +43,8 @@ class KometDashboardController < ApplicationController
     # If the tree is reversed so we are searching for parents of this node is identified in the request params with the key :parent_search (true/false)
     # If the parent of this node was already doing a reverse search is identified in the request params with the key :parent_reversed (true/false)
     # [Object] view_params - various parameters related to the view filters the user wants to apply - see full definition comment at top of komet_dashboard_controller file
-    #@return [json] the tree nodes to insert into the tree at the parent node passed in the request
+    # @return [json] the tree nodes to insert into the tree at the parent node passed in the request
     def load_tree_data
-
-        # roles = session[Roles::SESSION_ROLES_ROOT][Roles::SESSION_USER_ROLES]
-        # if(roles.include?(Roles::DEV_SUPER_USER))
-        #   #do something
-        # end
-        # CRIS, test flash code
-        # resp = CoordinateRest.get_coordinate(action: CoordinateRestActions::ACTION_COORDINATES_TOKEN, additional_req_params: {foo: 'faa'})
-        # resp.rest_exception.flash_error
-        # resp.flash_error   (both work)
-        # if resp.is_a? CommonRest::UnexpectedResponse
-        #   resp.flash_error
-        # end
-        #
-        # resp.flash_error if resp.respond_to? :flash_error
 
         # TODO - see if some of these can just be referenced everywhere as params[*] instead of passing variables to all sub functions
         selected_concept_id = params[:concept_id]
@@ -68,6 +52,7 @@ class KometDashboardController < ApplicationController
         parent_reversed = params[:parent_reversed]
         tree_walk_levels = params[:tree_walk_levels]
         multi_path = params[:multi_path]
+        next_page = params[:next_page]
         @view_params = check_view_params(params[:view_params])
 
         # check to make the number of levels to walk the tree was passed in
@@ -82,18 +67,25 @@ class KometDashboardController < ApplicationController
             multi_path = true
         end
 
-        tree_nodes = populate_tree(selected_concept_id, parent_search, parent_reversed, tree_walk_levels, multi_path)
+        $log.debug("!***! START LOAD TREE DATA PROCESSING")
+        tree_nodes = populate_tree(selected_concept_id, parent_search, parent_reversed, tree_walk_levels, multi_path, next_page)
+        $log.debug("!***! END LOAD TREE DATA PROCESSING")
 
         render json: tree_nodes
     end
 
-    def populate_tree(selected_concept_id, parent_search, parent_reversed, tree_walk_levels, multi_path)
+    def populate_tree(selected_concept_id, parent_search, parent_reversed, tree_walk_levels, multi_path, next_page = nil)
 
         coordinates_token = session[:coordinates_token].token
         root = selected_concept_id.eql?('#')
 
-        additional_req_params = {coordToken: coordinates_token, sememeMembership: true, maxPageSize: TAXONOMY_CHILD_PAGE_SIZE}
+        additional_req_params = {coordToken: coordinates_token, sememeMembership: true, maxPageSize: session[:komet_taxonomy_page_size]}
         additional_req_params.merge!(@view_params)
+
+        # check to see if we are getting the next page of child results, if so add the pageNum parameter
+        if next_page != nil
+            additional_req_params[:pageNum] = next_page
+        end
 
         if boolean(parent_search)
             tree_walk_levels = 100
@@ -137,8 +129,13 @@ class KometDashboardController < ApplicationController
             return []
         end
 
+        $log.debug("!***! START REST CONCEPT PROCESSING")
         raw_nodes = process_rest_concept(isaac_concept, tree_walk_levels, first_level: true, parent_search: parent_search, multi_path: multi_path)
+        $log.debug("!***! END REST CONCEPT PROCESSING")
+
+        $log.debug("!***! START TREE LEVEL PROCESSING")
         processed_nodes = process_tree_level(raw_nodes, [], parent_search, parent_reversed)
+        $log.debug("!***! END TREE LEVEL PROCESSING")
 
         if root
 
@@ -278,7 +275,7 @@ class KometDashboardController < ApplicationController
             nextPageNumber = /pageNum=(\d+)&/.match(concept.children.paginationData.nextUrl).captures[0]
 
             # make sure we aren't on the last page of results
-            if nextPageNumber.to_i <= (concept.children.paginationData.approximateTotal / TAXONOMY_CHILD_PAGE_SIZE.to_f).ceil
+            if nextPageNumber.to_i <= (concept.children.paginationData.approximateTotal / session[:komet_taxonomy_page_size].to_f).ceil
 
                 # add a node to the end of the child concepts to alert the user that there are more children that haven't been loaded
                 processed_related_concepts << {id: node[:id], text: 'This concept has children that have not been fetched. Click here to load them.', next_page: nextPageNumber}
@@ -307,7 +304,16 @@ class KometDashboardController < ApplicationController
 
             if raw_node[:next_page]
 
-                tree_nodes << {id: get_next_id, concept_id: raw_node[:id], text: raw_node[:text], next_page: raw_node[:next_page], children: false, parent_reversed: false, parent_search: false, icon: 'komet-tree-node-icon komet-tree-node-defined', a_attr: {class: 'komet-tree-warning', 'aria-label' => raw_node[:text]}}
+                tree_nodes << {id: get_next_id,
+                               concept_id: raw_node[:id],
+                               text: raw_node[:text],
+                               next_page: raw_node[:next_page],
+                               children: false,
+                               parent_reversed: false,
+                               parent_search: false,
+                               icon: 'komet-tree-node-icon fa fa-info-circle',
+                               a_attr: {class: 'komet-tree-warning', 'aria-label' => raw_node[:text]}
+                }
                 next
             end
 
@@ -568,6 +574,9 @@ class KometDashboardController < ApplicationController
         user_prefs[:refset_flags] = params[:refset_flags]
         user_prefs[:generate_vuid] = params[:generate_vuid]
         user_session(UserSession::USER_PREFERENCES, user_prefs)
+
+        # set the taxonomy page size into the session
+        session[:komet_taxonomy_page_size] = params[:komet_preferences_taxonomy_page_size]
 
         # update the default view params in the session
         session[:default_view_params][:time] = additional_req_params[:time]
@@ -1445,7 +1454,7 @@ class KometDashboardController < ApplicationController
             @view_params = session[:default_view_params].clone
         else
 
-            # if the view params haven't changed then this is the first hit on the daschboard and we should set vars, otherwise we should updated them
+            # if the view params haven't changed then this is the first hit on the dashboard and we should set vars, otherwise we should updated them
             if session[:view_params_changed] != true
 
                 # set variables for default view parameters that can be accessed from any controller or module
@@ -1538,6 +1547,11 @@ class KometDashboardController < ApplicationController
 
                 session[:komet_taxonomy_ids] = [$isaac_metadata_auxiliary['SCTID']['uuids'].first[:uuid], $isaac_metadata_auxiliary['VUID']['uuids'].first[:uuid], $isaac_metadata_auxiliary['CODE']['uuids'].first[:uuid]]
                 session[:komet_taxonomy_options] = [['SCTID', $isaac_metadata_auxiliary['SCTID']['uuids'].first[:uuid]], ['VUID', $isaac_metadata_auxiliary['VUID']['uuids'].first[:uuid]]]
+            end
+
+            # if the taxonomy page size is not in the session set it to the default
+            if !session[:komet_taxonomy_page_size]
+                session[:komet_taxonomy_page_size] = 250
             end
         end
 

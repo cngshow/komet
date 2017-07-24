@@ -50,6 +50,7 @@ KometTaxonomyTree.prototype.buildTaxonomyTree = function(viewParams, parentSearc
         "core": {
             "animation": 0,
             "check_callback": true,
+            "plugins" : [ "sort" ],
             "themes": {"stripes": true},
             'data': {
                 'url': gon.routes.taxonomy_load_tree_data_path,
@@ -111,9 +112,8 @@ KometTaxonomyTree.prototype.buildTaxonomyTree = function(viewParams, parentSearc
     this.selectItem = selectItem;
     this.viewParams = viewParams;
     this.multiPath = multiPath;
-    this.tree.on('after_open.jstree', onAfterOpen);
-    this.tree.on('after_close.jstree', onAfterClose);
     this.tree.on('changed.jstree', onChanged.bind(this));
+    this.tree.on('select_node.jstree', onSelect.bind(this));
 
     // set the tree to select the first node when it finishes loading
     this.tree.bind('ready.jstree', function (event, data) {
@@ -156,18 +156,55 @@ KometTaxonomyTree.prototype.buildTaxonomyTree = function(viewParams, parentSearc
         });
     }.bind(this));
 
-    function onAfterOpen(node, selected) {
-        //publish what we expect our observers to need in a way that allows them not to understand
-        //our tree and our tree's dom.
-        $.publish(KometChannels.Taxonomy.taxonomyTreeNodeOpenedChannel, [this.treeID, selected.node.original.concept_id]);
+    function onSelect(event, selectedObject ) {
 
-    }
+        var conceptID = selectedObject.node.original.concept_id;
 
-    function onAfterClose(node, selected) {
-        $.publish(KometChannels.Taxonomy.taxonomyTreeNodeClosedChannel, [this.treeID, selected.node.original.concept_id]);
+        // if this is an indicator node for more paged children, retrieve the next page
+        if (selectedObject.node.original.hasOwnProperty("next_page")){
+
+            var nextPageParams = "?concept_id=" + conceptID + "&parent_search=false&parent_reversed=false&" + jQuery.param({view_params: this.viewParams})
+                + "&multi_path=" + this.multiPath + "&next_page=" + selectedObject.node.original.next_page;
+            var thisTree = this.tree.jstree(true);
+
+            var selectedHTMLNode = thisTree.get_node(selectedObject.node.id, true);
+            selectedHTMLNode.addClass("jstree-loading");
+
+            // make an ajax call to get the data
+            var jqxhr = $.get(gon.routes.taxonomy_load_tree_data_path + nextPageParams, function (results) {
+
+                console.log("!***! START PROCESSS PAGE RESULTS " + window.performance.now().toString());
+
+                // loop through the returned children and for each one add a new node to the selected node's parent
+                $.each(results, function (index, value) {
+                    thisTree.create_node(selectedObject.node.parent, value);
+                });
+
+                // delete the current paging node
+                thisTree.delete_node(selectedObject.node.id);
+
+                console.log("!***! END PROCESSS PAGE RESULTS " + window.performance.now().toString());
+
+                // sort the tree
+                //thisTree.sort()
+            }.bind(this));
+
+            // make sure that we remove the loading text if the call failed.
+            jqxhr.fail(function() {
+                selectedHTMLNode.removeClass("jstree-loading");
+            });
+
+            event.preventDefault();
+        }
     }
 
     function onChanged(event, selectedObject) {
+
+        // if this is an indicator node for more paged children don't do anything
+        if (selectedObject.node.original.hasOwnProperty("next_page")){
+            event.preventDefault();
+            return false;
+        }
 
         var conceptID = selectedObject.node.original.concept_id;
         var viewerID = WindowManager.getLinkedViewerID();
