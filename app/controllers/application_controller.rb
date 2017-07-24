@@ -240,6 +240,7 @@ class ApplicationController < ActionController::Base
     cache_type.each do |module_class|
       CommonRest.clear_cache(rest_module: module_class)
     end
+    $log.debug("Rest caches cleared for #{cache_type.inspect}")
   end
 
   def flash_alert_insufficient_privileges
