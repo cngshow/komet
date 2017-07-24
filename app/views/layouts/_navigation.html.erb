@@ -36,13 +36,15 @@
     </div>
 
     <div class="komet-navbar-tools" role="navigation">
-
+      <% if controller.can_get_vuids? %>
         <div>
             <a href="#generateVuid" class="komet-link-button" id="komet_generate_vuid_link" aria-label="Generate VUID" onclick="VUIDRequest.openRequestDialog();return false;">
                 Generate VUID
             </a>
         </div>
-        <%= react_component("VhatXmlImport", props: {}, prerender: false) %>
+      <% end %>
+
+      <%= react_component("VhatXmlImport", props: {}, prerender: false) %>
         <div>
             <button type="button" class="komet-link-button" role="button" aria-label="VHAT XML Export" title="VHAT XML Export" id="komet_export_link">
                 <div class="glyphicon glyphicon-export" title="VHAT XML Export"></div>

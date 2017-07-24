@@ -36,6 +36,7 @@ class KometDashboardController < ApplicationController
     skip_after_action :verify_authorized, only: [:version]
     skip_before_action :read_only, only: [:version]
     before_action :can_edit_concept, only: [:get_concept_create_info, :create_concept, :edit_concept, :clone_concept, :change_concept_state]
+    before_action :can_get_vuids, only: [:get_generated_vhat_ids]
 
     ##
     # load_tree_data - RESTful route for populating the taxonomy tree using an http :GET
@@ -971,7 +972,6 @@ class KometDashboardController < ApplicationController
     end
 
     def get_generated_vhat_ids
-
         vuids = request_vuids(params[:number_of_vuids], params[:reason])
         render json: vuids.to_json
     end
