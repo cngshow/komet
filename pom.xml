@@ -57,14 +57,18 @@
 			<artifactId>rails_common</artifactId>
 			<version>${rails_common.version}</version>
 			<type>zip</type>
-			<optional>true</optional> <!-- Not needed at runtime / transitively -->
 		</dependency>
 		<dependency>
 			<groupId>gov.vha.isaac.ochre.modules</groupId>
 			<artifactId>ochre-metadata</artifactId>
 			<version>${isaac.version}</version>
 			<type>yaml.zip</type>
-			<optional>true</optional> <!-- Not needed at runtime / transitively -->
+		</dependency>
+		<dependency>
+			<groupId>gov.vha.isaac.ochre.modules</groupId>
+			<artifactId>ochre-api</artifactId>
+			<version>${isaac.version}</version>
+			<type>jar</type>
 		</dependency>
 	</dependencies>
 
@@ -178,10 +182,11 @@
 							<goal>copy-dependencies</goal>
 						</goals>
 						<configuration>
-							<!-- We really just want jenkins-client, cargo, isaac code and their transitive dependencies. -->
-							<excludeArtifactIds>
-								jruby-complete,rake,bundler,rails_common,junit,hamcrest-core,
-							</excludeArtifactIds>
+							<!-- We really just want ochre-api, and the constants from ochre-metadata.  don't copy nested dependencies from ochre-metadata -->
+							<includeArtifactIds>
+								ochre-api, ochre-metadata
+							</includeArtifactIds>
+							<excludeTransitive>true</excludeTransitive>
 							<overWriteReleases>true</overWriteReleases>
 							<overWriteSnapshots>true</overWriteSnapshots>
 							<stripVersion>true</stripVersion>
