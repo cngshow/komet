@@ -3,6 +3,9 @@ Komet Changelog
 This changelog summarizes changes and fixes which are a part of each revision.  For more details on the fixes, refer tracking numbers 
 where provided, and the git commit history.
 
+* 2017/08/?? - 4.18 - PENDING
+    *
+
 * 2017/07/24 - 4.17
     * Komet respects prisme edit role relative to the isaac database.
     * Komet "Generate VUID" menu bar only shows up when the correct role is granted.
