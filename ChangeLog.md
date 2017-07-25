@@ -4,9 +4,9 @@ This changelog summarizes changes and fixes which are a part of each revision.  
 where provided, and the git commit history.
 
 * 2017/07/24 - 4.17
-    *Komet respects prisme edit role relative to the isaac database.
-    *Komet "Generate VUID" menu bar only shows up when the correct role is granted.
-    *Komet clears taxonomy cache on vhat import.
+    * Komet respects prisme edit role relative to the isaac database.
+    * Komet "Generate VUID" menu bar only shows up when the correct role is granted.
+    * Komet clears taxonomy cache on vhat import.
     
 * 2017/07/21 - 4.16
     * Fixed javascript error when saving mapsets (Jazz: 550838)
