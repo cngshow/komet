@@ -73,9 +73,10 @@ In RubyMine you may see a message concerning rails_common being under source con
 
 
 Open a terminal and navigate to rails root and run the command:
-* mvn clean initialize  
+* jars.bat 
 * This will create the file:
 * ./config/generated/yaml/IsaacMetadataAuxiliary.yaml
+* it will also populate the ./lib/jars directory
 * Now run the following command to build the Isaac Rest project
 * bundle exec rake isaac:build_isaac_rest
 

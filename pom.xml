@@ -8,12 +8,12 @@
 	<parent>
 		<groupId>gov.vha.isaac.ochre</groupId>
 		<artifactId>isaac-parent</artifactId>
-		<version>4.12</version><!--TODO Eliminate Snapshot (and 3.12-snapshot goes to 3.11 for example) if present -->
+		<version>4.13</version><!--TODO Eliminate Snapshot (and 3.12-snapshot goes to 3.11 for example) if present -->
 	</parent>
 
 	<groupId>gov.vha.isaac.gui.rails</groupId>
 	<artifactId>rails_komet</artifactId>
-	<version>4.16</version> <!--TODO THIS IS THE ONLY PLACE SNAPSHOT CAN EXIST BEFORE MAKING A RELEASE!!-->
+	<version>4.17</version> <!--TODO THIS IS THE ONLY PLACE SNAPSHOT CAN EXIST BEFORE MAKING A RELEASE!!-->
 	<packaging>pom</packaging>
 
 	<name>ISAAC Rails Komet Tooling</name>
@@ -23,7 +23,7 @@
 	</description>
 
 	<properties>
-		<rails_common.version>1.72</rails_common.version><!--TODO Put new rails common version here if it has been changed, move to non snapshot if releasing  -->
+		<rails_common.version>1.73</rails_common.version><!--TODO Put new rails common version here if it has been changed, move to non snapshot if releasing  -->
 		<!--Open up the assembly.xml file in rails common if new directories are added. -->
 		<isaac.version>${project.parent.version}</isaac.version>
 		<!-- railsMode is automatically set to 'test' or 'production' - 'test' if the version number ends with '-SNAPSHOT'
@@ -57,20 +57,46 @@
 			<artifactId>rails_common</artifactId>
 			<version>${rails_common.version}</version>
 			<type>zip</type>
-			<optional>true</optional> <!-- Not needed at runtime / transitively -->
 		</dependency>
 		<dependency>
 			<groupId>gov.vha.isaac.ochre.modules</groupId>
 			<artifactId>ochre-metadata</artifactId>
 			<version>${isaac.version}</version>
 			<type>yaml.zip</type>
-			<optional>true</optional> <!-- Not needed at runtime / transitively -->
+		</dependency>
+		<dependency>
+			<groupId>gov.vha.isaac.ochre.modules</groupId>
+			<artifactId>ochre-api</artifactId>
+			<version>${isaac.version}</version>
+			<type>jar</type>
 		</dependency>
 	</dependencies>
 
 	<build>
 		<plugins>
-
+			<!-- Stomp any existing jar files in lib/jars to make sure an old version hanging around doesn't stomp us...-->
+			<plugin>
+				<artifactId>maven-clean-plugin</artifactId>
+				<version>3.0.0</version>
+				<configuration>
+					<filesets>
+						<fileset>
+							<directory>${basedir}/lib/jars/</directory>
+							<includes>
+								<include>**/*</include>
+							</includes>
+						</fileset>
+						<fileset>	<!-- Stomp this file that seems to be created during builds-->
+							<directory>${basedir}/db/data/</directory>
+							<includes>
+								<include>**/*</include>
+							</includes>
+						</fileset>
+						<!-- This really should be doing a stomp of rails_common as well, because the unpack, below, won't delete deleted files.
+						But that breaks the way that Cris / Greg checkout the common project as a submodule... conditional stomp, perhaps? -->
+					</filesets>
+				</configuration>
+			</plugin>
 			<plugin>
 				<artifactId>maven-antrun-plugin</artifactId>
 				<executions>
@@ -147,6 +173,24 @@
 							<outputDirectory>${basedir}/config/generated/yaml</outputDirectory>
 							<overWriteReleases>true</overWriteReleases>
 							<overWriteSnapshots>true</overWriteSnapshots>
+						</configuration>
+					</execution>
+					<execution>
+						<id>place-jars</id>
+						<phase>initialize</phase>
+						<goals>
+							<goal>copy-dependencies</goal>
+						</goals>
+						<configuration>
+							<!-- We really just want ochre-api, and the constants from ochre-metadata.  don't copy nested dependencies from ochre-metadata -->
+							<includeArtifactIds>
+								ochre-api, ochre-metadata
+							</includeArtifactIds>
+							<excludeTransitive>true</excludeTransitive>
+							<overWriteReleases>true</overWriteReleases>
+							<overWriteSnapshots>true</overWriteSnapshots>
+							<stripVersion>true</stripVersion>
+							<outputDirectory>${basedir}/lib/jars/</outputDirectory>
 						</configuration>
 					</execution>
 				</executions>

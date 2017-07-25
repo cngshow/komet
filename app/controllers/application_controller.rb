@@ -61,6 +61,7 @@ class ApplicationController < ActionController::Base
   end
 
   #REST_API_VERSIONS
+  #as a side effect populates $ISSAC_DB_ID
   def ensure_rest_version
     if ISAAC_ROOT.empty?
       $isaac_hunter_mutex.synchronize do
@@ -75,6 +76,7 @@ class ApplicationController < ActionController::Base
     begin
       response = SystemApis::get_system_api(action: SystemApiActions::ACTION_SYSTEM_INFO)
       unless response.is_a? CommonRest::UnexpectedResponse
+        $ISAAC_DB_ID = response.isaacDbId
         @@invalid_rest_server ||= (response.supportedAPIVersions.map do |e|
           e.split('.').slice(0, 2).join('.')
         end & REST_API_VERSIONS.map(&:to_s)).empty? # '&' is intersection operator for arrays
@@ -141,6 +143,7 @@ class ApplicationController < ActionController::Base
             user_params[:id] = user_login
             user_params[:password] = user_pwd.to_s unless ssoi
             user_params[:format] = 'json'
+            user_params[:isaac_db_uuid] = $ISAAC_DB_ID
             roles_body = conn.get(roles_url.path, user_params).body
             user_info = JSON.parse(roles_body)
           else
@@ -237,6 +240,7 @@ class ApplicationController < ActionController::Base
     cache_type.each do |module_class|
       CommonRest.clear_cache(rest_module: module_class)
     end
+    $log.debug("Rest caches cleared for #{cache_type.inspect}")
   end
 
   def flash_alert_insufficient_privileges
