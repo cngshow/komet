@@ -4,7 +4,7 @@ This changelog summarizes changes and fixes which are a part of each revision.  
 where provided, and the git commit history.
 
 * 2017/08/?? - 4.18 - PENDING
-    *
+    * Defect 548948 regression test xml import
 
 * 2017/07/24 - 4.17
     * Komet respects prisme edit role relative to the isaac database.
