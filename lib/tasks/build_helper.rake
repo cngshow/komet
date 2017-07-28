@@ -27,7 +27,7 @@ namespace :devops do
   task :set_up_react do
     Rake::Task['devops:cleanup_react'].invoke
     Dir.chdir('./client') do
-      sh 'yarn install'
+      sh 'yarn install --ignore-engines' #https://github.com/akveo/ng2-admin/issues/717
       Rake::Task['react_on_rails:locale'].invoke
     end
 
