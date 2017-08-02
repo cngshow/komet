@@ -63,7 +63,10 @@
 
                             <% @description_types.each do |type| %>
 
-                                <option value="<%= type[:concept_id] %>"><%= type[:description] %></option>
+                                <!-- replace with the metadata value when available-->
+                                <option value="<%= type[:concept_id] %>" <% if type[:concept_id] == '7b402b1e-5587-5732-80bf-69be40426df3' %> selected <% end %>>
+                                    <%= type[:description] %>
+                                </option>
                             <% end %>
 
                         </select>
