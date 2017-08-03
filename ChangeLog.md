@@ -3,6 +3,13 @@ Komet Changelog
 This changelog summarizes changes and fixes which are a part of each revision.  For more details on the fixes, refer tracking numbers 
 where provided, and the git commit history.
 
+* 2017/08/03 - 4.18
+    * Defect 548948 regression test xml import
+    * If Code or VUID fails to save, other VHAT ID on same concept or description will also not save.
+    * Fixed so state controls on concept editor do not get eclipsed by other fields in IE. (Jazz: 549180)
+    * Defaulted New Concept panel Designations drop-down list to Preferred Name
+    * In concept editor, fixed the relationships autosuggest box so that scrollbars in IE will not overlay the dropdown menu
+
 * 2017/07/24 - 4.17
     * Komet respects prisme edit role relative to the isaac database.
     * Komet "Generate VUID" menu bar only shows up when the correct role is granted.

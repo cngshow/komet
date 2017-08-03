@@ -989,9 +989,14 @@ class KometDashboardController < ApplicationController
         # this is a lambda to be used to process sememes nested under the concept and descriptions
         process_sememes = ->(referenced_id, sememes, type, error_text_prefix = '', referenced_temp_id = nil) {
 
+            referenced_id_for_error = referenced_id
+
             if referenced_temp_id != nil
                 referenced_id_for_error = referenced_temp_id
             end
+
+            vhat_id_failed = false
+            vhat_id_failed_error = nil
 
             sememes.each do |sememe_instance_id, sememe|
 
@@ -1000,6 +1005,13 @@ class KometDashboardController < ApplicationController
                     # get the sememe definition ID  and name
                     sememe_definition_id = sememe['sememe']
                     sememe_name = sememe['sememe_name']
+
+                    # if there has already been a failed vhat ID processed for the referenced concept and this is another vhat ID, do not attempt to save
+                    if vhat_id_failed && session[:komet_vhat_ids].include?(sememe_definition_id)
+
+                        failed_writes << {id: referenced_id_for_error + '_' + sememe_instance_id, text: error_text_prefix + type + ': ' + sememe_name + ': ' + vhat_id_failed_error, type: type}
+                        next
+                    end
 
                     if sememe_name == nil
                         sememe_name = ''
@@ -1038,7 +1050,15 @@ class KometDashboardController < ApplicationController
 
                     # if the sememe create or update failed, mark it
                     if return_value.is_a? CommonRest::UnexpectedResponse
+
                         failed_writes << {id: referenced_id_for_error + '_' + sememe_instance_id, text: error_text_prefix + type + ': ' + sememe_name + ': ' + return_value.rest_exception.conciseMessage, type: type}
+
+                        # if this is a vhat ID flag that it failed and the error so we can mark any other vhat IDs the same
+                        if session[:komet_vhat_ids].include?(sememe_definition_id)
+
+                            vhat_id_failed = true
+                            vhat_id_failed_error = return_value.rest_exception.conciseMessage
+                        end
                     end
 
                 rescue => exception

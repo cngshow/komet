@@ -1004,7 +1004,7 @@ ConceptViewer.prototype.createPropertyRowString = function (idPrefix, namePrefix
     }
 
     // add the edit version of the state field
-    rowString +=  '<div class="komet-show-on-edit komet-stamp' + hideStampClass + '">' + this.createSelectField(idPrefix + "state_" + this.viewerID, namePrefix + "[state]", this.selectFieldOptions.state, rowData.state, labelPrefix + "state") + '</div>';
+    rowString +=  '<div class="komet-show-on-edit komet-stamp' + hideStampClass + '">' + this.createSelectField(idPrefix + "state_" + this.viewerID, namePrefix + "[state]", this.selectFieldOptions.state, rowData.state, labelPrefix + " state", "komet-state-field") + '</div>';
 
     // add the view version of the state field and the rest of the stamp data
     rowString += '<div class="komet-show-on-view komet_stamp' + hideStampClass + '"><b></b>' + rowData.state + '</div>';
@@ -1124,7 +1124,7 @@ ConceptViewer.prototype.createDescriptionRowString = function (rowData) {
         rowString += '<input type="hidden" name="' + namePrefix + '[description_case_significance]" value="' + caseSignificance + '">'
     }
 
-    rowString += '<div class="komet-show-on-edit">' + this.createSelectField(descriptionID + "_description_state_" + this.viewerID, namePrefix + "[description_state]", this.selectFieldOptions.state, state, this.descriptionLabel + " State") + '</div>';
+    rowString += '<div class="komet-show-on-edit">' + this.createSelectField(descriptionID + "_description_state_" + this.viewerID, namePrefix + "[description_state]", this.selectFieldOptions.state, state, this.descriptionLabel + " State", "komet-state-field") + '</div>';
 
     // if this is not a new description show the rest of the STAMP data
     if (!isNew) {
@@ -1242,11 +1242,11 @@ ConceptViewer.prototype.createDescriptionDialectRowString = function (descriptio
         namePrefix = "descriptions[" + descriptionID + "][dialects][" + dialectID + "]";
 
         rowString = '<div id="' + rowID + '" class="komet-concept-edit-row komet-concept-edit-description-dialect-row">'
-            + '<div>' + this.createSelectField(idPrefix + "_dialect_" + this.viewerID, namePrefix + "[dialect]", this.selectFieldOptions.dialect, dialect, "dialect", labelPrefix + "Dialect State") + '</div>'
+            + '<div>' + this.createSelectField(idPrefix + "_dialect_" + this.viewerID, namePrefix + "[dialect]", this.selectFieldOptions.dialect, dialect, "dialect", labelPrefix + "Dialect State", "komet-state-field") + '</div>'
             + '<div>' + this.createSelectField(idPrefix + "_acceptability_" + this.viewerID, namePrefix + "[acceptability]", this.selectFieldOptions.acceptability, acceptability, "acceptability", labelPrefix + "Dialect Acceptability") + '</div>';
     }
 
-    rowString += '<div class="komet-show-on-edit">' + this.createSelectField(idPrefix + "_state_" + this.viewerID, namePrefix + "[state]", this.selectFieldOptions.state, state, labelPrefix + "Dialect State") + '</div>'
+    rowString += '<div class="komet-show-on-edit">' + this.createSelectField(idPrefix + "_state_" + this.viewerID, namePrefix + "[state]", this.selectFieldOptions.state, state, labelPrefix + "Dialect State", "komet-state-field") + '</div>'
         + '<div class="komet-show-on-view komet_stamp"><b></b>' + state + '</div>';
 
     if (isNew){
@@ -1324,7 +1324,7 @@ ConceptViewer.prototype.createAssociationRowString = function (rowData) {
         + '</autosuggest></div>'
         + '<div class="komet-show-on-view">' + targetText + '</div>';
 
-    rowString += '<div class="komet-show-on-edit">' + this.createSelectField(associationID + "_association_state_" + this.viewerID, "associations[" + associationID + "][association_state]", this.selectFieldOptions.state, state, typeText + " " + this.associationLabel + " State") + '</div>'
+    rowString += '<div class="komet-show-on-edit">' + this.createSelectField(associationID + "_association_state_" + this.viewerID, "associations[" + associationID + "][association_state]", this.selectFieldOptions.state, state, typeText + " " + this.associationLabel + " State", "komet-state-field") + '</div>'
         + '<div class="komet-show-on-view komet_stamp"><b></b>' + state + '</div>';
 
     // if this is not a new description show the rest of the STAMP data
