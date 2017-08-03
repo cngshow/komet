@@ -8,7 +8,7 @@
 	<parent>
 		<groupId>gov.vha.isaac.ochre</groupId>
 		<artifactId>isaac-parent</artifactId>
-		<version>4.16-SNAPSHOT</version><!--TODO Eliminate Snapshot (and 3.12-snapshot goes to 3.11 for example) if present -->
+		<version>4.16</version><!--TODO Eliminate Snapshot (and 3.12-snapshot goes to 3.11 for example) if present -->
 	</parent>
 
 	<groupId>gov.vha.isaac.gui.rails</groupId>
@@ -23,7 +23,7 @@
 	</description>
 
 	<properties>
-		<rails_common.version>1.74-SNAPSHOT</rails_common.version><!--TODO Put new rails common version here if it has been changed, move to non snapshot if releasing  -->
+		<rails_common.version>1.74</rails_common.version><!--TODO Put new rails common version here if it has been changed, move to non snapshot if releasing  -->
 		<!--Open up the assembly.xml file in rails common if new directories are added. -->
 		<isaac.version>${project.parent.version}</isaac.version>
 		<!-- railsMode is automatically set to 'test' or 'production' - 'test' if the version number ends with '-SNAPSHOT'
