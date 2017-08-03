@@ -3,6 +3,9 @@ Komet Changelog
 This changelog summarizes changes and fixes which are a part of each revision.  For more details on the fixes, refer tracking numbers 
 where provided, and the git commit history.
 
+* 2017/08/?? - 4.19 - PENDING
+    *
+
 * 2017/08/03 - 4.18
     * Defect 548948 regression test xml import
     * If Code or VUID fails to save, other VHAT ID on same concept or description will also not save.
