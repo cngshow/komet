@@ -7,14 +7,6 @@ $(document).on('ready	 page:load', function(){
       	$('#maincontent button, #maincontent a').first().focus();
       };
 	});
-
-	function getEvent(e){
-	    return (e || window.event);
-	};
-	function getKeyCode(e) {
-	    return (e.keyCode ? e.keyCode : e.which);
-	}; 
-
 });
 
 

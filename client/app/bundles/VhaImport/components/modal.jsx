@@ -5,8 +5,6 @@ const Modal = (props) => (
     <div
       className={`modal fade modal-wide${props.open ? " in" : ""}`}
       style={{ display: props.open ? "block" : "none" }}>
-      data-backdrop="static"
-      role="dialog"
       <div className="modal-dialog">
         <div className="modal-content">
           { props.children }

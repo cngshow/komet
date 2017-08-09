@@ -43,6 +43,10 @@ Copyright Notice
 @import "font-awesome";
 @import "skip_nav_link";
 
+*:focus {
+    border: 2px solid blue !important;    
+}
+
 html, body{
     width: 100%;
     height: 100%;
