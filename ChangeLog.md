@@ -4,7 +4,9 @@ This changelog summarizes changes and fixes which are a part of each revision.  
 where provided, and the git commit history.
 
 * 2017/08/?? - 4.19 - PENDING
-    *
+    * Fixed creating and editing concepts so that on successful save the buttons on the screen are not able to be clicked while the concept reloads.
+    * Fixed create concept so the if you click save, and then click cancel at the prompt it will not continue to save the concept.
+    * The Preferred Name option for VHAT concepts will be selected by default on the create concept screen every time you change the parent field. (Jazz: 555947)
 
 * 2017/08/03 - 4.18
     * Defect 548948 regression test xml import

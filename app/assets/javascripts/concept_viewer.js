@@ -556,7 +556,15 @@ ConceptViewer.prototype.conceptEditorParentOnChange = function(){
 
     // loop through the extended description type options to create the dropdown options
     $.each(this.extendedDescriptionTypeOptions, function (index, option){
-       option_tags += '<option value="' + option.value + '">' + option.label + '</option>'
+
+        option_tags += '<option value="' + option.value + '"';
+
+        // if this option is for the VHAT Preferred Name then select it
+        if (option.value == "7b402b1e-5587-5732-80bf-69be40426df3"){
+            option_tags += ' selected';
+        }
+
+        option_tags += '>' + option.label + '</option>'
     });
 
     descriptionTypes.html(option_tags);
@@ -635,7 +643,7 @@ ConceptViewer.prototype.createConcept = function() {
                     Common.cursor_auto();
                 } else {
 
-                    editorSection.prepend(UIHelper.generatePageMessage("The concept was created successfully.", true, "success"));
+                    editorSection.prepend(UIHelper.generatePageMessage("The concept was created successfully. Please wait while the concept is loaded in edit mode.", true, "success"));
                     conceptViewer.off('unsavedCheck');
                     TaxonomyModule.setViewParams(thisViewer.getViewParams());
 
@@ -907,7 +915,8 @@ ConceptViewer.prototype.editConcept = function(attributes, conceptProperties, de
                     Common.cursor_auto();
                 } else {
 
-                    editorSection.prepend(UIHelper.generatePageMessage("The concept was updated successfully", true, "success"));
+                    editorSection.css("pointer-events", "none");
+                    editorSection.prepend(UIHelper.generatePageMessage("The concept was updated successfully. Please wait while the concept reloads.", true, "success"));
                     conceptViewer.off('unsavedCheck');
                     TaxonomyModule.setViewParams(thisViewer.getViewParams());
                     $.publish(KometChannels.Taxonomy.taxonomyTreeNodeSelectedChannel, [null, data.concept_id, thisViewer.getViewParams(), thisViewer.viewerID, WindowManager.INLINE]);
@@ -1746,7 +1755,9 @@ ConceptViewer.prototype.showSaveSection = function (sectionName) {
                 UIHelper.toggleChangeHighlights(editorSection, false);
             }
 
-            if (buttonClicked != 'cancel') {
+            if (buttonClicked.toLowerCase() != 'cancel') {
+
+                form.css("pointer-events", "none");
                 form.submit();
             }
         }.bind(this);
