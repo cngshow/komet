@@ -7,6 +7,7 @@ where provided, and the git commit history.
     * Fixed creating and editing concepts so that on successful save the buttons on the screen are not able to be clicked while the concept reloads.
     * Fixed create concept so the if you click save, and then click cancel at the prompt it will not continue to save the concept.
     * The Preferred Name option for VHAT concepts will be selected by default on the create concept screen every time you change the parent field. (Jazz: 555947)
+    * 508 - When new viewer panel opens the appropriate first element will get focus (Jazz: 564546)
 
 * 2017/08/03 - 4.18
     * Defect 548948 regression test xml import

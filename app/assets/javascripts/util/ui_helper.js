@@ -427,6 +427,32 @@ var UIHelper = (function () {
         }
     }
 
+    function focusFirstFormField(containerElementOrSelector) {
+
+        var element;
+
+        // If the type of the first parameter is a string, then use it as a jquery selector, otherwise use as is
+        if (typeof containerElementOrSelector === "string") {
+            element = $(containerElementOrSelector);
+        } else {
+            element = containerElementOrSelector;
+        }
+
+        //add all elements we want to include in our selection
+        var focusableElements = 'input:not([disabled]), select:not([disabled]), [tabindex]:not([disabled]):not([tabindex="-1"])';
+
+        if (document.activeElement) {
+
+            var focusable = element[0].querySelector(focusableElements);
+
+            // make sure there is a focusable element
+            if (focusable != null){
+                focusable.focus();
+            }
+
+        }
+    }
+
     function generateConfirmationDialog(title, message, closeCallback, buttonText, positioningElementOrSelector, formID) {
 
         var dialogID = "komet_generated_confirm_dialog";
@@ -1641,6 +1667,7 @@ var UIHelper = (function () {
         initPageMessage: initPageMessage,
         removePageMessages: removePageMessages,
         focusNextElement: focusNextElement,
+        focusFirstFormField: focusFirstFormField,
         generateConfirmationDialog: generateConfirmationDialog,
         toggleChangeHighlights: toggleChangeHighlights,
         toggleFieldAvailability: toggleFieldAvailability,

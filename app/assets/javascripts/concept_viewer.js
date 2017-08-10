@@ -660,6 +660,9 @@ ConceptViewer.prototype.createConcept = function() {
         parentField.change();
     }
 
+    // set the focus to the first form field on the page
+    setTimeout("$('#komet_create_concept_parent_display_" + this.viewerID + "').focus();", 0);
+
     return true;
 };
 
@@ -934,8 +937,15 @@ ConceptViewer.prototype.editConcept = function(attributes, conceptProperties, de
         conceptViewer.find(".komet-show-on-edit").hide();
         UIHelper.toggleFieldAvailability(editorSection.find("input, select, textarea"));
 
+        // set the focus to the first form field on the page
+        setTimeout("$('#komet_concept_panel_tree_link_" + this.viewerID + "').parent().focus();", 0);
+
     } else {
+
         conceptViewer.find(".komet-show-on-view").hide();
+
+        // set the focus to the first form field on the page
+        setTimeout(UIHelper.focusFirstFormField, 0, "#komet_concept_attributes_panel_" + this.viewerID);
     }
 };
 
