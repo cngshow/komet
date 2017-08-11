@@ -3,6 +3,9 @@ Komet Changelog
 This changelog summarizes changes and fixes which are a part of each revision.  For more details on the fixes, refer tracking numbers 
 where provided, and the git commit history.
 
+* 2017/08/?? - 4.20 - PENDING
+    *
+
 * 2017/08/11 - 4.19
     * Fixed creating and editing concepts so that on successful save the buttons on the screen are not able to be clicked while the concept reloads.
     * Fixed create concept so the if you click save, and then click cancel at the prompt it will not continue to save the concept.
