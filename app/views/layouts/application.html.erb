@@ -11,10 +11,13 @@
   <%= csrf_meta_tags %>
 </head>
 <body class="<%= controller_name %> <%= action_name %>">
+<a id="skip-nav-link" href="#maincontent">
+  Skip to main content
+</a>
 <header>
   <%= render 'layouts/navigation' if @set_render_menu %>
 </header>
-<main role="main" class="komet-main">
+<main id="maincontent" role="main" class="komet-main">
   <%= render 'layouts/messages' %>
   <%= yield %>
 </main>

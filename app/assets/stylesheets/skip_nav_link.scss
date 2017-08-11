@@ -1,0 +1,18 @@
+a[href="#maincontent"] {
+  padding: 10px;
+  background: #BF1722;
+  color: white;
+  font-weight: 400;
+  position: absolute;
+  z-index: 2;
+  top: -4em;
+  border-bottom-right-radius: 8px;
+  transition: top 0.5s;
+  &:focus {
+  	color: white;
+  	top: 1em;
+  }
+  &:hover {
+  	color: white;
+  }
+}

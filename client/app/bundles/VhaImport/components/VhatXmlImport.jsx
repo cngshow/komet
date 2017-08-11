@@ -50,7 +50,7 @@ export default class VhatXmlImport extends React.Component {
       		role="button" 
       		aria-label="VHAT XML Import" 
       		title="VHAT XML Import" 
-      		id="komet_import_link" 
+      		id="komet_import_link"
             >
           	<div className="glyphicon glyphicon-import" title="VHAT XML Import">
           	</div>
@@ -73,18 +73,26 @@ export default class VhatXmlImport extends React.Component {
                 { this.state.success ? <MessageBox message={ this.state.success } /> : null }
                 { this.state.error ? <ErrorBox error={ this.state.error } /> : null }
                 <h2 className="modal-title">Please choose file</h2>
-                <input ref={ref => fileInput = ref} type="file" accept=".xml" name="file" required></input>
+                <input 
+                  ref={ref => fileInput = ref} 
+                  type="file" 
+                  accept=".xml" 
+                  name="file" 
+                  required
+                  autoFocus
+                >
+                </input>
               </div>
               <hr />
               <div>
                 <div className="btn-bar">
                   <button
-                    className="btn btn-default cancel"
+                    className="btn btn-default cancel xml-import-button"
                     role="button"
                     onClick={() => this.cancelButton() }>
                     Cancel
                   </button>
-                  <button type="submit" role="button" className="btn btn-default submit">Submit</button>
+                  <button  type="submit" role="button" className="btn btn-default submit xml-import-button">Submit</button>
                 </div>
               </div>
             </form>

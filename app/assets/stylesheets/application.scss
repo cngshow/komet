@@ -41,6 +41,11 @@ Copyright Notice
 @import 'bootstrap-datetimepicker';
 @import "font-awesome-sprockets";
 @import "font-awesome";
+@import "skip_nav_link";
+
+*:focus {
+    border: 2px solid blue !important;    
+}
 
 html, body{
     width: 100%;
