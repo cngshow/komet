@@ -44,10 +44,17 @@ export default class VhatXmlImport extends React.Component {
     });
   }; 
   onFormSubmit(form, body) {
+    //https://github.com/github/fetch/issues/424 FOR CSRF TOKEN HEADERS
     this.setState({ spinner: true });
+    const token = $('meta[name="csrf-token"]').attr('content');
     api(gon.routes.import_path, {
       method: 'POST',
-      body
+      headers: {
+        'X-Requested-With': 'XMLHttpRequest',
+        'X-CSRF-Token': token
+      },
+      body,
+      credentials: 'same-origin'
     })
     .then(response => { 
       form.reset();

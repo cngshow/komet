@@ -10,10 +10,10 @@ Rails.application.routes.draw do
     #match '/external/generate_vuid' => 'application#generateVuid', :as => :generate_vuid, via: [:get]
 
     post 'external/authenticate', as: :login
-    get 'external/export', as: :export
-    post 'external/import', as: :import
+    post 'external/export', as: :export
     get 'external/logout', :as => :logout
 
+    post 'komet_dashboard/import', as: :import
     get 'komet_dashboard/session_timeout', as: :session_timeout
     get 'komet_dashboard/renew_session', as: :renew_session, :constraints => OnlyAjaxRequest.new
 
