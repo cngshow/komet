@@ -459,9 +459,18 @@ MappingViewer.prototype.initializeSetEditor = function(viewerAction, mapItems){
     }
 
     if (this.viewerAction == MappingModule.SET_DETAILS){
+
         form.find(".komet-mapping-show-on-edit").hide();
+
+        // set the focus to the first form field on the page
+        setTimeout("$('#komet_mapping_panel_tree_link_" + this.viewerID + "').parent().focus();", 0);
+
     } else {
+
         form.find(".komet-mapping-show-on-view").hide();
+
+        // set the focus to the first form field on the page
+        setTimeout("$('#komet_mapping_set_definition_tab_link_" + this.viewerID + "').focus();", 0);
     }
 
     $("#komet_mapping_set_tabs_" + this.viewerID).tabs();
