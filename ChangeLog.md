@@ -6,7 +6,7 @@ where provided, and the git commit history.
 * 2017/08/?? - 4.20 - PENDING
     * xml import adding vuidGeneration param to api
     * adding loader + disabling button on gui when importing for xml import
-
+    * adding edit roles to xml import & xml export
 * 2017/08/11 - 4.19
     * Fixed creating and editing concepts so that on successful save the buttons on the screen are not able to be clicked while the concept reloads.
     * Fixed create concept so the if you click save, and then click cancel at the prompt it will not continue to save the concept.
