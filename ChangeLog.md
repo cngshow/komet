@@ -4,7 +4,7 @@ This changelog summarizes changes and fixes which are a part of each revision.  
 where provided, and the git commit history.
 
 * 2017/08/?? - 4.21 - PENDING
-    *
+    * associating vuid auto generate toggle option with xml import
 
 * 2017/08/15 - 4.20
     * xml import adding vuidGeneration param to api
