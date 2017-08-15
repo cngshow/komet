@@ -24,8 +24,6 @@ Copyright Notice
 require './lib/isaac_rest/intake_rest'
 
 class ExternalController < ApplicationController
-  skip_before_action :verify_authenticity_token
-
   # we cannot skip ensure roles on logout because we need to have @ssoi set to determine the redirect url
   skip_before_action :ensure_roles, only: [:login]
   skip_after_action :verify_authorized
@@ -69,29 +67,5 @@ class ExternalController < ApplicationController
 
   def export
   #   here for form validation?! - which is not yet working
-  end
-
-  def import
-    body_string = read_xml_file
-    additional_req_params = { editToken: get_edit_token }
-    response = IntakeRest.get_intake(action: IntakeRest::ACTION_VETS_XML, body_string: body_string, additional_req_params: additional_req_params)  
-
-    if response.respond_to? :flash_error
-      clear_rest_caches
-      render json: { 
-        errors: { 
-          status: response.status, 
-          body: response.body, 
-          message: response.rest_exception.conciseMessage 
-        } 
-      }, status: 422
-    else 
-      head :ok
-    end
-  end
-
-  private
-  def read_xml_file
-    params[:file].tempfile.read
   end
 end

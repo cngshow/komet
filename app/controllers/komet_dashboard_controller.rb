@@ -27,6 +27,7 @@ include ERB::Util
 # KometDashboardController -
 # handles the loading of the taxonomy tree
 class KometDashboardController < ApplicationController
+
     include TaxonomyConcern, ConceptConcern, InstrumentationConcern, SearchApis
     include CommonController, TaxonomyHelper
 
@@ -35,8 +36,36 @@ class KometDashboardController < ApplicationController
     skip_before_action :ensure_roles, only: [:version]
     skip_after_action :verify_authorized, only: [:version]
     skip_before_action :read_only, only: [:version]
-    before_action :can_edit_concept, only: [:get_concept_create_info, :create_concept, :edit_concept, :clone_concept, :change_concept_state]
+    before_action :can_edit_concept, only: [:get_concept_create_info, :create_concept, :edit_concept, :clone_concept, :change_concept_state, :import]
     before_action :can_get_vuids, only: [:get_generated_vhat_ids]
+
+    def import
+        body_string = read_xml_file
+        vuid_generation = user_session(UserSession::USER_PREFERENCES)["generate_vuid"]
+
+        additional_req_params = { 
+            editToken: get_edit_token,
+            vuidGeneration: vuid_generation
+        }
+        
+        response = IntakeRest.get_intake(
+                    action: IntakeRest::ACTION_VETS_XML, 
+                    body_string: body_string, 
+                    additional_req_params: additional_req_params
+                   )  
+        if response.respond_to? :flash_error
+          clear_rest_caches
+          render json: { 
+            errors: { 
+              status: response.status, 
+              body: response.body, 
+              message: response.rest_exception.conciseMessage 
+            } 
+          }, status: 422
+        else 
+          head :ok
+        end
+    end
 
     ##
     # load_tree_data - RESTful route for populating the taxonomy tree using an http :GET
@@ -1608,5 +1637,8 @@ class KometDashboardController < ApplicationController
         end
         render json: @version
     end
-
+  private
+  def read_xml_file
+    params[:file].tempfile.read
+  end
 end

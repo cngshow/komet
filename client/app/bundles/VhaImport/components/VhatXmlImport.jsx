@@ -3,6 +3,29 @@ import Modal from './modal.jsx';
 import MessageBox from './messageBox.jsx';
 import ErrorBox from './errorBox.jsx';
 
+const VhatXmlImportButtons = ({
+  disable,
+  onClose
+}) => (
+  <div>
+    <button
+      className="btn btn-default cancel xml-import-button"
+      role="button"
+      onClick={() => onClose()}
+      disabled={disable}
+    >
+      Close
+    </button>
+    <button 
+      type="submit" 
+      role="button" 
+      className="btn btn-default submit xml-import-button"
+      disabled={disable}
+    >
+      Submit
+    </button>
+  </div>
+);
 export default class VhatXmlImport extends React.Component {
   /**
    * @param props - Comes from your rails view.
@@ -17,22 +40,31 @@ export default class VhatXmlImport extends React.Component {
       open: false,
       success: null,
       error: null,
+      spinner: false,
     });
   }; 
   onFormSubmit(form, body) {
+    //https://github.com/github/fetch/issues/424 FOR CSRF TOKEN HEADERS
+    this.setState({ spinner: true });
+    const token = $('meta[name="csrf-token"]').attr('content');
     api(gon.routes.import_path, {
       method: 'POST',
-      body
+      headers: {
+        'X-Requested-With': 'XMLHttpRequest',
+        'X-CSRF-Token': token
+      },
+      body,
+      credentials: 'same-origin'
     })
     .then(response => { 
       form.reset();
       if (!response) {
-        this.setState({ success: "Successfully imported XML", error: null });
+        this.setState({ success: "Successfully imported XML", error: null, spinner: false });
       };
     })
     .catch(error => {
       form.reset();
-      this.setState({ error: error.message, success: null });
+      this.setState({ error: error.message, success: null, spinner: false });
     });
   };
   render() {
@@ -70,29 +102,32 @@ export default class VhatXmlImport extends React.Component {
                 <h2 className="modal-title">VHAT XML Import</h2>
               </div>
               <div className="modal-body">
-                { this.state.success ? <MessageBox message={ this.state.success } /> : null }
-                { this.state.error ? <ErrorBox error={ this.state.error } /> : null }
-                <h2 className="modal-title">Please choose file</h2>
-                <input 
-                  ref={ref => fileInput = ref} 
-                  type="file" 
-                  accept=".xml" 
-                  name="file" 
-                  required
-                  autoFocus
-                >
-                </input>
+                {
+                  this.state.spinner ? 
+                    <div><div data-loader="circle"></div></div> :
+                    <div>
+                      { this.state.success ? <MessageBox message={ this.state.success } /> : null }
+                      { this.state.error ? <ErrorBox error={ this.state.error } /> : null }
+                      <h2 className="modal-title">Please choose file</h2>
+                      <input 
+                        ref={ref => fileInput = ref} 
+                        type="file" 
+                        accept=".xml" 
+                        name="file" 
+                        required
+                        autoFocus
+                      >
+                      </input>
+                    </div>
+                }
               </div>
               <hr />
               <div>
                 <div className="btn-bar">
-                  <button
-                    className="btn btn-default cancel xml-import-button"
-                    role="button"
-                    onClick={() => this.cancelButton() }>
-                    Cancel
-                  </button>
-                  <button  type="submit" role="button" className="btn btn-default submit xml-import-button">Submit</button>
+                  <VhatXmlImportButtons 
+                    disable={this.state.spinner} 
+                    onClose={() => this.cancelButton() }
+                  />
                 </div>
               </div>
             </form>

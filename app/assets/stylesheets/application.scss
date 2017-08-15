@@ -42,6 +42,7 @@ Copyright Notice
 @import "font-awesome-sprockets";
 @import "font-awesome";
 @import "skip_nav_link";
+@import "loader";
 
 *:focus {
     border: 2px solid blue !important;    
@@ -96,6 +97,11 @@ body.komet_dashboard, body.komet_dashboard .ui-widget, body.komet_dashboard .ui-
 }
 .splitter_container.splitter-active > .splitter_bar{
     z-index: 11;
+}
+
+// bootstrap Overrides
+.badge {
+    background-color: #595959;
 }
 
 // KOMET Login styles

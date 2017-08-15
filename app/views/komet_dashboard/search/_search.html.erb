@@ -26,7 +26,7 @@
 
             <div class="komet-floated-bar">
                 <%= label_tag :taxonomy_search_type, 'Search In:' %>
-                <%= select_tag :taxonomy_search_type, options_for_select([['Descriptions', 'descriptions'], ['Sememes', 'sememes'], ['Identifiers', 'identifiers']], 'descriptions'), :onchange => 'TaxonomySearchModule.changeSearchType(this)' %>
+                <%= select_tag :taxonomy_search_type, options_for_select([['Descriptions', 'descriptions'], ['Sememes', 'sememes'], ['Identifiers', 'identifiers']], 'descriptions'), :onchange => 'TaxonomySearchModule.changeSearchType(this)', :title => 'Select the type search to make. Changing this field will provide different options below.' %>
 
                 <div class="pull-right">
                     <%= label_tag :taxonomy_search_page_size, 'Page Size:' %>
