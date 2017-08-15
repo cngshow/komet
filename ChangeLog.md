@@ -3,6 +3,9 @@ Komet Changelog
 This changelog summarizes changes and fixes which are a part of each revision.  For more details on the fixes, refer tracking numbers 
 where provided, and the git commit history.
 
+* 2017/08/?? - 4.21 - PENDING
+    *
+
 * 2017/08/15 - 4.20
     * xml import adding vuidGeneration param to api
     * adding loader + disabling button on gui when importing for xml import
