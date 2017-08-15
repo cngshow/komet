@@ -99,6 +99,11 @@ body.komet_dashboard, body.komet_dashboard .ui-widget, body.komet_dashboard .ui-
     z-index: 11;
 }
 
+// bootstrap Overrides
+.badge {
+    background-color: #595959;
+}
+
 // KOMET Login styles
 .external.login{
     background-color: #eef1f3;

@@ -7,6 +7,9 @@ where provided, and the git commit history.
     * xml import adding vuidGeneration param to api
     * adding loader + disabling button on gui when importing for xml import
     * adding edit roles to xml import & xml export
+    * 508 - fixed taxonomy tree badge contrast. (Jazz: 564560)
+    * 508 - added title to search "Search In" field to explain that changing the field changes other options. (Jazz: 564540)
+
 * 2017/08/11 - 4.19
     * Fixed creating and editing concepts so that on successful save the buttons on the screen are not able to be clicked while the concept reloads.
     * Fixed create concept so the if you click save, and then click cancel at the prompt it will not continue to save the concept.
