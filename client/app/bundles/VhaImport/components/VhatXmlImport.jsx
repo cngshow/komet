@@ -69,8 +69,6 @@ export default class VhatXmlImport extends React.Component {
   };
   componentDidUpdate(){
     $('input[name="file"]').focus();
-      $('input[name="file"]').length
-    );
   };
   componentDidMount() {
     //508 xml import
