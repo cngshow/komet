@@ -69,7 +69,6 @@ export default class VhatXmlImport extends React.Component {
   };
   componentDidUpdate(){
     $('input[name="file"]').focus();
-    console.log('this exists: ', 
       $('input[name="file"]').length
     );
   };
