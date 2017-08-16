@@ -5,6 +5,7 @@ where provided, and the git commit history.
 
 * 2017/08/?? - 4.21 - PENDING
     * associating vuid auto generate toggle option with xml import
+    * 508 fixes on xml import + refactoring previous 508 to cycle functions
 
 * 2017/08/15 - 4.20
     * xml import adding vuidGeneration param to api

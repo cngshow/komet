@@ -3,6 +3,7 @@ import React from 'react';
 const Modal = (props) => (
   <span>
     <div
+      id="bootstrap-react-modal"
       className={`modal fade modal-wide${props.open ? " in" : ""}`}
       style={{ display: props.open ? "block" : "none" }}>
       <div className="modal-dialog">
