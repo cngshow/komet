@@ -1309,6 +1309,7 @@ var UIHelper = (function () {
 
         $.contextMenu({
             selector: '.komet-context-menu',
+            zIndex: 10,
             events: {
                 show: function (opt) {
                     // show event is executed every time the menu is shown!

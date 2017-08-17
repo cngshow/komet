@@ -10,6 +10,8 @@ where provided, and the git commit history.
     * changed concept edit autosuggest searches so if editing a VHAT concept they will only display VHAT and ISAAC Metadata results (Jazz: 571827)
     * Fixed edit concept so if you save a concept and there are errors you can still edit the form
     * Fixed autosuggest field on concept create so if the field has an empty value it won't change the description type options
+    * Set the width of autosuggest menus (Jazz: 566143)
+    * fixed the z-index of context menus so that it doesn't appear under certain form controls
 
 * 2017/08/15 - 4.20
     * xml import adding vuidGeneration param to api
