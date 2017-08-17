@@ -39,34 +39,6 @@ class KometDashboardController < ApplicationController
     before_action :can_edit_concept, only: [:get_concept_create_info, :create_concept, :edit_concept, :clone_concept, :change_concept_state, :import]
     before_action :can_get_vuids, only: [:get_generated_vhat_ids]
 
-    def import
-        body_string = read_xml_file
-        vuid_generation = user_session(UserSession::USER_PREFERENCES)["generate_vuid"]
-
-        additional_req_params = { 
-            editToken: get_edit_token,
-            vuidGeneration: vuid_generation
-        }
-        
-        response = IntakeRest.get_intake(
-                    action: IntakeRest::ACTION_VETS_XML, 
-                    body_string: body_string, 
-                    additional_req_params: additional_req_params
-                   )  
-        if response.respond_to? :flash_error
-          clear_rest_caches
-          render json: { 
-            errors: { 
-              status: response.status, 
-              body: response.body, 
-              message: response.rest_exception.conciseMessage 
-            } 
-          }, status: 422
-        else 
-          head :ok
-        end
-    end
-
     ##
     # load_tree_data - RESTful route for populating the taxonomy tree using an http :GET
     # The current tree node is identified in the request params with the key :concept_id
@@ -580,7 +552,6 @@ class KometDashboardController < ApplicationController
 
     # sets the coordinate token from the user preferences parameters and puts the resulting token in the session
     def set_coordinates_token
-
         # set the params for the API call from the request
         additional_req_params = {}
         additional_req_params[:language] = params[:'komet_preferences_language']
@@ -1425,14 +1396,26 @@ class KometDashboardController < ApplicationController
     def get_concept_suggestions
 
         coordinates_token = session[:coordinates_token].token
-        view_params = check_view_params(params[:view_params], false)
+
+        # check to see if there were view_params and parse it if there were
+        if params[:view_params] && params[:view_params] != ''
+            params[:view_params] = JSON.parse(params[:view_params]);
+        end
+
+        view_params = check_view_params(params[:view_params], false);
         search_term = params[:term]
         concept_suggestions_data = []
         additional_req_params = {coordToken: coordinates_token, query: search_term, maxPageSize: 25, expand: 'referencedConcept', mergeOnConcept: true}
         additional_req_params.merge!(view_params)
         restrict_search = params[:restrict_search]
+        restrict_module = params[:restrict_module]
 
-        # only restict the search if the flag is set and there are at least three characters in the search term - otherwise performance is bad
+        # only restict the search if the flag is set
+        if restrict_search != nil && restrict_search != ''
+            additional_req_params[:restrictTo] = restrict_search;
+        end
+
+        # only restict the search if the flag is set
         if restrict_search != nil && restrict_search != ''
             additional_req_params[:restrictTo] = restrict_search;
         end
@@ -1637,8 +1620,51 @@ class KometDashboardController < ApplicationController
         end
         render json: @version
     end
+
+    def import
+        body_string = read_xml_file
+        vuid_generation = user_session(UserSession::USER_PREFERENCES)["generate_vuid"]
+
+        if vuid_generation == "false" 
+            return render json: { 
+                errors: { 
+                    message: "VUID tag missing in XML content" 
+                }
+            }, status: 422 unless check_xml_content_has_vuid_tag(body_string)
+        end
+
+        additional_req_params = { 
+            editToken: get_edit_token,
+            vuidGeneration: vuid_generation
+        }
+        
+        response = IntakeRest.get_intake(
+                    action: IntakeRest::ACTION_VETS_XML, 
+                    body_string: body_string, 
+                    additional_req_params: additional_req_params
+                   )  
+        if response.respond_to? :flash_error
+          clear_rest_caches
+          render json: { 
+            errors: { 
+              status: response.status, 
+              body: response.body, 
+              message: response.rest_exception.conciseMessage 
+            } 
+          }, status: 422
+        else 
+          head :ok
+        end
+    end
+
   private
   def read_xml_file
     params[:file].tempfile.read
+  end
+
+  def check_xml_content_has_vuid_tag(body)
+    doc = Nokogiri::HTML(body)
+    return true if doc.xpath("//vuid").present? || doc.xpath("//VUID").present?
+    false
   end
 end

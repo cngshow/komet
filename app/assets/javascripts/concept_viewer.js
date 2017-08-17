@@ -551,23 +551,27 @@ ConceptViewer.prototype.conceptEditorParentOnChange = function(){
     var preferred_name =  $("#komet_create_concept_description_" + this.viewerID).val();
     var option_tags = "";
 
-    // set the terminology specific settings
-    this.setTerminologySpecificSettings(terminologyTypes);
+    // only do the following if there is a value in the parent's field
+    if (parentField.val() != "") {
 
-    // loop through the extended description type options to create the dropdown options
-    $.each(this.extendedDescriptionTypeOptions, function (index, option){
+        // set the terminology specific settings
+        this.setTerminologySpecificSettings(terminologyTypes);
 
-        option_tags += '<option value="' + option.value + '"';
+        // loop through the extended description type options to create the dropdown options
+        $.each(this.extendedDescriptionTypeOptions, function (index, option) {
 
-        // if this option is for the VHAT Preferred Name then select it
-        if (option.value == "7b402b1e-5587-5732-80bf-69be40426df3"){
-            option_tags += ' selected';
-        }
+            option_tags += '<option value="' + option.value + '"';
 
-        option_tags += '>' + option.label + '</option>'
-    });
+            // if this option is for the VHAT Preferred Name then select it
+            if (option.value == "7b402b1e-5587-5732-80bf-69be40426df3") {
+                option_tags += ' selected';
+            }
 
-    descriptionTypes.html(option_tags);
+            option_tags += '>' + option.label + '</option>'
+        });
+
+        descriptionTypes.html(option_tags);
+    }
 
     this.setCreateSaveButtonState(parentField.val(), preferred_name);
 };
@@ -862,6 +866,9 @@ ConceptViewer.prototype.editConcept = function(attributes, conceptProperties, de
 
                 if (data.failed.length > 0){
 
+                    // return the ability to interact with the form
+                    form.css("pointer-events", "auto");
+
                     // create variables for any terminology specific labels that may appear in the error messages
                     var descriptionString = thisViewer.descriptionLabel.toLowerCase();
                     var associationString = thisViewer.associationLabel.toLowerCase();
@@ -918,7 +925,7 @@ ConceptViewer.prototype.editConcept = function(attributes, conceptProperties, de
                     Common.cursor_auto();
                 } else {
 
-                    editorSection.css("pointer-events", "none");
+
                     editorSection.prepend(UIHelper.generatePageMessage("The concept was updated successfully. Please wait while the concept reloads.", true, "success"));
                     conceptViewer.off('unsavedCheck');
                     TaxonomyModule.setViewParams(thisViewer.getViewParams());
@@ -1339,8 +1346,15 @@ ConceptViewer.prototype.createAssociationRowString = function (rowData) {
         + 'value="' + targetID + '" '
         + 'display-value="' + targetText + '" '
         + 'terminology-types="' + targetTerminologyTypes + '" '
-        + 'classes="komet-concept-edit-association-value">'
-        + '</autosuggest></div>'
+        + 'classes="komet-concept-edit-association-value" ';
+
+    if (this.isVHAT) {
+
+        var view_params_string = '{ &quot;modules&quot;: [&quot;' + UIHelper.VHAT + '&quot;]}';
+        rowString += 'view-params="' + view_params_string + '"';
+    }
+
+    rowString += '></autosuggest></div>'
         + '<div class="komet-show-on-view">' + targetText + '</div>';
 
     rowString += '<div class="komet-show-on-edit">' + this.createSelectField(associationID + "_association_state_" + this.viewerID, "associations[" + associationID + "][association_state]", this.selectFieldOptions.state, state, typeText + " " + this.associationLabel + " State", "komet-state-field") + '</div>'
@@ -1408,8 +1422,15 @@ ConceptViewer.prototype.addPropertyRow = function (descriptionID, addElement, pr
         + 'name="sememe" '
         + 'label="Search for a concept to use as a ' + property_type + ' property" '
         + 'restrict-search="' + UIHelper.RECENTS_SEMEME + '"'
-        + 'classes="komet-concept-add-property-sememe">'
-        + '</autosuggest></form>';
+        + 'classes="komet-concept-add-property-sememe" ';
+
+    if (this.isVHAT) {
+
+        var view_params_string = '{ &quot;modules&quot;: [&quot;' + UIHelper.VHAT + '&quot;]}';
+        addRowString += 'view-params="' + view_params_string + '"';
+    }
+
+    addRowString += '></autosuggest></form>';
 
     var confirmCallback = function(buttonClicked){
 

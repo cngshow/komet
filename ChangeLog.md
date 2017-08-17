@@ -3,6 +3,16 @@ Komet Changelog
 This changelog summarizes changes and fixes which are a part of each revision.  For more details on the fixes, refer tracking numbers 
 where provided, and the git commit history.
 
+* 2017/08/17 - 4.21
+    * associating vuid auto generate toggle option with xml import
+    * 508 fixes on xml import + refactoring previous 508 to cycle functions
+    * fixed autosuggest menu so it is always fully visible on screen (Jazz: 566143)
+    * changed concept edit autosuggest searches so if editing a VHAT concept they will only display VHAT and ISAAC Metadata results (Jazz: 571827)
+    * Fixed edit concept so if you save a concept and there are errors you can still edit the form
+    * Fixed autosuggest field on concept create so if the field has an empty value it won't change the description type options
+    * Set the width of autosuggest menus (Jazz: 566143)
+    * fixed the z-index of context menus so that it doesn't appear under certain form controls
+
 * 2017/08/15 - 4.20
     * xml import adding vuidGeneration param to api
     * adding loader + disabling button on gui when importing for xml import

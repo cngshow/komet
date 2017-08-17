@@ -843,7 +843,7 @@ var UIHelper = (function () {
             + 'data-menu-type="paste_target" data-menu-id-field="' + fieldIDBase + fieldIDPostfix + '" data-menu-display-field="' + fieldIDBase + '_display' + fieldIDPostfix + '" '
             + 'data-menu-taxonomy-type-field="' + fieldIDBase + '_type' + fieldIDPostfix + '" value="' + displayValue + '"' + fieldTabIndex + '>'
             + '<div id="' + fieldIDBase + '_recents_button' + fieldIDPostfix + '"  class="input-group-btn komet-search-combo-field">'
-            + '<button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-label="Select ' + displayName + '" aria-haspopup="true" aria-expanded="false"><span class="caret"></span></button>'
+            + '<button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" title="Select a recent value for the ' + label + ' field" aria-label="Select a recent value for the ' + label + ' field" aria-haspopup="true" aria-expanded="false"><span class="caret"></span></button>'
             + '<ul id="' + fieldIDBase + '_recents' + fieldIDPostfix + '" class="dropdown-menu dropdown-menu-right"' + recentsTabIndex + '></ul>'
             + '</div></div>';
 
@@ -882,7 +882,7 @@ var UIHelper = (function () {
             var useRecentsCache = tag.getAttribute("use-recents-cache");
             var characterTriggerLimit = tag.getAttribute("character-trigger-limit");
             var restrictSearch = tag.getAttribute("restrict-search");
-            var viewParams = tag.getAttribute("view_params");
+            var viewParams = tag.getAttribute("view-params");
 
             if (fieldIDPostfix == null) {
                 fieldIDPostfix = "";
@@ -909,8 +909,34 @@ var UIHelper = (function () {
             displayField.autocomplete({
                 source: gon.routes[suggestionRestVariable] + '?restrict_search=' + restrictSearch + '&' + jQuery.param({view_params: viewParams}),
                 minLength: characterTriggerLimit,
-                select: onAutoSuggestSelection
-                , change: onAutoSuggestChange(characterTriggerLimit)
+                select: onAutoSuggestSelection,
+                change: onAutoSuggestChange(characterTriggerLimit),
+                open: function(event){
+
+                    var input = $(event.target);
+                    var results = input.autocomplete("widget");
+                    var top = results.position().top;
+                    var left = results.position().left;
+                    var height = results.height();
+                    var width = results.width();
+
+                    // check to see if the dropdown menu will be below the bottom of the current screen, if so set the menu above the input field
+                    if (top + height >= document.body.clientHeight){
+
+                        var inputHeight = input.outerHeight();
+                        var newTop = top - height - inputHeight;
+
+                        results.css("top", newTop + "px");
+                    }
+
+                    // check to see if the dropdown menu will be past the right edge of the screen, if so set the menu so it fits on the screen
+                    if (left + width >= window.innerWidth){
+
+                        var newLeft = window.innerWidth - width - 10;
+
+                        results.css("left", newLeft + "px");
+                    }
+                }
             });
 
             displayField.data("ui-autocomplete")._renderItem = function (ul, item) {
@@ -1283,6 +1309,7 @@ var UIHelper = (function () {
 
         $.contextMenu({
             selector: '.komet-context-menu',
+            zIndex: 10,
             events: {
                 show: function (opt) {
                     // show event is executed every time the menu is shown!

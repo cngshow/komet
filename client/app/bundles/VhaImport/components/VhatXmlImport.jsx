@@ -67,6 +67,48 @@ export default class VhatXmlImport extends React.Component {
       this.setState({ error: error.message, success: null, spinner: false });
     });
   };
+  componentDidUpdate(){
+    $('input[name="file"]').focus();
+  };
+  componentDidMount() {
+    //508 xml import
+    $(document).on('keydown', '.submit.xml-import-button', function(e){
+      var e = getEvent(e);
+      var keyCode = getKeyCode(e);
+
+      if (e.keyCode == 9 && !e.shiftKey) {
+        e.preventDefault();
+        $('span.close-x').focus();
+      };
+    });
+    $(document).on('keydown', 'span.close-x', function(e){
+      var e = getEvent(e);
+      var keyCode = getKeyCode(e);
+
+      if (e.keyCode == 9 && e.shiftKey) {
+        e.preventDefault();
+        $('.submit.xml-import-button').focus();
+      };
+      if (e.keyCode == 13) {
+        $('span.close-x').click();
+      };
+    });
+    $(document).on('keydown', '[accept=".xml"]', function(e){
+      var e = getEvent(e);
+      var keyCode = getKeyCode(e);
+
+      if (e.keyCode == 9 && e.shiftKey) {
+        e.preventDefault();
+        console.log('running')
+        $('span.close-x').focus();
+      };
+
+      if (e.keyCode == 13) {
+        $('input[accept=".xml"]').click();
+      };
+    });
+  };
+
   render() {
     let fileInput;
     let form;
@@ -89,8 +131,21 @@ export default class VhatXmlImport extends React.Component {
         </button>
 
         <Modal open={this.state.open}>
+          
           <div className="vha-import-wrapper">
+            <div className="close-x">
+              <span 
+                className="close-x"
+                aria-label="close button" 
+                aria-hidden="true"
+                tabIndex="0"
+                onClick={() => this.cancelButton() }
+              >
+                ×
+              </span>
+            </div>
             <form
+
               ref={ref => form = ref}
               onSubmit={ev => {
                 ev.preventDefault();
@@ -115,7 +170,6 @@ export default class VhatXmlImport extends React.Component {
                         accept=".xml" 
                         name="file" 
                         required
-                        autoFocus
                       >
                       </input>
                     </div>
