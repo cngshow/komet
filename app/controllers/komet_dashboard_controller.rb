@@ -1396,14 +1396,26 @@ class KometDashboardController < ApplicationController
     def get_concept_suggestions
 
         coordinates_token = session[:coordinates_token].token
-        view_params = check_view_params(params[:view_params], false)
+
+        # check to see if there were view_params and parse it if there were
+        if params[:view_params] && params[:view_params] != ''
+            params[:view_params] = JSON.parse(params[:view_params]);
+        end
+
+        view_params = check_view_params(params[:view_params], false);
         search_term = params[:term]
         concept_suggestions_data = []
         additional_req_params = {coordToken: coordinates_token, query: search_term, maxPageSize: 25, expand: 'referencedConcept', mergeOnConcept: true}
         additional_req_params.merge!(view_params)
         restrict_search = params[:restrict_search]
+        restrict_module = params[:restrict_module]
 
-        # only restict the search if the flag is set and there are at least three characters in the search term - otherwise performance is bad
+        # only restict the search if the flag is set
+        if restrict_search != nil && restrict_search != ''
+            additional_req_params[:restrictTo] = restrict_search;
+        end
+
+        # only restict the search if the flag is set
         if restrict_search != nil && restrict_search != ''
             additional_req_params[:restrictTo] = restrict_search;
         end

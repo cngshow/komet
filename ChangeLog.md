@@ -6,6 +6,10 @@ where provided, and the git commit history.
 * 2017/08/?? - 4.21 - PENDING
     * associating vuid auto generate toggle option with xml import
     * 508 fixes on xml import + refactoring previous 508 to cycle functions
+    * fixed autosuggest menu so it is always fully visible on screen (Jazz: 566143)
+    * changed concept edit autosuggest searches so if editing a VHAT concept they will only display VHAT and ISAAC Metadata results (Jazz: 571827)
+    * Fixed edit concept so if you save a concept and there are errors you can still edit the form
+    * Fixed autosuggest field on concept create so if the field has an empty value it won't change the description type options
 
 * 2017/08/15 - 4.20
     * xml import adding vuidGeneration param to api

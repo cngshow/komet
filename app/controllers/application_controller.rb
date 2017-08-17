@@ -1,6 +1,7 @@
 require './lib/rails_common/util/controller_helpers'
 require 'faraday'
 require 'openssl'
+require 'json'
 require './lib/rails_common/roles/ssoi'
 require './lib/rails_common/roles/user_session'
 require './lib/rails_common/util/servlet_support'
