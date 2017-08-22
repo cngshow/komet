@@ -638,12 +638,20 @@ ConceptViewer.prototype.createConcept = function() {
             type: "POST",
             url: $(this).attr("action"),
             data: $(this).serialize(), //new FormData($(this)[0]),
-            error: function (){Common.cursor_auto();},
+            error: function (){
+
+                // return the ability to interact with the form
+                editorForm.css("pointer-events", "auto");
+                Common.cursor_auto();
+            },
             success: function (data) {
 
                 if (data.concept_id == null){
 
                     editorSection.prepend(UIHelper.generatePageMessage("An error has occurred. The concept was not created."));
+
+                    // return the ability to interact with the form
+                    editorForm.css("pointer-events", "auto");
                     Common.cursor_auto();
                 } else {
 
@@ -861,7 +869,12 @@ ConceptViewer.prototype.editConcept = function(attributes, conceptProperties, de
             type: "POST",
             url: $(this).attr("action"),
             data: $(this).serialize(),
-            error: function (){Common.cursor_auto();},
+            error: function (){
+
+                // return the ability to interact with the form
+                form.css("pointer-events", "auto");
+                Common.cursor_auto();
+            },
             success: function (data) {
 
                 if (data.failed.length > 0){

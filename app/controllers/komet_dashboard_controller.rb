@@ -907,15 +907,15 @@ class KometDashboardController < ApplicationController
         # if this is a new VHAT concept and not also a metadata concept add the VHAT ID properties
         if @new_concept && @concept_terminology_types.include?($isaac_metadata_auxiliary['VHAT_MODULES']['uuids'].first[:uuid]) && !@concept_terminology_types.include?($isaac_metadata_auxiliary['ISAAC_MODULE']['uuids'].first[:uuid])
 
-            # add ID properties to the description
-            new_sememe_properties = generate_vhat_properties(generate_vuid)
-            @descriptions[:descriptions].first[:nested_properties] = new_sememe_properties
-            @descriptions[:errors].concat(new_sememe_properties[:errors])
-
             # add ID properties to the attached sememes
             new_sememe_properties = generate_vhat_properties(generate_vuid)
             @concept_sememes[:field_info].merge!(new_sememe_properties[:field_info])
             @concept_sememes[:rows].concat(new_sememe_properties[:data])
+
+            # add ID properties to the description
+            new_sememe_properties = generate_vhat_properties(generate_vuid)
+            @descriptions[:descriptions].first[:nested_properties] = new_sememe_properties
+            @descriptions[:errors].concat(new_sememe_properties[:errors])
         end
 
         @language_options = get_concept_children(concept_id: $isaac_metadata_auxiliary['LANGUAGE']['uuids'].first[:uuid], return_json: false, remove_semantic_tag: true, view_params: @view_params)
