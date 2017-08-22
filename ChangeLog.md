@@ -5,6 +5,7 @@ where provided, and the git commit history.
 
 * 2017/08/?? - 4.23 - PENDING
     * tabbing away from left side tree lands on right side panel Edit button
+    * Fixed when cancelling create or edit screens so that it will correctly return the user to the previous viewed content or close the viewer if there was no previous content (Jazz: 524252)
 
 * 2017/08/22 - 4.22
     * Fixed create concept so if you save a concept and there are errors you can still edit the form

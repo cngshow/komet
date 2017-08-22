@@ -86,43 +86,53 @@ var WindowManager = (function () {
         console.log("*** registerPreviousViewerContent viewer ID: " + viewerID);
         console.log("*** registerPreviousViewerContent viewer action: " + WindowManager.viewers[viewerID].viewerAction);
 
-        if (WindowManager.viewers[viewerID].constructor.name = "ConceptViewer" && (WindowManager.viewers[viewerID].viewerAction == ConceptsModule.VIEW || WindowManager.viewers[viewerID].viewerAction == ConceptsModule.EDIT_VIEW)){
+        var viewer = WindowManager.viewers[viewerID];
+        var viewerName = "ConceptViewer";
 
-            WindowManager.viewers[viewerID].viewer_previous_content_id = WindowManager.viewers[viewerID].currentConceptID;
-
-        } else if (WindowManager.viewers[viewerID].constructor.name = "MappingViewer" && (WindowManager.viewers[viewerID].viewerAction == MappingModule.SET_LIST || WindowManager.viewers[viewerID].viewerAction == MappingModule.SET_DETAILS)){
-
-            WindowManager.viewers[viewerID].viewer_previous_content_id = WindowManager.viewers[viewerID].currentSetID;
+        // if the viewer doesn't have an initConcept method then it's a MappingViewer object
+        if (viewer.initConcept == undefined){
+            viewerName = "MappingViewer";
         }
 
-        WindowManager.viewers[viewerID].viewer_previous_content_type = WindowManager.viewers[viewerID].constructor.name
+        if (viewerName == "ConceptViewer" && (viewer.viewerAction == ConceptsModule.VIEW || viewer.viewerAction == ConceptsModule.EDIT_VIEW)){
 
-        console.log("*** registerPreviousViewerContent previous content type: " + WindowManager.viewers[viewerID].viewer_previous_content_type);
-        console.log("*** registerPreviousViewerContent previous content id: " + WindowManager.viewers[viewerID].viewer_previous_content_id);
+            viewer.viewer_previous_content_id = viewer.currentConceptID;
+
+        } else if (viewerName == "MappingViewer" && (viewer.viewerAction == MappingModule.SET_LIST || viewer.viewerAction == MappingModule.SET_DETAILS)){
+
+            viewer.viewer_previous_content_id = viewer.currentSetID;
+        }
+
+        viewer.viewer_previous_content_type = viewerName;
+
+        console.log("*** registerPreviousViewerContent previous content type: " + viewer.viewer_previous_content_type);
+        console.log("*** registerPreviousViewerContent previous content id: " + viewer.viewer_previous_content_id);
     }
 
     function cancelEditMode(viewerID) {
 
+        var viewer = WindowManager.viewers[viewerID];
+
         console.log("*** cancelEditMode viewer ID: " + viewerID);
-        console.log("*** cancelEditMode previous content type: " + WindowManager.viewers[viewerID].viewer_previous_content_type);
-        console.log("*** cancelEditMode previous content id: " + WindowManager.viewers[viewerID].viewer_previous_content_id);
+        console.log("*** cancelEditMode previous content type: " + viewer.viewer_previous_content_type);
+        console.log("*** cancelEditMode previous content id: " + viewer.viewer_previous_content_id);
 
         $("#komet_viewer_" + viewerID).off('unsavedCheck');
 
-        if (WindowManager.viewers[viewerID].viewer_previous_content_type && WindowManager.viewers[viewerID].viewer_previous_content_id){
+        if (viewer.viewer_previous_content_type && viewer.viewer_previous_content_id){
 
-            if (WindowManager.viewers[viewerID].viewer_previous_content_type == "ConceptViewer"){
+            if (viewer.viewer_previous_content_type == "ConceptViewer"){
                 console.log("*** cancelEditMode ConceptViewer");
                 console.log("*** cancelEditMode ConceptViewer View Params: " + TaxonomyModule.getStatedView());
 
-                $.publish(KometChannels.Taxonomy.taxonomyTreeNodeSelectedChannel, ["", WindowManager.viewers[viewerID].viewer_previous_content_id, TaxonomyModule.getViewParams(), viewerID, WindowManager.INLINE]);
+                $.publish(KometChannels.Taxonomy.taxonomyTreeNodeSelectedChannel, ["", viewer.viewer_previous_content_id, TaxonomyModule.getViewParams(), viewerID, WindowManager.INLINE]);
                 return false;
 
-            } else if (WindowManager.viewers[viewerID].viewer_previous_content_type == "MappingViewer"){
+            } else if (viewer.viewer_previous_content_type == "MappingViewer"){
                 console.log("*** cancelEditMode MappingViewer");
                 console.log("*** cancelEditMode MappingViewer View Params: " + MappingModule.getViewParams());
 
-                $.publish(KometChannels.Mapping.mappingTreeNodeSelectedChannel, ["", WindowManager.viewers[viewerID].viewer_previous_content_id, MappingModule.getViewParams(), viewerID, WindowManager.INLINE]);
+                $.publish(KometChannels.Mapping.mappingTreeNodeSelectedChannel, ["", viewer.viewer_previous_content_id, MappingModule.getViewParams(), viewerID, WindowManager.INLINE]);
                 return false;
             }
         }
