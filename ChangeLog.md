@@ -4,7 +4,8 @@ This changelog summarizes changes and fixes which are a part of each revision.  
 where provided, and the git commit history.
 
 * 2017/08/?? - 4.22 - PENDING
-    *
+    * Fixed create concept so if you save a concept and there are errors you can still edit the form
+    * Fixed order so concpet properties and then description properties get assigned VUIDs
 
 * 2017/08/17 - 4.21
     * associating vuid auto generate toggle option with xml import
