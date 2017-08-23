@@ -3,6 +3,9 @@ Komet Changelog
 This changelog summarizes changes and fixes which are a part of each revision.  For more details on the fixes, refer tracking numbers 
 where provided, and the git commit history.
 
+* 2017/08/?? - 4.24 - PENDING
+    *
+
 * 2017/08/23 - 4.23
     * tabbing away from left side tree lands on right side panel Edit button
     * Fixed when cancelling create or edit screens so that it will correctly return the user to the previous viewed content or close the viewer if there was no previous content (Jazz: 524252)
