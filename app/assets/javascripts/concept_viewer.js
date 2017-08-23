@@ -1165,6 +1165,9 @@ ConceptViewer.prototype.createDescriptionRowString = function (rowData) {
 
     rowString += '<div class="komet-show-on-edit">' + this.createSelectField(descriptionID + "_description_state_" + this.viewerID, namePrefix + "[description_state]", this.selectFieldOptions.state, state, this.descriptionLabel + " State", "komet-state-field") + '</div>';
 
+    // add the view version of the state field and the rest of the stamp data
+    rowString += '<div class="komet-show-on-view komet_stamp"><b></b>' + state + '</div>';
+
     // if this is not a new description show the rest of the STAMP data
     if (!isNew) {
 

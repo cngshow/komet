@@ -4,7 +4,7 @@ This changelog summarizes changes and fixes which are a part of each revision.  
 where provided, and the git commit history.
 
 * 2017/08/?? - 4.24 - PENDING
-    *
+    * Added Status to descriptions in concept view mode
 
 * 2017/08/23 - 4.23
     * tabbing away from left side tree lands on right side panel Edit button
