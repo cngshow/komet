@@ -3244,6 +3244,241 @@ module Api1
 
 module Data
 
+module Workflow
+
+  # (no documentation provided)
+  class RestWorkflowProcessHistory 
+
+    # The identifier data
+    attr_accessor :id
+    # The process id
+    attr_accessor :processId
+    # The workflow user
+    attr_accessor :userId
+    # The time advanced
+    attr_accessor :timeAdvanced
+    # The state
+    attr_accessor :initialState
+    # The action
+    attr_accessor :action
+    # The outcome
+    attr_accessor :outcomeState
+    # The comment
+    attr_accessor :comment
+
+    # the json hash for this RestWorkflowProcessHistory
+    def to_jaxb_json_hash
+      _h = {}
+      _h['id'] = id.to_jaxb_json_hash unless id.nil?
+      _h['processId'] = processId.to_jaxb_json_hash unless processId.nil?
+      _h['userId'] = userId.to_jaxb_json_hash unless userId.nil?
+      _h['timeAdvanced'] = timeAdvanced.to_jaxb_json_hash unless timeAdvanced.nil?
+      _h['initialState'] = initialState.to_jaxb_json_hash unless initialState.nil?
+      _h['action'] = action.to_jaxb_json_hash unless action.nil?
+      _h['outcomeState'] = outcomeState.to_jaxb_json_hash unless outcomeState.nil?
+      _h['comment'] = comment.to_jaxb_json_hash unless comment.nil?
+      return _h
+    end
+
+    # the json (string form) for this RestWorkflowProcessHistory
+    def to_json
+      to_jaxb_json_hash.to_json
+    end
+
+    #initializes this RestWorkflowProcessHistory with a json hash
+    def init_jaxb_json_hash(_o)
+        if !_o['id'].nil?
+          _oa = _o['id']
+            if(_oa.is_a? Hash)
+              @id = EnunciateHelpers::LAMB_CLASS_AWARE.call(_oa) if _oa['@class']
+              @id =  String.from_json(_oa) unless _oa['@class']
+            elsif (_oa.is_a? Array)
+              #an array(of hashes hopefully) or scalar
+              @id = Array.new
+              _oa.each { | _item | 
+                 if ((_item.nil? || _item['@class'].nil?)rescue true)
+                   @id.push String.from_json(_item)
+                 else
+                   @id.push EnunciateHelpers::LAMB_CLASS_AWARE.call(_item)
+                 end
+               }
+            else
+                @id = _oa
+            end
+          end
+        if !_o['processId'].nil?
+          _oa = _o['processId']
+            if(_oa.is_a? Hash)
+              @processId = EnunciateHelpers::LAMB_CLASS_AWARE.call(_oa) if _oa['@class']
+              @processId =  String.from_json(_oa) unless _oa['@class']
+            elsif (_oa.is_a? Array)
+              #an array(of hashes hopefully) or scalar
+              @processId = Array.new
+              _oa.each { | _item | 
+                 if ((_item.nil? || _item['@class'].nil?)rescue true)
+                   @processId.push String.from_json(_item)
+                 else
+                   @processId.push EnunciateHelpers::LAMB_CLASS_AWARE.call(_item)
+                 end
+               }
+            else
+                @processId = _oa
+            end
+          end
+        if !_o['userId'].nil?
+          _oa = _o['userId']
+            if(_oa.is_a? Hash)
+              @userId = EnunciateHelpers::LAMB_CLASS_AWARE.call(_oa) if _oa['@class']
+              @userId =  String.from_json(_oa) unless _oa['@class']
+            elsif (_oa.is_a? Array)
+              #an array(of hashes hopefully) or scalar
+              @userId = Array.new
+              _oa.each { | _item | 
+                 if ((_item.nil? || _item['@class'].nil?)rescue true)
+                   @userId.push String.from_json(_item)
+                 else
+                   @userId.push EnunciateHelpers::LAMB_CLASS_AWARE.call(_item)
+                 end
+               }
+            else
+                @userId = _oa
+            end
+          end
+        if !_o['timeAdvanced'].nil?
+          _oa = _o['timeAdvanced']
+            if(_oa.is_a? Hash)
+              @timeAdvanced = EnunciateHelpers::LAMB_CLASS_AWARE.call(_oa) if _oa['@class']
+              @timeAdvanced =  Bignum.from_json(_oa) unless _oa['@class']
+            elsif (_oa.is_a? Array)
+              #an array(of hashes hopefully) or scalar
+              @timeAdvanced = Array.new
+              _oa.each { | _item | 
+                 if ((_item.nil? || _item['@class'].nil?)rescue true)
+                   @timeAdvanced.push Bignum.from_json(_item)
+                 else
+                   @timeAdvanced.push EnunciateHelpers::LAMB_CLASS_AWARE.call(_item)
+                 end
+               }
+            else
+                @timeAdvanced = _oa
+            end
+          end
+        if !_o['initialState'].nil?
+          _oa = _o['initialState']
+            if(_oa.is_a? Hash)
+              @initialState = EnunciateHelpers::LAMB_CLASS_AWARE.call(_oa) if _oa['@class']
+              @initialState =  String.from_json(_oa) unless _oa['@class']
+            elsif (_oa.is_a? Array)
+              #an array(of hashes hopefully) or scalar
+              @initialState = Array.new
+              _oa.each { | _item | 
+                 if ((_item.nil? || _item['@class'].nil?)rescue true)
+                   @initialState.push String.from_json(_item)
+                 else
+                   @initialState.push EnunciateHelpers::LAMB_CLASS_AWARE.call(_item)
+                 end
+               }
+            else
+                @initialState = _oa
+            end
+          end
+        if !_o['action'].nil?
+          _oa = _o['action']
+            if(_oa.is_a? Hash)
+              @action = EnunciateHelpers::LAMB_CLASS_AWARE.call(_oa) if _oa['@class']
+              @action =  String.from_json(_oa) unless _oa['@class']
+            elsif (_oa.is_a? Array)
+              #an array(of hashes hopefully) or scalar
+              @action = Array.new
+              _oa.each { | _item | 
+                 if ((_item.nil? || _item['@class'].nil?)rescue true)
+                   @action.push String.from_json(_item)
+                 else
+                   @action.push EnunciateHelpers::LAMB_CLASS_AWARE.call(_item)
+                 end
+               }
+            else
+                @action = _oa
+            end
+          end
+        if !_o['outcomeState'].nil?
+          _oa = _o['outcomeState']
+            if(_oa.is_a? Hash)
+              @outcomeState = EnunciateHelpers::LAMB_CLASS_AWARE.call(_oa) if _oa['@class']
+              @outcomeState =  String.from_json(_oa) unless _oa['@class']
+            elsif (_oa.is_a? Array)
+              #an array(of hashes hopefully) or scalar
+              @outcomeState = Array.new
+              _oa.each { | _item | 
+                 if ((_item.nil? || _item['@class'].nil?)rescue true)
+                   @outcomeState.push String.from_json(_item)
+                 else
+                   @outcomeState.push EnunciateHelpers::LAMB_CLASS_AWARE.call(_item)
+                 end
+               }
+            else
+                @outcomeState = _oa
+            end
+          end
+        if !_o['comment'].nil?
+          _oa = _o['comment']
+            if(_oa.is_a? Hash)
+              @comment = EnunciateHelpers::LAMB_CLASS_AWARE.call(_oa) if _oa['@class']
+              @comment =  String.from_json(_oa) unless _oa['@class']
+            elsif (_oa.is_a? Array)
+              #an array(of hashes hopefully) or scalar
+              @comment = Array.new
+              _oa.each { | _item | 
+                 if ((_item.nil? || _item['@class'].nil?)rescue true)
+                   @comment.push String.from_json(_item)
+                 else
+                   @comment.push EnunciateHelpers::LAMB_CLASS_AWARE.call(_item)
+                 end
+               }
+            else
+                @comment = _oa
+            end
+          end
+    end
+
+    # constructs a RestWorkflowProcessHistory from a (parsed) JSON hash
+    def self.from_json(o)
+      if o.nil?
+        return nil
+      else
+        inst = new
+        inst.init_jaxb_json_hash o
+        return inst
+      end
+    end
+  end
+
+end
+
+end
+
+end
+
+end
+
+end
+
+end
+
+end
+
+module Gov
+
+module Vha
+
+module Isaac
+
+module Rest
+
+module Api1
+
+module Data
+
 module Association
 
   # (no documentation provided)
@@ -4189,88 +4424,6 @@ module Api1
 
 module Data
 
-module Concept
-
-  # (no documentation provided)
-  class RestConceptUpdateData 
-
-    # True to indicate the concept should be set as active, false for inactive.
-    # This field is optional, if not provided, it will be assumed to be active.
-    attr_accessor :active
-
-    # the json hash for this RestConceptUpdateData
-    def to_jaxb_json_hash
-      _h = {}
-      _h['active'] = active.to_jaxb_json_hash unless active.nil?
-      return _h
-    end
-
-    # the json (string form) for this RestConceptUpdateData
-    def to_json
-      to_jaxb_json_hash.to_json
-    end
-
-    #initializes this RestConceptUpdateData with a json hash
-    def init_jaxb_json_hash(_o)
-        if !_o['active'].nil?
-          _oa = _o['active']
-            if(_oa.is_a? Hash)
-              @active = EnunciateHelpers::LAMB_CLASS_AWARE.call(_oa) if _oa['@class']
-              @active =  Boolean.from_json(_oa) unless _oa['@class']
-            elsif (_oa.is_a? Array)
-              #an array(of hashes hopefully) or scalar
-              @active = Array.new
-              _oa.each { | _item | 
-                 if ((_item.nil? || _item['@class'].nil?)rescue true)
-                   @active.push Boolean.from_json(_item)
-                 else
-                   @active.push EnunciateHelpers::LAMB_CLASS_AWARE.call(_item)
-                 end
-               }
-            else
-                @active = _oa
-            end
-          end
-    end
-
-    # constructs a RestConceptUpdateData from a (parsed) JSON hash
-    def self.from_json(o)
-      if o.nil?
-        return nil
-      else
-        inst = new
-        inst.init_jaxb_json_hash o
-        return inst
-      end
-    end
-  end
-
-end
-
-end
-
-end
-
-end
-
-end
-
-end
-
-end
-
-module Gov
-
-module Vha
-
-module Isaac
-
-module Rest
-
-module Api1
-
-module Data
-
 module Workflow
 
   # (no documentation provided)
@@ -5069,6 +5222,88 @@ module Sememe
     end
 
     # constructs a RestSememeDescriptionUpdate from a (parsed) JSON hash
+    def self.from_json(o)
+      if o.nil?
+        return nil
+      else
+        inst = new
+        inst.init_jaxb_json_hash o
+        return inst
+      end
+    end
+  end
+
+end
+
+end
+
+end
+
+end
+
+end
+
+end
+
+end
+
+module Gov
+
+module Vha
+
+module Isaac
+
+module Rest
+
+module Api1
+
+module Data
+
+module Concept
+
+  # (no documentation provided)
+  class RestConceptUpdateData 
+
+    # True to indicate the concept should be set as active, false for inactive.
+    # This field is optional, if not provided, it will be assumed to be active.
+    attr_accessor :active
+
+    # the json hash for this RestConceptUpdateData
+    def to_jaxb_json_hash
+      _h = {}
+      _h['active'] = active.to_jaxb_json_hash unless active.nil?
+      return _h
+    end
+
+    # the json (string form) for this RestConceptUpdateData
+    def to_json
+      to_jaxb_json_hash.to_json
+    end
+
+    #initializes this RestConceptUpdateData with a json hash
+    def init_jaxb_json_hash(_o)
+        if !_o['active'].nil?
+          _oa = _o['active']
+            if(_oa.is_a? Hash)
+              @active = EnunciateHelpers::LAMB_CLASS_AWARE.call(_oa) if _oa['@class']
+              @active =  Boolean.from_json(_oa) unless _oa['@class']
+            elsif (_oa.is_a? Array)
+              #an array(of hashes hopefully) or scalar
+              @active = Array.new
+              _oa.each { | _item | 
+                 if ((_item.nil? || _item['@class'].nil?)rescue true)
+                   @active.push Boolean.from_json(_item)
+                 else
+                   @active.push EnunciateHelpers::LAMB_CLASS_AWARE.call(_item)
+                 end
+               }
+            else
+                @active = _oa
+            end
+          end
+    end
+
+    # constructs a RestConceptUpdateData from a (parsed) JSON hash
     def self.from_json(o)
       if o.nil?
         return nil
@@ -6606,241 +6841,6 @@ module Api1
 
 module Data
 
-module Workflow
-
-  # (no documentation provided)
-  class RestWorkflowProcessHistory 
-
-    # The identifier data
-    attr_accessor :id
-    # The process id
-    attr_accessor :processId
-    # The workflow user
-    attr_accessor :userId
-    # The time advanced
-    attr_accessor :timeAdvanced
-    # The state
-    attr_accessor :initialState
-    # The action
-    attr_accessor :action
-    # The outcome
-    attr_accessor :outcomeState
-    # The comment
-    attr_accessor :comment
-
-    # the json hash for this RestWorkflowProcessHistory
-    def to_jaxb_json_hash
-      _h = {}
-      _h['id'] = id.to_jaxb_json_hash unless id.nil?
-      _h['processId'] = processId.to_jaxb_json_hash unless processId.nil?
-      _h['userId'] = userId.to_jaxb_json_hash unless userId.nil?
-      _h['timeAdvanced'] = timeAdvanced.to_jaxb_json_hash unless timeAdvanced.nil?
-      _h['initialState'] = initialState.to_jaxb_json_hash unless initialState.nil?
-      _h['action'] = action.to_jaxb_json_hash unless action.nil?
-      _h['outcomeState'] = outcomeState.to_jaxb_json_hash unless outcomeState.nil?
-      _h['comment'] = comment.to_jaxb_json_hash unless comment.nil?
-      return _h
-    end
-
-    # the json (string form) for this RestWorkflowProcessHistory
-    def to_json
-      to_jaxb_json_hash.to_json
-    end
-
-    #initializes this RestWorkflowProcessHistory with a json hash
-    def init_jaxb_json_hash(_o)
-        if !_o['id'].nil?
-          _oa = _o['id']
-            if(_oa.is_a? Hash)
-              @id = EnunciateHelpers::LAMB_CLASS_AWARE.call(_oa) if _oa['@class']
-              @id =  String.from_json(_oa) unless _oa['@class']
-            elsif (_oa.is_a? Array)
-              #an array(of hashes hopefully) or scalar
-              @id = Array.new
-              _oa.each { | _item | 
-                 if ((_item.nil? || _item['@class'].nil?)rescue true)
-                   @id.push String.from_json(_item)
-                 else
-                   @id.push EnunciateHelpers::LAMB_CLASS_AWARE.call(_item)
-                 end
-               }
-            else
-                @id = _oa
-            end
-          end
-        if !_o['processId'].nil?
-          _oa = _o['processId']
-            if(_oa.is_a? Hash)
-              @processId = EnunciateHelpers::LAMB_CLASS_AWARE.call(_oa) if _oa['@class']
-              @processId =  String.from_json(_oa) unless _oa['@class']
-            elsif (_oa.is_a? Array)
-              #an array(of hashes hopefully) or scalar
-              @processId = Array.new
-              _oa.each { | _item | 
-                 if ((_item.nil? || _item['@class'].nil?)rescue true)
-                   @processId.push String.from_json(_item)
-                 else
-                   @processId.push EnunciateHelpers::LAMB_CLASS_AWARE.call(_item)
-                 end
-               }
-            else
-                @processId = _oa
-            end
-          end
-        if !_o['userId'].nil?
-          _oa = _o['userId']
-            if(_oa.is_a? Hash)
-              @userId = EnunciateHelpers::LAMB_CLASS_AWARE.call(_oa) if _oa['@class']
-              @userId =  String.from_json(_oa) unless _oa['@class']
-            elsif (_oa.is_a? Array)
-              #an array(of hashes hopefully) or scalar
-              @userId = Array.new
-              _oa.each { | _item | 
-                 if ((_item.nil? || _item['@class'].nil?)rescue true)
-                   @userId.push String.from_json(_item)
-                 else
-                   @userId.push EnunciateHelpers::LAMB_CLASS_AWARE.call(_item)
-                 end
-               }
-            else
-                @userId = _oa
-            end
-          end
-        if !_o['timeAdvanced'].nil?
-          _oa = _o['timeAdvanced']
-            if(_oa.is_a? Hash)
-              @timeAdvanced = EnunciateHelpers::LAMB_CLASS_AWARE.call(_oa) if _oa['@class']
-              @timeAdvanced =  Bignum.from_json(_oa) unless _oa['@class']
-            elsif (_oa.is_a? Array)
-              #an array(of hashes hopefully) or scalar
-              @timeAdvanced = Array.new
-              _oa.each { | _item | 
-                 if ((_item.nil? || _item['@class'].nil?)rescue true)
-                   @timeAdvanced.push Bignum.from_json(_item)
-                 else
-                   @timeAdvanced.push EnunciateHelpers::LAMB_CLASS_AWARE.call(_item)
-                 end
-               }
-            else
-                @timeAdvanced = _oa
-            end
-          end
-        if !_o['initialState'].nil?
-          _oa = _o['initialState']
-            if(_oa.is_a? Hash)
-              @initialState = EnunciateHelpers::LAMB_CLASS_AWARE.call(_oa) if _oa['@class']
-              @initialState =  String.from_json(_oa) unless _oa['@class']
-            elsif (_oa.is_a? Array)
-              #an array(of hashes hopefully) or scalar
-              @initialState = Array.new
-              _oa.each { | _item | 
-                 if ((_item.nil? || _item['@class'].nil?)rescue true)
-                   @initialState.push String.from_json(_item)
-                 else
-                   @initialState.push EnunciateHelpers::LAMB_CLASS_AWARE.call(_item)
-                 end
-               }
-            else
-                @initialState = _oa
-            end
-          end
-        if !_o['action'].nil?
-          _oa = _o['action']
-            if(_oa.is_a? Hash)
-              @action = EnunciateHelpers::LAMB_CLASS_AWARE.call(_oa) if _oa['@class']
-              @action =  String.from_json(_oa) unless _oa['@class']
-            elsif (_oa.is_a? Array)
-              #an array(of hashes hopefully) or scalar
-              @action = Array.new
-              _oa.each { | _item | 
-                 if ((_item.nil? || _item['@class'].nil?)rescue true)
-                   @action.push String.from_json(_item)
-                 else
-                   @action.push EnunciateHelpers::LAMB_CLASS_AWARE.call(_item)
-                 end
-               }
-            else
-                @action = _oa
-            end
-          end
-        if !_o['outcomeState'].nil?
-          _oa = _o['outcomeState']
-            if(_oa.is_a? Hash)
-              @outcomeState = EnunciateHelpers::LAMB_CLASS_AWARE.call(_oa) if _oa['@class']
-              @outcomeState =  String.from_json(_oa) unless _oa['@class']
-            elsif (_oa.is_a? Array)
-              #an array(of hashes hopefully) or scalar
-              @outcomeState = Array.new
-              _oa.each { | _item | 
-                 if ((_item.nil? || _item['@class'].nil?)rescue true)
-                   @outcomeState.push String.from_json(_item)
-                 else
-                   @outcomeState.push EnunciateHelpers::LAMB_CLASS_AWARE.call(_item)
-                 end
-               }
-            else
-                @outcomeState = _oa
-            end
-          end
-        if !_o['comment'].nil?
-          _oa = _o['comment']
-            if(_oa.is_a? Hash)
-              @comment = EnunciateHelpers::LAMB_CLASS_AWARE.call(_oa) if _oa['@class']
-              @comment =  String.from_json(_oa) unless _oa['@class']
-            elsif (_oa.is_a? Array)
-              #an array(of hashes hopefully) or scalar
-              @comment = Array.new
-              _oa.each { | _item | 
-                 if ((_item.nil? || _item['@class'].nil?)rescue true)
-                   @comment.push String.from_json(_item)
-                 else
-                   @comment.push EnunciateHelpers::LAMB_CLASS_AWARE.call(_item)
-                 end
-               }
-            else
-                @comment = _oa
-            end
-          end
-    end
-
-    # constructs a RestWorkflowProcessHistory from a (parsed) JSON hash
-    def self.from_json(o)
-      if o.nil?
-        return nil
-      else
-        inst = new
-        inst.init_jaxb_json_hash o
-        return inst
-      end
-    end
-  end
-
-end
-
-end
-
-end
-
-end
-
-end
-
-end
-
-end
-
-module Gov
-
-module Vha
-
-module Isaac
-
-module Rest
-
-module Api1
-
-module Data
-
 module Association
 
   # (no documentation provided)
@@ -7429,6 +7429,8 @@ module Exceptions
   class RestExceptionResponse 
 
     # (no documentation provided)
+    attr_accessor :conciseMessage
+    # (no documentation provided)
     attr_accessor :relevantQueryParameterValue
     # (no documentation provided)
     attr_accessor :verboseMessage
@@ -7436,17 +7438,15 @@ module Exceptions
     attr_accessor :relevantQueryParameterName
     # (no documentation provided)
     attr_accessor :status
-    # (no documentation provided)
-    attr_accessor :conciseMessage
 
     # the json hash for this RestExceptionResponse
     def to_jaxb_json_hash
       _h = {}
+      _h['conciseMessage'] = conciseMessage.to_jaxb_json_hash unless conciseMessage.nil?
       _h['relevantQueryParameterValue'] = relevantQueryParameterValue.to_jaxb_json_hash unless relevantQueryParameterValue.nil?
       _h['verboseMessage'] = verboseMessage.to_jaxb_json_hash unless verboseMessage.nil?
       _h['relevantQueryParameterName'] = relevantQueryParameterName.to_jaxb_json_hash unless relevantQueryParameterName.nil?
       _h['status'] = status.to_jaxb_json_hash unless status.nil?
-      _h['conciseMessage'] = conciseMessage.to_jaxb_json_hash unless conciseMessage.nil?
       return _h
     end
 
@@ -7457,6 +7457,25 @@ module Exceptions
 
     #initializes this RestExceptionResponse with a json hash
     def init_jaxb_json_hash(_o)
+        if !_o['conciseMessage'].nil?
+          _oa = _o['conciseMessage']
+            if(_oa.is_a? Hash)
+              @conciseMessage = EnunciateHelpers::LAMB_CLASS_AWARE.call(_oa) if _oa['@class']
+              @conciseMessage =  String.from_json(_oa) unless _oa['@class']
+            elsif (_oa.is_a? Array)
+              #an array(of hashes hopefully) or scalar
+              @conciseMessage = Array.new
+              _oa.each { | _item | 
+                 if ((_item.nil? || _item['@class'].nil?)rescue true)
+                   @conciseMessage.push String.from_json(_item)
+                 else
+                   @conciseMessage.push EnunciateHelpers::LAMB_CLASS_AWARE.call(_item)
+                 end
+               }
+            else
+                @conciseMessage = _oa
+            end
+          end
         if !_o['relevantQueryParameterValue'].nil?
           _oa = _o['relevantQueryParameterValue']
             if(_oa.is_a? Hash)
@@ -7531,25 +7550,6 @@ module Exceptions
                }
             else
                 @status = _oa
-            end
-          end
-        if !_o['conciseMessage'].nil?
-          _oa = _o['conciseMessage']
-            if(_oa.is_a? Hash)
-              @conciseMessage = EnunciateHelpers::LAMB_CLASS_AWARE.call(_oa) if _oa['@class']
-              @conciseMessage =  String.from_json(_oa) unless _oa['@class']
-            elsif (_oa.is_a? Array)
-              #an array(of hashes hopefully) or scalar
-              @conciseMessage = Array.new
-              _oa.each { | _item | 
-                 if ((_item.nil? || _item['@class'].nil?)rescue true)
-                   @conciseMessage.push String.from_json(_item)
-                 else
-                   @conciseMessage.push EnunciateHelpers::LAMB_CLASS_AWARE.call(_item)
-                 end
-               }
-            else
-                @conciseMessage = _oa
             end
           end
     end

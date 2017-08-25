@@ -264,13 +264,20 @@ class ApplicationController < ActionController::Base
   end
 
   def self.add_translations(json)
+    @@translation_lock ||= Mutex.new
+    @pool = Concurrent::FixedThreadPool.new($PROPS['KOMET.translation_pool_size'].to_i)
+    $log.info("Translations start...")
     translated_hash = json.deep_dup
     json.keys.each do |k|
       next if k.eql? AUXILLIARY_VERSION_KEY
       translated_array = []
       json[k]['uuids'].each do |uuid|
-        translation = JSON.parse IdAPIsRest::get_id(action: IdAPIsRestActions::ACTION_TRANSLATE, uuid_or_id: uuid, additional_req_params: {'outputType' => 'conceptSequence'}).to_json
-        translated_array << {uuid: uuid, translation: translation}
+        @pool.post do
+          translation = JSON.parse IdAPIsRest::get_id(action: IdAPIsRestActions::ACTION_TRANSLATE, uuid_or_id: uuid, additional_req_params: {'outputType' => 'conceptSequence'}).to_json
+          @@translation_lock.synchronize do
+            translated_array << {uuid: uuid, translation: translation}
+          end
+        end
         if $rake
           @translation_num ||= 0
           @translation_num +=1
@@ -279,7 +286,10 @@ class ApplicationController < ActionController::Base
       end
       translated_hash[k]['uuids'] = translated_array
     end
+    @pool.shutdown
+    @pool.wait_for_termination
     #json_to_yaml_file(translated_hash,'reema')
+    $log.info("Translations end.")
     translated_hash
   end
 

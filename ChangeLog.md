@@ -3,6 +3,9 @@ Komet Changelog
 This changelog summarizes changes and fixes which are a part of each revision.  For more details on the fixes, refer tracking numbers 
 where provided, and the git commit history.
 
+* 2017/08/25 - 5.01
+    * Updates to parallel translations during first Komet request
+
 * 2017/08/25 - 5.00
     * GUI improvements - hiding x button on xml import during importing
     * Release 5 build.
