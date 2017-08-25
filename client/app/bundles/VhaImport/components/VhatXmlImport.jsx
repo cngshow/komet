@@ -26,6 +26,27 @@ const VhatXmlImportButtons = ({
     </button>
   </div>
 );
+const CloseButton = ({
+  spinner,
+  onClick
+}) => {
+  if (spinner)
+    return null;
+
+  return(
+    <div className="close-x">
+      <span 
+        className="close-x"
+        aria-label="close button" 
+        aria-hidden="true"
+        tabIndex="0"
+        onClick={() => onClick() }
+      >
+        ×
+      </span>
+    </div>
+  );
+};
 export default class VhatXmlImport extends React.Component {
   /**
    * @param props - Comes from your rails view.
@@ -131,21 +152,12 @@ export default class VhatXmlImport extends React.Component {
         </button>
 
         <Modal open={this.state.open}>
-          
           <div className="vha-import-wrapper">
-            <div className="close-x">
-              <span 
-                className="close-x"
-                aria-label="close button" 
-                aria-hidden="true"
-                tabIndex="0"
-                onClick={() => this.cancelButton() }
-              >
-                ×
-              </span>
-            </div>
+            <CloseButton 
+              spinner={this.state.spinner}
+              onClick={() => this.cancelButton()} 
+            />
             <form
-
               ref={ref => form = ref}
               onSubmit={ev => {
                 ev.preventDefault();
