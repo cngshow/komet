@@ -266,7 +266,7 @@ class ApplicationController < ActionController::Base
   def self.add_translations(json)
     @@translation_lock ||= Mutex.new
     @pool = Concurrent::FixedThreadPool.new($PROPS['KOMET.translation_pool_size'].to_i)
-    $log.info("Translations start...")
+    $log.always("Translations start...")
     translated_hash = json.deep_dup
     json.keys.each do |k|
       next if k.eql? AUXILLIARY_VERSION_KEY
@@ -289,7 +289,7 @@ class ApplicationController < ActionController::Base
     @pool.shutdown
     @pool.wait_for_termination
     #json_to_yaml_file(translated_hash,'reema')
-    $log.info("Translations end.")
+    $log.always("Translations end.")
     translated_hash
   end
 
