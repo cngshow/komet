@@ -3,8 +3,9 @@ Komet Changelog
 This changelog summarizes changes and fixes which are a part of each revision.  For more details on the fixes, refer tracking numbers 
 where provided, and the git commit history.
 
-* 2017/08/?? - 4.25 - PENDING
-    *
+* 2017/08/25 - 5.00
+    * GUI improvements - hiding x button on xml import during importing
+    * Release 5 build.
 
 * 2017/08/24 - 4.24
     * Added Status to descriptions in concept view mode
