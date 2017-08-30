@@ -1625,14 +1625,6 @@ class KometDashboardController < ApplicationController
         body_string = read_xml_file
         vuid_generation = user_session(UserSession::USER_PREFERENCES)["generate_vuid"]
 
-        if vuid_generation == "false" 
-            return render json: { 
-                errors: { 
-                    message: "VUID tag missing in XML content" 
-                }
-            }, status: 422 unless check_xml_content_has_vuid_tag(body_string)
-        end
-
         additional_req_params = { 
             editToken: get_edit_token,
             vuidGeneration: vuid_generation
@@ -1660,11 +1652,5 @@ class KometDashboardController < ApplicationController
   private
   def read_xml_file
     params[:file].tempfile.read
-  end
-
-  def check_xml_content_has_vuid_tag(body)
-    doc = Nokogiri::HTML(body)
-    return true if doc.xpath("//vuid").present? || doc.xpath("//VUID").present?
-    false
   end
 end

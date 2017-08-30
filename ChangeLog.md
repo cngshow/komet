@@ -4,7 +4,7 @@ This changelog summarizes changes and fixes which are a part of each revision.  
 where provided, and the git commit history.
 
 * 2017/08/?? - 5.02 - PENDING
-    *
+    * Removing vuid checking for XML import 
 
 * 2017/08/25 - 5.01
     * Updates to parallel translations during first Komet request
