@@ -931,34 +931,55 @@ module ConceptConcern
 
     ##
     # get_direct_children - takes a uuid and returns all of its direct children.
-    # @param [String] concept_id - The UUID to look up children for
-    # @param [Boolean] format_results - Should the results be processed. Optional, defaults to false
-    # @param [Boolean] remove_semantic_tag - Should semantic tags be removed (Just 'ISAAC' at the moment). Optional, defaults to false
-    # @param [Boolean] include_definition - should definition descriptions be looked up and included in the results. Optional, defaults to false
-    # @param [Boolean] include_nested - should nested children be included in the results. Optional, defaults to false
-    # @param [Object] view_params - various parameters related to the view filters the user wants to apply - see full definition comment at top of komet_dashboard_controller file. Optional
-    # @param [Number] level - the level of nested concepts that is currently being processing. Optional, defaults to 0
-    # @param [String] qualifier - a string to be included after the text of each entry to serve as a identifier. Optional
+    # @param [String] type - The type of concept call to make. Options are 'concept', 'extended description', 'module'. Defaults to 'concept'
+    # @param [String] concept_id - The UUID to look up children for. Defaults to nil
+    # @param [Boolean] format_results - Should the results be processed. Defaults to false
+    # @param [Boolean] remove_semantic_tag - Should semantic tags be removed (Just 'ISAAC' at the moment). Defaults to false
+    # @param [Boolean] include_definition - should definition descriptions be looked up and included in the results. Defaults to false
+    # @param [Boolean] include_nested - should nested children be included in the results. Defaults to false
+    # @param [Object] view_params - various parameters related to the view filters the user wants to apply - see full definition comment at top of komet_dashboard_controller file. Defaults to an empty object
+    # @param [Number] level - the level of nested concepts that is currently being processing. Defaults to 0
+    # @param [String] qualifier - a string to be included after the text of each entry to serve as a identifier. Defaults to an empty string
     # @return [object] an array of children
-    def get_direct_children(concept_id, format_results = false, remove_semantic_tag = false, include_definition = false, include_nested = false, view_params = {}, level = 0, qualifier = '')
+    def get_direct_children(type: 'concept', concept_id: nil, format_results: true, remove_semantic_tag: true, include_definition: false, include_nested: true, view_params: {}, level: 0, qualifier: '')
 
-        # set the request params for the taxonomy call - getting one level of children along with a count of how many children each of them has
-        additional_req_params = {coordToken: session[:coordinates_token].token, childDepth: 1, countChildren: true}
-        additional_req_params.merge!(view_params)
+        # set the request params for the API call
+        additional_req_params = {coordToken: session[:coordinates_token].token}
 
-        # get the children of the passed in concept
-        children = TaxonomyRest.get_isaac_concept(uuid: concept_id, additional_req_params: additional_req_params)
+        if type == 'concept' || type == 'module'
+
+            # set the request params for the taxonomy call - getting one level of children along with a count of how many children each of them has
+            additional_req_params.merge!({childDepth: 1, countChildren: true})
+            additional_req_params.merge!(view_params)
+
+            # get the children of the passed in concept
+            children = TaxonomyRest.get_isaac_concept(uuid: concept_id, additional_req_params: additional_req_params)
+
+        elsif type == 'extended description'
+
+            additional_req_params.merge!(view_params)
+
+            # make a call to get the descriptions for this concept
+            children = SystemApis.get_system_api(action: SystemApiActions::ACTION_EXTENDED_DESCRIPTION_TYPES, uuid_or_id: concept_id, additional_req_params: additional_req_params)
+        else
+
+            # make a call to get the descriptions for this concept
+            children = SystemApis.get_system_api(action: SystemApiActions::ACTION_MODULES, additional_req_params: additional_req_params)
+        end
 
         # if there was an error return a blank array
         if children.is_a? CommonRest::UnexpectedResponse
             return []
         end
 
+        # if this is not an extended description call get the children of the first result
+        if type != 'extended description'
+            children = children.children.results
+        end
+
         # set the request params for the call to get definitions
         additional_req_params = {coordToken: session[:coordinates_token].token, includeAttributes: false}
         additional_req_params.merge!(view_params)
-
-        children = children.children.results
 
         # if we are processing the child list
         if format_results
@@ -968,8 +989,15 @@ module ConceptConcern
             # loop through all of the children
             children.each do |child|
 
+                # if this is not an extended description call we want access into the conChronology
+                if child.respond_to?('conChronology')
+                    child_info = child.conChronology
+                else
+                    child_info = child
+                end
+
                 # get the concept description
-                text = child.conChronology.description
+                text = child_info.description
                 definition = ''
 
                 # TODO - replace with regex that handles any semantic tag: start with /\s\(([^)]+)\)/ (regex101.com)
@@ -983,7 +1011,7 @@ module ConceptConcern
                 if include_definition
 
                     # make a call to get the descriptions for this concept
-                    descriptions = ConceptRest.get_concept(action: ConceptRestActions::ACTION_DESCRIPTIONS, uuid: child.conChronology.identifiers.uuids.first, additional_req_params: additional_req_params)
+                    descriptions = ConceptRest.get_concept(action: ConceptRestActions::ACTION_DESCRIPTIONS, uuid: child_info.identifiers.uuids.first, additional_req_params: additional_req_params)
 
                     # as long as we didn't get an error process the results
                     unless descriptions.is_a? CommonRest::UnexpectedResponse
@@ -1001,13 +1029,15 @@ module ConceptConcern
                     end
                 end
 
-                # add the concept information to the end of the child array
-                child_array << {concept_id: child.conChronology.identifiers.uuids.first, concept_sequence: child.conChronology.identifiers.sequence, text: text, qualifier: qualifier, definition: definition, level: level}
+                # add the concept information to the end of the child array, unless this is a module call then the concept should have a child or this not be the first level for it to be added to the array
+                if type != 'module' || (type == 'module' && (child.childCount > 0 || level > 0))
+                    child_array << {concept_id: child_info.identifiers.uuids.first, concept_sequence: child_info.identifiers.sequence, text: text, qualifier: qualifier, definition: definition, level: level}
+                end
 
                 # if we are grabbing nested children and this concept has children recursively call this function passing in the ID of this concept
-                if include_nested && child.childCount > 0
+                if include_nested && child.respond_to?('childCount') && child.childCount > 0
 
-                    child_array.concat(get_direct_children(child.conChronology.identifiers.uuids.first, format_results, remove_semantic_tag, include_definition, include_nested, view_params, level + 1, qualifier))
+                    child_array.concat(get_direct_children(type: type, concept_id: child_info.identifiers.uuids.first, format_results: format_results, remove_semantic_tag: remove_semantic_tag, include_definition: include_definition, include_nested: include_nested, view_params: view_params, level: level + 1, qualifier: qualifier))
                 end
             end
 
@@ -1015,78 +1045,6 @@ module ConceptConcern
         end
 
         return children
-
-    end
-
-    ##
-    # get_extended_description_types - takes a uuid of a child of Module and returns all of its direct children.
-    # @param [String] module_id - The UUID to look up children for, should be a child of Module
-    # @param [Boolean] remove_semantic_tag - Should semantic tags be removed (Just 'ISAAC' at the moment). Optional, defaults to true
-    # @param [Boolean] include_definition - should definition descriptions be looked up and included in the results. Optional, defaults to false
-    # @param [Object] view_params - various parameters related to the view filters the user wants to apply - see full definition comment at top of komet_dashboard_controller file. Optional
-    # @param [String] qualifier - a string to be included after the text of each entry to serve as a identifier. Optional
-    # @return [object] an array of extended types
-    def get_extended_description_types(module_id, remove_semantic_tag = true, include_definition = false, view_params = {}, qualifier = '')
-
-        # set the request params for the call
-        additional_req_params = {coordToken: session[:coordinates_token].token}
-        additional_req_params.merge!(view_params)
-
-        # get the children of the passed in concept
-        description_types = SystemApis.get_system_api(action: SystemApiActions::ACTION_EXTENDED_DESCRIPTION_TYPES, uuid_or_id: module_id, additional_req_params: additional_req_params)
-
-        # if there was an error return a blank array
-        if description_types.is_a? CommonRest::UnexpectedResponse
-            return []
-        end
-
-        # set the request params for the call to get definitions
-        additional_req_params = {coordToken: session[:coordinates_token].token, includeAttributes: false}
-        additional_req_params.merge!(view_params)
-
-        types_array = []
-
-        # loop through all of the children
-        description_types.each do |description_type|
-
-            # get the concept description
-            text = description_type.description
-            definition = ''
-
-            # TODO - replace with regex that handles any semantic tag: start with /\s\(([^)]+)\)/ (regex101.com)
-            # if desired remove certain semantic tags from the concept description
-            if remove_semantic_tag && text
-                text.slice!(' (ISAAC)')
-                text.slice!(' (core metadata concept)')
-            end
-
-            # if we are including the definition
-            if include_definition
-
-                # make a call to get the descriptions for this concept
-                descriptions = ConceptRest.get_concept(action: ConceptRestActions::ACTION_DESCRIPTIONS, uuid: description_type.identifiers.uuids.first, additional_req_params: additional_req_params)
-
-                # as long as we didn't get an error process the results
-                unless descriptions.is_a? CommonRest::UnexpectedResponse
-
-                    # loop through each description
-                    descriptions.each do |description|
-
-                        # if the description is a definition copy the description text and end the loop
-                        if description.descriptionTypeConcept.uuids.first == $isaac_metadata_auxiliary['DEFINITION_DESCRIPTION_TYPE']['uuids'].first[:uuid]
-
-                            definition = description.text
-                            break
-                        end
-                    end
-                end
-            end
-
-            # add the concept information to the end of the child array
-            types_array << {concept_id: description_type.identifiers.uuids.first, concept_sequence: description_type.identifiers.sequence, text: text, qualifier: qualifier, definition: definition, level: 0}
-        end
-
-        return types_array
 
     end
 

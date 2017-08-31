@@ -30,6 +30,7 @@ module SystemApiActions
   ACTION_EXTENDED_DESCRIPTION_TYPES = :extended_description_types
   ACTION_TERMINOLOGY_TYPES = :terminology_types
   ACTION_SYSTEM_INFO = :system_info
+  ACTION_MODULES = :modules
 end
 
 module SystemApis
@@ -46,6 +47,7 @@ module SystemApis
   PATH_EXTENDED_DESCRIPTION_TYPES = ROOT_PATH + "extendedDescriptionTypes/{id}"
   PATH_TERMINOLOGY_TYPES = ROOT_PATH + "terminologyTypes"
   PATH_SYSTEM_INFO = ROOT_PATH + "systemInfo"
+  PATH_MODULES = ROOT_PATH + "modules"
 
   PATH_SYSTEM_API_ENUMERATION =ROOT_PATH + "enumeration/"
   PATH_DYNAMIC_SEMEME_VALIDATOR_TYPE = PATH_SYSTEM_API_ENUMERATION + "restDynamicSememeValidatorType"
@@ -103,6 +105,10 @@ module SystemApis
           PATH_SYM => PATH_SYSTEM_INFO,
           STARTING_PARAMS_SYM => PARAMS_EMPTY,
           CLAZZ_SYM => Gov::Vha::Isaac::Rest::Api1::Data::RestSystemInfo},
+      ACTION_MODULES => {
+          PATH_SYM => PATH_MODULES,
+          STARTING_PARAMS_SYM => PARAMS_EMPTY,
+          CLAZZ_SYM =>Gov::Vha::Isaac::Rest::Api1::Data::Concept::RestConceptVersion}
   }
 
   class << self
@@ -157,4 +163,5 @@ h = SystemApis::get_system_api(action: SystemApiActions::ACTION_OBJECT_CHRONOLOG
 i = SystemApis::get_system_api(action: SystemApiActions::ACTION_SYSTEM_INFO)
 j = SystemApis::get_system_api(action: SystemApiActions::ACTION_EXTENDED_DESCRIPTION_TYPES, uuid_or_id: SystemApis::TEST_UUID)
 k = SystemApis::get_system_api(action: SystemApiActions::TERMINOLOGY_TYPES)
+L = SystemApis::get_system_api(action: SystemApiActions::ACTION_SYSTEM_MODULES)
 =end

@@ -109,7 +109,7 @@ class SearchController < ApplicationController
             # perform a description search with the parameters we set
             results = SearchApis.get_search_api(action: ACTION_DESCRIPTIONS, additional_req_params: additional_params)
 
-        elsif search_type.eql?('sememes') || (search_type.eql?('identifiers') && (![$isaac_metadata_auxiliary['GENERATED_UUID']['uuids'].first[:uuid], 'Any'].include?(params[:taxonomy_search_id_type]) || (params[:taxonomy_search_id_type] == 'Any' && !term_is_id)))
+        elsif search_type.eql?('sememes') || (search_type.eql?('identifiers') && (![$isaac_metadata_auxiliary['UUID']['uuids'].first[:uuid], 'Any'].include?(params[:taxonomy_search_id_type]) || (params[:taxonomy_search_id_type] == 'Any' && !term_is_id)))
 
             # if this is a sememe search get the params from the request, if this is an ID search treatAsString is yes and the assemblage depends on the ID type
             if search_type.eql?('sememes')
@@ -160,8 +160,15 @@ class SearchController < ApplicationController
         #loop through the search results
         results.results.each do |result|
 
+            matching_concept = result.referencedConcept.description
+
+            # Make sure the matching concept isn't nil
+            if matching_concept == nil
+                matching_concept = ''
+            end
+
             # add the information to the search array to be returned
-            result_row = {id: result.referencedConcept.identifiers.uuids.first, matching_concept: result.referencedConcept.description, concept_status: 'INACTIVE', matching_terms: result.matchText, match_score: result.score}
+            result_row = {id: result.referencedConcept.identifiers.uuids.first, matching_concept: matching_concept, concept_status: 'INACTIVE', matching_terms: result.matchText, match_score: result.score}
 
             if result.referencedConcept.versions.length > 0
                 result_row[:concept_status] = result.referencedConcept.versions.first.conVersion.state.enumName
