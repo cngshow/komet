@@ -6,6 +6,8 @@ where provided, and the git commit history.
 * 2017/08/?? - 5.02 - PENDING
     * Removing vuid checking for XML import 
     * 508 - changing tabbing color to red when inside of panel heading + Button Edit Concept focuses on first input when opened
+    * When no matching text is found for search results the field will show as blank
+    * refactored code to get child concepts and extended types, and fixed module call to get only main modules with children (only return modules that are loaded in the DB)
 
 * 2017/08/25 - 5.01
     * Updates to parallel translations during first Komet request

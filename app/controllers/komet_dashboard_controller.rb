@@ -540,7 +540,7 @@ class KometDashboardController < ApplicationController
             concept_id = params[:uuid]
         end
 
-        children = get_direct_children(concept_id, !return_json, remove_semantic_tag, include_definition, include_nested, view_params, 0, qualifier)
+        children = get_direct_children(concept_id: concept_id, format_results: !return_json, remove_semantic_tag: remove_semantic_tag, include_definition: include_definition, include_nested: include_nested, view_params: view_params, qualifier: qualifier)
 
         if return_json
             render json: children
@@ -1482,7 +1482,7 @@ class KometDashboardController < ApplicationController
         end
 
         # if the view params are already in the session put them into a variable for the GUI, otherwise set the default values for view params and other items
-        if session[:default_view_params] && session[:view_params_changed] != true
+        if false #session[:default_view_params] && session[:view_params_changed] != true
             @view_params = session[:default_view_params].clone
         else
 
@@ -1514,7 +1514,8 @@ class KometDashboardController < ApplicationController
             session['komet_extended_description_types'] = {}
 
             # get the full list of modules
-            module_list = get_concept_children(concept_id: $isaac_metadata_auxiliary['MODULE']['uuids'].first[:uuid], return_json: false, remove_semantic_tag: true, include_nested: true, view_params: session[:edit_view_params])
+            module_list = get_direct_children(type: 'module', concept_id: $isaac_metadata_auxiliary['MODULE']['uuids'].first[:uuid], view_params: session[:edit_view_params])
+            #module_list = get_concept_children(concept_id: $isaac_metadata_auxiliary['MODULE']['uuids'].first[:uuid], return_json: false, remove_semantic_tag: true, include_nested: true, view_params: session[:edit_view_params])
 
             # loop thru the full module list to build an array of options in the session, including the nested level of each module
             module_list.each do |komet_module|
@@ -1527,7 +1528,8 @@ class KometDashboardController < ApplicationController
                 session[:komet_module_options] << [indent + komet_module[:text], komet_module[:concept_id], {title: komet_module[:text], 'data-level': komet_module[:level]}]
 
                 # also build a list of the extended description types that apply to concepts belonging to this module
-                extended_description_types = get_extended_description_types(komet_module[:concept_id], true, false, {}, komet_module[:text])
+                extended_description_types = get_direct_children(type: 'extended description', concept_id: komet_module[:concept_id], include_nested: false, qualifier: komet_module[:text])
+                #extended_description_types = get_extended_description_types(komet_module[:concept_id], true, false, {}, komet_module[:text])
 
                 if extended_description_types.length > 0
                     session['komet_extended_description_types'][komet_module[:text].to_sym] = extended_description_types

@@ -160,8 +160,15 @@ class SearchController < ApplicationController
         #loop through the search results
         results.results.each do |result|
 
+            matching_concept = result.referencedConcept.description
+
+            # Make sure the matching concept isn't nil
+            if matching_concept == nil
+                matching_concept = ''
+            end
+
             # add the information to the search array to be returned
-            result_row = {id: result.referencedConcept.identifiers.uuids.first, matching_concept: result.referencedConcept.description, concept_status: 'INACTIVE', matching_terms: result.matchText, match_score: result.score}
+            result_row = {id: result.referencedConcept.identifiers.uuids.first, matching_concept: matching_concept, concept_status: 'INACTIVE', matching_terms: result.matchText, match_score: result.score}
 
             if result.referencedConcept.versions.length > 0
                 result_row[:concept_status] = result.referencedConcept.versions.first.conVersion.state.enumName
