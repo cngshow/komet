@@ -3,6 +3,9 @@ Komet Changelog
 This changelog summarizes changes and fixes which are a part of each revision.  For more details on the fixes, refer tracking numbers 
 where provided, and the git commit history.
 
+* 2017/09/?? - 5.03 - PENDING
+    *
+
 * 2017/08/31 - 5.02
     * Removing vuid checking for XML import 
     * 508 - changing tabbing color to red when inside of panel heading + Button Edit Concept focuses on first input when opened
