@@ -7,7 +7,7 @@
 
         <div class="panel-heading">
             <span class="panel-title komet-section-title">
-                <button tabindex="-1" type="button" class="komet-link-button" onclick="WindowManager.toggleViewerLinkage('<%= @viewer_id %>', WindowManager.getLinkedViewerID() != '<%= @viewer_id %>');" aria-label="Viewer linked to Taxonomy Tree. Click to unlink." title="Viewer linked to Taxonomy Tree. Click to unlink.">
+                <button tabindex="0" type="button" class="komet-link-button" onclick="WindowManager.toggleViewerLinkage('<%= @viewer_id %>', WindowManager.getLinkedViewerID() != '<%= @viewer_id %>');" aria-label="Viewer linked to Taxonomy Tree. Click to unlink." title="Viewer linked to Taxonomy Tree. Click to unlink.">
                     <span id="komet_concept_panel_tree_link_<%= @viewer_id %>" class="fa fa-chain-broken" ></span>
                 </button>
                 <button type="button" id="komet_concept_panel_tree_show_<%= @viewer_id %>" class="komet-link-button" onclick="WindowManager.viewers[<%= @viewer_id %>].showInTaxonomyTree();" aria-label="Show in Taxonomy Tree" title="Show in Taxonomy Tree">

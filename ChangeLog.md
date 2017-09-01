@@ -5,6 +5,7 @@ where provided, and the git commit history.
 
 * 2017/09/?? - 5.03 - PENDING
     * Changed get_uuids_from_identified_objects method to collect all UUIDs for a concept
+    * 508 - main page panel checkbox highlighted to red on focus & first row result from search tab is focused
 
 * 2017/08/31 - 5.02
     * Removing vuid checking for XML import 
