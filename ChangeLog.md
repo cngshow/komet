@@ -4,7 +4,7 @@ This changelog summarizes changes and fixes which are a part of each revision.  
 where provided, and the git commit history.
 
 * 2017/09/?? - 5.03 - PENDING
-    *
+    * Changed get_uuids_from_identified_objects method to collect all UUIDs for a concept
 
 * 2017/08/31 - 5.02
     * Removing vuid checking for XML import 

@@ -55,13 +55,25 @@ module ApplicationHelper
 
         uuids = ''
 
+        # loop though all the identified objects
         identified_objects.each_with_index { |identified_object, index|
 
+            # if this is not the first iteration of the loop add a separator
             if index > 0
                 uuids += ','
             end
 
-            uuids += identified_object.uuids.first
+            # loop through all the uuids in the identified object
+            identified_object.uuids.each_with_index { |uuid, uuid_index|
+
+                # if this is not the first iteration of the uuid loop add a separator
+                if uuid_index > 0
+                    uuids += ','
+                end
+
+                # add the uuid to our list
+                uuids += uuid
+            }
         }
 
         return uuids
