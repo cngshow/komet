@@ -3,7 +3,7 @@ Komet Changelog
 This changelog summarizes changes and fixes which are a part of each revision.  For more details on the fixes, refer tracking numbers 
 where provided, and the git commit history.
 
-* 2017/09/?? - 5.03 - PENDING
+* 2017/09/01 - 5.03
     * Changed get_uuids_from_identified_objects method to collect all UUIDs for a concept
     * 508 - main page panel checkbox highlighted to red on focus & first row result from search tab is focused
 
