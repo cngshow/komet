@@ -15,7 +15,6 @@ var TaxonomySearchModule = (function () {
         var form = $("#komet_taxonomy_search_form");
 
         form.submit(function () {
-
             TaxonomySearchModule.loadResultGrid();
             return false;
         });
@@ -151,6 +150,7 @@ var TaxonomySearchModule = (function () {
                     }
 
                     params.successCallback(search_results.data, search_results.total_number);
+                    searchResultFocus();
                     Common.cursor_auto();
                 }).fail(function() {
                     Common.cursor_auto();
@@ -163,6 +163,14 @@ var TaxonomySearchModule = (function () {
         // reload the recents menu
         UIHelper.loadAutoSuggestRecents("taxonomy_search_assemblage_recents", null);
     }
+    function searchResultFocus(){
+        var agBodyContainer = $('.ag-body-container');
+        if (agBodyContainer.children().length) {
+            var firstRowCells = agBodyContainer.children().first('.ag-row').find('.ag-cell');
+            firstRowCells.first().attr('tabindex', 0)
+            firstRowCells[0].focus()
+        };
+    };
 
     function onGridSelection(){
 

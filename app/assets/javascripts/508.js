@@ -23,15 +23,6 @@ $(document).on('ready page:load', function(){
 		}, 2000);
 	});
 
-	$(document).on('click', '#komet_taxonomy_search_form button', function(){
-		setTimeout(function(){
-			var agBodyContainer = $('.ag-body-container');
-			if (agBodyContainer.children().length) {
-				agBodyContainer.children()[0].focus();
-			};
-		},1000);
-	});
-
 	function addStyleOnPanelHeadingCheckbox(){
 		var checkbox = $('.komet-editor-form input[type="checkbox"]')[1];
 		$(checkbox).css({
