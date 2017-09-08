@@ -4,7 +4,7 @@ This changelog summarizes changes and fixes which are a part of each revision.  
 where provided, and the git commit history.
 
 * 2017/09/?? - 5.04 - PENDING
-    *
+    * 508 - making search results tabbable
 
 * 2017/09/01 - 5.03
     * Changed get_uuids_from_identified_objects method to collect all UUIDs for a concept
