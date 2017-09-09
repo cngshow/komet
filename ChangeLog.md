@@ -4,7 +4,7 @@ This changelog summarizes changes and fixes which are a part of each revision.  
 where provided, and the git commit history.
 
 * 2017/09/?? - 5.05 - PENDING
-    *
+    * Fixed so description type and extended description type won't show as the string "null" if those fields are null.
 
 * 2017/09/08 - 5.04
     * 508 - making search results tabbable
