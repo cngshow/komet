@@ -602,8 +602,8 @@ class MappingController < ApplicationController
     def process_map_set
 
         set_id = params[:komet_mapping_set_editor_set_id]
-        set_name = params[:komet_mapping_set_editor_name]
-        description = params[:komet_mapping_set_editor_description]
+        set_name = params[:komet_mapping_set_editor_name].strip
+        description = params[:komet_mapping_set_editor_description].strip
         field_info = session[:mapset_item_definitions]
         failed_writes = {set: [], items: []}
         successful_writes = 0
@@ -641,7 +641,7 @@ class MappingController < ApplicationController
                     end
 
                     set_field_data_type = 'gov.vha.isaac.rest.api1.data.sememe.dataTypes.RestDynamicSememe' + set_field_data_type
-                    set_field_value = params['komet_mapping_set_editor_' + set_field]
+                    set_field_value = params['komet_mapping_set_editor_' + set_field].strip
 
                     set_extended_fields << {extensionNameConcept: set_field_label, extensionValue: {'@class' => set_field_data_type, columnNumber: 1, data: set_field_value}}
                 end
@@ -650,7 +650,7 @@ class MappingController < ApplicationController
             if params[:komet_mapping_set_editor_rules] != ''
 
                 rules_id = $isaac_metadata_auxiliary['BUSINESS_RULES']['uuids'].first[:uuid]
-                set_extended_fields << {extensionNameConcept: rules_id, extensionValue: {'@class' => 'gov.vha.isaac.rest.api1.data.sememe.dataTypes.RestDynamicSememeString', columnNumber: 1, data: params[:komet_mapping_set_editor_rules]}}
+                set_extended_fields << {extensionNameConcept: rules_id, extensionValue: {'@class' => 'gov.vha.isaac.rest.api1.data.sememe.dataTypes.RestDynamicSememeString', columnNumber: 1, data: params[:komet_mapping_set_editor_rules].strip}}
             end
 
             body_params[:mapSetExtendedFields] = set_extended_fields
@@ -715,7 +715,7 @@ class MappingController < ApplicationController
                 set_id = return_value.uuid
             end
 
-            comment = params[:komet_mapping_set_editor_comment]
+            comment = params[:komet_mapping_set_editor_comment].strip
             comment_id = params[:komet_mapping_set_editor_comment_id]
             comment_return = ''
 
@@ -828,6 +828,9 @@ class MappingController < ApplicationController
                                 else
                                     data = false
                                 end
+
+                            elsif data != nil || data != ''
+                                data = data.strip
                             end
 
                             data_type = data_type.downcase
@@ -875,7 +878,7 @@ class MappingController < ApplicationController
 
                     if !return_value.is_a? CommonRest::UnexpectedResponse
 
-                        comment = item[:comment]
+                        comment = item[:comment].strip
                         comment_id = item[:comment_id]
                         comment_return = ''
 

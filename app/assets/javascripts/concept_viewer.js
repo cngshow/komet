@@ -129,7 +129,7 @@ ConceptViewer.prototype.setTerminologySpecificSettings = function (terminology_t
 
 ConceptViewer.prototype.getExtendedDescriptionTypeText = function(typeID){
 
-    var text = null;
+    var text = "";
 
     $.each(this.extendedDescriptionTypeOptions, function(index, option){
 
@@ -1075,8 +1075,8 @@ ConceptViewer.prototype.createDescriptionRowString = function (rowData) {
     var rowString = "";
     var descriptionID = "";
     var descriptionTypeID = gon.IsaacMetadataAuxiliary.SYNONYM.uuids[0].uuid;
+    var descriptionTypeText = "";
     var extendedDescriptionTypeID = "";
-    var extendedDescriptionTypeText = "";
     var text = "";
     var state = "";
     var time = "";
@@ -1094,8 +1094,8 @@ ConceptViewer.prototype.createDescriptionRowString = function (rowData) {
 
         descriptionID = rowData.description_id;
         descriptionTypeID = rowData.description_type_id;
+        descriptionTypeText = rowData.description_type;
         extendedDescriptionTypeID = rowData.extended_description_type_id;
-        extendedDescriptionTypeText = rowData.description_type;
         text = rowData.text;
         state = rowData.attributes[0].state;
         time = rowData.attributes[0].time;
@@ -1130,7 +1130,7 @@ ConceptViewer.prototype.createDescriptionRowString = function (rowData) {
 
     if (this.showDescriptionType){
         rowString += '<div class="komet-show-on-edit">' + this.createSelectField(descriptionID + "_description_type_" + this.viewerID, namePrefix + "[description_type]", this.selectFieldOptions.descriptionType, descriptionTypeID, this.descriptionLabel + " Type") + '</div>';
-        rowString += '<div class="komet-show-on-view">' + extendedDescriptionTypeText + '</div>';
+        rowString += '<div class="komet-show-on-view">' + descriptionTypeText + '</div>';
     } else {
         rowString += '<input type="hidden" id="' + descriptionID + '_description_type_' + this.viewerID + '" name="' + namePrefix + '[description_type]" value="' + descriptionTypeID + '" aria-label="' + this.descriptionLabel + ' Type">'
     }

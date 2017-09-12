@@ -207,6 +207,10 @@ module ConceptConcern
             description_info[:description_type_id] = description.descriptionTypeConcept.uuids.first
             description_info[:description_type] = get_concept_metadata(description_info[:description_type_id], view_params)
 
+            if description_info[:description_type] == nil
+                description_info[:description_type] = ''
+            end
+
             case description_info[:description_type]
 
                 when 'fully specified name'
@@ -227,7 +231,7 @@ module ConceptConcern
 
             description_info[:extended_description_type_id] = ''
 
-                # check to see if there is an extended description type
+            # check to see if there is an extended description type
             if description.descriptionExtendedTypeConcept
 
                 description_info[:extended_description_type_id] = description.descriptionExtendedTypeConcept.uuids.first
@@ -251,6 +255,10 @@ module ConceptConcern
 
                 # if there is no extended description type then just use the default options
                 # description_info[:extended_description_type_options] = session['komet_extended_description_types'][:default]
+            end
+
+            if description_info[:extended_description_type_id] == nil
+                description_info[:extended_description_type_id] = ''
             end
 
             # process languages

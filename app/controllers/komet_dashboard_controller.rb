@@ -844,7 +844,7 @@ class KometDashboardController < ApplicationController
 
         begin
             body_params = {
-                fsn: preferred_term,
+                fsn: preferred_term.strip,
                 parentConceptIds: [parent_concept_id],
                 descriptionLanguageConceptId: $isaac_metadata_auxiliary['ENGLISH_LANGUAGE']['uuids'].first[:uuid],
                 descriptionPreferredInDialectAssemblagesConceptIds: [$isaac_metadata_auxiliary['US_ENGLISH_DIALECT']['uuids'].first[:uuid]]
@@ -1034,7 +1034,7 @@ class KometDashboardController < ApplicationController
                     additional_req_params[:editToken] = get_edit_token
 
                     sememe.each do |field_id, field|
-                        body_params[:columnData] << {columnNumber: field['column_number'], data: field['value'], '@class' => field['data_type_class']}
+                        body_params[:columnData] << {columnNumber: field['column_number'], data: field['value'].strip, '@class' => field['data_type_class']}
                     end
 
                     # if the sememe ID is a UUID, then it is an existing sememe to be updated, otherwise it is a new sememe to be created
@@ -1091,7 +1091,7 @@ class KometDashboardController < ApplicationController
                         if description['description_type'] == fsn_id
 
                             body_params = {
-                                fsn: description['text'],
+                                fsn: description['text'].strip,
                                 parentConceptIds: [params[:komet_concept_edit_parent]],
                                 descriptionLanguageConceptId: description['description_language']
                             }
@@ -1196,7 +1196,7 @@ class KometDashboardController < ApplicationController
                 body_params = {
                     caseSignificanceConcept: description['description_case_significance'],
                     languageConcept: description['description_language'],
-                    text: description['text'],
+                    text: description['text'].strip,
                     descriptionTypeConcept:  description['description_type'], # $isaac_metadata_auxiliary['SYNONYM']['uuids'].first[:uuid],
                     extendedDescriptionTypeConcept: description['extended_description_type'],
                     active: active

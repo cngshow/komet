@@ -3,6 +3,11 @@ Komet Changelog
 This changelog summarizes changes and fixes which are a part of each revision.  For more details on the fixes, refer tracking numbers 
 where provided, and the git commit history.
 
+* 2017/09/12 - 5.05
+    * Fixed so description type and extended description type won't show as the string "null" if those fields are null.
+    * Trimmed all concept and mapset input fields (Jazz: 585454)
+    * Official Release 5 build
+
 * 2017/09/08 - 5.04
     * 508 - making search results tabbable
 
