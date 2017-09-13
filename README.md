@@ -2,12 +2,12 @@
 
 You need to first get JRuby, here is the link to the 64 bit msi installer:
 
-https://s3.amazonaws.com/jruby.org/downloads/9.1.8.0/jruby_windows_x64_9_1_8_0.exe
+https://s3.amazonaws.com/jruby.org/downloads/9.1.13.0/jruby_windows_x64_9_1_13_0.exe
 
 Get JRuby's complete jar file.  You can put it anywhere you want just remember where you put it!
 I put it in the directory where JRuby is installed.
 
-https://s3.amazonaws.com/jruby.org/downloads/9.1.8.0/jruby-complete-9.1.8.0.jar
+https://s3.amazonaws.com/jruby.org/downloads/9.1.13.0/jruby-complete-9.1.13.0.jar
 
 You also need Maven: https://maven.apache.org/download.cgi
 Place where you would like
@@ -15,12 +15,12 @@ Add the bin directory of the created directory [apache dir] to the PATH environm
 
 Confirm with mvn -v in a new shell. 
 
-You need to make sure you have the source code for the ISAAC-rest project on your system.
+You need to make sure you have the source code for the ISAAC-rest project on your system.(Replace my ID with yours!)
 
 git clone https://cshupp@vadev.mantech.com:4848/git/r/ISAAC-rest.git
 
 In rails root you will find a file called setup.bat.template.
-Move this file to setup.bat, then you will need to modify the following environment variables:<br>
+Copy this file to setup.bat, then you will need to modify the following environment variables:<br>
 Download jdk if you don't already have it for line 5 http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html
 
 GEM_HOME : (this is in line 2, make sure you create the directory you reference)
