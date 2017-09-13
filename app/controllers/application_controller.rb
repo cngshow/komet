@@ -6,7 +6,7 @@ require './lib/rails_common/roles/ssoi'
 require './lib/rails_common/roles/user_session'
 require './lib/rails_common/util/servlet_support'
 require './lib/isaac_rest/auxilliary_metadata/constants'
-#push R6
+
 OpenSSL::SSL::VERIFY_PEER = OpenSSL::SSL::VERIFY_NONE
 
 class ApplicationController < ActionController::Base
