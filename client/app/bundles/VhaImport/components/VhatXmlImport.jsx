@@ -16,9 +16,9 @@ const VhatXmlImportButtons = ({
     >
       Close
     </button>
-    <button 
-      type="submit" 
-      role="button" 
+    <button
+      type="submit"
+      role="button"
       className="btn btn-default submit xml-import-button"
       disabled={disable}
     >
@@ -35,9 +35,9 @@ const CloseButton = ({
 
   return(
     <div className="close-x">
-      <span 
+      <span
         className="close-x"
-        aria-label="close button" 
+        aria-label="close button"
         aria-hidden="true"
         tabIndex="0"
         onClick={() => onClick() }
@@ -57,17 +57,18 @@ export default class VhatXmlImport extends React.Component {
     this.state = {  };
   };
   cancelButton() {
-    this.setState({ 
+    this.setState({
       open: false,
       success: null,
       error: null,
       spinner: false,
     });
-  }; 
+  };
   onFormSubmit(form, body) {
     //https://github.com/github/fetch/issues/424 FOR CSRF TOKEN HEADERS
     this.setState({ spinner: true });
     const token = $('meta[name="csrf-token"]').attr('content');
+    const successMessage = 'Successfully imported XML. To see changes from imported concepts please refresh the taxonomy tree or any open concepts';
     api(gon.routes.import_path, {
       method: 'POST',
       headers: {
@@ -77,10 +78,10 @@ export default class VhatXmlImport extends React.Component {
       body,
       credentials: 'same-origin'
     })
-    .then(response => { 
+    .then(response => {
       form.reset();
       if (!response) {
-        this.setState({ success: "Successfully imported XML", error: null, spinner: false });
+        this.setState({ success: successMessage, error: null, spinner: false });
       };
     })
     .catch(error => {
@@ -136,15 +137,15 @@ export default class VhatXmlImport extends React.Component {
 
     return (
       <div className="vhat-import-container">
-      	<button 
+      	<button
           onClick={() =>
             this.setState({ open: true })
           }
       		type="button"
-      		className="komet-link-button" 
-      		role="button" 
-      		aria-label="VHAT XML Import" 
-      		title="VHAT XML Import" 
+      		className="komet-link-button"
+      		role="button"
+      		aria-label="VHAT XML Import"
+      		title="VHAT XML Import"
       		id="komet_import_link"
             >
           	<div className="glyphicon glyphicon-import" title="VHAT XML Import">
@@ -153,9 +154,9 @@ export default class VhatXmlImport extends React.Component {
 
         <Modal open={this.state.open}>
           <div className="vha-import-wrapper">
-            <CloseButton 
+            <CloseButton
               spinner={this.state.spinner}
-              onClick={() => this.cancelButton()} 
+              onClick={() => this.cancelButton()}
             />
             <form
               ref={ref => form = ref}
@@ -170,17 +171,17 @@ export default class VhatXmlImport extends React.Component {
               </div>
               <div className="modal-body">
                 {
-                  this.state.spinner ? 
+                  this.state.spinner ?
                     <div><div data-loader="circle"></div></div> :
                     <div>
                       { this.state.success ? <MessageBox message={ this.state.success } /> : null }
                       { this.state.error ? <ErrorBox error={ this.state.error } /> : null }
                       <h2 className="modal-title">Please choose file</h2>
-                      <input 
-                        ref={ref => fileInput = ref} 
-                        type="file" 
-                        accept=".xml" 
-                        name="file" 
+                      <input
+                        ref={ref => fileInput = ref}
+                        type="file"
+                        accept=".xml"
+                        name="file"
                         required
                       >
                       </input>
@@ -190,8 +191,8 @@ export default class VhatXmlImport extends React.Component {
               <hr />
               <div>
                 <div className="btn-bar">
-                  <VhatXmlImportButtons 
-                    disable={this.state.spinner} 
+                  <VhatXmlImportButtons
+                    disable={this.state.spinner}
                     onClose={() => this.cancelButton() }
                   />
                 </div>
@@ -212,8 +213,8 @@ function api(url, options) {
         return response.json();
       }
     } else {
-      return response.json().then(error => { 
-        throw new Error(error.errors.message) 
+      return response.json().then(error => {
+        throw new Error(error.errors.message)
       });
     }
   });
