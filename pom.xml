@@ -8,12 +8,12 @@
 	<parent>
 		<groupId>gov.vha.isaac.ochre</groupId>
 		<artifactId>isaac-parent</artifactId>
-		<version>5.06</version><!--TODO Eliminate Snapshot (and 3.12-snapshot goes to 3.11 for example) if present -->
+		<version>6.00</version><!--TODO Eliminate Snapshot (and 3.12-snapshot goes to 3.11 for example) if present -->
 	</parent>
 
 	<groupId>gov.vha.isaac.gui.rails</groupId>
 	<artifactId>rails_komet</artifactId>
-	<version>5.05</version> <!--TODO THIS IS THE ONLY PLACE SNAPSHOT CAN EXIST BEFORE MAKING A RELEASE!!-->
+	<version>6.00</version> <!--TODO THIS IS THE ONLY PLACE SNAPSHOT CAN EXIST BEFORE MAKING A RELEASE!!-->
 	<packaging>pom</packaging>
 
 	<name>ISAAC Rails Komet Tooling</name>
